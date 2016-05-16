@@ -218,14 +218,53 @@ SOURCE=.\bbsys.cpp
 # Begin Source File
 
 SOURCE=.\multiplay.cpp
+
+!IF  "$(CFG)" == "bbruntime - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Blitz3DRelease"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Blitz2DRelease"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\multiplay_setup.cpp
+
+!IF  "$(CFG)" == "bbruntime - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Blitz3DRelease"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Blitz2DRelease"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\multiplay_setup.rc
+
+!IF  "$(CFG)" == "bbruntime - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Blitz3DRelease"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "bbruntime - Win32 Blitz2DRelease"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
