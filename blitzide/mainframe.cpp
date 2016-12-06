@@ -123,7 +123,13 @@ int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 
 	if( !toolbmp ){
 		BITMAP bm;
-		string t=prefs.homeDir+"/cfg/ide_toolbar.bmp";
+		int scale=(int)GetDPIScaleX();
+		string t;
+		if ( scale > 0 ){
+			t=prefs.homeDir+"/cfg/ide_toolbar@"+string(itoa(scale))+".bmp";
+		}else{
+			t=prefs.homeDir+"/cfg/ide_toolbar.bmp";
+		}
 		toolbmp=(HBITMAP)LoadImage( 0,t.c_str(),IMAGE_BITMAP,0,0,LR_LOADFROMFILE|LR_LOADMAP3DCOLORS );
 		if( !toolbmp ){
 			AfxMessageBox( "toolbar bitmap failed to load!" );
@@ -132,7 +138,7 @@ int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 		GetObject( toolbmp,sizeof(bm),&bm );
 		int n=0;
 		for( int k=0;k<toolcnt;++k ) if( toolbuts[k]!=ID_SEPARATOR ) ++n;
-		imgsz.cx=(bm.bmWidth/n)*GetDPIScaleX();imgsz.cy=bm.bmHeight*GetDPIScaleY();
+		imgsz.cx=bm.bmWidth/n;imgsz.cy=bm.bmHeight;
 		butsz.cx=imgsz.cx+7;butsz.cy=imgsz.cy+6;
 	}
 	toolBar.CreateEx( this,TBSTYLE_FLAT,WS_CHILD|WS_VISIBLE|CBRS_TOP|CBRS_TOOLTIPS );
@@ -196,7 +202,7 @@ void MainFrame::OnDestroy(){
 
 void MainFrame::setTitle( const string &s ){
 #ifdef PRO
-	SetWindowText( ("Blitz3D - "+s ).c_str() );
+	SetWindowText( ("Blitz3D-NG - "+s ).c_str() );
 	return;
 #else
 	SetWindowText( ("Blitz2D - "+s ).c_str() );
@@ -701,7 +707,9 @@ void MainFrame::build( bool exec,bool publish ){
 	string src=src_file;
 
 	if( !src.size() ){
-		src=prefs.homeDir+"\\tmp\\tmp.bb";
+		string tmpPath=prefs.homeDir+"\\tmp";
+		if( !PathIsDirectory( tmpPath.c_str() ) ) CreateDirectory( tmpPath.c_str(),NULL );
+		src=tmpPath+"\\tmp.bb";
 		int om=ios_base::binary|ios_base::out|ios_base::trunc;
 		ofstream out( src.c_str(),om );
 		if( !out.good() ){

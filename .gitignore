@@ -25,8 +25,11 @@
 *.lastbuildstate
 UpgradeLog.htm
 
+*.bb_bak*
+
 _release/bin
 _release/cfg/blitzide.prefs
+_release/tmp
 
 /build
 /innosetup/installs

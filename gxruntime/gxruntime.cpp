@@ -370,7 +370,7 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 		if( !suspended ){
 			if( gfx_mode==3 ){
 				SetCursor( 0 );
-				return 1; 
+				return 1;
 			}else if( !pointer_visible ){
 				POINT p;
 				GetCursorPos( &p );
@@ -734,7 +734,7 @@ void gxRuntime::backupWindowState(){
 
 void gxRuntime::restoreWindowState(){
 	SetWindowLong( hwnd,GWL_STYLE,t_style );
-	SetWindowPos( 
+	SetWindowPos(
 		hwnd,0,t_rect.left,t_rect.top,
 		t_rect.right-t_rect.left,t_rect.bottom-t_rect.top,
 		SWP_NOZORDER|SWP_FRAMECHANGED );
@@ -791,7 +791,7 @@ gxGraphics *gxRuntime::openWindowedGraphics( int w,int h,int d,bool d3d ){
 			//create clipper
 			IDirectDrawClipper *cp;
 			if( dd->CreateClipper( 0,&cp,0 )>=0 ){
-				//attach clipper 
+				//attach clipper
 				if( ps->SetClipper( cp )>=0 ){
 					//set clipper HWND
 					if( cp->SetHWnd( 0,hwnd )>=0 ){
@@ -1094,6 +1094,22 @@ void gxRuntime::graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *
 	*h=m->desc.dwHeight;
 	*d=m->desc.ddpfPixelFormat.dwRGBBitCount;
 	*c=caps;
+}
+
+void gxRuntime::dpiInfo( float *scale_x,float *scale_y ){
+	static bool calculated=false;
+	static float _scale_x=1.0f,_scale_y=1.0f;
+
+  if ( !calculated ){
+		HDC hdc=GetDC( GetDesktopWindow() );
+		_scale_x=GetDeviceCaps( hdc,LOGPIXELSX ) / 96.0f;
+		_scale_y=GetDeviceCaps( hdc,LOGPIXELSY ) / 96.0f;
+		ReleaseDC( GetDesktopWindow(),hdc );
+		calculated=true;
+	}
+
+	*scale_x=_scale_x;
+	*scale_y=_scale_y;
 }
 
 void gxRuntime::windowedModeInfo( int *c ){

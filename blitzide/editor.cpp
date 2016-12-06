@@ -195,7 +195,7 @@ int Editor::OnCreate( LPCREATESTRUCT cs ){
 
 	CRect r( 0,0,0,0 );
 
-	editCtrl.Create( 
+	editCtrl.Create(
 		WS_CHILD|WS_VISIBLE|WS_HSCROLL|WS_VSCROLL|WS_BORDER|
 		ES_MULTILINE|ES_AUTOHSCROLL|ES_AUTOVSCROLL|ES_NOHIDESEL,
 		r,this,1 );
@@ -259,7 +259,7 @@ bool Editor::setText( istream &in ){
 	es.dwCookie=(DWORD)this;
 	es.dwError=0;
 	es.pfnCallback=streamIn;
-	is_line="{{\\colortbl;"+rtfbgr(prefs.rgb_string)+rtfbgr(prefs.rgb_ident)+
+	is_line="{\\rtf1\\ansi{{\\colortbl;"+rtfbgr(prefs.rgb_string)+rtfbgr(prefs.rgb_ident)+
 	rtfbgr(prefs.rgb_keyword)+rtfbgr(prefs.rgb_comment)+rtfbgr(prefs.rgb_digit)+
 	rtfbgr(prefs.rgb_default)+"}";
 	int tabTwips=1440*8/GetDeviceCaps( ::GetDC(0),LOGPIXELSX ) * prefs.edit_tabs;
@@ -623,35 +623,36 @@ void Editor::en_msgfilter( NMHDR *nmhdr,LRESULT *result ){
 
 	}else if( msg->msg==WM_CHAR ){
 		if( msg->wParam=='\t' ){
+			bool holding_shift=GetAsyncKeyState( VK_SHIFT )&0x80000000;
 			int lineStart=editCtrl.LineFromChar( selStart );
-			int lineEnd=editCtrl.LineFromChar( selEnd );
-			if( lineEnd<=lineStart ) return;
+			int lineEnd=editCtrl.LineFromChar( selEnd-1 );
+			if( lineEnd<=lineStart && !holding_shift ) return;
 			editCtrl.HideSelection( true,false );
-			if( GetAsyncKeyState( VK_SHIFT )&0x80000000 ){
+			if( holding_shift ){
 				char buff[4];
-				for( int line=lineStart;line<lineEnd;++line ){
+				for( int line=lineStart;line<=lineEnd;++line ){
 					int n=editCtrl.LineIndex( line );
 					editCtrl.SetSel( n,n+1 );editCtrl.GetSelText( buff );
 					if( buff[0]=='\t' ) editCtrl.ReplaceSel( "",true );
 				}
 			}else{
-				for( int line=lineStart;line<lineEnd;++line ){
+				for( int line=lineStart;line<=lineEnd;++line ){
 					int n=editCtrl.LineIndex( line );
 					editCtrl.SetSel( n,n );editCtrl.ReplaceSel( "\t",true );
 				}
 			}
 			selStart=editCtrl.LineIndex( lineStart );
-			selEnd=editCtrl.LineIndex( lineEnd );
+			selEnd=editCtrl.LineIndex( lineEnd+1 )-1;
 			setSel();*result=1;
 			editCtrl.HideSelection( false,false );
 		}else if( msg->wParam==13 ){
 			if( selStart!=selEnd ) return;
 			int k;
-			int ln=editCtrl.LineFromChar( selStart );
+			int ln=editCtrl.LineFromChar( selStart )-1;
 			int pos=selStart-editCtrl.LineIndex( ln );
 			string line=getLine( ln );if( pos>line.size() ) return;
 			for( k=0;k<pos && line[k]=='\t';++k ){}
-			line="\r\n"+line.substr( 0,k )+'\0';
+			line=line.substr( 0,k )+'\0';
 			editCtrl.ReplaceSel( line.data(),true );
 			*result=1;
 		}
@@ -841,7 +842,7 @@ void Editor::formatLine( int ln ){
 			if( selStart<=pos+from || selStart>pos+k ){
 				map<string,string>::iterator it=keyWordMap.find( line.substr( from,k-from ) );
 				if( it!=keyWordMap.end() ){
-					rep=it->second;cf=&prefs.rgb_keyword; 
+					rep=it->second;cf=&prefs.rgb_keyword;
 				}
 			}else lineToFmt=ln;
 		}else if( c=='$' && k+1<sz && isxdigit(line[k+1]) ){

@@ -323,6 +323,18 @@ int  bbAvailVidMem(){
 	return gx_graphics->getAvailVidmem();
 }
 
+float  bbDPIScaleX(){
+	float x,y;
+	gx_runtime->dpiInfo( &x,&y );
+	return x;
+}
+
+float  bbDPIScaleY(){
+	float x,y;
+	gx_runtime->dpiInfo( &x,&y );
+	return y;
+}
+
 void bbSetBuffer( gxCanvas *buff ){
 	debugCanvas( buff );
 	gx_canvas=buff;
@@ -1221,6 +1233,8 @@ void graphics_link( void (*rtSym)( const char *sym,void *pc ) ){
 	rtSym( "%GfxModeDepth%mode",bbGfxModeDepth );
 	rtSym( "%AvailVidMem",bbAvailVidMem );
 	rtSym( "%TotalVidMem",bbTotalVidMem );
+	rtSym( "#DPIScaleX",bbDPIScaleX );
+	rtSym( "#DPIScaleY",bbDPIScaleY );
 
 #ifdef PRO
 	rtSym( "%GfxDriver3D%driver",bbGfxDriver3D );

@@ -75,38 +75,38 @@ int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 	toolBar.SetButtons( toolbuts,toolcnt );
 
 	//Tabber
-	tabber.Create( 
+	tabber.Create(
 		WS_VISIBLE|WS_CHILD|
 		TCS_HOTTRACK,
 		CRect( 0,0,0,0 ),this,1 );
 	tabber.SetFont( &prefs.tabsFont );
 
 	//Second tabber
-	tabber2.Create( 
+	tabber2.Create(
 		WS_VISIBLE|WS_CHILD|
 		TCS_HOTTRACK,
 		CRect( 0,0,0,0 ),this,2 );
 	tabber2.SetFont( &prefs.tabsFont );
 
 	//Debug Log
-	debug_log.Create( 
+	debug_log.Create(
 		WS_CHILD|WS_HSCROLL|WS_VSCROLL|
 		ES_NOHIDESEL|ES_MULTILINE|ES_AUTOHSCROLL|ES_AUTOVSCROLL,
 		CRect( 0,0,0,0 ),&tabber,1 );
 	tabber.insert( 0,&debug_log,"Debug log" );
 
 	//Debug trees
-	locals_tree.Create( 
+	locals_tree.Create(
 		WS_VISIBLE|WS_CHILD|
 		TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS,
 		CRect( 0,0,0,0 ),&tabber2,3 );
 
-	globals_tree.Create( 
+	globals_tree.Create(
 		WS_VISIBLE|WS_CHILD|
 		TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS,
 		CRect( 0,0,0,0 ),&tabber2,3 );
 
-	consts_tree.Create( 
+	consts_tree.Create(
 		WS_VISIBLE|WS_CHILD|
 		TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS,
 		CRect( 0,0,0,0 ),&tabber2,3 );
@@ -285,8 +285,8 @@ SourceFile *MainFrame::sourceFile(const char *file){
 
 	file_tabs.insert( make_pair(file,tab) );
 
-	if( char *p=strrchr(file,'/') ) file=p+1;
-	if( char *p=strrchr(file,'\\') ) file=p+1;
+	if( const char *p=strrchr(file,'/') ) file=p+1;
+	if( const char *p=strrchr(file,'\\') ) file=p+1;
 	tabber.insert( tab,t,file );
 
 	tabber.setCurrent( tab );

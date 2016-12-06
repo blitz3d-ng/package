@@ -285,13 +285,13 @@ string ftoa( float n ){
 
 string tolower( const string &s ){
 	string t=s;
-	for( int k=0;k<t.size();++k ) t[k]=tolower(t[k]);
+	for( unsigned int k=0;k<t.size();++k ) t[k]=(char)tolower(t[k]);
 	return t;
 }
 
 string toupper( const string &s ){
 	string t=s;
-	for( int k=0;k<t.size();++k ) t[k]=toupper(t[k]);
+	for( unsigned int k=0;k<t.size();++k ) t[k]=(char)toupper(t[k]);
 	return t;
 }
 

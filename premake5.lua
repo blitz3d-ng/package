@@ -54,8 +54,14 @@ project "blitzide"
   targetname "ide"
   targetextension ".exe"
 
+  -- characterset "Unicode"
+
+  warnings "Extra"
+  disablewarnings { "4100","4189" }
+
   defines {
-    "_WIN32_WINNT=_WIN32_WINNT_WINXP"
+    "_WIN32_WINNT=_WIN32_WINNT_WINXP",
+    "NO_WARN_MBCS_MFC_DEPRECATION"
   }
 
   flags { "WinMain", "MFC" }
@@ -93,6 +99,30 @@ project "blitzide"
 --     "blitzide2/FileView.h", "blitzide2/FileView.cpp",
 --     "blitzide2/main.cpp"
 --   }
+
+project "debugger"
+  kind "SharedLib"
+  language "C++"
+
+  targetdir "_release/bin"
+  targetname "debugger"
+  targetextension ".dll"
+
+
+  buildoptions "/w"
+
+  defines {
+    "_WIN32_WINNT=_WIN32_WINNT_WINXP",
+    "_WINDLL"
+  }
+
+  flags "MFC"
+
+  files {
+    "debugger/debugger.rc",
+    "debugger/debuggerapp.cpp", "debugger/debuggerapp.h",
+    "debugger/debugtree.cpp", "debugger/debugtree.h", "debugger/mainframe.cpp", "debugger/prefs.cpp", "debugger/sourcefile.cpp", "debugger/stdafx.cpp", "debugger/stdutil.cpp", "debugger/tabber.cpp", "debugger/debugger.h", "debugger/mainframe.h", "debugger/prefs.h", "debugger/sourcefile.h", "debugger/stdafx.h", "debugger/tabber.h"
+  }
 
 project "bblaunch"
   kind "WindowedApp"
@@ -137,7 +167,7 @@ project "bbruntime_dll"
 
   links { "dxguid" }
   links { "blitz3d", "gxruntime", "fmodvc", "freeimage" }
-  links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "dplayx", "ddraw", "dinput", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
+  links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "ddraw", "dinput", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
 
 project "gxruntime"
   kind "StaticLib"
@@ -150,41 +180,23 @@ project "bbruntime"
   language "C++"
 
   files {
-    "bbruntime/basic.cpp",
-    "bbruntime/bbaudio.cpp",
-    "bbruntime/bbbank.cpp",
-    "bbruntime/bbblitz3d.cpp",
-    "bbruntime/bbfilesystem.cpp",
-    "bbruntime/bbgraphics.cpp",
-    "bbruntime/bbinput.cpp",
-    "bbruntime/bbmath.cpp",
-    "bbruntime/bbruntime.cpp",
-    "bbruntime/bbsockets.cpp",
-    "bbruntime/bbstream.cpp",
-    "bbruntime/bbstring.cpp",
-    "bbruntime/bbsys.cpp",
-    "bbruntime/multiplay.cpp",
-    "bbruntime/multiplay_setup.cpp",
-    "bbruntime/std.cpp",
-    "bbruntime/userlibs.cpp",
-    "bbruntime/basic.h",
-    "bbruntime/bbaudio.h",
-    "bbruntime/bbbank.h",
-    "bbruntime/bbblitz3d.h",
-    "bbruntime/bbfilesystem.h",
-    "bbruntime/bbgraphics.h",
-    "bbruntime/bbinput.h",
-    "bbruntime/bbmath.h",
-    "bbruntime/bbruntime.h",
-    "bbruntime/bbsockets.h",
-    "bbruntime/bbstream.h",
-    "bbruntime/bbstring.h",
-    "bbruntime/bbsys.h",
-    "bbruntime/multiplay.h",
-    "bbruntime/multiplay_setup.h",
-    "bbruntime/resource.h",
-    "bbruntime/std.h",
-    "bbruntime/userlibs.h"
+    "bbruntime/basic.cpp", "bbruntime/basic.h",
+    "bbruntime/bbaudio.cpp", "bbruntime/bbaudio.h",
+    "bbruntime/bbbank.cpp", "bbruntime/bbbank.h",
+    "bbruntime/bbblitz3d.cpp", "bbruntime/bbblitz3d.h",
+    "bbruntime/bbfilesystem.cpp", "bbruntime/bbfilesystem.h",
+    "bbruntime/bbgraphics.cpp", "bbruntime/bbgraphics.h",
+    "bbruntime/bbinput.cpp", "bbruntime/bbinput.h",
+    "bbruntime/bbmath.cpp", "bbruntime/bbmath.h",
+    "bbruntime/bbruntime.cpp", "bbruntime/bbruntime.h",
+    "bbruntime/bbsockets.cpp", "bbruntime/bbsockets.h",
+    "bbruntime/bbstream.cpp", "bbruntime/bbstream.h",
+    "bbruntime/bbstring.cpp", "bbruntime/bbstring.h",
+    "bbruntime/bbsys.cpp", "bbruntime/bbsys.h",
+    -- "bbruntime/multiplay.cpp", "bbruntime/multiplay_setup.cpp", "bbruntime/multiplay.h", "bbruntime/multiplay_setup.h",
+    "bbruntime/std.cpp", "bbruntime/std.h",
+    "bbruntime/userlibs.cpp", "bbruntime/userlibs.h",
+    "bbruntime/resource.h"
   }
 
 project "blitz3d"

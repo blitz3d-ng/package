@@ -21,6 +21,8 @@ int		 bbCountGfxModes();
 int		 bbGfxModeWidth( int n );
 int		 bbGfxModeHeight( int n );
 int		 bbGfxModeDepth( int n );
+float  bbDPIScaleX();
+float  bbDPIScaleY();
 int		 bbGraphicsWidth();
 int		 bbGraphicsHeight();
 int		 bbGraphicsDepth();

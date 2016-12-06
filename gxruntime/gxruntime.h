@@ -116,6 +116,8 @@ public:
 	int numGraphicsModes( int driver );
 	void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *caps );
 
+	void dpiInfo( float *scale_x,float *scale_y );
+
 	void windowedModeInfo( int *caps );
 
 	gxAudio *openAudio( int flags );
