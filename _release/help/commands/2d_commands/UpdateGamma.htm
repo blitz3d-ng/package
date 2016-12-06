@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>UpdateGamma [calibrate]</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+calibrate - a flag to indicate whether the gamma table should be calibrated to the display. Defaults to false.
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+UpdateGamma should be used after a series of <a class=small href=../2d_commands/SetGamma.htm>SetGamma</a> commands in order to effect actual changes.
+<br>
+<br>
+See also: <a class=small href=SetGamma.htm>SetGamma</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../2d_examples/UpdateGamma.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+;gamma demo - use left/right arrows to<br />
+;control display intensity<br />
+;<br />
+;hold down left-control for a 'red-out' effect!<br />
+<br />
+Graphics 640,480,16,1<br />
+SetBuffer BackBuffer()<br />
+<br />
+n=0<br />
+<br />
+While Not KeyHit(1)<br />
+<br />
+If KeyDown(203) n=n-1<br />
+If KeyDown(205) n=n+1<br />
+<br />
+If KeyDown(29)<br />
+SetGammaRed(n)<br />
+Else<br />
+SetGammaIntensity(n)<br />
+EndIf<br />
+Cls<br />
+SeedRnd 1234<br />
+For k=1 To 1000<br />
+Color Rnd(255),Rnd(255),Rnd(255)<br />
+Rect Rnd(640),Rnd(480),Rnd(64),Rnd(64)<br />
+Next<br />
+<br />
+Text 0,0,"Intensity offset="+n<br />
+<br />
+Flip<br />
+<br />
+Wend<br />
+<br />
+End<br />
+<br />
+Function SetGammaRed( n )<br />
+<br />
+For k=0 To 255<br />
+SetGamma k,k,k,k+n,0,0<br />
+Next<br />
+<br />
+UpdateGamma<br />
+<br />
+End Function<br />
+<br />
+Function SetGammaIntensity( n )<br />
+<br />
+For k=0 To 255<br />
+SetGamma k,k,k,k+n,k+n,k+n<br />
+Next<br />
+<br />
+UpdateGamma<br />
+<br />
+End Function
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=UpdateGamma&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

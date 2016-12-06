@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>CountGfxModes3D()</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+None.
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns the number of 3D compatible modes available on the selected 3D graphics card, and sets up the info to be returned by GfxModeWidth, GfxModeHeight, GfxModeDepth etc (see 2D commands). <br />
+<br />
+Any difference between CountGfxModes3D and CountGfxModes has been made largely irrelevant by newer cards as they now tend to support 3D in all graphics modes. However there are a few older cards that do not support 3D in some graphics modes, hence the inclusion of the CountGfxModes3D command.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/CountGfxModes3D.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; CountGfxModes3D()<br />
+; -----------------<br />
+<br />
+Graphics 800,600,0,2<br />
+<br />
+For i=1 To CountGfxModes3D()<br />
+<br />
+	Print "Mode "+i+": ("+GfxModeWidth(i)+"x"+GfxModeHeight(i)+"x"+GfxModeDepth(i)+")"<br />
+<br />
+Next<br />
+<br />
+WaitKey()
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=CountGfxModes3D&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

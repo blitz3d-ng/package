@@ -1,0 +1,149 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>TFormImage image,a#,b#,c#,d#</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+image - image handle<br />
+a# - 1,1 element of 2x2 matrix<br />
+b# - 2,1 element of 2x2 matrix<br />
+c# - 1,2 element of 2x2 matrix<br />
+d# - 2,2 element of 2x2 matrix
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Transforms an image based on a 2x2 matrix.  The input parameters relate to the elements of the matrix as below:<br />
+<br />
+( a# b# )<br />
+( c# d# )<br />
+<br />
+The image is treated as a matrix and is multiplied by the matrix above.  Unless you understand matrix manipulation thoroughly, it is unlikely that you will find this command useful.<br />
+<br />
+Common uses for this command might be to rotate or scale images.  These are available independently using <a class=small href=../2d_commands/ScaleImage.htm>ScaleImage</a> and <a class=small href=../2d_commands/RotateImage.htm>RotateImage</a>  However, using this command it is possible to do both operations simultaneously.  It is also possible to shear images using this command.<br />
+<br />
+It is strongly recommended that you run the (rather lengthy) example below to better understand how this command can be used.
+<br>
+<br>
+See also: <a class=small href=ScaleImage.htm>ScaleImage</a>, <a class=small href=RotateImage.htm>RotateImage</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../2d_examples/TFormImage.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; Set up the Blitz evironment and user controlled input parameters<br />
+Global a#=1 ; This controls the horizontal scale, negative values cause the image to flip.  Zero is invalid.<br />
+Global b#=0 ; This shears the image vertically<br />
+Global c#=0 ; This shears the image horizontally<br />
+Global d#=1 ; This controls the vertical scale, negative values cause the image to flip.  Zero is invalid.<br />
+Graphics 600,400,16<br />
+<br />
+; Create an image that we can manipulate<br />
+Global img=CreateImage(50,50) <br />
+SetBuffer ImageBuffer(img) <br />
+Color 255,0,0 : Rect 0,0,25,25,1<br />
+Color 255,255,0 : Rect 25,25,25,25,1<br />
+Color 0,255,0 : Rect 25,0,25,25,1<br />
+Color 0,0,255 : Rect 0,25,25,25,1<br />
+<br />
+; Set up drawing & timing stuff<br />
+SetBuffer BackBuffer() <br />
+timer=CreateTimer(30)<br />
+<br />
+Repeat	<br />
+	; deal with keyboard inputs<br />
+	If KeyDown(42) Or KeyDown(54) Then inc#=-0.1 Else inc#=0.1<br />
+	If KeyDown(30) Then a#=a#+inc#<br />
+	If KeyDown(48) Then b#=b#+inc#<br />
+	If KeyDown(46) Then c#=c#+inc#<br />
+	If KeyDown(32) Then d#=d#+inc#<br />
+	If KeyHit(57) Then RunDemo()<br />
+	If KeyHit(1) Then Exit<br />
+	<br />
+	; draw the screen<br />
+	DrawScreen()	<br />
+	WaitTimer timer<br />
+Forever<br />
+End<br />
+<br />
+; Rolling Demo<br />
+Function RunDemo()<br />
+	degrees=0 ; the number of degrees by which to rotate the image<br />
+	scale#=1.0 ;  the scale of the image<br />
+	timer=CreateTimer(10)<br />
+	Repeat<br />
+		a#=scale#:b#=0:c#=0:d#=scale# ; reset the matrix<br />
+		; increase the degrees (or reset if >360)<br />
+		If degrees<360 Then degrees=degrees+4 Else degrees=0<br />
+		; and set up the matrix multipliers.  The explanation as to why these work can be found in most good<br />
+		; mathematics text books, and is too involved to go into here!<br />
+		ma#=Cos(degrees) <br />
+		mb#=Sin(degrees) <br />
+		mc#=-Sin(degrees) <br />
+		md#=Cos(degrees) <br />
+		; multiply the two matrices.  <br />
+		na#=a#*ma#+b#*mc# <br />
+		nb#=a#*mb#+b#*md# <br />
+		nc#=c#*ma#+d#*mc# <br />
+		nd#=c#*mb#+d#*md# <br />
+		a#=na#:b#=nb#:c#=nc#:d#=nd#<br />
+		<br />
+		; handle input and draw the screen<br />
+		If KeyHit(1) Then Exit<br />
+		If KeyDown(200) And scale#<2.0 Then scale#=scale#+0.1<br />
+		If KeyDown(208) And scale#>0.1 Then scale#=scale#-0.1<br />
+		DrawScreen(True)<br />
+		WaitTimer timer<br />
+	Forever<br />
+	a#=1:b#=0:c#=0:d#=1 ; reset the matrix<br />
+	FlushKeys()<br />
+End Function<br />
+<br />
+; Draw stuff on the screen, including transforming the image<br />
+Function DrawScreen(demo=False)<br />
+	ClsColor 0,0,0<br />
+	Cls<br />
+	DrawBlock img,10,10<br />
+	Text 100,5,"TFORMIMAGE EXAMPLE"<br />
+	Text 100,20,"The command format is: TFormImage image, a, b, c, d"<br />
+	If Not demo Then<br />
+		Text 100,35,"Press 'Space' for a rolling demo"<br />
+		Text 100,50,"Use the keys a, b, c, and d to increase the parameters"<br />
+		Text 100,65,"Also hold down shift to decrease each of these parameters"<br />
+	Else<br />
+		Text 100,35,"Use the up and down arrow keys to change the scale"<br />
+	End If<br />
+	Text 100,80,"Press 'Escape' to exit"<br />
+	Text 10,110,"Current Parameters:"<br />
+	<br />
+	; ######################## This is where we actually use TFormImage using the input parameters<br />
+	Text 20,125,"TFormImage image, "+a#+", "+b#+", "+c#+", "+d#<br />
+	img2=CopyImage(img) <br />
+	TFormImage img2,a#,b#,c#,d#<br />
+	; #############################################################################<br />
+	<br />
+	If demo Then<br />
+		DrawBlock img2,300,280<br />
+	Else<br />
+		DrawBlock img2,300-ImageWidth(img2)/2,280-ImageHeight(img2)/2<br />
+	EndIf<br />
+	Flip<br />
+End Function
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=TFormImage&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

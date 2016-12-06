@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>JoyHat ( [port] )</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+port (optional) - an integer value representing the port to be checked for joystick data
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+JoyHat returns the state of a joystick 'hat' or 'pov' (point-of-view) control.<br />
+<br />
+If the returned value is -1, the hat is currently centred.<br />
+<br />
+Otherwise, the returned value gives the direction as an angle in the range 0 to 360 relative to 'up'.
+</td>
+</tr>
+</table>
+<h1><a href=../2d_examples/JoyHat.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+While Not KeyHit(1)<br />
+Print JoyHat()<br />
+Wend<br />
+End
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=JoyHat&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

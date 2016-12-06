@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>GetEnv$ ( env_var$ )</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+env_var$ - the name of the environment variable to 'get'
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns the value of the specified environment variable.<br />
+<br />
+Unlike the SetEnv command, which is only capable of setting environment variables local to Blitz, the GetEnv command is capable of getting Windows environment variables.<br />
+<br />
+Windows environment variables tell your computer what kind of machine it is, and where to install programs.<br />
+<br />
+If you're curious to find out what environment variables are set on your Windows install, then you can find out in WindowsXP by running 'cmd', and then typing 'set'.<br />
+<br />
+See also: SetEnv
+</td>
+</tr>
+</table>
+<h1><a href=../2d_examples/GetEnv.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; GetEnv Example<br />
+; --------------<br />
+<br />
+Print "PROCESSOR_ARCHITECTURE: "+GetEnv$("PROCESSOR_ARCHITECTURE")<br />
+Print "ProgramFiles: "+GetEnv$("ProgramFiles")<br />
+Print "SystemDrive: "+GetEnv$("SystemDrive")<br />
+Print "TEMP: "+GetEnv$("TEMP")<br />
+<br />
+WaitKey()
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=GetEnv&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

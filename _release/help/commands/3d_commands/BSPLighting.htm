@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>BSPLighting bsp, use_lightmaps</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+bsp - BSP handle<br />
+use_lightmaps - True to use lightmaps, False for vertex lighting. The default  mode is True.
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Controls whether BSP models are illuminated using lightmaps, or by vertex lighting.<br />
+<br />
+Vertex lighting will be faster on some graphics cards, but doesn't look as good!
+<br>
+<br>
+See also: <a class=small href=LoadBSP.htm>LoadBSP</a>, <a class=small href=BSPAmbientLight.htm>BSPAmbientLight</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/BSPLighting.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+Graphics3D 640,480<br />
+<br />
+campiv = CreatePivot()<br />
+cam = CreateCamera(campiv)<br />
+CameraRange cam, 0.1,2000<br />
+<br />
+level=LoadBSP( "nyk3dm1\nyk3dm1.bsp",.8 ) ; load a 'legal' quake3 bsp map<br />
+BSPAmbientLight level, 0,255,0 ; make the ambient light green<br />
+;BSPLighting level, False ; uncomment this line to turn lightmap off<br />
+<br />
+While Not KeyDown(1) ; if ESCAPE pressed then exit<br />
+RenderWorld:Flip<br />
+<br />
+mys = MouseYSpeed()<br />
+If Abs(EntityPitch(cam)+mys) < 75 ; restrict pitch of camera<br />
+TurnEntity cam, mys,0,0	<br />
+EndIf<br />
+TurnEntity campiv,0,-MouseXSpeed(),0<br />
+<br />
+If MouseDown(1) Then ; press mousebutton to move forward<br />
+TFormVector 0,0,3,cam,campiv<br />
+MoveEntity campiv,TFormedX(),TFormedY(),TFormedZ()<br />
+EndIf<br />
+<br />
+MoveMouse 320,240 ; centre mouse cursor<br />
+Wend<br />
+<br />
+End
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=BSPLighting&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

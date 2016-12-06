@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>CallDLL( dll_name$, proc_name$[,in_bank,out_bank] )</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+dll_name$ - name of dll<br />
+proc_name$ - name of procedure<br />
+in_bank (optional) - handle of bank that is made available from Blitz to DLL  procedure<br />
+out_bank (optional) - handle of bank that is made available from DLL procedure  to Blitz
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+The DLL is called with pointers to and sizes of bank memory. Dll function prototypes  should like something like this (Visual C++) example:<br />
+<br />
+extern "C"{<br />
+_declspec(dllexport) int _cdecl my_dll_func( const void *in,int in_size,void  *out,int out_sz );<br />
+}<br />
+<br />
+The 'extern "C"' bit prevents C++ 'name-mangling', and the _cdecl bit prevents  name decoration. You could call this function using something like:<br />
+<br />
+in_bank=CreateBank(...)<br />
+out_bank=CreateBank(...)<br />
+<br />
+;poke input parameters into in_bank<br />
+result=CallDLL( "mydll","my_dll_func",bank1,bank2 )<br />
+;peek output results from out_bank
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=CallDLL&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

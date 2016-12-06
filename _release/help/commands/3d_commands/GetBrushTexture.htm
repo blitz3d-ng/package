@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>GetBrushTexture(brush[,index=0])</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+brush - brush handle<br />
+index (optional) - index of texture applied to brush, from 0-7. Defaults to 0.
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns the texture that is applied to the specified brush.<br />
+<br />
+The optional index parameter allows you to specify which particular texture you'd like returning, if there are more than one textures applied to a brush.<br />
+<br />
+You should release the texture returned by GetBrushTexture after use to prevent leaks! Use <a class=small href=../3d_commands/FreeTexture.htm>FreeTexture</a> to do this.<br />
+<br />
+To find out the name of the texture, use <a class=small href=../3d_commands/TextureName.htm>TextureName</a>
+<br>
+<br>
+See also: <a class=small href=TextureName.htm>TextureName</a>, <a class=small href=FreeTexture.htm>FreeTexture</a>, <a class=small href=GetEntityBrush.htm>GetEntityBrush</a>, <a class=small href=GetSurfaceBrush.htm>GetSurfaceBrush</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/GetBrushTexture.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; GetBrushTexture Example<br />
+; -----------------------<br />
+<br />
+Graphics3D 640,480<br />
+SetBuffer BackBuffer()<br />
+<br />
+camera=CreateCamera()<br />
+<br />
+light=CreateLight()<br />
+RotateEntity light,90,0,0<br />
+<br />
+; Load mesh<br />
+crate=LoadMesh("media/wood-crate/wcrate1.3ds")<br />
+PositionEntity crate,0,0,100<br />
+<br />
+; Get mesh surface<br />
+surf=GetSurface(crate,1)<br />
+<br />
+; Get surface brush<br />
+crate_brush=GetSurfaceBrush(surf)<br />
+<br />
+; Get brush texture<br />
+crate_tex=GetBrushTexture(crate_brush,0)<br />
+<br />
+While Not KeyDown( 1 )<br />
+<br />
+	RenderWorld<br />
+<br />
+	; Display full texture name<br />
+	Text 0,0,"Texture name, as returned by TextureName$():"<br />
+	Text 0,20,TextureName$(crate_tex)<br />
+	<br />
+	; Display trimmed texture name<br />
+	Text 0,40,"Texture name with path stripped:"<br />
+	Text 0,60,StripPath$(TextureName$(crate_tex))<br />
+<br />
+	Flip<br />
+<br />
+Wend<br />
+<br />
+End<br />
+<br />
+Function StripPath$(file$) <br />
+<br />
+	If Len(file$)>0 <br />
+	<br />
+		For i=Len(file$) To 1 Step -1 <br />
+		<br />
+			mi$=Mid$(file$,i,1) <br />
+			If mi$="\" Or mi$="/" Then Return name$ Else name$=mi$+name$ <br />
+		<br />
+		Next <br />
+	<br />
+	EndIf <br />
+	<br />
+	Return name$ <br />
+<br />
+End Function
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=GetBrushTexture&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>JoyUDir([port])</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+port (optional) - an integer value representing the port to be checked for joystick data
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns an integer value between -1 and 1 that represents the U value of a joystick's output.<br />
+<br />
+The U value of a joystick usually corresponds to a joystick's 'slider' or 'throttle' feature, although this may vary depending on the joystick, and will not be available with all joysticks.<br />
+<br />
+The optional port parameter allows you to select which joystick to get output from should you have multiple controllers connected to your PC.
+</td>
+</tr>
+</table>
+<h1><a href=../2d_examples/JoyUDir.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+JoyUDir Example<br />
+---------------<br />
+<br />
+While Not KeyDown(1)<br />
+<br />
+; Get various joystick values<br />
+ju#=JoyU()<br />
+judir=JoyUDir()<br />
+jv#=JoyV()<br />
+jvdir=JoyVDir()<br />
+jyaw#=JoyYaw()<br />
+jpitch#=JoyPitch()<br />
+jroll#=JoyRoll()<br />
+<br />
+; Output joystick values<br />
+Text 0,0,"Move joystick to output values onto screen"<br />
+Text 0,20,"JoyU(): "+ju#<br />
+Text 0,40,"JoyUDir(): "+judir<br />
+Text 0,60,"JoyV(): "+jv#<br />
+Text 0,80,"JoyVDir(): "+jvdir<br />
+Text 0,100,"JoyYaw(): "+jyaw#<br />
+Text 0,120,"JoyPitch(): "+jpitch#<br />
+Text 0,140,"JoyRoll(): "+jroll#<br />
+<br />
+Flip<br />
+Cls<br />
+<br />
+Wend
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=JoyUDir&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

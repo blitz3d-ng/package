@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>AddMesh source_mesh,dest_mesh</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+source_mesh - source mesh handle<br />
+dest_mesh - destination mesh handle
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Adds the source mesh to the destination mesh.<br />
+<br />
+AddMesh works best with  meshes that have previously only had mesh commands used with them. <br />
+<br />
+So if you want to manipulate a mesh before adding it to another mesh, make  sure you use ScaleMesh, PositionMesh, PaintMesh etc rather than ScaleEntity,  PositionEntity, EntityTexture etc before using AddMesh. <br />
+<br />
+However, something to be aware of when using commands such as RotateMesh  is that all mesh commands work from a global origin of 0,0,0. Therefore it is  generally a good idea to scale and rotate a mesh before positioning it, otherwise  your mesh could end up in unexpected positions. Also, when using AddMesh, the  origin of the new all-in-one mesh will be set at 0,0,0. <br />
+<br />
+After using AddMesh, the original source_mesh will still exist, therefore  use FreeEntity to delete it if you wish to do so.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/AddMesh.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; AddMesh Example<br />
+; ---------------<br />
+<br />
+Graphics3D 640,480<br />
+SetBuffer BackBuffer()<br />
+<br />
+camera=CreateCamera()<br />
+PositionEntity camera,0,0,-10<br />
+<br />
+light=CreateLight()<br />
+RotateEntity light,90,0,0<br />
+<br />
+; Create tree mesh (upper half)<br />
+tree=CreateCone()<br />
+green_br=CreateBrush(0,255,0)<br />
+PaintMesh tree,green_br<br />
+ScaleMesh tree,2,2,2<br />
+PositionMesh tree,0,1.5,0<br />
+<br />
+; Create trunk mesh<br />
+trunk=CreateCylinder()<br />
+brown_br=CreateBrush(128,64,0)<br />
+PaintMesh trunk,brown_br<br />
+PositionMesh trunk,0,-1.5,0<br />
+<br />
+; Add trunk mesh to tree mesh, to form one whole tree<br />
+AddMesh trunk,tree<br />
+<br />
+; Free trunk mesh - we don't need it anymore<br />
+FreeEntity trunk<br />
+<br />
+While Not KeyDown( 1 )<br />
+<br />
+TurnEntity tree,1,1,1<br />
+<br />
+RenderWorld<br />
+Flip<br />
+<br />
+Wend<br />
+<br />
+End
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=AddMesh&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

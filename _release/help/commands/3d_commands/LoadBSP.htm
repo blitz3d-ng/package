@@ -1,0 +1,84 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>LoadBSP( file$[,gamma_adjust#][,parent] )</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+file$ - filename of BSP model<br />
+gamma_adjust# (optional) - intensity of BSP lightmaps. Values should be in the  range 0-1. Defaults to 0.<br />
+parent (optional) - parent entity of BSP
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Loads a BSP model and returns its handle.<br />
+<br />
+Some points about Blitz3D's BSP support: <br />
+<br />
+* Shaders are *not* supported!<br />
+<br />
+* BSP's cannot be painted, textured, colored, faded etc. in Blitz.<br />
+<br />
+* A BSP model is just an entity. Use the standard entity commands to scale,  rotate and position the BSP, and the standard collision commands to setup collisions  with the BSP.<br />
+<br />
+* BSP models are not lit by either 'normal' AmbientLight,  or by any directional lighting. This allows you to setup lighting for in-game  models without affecting the BSP lighting. However, BSP models *will* be lit  by point or spot lights.<br />
+<br />
+* Textures for the BSP model must be in the same directory as the BSP file itself. <br />
+<br />
+The optional parent parameter allows you to specify a parent entity for the  BSP so that when the parent is moved the child BSP will move with it. However,  this relationship is one way; applying movement commands to the child will not  affect the parent. <br />
+<br />
+Specifying a parent entity will still result in the BSP being created at position 0,0,0 rather than at the parent entity's position.
+<br>
+<br>
+See also: <a class=small href=BSPAmbientLight.htm>BSPAmbientLight</a>, <a class=small href=BSPLighting.htm>BSPLighting</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/LoadBSP.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+Graphics3D 640,480<br />
+<br />
+campiv = CreatePivot()<br />
+cam = CreateCamera(campiv)<br />
+CameraRange cam, 0.1,2000<br />
+<br />
+level=LoadBSP( "nyk3dm1\nyk3dm1.bsp",.8 ) ; load a 'legal' quake3 bsp map<br />
+BSPAmbientLight level, 0,255,0 ; make the ambient light green<br />
+;BSPLighting level, False ; uncomment this line to turn lightmap off<br />
+<br />
+While Not KeyDown(1) ; if ESCAPE pressed then exit<br />
+RenderWorld:Flip<br />
+<br />
+mys = MouseYSpeed()<br />
+If Abs(EntityPitch(cam)+mys) < 75 ; restrict pitch of camera<br />
+TurnEntity cam, mys,0,0	<br />
+EndIf<br />
+TurnEntity campiv,0,-MouseXSpeed(),0<br />
+<br />
+If MouseDown(1) Then ; press mousebutton to move forward<br />
+TFormVector 0,0,3,cam,campiv<br />
+MoveEntity campiv,TFormedX(),TFormedY(),TFormedZ()<br />
+EndIf<br />
+<br />
+MoveMouse 320,240 ; centre mouse cursor<br />
+Wend<br />
+<br />
+End
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=LoadBSP&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

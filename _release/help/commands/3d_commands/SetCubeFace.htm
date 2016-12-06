@@ -1,0 +1,283 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>SetCubeFace texture,face</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+texture - texture<br />
+face - face of cube to select. This should be one of the following values:<br />
+0: left (negative X) face<br />
+1: forward (positive Z) face - this is the default.<br />
+2: right (positive X) face<br />
+3: backward (negative Z) face<br />
+4: up (positive Y) face<br />
+5: down (negative Y) face
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Selects a cube face for direct rendering to a texture.<br />
+<br />
+This command should only be used when you wish to draw directly to a cubemap texture in real-time. Otherwise, just loading a pre-rendered cubemap with a flag of 128 will suffice.<br />
+<br />
+To understand how this command works exactly it is important to recognise that Blitz treats cubemap textures slightly differently to how it treats other textures. Here's how it works...<br />
+<br />
+A cubemap texture in Blitz actually consists of six images, each of which must be square 'power' of two size - e.g. 32, 64, 128 etc. Each corresponds to a particular cube face. These images are stored internally by Blitz, and the texture handle that is returned by LoadTexture/CreateTexture when specifying the cubemap flag, only provides access to one of these six images at once (by default the first one, or '0' face).<br />
+<br />
+This is why, when loading a cubemap texture into Blitz using LoadTexture, all the six cubemap images must be laid out in a specific order (0-5, as described above), in a horizontal strip. Then Blitz takes this texture and internally converts it into six separate images.<br />
+<br />
+So seeing as the texture handle returned by <a class=small href=../3d_commands/CreateTexture.htm>CreateTexture</a> / <a class=small href=../3d_commands/LoadTexture.htm>LoadTexture</a> only provides access to one of these images at once (no. 1 by default), how do we get access to the other five images? This is where SetCubeFace comes in. It will tell Blitz that whenever you next draw to a cubemap texture, to draw to the particular image representing the face you have specified with the face parameter.<br />
+<br />
+Now you have the ability to draw to a cubemap in real-time.<br />
+<br />
+To give you some idea of how this works in code, here's a function that updates a cubemap in real-time. It works by rendering six different views and copying them to the cubemap texture buffer, using SetCubeFace to specify which particular cubemap image should be drawn to.<br />
+<br />
+; Start of code<br />
+<br />
+Function UpdateCubeMap( tex,camera )<br />
+<br />
+tex_sz=TextureWidth(tex)<br />
+<br />
+; do left view<br />
+SetCubeFace tex,0<br />
+RotateEntity camera,0,90,0<br />
+RenderWorld<br />
+<br />
+; copy contents of backbuffer to cubemap<br />
+CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+<br />
+; do forward view<br />
+SetCubeFace tex,1<br />
+RotateEntity camera,0,0,0<br />
+RenderWorld<br />
+CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+<br />
+; do right view	<br />
+SetCubeFace tex,2<br />
+RotateEntity camera,0,-90,0<br />
+RenderWorld<br />
+CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+<br />
+; do backward view<br />
+SetCubeFace tex,3<br />
+RotateEntity camera,0,180,0<br />
+RenderWorld<br />
+CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+<br />
+; do up view<br />
+SetCubeFace tex,4<br />
+RotateEntity camera,-90,0,0<br />
+RenderWorld<br />
+CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+<br />
+; do down view<br />
+SetCubeFace tex,5<br />
+RotateEntity camera,90,0,0<br />
+RenderWorld<br />
+CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+<br />
+EndFunction<br />
+<br />
+; End of code<br />
+<br />
+All rendering to a texture buffer affects the currently selected face. Do not change the selected cube face while a buffer is locked.<br />
+<br />
+Finally, you may wish to combine the vram 256 flag with the cubic mapping flag when drawing to cubemap textures for faster access.
+<br>
+<br>
+See also: <a class=small href=CreateTexture.htm>CreateTexture</a>, <a class=small href=LoadTexture.htm>LoadTexture</a>, <a class=small href=SetCubeMode.htm>SetCubeMode</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/SetCubeFace.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; SetCubeFace Example<br />
+; -------------------<br />
+<br />
+width=640<br />
+height=480<br />
+depth=0<br />
+mode=0<br />
+<br />
+Graphics3D width,height,depth,mode<br />
+SetBuffer BackBuffer()<br />
+<br />
+; If user's graphics card does not support cubic mapping then quit example<br />
+If GfxDriverCaps3D()<110 Then RuntimeError "Sorry, your graphics card does not support cubic environemnt maps."<br />
+<br />
+cam=CreateCamera()<br />
+PositionEntity cam,0,10,-10<br />
+<br />
+; Create separate camera for updating cube map - this allows us to manipulate main camera and cube camera which avoids any confusion<br />
+cube_cam=CreateCamera()<br />
+HideEntity cube_cam<br />
+<br />
+light=CreateLight()<br />
+RotateEntity light,90,0,0<br />
+<br />
+; Load object we will apply cubemap to - the classic teapot<br />
+teapot=LoadMesh("media/teapot.x")<br />
+ScaleEntity teapot,3,3,3<br />
+PositionEntity teapot,0,10,0<br />
+<br />
+; Create some scenery<br />
+<br />
+; ground<br />
+ground=CreatePlane()<br />
+EntityColor ground,168,133,55<br />
+ground_tex=LoadTexture("media/sand.bmp")<br />
+ScaleTexture ground_tex,10,10<br />
+EntityTexture ground,ground_tex<br />
+<br />
+; sky<br />
+sky=CreateSphere(24)<br />
+ScaleEntity sky,500,500,500<br />
+FlipMesh sky<br />
+EntityFX sky,1<br />
+sky_tex=LoadTexture("media/sky.bmp")<br />
+EntityTexture sky,sky_tex<br />
+<br />
+; cactus<br />
+cactus=LoadMesh("media/cactus2.x")<br />
+FitMesh cactus,-5,0,-5,2,6,.5<br />
+<br />
+; camel<br />
+camel=LoadMesh("media/camel.x")<br />
+FitMesh camel,5,0,-5,6,5,4<br />
+<br />
+; Load ufo to give us a dynamic moving object that the cubemap will be able to reflect<br />
+ufo_piv=CreatePivot()<br />
+PositionEntity ufo_piv,0,15,0<br />
+ufo=LoadMesh("media/green_ufo.x",ufo_piv)<br />
+PositionEntity ufo,0,0,10<br />
+<br />
+; Create texture with color + cubic environment map + store in vram flags<br />
+tex=CreateTexture(256,256,1+128+256)<br />
+<br />
+; Apply cubic environment map to teapot<br />
+EntityTexture teapot,tex<br />
+<br />
+While Not KeyDown(1)<br />
+<br />
+	; Control camera<br />
+	<br />
+	; mouse look<br />
+	<br />
+	mxs#=mxs#+(MouseXSpeed()/5.0)<br />
+	mys#=mys#+(MouseYSpeed()/5.0)<br />
+<br />
+	RotateEntity cam,mys#,-mxs#,0<br />
+<br />
+	MoveMouse width/2,height/2<br />
+<br />
+	; move camera forwards/backwards/left/right with cursor keys<br />
+	<br />
+	If KeyDown(200)=True Then MoveEntity cam,0,0,.2 ; move camera forward<br />
+	If KeyDown(208)=True Then MoveEntity cam,0,0,-.2 ; move camera back<br />
+<br />
+	If KeyDown(205)=True Then MoveEntity cam,.2,0,0 ; move camera left<br />
+	If KeyDown(203)=True Then MoveEntity cam,-.2,0,0 ; move camera right<br />
+	<br />
+	; Turn ufo pivot, causing child ufo mesh to spin around it (and teapot)<br />
+	TurnEntity ufo_piv,0,2,0<br />
+<br />
+	; Hide our main camera before updating cube map - we don't need it to be rendererd every time cube_cam is rendered<br />
+	HideEntity cam<br />
+<br />
+	; Update cubemap<br />
+	UpdateCubemap(tex,cube_cam,teapot)<br />
+<br />
+	; Show main camera again<br />
+	ShowEntity cam<br />
+<br />
+	RenderWorld<br />
+	<br />
+	Text 0,0,"Use mouse to look around"<br />
+	Text 0,20,"Use cursor keys to change camera position"<br />
+<br />
+	Flip<br />
+<br />
+Wend<br />
+<br />
+<br />
+Function UpdateCubemap(tex,camera,entity)<br />
+<br />
+	tex_sz=TextureWidth(tex)<br />
+<br />
+	; Show the camera we have specifically created for updating the cubemap<br />
+	ShowEntity camera<br />
+	<br />
+	; Hide entity that will have cubemap applied to it. This is so we can get cubemap from its position, without it blocking the view<br />
+	HideEntity entity<br />
+<br />
+	; Position camera where the entity is - this is where we will be rendering views from for cubemap<br />
+	PositionEntity camera,EntityX#(entity),EntityY#(entity),EntityZ#(entity)<br />
+<br />
+	CameraClsMode camera,False,True<br />
+	<br />
+	; Set the camera's viewport so it is the same size as our texture - so we can fit entire screen contents into texture<br />
+	CameraViewport camera,0,0,tex_sz,tex_sz<br />
+<br />
+	; Update cubemap<br />
+<br />
+	; do left view	<br />
+	SetCubeFace tex,0<br />
+	RotateEntity camera,0,90,0<br />
+	RenderWorld<br />
+	CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+	<br />
+	; do forward view<br />
+	SetCubeFace tex,1<br />
+	RotateEntity camera,0,0,0<br />
+	RenderWorld<br />
+	CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+	<br />
+	; do right view	<br />
+	SetCubeFace tex,2<br />
+	RotateEntity camera,0,-90,0<br />
+	RenderWorld<br />
+	CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+	<br />
+	; do backward view<br />
+	SetCubeFace tex,3<br />
+	RotateEntity camera,0,180,0<br />
+	RenderWorld<br />
+	CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+	<br />
+	; do up view<br />
+	SetCubeFace tex,4<br />
+	RotateEntity camera,-90,0,0<br />
+	RenderWorld<br />
+	CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+	<br />
+	; do down view<br />
+	SetCubeFace tex,5<br />
+	RotateEntity camera,90,0,0<br />
+	RenderWorld<br />
+	CopyRect 0,0,tex_sz,tex_sz,0,0,BackBuffer(),TextureBuffer(tex)<br />
+	<br />
+	; Show entity again<br />
+	ShowEntity entity<br />
+	<br />
+	; Hide the cubemap camera<br />
+	HideEntity camera<br />
+	<br />
+End Function
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=SetCubeFace&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

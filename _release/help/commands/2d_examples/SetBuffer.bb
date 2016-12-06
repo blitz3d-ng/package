@@ -1,0 +1,1 @@
+SetBuffer FrontBuffer() ;Sets FrontBuffer as the current drawing buffer

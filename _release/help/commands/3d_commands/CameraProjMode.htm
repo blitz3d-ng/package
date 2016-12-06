@@ -1,0 +1,94 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>CameraProjMode camera,mode</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+camera - camera handle<br />
+mode - projection mode:<br />
+0: no projection - disables camera (faster than HideEntity)<br />
+1: perspective projection (default)<br />
+2: orthographic projection
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Sets the camera projection mode.<br />
+<br />
+The projection mode is the the technique  used by Blitz to display 3D graphics on the screen. Using projection mode 0,  nothing is displayed on the screen, and this is the fastest method of hiding  a camera. Using camera projection mode 1, the graphics are displayed in their  'correct' form - and this is the default mode for a camera. Camera projection  mode 2 is a special type of projection, used for displaying 3D graphics on screen,  but in a 2D form - that is, no sense of perspective will be given to the graphics.  Two identical objects at varying distances from the camera will both appear  to be the same size. Orthographic projection is useful for 3D editors, where  a sense of perspective is unimportant, and also certain games. <br />
+<br />
+Use 'CameraZoom' to control the scale of graphics rendered with orthographic  projection. As a general rule, using orthographic projection with the default  camera zoom setting of 1 will result in graphics that are too 'zoomed-in' -  changing the camera zoom to 0.1 should fix this. <br />
+<br />
+One thing to note with using camera project mode 2, is that terrains will  not be displayed correctly - this is because the level of detail algorithm used  by terrains relies on perspective in order to work properly. 
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/CameraProjMode.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; CameraProjMode Example<br />
+; ----------------------<br />
+<br />
+Graphics3D 640,480<br />
+SetBuffer BackBuffer()<br />
+<br />
+camera=CreateCamera()<br />
+PositionEntity camera,0,0,-10<br />
+<br />
+light=CreateLight()<br />
+RotateEntity light,0,0,0<br />
+<br />
+; Create cube 1, near to camera<br />
+cube1=CreateCube()<br />
+EntityColor cube1,255,0,0<br />
+PositionEntity cube1,0,0,0<br />
+<br />
+; Create cube 2, same size as cube 1 but further away<br />
+cube2=CreateCube()<br />
+EntityColor cube2,0,255,0<br />
+PositionEntity cube2,5,5,5<br />
+<br />
+While Not KeyDown( 1 )<br />
+<br />
+; If spacebar pressed then change mode value<br />
+If KeyHit(57)=True Then mode=mode+1 : If mode=3 Then mode=0<br />
+<br />
+; If mode value = 2 (orthagraphic), then reduce zoom value to 0.1<br />
+If mode=2 Then zoom#=0.1 Else zoom#=1<br />
+<br />
+; Set camera projection mode using mode value<br />
+CameraProjMode camera,mode<br />
+<br />
+; Set camera zoom using zoom value<br />
+CameraZoom camera,zoom#<br />
+<br />
+RenderWorld<br />
+<br />
+Text 0,0,"Press spacebar to change the camera project mode"<br />
+Text 0,20,"CameraProjMode camera,"+mode<br />
+Text 0,40,"CameraZoom camera,"+zoom#<br />
+<br />
+Flip<br />
+<br />
+Cls<br />
+<br />
+Wend<br />
+<br />
+End
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=CameraProjMode&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

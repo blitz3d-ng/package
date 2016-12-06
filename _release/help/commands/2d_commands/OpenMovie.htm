@@ -1,0 +1,139 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>OpenMovie( file$ )</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+file$ - filename of movie
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Movie support relies on DirectShow, so you will need to ensure the correct drivers are installed.<br />
+<br />
+This command will open GIFs as well as AVI and MPEG movie files.  However, AVI and MPEG movie will start playing immediately once this command has been used, whereas GIFs do not.  See <a class=small href=../2d_commands/DrawMovie.htm>DrawMovie</a> for details on how to deal with GIF animation playback.<br />
+<br />
+No error is raised if the specified file is not a movie file, or if the file does not exist, but the returned movie handle will be zero.
+<br>
+<br>
+See also: <a class=small href=DrawMovie.htm>DrawMovie</a>, <a class=small href=CloseMovie.htm>CloseMovie</a>, <a class=small href=MoviePlaying.htm>MoviePlaying</a>, <a class=small href=MovieWidth.htm>MovieWidth</a>, <a class=small href=MovieHeight.htm>MovieHeight</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../2d_examples/OpenMovie.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; Movie Commands Example<br />
+; ======================<br />
+; This demonstrates the following commands:<br />
+;<br />
+;	OpenMovie<br />
+;	MovieHeight<br />
+;	MovieWidth<br />
+;	MoviePlaying<br />
+;	DrawMovie<br />
+<br />
+; Some constants to start with<br />
+Const WIDTH = 640<br />
+Const HEIGHT = 480<br />
+<br />
+; First of all, set up the graphics<br />
+Graphics WIDTH, HEIGHT<br />
+SetBuffer BackBuffer()<br />
+ClsColor 0,0,0<br />
+Color 0,255,0<br />
+<br />
+; Next, open the movie file.  Feel free to change this to an AVI or MPEG file.<br />
+movie=OpenMovie("media/hat.gif")<br />
+<br />
+; check to see if it loaded okay<br />
+If movie=0 Then RuntimeError "Error - Movie not loaded!"<br />
+If Not(MoviePlaying(movie)) Then RuntimeError "Error - Movie not playing!"<br />
+<br />
+;Now determine the size of the movie<br />
+w=MovieWidth(movie)     ; the width of the movie<br />
+h=MovieHeight(movie)    ; the height of the movie<br />
+<br />
+; Now set up the starting position and timing variables<br />
+x=(WIDTH-w)/2           ; the x position of the movie on screen<br />
+y=(HEIGHT-h-100)/2      ; the y position of the movie on screen<br />
+period=100              ; the interval between frames<br />
+time=MilliSecs()        ; the time of the last frame update<br />
+<br />
+; And here's the main loop<br />
+Repeat<br />
+<br />
+; Wait for the specified period<br />
+<br />
+; GIFs have no timing info, and as such will redraw the next frame on each call to DrawMovie.<br />
+; AVIs and MPEGs do have timing info, and as such will redraw the most recent frame on each call to DrawMovie.<br />
+; Ergo, this time limiter only has an impact, and is only required for GIFs.<br />
+Repeat<br />
+; do nothing<br />
+Until MilliSecs()-time>=period<br />
+time=MilliSecs()    ; save the current time for the next frame<br />
+<br />
+; Handle keyboard inputs<br />
+<br />
+; CONTROL adjusts the speed with which we do stuff	<br />
+If KeyDown(29) Or KeyDown(157) Then<br />
+change=5<br />
+Else<br />
+change=1<br />
+End If<br />
+<br />
+; SHIFT means we're dealing with the size<br />
+If KeyDown(42) Or KeyDown(54) Then<br />
+	If KeyDown(203) And w>change-1 Then w=w-change<br />
+	If KeyDown(205) And x+w+change < WIDTH Then w=w+change<br />
+	If KeyDown(200) And h>change-1 Then h=h-change<br />
+	If KeyDown(208) And y+h+change < HEIGHT Then h=h+change<br />
+Else<br />
+	; otherwise it's the position that we're changing<br />
+	If KeyDown(203) And x>change-1 Then x=x-change<br />
+	If KeyDown(205) And x+w+change < WIDTH Then x=x+change<br />
+	If KeyDown(200) And y>change-1 Then y=y-change<br />
+	If KeyDown(208) And y+h+change < HEIGHT Then y=y+change<br />
+EndIf<br />
+<br />
+; +/- to change the animation speed<br />
+If ( KeyDown(13) Or KeyDown(78) ) And period>change Then period=period-change<br />
+If ( KeyDown(12) Or KeyDown(74) ) And period < 500 Then period=period+change<br />
+<br />
+; Redraw the screen, by...<br />
+<br />
+Cls                         ; clear the screen<br />
+DrawMovie movie,x,y,w,h     ; draw the movie<br />
+; draw the instructions<br />
+Text 0,0,"Use the arrow keys to reposition the movie."			<br />
+Text 0,20,"Hold SHIFT with the arrow keys to resize."					<br />
+Text 0,40,"Use + or - or control the animation speed."<br />
+Text 0,60,"Hold CONTROL to resize, move, or change speed faster."	<br />
+Text 0,80,"Press ESCAPE to exit."<br />
+Text 0,100,"Current Command Syntax: DrawMovie(movie, " + x + ","+ y + "," + w + "," + h + ")"<br />
+; Flip the buffers<br />
+Flip						<br />
+<br />
+Until KeyHit(1) ; Escape to exit<br />
+<br />
+; Remove the movie from memory before closing down<br />
+CloseMovie(movie)<br />
+<br />
+End ; bye!
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=OpenMovie&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

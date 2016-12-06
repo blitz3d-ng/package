@@ -1,0 +1,84 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>DeltaYaw# ( src_entity,dest_entity )</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+src_entity - source entity handle<br />
+dest_entity - destination entity handle
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns the yaw angle, that src_entity should be rotated by in order to face dest_entity.<br />
+<br />
+This command can be used to be point one entity at another, rotating on the y axis only.
+<br>
+<br>
+See also: <a class=small href=DeltaPitch.htm>DeltaPitch</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/DeltaYaw.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+SetBuffer BackBuffer()<br />
+<br />
+camera=CreateCamera()<br />
+<br />
+; Make camera orthagraphic for flat, 2D view<br />
+CameraProjMode camera,2<br />
+<br />
+; Position and rotate camera so we have overhead (top-down) view<br />
+PositionEntity camera,0,5,0<br />
+RotateEntity camera,90,0,0<br />
+<br />
+; Create red cone (the arrow)<br />
+arrow=CreateCone()<br />
+RotateMesh arrow,90,180,0<br />
+ScaleMesh arrow,.1,.1,.2<br />
+EntityColor arrow,255,0,0<br />
+<br />
+; Create blue sphere (the spot)<br />
+spot=CreateSphere()<br />
+ScaleMesh spot,.1,.1,.1<br />
+EntityColor spot,0,0,255<br />
+<br />
+While Not KeyDown(1)<br />
+<br />
+	; If w,a,s,d pressed then move spot<br />
+	If KeyDown(17)=True Then MoveEntity spot,0,0,0.01 ; w - up<br />
+	If KeyDown(30)=True Then MoveEntity spot,-0.01,0,0 ; a - left<br />
+	If KeyDown(31)=True Then MoveEntity spot,0,0,-0.01 ; s - down<br />
+	If KeyDown(32)=True Then MoveEntity spot,0.01,0,0 ; d - right<br />
+<br />
+	; Rotate arrow using delta yaw value. Arrow will point at spot.<br />
+	RotateEntity arrow,0,DeltaYaw#(spot,arrow),0<br />
+<br />
+	RenderWorld<br />
+<br />
+	Text 0,0,"Note: Camera view is overhead. The arrow will y-rotate using DeltaYaw value."<br />
+	Text 0,20,"Use w,a,s,d to move spot."<br />
+	Text 0,40,"Delta yaw: "+DeltaYaw#(spot,arrow)<br />
+<br />
+	Flip<br />
+	Wend<br />
+<br />
+End
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=DeltaYaw&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

@@ -1,0 +1,84 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>VectorPitch# ( x#,y#,z# )</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+x# - x vector length<br />
+y# - y vector length<br />
+z# - z vector length
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns the pitch value of a vector.<br />
+<br />
+Using this command will return the same result as using <a class=small href=../3d_commands/EntityPitch.htm>EntityPitch</a> to get the pitch value of an entity that is pointing in the vector's direction.
+<br>
+<br>
+See also: <a class=small href=VectorYaw.htm>VectorYaw</a>, <a class=small href=EntityPitch.htm>EntityPitch</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/VectorPitch.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; VectorPitch Example<br />
+; -------------------<br />
+<br />
+Graphics3D 640,480<br />
+SetBuffer BackBuffer()<br />
+<br />
+; Set vector x,y,z values<br />
+vx#=2<br />
+vy#=2<br />
+vz#=0<br />
+<br />
+camera=CreateCamera()<br />
+PositionEntity camera,0,0,-5<br />
+<br />
+light=CreateLight()<br />
+<br />
+cone=CreateCone()<br />
+<br />
+ ; Rotate cone so that it points in the direction it is facing<br />
+RotateMesh cone,90,0,0<br />
+<br />
+pivot=CreatePivot()<br />
+<br />
+; Position pivot to represent a vector<br />
+PositionEntity pivot,vx#,vy#,vz#<br />
+<br />
+; Point cone in direction of pivot. It should now have same pitch value.<br />
+PointEntity cone,pivot<br />
+<br />
+While Not KeyDown(1)<br />
+<br />
+	RenderWorld<br />
+	<br />
+	; Print entity pitch value and vector pitch value. Both should be identical.<br />
+	Text 0,0,"Entity pitch: "+EntityPitch(cone)<br />
+	Text 0,20,"Vector pitch: "+VectorPitch(vx#,vy#,vz#)<br />
+	<br />
+	Flip<br />
+<br />
+Wend<br />
+<br />
+End
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=VectorPitch&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

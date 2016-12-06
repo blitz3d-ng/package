@@ -1,0 +1,45 @@
+body
+{
+	color: #ffffff;
+	font: 8pt verdana;
+	background: #003d78;
+}
+
+h1
+{
+	font: bold 10pt verdana;
+}
+
+ul
+{
+	margin: 0px 32px;
+}
+
+table
+{
+	font: 8pt verdana;	
+	background: #003566;
+	width: 100%;
+}
+
+a
+{
+  	color: #fff000;
+	font: 8pt verdana;
+	text-decoration: none;
+}
+
+a:hover
+{
+	color: #fff000;
+	font: 8pt verdana;
+	background: #0088ee;
+	text-decoration: none;
+}
+
+pre.code
+{
+	color: #44ff00;
+	background: #000000;
+	margin: 8px;
+}

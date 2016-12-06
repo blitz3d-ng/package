@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>EntityClass$( entity )</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+entity - a valid entity handle
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns a string containing the class of the specified entity.<br />
+<br />
+Possible return values are:<br />
+<br />
+Pivot<br />
+Light<br />
+Camera<br />
+Mirror<br />
+Listener<br />
+Sprite<br />
+Terrain<br />
+Plane<br />
+Mesh<br />
+MD2<br />
+BSP<br />
+<br />
+Note that the command will fail if a valid entity handle is not supplied, and will not just return an empty string.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/EntityClass.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; EntityClass Example<br />
+; -------------------<br />
+<br />
+Graphics3D 640,480,16<br />
+SetBuffer BackBuffer()<br />
+<br />
+SeedRnd MilliSecs()<br />
+<br />
+; Select a random number between 0 and 7 then create a certain class of entity depending on the number selected<br />
+i=Rand(0,7)<br />
+Select i<br />
+	Case 0 ent=CreatePivot()<br />
+	Case 1 ent=CreateLight()<br />
+	Case 2 ent=CreateCamera()<br />
+	Case 3 ent=CreateMirror()<br />
+	Case 4 ent=CreateSprite()<br />
+	Case 5 ent=CreateTerrain(32)<br />
+	Case 6 ent=CreatePlane()<br />
+	Case 7 ent=CreateMesh()<br />
+	;Case 8 ent=CreateListener(parent)<br />
+	;Case 9 ent=LoadMD2(md2_file$)<br />
+	;Case 10 ent=LoadBSP(bsp_file$)<br />
+End Select<br />
+<br />
+; Get the class of the entity<br />
+class$=EntityClass$(ent)<br />
+<br />
+; Output the class to the screen<br />
+Text 0,0,"A "+class$+" was created."<br />
+<br />
+Text 0,20,"Press a key."<br />
+<br />
+WaitKey()<br />
+<br />
+End
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=EntityClass&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>SetEnv env_var$,value$</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+env_var$ - the name of the environment variable<br />
+value$ - the value of the environment variable
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Sets an environment variable.<br />
+<br />
+However, it should be noted that the command does not set a Windows environment variable. It only sets an environment variable which is local to a single Blitz program - i.e. from the moment the SetEnv command is used, it will only exist for the duration of time the source code file is open in the Blitz IDE, or the program EXE is running.<br />
+<br />
+See also: GetEnv
+</td>
+</tr>
+</table>
+<h1><a href=../2d_examples/SetEnv.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; SetEnv Example<br />
+; --------------<br />
+<br />
+SetEnv "mypath","c:\program files\my game\"<br />
+<br />
+Print GetEnv$("mypath")<br />
+<br />
+WaitKey()
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=SetEnv&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

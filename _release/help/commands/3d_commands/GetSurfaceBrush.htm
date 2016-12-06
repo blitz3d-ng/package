@@ -1,0 +1,102 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>GetSurfaceBrush(surface)</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+surface - surface handle
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns a brush with the same properties as is applied to the specified mesh surface.<br />
+<br />
+If this command does not appear to be returning a valid brush, try using <a class=small href=../3d_commands/GetEntityBrush.htm>GetEntityBrush</a> instead.<br />
+<br />
+Remember, GetSurfaceBrush actually creates a new brush so don't forget to free it afterwards using <a class=small href=../3d_commands/FreeBrush.htm>FreeBrush</a> to prevent memory leaks.<br />
+<br />
+Once you have got the brush handle from a surface, you can use <a class=small href=../3d_commands/GetBrushTexture.htm>GetBrushTexture</a> and <a class=small href=../3d_commands/TextureName.htm>TextureName</a> to get the details of what texture(s) are applied to the brush.
+<br>
+<br>
+See also: <a class=small href=GetEntityBrush.htm>GetEntityBrush</a>, <a class=small href=FreeBrush.htm>FreeBrush</a>, <a class=small href=GetSurface.htm>GetSurface</a>, <a class=small href=GetBrushTexture.htm>GetBrushTexture</a>, <a class=small href=TextureName.htm>TextureName</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/GetSurfaceBrush.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; GetSurfaceBrush Example<br />
+; -----------------------<br />
+<br />
+Graphics3D 640,480<br />
+SetBuffer BackBuffer()<br />
+<br />
+camera=CreateCamera()<br />
+<br />
+light=CreateLight()<br />
+RotateEntity light,90,0,0<br />
+<br />
+; Load mesh<br />
+crate=LoadMesh("media/wood-crate/wcrate1.3ds")<br />
+PositionEntity crate,0,0,100<br />
+<br />
+; Get mesh surface<br />
+surf=GetSurface(crate,1)<br />
+<br />
+; Get surface brush<br />
+crate_brush=GetSurfaceBrush(surf)<br />
+<br />
+; Get brush texture<br />
+crate_tex=GetBrushTexture(crate_brush,0)<br />
+<br />
+While Not KeyDown( 1 )<br />
+<br />
+	RenderWorld<br />
+<br />
+	; Display full texture name<br />
+	Text 0,0,"Texture name, as returned by TextureName$():"<br />
+	Text 0,20,TextureName$(crate_tex)<br />
+	<br />
+	; Display trimmed texture name<br />
+	Text 0,40,"Texture name with path stripped:"<br />
+	Text 0,60,StripPath$(TextureName$(crate_tex))<br />
+<br />
+	Flip<br />
+<br />
+Wend<br />
+<br />
+End<br />
+<br />
+Function StripPath$(file$) <br />
+<br />
+	If Len(file$)>0 <br />
+	<br />
+		For i=Len(file$) To 1 Step -1 <br />
+		<br />
+			mi$=Mid$(file$,i,1) <br />
+			If mi$="\" Or mi$="/" Then Return name$ Else name$=mi$+name$ <br />
+		<br />
+		Next <br />
+	<br />
+	EndIf <br />
+	<br />
+	Return name$ <br />
+<br />
+End Function
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=GetSurfaceBrush&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>

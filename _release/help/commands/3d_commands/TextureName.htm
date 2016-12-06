@@ -1,0 +1,117 @@
+<html>
+<head>
+<title>Blitz3D Docs</title>
+<link rel=stylesheet href=../css/commands.css type=text/css>
+</head>
+<body>
+<h1>TextureName$(texture)</h1>
+<h1>Parameters</h1>
+<table>
+<tr>
+<td>
+texture - a valid texture handle
+</td>
+</tr>
+</table>
+<h1>Description</h1>
+<table>
+<tr>
+<td>
+Returns a texture's absolute filename.<br />
+<br />
+To find out just the name of the texture, you will need to parse the string returned by TextureName. One such function to do this is:<br />
+<br />
+; start of code<br />
+Function StripPath$(file$)<br />
+<br />
+If Len(file$)>0<br />
+<br />
+For i=Len(file$) To 1 Step -1<br />
+<br />
+mi$=Mid$(file$,i,1)<br />
+If mi$="\" Or mi$="/" Then Return name$ Else name$=mi$+name$<br />
+<br />
+Next<br />
+<br />
+EndIf<br />
+<br />
+Return name$<br />
+<br />
+End Function<br />
+; end of code
+<br>
+<br>
+See also: <a class=small href=GetBrushTexture.htm>GetBrushTexture</a>.
+</td>
+</tr>
+</table>
+<h1><a href=../3d_examples/TextureName.bb>Example</a></h1>
+<table>
+<tr>
+<td>
+; TextureName Example<br />
+; -------------------<br />
+<br />
+Graphics3D 640,480<br />
+SetBuffer BackBuffer()<br />
+<br />
+camera=CreateCamera()<br />
+<br />
+light=CreateLight()<br />
+RotateEntity light,90,0,0<br />
+<br />
+; Load mesh<br />
+crate=LoadMesh("media/wood-crate/wcrate1.3ds")<br />
+PositionEntity crate,0,0,100<br />
+<br />
+; Get mesh surface<br />
+surf=GetSurface(crate,1)<br />
+<br />
+; Get surface brush<br />
+crate_brush=GetSurfaceBrush(surf)<br />
+<br />
+; Get brush texture<br />
+crate_tex=GetBrushTexture(crate_brush,0)<br />
+<br />
+While Not KeyDown( 1 )<br />
+<br />
+	RenderWorld<br />
+<br />
+	; Display full texture name<br />
+	Text 0,0,"Texture name, as returned by TextureName$():"<br />
+	Text 0,20,TextureName$(crate_tex)<br />
+	<br />
+	; Display trimmed texture name<br />
+	Text 0,40,"Texture name with path stripped:"<br />
+	Text 0,60,StripPath$(TextureName$(crate_tex))<br />
+<br />
+	Flip<br />
+<br />
+Wend<br />
+<br />
+End<br />
+<br />
+Function StripPath$(file$) <br />
+<br />
+	If Len(file$)>0 <br />
+	<br />
+		For i=Len(file$) To 1 Step -1 <br />
+		<br />
+			mi$=Mid$(file$,i,1) <br />
+			If mi$="\" Or mi$="/" Then Return name$ Else name$=mi$+name$ <br />
+		<br />
+		Next <br />
+	<br />
+	EndIf <br />
+	<br />
+	Return name$ <br />
+<br />
+End Function
+</td>
+</tr>
+</table>
+<br>
+<a target=_top href=../index.htm>Index</a><br>
+<br>
+Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=TextureName&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+</html>
