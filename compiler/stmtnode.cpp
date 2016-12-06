@@ -25,10 +25,10 @@ void StmtSeqNode::reset( const string &file,const string &lab ){
 void StmtSeqNode::semant( Environ *e ){
 	for( int k=0;k<stmts.size();++k ){
 		try{ stmts[k]->semant( e ); }
-		catch( Ex &x ){ 
+		catch( Ex &x ){
 			if( x.pos<0 ) x.pos=stmts[k]->pos;
 			if( !x.file.size() ) x.file=file;
-			throw; 
+			throw;
 		}
 	}
 }
@@ -41,12 +41,12 @@ void StmtSeqNode::translate( Codegen *g ){
 		StmtNode *stmt=stmts[k];
 		stmt->debug( stmts[k]->pos,g );
 		try{
-			stmt->translate( g ); 
+			stmt->translate( g );
 		}
-		catch( Ex &x ){ 
+		catch( Ex &x ){
 			if( x.pos<0 ) x.pos=stmts[k]->pos;
 			if( !x.file.size() ) x.file=file;
-			throw; 
+			throw;
 		}
 	}
 	fileLabel=t;
@@ -59,7 +59,7 @@ void IncludeNode::semant( Environ *e ){
 
 	label=genLabel();
 	fileMap[file]=label;
-	
+
 	stmts->semant( e );
 }
 
@@ -127,7 +127,7 @@ void DimNode::translate( Codegen *g ){
 	g->i_data( 0,"_a"+ident );
 	g->i_data( et );
 	g->i_data( exprs->size() );
-	for( k=0;k<exprs->size();++k ) g->i_data( 0 );
+	for( int k=0;k<exprs->size();++k ) g->i_data( 0 );
 }
 
 ////////////////
@@ -527,7 +527,7 @@ void SelectNode::translate( Codegen *g ){
 	}
 	if( defStmts ) defStmts->translate( g );
 	g->code( jump( brk ) );
-	for( k=0;k<cases.size();++k ){
+	for( int k=0;k<cases.size();++k ){
 		CaseNode *c=cases[k];
 		g->label( labs[k] );
 		c->stmts->translate( g );
@@ -583,4 +583,3 @@ void ReadNode::translate( Codegen *g ){
 	else t=call( "__bbReadStr" );
 	g->code( var->store( g,t ) );
 }
-

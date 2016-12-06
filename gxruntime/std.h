@@ -9,9 +9,6 @@
 
 #pragma warning( disable:4786 )
 
-#define DIRECTSOUND_VERSION 0x700
-#define DIRECTINPUT_VERSION 0x700
-
 #include <set>
 #include <map>
 #include <list>

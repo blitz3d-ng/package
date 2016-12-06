@@ -5,6 +5,7 @@
 #include "about.h"
 #include "blitzide.h"
 #include "libs.h"
+#include "dpi.h"
 
 #include <mmsystem.h>
 
@@ -109,9 +110,10 @@ MainFrame::MainFrame():exit_flag(false){
 int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 	CFrameWnd::OnCreate( lpCreateStruct );
 
+
 	static HBITMAP toolbmp;
 	static SIZE imgsz,butsz;
-	static UINT toolbuts[]={ 
+	static UINT toolbuts[]={
 		ID_NEW,ID_OPEN,ID_SAVE,ID_CLOSE,ID_SEPARATOR,
 		ID_CUT,ID_COPY,ID_PASTE,ID_SEPARATOR,
 		ID_FIND,ID_SEPARATOR,
@@ -130,7 +132,7 @@ int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 		GetObject( toolbmp,sizeof(bm),&bm );
 		int n=0;
 		for( int k=0;k<toolcnt;++k ) if( toolbuts[k]!=ID_SEPARATOR ) ++n;
-		imgsz.cx=bm.bmWidth/n;imgsz.cy=bm.bmHeight;
+		imgsz.cx=(bm.bmWidth/n)*GetDPIScaleX();imgsz.cy=bm.bmHeight*GetDPIScaleY();
 		butsz.cx=imgsz.cx+7;butsz.cy=imgsz.cy+6;
 	}
 	toolBar.CreateEx( this,TBSTYLE_FLAT,WS_CHILD|WS_VISIBLE|CBRS_TOP|CBRS_TOOLTIPS );
@@ -250,23 +252,23 @@ Editor *MainFrame::getEditor( int n ){
 	return it==editors.end() ? 0 : it->second;
 }
 
-HtmlHelp *MainFrame::getHelp( int n ){
-	map<CWnd*,HtmlHelp*>::iterator it=helps.find( tabber.getTabWnd( n ) );
+HelpView *MainFrame::getHelp( int n ){
+	map<CWnd*,HelpView*>::iterator it=helps.find( tabber.getTabWnd( n ) );
 	return it==helps.end() ? 0 : it->second;
 }
 
-HtmlHelp *MainFrame::getHelp(){
+HelpView *MainFrame::getHelp(){
 	return getHelp( tabber.getCurrent() );
 }
 
-HtmlHelp *MainFrame::findHelp(){
+HelpView *MainFrame::findHelp(){
 	int n;
-	HtmlHelp *h;
+	HelpView *h;
 	for( n=0;n<tabber.size();++n ){
 		if( h=getHelp( n ) ) break;
 	}
 	if( n==tabber.size() ){
-		h=new HtmlHelp( this );
+		h=new HelpView( this );
 		h->Create( 0,"Help",WS_CHILD|WS_BORDER,CRect( 0,0,0,0 ),&tabber,1 );
 		helps[h]=h;
 		tabber.insert( n,h,"Help" );
@@ -290,7 +292,7 @@ void MainFrame::currentSet( Tabber *tabber,int index ){
 		if( !t.size() ) t="<untitled>";
 		setTitle( t );
 		cursorMoved( e );
-	}else if( HtmlHelp *h=getHelp() ){
+	}else if( HelpView *h=getHelp() ){
 		setTitle( h->getTitle() );
 		statusBar.SetPaneText( 1,"" );
 	}else{
@@ -299,12 +301,12 @@ void MainFrame::currentSet( Tabber *tabber,int index ){
 	}
 }
 
-void MainFrame::helpOpen( HtmlHelp *help,const string &file ){
+void MainFrame::helpOpen( HelpView *help,const string &file ){
 	open( file );
 }
 
-void MainFrame::helpTitleChange( HtmlHelp *help,const string &title ){
-	if( HtmlHelp *h=getHelp() ) setTitle( h->getTitle() );
+void MainFrame::helpTitleChange( HelpView *help,const string &title ){
+	if( HelpView *h=getHelp() ) setTitle( h->getTitle() );
 }
 
 void MainFrame::insertRecent( const string &file ){
@@ -428,7 +430,7 @@ bool MainFrame::close( int n ){
 		e->DestroyWindow();
 		editors.erase( e );
 		delete e;
-	}else if( HtmlHelp *h=getHelp( n ) ){
+	}else if( HelpView *h=getHelp( n ) ){
 	}
 	return true;
 }
@@ -776,23 +778,23 @@ void MainFrame::programDebug(){
 }
 
 void MainFrame::helpHome(){
-	HtmlHelp *h=findHelp();
+	HelpView *h=findHelp();
 	string t;
 	t="index.html";
 	h->Navigate( (prefs.homeDir+"/help/"+t).c_str() );
 }
 
 void MainFrame::helpAutodoc(){
-	HtmlHelp *h=findHelp();
+	HelpView *h=findHelp();
 	h->Navigate( (prefs.homeDir+"/help/autodoc.html").c_str() );
 }
 
 void MainFrame::helpBack(){
-	if( HtmlHelp *h=findHelp() ) h->GoBack();
+	if( HelpView *h=findHelp() ) h->GoBack();
 }
 
 void MainFrame::helpForward(){
-	if( HtmlHelp *h=findHelp() ) h->GoForward();
+	if( HelpView *h=findHelp() ) h->GoForward();
 }
 
 void MainFrame::helpAbout(){
@@ -932,7 +934,7 @@ void MainFrame::quick_Help(){
 			AfxMessageBox( ex.c_str(),MB_ICONWARNING );
 			return;
 		}
-		if( HtmlHelp *h=findHelp() ){
+		if( HelpView *h=findHelp() ){
 			h->Navigate( url.c_str(),0,0 );
 		}
 	}

@@ -2,8 +2,6 @@
 #include "std.h"
 #include "entity.h"
 
-#include "stats.h"
-
 Entity *Entity::_orphans,*Entity::_last_orphan;
 
 enum{

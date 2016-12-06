@@ -166,11 +166,11 @@ Vector static tf( const Vector &v ){
 }
 
 #ifdef BETA
-static log( const string &t ){
+static void log( const string &t ){
 	gx_runtime->debugLog( t.c_str() );
 }
 #else
-static log( const string &t ){}
+static void log( const string &t ){}
 #endif
 
 static Surf *findSurf( q3_face *f ){

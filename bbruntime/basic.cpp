@@ -492,7 +492,7 @@ float _bbFAbs( float n ){
 }
 
 float _bbFSgn( float n ){
-	return n>0 ? 1 : (n<0 ? -1 : 0);
+	return n>0.0f ? 1.0f : (n<0.0f ? -1.0f : 0.0f);
 }
 
 float _bbFMod( float x,float y ){

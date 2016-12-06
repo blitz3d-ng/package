@@ -284,7 +284,7 @@ static void parseMaterial(){
 		}
 	}
 	if( tex_name.size() ){
-		mat.setTexture( 0,Texture( tex_name,0 ),0 ); 
+		mat.setTexture( 0,Texture( tex_name,0 ),0 );
 		mat.setColor( Vector( 1,1,1 ) );
 	}
 	if( name.size() ){
@@ -369,7 +369,7 @@ static void parseMeshInfo( MeshModel *root,float curr_time ){
 	Vector pivot;
 	Animation anim;
 	unsigned short id=65535,parent=65535,flags1,flags2;
-	Box box( Vector(),Vector() );
+	Box box;
 	Vector box_centre;
 	while( int chunk_id=nextChunk() ){
 		switch( chunk_id ){

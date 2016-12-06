@@ -4,6 +4,7 @@
 #include <iomanip>
 #include "resource.h"
 #include "prefs.h"
+#include "dpi.h"
 
 #define SWAPRB(x) ( (((x)>>16)&0xff) | ((x)&0xff00) | (((x)&0xff)<<16) )
 
@@ -127,7 +128,7 @@ void Prefs::setDefault(){
 	prg_debug=true;
 
 	win_rect.left=win_rect.top=0;
-	win_rect.right=640;win_rect.bottom=480;
+	win_rect.right=640*GetDPIScaleX();win_rect.bottom=480*GetDPIScaleY();
 	win_maximized=false;
 	win_notoolbar=false;
 #ifdef PLUS

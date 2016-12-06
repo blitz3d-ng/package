@@ -218,7 +218,7 @@ int _cdecl main( int argc,char *argv[] ){
 	}
 
 	ProgNode *prog=0;
-	Environ *environ=0;
+	Environ *env=0;
 	Module *module=0;
 
 	try{
@@ -230,7 +230,7 @@ int _cdecl main( int argc,char *argv[] ){
 
 		//semant
 		if( !veryquiet ) cout<<"Generating..."<<endl;
-		environ=prog->semant( runtimeEnviron );
+		env=prog->semant( runtimeEnviron );
 
 		//translate
 		if( !veryquiet ) cout<<"Translating..."<<endl;
@@ -277,7 +277,7 @@ int _cdecl main( int argc,char *argv[] ){
 			if( dbgHandle ){
 				typedef Debugger *(_cdecl*GetDebugger)( Module*,Environ* );
 				GetDebugger gd=(GetDebugger)GetProcAddress( dbgHandle,"debuggerGetDebugger" );
-				if( gd ) debugger=gd( module,environ );
+				if( gd ) debugger=gd( module,env );
 			}
 			if( !debugger ) err( "Error launching debugger" );
 		}
@@ -290,7 +290,7 @@ int _cdecl main( int argc,char *argv[] ){
 	}
 
 	delete module;
-	delete environ;
+	delete env;
 
 	closeLibs();
 

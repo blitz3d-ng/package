@@ -15,6 +15,8 @@ const float TWOPI=PI*2.0f;			//360 degrees
 const float HALFPI=PI*.5f;			//90  degrees
 const float QUARTERPI=PI*.25f;		//45  degrees
 const float EPSILON=.000001f;		//small value
+
+#undef INFINITY
 const float INFINITY=10000000.0f;	//big value
 
 class Vector{
@@ -32,13 +34,13 @@ public:
 		return &x;
 	}
 	float &operator[]( int n ){
-		return (&x)[n]; 
+		return (&x)[n];
 	}
 	float operator[]( int n )const{
-		return (&x)[n]; 
+		return (&x)[n];
 	}
 	Vector operator-()const{
-		return Vector( -x,-y,-z ); 
+		return Vector( -x,-y,-z );
 	}
 	Vector operator*( float scale )const{
 		return Vector( x*scale,y*scale,z*scale );
@@ -278,7 +280,7 @@ public:
 		k=Vector( u.z*u.x*(1-c)-u.y*s,u.y*u.z*(1-c)+u.x*s,z2+c*(1-z2) );
 	}
 	Vector &operator[]( int n ){
-		return (&i)[n]; 
+		return (&i)[n];
 	}
 	const Vector &operator[]( int n )const{
 		return (&i)[n];

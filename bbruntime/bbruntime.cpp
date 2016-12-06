@@ -57,7 +57,7 @@ BBStr *  bbGetEnv( BBStr *env_var ){
 
 void  bbSetEnv( BBStr *env_var,BBStr *val ){
 	string t=*env_var+"="+*val;
-	putenv( t.c_str() );
+	_putenv( t.c_str() );
 	delete env_var;
 	delete val;
 }

@@ -7,7 +7,7 @@
 
 extern gxRuntime *gx_runtime;
 
-#include "..\..\freeimage241\source\freeimage.h"
+#include <FreeImage.h>
 
 static AsmCoder asm_coder;
 
@@ -465,18 +465,19 @@ ddSurf *ddUtil::loadSurface( const std::string &f,int flags,gxGraphics *gfx ){
 
 	FreeImage_Initialise();
 	FREE_IMAGE_FORMAT fmt=FreeImage_GetFileType( f.c_str(),f.size() );
-	if( fmt==FIF_UNKNOWN ){
-		int n=f.find( "." );if( n==string::npos ) return 0;
-		fmt=FreeImage_GetFileTypeFromExt( f.substr(n+1).c_str() );
-		if( fmt==FIF_UNKNOWN ) return 0;
-	}
+	if( fmt==FIF_UNKNOWN ) return 0;
+	// if( fmt==FIF_UNKNOWN ){
+	// 	int n=f.find( "." );if( n==string::npos ) return 0;
+	// 	fmt=FreeImage_GetFileTypeFromExt( f.substr(n+1).c_str() );
+	// 	if( fmt==FIF_UNKNOWN ) return 0;
+	// }
 	FIBITMAP *t_dib=FreeImage_Load( fmt,f.c_str(),0 );
 	if( !t_dib ) return 0;
 
 	bool trans=FreeImage_GetBPP( t_dib )==32 ||	FreeImage_IsTransparent( t_dib );
 
 	FIBITMAP *dib=FreeImage_ConvertTo32Bits( t_dib );
-	
+
 	if( dib ) FreeImage_Unload( t_dib );
 	else dib=t_dib;
 

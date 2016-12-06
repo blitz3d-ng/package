@@ -36,7 +36,7 @@ MeshCollider::MeshCollider( const vector<Vertex> &verts,const vector<Triangle> &
 vertices(verts),triangles(tris){
 	vector<int> ts;
 	tri_centres.clear();
-	for( int k=0;k<triangles.size();++k ){
+	for( unsigned int k=0;k<triangles.size();++k ){
 		const MeshCollider::Triangle &t=triangles[k];
 		const Vector &v0=vertices[t.verts[0]].coords;
 		const Vector &v1=vertices[t.verts[1]].coords;
@@ -77,7 +77,7 @@ bool MeshCollider::collide( const Box &line_box,const Line &line,float radius,co
 
 	stats3d[0]+=node->triangles.size();
 
-	for( int k=0;k<node->triangles.size();++k ){
+	for( unsigned int k=0;k<node->triangles.size();++k ){
 
 		const Triangle &tri=triangles[node->triangles[k]];
 		const Vector &t_v0=vertices[ tri.verts[0] ].coords;
@@ -102,7 +102,7 @@ bool MeshCollider::collide( const Box &line_box,const Line &line,float radius,co
 
 Box MeshCollider::nodeBox( const vector<int> &tris ){
 	Box box;
-	for( int k=0;k<tris.size();++k ){
+	for( unsigned int k=0;k<tris.size();++k ){
 		const Triangle &t=triangles[ tris[k] ];
 		for( int j=0;j<3;++j ) box.update( vertices[t.verts[j]].coords );
 	}
@@ -136,7 +136,7 @@ MeshCollider::Node *MeshCollider::createNode( const vector<int> &tris ){
 
 	//sort by axis
 	//
-	int k;
+	unsigned int k;
 	multimap<float,int> axis_map;
 	for( k=0;k<tris.size();++k ){
 		pair<float,int> p( tri_centres[tris[k]][axis],tris[k] );
@@ -168,15 +168,15 @@ bool MeshCollider::intersects( const MeshCollider &c,const Transform &t )const{
 	static Vector a[MAX_COLL_TRIS][3],b[3];
 	
 	if( !(t * tree->box).overlaps( c.tree->box ) ) return false;
-	for( int k=0;k<leaves.size();++k ){
+	for( unsigned int k=0;k<leaves.size();++k ){
 		Node *p=leaves[k];
 		Box box=t*p->box;
 		bool tformed=false;
-		for( int j=0;j<c.leaves.size();++j ){
+		for( unsigned int j=0;j<c.leaves.size();++j ){
 			Node *q=c.leaves[j];
 			if( !box.overlaps( q->box ) ) continue;
 			if( !tformed ){
-				for( int n=0;n<p->triangles.size();++n ){
+				for( unsigned int n=0;n<p->triangles.size();++n ){
 					const Triangle &tri=triangles[p->triangles[n]];
 					a[n][0]=t * vertices[tri.verts[0]].coords;
 					a[n][1]=t * vertices[tri.verts[1]].coords;
@@ -184,12 +184,12 @@ bool MeshCollider::intersects( const MeshCollider &c,const Transform &t )const{
 				}
 				tformed=true;
 			}
-			for( int n=0;n<q->triangles.size();++n ){
+			for( unsigned int n=0;n<q->triangles.size();++n ){
 				const Triangle &tri=c.triangles[q->triangles[n]];
 				b[0]=c.vertices[tri.verts[0]].coords;
 				b[1]=c.vertices[tri.verts[1]].coords;
 				b[2]=c.vertices[tri.verts[2]].coords;
-				for( int t=0;t<p->triangles.size();++t ){
+				for( unsigned int t=0;t<p->triangles.size();++t ){
 					if( trisIntersect( a[t],b ) ) return true;
 				}
 			}

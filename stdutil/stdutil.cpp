@@ -148,11 +148,11 @@ string itoa( int n ){
 	return string( buff );
 }
 
-static int _finite( double n ){		// definition: exponent anything but 2047.
+static int _bb_finite( double n ){		// definition: exponent anything but 2047.
 
 	int e;					// 11 bit exponent
-	const int eMax = 2047;	// 0x7ff, all bits = 1	
-	
+	const int eMax = 2047;	// 0x7ff, all bits = 1
+
 	int *pn = (int *) &n;
 
 	e = *++pn;				// Intel order!
@@ -161,11 +161,11 @@ static int _finite( double n ){		// definition: exponent anything but 2047.
 	return e != eMax;
 }
 
-static int _isnan( double n ){		// definition: exponent 2047, nonzero fraction.
+static int _bb_isnan( double n ){		// definition: exponent 2047, nonzero fraction.
 
 	int e;					// 11 bit exponent
-	const int eMax = 2047;	// 0x7ff, all bits = 1	
-	
+	const int eMax = 2047;	// 0x7ff, all bits = 1
+
 	int *pn = (int *) &n;
 
 	e = *++pn;				// Intel order!
@@ -194,11 +194,11 @@ string ftoa( float n ){
 	string t;
 	int dec, sign;
 
-	if ( _finite( n ) ){
+	if ( _bb_finite( n ) ){
 
 //		if ( digits < 1 ) digits = 1;	// less than one digit is nonsense
 //		if ( digits > 8 ) digits = 8;	// practical maximum for float
-		
+
 		t = _ecvt( n, digits, &dec, &sign );
 
 		if ( dec <= eNeg + 1 || dec > ePos ){
@@ -207,10 +207,10 @@ string ftoa( float n ){
 			t = buffer;
 			return t;
 		}
-		
+
 		// Here is the tricky case. We want a nicely formatted
 		// number with no e-notation or multiple trailing zeroes.
-	
+
 		if ( dec <= 0 ){
 
 			t = "0." + string( -dec, '0' ) + t;
@@ -228,10 +228,10 @@ string ftoa( float n ){
 			dec += dec - digits;
 
 		}
-	
+
 		// Finally, trim off excess zeroes.
 
-		int dp1 = dec + 1, p = t.length();	
+		int dp1 = dec + 1, p = t.length();
 		while( --p > dp1 && t[p] == '0' );
 		t = string( t, 0, ++p );
 
@@ -239,7 +239,7 @@ string ftoa( float n ){
 
 	}	// end of finite case
 
-	if ( _isnan( n ) )	return "NaN";
+	if ( _bb_isnan( n ) )	return "NaN";
 	if ( n > 0.0 )		return "Infinity";
 	if ( n < 0.0 )		return "-Infinity";
 

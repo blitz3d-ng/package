@@ -199,7 +199,7 @@ static void link(){
 
 		if( !isalnum(t[0]) ) t=t.substr(1);
 
-		for( int k=0;k<t.size();++k ){
+		for( unsigned int k=0;k<t.size();++k ){
 			if( isalnum(t[k]) || t[k]=='_' ) continue;
 			t=t.substr( 0,k );break;
 		}
@@ -301,4 +301,3 @@ int __stdcall bbWinMain(){
 	ExitProcess(0);
 	return 0;
 }
-

@@ -67,7 +67,7 @@ static BOOL FAR PASCAL enumConnection( LPCGUID guid,LPVOID conn,DWORD size,LPCDP
 	int n=dp->InitializeConnection( conn,0 );
 	dp->Release();if( n<0 ) return TRUE;
 
-	Connection *c=d_new Connection( *guid,string( strdup( name->lpszShortNameA ) ),conn,size );
+	Connection *c=d_new Connection( *guid,string( _strdup( name->lpszShortNameA ) ),conn,size );
 	connections.push_back( c );
 
 	return TRUE;
@@ -145,7 +145,7 @@ static bool enumSessions( HWND hwnd ){
 	if( n>=0 ){
 		if( !timer ) SetTimer( hwnd,timer=1,1000,0 );
 		for( int k=0;k<sessions.size();++k ){
-			SendDlgItemMessage( hwnd,IDC_GAMELIST,LB_ADDSTRING,0,(LPARAM)strdup( sessions[k]->name.c_str() ) );
+			SendDlgItemMessage( hwnd,IDC_GAMELIST,LB_ADDSTRING,0,(LPARAM)_strdup( sessions[k]->name.c_str() ) );
 		}
 		if( !sessions.size() ){
 			SendDlgItemMessage( hwnd,IDC_GAMELIST,LB_ADDSTRING,0,(LPARAM)"<no games found>" );

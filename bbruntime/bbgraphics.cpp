@@ -986,7 +986,7 @@ void bbTFormFilter( int enable ){
 static int p_ox,p_oy,p_hx,p_hy,p_vpx,p_vpy,p_vpw,p_vph;
 
 static gxCanvas *startPrinting(){
-	
+
 	gxCanvas *c=gx_graphics->getFrontCanvas();
 
 	c->lock();

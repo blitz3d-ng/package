@@ -85,7 +85,8 @@ static const char *linkRuntime(){
 		int start=0,end;
 		Type *t=Type::void_type;
 		if( !isalpha( s[0] ) ){ start=1;t=typeof( s[0] ); }
-		for( int k=1;k<s.size();++k ){
+		int k;
+		for( k=1;k<s.size();++k ){
 			if( !isalnum( s[k] ) && s[k]!='_' ) break;
 		}
 		end=k;
@@ -247,7 +248,7 @@ static const char *linkUserLibs(){
 }
 
 const char *openLibs(){
-	
+
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
 	home=string(p);
