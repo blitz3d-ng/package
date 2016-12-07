@@ -4,15 +4,19 @@ This project is an attempt to revive & modernize Blitz3D.
 
 ## Building
 
-You'll need a few tools...
-
-- https://www.visualstudio.com/vs/community/
-- https://premake.github.io/download.html
-- http://downloads.sourceforge.net/freeimage/FreeImage3170.zip
+You'll need a copy of [Visual Studio](https://www.visualstudio.com/vs/community/) and [premake](https://premake.github.io/download.html).
 
 ```
-> premake5 vs2015 && devenv build\blitz3d.sln /build
+> premake5 vs2015 && devenv build\blitz3d.sln /build release
 ```
+
+## Roadmap
+
+- Add misc. quick fixes & improvements (i.e., add "missing" features like [BlitzClose](http://www.blitzbasic.com/codearcs/codearcs.php?code=832).)
+- Improve help files & styling.
+- OpenGL & newer Direct3D renderers.
+- 64-bit support.
+- macOS, Linux, Android, iOS support.
 
 ## License
 

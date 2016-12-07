@@ -6,7 +6,8 @@ This document lays out what we've changed from the original Blitz3D.
 
 ### Graphics
 
-- Apps are now DPI "aware." This means you will need to scale your windows & UIs based on user DPI. See DPIScaleX()/DPIScaleY().
+- Apps are now DPI "aware." This means you will need to scale your windows & UIs based on user DPI. See [DPIScaleX()](https://github.com/kfprimm/blitz3d-ng/blob/master/_release/help/commands/2d_examples/DPIScaleX.bb)/[DPIScaleY()](https://github.com/kfprimm/blitz3d-ng/blob/master/_release/help/commands/2d_examples/DPIScaleX.bb).
+- FreeImage has been upgraded to version 3.17. That means Blitz can load [a lot more file formats](http://freeimage.sourceforge.net/features.html).
 
 ### Input
 

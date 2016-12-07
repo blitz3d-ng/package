@@ -1,8 +1,8 @@
 @echo off
 echo "Building x86..."
-premake5 vs2015 && devenv build\blitz3d.sln /rebuild "release|win32"
+premake5 vs2015 && devenv build\blitz3d.sln /rebuild "release|win32" || exit /b
 echo "Building x64..."
-premake5 vs2015 && devenv build\blitz3d.sln /rebuild "release|win64"
+premake5 vs2015 && devenv build\blitz3d.sln /rebuild "release|win64" || exit /b
 
 echo "Removing intermediate files..."
 del /F _release\bin\.vs
