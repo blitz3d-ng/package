@@ -2,23 +2,25 @@
 #ifndef BBMATH_H
 #define BBMATH_H
 
-float	 bbSin( float n );
-float	 bbCos( float n );
-float	 bbTan( float n );
-float	 bbASin( float n );
-float	 bbACos( float n );
-float	 bbATan( float n );
-float	 bbHSin( float n );
-float	 bbHCos( float n );
-float	 bbHTan( float n );
-float	 bbATan2( float n,float t );
-float	 bbSqr( float n );
-float	 bbFloor( float n );
-float	 bbCeil( float n );
-float	 bbExp( float n );
-float	 bbLog( float n );
-float	 bbLog10( float n );
-float	 bbRnd( float from,float to );
-void	 bbSeedRnd( int seed );
+#include "std.h"
+
+float	 BBCALL bbSin( float n );
+float	 BBCALL bbCos( float n );
+float	 BBCALL bbTan( float n );
+float	 BBCALL bbASin( float n );
+float	 BBCALL bbACos( float n );
+float	 BBCALL bbATan( float n );
+float	 BBCALL bbHSin( float n );
+float	 BBCALL bbHCos( float n );
+float	 BBCALL bbHTan( float n );
+float	 BBCALL bbATan2( float n,float t );
+float	 BBCALL bbSqr( float n );
+float	 BBCALL bbFloor( float n );
+float	 BBCALL bbCeil( float n );
+float	 BBCALL bbExp( float n );
+float	 BBCALL bbLog( float n );
+float	 BBCALL bbLog10( float n );
+float	 BBCALL bbRnd( float from,float to );
+void	 BBCALL bbSeedRnd( int seed );
 
 #endif

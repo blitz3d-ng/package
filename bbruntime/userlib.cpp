@@ -10,7 +10,7 @@ static void procNotFound(){
 	RTEX( "User lib function not found" );
 }
 
-void _bbLoadLibs( char *p ){
+void BBCALL _bbLoadLibs( char *p ){
 	while( *p ){
 		HMODULE mod=LoadLibrary( p );
 		if( !mod ){
@@ -29,6 +29,6 @@ void _bbLoadLibs( char *p ){
 	}
 }
 
-void _bbUnloadLibs(){
+void BBCALL _bbUnloadLibs(){
 	for( ;_mods.size();_mods.pop_back() ) FreeLibrary( _mods.back() );
 }

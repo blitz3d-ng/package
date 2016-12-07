@@ -134,14 +134,14 @@ static int startGame( int n ){
 	return 0;
 }
 
-int bbStartNetGame(){
+int BBCALL bbStartNetGame(){
 	if( dirPlay ){
 		RTEX( "Multiplayer game already started" );
 	}
 	return startGame( multiplay_setup_open() );
 }
 
-int bbHostNetGame( BBStr *name ){
+int BBCALL bbHostNetGame( BBStr *name ){
 	if( dirPlay ){
 		RTEX( "Multiplayer game already started" );
 	}
@@ -149,7 +149,7 @@ int bbHostNetGame( BBStr *name ){
 	return startGame( multiplay_setup_host( n ) );
 }
 
-int bbJoinNetGame( BBStr *name,BBStr *address ){
+int BBCALL bbJoinNetGame( BBStr *name,BBStr *address ){
 	if( dirPlay ){
 		RTEX( "Multiplayer game already started" );
 	}
@@ -157,12 +157,12 @@ int bbJoinNetGame( BBStr *name,BBStr *address ){
 	return startGame( multiplay_setup_join( n,a ) );
 }
 
-void bbStopNetGame(){
+void BBCALL bbStopNetGame(){
 	multiplay_setup_close();
 	clearPlayers();
 }
 
-DPID bbCreateNetPlayer( BBStr *nm ){
+DPID BBCALL bbCreateNetPlayer( BBStr *nm ){
 	chk();
 
 	string t=*nm;
@@ -188,7 +188,7 @@ DPID bbCreateNetPlayer( BBStr *nm ){
 	return id;
 }
 
-void bbDeleteNetPlayer( DPID player ){
+void BBCALL bbDeleteNetPlayer( DPID player ){
 	chk();
 
 	if( Player *p=findPlayer( player ) ){
@@ -197,18 +197,18 @@ void bbDeleteNetPlayer( DPID player ){
 	}
 }
 
-BBStr *bbNetPlayerName( DPID player ){
+BBStr * BBCALL bbNetPlayerName( DPID player ){
 	if( !player ) return d_new BBStr( "<all>" );
 	Player *p=findPlayer( player );
 	return d_new BBStr( p ? p->name : "<unknown>" );
 }
 
-int bbNetPlayerLocal( DPID player ){
+int BBCALL bbNetPlayerLocal( DPID player ){
 	if( Player *p=findPlayer( player ) ) return p->remote ? 0 : 1;
 	return 0;
 }
 
-int bbRecvNetMsg(){
+int BBCALL bbRecvNetMsg(){
 	chk();
 
 	msg_type=0;
@@ -272,23 +272,23 @@ int bbRecvNetMsg(){
 	return 1;
 }
 
-int bbNetMsgType(){
+int BBCALL bbNetMsgType(){
 	return msg_type;
 }
 
-BBStr *bbNetMsgData(){
+BBStr * BBCALL bbNetMsgData(){
 	return d_new BBStr( msg_data );
 }
 
-DPID bbNetMsgFrom(){
+DPID BBCALL bbNetMsgFrom(){
 	return msg_from;
 }
 
-DPID bbNetMsgTo(){
+DPID BBCALL bbNetMsgTo(){
 	return msg_to;
 }
 
-int bbSendNetMsg( int type,BBStr *msg,DPID from,DPID to,int reliable ){
+int BBCALL bbSendNetMsg( int type,BBStr *msg,DPID from,DPID to,int reliable ){
 	chk();
 
 	int sz=msg->size()+sizeof(bbMsg);

@@ -121,56 +121,56 @@ BBStr::~BBStr(){
 	--stringCnt;
 }
 
-BBStr *_bbStrLoad( BBStr **var ){
+BBStr * BBCALL _bbStrLoad( BBStr **var ){
 	return *var ? d_new BBStr( **var ) : d_new BBStr();
 }
 
-void _bbStrRelease( BBStr *str ){
+void BBCALL _bbStrRelease( BBStr *str ){
 	delete str;
 }
 
-void _bbStrStore( BBStr **var,BBStr *str ){
+void BBCALL _bbStrStore( BBStr **var,BBStr *str ){
 	_bbStrRelease( *var );*var=str;
 }
 
-BBStr *_bbStrConcat( BBStr *s1,BBStr *s2 ){
+BBStr * BBCALL _bbStrConcat( BBStr *s1,BBStr *s2 ){
 	*s1+=*s2;delete s2;return s1;
 }
 
-int _bbStrCompare( BBStr *lhs,BBStr *rhs ){
+int BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs ){
 	int n=lhs->compare( *rhs );
 	delete lhs;delete rhs;return n;
 }
 
-int _bbStrToInt( BBStr *s ){
+int BBCALL _bbStrToInt( BBStr *s ){
 	int n=atoi( *s );
 	delete s;return n;
 }
 
-BBStr *_bbStrFromInt( int n ){
+BBStr * BBCALL _bbStrFromInt( int n ){
 	return d_new BBStr( itoa( n ) );
 }
 
-float _bbStrToFloat( BBStr *s ){
+float BBCALL _bbStrToFloat( BBStr *s ){
 	float n=(float)atof( *s );
 	delete s;return n;
 }
 
-BBStr *_bbStrFromFloat( float n ){
+BBStr * BBCALL _bbStrFromFloat( float n ){
 	return d_new BBStr( ftoa( n ) );
 }
 
-BBStr *_bbStrConst( const char *s ){
+BBStr * BBCALL _bbStrConst( const char *s ){
 	return d_new BBStr( s );
 }
 
-void * _bbVecAlloc( BBVecType *type ){
+void * BBCALL _bbVecAlloc( BBVecType *type ){
 	void *vec=bbMalloc( type->size*4 );
 	memset( vec,0,type->size*4 );
 	return vec;
 }
 
-void _bbVecFree( void *vec,BBVecType *type ){
+void BBCALL _bbVecFree( void *vec,BBVecType *type ){
 	if( type->elementType->type==BBTYPE_STR ){
 		BBStr **p=(BBStr**)vec;
 		for( int k=0;k<type->size;++p,++k ){
@@ -185,11 +185,11 @@ void _bbVecFree( void *vec,BBVecType *type ){
 	bbFree( vec );
 }
 
-void _bbVecBoundsEx(){
+void BBCALL _bbVecBoundsEx(){
 	RTEX( "Blitz array index out of bounds" );
 }
 
-void _bbUndimArray( BBArray *array ){
+void BBCALL _bbUndimArray( BBArray *array ){
 	if( void *t=array->data ){
 		if( array->elementType==BBTYPE_STR ){
 			BBStr **p=(BBStr**)t;
@@ -209,7 +209,7 @@ void _bbUndimArray( BBArray *array ){
 	}
 }
 
-void _bbDimArray( BBArray *array ){
+void BBCALL _bbDimArray( BBArray *array ){
 	int k;
 	for( k=0;k<array->dims;++k ) ++array->scales[k];
 	for( k=1;k<array->dims;++k ){
@@ -220,7 +220,7 @@ void _bbDimArray( BBArray *array ){
 	memset( array->data,0,size*4 );
 }
 
-void _bbArrayBoundsEx(){
+void BBCALL _bbArrayBoundsEx(){
 	RTEX( "Array index out of bounds" );
 }
 
@@ -236,7 +236,7 @@ static void insertObj( BBObj *obj,BBObj *next ){
 	next->prev=obj;
 }
 
-BBObj *_bbObjNew( BBObjType *type ){
+BBObj * BBCALL _bbObjNew( BBObjType *type ){
 	if( type->free.next==&type->free ){
 		int obj_size=sizeof(BBObj)+type->fieldCnt*4;
 		BBObj *o=(BBObj*)bbMalloc( obj_size*OBJ_NEW_INC );
@@ -265,7 +265,7 @@ BBObj *_bbObjNew( BBObjType *type ){
 	return o;
 }
 
-void _bbObjDelete( BBObj *obj ){
+void BBCALL _bbObjDelete( BBObj *obj ){
 	if( !obj ) return;
 	BBField *fields=obj->fields;
 	if( !fields ) return;
@@ -293,7 +293,7 @@ void _bbObjDelete( BBObj *obj ){
 	--objCnt;
 }
 
-void _bbObjDeleteEach( BBObjType *type ){
+void BBCALL _bbObjDeleteEach( BBObjType *type ){
 	BBObj *obj=type->used.next;
 	while( obj->type ){
 		BBObj *next=obj->next;
@@ -302,27 +302,27 @@ void _bbObjDeleteEach( BBObjType *type ){
 	}
 }
 
-extern void bbDebugLog( BBStr *t );
-extern void bbStop( );
+extern void BBCALL bbDebugLog( BBStr *t );
+extern void BBCALL bbStop( );
 
-void _bbObjRelease( BBObj *obj ){
+void BBCALL _bbObjRelease( BBObj *obj ){
 	if( !obj || --obj->ref_cnt ) return;
 	unlinkObj( obj );
 	insertObj( obj,&obj->type->free );
 	--unrelObjCnt;
 }
 
-void _bbObjStore( BBObj **var,BBObj *obj ){
+void BBCALL _bbObjStore( BBObj **var,BBObj *obj ){
 	if( obj ) ++obj->ref_cnt;	//do this first incase of self-assignment
 	_bbObjRelease( *var );
 	*var=obj;
 }
 
-int _bbObjCompare( BBObj *o1,BBObj *o2 ){
+int BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 ){
 	return (o1 ? o1->fields : 0)!=(o2 ? o2->fields : 0);
 }
 
-BBObj *_bbObjNext( BBObj *obj ){
+BBObj * BBCALL _bbObjNext( BBObj *obj ){
 	do{
 		obj=obj->next;
 		if( !obj->type ) return 0;
@@ -330,7 +330,7 @@ BBObj *_bbObjNext( BBObj *obj ){
 	return obj;
 }
 
-BBObj *_bbObjPrev( BBObj *obj ){
+BBObj * BBCALL _bbObjPrev( BBObj *obj ){
 	do{
 		obj=obj->prev;
 		if( !obj->type ) return 0;
@@ -338,47 +338,47 @@ BBObj *_bbObjPrev( BBObj *obj ){
 	return obj;
 }
 
-BBObj *_bbObjFirst( BBObjType *type ){
+BBObj * BBCALL _bbObjFirst( BBObjType *type ){
 	return _bbObjNext( &type->used );
 }
 
-BBObj *_bbObjLast( BBObjType *type ){
+BBObj * BBCALL _bbObjLast( BBObjType *type ){
 	return _bbObjPrev( &type->used );
 }
 
-void _bbObjInsBefore( BBObj *o1,BBObj *o2 ){
+void BBCALL _bbObjInsBefore( BBObj *o1,BBObj *o2 ){
 	if( o1==o2 ) return;
 	unlinkObj( o1 );
 	insertObj( o1,o2 );
 }
 
-void _bbObjInsAfter( BBObj *o1,BBObj *o2 ){
+void BBCALL _bbObjInsAfter( BBObj *o1,BBObj *o2 ){
 	if( o1==o2 ) return;
 	unlinkObj( o1 );
 	insertObj( o1,o2->next );
 }
 
-int _bbObjEachFirst( BBObj **var,BBObjType *type ){
+int BBCALL _bbObjEachFirst( BBObj **var,BBObjType *type ){
 	_bbObjStore( var,_bbObjFirst( type ) );
 	return *var!=0;
 }
 
-int _bbObjEachNext( BBObj **var ){
+int BBCALL _bbObjEachNext( BBObj **var ){
 	_bbObjStore( var,_bbObjNext( *var ) );
 	return *var!=0;
 }
 
-int _bbObjEachFirst2( BBObj **var,BBObjType *type ){
+int BBCALL _bbObjEachFirst2( BBObj **var,BBObjType *type ){
 	*var=_bbObjFirst( type );
 	return *var!=0;
 }
 
-int _bbObjEachNext2( BBObj **var ){
+int BBCALL _bbObjEachNext2( BBObj **var ){
 	*var=_bbObjNext( *var );
 	return *var!=0;
 }
 
-BBStr *_bbObjToStr( BBObj *obj ){
+BBStr * BBCALL _bbObjToStr( BBObj *obj ){
 	if( !obj || !obj->fields ) return d_new BBStr( "[NULL]" );
 
 	static BBObj *root;
@@ -420,7 +420,7 @@ BBStr *_bbObjToStr( BBObj *obj ){
 	return s;
 }
 
-int _bbObjToHandle( BBObj *obj ){
+int BBCALL _bbObjToHandle( BBObj *obj ){
 	if( !obj || !obj->fields ) return 0;
 	map<BBObj*,int>::const_iterator it=object_map.find( obj );
 	if( it!=object_map.end() ) return it->second;
@@ -430,22 +430,22 @@ int _bbObjToHandle( BBObj *obj ){
 	return next_handle;
 }
 
-BBObj *_bbObjFromHandle( int handle,BBObjType *type ){
+BBObj * BBCALL _bbObjFromHandle( int handle,BBObjType *type ){
 	map<int,BBObj*>::const_iterator it=handle_map.find( handle );
 	if( it==handle_map.end() ) return 0;
 	BBObj *obj=it->second;
 	return obj->type==type ? obj : 0;
 }
 
-void _bbNullObjEx(){
+void BBCALL _bbNullObjEx(){
 	RTEX( "Object does not exist" );
 }
 
-void _bbRestore( BBData *data ){
+void BBCALL _bbRestore( BBData *data ){
 	dataPtr=data;
 }
 
-int _bbReadInt(){
+int BBCALL _bbReadInt(){
 	switch( dataPtr->fieldType ){
 	case BBTYPE_END:RTEX( "Out of data" );return 0;
 	case BBTYPE_INT:return dataPtr++->field.INT;
@@ -455,7 +455,7 @@ int _bbReadInt(){
 	}
 }
 
-float _bbReadFloat(){
+float BBCALL _bbReadFloat(){
 	switch( dataPtr->fieldType ){
 	case BBTYPE_END:RTEX( "Out of data" );return 0;
 	case BBTYPE_INT:return dataPtr++->field.INT;
@@ -465,7 +465,7 @@ float _bbReadFloat(){
 	}
 }
 
-BBStr *_bbReadStr(){
+BBStr * BBCALL _bbReadStr(){
 	switch( dataPtr->fieldType ){
 	case BBTYPE_END:RTEX( "Out of data" );return 0;
 	case BBTYPE_INT:return d_new BBStr( itoa( dataPtr++->field.INT ) );
@@ -475,35 +475,35 @@ BBStr *_bbReadStr(){
 	}
 }
 
-int _bbAbs( int n ){
+int BBCALL _bbAbs( int n ){
 	return n>=0 ? n : -n;
 }
 
-int _bbSgn( int n ){
+int BBCALL _bbSgn( int n ){
 	return n>0 ? 1 : (n<0 ? -1 : 0);
 }
 
-int _bbMod( int x,int y ){
+int BBCALL _bbMod( int x,int y ){
 	return x%y;
 }
 
-float _bbFAbs( float n ){
+float BBCALL _bbFAbs( float n ){
 	return n>=0 ? n : -n;
 }
 
-float _bbFSgn( float n ){
+float BBCALL _bbFSgn( float n ){
 	return n>0.0f ? 1.0f : (n<0.0f ? -1.0f : 0.0f);
 }
 
-float _bbFMod( float x,float y ){
+float BBCALL _bbFMod( float x,float y ){
 	return (float)fmod( x,y );
 }
 
-float _bbFPow( float x,float y ){
+float BBCALL _bbFPow( float x,float y ){
 	return (float)pow( x,y );
 }
 
-void bbRuntimeStats(){
+void BBCALL bbRuntimeStats(){
 	gx_runtime->debugLog( ("Active strings :"+itoa(stringCnt)).c_str() );
 	gx_runtime->debugLog( ("Active objects :"+itoa(objCnt)).c_str() );
 	gx_runtime->debugLog( ("Unreleased objs:"+itoa(unrelObjCnt)).c_str() );

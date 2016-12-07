@@ -4,23 +4,23 @@
 
 #include "basic.h"
 
-BBStr *  bbString( BBStr *s,int n );
-BBStr *	 bbLeft( BBStr *s,int n );
-BBStr *	 bbRight( BBStr *s,int n );
-BBStr *  bbReplace( BBStr *s,BBStr *from,BBStr *to );
-int		 bbInstr( BBStr *s,BBStr *t,int from );
-BBStr *	 bbMid( BBStr *s,int o,int n );
-BBStr *  bbUpper( BBStr *s );
-BBStr *	 bbLower( BBStr *s );
-BBStr *  bbTrim( BBStr *s );
-BBStr *  bbLSet( BBStr *s,int n );
-BBStr *  bbRSet( BBStr *s,int n );
-BBStr *  bbChr( int n );
-int		 bbAsc( BBStr *s );
-int		 bbLen( BBStr *s );
-BBStr *	 bbHex( int n );
-BBStr *  bbBin( int n );
-BBStr *  bbCurrentDate();
-BBStr *  bbCurrentTime();
+BBStr *  BBCALL bbString( BBStr *s,int n );
+BBStr *	 BBCALL bbLeft( BBStr *s,int n );
+BBStr *	 BBCALL bbRight( BBStr *s,int n );
+BBStr *  BBCALL bbReplace( BBStr *s,BBStr *from,BBStr *to );
+int		 BBCALL bbInstr( BBStr *s,BBStr *t,int from );
+BBStr *	 BBCALL bbMid( BBStr *s,int o,int n );
+BBStr *  BBCALL bbUpper( BBStr *s );
+BBStr *	 BBCALL bbLower( BBStr *s );
+BBStr *  BBCALL bbTrim( BBStr *s );
+BBStr *  BBCALL bbLSet( BBStr *s,int n );
+BBStr *  BBCALL bbRSet( BBStr *s,int n );
+BBStr *  BBCALL bbChr( int n );
+int		 BBCALL bbAsc( BBStr *s );
+int		 BBCALL bbLen( BBStr *s );
+BBStr *	 BBCALL bbHex( int n );
+BBStr *  BBCALL bbBin( int n );
+BBStr *  BBCALL bbCurrentDate();
+BBStr *  BBCALL bbCurrentTime();
 
 #endif

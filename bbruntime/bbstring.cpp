@@ -6,24 +6,24 @@
 #define CHKPOS(x) if( (x)<0 ) RTEX( "parameter must be positive" );
 #define CHKOFF(x) if( (x)<=0 ) RTEX( "parameter must be greater than 0" );
 
-BBStr *bbString( BBStr *s,int n ){
+BBStr * BBCALL bbString( BBStr *s,int n ){
 	BBStr *t=d_new BBStr();
 	while( n-->0 ) *t+=*s;
 	delete s;return t;
 }
 
-BBStr *bbLeft( BBStr *s,int n ){
+BBStr * BBCALL bbLeft( BBStr *s,int n ){
 	CHKPOS( n );
 	*s=s->substr( 0,n );return s;
 }
 
-BBStr *bbRight( BBStr *s,int n ){
+BBStr * BBCALL bbRight( BBStr *s,int n ){
 	CHKPOS( n );
 	n=s->size()-n;if( n<0 ) n=0;
 	*s=s->substr( n );return s;
 }
 
-BBStr *bbReplace( BBStr *s,BBStr *from,BBStr *to ){
+BBStr * BBCALL bbReplace( BBStr *s,BBStr *from,BBStr *to ){
 	int n=0,from_sz=from->size(),to_sz=to->size();
 	while( n<s->size() && (n=s->find( *from,n ))!=string::npos ){
 		s->replace( n,from_sz,*to );
@@ -32,14 +32,14 @@ BBStr *bbReplace( BBStr *s,BBStr *from,BBStr *to ){
 	delete from;delete to;return s;
 }
 
-int bbInstr( BBStr *s,BBStr *t,int from ){
+int BBCALL bbInstr( BBStr *s,BBStr *t,int from ){
 	CHKOFF( from );--from;
 	int n=s->find( *t,from );
 	delete s;delete t;
 	return n==string::npos ? 0 : n+1;
 }
 
-BBStr *bbMid( BBStr *s,int o,int n ){
+BBStr * BBCALL bbMid( BBStr *s,int o,int n ){
 	CHKOFF( o );--o;
 	if( o>s->size() ) o=s->size();
 	if( n>=0 ) *s=s->substr( o,n );
@@ -47,24 +47,24 @@ BBStr *bbMid( BBStr *s,int o,int n ){
 	return s;
 }
 
-BBStr *bbUpper( BBStr *s ){
+BBStr * BBCALL bbUpper( BBStr *s ){
 	for( int k=0;k<s->size();++k ) (*s)[k]=toupper( (*s)[k] );
 	return s;
 }
 
-BBStr *bbLower( BBStr *s ){
+BBStr * BBCALL bbLower( BBStr *s ){
 	for( int k=0;k<s->size();++k ) (*s)[k]=tolower( (*s)[k] );
 	return s;
 }
 
-BBStr *bbTrim( BBStr *s ){
+BBStr * BBCALL bbTrim( BBStr *s ){
 	int n=0,p=s->size();
 	while( n<s->size() && !isgraph( (*s)[n] ) ) ++n;
 	while( p>n && !isgraph( (*s)[p-1] ) ) --p;
 	*s=s->substr( n,p-n );return s;
 }
 
-BBStr *bbLSet( BBStr *s,int n ){
+BBStr * BBCALL bbLSet( BBStr *s,int n ){
 	CHKPOS(n);
 	if( s->size()>n ) *s=s->substr( 0,n );
 	else{
@@ -73,7 +73,7 @@ BBStr *bbLSet( BBStr *s,int n ){
 	return s;
 }
 
-BBStr *bbRSet( BBStr *s,int n ){
+BBStr * BBCALL bbRSet( BBStr *s,int n ){
 	CHKPOS(n);
 	if( s->size()>n ) *s=s->substr( s->size()-n );
 	else{
@@ -82,12 +82,12 @@ BBStr *bbRSet( BBStr *s,int n ){
 	return s;
 }
 
-BBStr *bbChr( int n ){
+BBStr * BBCALL bbChr( int n ){
 	BBStr *t=d_new BBStr();
 	*t+=(char)n;return t;
 }
 
-BBStr *bbHex( int n ){
+BBStr * BBCALL bbHex( int n ){
 	char buff[12];
 	for( int k=7;k>=0;n>>=4,--k ){
 		int t=(n&15)+'0';
@@ -97,7 +97,7 @@ BBStr *bbHex( int n ){
 	return d_new BBStr( buff );
 }
 
-BBStr *bbBin( int n ){
+BBStr * BBCALL bbBin( int n ){
 	char buff[36];
 	for( int k=31;k>=0;n>>=1,--k ){
 		buff[k]=n&1 ? '1' : '0';
@@ -106,17 +106,17 @@ BBStr *bbBin( int n ){
 	return d_new BBStr( buff );
 }
 
-int bbAsc( BBStr *s ){
+int BBCALL bbAsc( BBStr *s ){
 	int n=s->size() ? (*s)[0] & 255 : -1;
 	delete s;return n;
 }
 
-int bbLen( BBStr *s ){
+int BBCALL bbLen( BBStr *s ){
 	int n=s->size();
 	delete s;return n;
 }
 
-BBStr *bbCurrentDate(){
+BBStr * BBCALL bbCurrentDate(){
 	time_t t;
 	time( &t );
 	char buff[256];
@@ -124,7 +124,7 @@ BBStr *bbCurrentDate(){
 	return d_new BBStr( buff );
 }
 
-BBStr *bbCurrentTime(){
+BBStr * BBCALL bbCurrentTime(){
 	time_t t;
 	time( &t );
 	char buff[256];

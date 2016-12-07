@@ -60,7 +60,7 @@ struct bbStringType : public bbType{
 struct bbVectorType : public bbType{
 	bbType *element_type;
 	bbVectorType( bbType *e ):bbType( BBTYPE_VECTOR ),element_type( e ){}
-}
+};
 
 struct bbObjectType : public bbType{
 	bbEnviron *environ;

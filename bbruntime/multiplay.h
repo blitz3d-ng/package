@@ -9,22 +9,22 @@ void multiplay_link();
 bool multiplay_create();
 bool multiplay_destroy();
 
-int		 bbStartNetGame();
-int		 bbHostNetGame( BBStr *name );
-int		 bbJoinNetGame( BBStr *name,BBStr *address );
-void	 bbStopNetGame();
+int		 BBCALL bbStartNetGame();
+int		 BBCALL bbHostNetGame( BBStr *name );
+int		 BBCALL bbJoinNetGame( BBStr *name,BBStr *address );
+void	 BBCALL bbStopNetGame();
 
-DPID	 bbCreateNetPlayer( BBStr *name );
-void	 bbDeleteNetPlayer( DPID player );
-BBStr *	 bbNetPlayerName( DPID player );
-int		 bbNetPlayerLocal( DPID player );
+DPID	 BBCALL bbCreateNetPlayer( BBStr *name );
+void	 BBCALL bbDeleteNetPlayer( DPID player );
+BBStr *	 BBCALL bbNetPlayerName( DPID player );
+int		 BBCALL bbNetPlayerLocal( DPID player );
 
-int		 bbSendNetMsg( int type,BBStr *msg,DPID from,DPID to,int reliable );
+int		 BBCALL bbSendNetMsg( int type,BBStr *msg,DPID from,DPID to,int reliable );
 
-int		 bbRecvNetMsg();
-int		 bbNetMsgType();
-BBStr *	 bbNetMsgData();
-DPID	 bbNetMsgFrom();
-DPID	 bbNetMsgTo();
+int		 BBCALL bbRecvNetMsg();
+int		 BBCALL bbNetMsgType();
+BBStr *	BBCALL bbNetMsgData();
+DPID	 BBCALL bbNetMsgFrom();
+DPID	 BBCALL bbNetMsgTo();
 
 #endif

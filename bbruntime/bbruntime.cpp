@@ -3,20 +3,20 @@
 #include "bbsys.h"
 #include "bbruntime.h"
 
-void  bbEnd(){
+void BBCALL bbEnd(){
 	RTEX( 0 );
 }
-void  bbStop(){
+void BBCALL bbStop(){
 	gx_runtime->debugStop();
 	if( !gx_runtime->idle() ) RTEX( 0 );
 }
 
-void  bbAppTitle( BBStr *ti,BBStr *cp ){
+void BBCALL bbAppTitle( BBStr *ti,BBStr *cp ){
 	gx_runtime->setTitle( *ti,*cp );
 	delete ti;delete cp;
 }
 
-void  bbRuntimeError( BBStr *str ){
+void BBCALL bbRuntimeError( BBStr *str ){
 	string t=*str;delete str;
 	if( t.size()>255 ) t[255]=0;
 	static char err[256];
@@ -24,74 +24,74 @@ void  bbRuntimeError( BBStr *str ){
 	RTEX( err );
 }
 
-int   bbExecFile( BBStr *f ){
+int BBCALL bbExecFile( BBStr *f ){
 	string t=*f;delete f;
 	int n=gx_runtime->execute( t );
 	if( !gx_runtime->idle() ) RTEX( 0 );
 	return n;
 }
 
-void  bbDelay( int ms ){
+void BBCALL bbDelay( int ms ){
 	if( !gx_runtime->delay( ms ) ) RTEX( 0 );
 }
 
-int  bbMilliSecs(){
+int BBCALL bbMilliSecs(){
 	return gx_runtime->getMilliSecs();
 }
 
-BBStr * bbCommandLine(){
+BBStr * BBCALL bbCommandLine(){
 	return d_new BBStr( gx_runtime->commandLine() );
 }
 
-BBStr * bbSystemProperty( BBStr *p ){
+BBStr * BBCALL bbSystemProperty( BBStr *p ){
 	string t=gx_runtime->systemProperty( *p );
 	delete p;return d_new BBStr( t );
 }
 
-BBStr *  bbGetEnv( BBStr *env_var ){
+BBStr * BBCALL bbGetEnv( BBStr *env_var ){
 	char *p=getenv( env_var->c_str() );
 	BBStr *val=d_new BBStr( p ? p : "" );
 	delete env_var;
 	return val;
 }
 
-void  bbSetEnv( BBStr *env_var,BBStr *val ){
+void BBCALL bbSetEnv( BBStr *env_var,BBStr *val ){
 	string t=*env_var+"="+*val;
 	_putenv( t.c_str() );
 	delete env_var;
 	delete val;
 }
 
-gxTimer * bbCreateTimer( int hertz ){
+gxTimer * BBCALL bbCreateTimer( int hertz ){
 	gxTimer *t=gx_runtime->createTimer( hertz );
 	return t;
 }
 
-int   bbWaitTimer( gxTimer *t ){
+int BBCALL bbWaitTimer( gxTimer *t ){
 	int n=t->wait();
 	if( !gx_runtime->idle() ) RTEX( 0 );
 	return n;
 }
 
-void  bbFreeTimer( gxTimer *t ){
+void BBCALL bbFreeTimer( gxTimer *t ){
 	gx_runtime->freeTimer( t );
 }
 
-void  bbDebugLog( BBStr *t ){
+void BBCALL bbDebugLog( BBStr *t ){
 	gx_runtime->debugLog( t->c_str() );
 	delete t;
 }
 
-void  _bbDebugStmt( int pos,const char *file ){
+void BBCALL _bbDebugStmt( int pos,const char *file ){
 	gx_runtime->debugStmt( pos,file );
 	if( !gx_runtime->idle() ) RTEX( 0 );
 }
 
-void  _bbDebugEnter( void *frame,void *env,const char *func ){
+void BBCALL _bbDebugEnter( void *frame,void *env,const char *func ){
 	gx_runtime->debugEnter( frame,env,func );
 }
 
-void  _bbDebugLeave(){
+void BBCALL _bbDebugLeave(){
 	gx_runtime->debugLeave();
 }
 

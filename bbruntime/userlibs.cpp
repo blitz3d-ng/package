@@ -23,7 +23,7 @@ static void procNotFound(){
 	RTEX( "User lib function not found" );
 }
 
-void _bbLoadLibs( char *p ){
+void BBCALL _bbLoadLibs( char *p ){
 
 	string home;
 
@@ -56,7 +56,7 @@ void _bbLoadLibs( char *p ){
 	}
 }
 
-const char*  _bbStrToCStr( BBStr *str ){
+const char* BBCALL _bbStrToCStr( BBStr *str ){
 
 	Str &t=_strs[_nextStr++ & 255];
 
@@ -74,7 +74,7 @@ const char*  _bbStrToCStr( BBStr *str ){
 	return t.p;
 }
 
-BBStr*		 _bbCStrToStr( const char *str ){
+BBStr*	BBCALL	 _bbCStrToStr( const char *str ){
 	return new BBStr( str );
 }
 
@@ -91,5 +91,3 @@ void userlibs_link( void(*rtSym)(const char*,void*) ){
 	rtSym( "_bbStrToCStr",_bbStrToCStr );
 	rtSym( "_bbCStrToStr",_bbCStrToStr );
 }
-
-

@@ -2,7 +2,9 @@
 #ifndef USERLIB_H
 #define USERLIB_H
 
-void _bbLoadLibs( char *table );
-void _bbUnloadLibs();
+#include "std.h"
+
+void BBCALL _bbLoadLibs( char *table );
+void BBCALL _bbUnloadLibs();
 
 #endif

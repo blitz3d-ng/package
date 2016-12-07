@@ -2,7 +2,7 @@
 #ifndef BASIC_H
 #define BASIC_H
 
-#include <string>
+#include "std.h"
 
 enum{
 	BBTYPE_END=0,
@@ -92,58 +92,58 @@ extern BBType _bbFltType;
 extern BBType _bbStrType;
 extern BBType _bbCStrType;
 
-BBStr *	 _bbStrLoad( BBStr **var );
-void	 _bbStrRelease( BBStr *str );
-void	 _bbStrStore( BBStr **var,BBStr *str );
-int		 _bbStrCompare( BBStr *lhs,BBStr *rhs );
+BBStr *	 BBCALL _bbStrLoad( BBStr **var );
+void	 BBCALL _bbStrRelease( BBStr *str );
+void	 BBCALL _bbStrStore( BBStr **var,BBStr *str );
+int		 BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs );
 
-BBStr *	 _bbStrConcat( BBStr *s1,BBStr *s2 );
-int		 _bbStrToInt( BBStr *s );
-BBStr *	 _bbStrFromInt( int n );
-float	 _bbStrToFloat( BBStr *s );
-BBStr *	 _bbStrFromFloat( float n );
-BBStr *	 _bbStrConst( const char *s );
+BBStr *	 BBCALL _bbStrConcat( BBStr *s1,BBStr *s2 );
+int		 BBCALL _bbStrToInt( BBStr *s );
+BBStr *	 BBCALL _bbStrFromInt( int n );
+float	 BBCALL _bbStrToFloat( BBStr *s );
+BBStr *	 BBCALL _bbStrFromFloat( float n );
+BBStr *	 BBCALL _bbStrConst( const char *s );
 
-void	 _bbDimArray( BBArray *array );
-void	 _bbUndimArray( BBArray *array );
-void	 _bbArrayBoundsEx();
+void	 BBCALL _bbDimArray( BBArray *array );
+void	 BBCALL _bbUndimArray( BBArray *array );
+void	 BBCALL _bbArrayBoundsEx();
 
-void *	 _bbVecAlloc( BBVecType *type );
-void	 _bbVecFree( void *vec,BBVecType *type );
-void	 _bbVecBoundsEx();
+void *	 BBCALL _bbVecAlloc( BBVecType *type );
+void	 BBCALL _bbVecFree( void *vec,BBVecType *type );
+void	 BBCALL _bbVecBoundsEx();
 
-BBObj *	 _bbObjNew( BBObjType *t );
-void	 _bbObjDelete( BBObj *obj );
-void	 _bbObjDeleteEach( BBObjType *type );
-void	 _bbObjRelease( BBObj *obj );
-void	 _bbObjStore( BBObj **var,BBObj *obj );
-BBObj *	 _bbObjNext( BBObj *obj );
-BBObj *	 _bbObjPrev( BBObj *obj );
-BBObj *	 _bbObjFirst( BBObjType *t );
-BBObj *  _bbObjLast( BBObjType *t );
-void	 _bbObjInsBefore( BBObj *o1,BBObj *o2 );
-void	 _bbObjInsAfter( BBObj *o1,BBObj *o2 );
-int		 _bbObjEachFirst( BBObj **var,BBObjType *type );
-int		 _bbObjEachNext( BBObj **var );
-int		 _bbObjCompare( BBObj *o1,BBObj *o2 );
-BBStr *	 _bbObjToStr( BBObj *obj );
-int		 _bbObjToHandle( BBObj *obj );
-BBObj *	 _bbObjFromHandle( int handle,BBObjType *type );
-void	 _bbNullObjEx();
+BBObj *	 BBCALL _bbObjNew( BBObjType *t );
+void	 BBCALL _bbObjDelete( BBObj *obj );
+void	 BBCALL _bbObjDeleteEach( BBObjType *type );
+void	 BBCALL _bbObjRelease( BBObj *obj );
+void	 BBCALL _bbObjStore( BBObj **var,BBObj *obj );
+BBObj *	 BBCALL _bbObjNext( BBObj *obj );
+BBObj *	 BBCALL _bbObjPrev( BBObj *obj );
+BBObj *	 BBCALL _bbObjFirst( BBObjType *t );
+BBObj *  BBCALL _bbObjLast( BBObjType *t );
+void	 BBCALL _bbObjInsBefore( BBObj *o1,BBObj *o2 );
+void	 BBCALL _bbObjInsAfter( BBObj *o1,BBObj *o2 );
+int		 BBCALL _bbObjEachFirst( BBObj **var,BBObjType *type );
+int		 BBCALL _bbObjEachNext( BBObj **var );
+int		 BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 );
+BBStr *	 BBCALL _bbObjToStr( BBObj *obj );
+int		 BBCALL _bbObjToHandle( BBObj *obj );
+BBObj *	 BBCALL _bbObjFromHandle( int handle,BBObjType *type );
+void	 BBCALL _bbNullObjEx();
 
-void	 _bbRestore( BBData *data );
-int		 _bbReadInt();
-float	 _bbReadFloat();
-BBStr *	 _bbReadStr();
+void	 BBCALL _bbRestore( BBData *data );
+int		 BBCALL _bbReadInt();
+float	 BBCALL _bbReadFloat();
+BBStr *	 BBCALL _bbReadStr();
 
-int		 _bbAbs( int n );
-int		 _bbSgn( int n );
-int		 _bbMod( int x,int y );
-float	 _bbFAbs( float n );
-float	 _bbFSgn( float n );
-float	 _bbFMod( float x,float y );
-float	 _bbFPow( float x,float y );
+int		 BBCALL _bbAbs( int n );
+int		 BBCALL _bbSgn( int n );
+int		 BBCALL _bbMod( int x,int y );
+float	 BBCALL _bbFAbs( float n );
+float	 BBCALL _bbFSgn( float n );
+float	 BBCALL _bbFMod( float x,float y );
+float	 BBCALL _bbFPow( float x,float y );
 
-void	 bbRuntimeStats();
+void	 BBCALL bbRuntimeStats();
 
 #endif

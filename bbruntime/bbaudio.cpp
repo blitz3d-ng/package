@@ -20,90 +20,90 @@ static gxChannel *playMusic( BBStr *f,bool use_3d ){
 	return gx_audio ? gx_audio->playFile( t,use_3d ) : 0;
 }
 
-gxSound *bbLoadSound( BBStr *f ){
+gxSound * BBCALL bbLoadSound( BBStr *f ){
 	return loadSound( f,false );
 }
 
-void bbFreeSound( gxSound *sound ){
+void BBCALL bbFreeSound( gxSound *sound ){
 	if( !sound ) return;
 	debugSound( sound );
 	gx_audio->freeSound( sound );
 }
 
-void bbLoopSound( gxSound *sound ){
+void BBCALL bbLoopSound( gxSound *sound ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setLoop( true );
 }
 
-void bbSoundPitch( gxSound *sound,int pitch ){
+void BBCALL bbSoundPitch( gxSound *sound,int pitch ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setPitch( pitch );
 }
 
-void bbSoundVolume( gxSound *sound,float volume ){
+void BBCALL bbSoundVolume( gxSound *sound,float volume ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setVolume( volume );
 }
 
-void bbSoundPan( gxSound *sound,float pan ){
+void BBCALL bbSoundPan( gxSound *sound,float pan ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setPan( pan );
 }
 
-gxChannel *bbPlaySound( gxSound *sound ){
+gxChannel * BBCALL bbPlaySound( gxSound *sound ){
 	if( !sound ) return 0;
 	debugSound( sound );
 	return sound->play();
 }
 
-gxChannel *bbPlayMusic( BBStr *f ){
+gxChannel * BBCALL bbPlayMusic( BBStr *f ){
 	return playMusic( f,false );
 }
 
-gxChannel *bbPlayCDTrack( int track,int mode ){
+gxChannel * BBCALL bbPlayCDTrack( int track,int mode ){
 	return gx_audio ? gx_audio->playCDTrack( track,mode ) : 0;
 }
 
-void bbStopChannel( gxChannel *channel ){
+void BBCALL bbStopChannel( gxChannel *channel ){
 	if( !channel ) return;
 	channel->stop();
 }
 
-void bbPauseChannel( gxChannel *channel ){
+void BBCALL bbPauseChannel( gxChannel *channel ){
 	if( !channel ) return;
 	channel->setPaused( true );
 }
 
-void bbResumeChannel( gxChannel *channel ){
+void BBCALL bbResumeChannel( gxChannel *channel ){
 	if( !channel ) return;
 	channel->setPaused( false );
 }
 
-void bbChannelPitch( gxChannel *channel,int pitch ){
+void BBCALL bbChannelPitch( gxChannel *channel,int pitch ){
 	if( !channel ) return;
 	channel->setPitch( pitch );
 }
 
-void bbChannelVolume( gxChannel *channel,float volume ){
+void BBCALL bbChannelVolume( gxChannel *channel,float volume ){
 	if( !channel ) return;
 	channel->setVolume( volume );
 }
 
-void bbChannelPan( gxChannel *channel,float pan ){
+void BBCALL bbChannelPan( gxChannel *channel,float pan ){
 	if( !channel ) return;
 	channel->setPan( pan );
 }
 
-int bbChannelPlaying( gxChannel *channel ){
+int BBCALL bbChannelPlaying( gxChannel *channel ){
 	return channel ? channel->isPlaying() : 0;
 }
 
 #ifdef PRO
-gxSound *bbLoad3DSound( BBStr *f ){
+gxSound * BBCALL bbLoad3DSound( BBStr *f ){
 	return loadSound( f,true );
 }
 #endif

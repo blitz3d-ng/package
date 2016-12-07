@@ -13,47 +13,47 @@ extern gxDevice *gx_keyboard;
 extern std::vector<gxDevice*> gx_joysticks;
 
 //keyboard
-int   bbKeyDown( int n );
-int   bbKeyHit( int n );
-int   bbGetKey();
-int   bbWaitKey();
-void  bbFlushKeys();
+int  BBCALL bbKeyDown( int n );
+int  BBCALL bbKeyHit( int n );
+int  BBCALL bbGetKey();
+int  BBCALL bbWaitKey();
+void BBCALL bbFlushKeys();
 
 //mouse
-int   bbMouseDown( int n );
-int   bbMouseHit( int n );
-int   bbGetMouse();
-int   bbWaitMouse();
-int   bbMouseX();
-int   bbMouseY();
-int   bbMouseXSpeed();
-int   bbMouseYSpeed();
-void  bbMoveMouse( int x,int y );
-void  bbFlushMouse();
+int  BBCALL bbMouseDown( int n );
+int  BBCALL bbMouseHit( int n );
+int  BBCALL bbGetMouse();
+int  BBCALL bbWaitMouse();
+int  BBCALL bbMouseX();
+int  BBCALL bbMouseY();
+int  BBCALL bbMouseXSpeed();
+int  BBCALL bbMouseYSpeed();
+void BBCALL bbMoveMouse( int x,int y );
+void BBCALL bbFlushMouse();
 
 //joysticks
-int    bbCountJoys();
-int    bbFindJoy( BBStr *id );
-BBStr *bbJoyID( int port );
-BBStr *bbJoyName( int port );
-int		 bbJoyType( int port );
-int		 bbJoyDown( int n,int port );
-int		 bbJoyHit( int n,int port );
-int		 bbGetJoy( int port );
-int		 bbWaitJoy( int port );
-float	 bbJoyX( int port );
-float	 bbJoyY( int port );
-float	 bbJoyZ( int port );
-float	 bbJoyU( int port );
-float	 bbJoyV( int port );
-float	 bbJoyPitch( int port );
-float	 bbJoyYaw( int port );
-float	 bbJoyRoll( int port );
-int		 bbJoyXDir( int port );
-int		 bbJoyYDir( int port );
-int		 bbJoyZDir( int port );
-int		 bbJoyUDir( int port );
-int		 bbJoyVDir( int port );
-void	 bbFlushJoy();
+int   BBCALL bbCountJoys();
+int   BBCALL bbFindJoy( BBStr *id );
+BBStr * BBCALL bbJoyID( int port );
+BBStr * BBCALL bbJoyName( int port );
+int		BBCALL bbJoyType( int port );
+int		BBCALL bbJoyDown( int n,int port );
+int		BBCALL bbJoyHit( int n,int port );
+int		BBCALL bbGetJoy( int port );
+int		BBCALL bbWaitJoy( int port );
+float	BBCALL bbJoyX( int port );
+float	BBCALL bbJoyY( int port );
+float	BBCALL bbJoyZ( int port );
+float	BBCALL bbJoyU( int port );
+float	BBCALL bbJoyV( int port );
+float	BBCALL bbJoyPitch( int port );
+float	BBCALL bbJoyYaw( int port );
+float	BBCALL bbJoyRoll( int port );
+int		BBCALL bbJoyXDir( int port );
+int		BBCALL bbJoyYDir( int port );
+int		BBCALL bbJoyZDir( int port );
+int		BBCALL bbJoyUDir( int port );
+int		BBCALL bbJoyVDir( int port );
+void	BBCALL bbFlushJoy();
 
 #endif

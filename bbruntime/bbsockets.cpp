@@ -291,7 +291,7 @@ static inline void debugTCPServer( TCPServer *p ){
 
 static vector<int> host_ips;
 
-int bbCountHostIPs( BBStr *host ){
+int BBCALL bbCountHostIPs( BBStr *host ){
 	host_ips.clear();
 	HOSTENT *h=gethostbyname( host->c_str() );
 	delete host;if( !h ) return 0;
@@ -300,7 +300,7 @@ int bbCountHostIPs( BBStr *host ){
 	return host_ips.size();
 }
 
-int bbHostIP( int index ){
+int BBCALL bbHostIP( int index ){
 	if( debug ){
 		if( index<1 || index>host_ips.size() ){
 			RTEX( "Host index out of range" );
@@ -309,7 +309,7 @@ int bbHostIP( int index ){
 	return host_ips[index-1];
 }
 
-UDPStream *bbCreateUDPStream( int port ){
+UDPStream * BBCALL bbCreateUDPStream( int port ){
 	if( !socks_ok ) return 0;
 	SOCKET s=::socket( AF_INET,SOCK_DGRAM,0 );
 	if( s!=INVALID_SOCKET ){
@@ -324,47 +324,47 @@ UDPStream *bbCreateUDPStream( int port ){
 	return 0;
 }
 
-void bbCloseUDPStream( UDPStream *p ){
+void BBCALL bbCloseUDPStream( UDPStream *p ){
 	debugUDPStream( p );
 	udp_set.erase( p );
 	delete p;
 }
 
-int bbRecvUDPMsg( UDPStream *p ){
+int BBCALL bbRecvUDPMsg( UDPStream *p ){
 	debugUDPStream( p );
 	return p->recv();
 }
 
-void bbSendUDPMsg( UDPStream *p,int ip,int port ){
+void BBCALL bbSendUDPMsg( UDPStream *p,int ip,int port ){
 	debugUDPStream( p );
 	p->send( ip,port );
 }
 
-int bbUDPStreamIP( UDPStream *p ){
+int BBCALL bbUDPStreamIP( UDPStream *p ){
 	debugUDPStream( p );
 	return p->getIP();
 }
 
-int bbUDPStreamPort( UDPStream *p ){
+int BBCALL bbUDPStreamPort( UDPStream *p ){
 	debugUDPStream( p );
 	return p->getPort();
 }
 
-int bbUDPMsgIP( UDPStream *p ){
+int BBCALL bbUDPMsgIP( UDPStream *p ){
 	debugUDPStream( p );
 	return p->getMsgIP();
 }
 
-int bbUDPMsgPort( UDPStream *p ){
+int BBCALL bbUDPMsgPort( UDPStream *p ){
 	debugUDPStream( p );
 	return p->getMsgPort();
 }
 
-void bbUDPTimeouts( int rt ){
+void BBCALL bbUDPTimeouts( int rt ){
 	recv_timeout=rt;
 }
 
-BBStr *bbDottedIP( int ip ){
+BBStr * BBCALL bbDottedIP( int ip ){
 	return d_new BBStr(
 		itoa((ip>>24)&255)+"."+itoa((ip>>16)&255)+"."+
 		itoa((ip>>8)&255)+"."+itoa(ip&255) );
@@ -382,7 +382,7 @@ static int findHostIP( const string &t ){
 	return 0;
 }
 
-TCPStream *bbOpenTCPStream( BBStr *server,int port,int local_port ){
+TCPStream * BBCALL bbOpenTCPStream( BBStr *server,int port,int local_port ){
 	if( !socks_ok ){
 		delete server;
 		return 0;
@@ -410,13 +410,13 @@ TCPStream *bbOpenTCPStream( BBStr *server,int port,int local_port ){
 	return 0;
 }
 
-void bbCloseTCPStream( TCPStream *p ){
+void BBCALL bbCloseTCPStream( TCPStream *p ){
 	debugTCPStream( p );
 	tcp_set.erase( p );
 	delete p;
 }
 
-TCPServer *  bbCreateTCPServer( int port ){
+TCPServer * BBCALL bbCreateTCPServer( int port ){
 	SOCKET s=::socket( AF_INET,SOCK_STREAM,0 );
 	if( s!=INVALID_SOCKET ){
 		sockaddr_in addr={AF_INET,htons(port)};
@@ -432,13 +432,13 @@ TCPServer *  bbCreateTCPServer( int port ){
 	return 0;
 }
 
-void  bbCloseTCPServer( TCPServer *p ){
+void BBCALL bbCloseTCPServer( TCPServer *p ){
 	debugTCPServer( p );
 	server_set.erase( p );
 	delete p;
 }
 
-TCPStream *  bbAcceptTCPStream( TCPServer *server ){
+TCPStream * BBCALL bbAcceptTCPStream( TCPServer *server ){
 	debugTCPServer( server );
 	if( !gx_runtime->idle() ) RTEX( 0 );
 	if( TCPStream *tcp=server->accept() ){
@@ -448,17 +448,17 @@ TCPStream *  bbAcceptTCPStream( TCPServer *server ){
 	return 0;
 }
 
-int bbTCPStreamIP( TCPStream *p ){
+int BBCALL bbTCPStreamIP( TCPStream *p ){
 	debugTCPStream( p );
 	return p->getIP();
 }
 
-int bbTCPStreamPort( TCPStream *p ){
+int BBCALL bbTCPStreamPort( TCPStream *p ){
 	debugTCPStream( p );
 	return p->getPort();
 }
 
-void bbTCPTimeouts( int rt,int at ){
+void BBCALL bbTCPTimeouts( int rt,int at ){
 	read_timeout=rt;
 	accept_timeout=at;
 }

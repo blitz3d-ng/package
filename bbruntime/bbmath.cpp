@@ -11,19 +11,19 @@ static const int RND_R=3399;
 static const float dtor=0.0174532925199432957692369076848861f;
 static const float rtod=57.2957795130823208767981548141052f;
 
-float bbSin( float n ){ return (float)sin(n*dtor); }
-float bbCos( float n ){ return (float)cos(n*dtor); }
-float bbTan( float n ){ return (float)tan(n*dtor); }
-float bbASin( float n ){ return (float)asin(n)*rtod; }
-float bbACos( float n ){ return (float)acos(n)*rtod; }
-float bbATan( float n ){ return (float)atan(n)*rtod; }
-float bbATan2( float n,float t ){ return (float)atan2(n,t)*rtod; }
-float bbSqr( float n ){ return (float)sqrt(n); }
-float bbFloor( float n ){ return (float)floor(n); }
-float bbCeil( float n ){ return (float)ceil(n); }
-float bbExp( float n ){ return (float)exp(n); }
-float bbLog( float n ){ return (float)log(n); }
-float bbLog10( float n ){ return (float)log10(n); }
+float BBCALL bbSin( float n ){ return (float)sin(n*dtor); }
+float BBCALL bbCos( float n ){ return (float)cos(n*dtor); }
+float BBCALL bbTan( float n ){ return (float)tan(n*dtor); }
+float BBCALL bbASin( float n ){ return (float)asin(n)*rtod; }
+float BBCALL bbACos( float n ){ return (float)acos(n)*rtod; }
+float BBCALL bbATan( float n ){ return (float)atan(n)*rtod; }
+float BBCALL bbATan2( float n,float t ){ return (float)atan2(n,t)*rtod; }
+float BBCALL bbSqr( float n ){ return (float)sqrt(n); }
+float BBCALL bbFloor( float n ){ return (float)floor(n); }
+float BBCALL bbCeil( float n ){ return (float)ceil(n); }
+float BBCALL bbExp( float n ){ return (float)exp(n); }
+float BBCALL bbLog( float n ){ return (float)log(n); }
+float BBCALL bbLog10( float n ){ return (float)log10(n); }
 
 //return rand float from 0...1
 static inline float rnd(){
@@ -32,21 +32,21 @@ static inline float rnd(){
 	return (rnd_state&65535)/65536.0f+(.5f/65536.0f);
 }
 
-float bbRnd( float from,float to ){
+float BBCALL bbRnd( float from,float to ){
 	return rnd()*(to-from)+from;
 }
 
-int bbRand( int from,int to ){
+int BBCALL bbRand( int from,int to ){
 	if( to<from ) std::swap( from,to );
 	return int(rnd()*(to-from+1))+from;
 }
 
-void bbSeedRnd( int seed ){
+void BBCALL bbSeedRnd( int seed ){
 	seed&=0x7fffffff;
 	rnd_state=seed ? seed : 1;
 }
 
-int  bbRndSeed(){
+int  BBCALL bbRndSeed(){
 	return rnd_state;
 }
 

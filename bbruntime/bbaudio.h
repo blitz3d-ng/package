@@ -7,22 +7,21 @@
 
 extern gxAudio *gx_audio;
 
-gxSound *	 bbLoadSound( BBStr *file );
-void		 bbFreeSound( gxSound *sound );
-gxChannel *	 bbPlaySound( gxSound *sound );
-void		 bbLoopSound( gxSound *sound );
-void		 bbSoundPitch( gxSound *sound,int pitch );
-void		 bbSoundVolume( gxSound *sound,float volume );
-void		 bbSoundPan( gxSound *sound,float pan );
-gxChannel *	 bbPlayMusic( BBStr *s );
-gxChannel *  bbPlayCDTrack( int track,int mode );
-void		 bbStopChannel( gxChannel *channel );
-void		 bbPauseChannel( gxChannel *channel );
-void		 bbResumeChannel( gxChannel *channel );
-void		 bbChannelPitch( gxChannel *channel,int pitch );
-void		 bbChannelVolume( gxChannel *channel,float volume );
-void		 bbChannelPan( gxChannel *channel,float pan );
-int			 bbChannelPlaying( gxChannel *channel );
+gxSound *	 BBCALL bbLoadSound( BBStr *file );
+void		 BBCALL bbFreeSound( gxSound *sound );
+gxChannel *	 BBCALL bbPlaySound( gxSound *sound );
+void		 BBCALL bbLoopSound( gxSound *sound );
+void		 BBCALL bbSoundPitch( gxSound *sound,int pitch );
+void		 BBCALL bbSoundVolume( gxSound *sound,float volume );
+void		 BBCALL bbSoundPan( gxSound *sound,float pan );
+gxChannel *	 BBCALL bbPlayMusic( BBStr *s );
+gxChannel *  BBCALL bbPlayCDTrack( int track,int mode );
+void		 BBCALL bbStopChannel( gxChannel *channel );
+void		 BBCALL bbPauseChannel( gxChannel *channel );
+void		 BBCALL bbResumeChannel( gxChannel *channel );
+void		 BBCALL bbChannelPitch( gxChannel *channel,int pitch );
+void		 BBCALL bbChannelVolume( gxChannel *channel,float volume );
+void		 BBCALL bbChannelPan( gxChannel *channel,float pan );
+int			 BBCALL bbChannelPlaying( gxChannel *channel );
 
 #endif
-

@@ -65,17 +65,17 @@ bbFile *bbOpenFile( BBStr *f ){
 	return open( f,ios_base::in|ios_base::out );
 }
 
-void bbCloseFile( bbFile *f ){
+void BBCALL bbCloseFile( bbFile *f ){
 	debugFile( f );
 	file_set.erase( f );
 	delete f;
 }
 
-int bbFilePos( bbFile *f ){
+int BBCALL bbFilePos( bbFile *f ){
 	return f->buf->pubseekoff( 0,ios_base::cur );
 }
 
-int bbSeekFile( bbFile *f,int pos ){
+int BBCALL bbSeekFile( bbFile *f,int pos ){
 	return f->buf->pubseekoff( pos,ios_base::beg );
 }
 
@@ -84,7 +84,7 @@ gxDir *bbReadDir( BBStr *d ){
 	return gx_filesys->openDir( t,0 );
 }
 
-void bbCloseDir( gxDir *d ){
+void BBCALL bbCloseDir( gxDir *d ){
 	gx_filesys->closeDir( d );
 }
 
@@ -97,39 +97,39 @@ BBStr *bbCurrentDir(){
 	return d_new BBStr( gx_filesys->getCurrentDir() );
 }
 
-void bbChangeDir( BBStr *d ){
+void BBCALL bbChangeDir( BBStr *d ){
 	gx_filesys->setCurrentDir( *d );
 	delete d;
 }
 
-void bbCreateDir( BBStr *d ){
+void BBCALL bbCreateDir( BBStr *d ){
 	gx_filesys->createDir( *d );
 	delete d;
 }
 
-void bbDeleteDir( BBStr *d ){
+void BBCALL bbDeleteDir( BBStr *d ){
 	gx_filesys->deleteDir( *d );
 	delete d;
 }
 
-int bbFileType( BBStr *f ){
+int BBCALL bbFileType( BBStr *f ){
 	string t=*f;delete f;
 	int n=gx_filesys->getFileType( t );
 	return n==gxFileSystem::FILE_TYPE_FILE ? 1 : (n==gxFileSystem::FILE_TYPE_DIR ? 2 : 0);
 }
 
-int	bbFileSize( BBStr *f ){
+int BBCALL bbFileSize( BBStr *f ){
 	string t=*f;delete f;
 	return gx_filesys->getFileSize( t );
 }
 
-void bbCopyFile( BBStr *f,BBStr *to ){
+void BBCALL bbCopyFile( BBStr *f,BBStr *to ){
 	string src=*f,dest=*to;
 	delete f;delete to;
 	gx_filesys->copyFile( src,dest );
 }
 
-void bbDeleteFile( BBStr *f ){
+void BBCALL bbDeleteFile( BBStr *f ){
 	gx_filesys->deleteFile( *f );
 	delete f;
 }

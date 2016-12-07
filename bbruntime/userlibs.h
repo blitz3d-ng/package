@@ -4,9 +4,9 @@
 
 #include "basic.h"
 
-void		 _bbLoadLibs( char *p );
+void	BBCALL	 _bbLoadLibs( char *p );
 
-const char*	 _bbStrToCStr( BBStr *str );
-BBStr*		 _bbCStrToStr( const char *str );
+const char*	BBCALL _bbStrToCStr( BBStr *str );
+BBStr*		BBCALL _bbCStrToStr( const char *str );
 
 #endif
