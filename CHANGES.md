@@ -11,6 +11,7 @@ This document lays out what we've changed from the original Blitz3D.
 ### Input
 
 - DirectInput has been bumped to DirectInput8.
+- Added CountJoys(),FindJoy(id$),JoyID$(),JoyName$(port).
 
 ### Networking
 

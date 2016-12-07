@@ -125,7 +125,25 @@ void bbMoveMouse( int x,int y ){
 }
 
 int bbCountJoys(){
-	return gx_input->numJoysticks();
+	return gx_joysticks.size();
+}
+
+int bbFindJoy( BBStr *id ){
+	string i=*id;delete id;
+	for( int k=0;k<gx_joysticks.size();++k ){
+		if( strcmp( i.c_str(),gx_joysticks[k]->getId() )==0 ) return k;
+	}
+	return -1;
+}
+
+BBStr *bbJoyID( int port ){
+	if( port<0 || port>=gx_joysticks.size() ) return d_new BBStr( "" );
+	return d_new BBStr( gx_joysticks[port]->getId() );
+}
+
+BBStr *bbJoyName( int port ){
+	if( port<0 || port>=gx_joysticks.size() ) return d_new BBStr( "" );
+	return d_new BBStr( gx_joysticks[port]->getName() );
 }
 
 int bbJoyType( int port ){
@@ -265,6 +283,9 @@ void input_link( void (*rtSym)( const char *sym,void *pc ) ){
 	rtSym( "MoveMouse%x%y",bbMoveMouse );
 
 	rtSym( "%CountJoys",bbCountJoys );
+	rtSym( "%FindJoy$id",bbFindJoy );
+	rtSym( "$JoyID%port",bbJoyID );
+	rtSym( "$JoyName%port",bbJoyName );
 	rtSym( "%JoyType%port=0",bbJoyType );
 	rtSym( "%JoyDown%button%port=0",bbJoyDown );
 	rtSym( "%JoyHit%button%port=0",bbJoyHit );

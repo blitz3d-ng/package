@@ -24,8 +24,7 @@ LRESULT EditCtrl::OnPaste( WPARAM wParam,LPARAM lParam ){
 BOOL EditCtrl::PreTranslateMessage( MSG* msg )
 {
 	if( msg->message==WM_KEYDOWN&&msg->wParam=='V'  ){
-		if( ::GetAsyncKeyState(VK_CONTROL ) ){
-			;
+		if( ::GetAsyncKeyState( VK_CONTROL )&0x80000000 ){
 			return (BOOL)OnPaste( msg->wParam,msg->lParam );
 		}
 	}
@@ -542,7 +541,7 @@ void Editor::addKeyword( const string &s ){
 
 void Editor::endFind(){
 	if( !finder ) return;
-	finder->DestroyWindow();
+	if( !finder->IsTerminating() ) finder->DestroyWindow();
 	finder=0;
 }
 

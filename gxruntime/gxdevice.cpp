@@ -4,6 +4,7 @@
 #include "gxruntime.h"
 
 gxDevice::gxDevice(){
+	memset( name,0,sizeof(name) );
 	reset();
 }
 
@@ -59,4 +60,12 @@ int gxDevice::getKey(){
 float gxDevice::getAxisState( int axis ){
 	update();
 	return axis_states[axis];
+}
+
+const char *gxDevice::getId(){
+	return id;
+}
+
+const char *gxDevice::getName(){
+	return name;
 }

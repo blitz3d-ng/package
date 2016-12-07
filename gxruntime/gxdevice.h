@@ -24,6 +24,9 @@ private:
 	bool down_state[256];			//time key went down
 	int que[QUE_SIZE],put,get;
 
+protected:
+	char id[64],name[64];
+
 	/***** GX INTERFACE *****/
 public:
 	void flush();
@@ -35,6 +38,9 @@ public:
 	int getKey();
 
 	float getAxisState( int axis );
+
+	const char *getId();
+	const char *getName();
 };
 
 #endif

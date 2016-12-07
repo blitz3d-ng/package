@@ -81,6 +81,16 @@ public:
 	int type,poll_time;
 	int mins[12],maxs[12];
 	Joystick( gxInput *i,IDirectInputDevice8 *d,int t ):Device(i,d),type(t),poll_time(0){
+		DIDEVICEINSTANCE info;
+		info.dwSize=sizeof(DIDEVICEINSTANCE);
+		if( d->GetDeviceInfo( &info )==DI_OK ){
+			snprintf( id,sizeof(id),"%08lX-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX",
+	      info.guidInstance.Data1, info.guidInstance.Data2, info.guidInstance.Data3,
+	      info.guidInstance.Data4[0], info.guidInstance.Data4[1], info.guidInstance.Data4[2], info.guidInstance.Data4[3],
+	      info.guidInstance.Data4[4], info.guidInstance.Data4[5], info.guidInstance.Data4[6], info.guidInstance.Data4[7]);
+			snprintf( name,sizeof(name),"%s",info.tszProductName );
+		}
+
 		for( int k=0;k<12;++k ){
 			//initialize joystick axis ranges (d'oh!)
 			DIPROPRANGE range;
@@ -199,8 +209,7 @@ static Joystick *createJoystick( gxInput *input,LPCDIDEVICEINSTANCE devinst ){
 }
 
 static BOOL CALLBACK enumJoystick( LPCDIDEVICEINSTANCE devinst,LPVOID pvRef ){
-
-	if( (devinst->dwDevType&0xff)!=DI8DEVCLASS_GAMECTRL ) return DIENUM_CONTINUE;
+	// if( (devinst->dwDevType&0xff)!=DI8DEVCLASS_GAMECTRL ) return DIENUM_CONTINUE;
 
 	if( Joystick *joy=createJoystick( (gxInput*)pvRef,devinst ) ){
 		joysticks.push_back( joy );

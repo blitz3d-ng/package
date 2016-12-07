@@ -33,6 +33,9 @@ void  bbFlushMouse();
 
 //joysticks
 int    bbCountJoys();
+int    bbFindJoy( BBStr *id );
+BBStr *bbJoyID( int port );
+BBStr *bbJoyName( int port );
 int		 bbJoyType( int port );
 int		 bbJoyDown( int n,int port );
 int		 bbJoyHit( int n,int port );
