@@ -11,9 +11,9 @@ class gxRuntime;
 class gxInput{
 public:
 	gxRuntime *runtime;
-	IDirectInput7 *dirInput;
+	IDirectInput8 *dirInput;
 
-	gxInput( gxRuntime *runtime,IDirectInput7 *di );
+	gxInput( gxRuntime *runtime,IDirectInput8 *di );
 	~gxInput();
 
 	void reset();

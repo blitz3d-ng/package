@@ -1,8 +1,7 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
-// Used by runtime_dll.rc
+// Microsoft Visual C++ generated include file.
+// Used by bbruntime_dll.rc
 //
-#define IDI_ICON1                       107
 #define IDR_BBMODULE                    1111
 
 // Next default values for new objects

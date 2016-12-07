@@ -5,6 +5,15 @@
 #include "tabber.h"
 #include "funclist.h"
 
+class EditCtrl : public CRichEditCtrl{
+protected:
+	virtual BOOL PreTranslateMessage( MSG* msg );
+public:
+	DECLARE_DYNAMIC( EditCtrl )
+	DECLARE_MESSAGE_MAP()
+	afx_msg LRESULT OnPaste( WPARAM wParam,LPARAM lParam );
+};
+
 class Editor;
 
 class EditorListener{
@@ -92,7 +101,7 @@ private:
 	//tabber
 	Tabber tabber;
 	FuncList funcList,typeList,labsList;
-	CRichEditCtrl editCtrl;
+	EditCtrl editCtrl;
 
 	void funcSelected( int line );
 	void currentSet( Tabber *tabber,int index );
@@ -110,10 +119,10 @@ private:
 
 	void formatStreamLine();
 
-	DWORD streamIn( LPBYTE buff,LONG cnt,LONG *done );
+	DWORD _streamIn( LPBYTE buff,LONG cnt,LONG *done );
 
-	static DWORD CALLBACK streamIn( DWORD cookie,LPBYTE buff,LONG cnt,LONG *done );
-	static DWORD CALLBACK streamOut( DWORD cookie,LPBYTE buff,LONG cnt,LONG *done );
+	static DWORD CALLBACK streamIn( DWORD_PTR cookie,LPBYTE buff,LONG cnt,LONG *done );
+	static DWORD CALLBACK streamOut( DWORD_PTR cookie,LPBYTE buff,LONG cnt,LONG *done );
 };
 
 #endif

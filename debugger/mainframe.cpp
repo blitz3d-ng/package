@@ -4,6 +4,7 @@
 #include "resource.h"
 #include "debuggerapp.h"
 #include "prefs.h"
+#include "dpi.h"
 
 #define WM_IDLEUPDATECMDUI  0x0363  // wParam == bDisableIfNoHandler
 
@@ -49,9 +50,18 @@ MainFrame::~MainFrame(){
 int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 	CFrameWnd::OnCreate( lpCreateStruct );
 
+	HICON icon=LoadIcon( AfxGetInstanceHandle(),MAKEINTRESOURCE(IDI_ICON1) );
+	SetIcon( icon,TRUE );
+
 	prefs.open();
 
-	string tb=prefs.homeDir+"/cfg/dbg_toolbar.bmp";
+	string tb;
+	int scale=(int)GetDPIScaleX();
+	if (scale > 1) {
+		tb=prefs.homeDir+"/cfg/dbg_toolbar@"+string(itoa(scale))+".bmp";
+	} else {
+		tb=prefs.homeDir+"/cfg/dbg_toolbar.bmp";
+	}
 
 	//Toolbar
 	HBITMAP toolbmp=(HBITMAP)LoadImage(
@@ -145,9 +155,9 @@ void MainFrame::OnSize( UINT type,int sw,int sh ){
 
 	toolBar.GetWindowRect( &t );y+=t.Height();h-=t.Height();
 
-	tabber.MoveWindow( x,y,w-240,h );
+	tabber.MoveWindow( x,y,w-240*GetDPIScaleX(),h );
 
-	tabber2.MoveWindow( x+w-240,y,240,h );
+	tabber2.MoveWindow( x+w-240*GetDPIScaleX(),y,240*GetDPIScaleX(),h );
 }
 
 void MainFrame::setRuntime( void *mod,void *env ){

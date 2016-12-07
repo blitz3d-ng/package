@@ -4,6 +4,7 @@
 #include "debuggerapp.h"
 #include "resource.h"
 #include "prefs.h"
+#include "dpi.h"
 
 DebuggerApp debuggerApp;
 
@@ -23,7 +24,7 @@ BOOL DebuggerApp::InitInstance(){
 
 	int x=rect.left;
 	int w=rect.right-x;
-	int h=240;
+	int h=240*GetDPIScaleY();
 	int y=rect.bottom-h;
 
 	main_frame->Create( 0,"Blitz Debugger",

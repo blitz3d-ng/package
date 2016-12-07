@@ -8,7 +8,6 @@ You'll need a few tools...
 
 - https://www.visualstudio.com/vs/community/
 - https://premake.github.io/download.html
-- http://tdxlibrary.org/Downloads/Microsoft/dx7adxf.exe
 - http://downloads.sourceforge.net/freeimage/FreeImage3170.zip
 
 ```

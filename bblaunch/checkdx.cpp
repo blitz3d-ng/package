@@ -11,14 +11,12 @@
 #include <windowsx.h>
 #include <ddraw.h>
 #include <dinput.h>
-#include <dmusici.h>
+#include <dmusicc.h>
 
 typedef HRESULT(WINAPI * DIRECTDRAWCREATE)( GUID*, LPDIRECTDRAW*, IUnknown* );
 typedef HRESULT(WINAPI * DIRECTDRAWCREATEEX)( GUID*, VOID**, REFIID, IUnknown* );
 typedef HRESULT(WINAPI * DIRECTINPUTCREATE)( HINSTANCE, DWORD, LPDIRECTINPUT*,
                                              IUnknown* );
-
-
 
 //-----------------------------------------------------------------------------
 // Name: GetDXVersion()
@@ -88,11 +86,11 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
             (*pdwDXVersion) = 0x200;
 
             // We're not supposed to be able to tell which SP we're on, so check for dinput
-            DIHinst = LoadLibrary( "DINPUT.DLL" );
+            DIHinst = LoadLibrary( L"DINPUT.DLL" );
             if( DIHinst == 0 )
             {
                 // No DInput... must be DX2 on NT 4 pre-SP3
-                OutputDebugString( "Couldn't LoadLibrary DInput\r\n" );
+                OutputDebugString( L"Couldn't LoadLibrary DInput\r\n" );
                 return;
             }
 
@@ -103,7 +101,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
             if( DirectInputCreate == 0 )
             {
                 // No DInput... must be pre-SP3 DX2
-                OutputDebugString( "Couldn't GetProcAddress DInputCreate\r\n" );
+                OutputDebugString( L"Couldn't GetProcAddress DInputCreate\r\n" );
                 return;
             }
 
@@ -122,7 +120,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
 
     // Now we know we are in Windows 9x (or maybe 3.1), so anything's possible.
     // First see if DDRAW.DLL even exists.
-    DDHinst = LoadLibrary( "DDRAW.DLL" );
+    DDHinst = LoadLibrary( L"DDRAW.DLL" );
     if( DDHinst == 0 )
     {
         (*pdwDXVersion)  = 0;
@@ -138,7 +136,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
         (*pdwDXVersion)  = 0;
         (*pdwDXPlatform) = 0;
         FreeLibrary( DDHinst );
-        OutputDebugString( "Couldn't LoadLibrary DDraw\r\n" );
+        OutputDebugString( L"Couldn't LoadLibrary DDraw\r\n" );
         return;
     }
 
@@ -148,7 +146,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
         (*pdwDXVersion)  = 0;
         (*pdwDXPlatform) = 0;
         FreeLibrary( DDHinst );
-        OutputDebugString( "Couldn't create DDraw\r\n" );
+        OutputDebugString( L"Couldn't create DDraw\r\n" );
         return;
     }
 
@@ -162,7 +160,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
         // No IDirectDraw2 exists... must be DX1
         pDDraw->Release();
         FreeLibrary( DDHinst );
-        OutputDebugString( "Couldn't QI DDraw2\r\n" );
+        OutputDebugString( L"Couldn't QI DDraw2\r\n" );
         return;
     }
 
@@ -176,11 +174,11 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
     ///////////////////////////////////////////////////////////////////////////
 
     // DirectInput was added for DX3
-    DIHinst = LoadLibrary( "DINPUT.DLL" );
+    DIHinst = LoadLibrary( L"DINPUT.DLL" );
     if( DIHinst == 0 )
     {
         // No DInput... must not be DX3
-        OutputDebugString( "Couldn't LoadLibrary DInput\r\n" );
+        OutputDebugString( L"Couldn't LoadLibrary DInput\r\n" );
         pDDraw->Release();
         FreeLibrary( DDHinst );
         return;
@@ -194,7 +192,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
         FreeLibrary( DIHinst );
         FreeLibrary( DDHinst );
         pDDraw->Release();
-        OutputDebugString( "Couldn't GetProcAddress DInputCreate\r\n" );
+        OutputDebugString( L"Couldn't GetProcAddress DInputCreate\r\n" );
         return;
     }
 
@@ -224,7 +222,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
         pDDraw->Release();
         FreeLibrary( DDHinst );
         (*pdwDXVersion) = 0;
-        OutputDebugString( "Couldn't Set coop level\r\n" );
+        OutputDebugString( L"Couldn't Set coop level\r\n" );
         return;
     }
 
@@ -235,7 +233,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
         pDDraw->Release();
         FreeLibrary( DDHinst );
         *pdwDXVersion = 0;
-        OutputDebugString( "Couldn't CreateSurface\r\n" );
+        OutputDebugString( L"Couldn't CreateSurface\r\n" );
         return;
     }
 
@@ -282,7 +280,7 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
                            IID_IDirectMusic, (VOID**)&pDMusic );
     if( FAILED(hr) )
     {
-        OutputDebugString( "Couldn't create CLSID_DirectMusic\r\n" );
+        OutputDebugString( L"Couldn't create CLSID_DirectMusic\r\n" );
         FreeLibrary( DDHinst );
         return;
     }

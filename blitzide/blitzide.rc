@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -27,18 +25,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\r\n"
@@ -53,7 +51,7 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU DISCARDABLE 
+IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -114,7 +112,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS DISCARDABLE 
+IDR_MAINFRAME ACCELERATORS
 BEGIN
     "F",            ID_FIND,                VIRTKEY, CONTROL, NOINVERT
     "H",            ID_HOME,                VIRTKEY, CONTROL, NOINVERT
@@ -134,8 +132,7 @@ BEGIN
     VK_F7,          ID_COMPILE,             VIRTKEY, NOINVERT
     VK_F9,          ID_DEBUGLOG,            VIRTKEY, NOINVERT
     VK_TAB,         ID_CTRLTAB,             VIRTKEY, CONTROL, NOINVERT
-    VK_TAB,         ID_CTRLSHIFTTAB,        VIRTKEY, SHIFT, CONTROL, 
-                                                    NOINVERT
+    VK_TAB,         ID_CTRLSHIFTTAB,        VIRTKEY, SHIFT, CONTROL, NOINVERT
 END
 
 
@@ -144,21 +141,19 @@ END
 // Dialog
 //
 
-IDD_COMPILING DIALOG DISCARDABLE  0, 0, 189, 63
-STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
+IDD_COMPILING DIALOG 0, 0, 189, 63
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
 CAPTION "Compiling"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Compiling Blitz Basic Program...",IDC_STATIC,36,13,99,8
-    CONTROL         "Progress2",IDC_COMPILEPROGRESS,"msctls_progress32",
-                    WS_BORDER,28,31,134,14
+    CONTROL         "Progress2",IDC_COMPILEPROGRESS,"msctls_progress32",WS_BORDER,28,31,134,14
 END
 
-IDD_COMMANDLINE DIALOG DISCARDABLE  0, 0, 186, 77
-STYLE DS_MODALFRAME | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_VISIBLE | 
-    WS_CAPTION
+IDD_COMMANDLINE DIALOGEX 0, 0, 186, 77
+STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
 CAPTION "Program Command Line"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     EDITTEXT        IDC_CMDLINE,7,21,172,14,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "OK",IDOK,7,56,50,14
@@ -173,7 +168,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_COMPILING, DIALOG
     BEGIN
@@ -199,19 +194,52 @@ END
 // Bitmap
 //
 
-IDB_BITMAP1             BITMAP  DISCARDABLE     "IDE (logo, no code) 32.ico"
+#if defined(APSTUDIO_INVOKED) || !defined(SMALL)
+IDB_BITMAP1             BITMAP                  "IDE (logo, no code) 32.ico"
+
+#endif
+#if defined(APSTUDIO_INVOKED) || defined(SMALL)
+#if defined(APSTUDIO_INVOKED)
+IDB_BITMAP1$(SMALL)     BITMAP                  "bitmap1.bmp"
+
+#else
+IDB_BITMAP1             BITMAP                  "bitmap1.bmp"
+
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_COMMANDLINE AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "blitzide.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table
 //
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "Blitz Basic"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_OPEN                 "Open a Blitz program\nOpen"
     ID_SAVE                 "Save this program\nSave"
@@ -223,7 +251,7 @@ BEGIN
     ID_COMPILE              "Check program for errors\nCheck for errors"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_STEP                 "Strp program\nStep"
     ID_TRACE                "Trace program\nTrace"
@@ -234,13 +262,13 @@ BEGIN
     ID_STOP                 "Pause program\nPause"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_STATUSTEXT           "status"
     ID_COLROWTEXT           "colrow"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_PUBLISH              "Create Executable\nCreate Executable"
     ID_CLOSE                "Close file\nClose"
@@ -249,12 +277,12 @@ BEGIN
     ID_FORWARD              "Help forward\nForward"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_WINDOWED             "Run program in a window\nRun windowed"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     ID_EXECUTE              "Run program\nRun"
     ID_STEPOVER             "Step over statement\nStep Over"
@@ -262,17 +290,17 @@ BEGIN
     ID_STEPOUT              "Step out of function\nStep Out"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_APP_TITLE       "Blitz Basic"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     IDR_DEBUGFRAME          "Blitz Basic Debugger"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -280,33 +308,26 @@ END
 // English (New Zealand) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENZ)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_NZ
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_ABOUT DIALOG DISCARDABLE  0, 0, 224, 171
-STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
+IDD_ABOUT DIALOG 0, 0, 224, 171
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
 CAPTION "About Blitz"
 FONT 10, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "Okee Dokee!",IDOK,79,150,50,14
-    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,11,
-                    5,64,32
+    CONTROL         IDB_BITMAP2,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,11,5,64,32
     CTEXT           "BlitzPlus - Demo Version",IDC_PRODUCT,78,7,139,8
-    CTEXT           "IDE V1.1  Runtime V1.1  Linker V1.1",IDC_VERSION,78,27,
-                    139,8
+    CTEXT           "IDE V1.1  Runtime V1.1  Linker V1.1",IDC_VERSION,78,27,139,8
     CTEXT           "Copyright Blitz Research Ltd",IDC_STATIC,78,17,139,8
-    CONTROL         "Progress1",IDC_PROGRESS1,"msctls_progress32",PBS_SMOOTH | 
-                    WS_BORDER,5,150,212,14
-    CONTROL         "",IDC_CREDITS,"RICHEDIT",ES_CENTER | ES_MULTILINE | 
-                    ES_READONLY | WS_DISABLED | WS_BORDER | WS_TABSTOP,5,41,
-                    212,104
+    CONTROL         "Progress1",IDC_PROGRESS1,"msctls_progress32",PBS_SMOOTH | WS_BORDER,5,150,212,14
+    CONTROL         "",IDC_CREDITS,"RICHEDIT",TCS_SCROLLOPPOSITE | TCS_RAGGEDRIGHT | TCS_MULTISELECT | WS_DISABLED | WS_BORDER | WS_TABSTOP,5,41,212,104
 END
 
 
@@ -316,7 +337,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
@@ -333,7 +354,8 @@ END
 // Bitmap
 //
 
-IDB_BITMAP2             BITMAP  DISCARDABLE     "b3dlogo.bmp"
+IDB_BITMAP2             BITMAP                  "b3dlogo.bmp"
+
 #endif    // English (New Zealand) resources
 /////////////////////////////////////////////////////////////////////////////
 

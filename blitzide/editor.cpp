@@ -11,6 +11,28 @@ static const int TEXTLIMIT=16384;
 static const int TEXTLIMIT=1024*1024-1;
 #endif
 
+IMPLEMENT_DYNAMIC( EditCtrl,CRichEditCtrl )
+BEGIN_MESSAGE_MAP( EditCtrl,CRichEditCtrl )
+	ON_MESSAGE( WM_PASTE,OnPaste )
+END_MESSAGE_MAP()
+
+LRESULT EditCtrl::OnPaste( WPARAM wParam,LPARAM lParam ){
+	PasteSpecial( CF_TEXT,0 );
+	return 1;
+}
+
+BOOL EditCtrl::PreTranslateMessage( MSG* msg )
+{
+	if( msg->message==WM_KEYDOWN&&msg->wParam=='V'  ){
+		if( ::GetAsyncKeyState(VK_CONTROL ) ){
+			;
+			return (BOOL)OnPaste( msg->wParam,msg->lParam );
+		}
+	}
+	return CRichEditCtrl::PreTranslateMessage( msg );
+}
+
+
 static const UINT wm_Find=RegisterWindowMessage( FINDMSGSTRING );
 
 IMPLEMENT_DYNAMIC( Editor,CWnd )
@@ -47,7 +69,7 @@ static string rtfbgr( int bgr ){
 	return "\\red"+itoa(bgr&0xff)+"\\green"+itoa((bgr>>8)&0xff)+"\\blue"+itoa((bgr>>16)&0xff)+';';
 }
 
-DWORD Editor::streamIn( LPBYTE buff,LONG cnt,LONG *done ){
+DWORD Editor::_streamIn( LPBYTE buff,LONG cnt,LONG *done ){
 	int n=0;
 	while( n<cnt ){
 		if( is_curs==is_line.size() ){
@@ -72,12 +94,12 @@ DWORD Editor::streamIn( LPBYTE buff,LONG cnt,LONG *done ){
 	return 0;
 }
 
-DWORD CALLBACK Editor::streamIn( DWORD cookie,LPBYTE buff,LONG cnt,LONG *done ){
+DWORD CALLBACK Editor::streamIn( DWORD_PTR cookie,LPBYTE buff,LONG cnt,LONG *done ){
 	Editor *e=(Editor*)cookie;
-	return e->streamIn( buff,cnt,done );
+	return e->_streamIn( buff,cnt,done );
 }
 
-DWORD CALLBACK Editor::streamOut( DWORD cookie,LPBYTE buff,LONG cnt,LONG *done ){
+DWORD CALLBACK Editor::streamOut( DWORD_PTR cookie,LPBYTE buff,LONG cnt,LONG *done ){
 	ostream *out=(ostream*)cookie;
 	out->write( (char*)buff,cnt );
 	*done=cnt;return 0;
@@ -310,6 +332,18 @@ void Editor::copy(){
 
 void Editor::paste(){
 	editCtrl.PasteSpecial( CF_TEXT,0 );
+	// if ( !OpenClipboard() ) return;
+	//
+	// HANDLE data=GetClipboardData( CF_TEXT );
+	// if ( data==nullptr ) return;
+	// char *p=static_cast<char*>( GlobalLock(data) );
+	// if ( p==nullptr ) return;
+	// std::string text( p );
+	// GlobalUnlock( data );
+	// CloseClipboard();
+	//
+	// MessageBox(text.c_str(),"...",MB_OK);
+	// editCtrl.ReplaceSel( text.data(),true );
 }
 
 bool Editor::canCutCopy(){

@@ -110,6 +110,8 @@ MainFrame::MainFrame():exit_flag(false){
 int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 	CFrameWnd::OnCreate( lpCreateStruct );
 
+	HICON icon=LoadIcon( AfxGetInstanceHandle(),MAKEINTRESOURCE(IDI_ICON1) );
+	SetIcon( icon,TRUE );
 
 	static HBITMAP toolbmp;
 	static SIZE imgsz,butsz;
@@ -202,12 +204,15 @@ void MainFrame::OnDestroy(){
 
 void MainFrame::setTitle( const string &s ){
 #ifdef PRO
+	#ifdef WIN64
+	SetWindowText( ("Blitz3D-NG (x64) - "+s ).c_str() );
+	#else
 	SetWindowText( ("Blitz3D-NG - "+s ).c_str() );
-	return;
+	#endif
 #else
 	SetWindowText( ("Blitz2D - "+s ).c_str() );
-	return;
 #endif
+return;
 }
 
 void MainFrame::OnClose(){

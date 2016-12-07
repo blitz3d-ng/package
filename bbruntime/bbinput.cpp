@@ -124,6 +124,10 @@ void bbMoveMouse( int x,int y ){
 	gx_input->moveMouse( mouse_x=x,mouse_y=y );
 }
 
+int bbCountJoys(){
+	return gx_input->numJoysticks();
+}
+
 int bbJoyType( int port ){
 	return gx_input->getJoystickType( port );
 }
@@ -260,6 +264,7 @@ void input_link( void (*rtSym)( const char *sym,void *pc ) ){
 	rtSym( "FlushMouse",bbFlushMouse );
 	rtSym( "MoveMouse%x%y",bbMoveMouse );
 
+	rtSym( "%CountJoys",bbCountJoys );
 	rtSym( "%JoyType%port=0",bbJoyType );
 	rtSym( "%JoyDown%button%port=0",bbJoyDown );
 	rtSym( "%JoyHit%button%port=0",bbJoyHit );

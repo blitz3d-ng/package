@@ -1,20 +1,21 @@
 -- premake5.lua
 workspace "blitz3d"
-  configurations { "debug" } --, "release" }
-  platforms { "win32" } --, "macos", "linux" }
+  configurations { "debug", "release" }
+  platforms { "win32", "win64" } --, "macos", "linux" }
 
   location "build"
 
   characterset "MBCS"
-  architecture "x86"
   exceptionhandling "SEH"
+
+  flags "StaticRuntime"
 
   defines {
     "PRO", -- "MEMDEBUG",
     "FREEIMAGE_LIB",
     "_CRT_SECURE_NO_WARNINGS",
     "DIRECTSOUND_VERSION=0x700",
-    "DIRECTINPUT_VERSION=0x700"
+    "DIRECTINPUT_VERSION=0x800"
   }
 
   buildoptions {
@@ -29,12 +30,6 @@ workspace "blitz3d"
   }
   libdirs "../fmodapi375win/api/lib"
 
-  -- DirectX SDK
-  includedirs "../dx7sdk/include"
-  libdirs "../dx7sdk/lib"
-  -- includedirs "C:\\Program Files (x86)\\Microsoft DirectX SDK (June 2010)\\Include"
-  -- libdirs "C:\\Program Files (x86)\\Microsoft DirectX SDK (June 2010)\\Lib\\x86"
-
   -- FIXME: we should attend to the warnings at some point...
   -- buildoptions "/w"
 
@@ -46,9 +41,31 @@ workspace "blitz3d"
 
     defines { "DEBUG" }
 
+  filter "configurations:release"
+    optimize "Full"
+    defines { "NDEBUG" }
+
+  filter "platforms:win32"
+    architecture "x86"
+    libdirs "common/x86"
+    includedirs "common/include"
+
+    defines "TARGETSUFFIX="
+
+  filter "platforms:win64"
+    architecture "x64"
+    libdirs "common/x64"
+    includedirs "common/include"
+
+    targetsuffix "64"
+
+    defines { "WIN64", "TARGETSUFFIX=\"64\"" }
+
 project "blitzide"
   kind "WindowedApp"
   language "C++"
+
+  -- removeplatforms "win32"
 
   targetdir "_release/bin"
   targetname "ide"
@@ -56,7 +73,7 @@ project "blitzide"
 
   -- characterset "Unicode"
 
-  warnings "Extra"
+  warnings "Off"
   disablewarnings { "4100","4189" }
 
   defines {
@@ -104,39 +121,53 @@ project "debugger"
   kind "SharedLib"
   language "C++"
 
+  removeplatforms "win64"
+
   targetdir "_release/bin"
   targetname "debugger"
   targetextension ".dll"
-
 
   buildoptions "/w"
 
   defines {
     "_WIN32_WINNT=_WIN32_WINNT_WINXP",
-    "_WINDLL"
+    "_USRDLL"
   }
+
+  links "stdutil"
 
   flags "MFC"
 
   files {
     "debugger/debugger.rc",
     "debugger/debuggerapp.cpp", "debugger/debuggerapp.h",
-    "debugger/debugtree.cpp", "debugger/debugtree.h", "debugger/mainframe.cpp", "debugger/prefs.cpp", "debugger/sourcefile.cpp", "debugger/stdafx.cpp", "debugger/stdutil.cpp", "debugger/tabber.cpp", "debugger/debugger.h", "debugger/mainframe.h", "debugger/prefs.h", "debugger/sourcefile.h", "debugger/stdafx.h", "debugger/tabber.h"
+    "debugger/debugtree.cpp", "debugger/debugtree.h",
+    "debugger/mainframe.cpp", "debugger/mainframe.h",
+    "debugger/prefs.cpp", "debugger/prefs.h",
+    "debugger/sourcefile.cpp", "debugger/sourcefile.h",
+    "debugger/stdafx.cpp", "debugger/stdafx.h",
+    "debugger/tabber.cpp", "debugger/tabber.h",
+    "debugger/dpi.cpp", "debugger/dpi.h",
+    "debugger/debugger.h"
   }
 
 project "bblaunch"
   kind "WindowedApp"
   language "C++"
 
+  -- removeplatforms "win64"
+
   files { "bblaunch/bblaunch.cpp" }
 
-  filter "platforms:win32"
+  filter "platforms:win32 or win64"
     files { "bblaunch/checkdx.cpp", "bblaunch/checkdx.h", "bblaunch/checkie.cpp", "bblaunch/checkie.h", "bblaunch/bblaunch.rc", "re" }
     flags "WinMain"
 
   targetdir "_release"
   targetname "Blitz3D"
   targetextension ".exe"
+
+  characterset "Unicode"
 
   -- linkoptions "/force"
 
@@ -145,6 +176,8 @@ project "bblaunch"
 project "bbruntime_dll"
   kind "SharedLib"
   language "C++"
+
+  removeplatforms "win64"
 
   targetdir "_release/bin"
   targetprefix ""
@@ -167,17 +200,21 @@ project "bbruntime_dll"
 
   links { "dxguid" }
   links { "blitz3d", "gxruntime", "fmodvc", "freeimage" }
-  links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "ddraw", "dinput", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
+  links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
 
 project "gxruntime"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms "win64"
 
   files { "gxruntime/ddutil.cpp", "gxruntime/gxaudio.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxchannel.cpp", "gxruntime/gxdevice.cpp", "gxruntime/gxdir.cpp", "gxruntime/gxfilesystem.cpp", "gxruntime/gxfont.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxinput.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxsound.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxaudio.h", "gxruntime/gxcanvas.h", "gxruntime/gxchannel.h", "gxruntime/gxdevice.h", "gxruntime/gxdir.h", "gxruntime/gxfilesystem.h", "gxruntime/gxfont.h", "gxruntime/gxgraphics.h", "gxruntime/gxinput.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxsound.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
 
 project "bbruntime"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms "win64"
 
   files {
     "bbruntime/basic.cpp", "bbruntime/basic.h",
@@ -203,6 +240,8 @@ project "blitz3d"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms "win64"
+
   files {
     "blitz3d/animation.cpp", "blitz3d/animator.cpp", "blitz3d/brush.cpp", "blitz3d/cachedtexture.cpp", "blitz3d/camera.cpp", "blitz3d/collision.cpp", "blitz3d/entity.cpp", "blitz3d/frustum.cpp", "blitz3d/geom.cpp", "blitz3d/light.cpp", "blitz3d/listener.cpp", "blitz3d/loader_3ds.cpp", "blitz3d/loader_b3d.cpp", "blitz3d/loader_x.cpp", "blitz3d/md2model.cpp", "blitz3d/md2norms.cpp", "blitz3d/md2rep.cpp", "blitz3d/meshcollider.cpp", "blitz3d/meshloader.cpp", "blitz3d/meshmodel.cpp", "blitz3d/meshutil.cpp", "blitz3d/mirror.cpp", "blitz3d/model.cpp", "blitz3d/object.cpp", "blitz3d/pivot.cpp", "blitz3d/planemodel.cpp", "blitz3d/q3bspmodel.cpp", "blitz3d/q3bsprep.cpp", "blitz3d/sprite.cpp", "blitz3d/std.cpp", "blitz3d/surface.cpp", "blitz3d/terrain.cpp", "blitz3d/terrainrep.cpp", "blitz3d/texture.cpp", "blitz3d/world.cpp", "blitz3d/animation.h", "blitz3d/animator.h", "blitz3d/blitz3d.h", "blitz3d/brush.h", "blitz3d/cachedtexture.h", "blitz3d/camera.h", "blitz3d/collision.h", "blitz3d/entity.h", "blitz3d/frustum.h", "blitz3d/geom.h", "blitz3d/light.h", "blitz3d/listener.h", "blitz3d/loader_3ds.h", "blitz3d/loader_b3d.h", "blitz3d/loader_x.h", "blitz3d/md2model.h", "blitz3d/md2norms.h", "blitz3d/md2rep.h", "blitz3d/meshcollider.h", "blitz3d/meshloader.h", "blitz3d/meshmodel.h", "blitz3d/meshutil.h", "blitz3d/mirror.h", "blitz3d/model.h", "blitz3d/object.h", "blitz3d/pivot.h", "blitz3d/planemodel.h", "blitz3d/q3bspmodel.h", "blitz3d/q3bsprep.h", "blitz3d/rendercontext.h", "blitz3d/sprite.h", "blitz3d/std.h", "blitz3d/surface.h", "blitz3d/terrain.h", "blitz3d/terrainrep.h", "blitz3d/texture.h", "blitz3d/world.h"
   }
@@ -211,13 +250,14 @@ project "blitz"
   kind "ConsoleApp"
   language "C++"
 
-  files { "blitz/main.cpp", "blitz/libs.cpp" }
+  removeplatforms "win64"
+
+  files { "blitz/main.cpp", "blitz/libs.cpp",  "blitz/resource.h", "blitz/blitz.rc" }
 
   targetdir "_release/bin"
   targetname "blitzcc"
 
   links { "compiler", "linker", "stdutil" }
-  linkoptions { "-mconsole" }
 
   filter "platforms:win32"
     files "bbruntime_dll/dpi.manifest"
@@ -226,6 +266,8 @@ project "blitz"
 project "compiler"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms "win64"
 
   files {
     "compiler/declnode.cpp", "compiler/declnode.h", "compiler/exprnode.cpp", "compiler/exprnode.h", "compiler/node.cpp", "compiler/node.h", "compiler/nodes.h", "compiler/prognode.cpp", "compiler/prognode.h", "compiler/stmtnode.cpp", "compiler/stmtnode.h", "compiler/varnode.cpp", "compiler/varnode.h", "compiler/decl.cpp", "compiler/decl.h", "compiler/environ.cpp", "compiler/environ.h", "compiler/label.h", "compiler/type.cpp", "compiler/type.h", "compiler/parser.cpp", "compiler/parser.h", "compiler/toker.cpp", "compiler/toker.h",
@@ -239,6 +281,8 @@ project "linker_dll"
   kind "SharedLib"
   language "C++"
 
+  removeplatforms "win64"
+
   targetdir "_release/bin"
   targetname "linker"
 
@@ -251,17 +295,23 @@ project "linker"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms "win64"
+
   files { "linker/linker.h", "linker/linker.cpp", "linker/image_util.h", "linker/image_util.cpp" }
 
 project "stdutil"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms "win64"
+
   files { "stdutil/stdutil.h", "stdutil/stdutil.cpp" }
 
 project "freeimage"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms "win64"
 
   includedirs {
     "../freeimage317/Source/Zlib"
