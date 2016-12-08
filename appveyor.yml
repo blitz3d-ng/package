@@ -1,0 +1,28 @@
+shallow_clone: true
+
+os:
+  - Visual Studio 2015
+
+environment:
+  matrix:
+  - TOOLSET: vs2015
+
+clone_script:
+- cmd: >-
+    git clone -q --recursive --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
+
+install:
+  - ps: Start-FileDownload 'https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-windows.zip' 'premake.zip'
+  - 7z x premake.zip
+  - premake5.exe %TOOLSET%
+
+configuration:
+  - debug
+  - release
+
+platform:
+  - win32
+
+build:
+  parallel: true
+  project: build/blitz3d.sln

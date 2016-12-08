@@ -404,17 +404,6 @@ project "tiff4"
   kind "StaticLib"
   language "C"
 
-  -- UGH. Such a hack...
-  local dir="..\\freeimage317\\Source\\LibTIFF4"
-  local in_file,out_file=dir.."\\tif_config.vc.h",dir.."\\tif_config.h"
-  prebuildcommands {
-    "echo #ifndef TIF_CONFIG_H > "..out_file,
-    "echo #define TIF_CONFIG_H >> "..out_file,
-    "echo. >> "..out_file,
-    "type "..in_file.." >> "..out_file,
-    "echo. >> "..out_file,
-    "echo #endif >> "..out_file,
-  }
   defines 'TIFF_SSIZE_FORMAT=""'
 
   files {
