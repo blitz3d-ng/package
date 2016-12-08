@@ -55,21 +55,25 @@ int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 
 	prefs.open();
 
-	string tb;
-	int scale=(int)GetDPIScaleX();
-	if (scale > 1) {
-		tb=prefs.homeDir+"/cfg/dbg_toolbar@"+string(itoa(scale))+".bmp";
-	} else {
+	bool scale_bmp=false;
+	string tb=prefs.homeDir+"/cfg/dbg_toolbar@"+string(itoa(GetDPIScaleX()))+".bmp";;
+
+	if( !PathFileExists(tb.c_str()) ){
 		tb=prefs.homeDir+"/cfg/dbg_toolbar.bmp";
+		scale_bmp=true;
 	}
 
 	//Toolbar
-	HBITMAP toolbmp=(HBITMAP)LoadImage(
-	0,tb.c_str(),IMAGE_BITMAP,0,0,LR_LOADFROMFILE|LR_LOADMAP3DCOLORS );
+	HBITMAP toolbmp=(HBITMAP)LoadImage(	0,tb.c_str(),IMAGE_BITMAP,0,0,LR_LOADFROMFILE|LR_LOADMAP3DCOLORS );
 
 	BITMAP bm;
-	GetObject( toolbmp,sizeof(bm),&bm );
 
+	if( scale_bmp ){
+		GetObject( toolbmp,sizeof(bm),&bm );
+		toolbmp=ScaleBitmap( toolbmp,bm.bmWidth*GetDPIScaleX(),bm.bmHeight*GetDPIScaleY() );
+	}
+
+	GetObject( toolbmp,sizeof(bm),&bm );
 	int n=0;
 	UINT toolbuts[]={ ID_STOP,ID_RUN,ID_STEPOVER,ID_STEPINTO,ID_STEPOUT,ID_END };
 	int toolcnt=sizeof(toolbuts)/sizeof(UINT);

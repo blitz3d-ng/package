@@ -125,18 +125,24 @@ int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 
 	if( !toolbmp ){
 		BITMAP bm;
-		int scale=(int)GetDPIScaleX();
-		string t;
-		if ( scale > 0 ){
-			t=prefs.homeDir+"/cfg/ide_toolbar@"+string(itoa(scale))+".bmp";
-		}else{
+		bool scale_bmp=false;
+		string t=prefs.homeDir+"/cfg/ide_toolbar@"+string(itoa(GetDPIScaleX()))+".bmp";
+
+		if( !PathFileExists(t.c_str()) ){
 			t=prefs.homeDir+"/cfg/ide_toolbar.bmp";
+			scale_bmp=true;
 		}
 		toolbmp=(HBITMAP)LoadImage( 0,t.c_str(),IMAGE_BITMAP,0,0,LR_LOADFROMFILE|LR_LOADMAP3DCOLORS );
 		if( !toolbmp ){
 			AfxMessageBox( "toolbar bitmap failed to load!" );
 			ExitProcess(0);
 		}
+
+		if( scale_bmp ){
+			GetObject( toolbmp,sizeof(bm),&bm );
+			toolbmp=ScaleBitmap( toolbmp,bm.bmWidth*GetDPIScaleX(),bm.bmHeight*GetDPIScaleY() );
+		}
+
 		GetObject( toolbmp,sizeof(bm),&bm );
 		int n=0;
 		for( int k=0;k<toolcnt;++k ) if( toolbuts[k]!=ID_SEPARATOR ) ++n;

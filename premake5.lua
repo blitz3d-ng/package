@@ -148,8 +148,6 @@ project "bblaunch"
   kind "WindowedApp"
   language "C++"
 
-  -- removeplatforms "win64"
-
   files { "bblaunch/bblaunch.cpp" }
 
   filter "platforms:win32 or win64"
@@ -161,8 +159,6 @@ project "bblaunch"
   targetextension ".exe"
 
   characterset "Unicode"
-
-  -- linkoptions "/force"
 
   links { "dxguid", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
 
@@ -178,8 +174,6 @@ project "bbruntime_dll"
 
   -- suppress libraw warnings
   disablewarnings "4217"
-
-  -- linkoptions "/force"
 
   files {
     "bbruntime_dll/bbruntime_dll.h",

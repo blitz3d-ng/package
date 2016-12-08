@@ -360,3 +360,32 @@ qstreambuf::int_type qstreambuf::overflow( qstreambuf::int_type c ){
 	*pptr()=traits_type::to_char_type( c );
 	pbump( 1 );return traits_type::not_eof( c );
 }
+
+HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height ){
+	HDC src,dest;
+	src=CreateCompatibleDC( NULL );
+	dest=CreateCompatibleDC( NULL );
+	BITMAP bm;
+	GetObject( bmp,sizeof(bm),&bm );
+	HBITMAP result=CreateCompatibleBitmap( GetDC(NULL),width,height );
+	HBITMAP old_src=(HBITMAP)SelectObject( src,bmp );
+	HBITMAP old_dest=(HBITMAP)SelectObject( dest,result );
+	StretchBlt( dest,0,0,width,height,src,0,0,bm.bmWidth,bm.bmHeight,SRCCOPY );
+	SelectObject( src, old_src );
+	SelectObject( dest, old_dest );
+	return result;
+}
+// HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height ){
+// 	CDC src,dest;
+// 	src.CreateCompatibleDC( NULL );
+// 	dest.CreateCompatibleDC( NULL );
+// 	BITMAP bm;
+// 	::GetObject( bmp,sizeof(bm),&bm );
+// 	HBITMAP result=::CreateCompatibleBitmap( CClientDC(NULL),width,height );
+// 	HBITMAP old_src=(HBITMAP)::SelectObject( src.m_hDC,bmp );
+// 	HBITMAP old_dest=(HBITMAP)::SelectObject( dest.m_hDC,result );
+// 	dest.StretchBlt( 0,0,width,height,&src,0,0,bm.bmWidth,bm.bmHeight,SRCCOPY );
+// 	::SelectObject( src.m_hDC, old_src );
+// 	::SelectObject( dest.m_hDC, old_dest );
+// 	return result;
+// }

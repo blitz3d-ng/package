@@ -9,6 +9,8 @@
 #include <string>
 #include <iostream>
 
+#include <windows.h>
+
 #ifdef MEMDEBUG
 
 void * _cdecl operator new( size_t size );
@@ -108,5 +110,7 @@ public:
 	void construct( pointer p,const T &q ){ new(p)T(q); }
 	void destroy( pointer p ){ p->~T(); }
 };
+
+HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height );
 
 #endif
