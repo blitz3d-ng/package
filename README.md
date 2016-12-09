@@ -6,6 +6,8 @@ This project is an attempt to revive & modernize Blitz3D.
 
 You'll need a copy of [Visual Studio](https://www.visualstudio.com/vs/community/) and [premake](https://premake.github.io/download.html).
 
+Open up a command prompt via `Start -> Visual Studio 2015 -> Developer Command Prompt for VS2015`.
+
 ```
 > git clone --recursive https://github.com/kfprimm/blitz3d-ng
 > premake5 vs2015 && devenv build\blitz3d.sln /build release
