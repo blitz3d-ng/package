@@ -3,8 +3,8 @@
 #define BBFILESYSTEM_H
 
 #include "bbsys.h"
-#include "../gxruntime/gxfilesystem.h"
+#include "../filesystem/driver.h"
 
-extern gxFileSystem *gx_filesys;
+extern BBFileSystem *gx_filesys;
 
 #endif

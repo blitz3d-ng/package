@@ -25,7 +25,6 @@
 #include "../blitz3d/cachedtexture.h"
 
 gxScene *gx_scene;
-extern gxFileSystem *gx_filesys;
 
 static int tri_count;
 static World *world;

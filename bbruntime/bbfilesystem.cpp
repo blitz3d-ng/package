@@ -4,7 +4,7 @@
 #include "bbstream.h"
 #include <fstream>
 
-gxFileSystem *gx_filesys;
+BBFileSystem *gx_filesys;
 
 struct bbFile : public bbStream{
 	filebuf *buf;
@@ -35,7 +35,7 @@ static inline void debugFile( bbFile *f ){
 	}
 }
 
-static inline void debugDir( gxDir *d ){
+static inline void debugDir( BBDir *d ){
 	if( debug ){
 		if( !gx_filesys->verifyDir( d ) ) RTEX( "Directory does not exist" );
 	}
@@ -79,16 +79,16 @@ int BBCALL bbSeekFile( bbFile *f,int pos ){
 	return f->buf->pubseekoff( pos,ios_base::beg );
 }
 
-gxDir *bbReadDir( BBStr *d ){
+BBDir *bbReadDir( BBStr *d ){
 	string t=*d;delete d;
 	return gx_filesys->openDir( t,0 );
 }
 
-void BBCALL bbCloseDir( gxDir *d ){
+void BBCALL bbCloseDir( BBDir *d ){
 	gx_filesys->closeDir( d );
 }
 
-BBStr *bbNextFile( gxDir *d ){
+BBStr *bbNextFile( BBDir *d ){
 	debugDir( d );
 	return d_new BBStr( d->getNextFile() );
 }
@@ -115,7 +115,7 @@ void BBCALL bbDeleteDir( BBStr *d ){
 int BBCALL bbFileType( BBStr *f ){
 	string t=*f;delete f;
 	int n=gx_filesys->getFileType( t );
-	return n==gxFileSystem::FILE_TYPE_FILE ? 1 : (n==gxFileSystem::FILE_TYPE_DIR ? 2 : 0);
+	return n==BBFileSystem::FILE_TYPE_FILE ? 1 : (n==BBFileSystem::FILE_TYPE_DIR ? 2 : 0);
 }
 
 int BBCALL bbFileSize( BBStr *f ){

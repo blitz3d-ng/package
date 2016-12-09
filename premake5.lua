@@ -184,12 +184,12 @@ project "bbruntime_dll"
   }
 
   links {
-    "bbruntime", "audio", "system", "stdutil"
+    "bbruntime", "audio", "system", "filesystem", "stdutil"
   }
 
   links { "dxguid" }
   links { "blitz3d", "gxruntime" }
-  links { "fmodaudio", "fmodvc", "system.windows" }
+  links { "fmodaudio", "fmodvc", "system.windows", "filesystem.windows" }
   links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
   links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
 
@@ -199,7 +199,7 @@ project "gxruntime"
 
   removeplatforms "win64"
 
-  files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxdevice.cpp", "gxruntime/gxdir.cpp", "gxruntime/gxfilesystem.cpp", "gxruntime/gxfont.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxinput.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxdevice.h", "gxruntime/gxdir.h", "gxruntime/gxfilesystem.h", "gxruntime/gxfont.h", "gxruntime/gxgraphics.h", "gxruntime/gxinput.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
+  files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxdevice.cpp", "gxruntime/gxfont.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxinput.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxdevice.h", "gxruntime/gxfont.h", "gxruntime/gxgraphics.h", "gxruntime/gxinput.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
 
 project "bbruntime"
   kind "StaticLib"
@@ -263,6 +263,23 @@ project "system.windows"
   files { "system.windows/driver.cpp", "system.windows/driver.h" }
 
   links "system"
+
+project "filesystem"
+  kind "StaticLib"
+  language "C++"
+
+  files { "filesystem/driver.cpp", "filesystem/driver.h" }
+
+project "filesystem.windows"
+  kind "StaticLib"
+  language "C++"
+
+  files {
+    "filesystem.windows/driver.cpp", "filesystem.windows/driver.h",
+    "filesystem.windows/dir.cpp", "filesystem.windows/dir.h"
+  }
+
+  links "filesystem"
 
 project "blitz3d"
   kind "StaticLib"

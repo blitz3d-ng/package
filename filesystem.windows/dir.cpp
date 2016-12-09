@@ -1,15 +1,16 @@
 
-#include "std.h"
-#include "gxdir.h"
+#include <windows.h>
+#include "dir.h"
+using namespace std;
 
-gxDir::gxDir( HANDLE h,const WIN32_FIND_DATA &f ):handle(h),findData(f){
+WindowsDir::WindowsDir( HANDLE h,const WIN32_FIND_DATA &f ):handle(h),findData(f){
 }
 
-gxDir::~gxDir(){
+WindowsDir::~WindowsDir(){
 	if( handle!=INVALID_HANDLE_VALUE ) FindClose( handle );
 }
 
-string gxDir::getNextFile(){
+string WindowsDir::getNextFile(){
 	if( handle==INVALID_HANDLE_VALUE ) return "";
 	string t=findData.cFileName;
 	if( !FindNextFile( handle,&findData ) ){

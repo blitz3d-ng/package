@@ -5,10 +5,12 @@
 #include <string>
 #include <windows.h>
 
-class gxDir{
+#include "../filesystem/driver.h"
+
+class WindowsDir : public BBDir{
 public:
-	gxDir( HANDLE h,const WIN32_FIND_DATA &f );
-	~gxDir();
+	WindowsDir( HANDLE h,const WIN32_FIND_DATA &f );
+	~WindowsDir();
 
 private:
 	HANDLE handle;

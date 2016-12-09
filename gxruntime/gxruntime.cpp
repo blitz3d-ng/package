@@ -958,14 +958,14 @@ bool gxRuntime::graphicsLost(){
 	return gfx_lost;
 }
 
-gxFileSystem *gxRuntime::openFileSystem( int flags ){
+BBFileSystem *gxRuntime::openFileSystem( int flags ){
 	if( fileSystem ) return 0;
 
-	fileSystem=d_new gxFileSystem();
+	fileSystem=d_new WindowsFileSystem();
 	return fileSystem;
 }
 
-void gxRuntime::closeFileSystem( gxFileSystem *f ){
+void gxRuntime::closeFileSystem( BBFileSystem *f ){
 	if( !fileSystem || fileSystem!=f ) return;
 
 	delete fileSystem;

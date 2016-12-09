@@ -3,20 +3,15 @@
 #define GXFILESYSTEM_H
 
 #include <string>
+#include "../filesystem/driver.h"
 
-#include "gxdir.h"
-
-class gxFileSystem{
+class WindowsFileSystem : public BBFileSystem{
 public:
-	gxFileSystem();
-	~gxFileSystem();
+	WindowsFileSystem();
+	~WindowsFileSystem();
 
 	/***** GX INTERFACE *****/
 public:
-	enum{
-		FILE_TYPE_NONE=0,FILE_TYPE_FILE=1,FILE_TYPE_DIR=2
-	};
-
 	bool createDir( const std::string &dir );
 	bool deleteDir( const std::string &dir );
 	bool createFile( const std::string &file );
@@ -29,9 +24,9 @@ public:
 	int getFileSize( const std::string &name )const;
 	int getFileType( const std::string &name )const;
 
-	gxDir *openDir( const std::string &name,int flags );
-	gxDir *verifyDir( gxDir *d );
-	void closeDir( gxDir *dir );
+	BBDir *openDir( const std::string &name,int flags );
+	BBDir *verifyDir( BBDir *d );
+	void closeDir( BBDir *dir );
 };
 
 #endif

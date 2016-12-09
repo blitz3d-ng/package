@@ -9,7 +9,7 @@
 #include "../fmodaudio/driver.h"
 #include "gxinput.h"
 #include "gxgraphics.h"
-#include "gxfilesystem.h"
+#include "../filesystem.windows/driver.h"
 #include "gxtimer.h"
 
 #include "../debugger/debugger.h"
@@ -25,7 +25,7 @@ public:
 	FMODAudioDriver *audio;
 	gxInput *input;
 	gxGraphics *graphics;
-	gxFileSystem *fileSystem;
+	WindowsFileSystem *fileSystem;
 
 	void flip( bool vwait );
 	void moveMouse( int x,int y );
@@ -131,8 +131,8 @@ public:
 	void closeGraphics( gxGraphics *graphics );
 	bool graphicsLost();
 
-	gxFileSystem *openFileSystem( int flags );
-	void closeFileSystem( gxFileSystem *filesys );
+	BBFileSystem *openFileSystem( int flags );
+	void closeFileSystem( BBFileSystem *filesys );
 
 	gxTimer *createTimer( int hertz );
 	void freeTimer( gxTimer *timer );
