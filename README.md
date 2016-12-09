@@ -10,6 +10,7 @@ Open up a command prompt via `Start -> Visual Studio 2015 -> Developer Command P
 
 ```
 > git clone --recursive https://github.com/kfprimm/blitz3d-ng
+> cd blitz3d-ng
 > premake5 vs2015 && devenv build\blitz3d.sln /build release
 ```
 
