@@ -236,7 +236,7 @@ void gxScene::setLights(){
 	}else if( fx & FX_CONDLIGHT ){
 		//some lights on
 		for( int n=0;n<_curLights.size();++n ){
-			gxLight *light=_curLights[n];
+			gxLight *light=(gxLight*)_curLights[n];
 			bool enable=light->d3d_light.dltType!=D3DLIGHT_DIRECTIONAL;
 			dir3dDev->LightEnable( n,enable );
 		}
@@ -519,7 +519,7 @@ void gxScene::setRenderState( const RenderState &rs ){
 	}
 }
 
-bool gxScene::begin( const vector<gxLight*> &lights ){
+bool gxScene::begin( const vector<BBLightRep*> &lights ){
 
 	if( dir3dDev->BeginScene()!=D3D_OK ) return false;
 
@@ -537,7 +537,7 @@ bool gxScene::begin( const vector<gxLight*> &lights ){
 	for( n=0;n<8;++n ){
 		if( n<lights.size() ){
 			_curLights.push_back( lights[n] );
-			dir3dDev->SetLight( n,&_curLights[n]->d3d_light );
+			dir3dDev->SetLight( n,&((gxLight*)_curLights[n])->d3d_light );
 		}else{
 			dir3dDev->LightEnable( n,false );
 		}
@@ -603,13 +603,13 @@ void gxScene::end(){
 	target->damage( r );
 }
 
-gxLight *gxScene::createLight( int flags ){
-	gxLight *l=d_new gxLight( this,flags );
+BBLightRep *gxScene::createLight( int flags ){
+	BBLightRep *l=d_new gxLight( this,flags );
 	_allLights.insert(l);
 	return l;
 }
 
-void gxScene::freeLight( gxLight *l ){
+void gxScene::freeLight( BBLightRep *l ){
 	_allLights.erase(l);
 }
 

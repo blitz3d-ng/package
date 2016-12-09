@@ -3,6 +3,9 @@
 #define ENTITY_H
 
 #include <list>
+#include <vector>
+
+using namespace std;
 
 #include "geom.h"
 

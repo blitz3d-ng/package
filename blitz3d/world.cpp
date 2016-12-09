@@ -194,7 +194,7 @@ void World::collide( Object *src ){
 		for( coll_it=collinfos.begin();coll_it!=collinfos.end();++coll_it ){
 
 			vector<Object*>::const_iterator dst_it;
-			
+
 			const vector<Object*> &dst_objs=_objsByType[coll_it->dst_type];
 
 			for( dst_it=dst_objs.begin();dst_it!=dst_objs.end();++dst_it ){
@@ -206,14 +206,14 @@ void World::collide( Object *src ){
 				const Transform &dst_tform=dst->getPrevWorldTform();
 
 				if( y_scale==1 ){
-					if( hitTest( 
+					if( hitTest(
 					coll_line,radius,dst,dst_tform,
 					coll_it->method,&coll ) ){
 						coll_obj=dst;
 						coll_info=coll_it;
 					}
 				}else{
-					if( hitTest( 
+					if( hitTest(
 					coll_line,radius,dst,y_tform * dst_tform,
 					coll_it->method,&coll ) ){
 						coll_obj=dst;
@@ -354,7 +354,7 @@ void World::collide( Object *src ){
 		for( coll_it=collinfos.begin();coll_it!=collinfos.end();++coll_it ){
 
 			vector<Object*>::const_iterator dst_it;
-			
+
 			const vector<Object*> &dst_objs=_objsByType[coll_it->dst_type];
 
 			for( dst_it=dst_objs.begin();dst_it!=dst_objs.end();++dst_it ){
@@ -367,7 +367,7 @@ void World::collide( Object *src ){
 
 				if( y_scale==1 ){
 
-					if( hitTest( 
+					if( hitTest(
 					coll_line,radius,dst,dst_tform,
 					coll_it->method,&coll ) ){
 						coll_obj=dst;
@@ -375,7 +375,7 @@ void World::collide( Object *src ){
 					}
 				}else{
 
-					if( hitTest( 
+					if( hitTest(
 					coll_line,radius,dst,y_tform * dst_tform,
 					coll_it->method,&coll ) ){
 						coll_obj=dst;
@@ -409,7 +409,7 @@ void World::collide( Object *src ){
 		//STOP?
 		if( coll_info->response==COLLISION_RESPONSE_STOP ){
 			dv=sv;
-			break; 
+			break;
 		}
 
 		//find nearest point on plane to dest
@@ -501,7 +501,7 @@ void World::update( float elapsed ){
 
 static Transform cam_tform;		//current camera transform
 
-static vector<gxLight*> _lights;
+static vector<BBLightRep*> _lights;
 static vector<Mirror*> _mirrors;
 static vector<Listener*> _listeners;
 
@@ -513,7 +513,7 @@ struct OrderComp{
 
 struct TransComp{
 	bool operator()( Model *a,Model *b )const{
-		return 
+		return
 		cam_tform.v.distance( a->getRenderTform().v )<
 		cam_tform.v.distance( b->getRenderTform().v );
 	}
@@ -556,7 +556,7 @@ void World::render( float tween ){
 
 		if( !o->beginRender(tween) ) continue;
 
-		if( Light *t=o->getLight() ) _lights.push_back(t->getGxLight());
+		if( Light *t=o->getLight() ) _lights.push_back(t->getRep());
 		else if( Camera *t=o->getCamera() ) cam_que.push(t);
 		else if( Mirror *t=o->getMirror() ) _mirrors.push_back(t);
 		else if( Listener *t=o->getListener() ) _listeners.push_back(t);

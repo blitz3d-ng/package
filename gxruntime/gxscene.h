@@ -10,7 +10,6 @@
 class gxCanvas;
 
 class gxMesh;
-class gxLight;
 class gxGraphics;
 class gxTexture;
 
@@ -22,7 +21,7 @@ public:
 	gxScene( gxGraphics *graphics,gxCanvas *target );
 	~gxScene();
 
-	void setEnabled( gxLight *light,bool enabled );
+	void setEnabled( BBLightRep *light,bool enabled );
 
 	/***** GX INTERFACE *****/
 public:
@@ -74,7 +73,7 @@ public:
 			int blend,flags;
 		}tex_states[MAX_TEXTURES];
 	};
-	
+
 	//state
 	int  hwTexUnits();
 	int  gfxDriverCaps3D();
@@ -99,14 +98,14 @@ public:
 	void setRenderState( const RenderState &state );
 
 	//rendering
-	bool begin( const std::vector<gxLight*> &lights );
+	bool begin( const std::vector<BBLightRep*> &lights );
 	void clear( const float rgb[3],float alpha,float z,bool clear_argb,bool clear_z );
 	void render( gxMesh *mesh,int first_vert,int vert_cnt,int first_tri,int tri_cnt );
 	void end();
 
 	//lighting
-	gxLight *createLight( int flags );
-	void freeLight( gxLight *l );
+	BBLightRep *createLight( int flags );
+	void freeLight( BBLightRep *l );
 
 	//info
 	int getTrianglesDrawn()const;
@@ -134,8 +133,8 @@ private:
 	TexState texstate[MAX_TEXTURES];
 	int n_texs,tris_drawn;
 
-	std::set<gxLight*> _allLights;
-	std::vector<gxLight*> _curLights;
+	std::set<BBLightRep*> _allLights;
+	std::vector<BBLightRep*> _curLights;
 
 	int d3d_rs[160];
 	int d3d_tss[8][32];
