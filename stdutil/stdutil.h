@@ -11,6 +11,10 @@
 
 #include <windows.h>
 
+struct BBEnv{
+	void *window;
+};
+
 #ifdef MEMDEBUG
 
 void * _cdecl operator new( size_t size );

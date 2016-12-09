@@ -82,8 +82,9 @@ bool userlibs_create(){
 	return true;
 }
 
-void userlibs_destroy(){
+bool userlibs_destroy(){
 	for( ;_mods.size();_mods.pop_back() ) FreeLibrary( _mods.back() );
+	return true;
 }
 
 void userlibs_link( void(*rtSym)(const char*,void*) ){

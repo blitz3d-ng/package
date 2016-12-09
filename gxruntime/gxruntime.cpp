@@ -123,6 +123,8 @@ pointer_visible(true),audio(0),input(0),graphics(0),fileSystem(0),use_di(false){
 
 	CoInitialize( 0 );
 
+	env.window=hwnd;
+
 	enumGfx();
 	TIMECAPS tc;
 	timeGetDevCaps( &tc,sizeof(tc) );
@@ -667,23 +669,18 @@ void gxRuntime::setPointerVisible( bool vis ){
 /////////////////
 // AUDIO SETUP //
 /////////////////
-gxAudio *gxRuntime::openAudio( int flags ){
+BBAudioDriver *gxRuntime::openAudio( int flags ){
 	if( audio ) return 0;
-
-	int f_flags=
-		FSOUND_INIT_GLOBALFOCUS|
-		FSOUND_INIT_USEDEFAULTMIDISYNTH;
-
-	FSOUND_SetHWND( hwnd );
-	if( !FSOUND_Init( 44100,1024,f_flags ) ){
+	audio=d_new FMODAudioDriver();
+	if( audio->init( env ) ){
+		return audio;
+	}else{
+		closeAudio( audio );
 		return 0;
 	}
-
-	audio=d_new gxAudio( this );
-	return audio;
 }
 
-void gxRuntime::closeAudio( gxAudio *a ){
+void gxRuntime::closeAudio( BBAudioDriver *a ){
 	if( !audio || audio!=a ) return;
 	delete audio;
 	audio=0;

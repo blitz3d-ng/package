@@ -2,108 +2,106 @@
 #include "std.h"
 #include "bbaudio.h"
 
-gxAudio *gx_audio;
-
-static inline void debugSound( gxSound *s ){
+static inline void debugSound( BBSound *s ){
 	if( debug ){
 		if( !gx_audio->verifySound( s ) ) RTEX( "Sound does not exist" );
 	}
 }
 
-static gxSound *loadSound( BBStr *f,bool use_3d ){
+static BBSound *loadSound( BBStr *f,bool use_3d ){
 	string t=*f;delete f;
 	return gx_audio ? gx_audio->loadSound( t,use_3d ) : 0;
 }
 
-static gxChannel *playMusic( BBStr *f,bool use_3d ){
+static BBChannel *playMusic( BBStr *f,bool use_3d ){
 	string t=*f;delete f;
 	return gx_audio ? gx_audio->playFile( t,use_3d ) : 0;
 }
 
-gxSound * BBCALL bbLoadSound( BBStr *f ){
+BBSound * BBCALL bbLoadSound( BBStr *f ){
 	return loadSound( f,false );
 }
 
-void BBCALL bbFreeSound( gxSound *sound ){
+void BBCALL bbFreeSound( BBSound *sound ){
 	if( !sound ) return;
 	debugSound( sound );
 	gx_audio->freeSound( sound );
 }
 
-void BBCALL bbLoopSound( gxSound *sound ){
+void BBCALL bbLoopSound( BBSound *sound ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setLoop( true );
 }
 
-void BBCALL bbSoundPitch( gxSound *sound,int pitch ){
+void BBCALL bbSoundPitch( BBSound *sound,int pitch ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setPitch( pitch );
 }
 
-void BBCALL bbSoundVolume( gxSound *sound,float volume ){
+void BBCALL bbSoundVolume( BBSound *sound,float volume ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setVolume( volume );
 }
 
-void BBCALL bbSoundPan( gxSound *sound,float pan ){
+void BBCALL bbSoundPan( BBSound *sound,float pan ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setPan( pan );
 }
 
-gxChannel * BBCALL bbPlaySound( gxSound *sound ){
+BBChannel * BBCALL bbPlaySound( BBSound *sound ){
 	if( !sound ) return 0;
 	debugSound( sound );
 	return sound->play();
 }
 
-gxChannel * BBCALL bbPlayMusic( BBStr *f ){
+BBChannel * BBCALL bbPlayMusic( BBStr *f ){
 	return playMusic( f,false );
 }
 
-gxChannel * BBCALL bbPlayCDTrack( int track,int mode ){
+BBChannel * BBCALL bbPlayCDTrack( int track,int mode ){
 	return gx_audio ? gx_audio->playCDTrack( track,mode ) : 0;
 }
 
-void BBCALL bbStopChannel( gxChannel *channel ){
+void BBCALL bbStopChannel( BBChannel *channel ){
 	if( !channel ) return;
 	channel->stop();
 }
 
-void BBCALL bbPauseChannel( gxChannel *channel ){
+void BBCALL bbPauseChannel( BBChannel *channel ){
 	if( !channel ) return;
 	channel->setPaused( true );
 }
 
-void BBCALL bbResumeChannel( gxChannel *channel ){
+void BBCALL bbResumeChannel( BBChannel *channel ){
 	if( !channel ) return;
 	channel->setPaused( false );
 }
 
-void BBCALL bbChannelPitch( gxChannel *channel,int pitch ){
+void BBCALL bbChannelPitch( BBChannel *channel,int pitch ){
 	if( !channel ) return;
 	channel->setPitch( pitch );
 }
 
-void BBCALL bbChannelVolume( gxChannel *channel,float volume ){
+void BBCALL bbChannelVolume( BBChannel *channel,float volume ){
 	if( !channel ) return;
 	channel->setVolume( volume );
 }
 
-void BBCALL bbChannelPan( gxChannel *channel,float pan ){
+void BBCALL bbChannelPan( BBChannel *channel,float pan ){
 	if( !channel ) return;
 	channel->setPan( pan );
 }
 
-int BBCALL bbChannelPlaying( gxChannel *channel ){
+int BBCALL bbChannelPlaying( BBChannel *channel ){
 	return channel ? channel->isPlaying() : 0;
 }
 
 #ifdef PRO
-gxSound * BBCALL bbLoad3DSound( BBStr *f ){
+BBSound * BBCALL bbLoad3DSound( BBStr *f ){
 	return loadSound( f,true );
 }
 #endif

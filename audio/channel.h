@@ -1,12 +1,12 @@
 
-#ifndef GXCHANNEL_H
-#define GXCHANNEL_H
+#ifndef BBCHANNEL_H
+#define BBCHANNEL_H
 
-class gxChannel{
+class BBChannel{
 
 	/***** GX INTERFACE *****/
 public:
-	virtual ~gxChannel();
+	virtual ~BBChannel();
 	//modifiers
 	virtual void stop()=0;
 	virtual void setPaused( bool paused )=0;

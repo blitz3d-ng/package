@@ -1328,7 +1328,7 @@ Entity * BBCALL bbCreateListener( Entity *p,float roll,float dopp,float dist ){
 	return insertEntity( listener,p );
 }
 
-gxChannel * BBCALL bbEmitSound( gxSound *sound,Object *o ){
+BBChannel * BBCALL bbEmitSound( BBSound *sound,Object *o ){
 	if( debug ){
 		debugObject(o);
 		if( !listener ) RTEX( "No Listener created" );

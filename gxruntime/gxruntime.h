@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "gxaudio.h"
+#include "../fmodaudio/driver.h"
 #include "gxinput.h"
 #include "gxgraphics.h"
 #include "gxfilesystem.h"
@@ -17,11 +17,12 @@
 class gxRuntime{
 	/***** INTERNAL INTERFACE *****/
 public:
+	BBEnv env;
 
 	HWND hwnd;
 	HINSTANCE hinst;
 
-	gxAudio *audio;
+	FMODAudioDriver *audio;
 	gxInput *input;
 	gxGraphics *graphics;
 	gxFileSystem *fileSystem;
@@ -120,8 +121,8 @@ public:
 
 	void windowedModeInfo( int *caps );
 
-	gxAudio *openAudio( int flags );
-	void closeAudio( gxAudio *audio );
+	BBAudioDriver *openAudio( int flags );
+	void closeAudio( BBAudioDriver *audio );
 
 	gxInput *openInput( int flags );
 	void closeInput( gxInput *input );

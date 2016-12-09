@@ -95,46 +95,21 @@ void BBCALL _bbDebugLeave(){
 	gx_runtime->debugLeave();
 }
 
-bool basic_create();
-bool basic_destroy();
-void basic_link( void (*rtSym)( const char *sym,void *pc ) );
-bool math_create();
-bool math_destroy();
-void math_link( void (*rtSym)( const char *sym,void *pc ) );
-bool string_create();
-bool string_destroy();
-void string_link( void (*rtSym)( const char *sym,void *pc ) );
-bool stream_create();
-bool stream_destroy();
-void stream_link( void (*rtSym)( const char *sym,void *pc ) );
-bool sockets_create();
-bool sockets_destroy();
-void sockets_link( void (*rtSym)( const char *sym,void *pc ) );
-bool filesystem_create();
-bool filesystem_destroy();
-void filesystem_link( void (*rtSym)( const char *sym,void *pc ) );
-bool bank_create();
-bool bank_destroy();
-void bank_link( void (*rtSym)( const char *sym,void *pc ) );
-bool graphics_create();
-bool graphics_destroy();
-void graphics_link( void (*rtSym)( const char *sym,void *pc ) );
-bool input_create();
-bool input_destroy();
-void input_link( void (*rtSym)( const char *sym,void *pc ) );
-bool audio_create();
-bool audio_destroy();
-void audio_link( void (*rtSym)( const char *sym,void *pc ) );
-// bool multiplay_create();
-// bool multiplay_destroy();
-// void multiplay_link( void (*rtSym)( const char *sym,void *pc ) );
-bool userlibs_create();
-void userlibs_destroy();
-void userlibs_link( void (*rtSym)( const char *sym,void *pc ) );
+BBMODULE_DECL( basic );
+BBMODULE_DECL( math );
+BBMODULE_DECL( string );
+BBMODULE_DECL( system );
+BBMODULE_DECL( stream );
+BBMODULE_DECL( sockets );
+BBMODULE_DECL( filesystem );
+BBMODULE_DECL( bank );
+BBMODULE_DECL( graphics );
+BBMODULE_DECL( input );
+BBMODULE_DECL( audio );
+BBMODULE_DECL( multiplay );
+BBMODULE_DECL( userlibs );
 #ifdef PRO
-bool blitz3d_create();
-bool blitz3d_destroy();
-void blitz3d_link( void (*rtSym)( const char *sym,void *pc ) );
+BBMODULE_DECL( blitz3d );
 #else
 bool blitz3d_create(){ return true; }
 bool blitz3d_destroy(){ return true; }
@@ -167,6 +142,7 @@ void bbruntime_link( void (*rtSym)( const char *sym,void *pc ) ){
 	basic_link( rtSym );
 	math_link( rtSym );
 	string_link( rtSym );
+	system_link( rtSym );
 	stream_link( rtSym );
 	sockets_link( rtSym );
 	filesystem_link( rtSym );
@@ -189,35 +165,38 @@ bool bbruntime_create(){
 	if( basic_create() ){
 		if( math_create() ){
 			if( string_create() ){
-				if( stream_create() ){
-					if( sockets_create() ){
-						if( filesystem_create() ){
-							if( bank_create() ){
-								if( graphics_create() ){
-									if( input_create() ){
-										if( audio_create() ){
-											// if( multiplay_create() ){
-												if( blitz3d_create() ){
-													if( userlibs_create() ){
-														return true;
-													}
-												}else sue( "blitz3d_create failed" );
-											// 	multiplay_destroy();
-											// }else sue( "multiplay_create failed" );
-											audio_destroy();
-										}else sue( "audio_create failed" );
-										input_destroy();
-									}else sue( "input_create failed" );
-									graphics_destroy();
-								}else sue( "graphics_create failed" );
-								bank_destroy();
-							}else sue( "bank_create failed" );
-							filesystem_destroy();
-						}else sue( "filesystem_create failed" );
-						sockets_destroy();
-					}else sue( "sockets_create failed" );
-					stream_destroy();
-				}else sue( "stream_create failed" );
+				if( system_create() ){
+					if( stream_create() ){
+						if( sockets_create() ){
+							if( filesystem_create() ){
+								if( bank_create() ){
+									if( graphics_create() ){
+										if( input_create() ){
+											if( audio_create() ){
+												// if( multiplay_create() ){
+													if( blitz3d_create() ){
+														if( userlibs_create() ){
+															return true;
+														}
+													}else sue( "blitz3d_create failed" );
+												// 	multiplay_destroy();
+												// }else sue( "multiplay_create failed" );
+												audio_destroy();
+											}else sue( "audio_create failed" );
+											input_destroy();
+										}else sue( "input_create failed" );
+										graphics_destroy();
+									}else sue( "graphics_create failed" );
+									bank_destroy();
+								}else sue( "bank_create failed" );
+								filesystem_destroy();
+							}else sue( "filesystem_create failed" );
+							sockets_destroy();
+						}else sue( "sockets_create failed" );
+						stream_destroy();
+					}else sue( "stream_create failed" );
+					system_destroy();
+				}else sue( "system_create failed" );
 				string_destroy();
 			}else sue( "string_create failed" );
 			math_destroy();

@@ -2,17 +2,17 @@
 #ifndef GXSOUND_H
 #define GXSOUND_H
 
-#include "gxchannel.h"
+#include "../audio/driver.h"
 
-class gxAudio;
+class FMODAudioDriver;
 struct FSOUND_SAMPLE;
 
-class gxSound{
+class FMODSound : public BBSound{
 public:
-	gxAudio *audio;
+	FMODAudioDriver *audio;
 
-	gxSound( gxAudio *audio,FSOUND_SAMPLE *sample );
-	~gxSound();
+	FMODSound( FMODAudioDriver *audio,FSOUND_SAMPLE *sample );
+	~FMODSound();
 
 private:
 	bool defs_valid;
@@ -25,8 +25,8 @@ private:
 	/***** GX INTERFACE *****/
 public:
 	//actions
-	gxChannel *play();
-	gxChannel *play3d( const float pos[3],const float vel[3] );
+	BBChannel *play();
+	BBChannel *play3d( const float pos[3],const float vel[3] );
 
 	//modifiers
 	void setLoop( bool loop );

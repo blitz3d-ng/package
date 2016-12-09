@@ -18,6 +18,10 @@ This document lays out what we've changed from the original Blitz3D.
 
 - DirectPlay related commands have been disabled.
 
+### System
+
+- Add ScreenWidth & ScreenHeight for getting the desktop width/height.
+
 ## IDE
 
 - It is now DPI "aware."

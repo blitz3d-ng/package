@@ -1,12 +1,18 @@
 
-#include "std.h"
-#include "gxaudio.h"
+#include "../stdutil/stdutil.h"
+#include <vector>
+#include <map>
+#include <set>
+using namespace std;
 
-struct StaticChannel : public gxChannel{
+#include <fmod.h>
+#include "driver.h"
+
+struct StaticChannel : public BBChannel{
 	virtual void play()=0;
 };
 
-struct SoundChannel : public gxChannel{
+struct SoundChannel : public BBChannel{
 	SoundChannel():channel(-1){
 	}
 	void set( int n ){
@@ -37,12 +43,12 @@ private:
 	int channel;
 };
 
-struct CDChannel : public gxChannel{
+struct CDChannel : public BBChannel{
 	void play( int track,int mode ){
 		stop();
 		int cd_mode=FSOUND_CD_PLAYONCE;
-		if( mode==gxAudio::CD_MODE_LOOP ) cd_mode=FSOUND_CD_PLAYLOOPED;
-		else if( mode==gxAudio::CD_MODE_ALL ) cd_mode=FSOUND_CD_PLAYCONTINUOUS;
+		if( mode==BBAudioDriver::CD_MODE_LOOP ) cd_mode=FSOUND_CD_PLAYLOOPED;
+		else if( mode==BBAudioDriver::CD_MODE_ALL ) cd_mode=FSOUND_CD_PLAYCONTINUOUS;
 		FSOUND_CD_SetPlayMode( 0,cd_mode );
 		FSOUND_CD_Play( 0,track );
 	}
@@ -135,15 +141,15 @@ private:
 	FMUSIC_MODULE *module;
 };
 
-static set<gxSound*> sound_set;
-static vector<gxChannel*> channels;
+static set<FMODSound*> sound_set;
+static vector<BBChannel*> channels;
 static map<string,StaticChannel*> songs;
 static CDChannel *cdChannel;
 
 static int next_chan;
 static vector<SoundChannel*> soundChannels;
 
-static gxChannel *allocSoundChannel( int n ){
+static BBChannel *allocSoundChannel( int n ){
 
 	SoundChannel *chan=0;
 	for( int k=0;k<soundChannels.size();++k ){
@@ -170,17 +176,10 @@ static gxChannel *allocSoundChannel( int n ){
 	return chan;
 }
 
-gxAudio::gxAudio( gxRuntime *r ):
-runtime(r){
-	next_chan=0;
-	soundChannels.resize( 4096 );
-	for( int k=0;k<4096;++k ) soundChannels[k]=0;
-
-	cdChannel=d_new CDChannel();
-	channels.push_back( cdChannel );
+FMODAudioDriver::FMODAudioDriver(){
 }
 
-gxAudio::~gxAudio(){
+FMODAudioDriver::~FMODAudioDriver(){
 	//free all channels
 	for( ;channels.size();channels.pop_back() ) delete channels.back();
 	//free all sound_set
@@ -191,13 +190,33 @@ gxAudio::~gxAudio(){
 	FSOUND_Close();
 }
 
-gxChannel *gxAudio::play( FSOUND_SAMPLE *sample ){
+bool FMODAudioDriver::init( const BBEnv &env ){
+	int f_flags=
+		FSOUND_INIT_GLOBALFOCUS|
+		FSOUND_INIT_USEDEFAULTMIDISYNTH;
+
+	FSOUND_SetHWND( (HWND)env.window );
+	if( !FSOUND_Init( 44100,1024,f_flags ) ){
+		return false;
+	}
+
+	next_chan=0;
+	soundChannels.resize( 4096 );
+	for( int k=0;k<4096;++k ) soundChannels[k]=0;
+
+	cdChannel=d_new CDChannel();
+	channels.push_back( cdChannel );
+
+	return true;
+}
+
+BBChannel *FMODAudioDriver::play( FSOUND_SAMPLE *sample ){
 
 	int n=FSOUND_PlaySound( FSOUND_FREE,sample );
 	return n>=0 ? allocSoundChannel( n ) : 0;
 }
 
-gxChannel *gxAudio::play3d( FSOUND_SAMPLE *sample,const float pos[3],const float vel[3] ){
+BBChannel *FMODAudioDriver::play3d( FSOUND_SAMPLE *sample,const float pos[3],const float vel[3] ){
 
 	int n=FSOUND_PlaySoundEx( FSOUND_FREE,sample,0,true );
 	if( n<0 ) return 0;
@@ -206,51 +225,51 @@ gxChannel *gxAudio::play3d( FSOUND_SAMPLE *sample,const float pos[3],const float
 	return allocSoundChannel( n );
 }
 
-void gxAudio::pause(){
+void FMODAudioDriver::pause(){
 }
 
-void gxAudio::resume(){
+void FMODAudioDriver::resume(){
 }
 
-gxSound *gxAudio::loadSound( const string &f,bool use3d ){
+BBSound *FMODAudioDriver::loadSound( const string &f,bool use3d ){
 
 	int flags=FSOUND_NORMAL | (use3d ? FSOUND_FORCEMONO : FSOUND_2D);
 
 	FSOUND_SAMPLE *sample=FSOUND_Sample_Load( FSOUND_FREE,f.c_str(),flags,0,0 );
 	if( !sample ) return 0;
 
-	gxSound *sound=d_new gxSound( this,sample );
+	FMODSound *sound=d_new FMODSound( this,sample );
 	sound_set.insert( sound );
 	return sound;
 }
 
-gxSound *gxAudio::verifySound( gxSound *s ){
-	return sound_set.count( s )  ? s : 0;
+BBSound *FMODAudioDriver::verifySound( BBSound *s ){
+	return sound_set.count( (FMODSound*)s )  ? s : 0;
 }
 
-void gxAudio::freeSound( gxSound *s ){
-	if( sound_set.erase( s ) ) delete s;
+void FMODAudioDriver::freeSound( BBSound *s ){
+	if( sound_set.erase( (FMODSound*)s ) ) delete s;
 }
 
-void gxAudio::setPaused( bool paused ){
+void FMODAudioDriver::setPaused( bool paused ){
 	FSOUND_SetPaused( FSOUND_ALL,paused );
 }
 
-void gxAudio::setVolume( float volume ){
+void FMODAudioDriver::setVolume( float volume ){
 }
 
-void gxAudio::set3dOptions( float roll,float dopp,float dist ){
+void FMODAudioDriver::set3dOptions( float roll,float dopp,float dist ){
 	FSOUND_3D_SetRolloffFactor( roll );
 	FSOUND_3D_SetDopplerFactor( dopp );
 	FSOUND_3D_SetDistanceFactor( dist );
 }
 
-void gxAudio::set3dListener( const float pos[3],const float vel[3],const float forward[3],const float up[3] ){
+void FMODAudioDriver::set3dListener( const float pos[3],const float vel[3],const float forward[3],const float up[3] ){
 	FSOUND_3D_Listener_SetAttributes( (float*)pos,(float*)vel,forward[0],forward[1],forward[2],up[0],up[1],up[2] );
 	FSOUND_Update();
 }
 
-gxChannel *gxAudio::playFile( const string &t,bool use_3d ){
+BBChannel *FMODAudioDriver::playFile( const string &t,bool use_3d ){
 	string f=tolower( t );
 	StaticChannel *chan=0;
 	map<string,StaticChannel*>::iterator it=songs.find(f);
@@ -258,7 +277,7 @@ gxChannel *gxAudio::playFile( const string &t,bool use_3d ){
 		chan=it->second;
 		chan->play();
 		return chan;
-	}else if( 
+	}else if(
 		f.find( ".raw" )!=string::npos ||
 		f.find( ".wav" )!=string::npos ||
 		f.find( ".mp2" )!=string::npos ||
@@ -279,7 +298,7 @@ gxChannel *gxAudio::playFile( const string &t,bool use_3d ){
 	return chan;
 }
 
-gxChannel *gxAudio::playCDTrack( int track,int mode ){
+BBChannel *FMODAudioDriver::playCDTrack( int track,int mode ){
 	cdChannel->play( track,mode );
 	return cdChannel;
 }

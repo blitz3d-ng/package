@@ -1,8 +1,7 @@
 
 #include "std.h"
 #include "listener.h"
-
-extern gxAudio *gx_audio;
+#include "../audio/driver.h"
 
 Listener::Listener( float roll,float dopp,float dist ){
 	if( !gx_audio ) return;

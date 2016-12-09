@@ -4,9 +4,6 @@
 
 #include "object.h"
 
-class gxSound;
-class gxChannel;
-
 class Emitter : public Object{
 public:
 	Emitter();
@@ -21,12 +18,12 @@ public:
 	void beginRender( float tween );
 
 	//Public interface
-	gxChannel *emitSound( gxSound *sound );
+	BBChannel *emitSound( BBSound *sound );
 
 private:
 	Vector pos,vel;
 
-	vector<gxChannel*> channels;
+	vector<BBChannel*> channels;
 };
 
 #endif

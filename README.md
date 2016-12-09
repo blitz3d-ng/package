@@ -7,6 +7,7 @@ This project is an attempt to revive & modernize Blitz3D.
 You'll need a copy of [Visual Studio](https://www.visualstudio.com/vs/community/) and [premake](https://premake.github.io/download.html).
 
 ```
+> git clone --recursive https://github.com/kfprimm/blitz3d-ng
 > premake5 vs2015 && devenv build\blitz3d.sln /build release
 ```
 
@@ -14,6 +15,8 @@ You'll need a copy of [Visual Studio](https://www.visualstudio.com/vs/community/
 
 - Add misc. quick fixes & improvements (i.e., add "missing" features like [BlitzClose](http://www.blitzbasic.com/codearcs/codearcs.php?code=832).)
 - Improve help files & styling.
+- Swap out FMOD for something with a more permissive license.
+- Integrate [Assimp](http://www.assimp.org/) to that we don't depend on the DirectX X library anymore.
 - OpenGL & newer Direct3D renderers.
 - 64-bit support.
 - macOS, Linux, Android, iOS support.
