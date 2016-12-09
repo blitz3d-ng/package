@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "blitzide.h"
 #include "editor.h"
+#include "dpi.h"
 
 static bool locked;
 
@@ -105,7 +106,7 @@ DWORD CALLBACK Editor::streamOut( DWORD_PTR cookie,LPBYTE buff,LONG cnt,LONG *do
 }
 
 Editor::Editor( EditorListener *l ):
-listener(l),sizing(false),tabber_width(170),
+listener(l),sizing(false),
 fmtBusy(false),findOnly(false),found(false),
 finder(0),selStart(0),selEnd(0),
 findFlags(0),lineToFmt(-1){
@@ -114,6 +115,7 @@ findFlags(0),lineToFmt(-1){
 	funcList.setListener( this );
 	typeList.setListener( this );
 	labsList.setListener( this );
+	tabber_width=170*GetDPIScaleX();
 }
 
 Editor::~Editor(){
