@@ -189,7 +189,7 @@ project "bbruntime_dll"
 
   links { "dxguid" }
   links { "blitz3d", "gxruntime" }
-  links { "fmodaudio", "fmodvc", "system.windows", "filesystem.windows" }
+  links { "audio.fmod", "fmodvc", "system.windows", "filesystem.windows" }
   links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
   links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
 
@@ -239,13 +239,13 @@ project "audio"
     "audio/driver.cpp", "audio/driver.h",
   }
 
-project "fmodaudio"
+project "audio.fmod"
   kind "StaticLib"
   language "C++"
 
   files {
-    "fmodaudio/sound.cpp", "audio/sound.h",
-    "fmodaudio/driver.cpp", "fmodaudio/driver.h",
+    "audio.fmod/sound.cpp", "audio/sound.h",
+    "audio.fmod/driver.cpp", "audio.fmod/driver.h",
   }
 
   links "audio"

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "../fmodaudio/driver.h"
+#include "../audio.fmod/driver.h"
 #include "gxinput.h"
 #include "gxgraphics.h"
 #include "../filesystem.windows/driver.h"
