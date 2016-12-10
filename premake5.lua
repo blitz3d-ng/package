@@ -54,7 +54,7 @@ workspace "blitz3d"
 
     targetsuffix "64"
 
-    defines { "WIN64", "TARGETSUFFIX=\"64\"" }
+    defines { "WIN32", "WIN64", "TARGETSUFFIX=\"64\"" }
 
 project "blitzide"
   kind "WindowedApp"
@@ -207,8 +207,6 @@ project "bbruntime"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms "win64"
-
   files {
     "bbruntime/basic.cpp", "bbruntime/basic.h",
     "bbruntime/bbaudio.cpp", "bbruntime/bbaudio.h",
@@ -287,8 +285,6 @@ project "blitz3d"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms "win64"
-
   files {
     "blitz3d/animation.cpp", "blitz3d/animator.cpp", "blitz3d/brush.cpp", "blitz3d/cachedtexture.cpp", "blitz3d/camera.cpp", "blitz3d/collision.cpp", "blitz3d/entity.cpp", "blitz3d/frustum.cpp", "blitz3d/geom.cpp", "blitz3d/light.cpp", "blitz3d/listener.cpp", "blitz3d/loader_3ds.cpp", "blitz3d/loader_b3d.cpp", "blitz3d/loader_x.cpp", "blitz3d/md2model.cpp", "blitz3d/md2norms.cpp", "blitz3d/md2rep.cpp", "blitz3d/meshcollider.cpp", "blitz3d/meshloader.cpp", "blitz3d/meshmodel.cpp", "blitz3d/meshutil.cpp", "blitz3d/mirror.cpp", "blitz3d/model.cpp", "blitz3d/object.cpp", "blitz3d/pivot.cpp", "blitz3d/planemodel.cpp", "blitz3d/q3bspmodel.cpp", "blitz3d/q3bsprep.cpp", "blitz3d/sprite.cpp", "blitz3d/std.cpp", "blitz3d/surface.cpp", "blitz3d/terrain.cpp", "blitz3d/terrainrep.cpp", "blitz3d/texture.cpp", "blitz3d/world.cpp", "blitz3d/animation.h", "blitz3d/animator.h", "blitz3d/blitz3d.h", "blitz3d/brush.h", "blitz3d/cachedtexture.h", "blitz3d/camera.h", "blitz3d/collision.h", "blitz3d/entity.h", "blitz3d/frustum.h", "blitz3d/geom.h", "blitz3d/light.h", "blitz3d/listener.h", "blitz3d/loader_3ds.h", "blitz3d/loader_b3d.h", "blitz3d/loader_x.h", "blitz3d/md2model.h", "blitz3d/md2norms.h", "blitz3d/md2rep.h", "blitz3d/meshcollider.h", "blitz3d/meshloader.h", "blitz3d/meshmodel.h", "blitz3d/meshutil.h", "blitz3d/mirror.h", "blitz3d/model.h", "blitz3d/object.h", "blitz3d/pivot.h", "blitz3d/planemodel.h", "blitz3d/q3bspmodel.h", "blitz3d/q3bsprep.h", "blitz3d/rendercontext.h", "blitz3d/sprite.h", "blitz3d/std.h", "blitz3d/surface.h", "blitz3d/terrain.h", "blitz3d/terrainrep.h", "blitz3d/texture.h", "blitz3d/world.h"
   }
@@ -365,16 +361,11 @@ project "stdutil"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms "win64"
-
   files { "stdutil/stdutil.h", "stdutil/stdutil.cpp" }
 
 project "freeimage"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C++"
-
-  removeplatforms "win64"
 
   includedirs {
     "freeimage317/Source/LibJXR/jxrgluelib",
@@ -394,7 +385,6 @@ project "freeimage"
   }
 
 project "jpeg"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C"
 
@@ -403,7 +393,6 @@ project "jpeg"
   }
 
 project "jxr"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C"
 
@@ -419,7 +408,6 @@ project "jxr"
   }
 
 project "openexr"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C++"
 
@@ -439,7 +427,6 @@ project "openexr"
   }
 
 project "openjpeg"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C"
 
@@ -448,7 +435,6 @@ project "openjpeg"
   }
 
 project "png"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C"
 
@@ -459,7 +445,6 @@ project "png"
   }
 
 project "raw"
-  removeplatforms "win64"
   kind "StaticLib"
 
   includedirs "freeimage317/Source/LibRawLite"
@@ -471,7 +456,6 @@ project "raw"
   }
 
 project "tiff4"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C"
 
@@ -482,7 +466,6 @@ project "tiff4"
   }
 
 project "webp"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C"
 
@@ -491,7 +474,6 @@ project "webp"
   }
 
 project "zlib"
-  removeplatforms "win64"
   kind "StaticLib"
   language "C"
 
