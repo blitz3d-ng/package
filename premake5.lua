@@ -22,6 +22,8 @@ workspace "blitz3d"
     "/Gy" -- function level linking: true
   }
 
+  -- disablewarnings { "4018","4244" }
+
   includedirs {
     "freeimage317/Source",
   }
@@ -173,7 +175,7 @@ project "bbruntime_dll"
   targetname "runtime"
 
   -- suppress libraw warnings
-  disablewarnings "4217"
+  linkoptions "/ignore:4217"
 
   files {
     "bbruntime_dll/bbruntime_dll.h",
@@ -184,11 +186,11 @@ project "bbruntime_dll"
   }
 
   links {
-    "bbruntime", "audio", "system", "filesystem", "stdutil"
+    "bbruntime", "audio", "system", "filesystem", "stdutil", "blitz2d", "graphics"
   }
 
   links { "dxguid" }
-  links { "blitz3d", "gxruntime" }
+  links {  "blitz3d", "gxruntime" }
   links { "audio.fmod", "fmodvc", "system.windows", "filesystem.windows" }
   links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
   links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
@@ -199,7 +201,7 @@ project "gxruntime"
 
   removeplatforms "win64"
 
-  files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxdevice.cpp", "gxruntime/gxfont.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxinput.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxdevice.h", "gxruntime/gxfont.h", "gxruntime/gxgraphics.h", "gxruntime/gxinput.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
+  files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxdevice.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxinput.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxdevice.h", "gxruntime/gxgraphics.h", "gxruntime/gxinput.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
 
 project "bbruntime"
   kind "StaticLib"
@@ -289,6 +291,21 @@ project "blitz3d"
 
   files {
     "blitz3d/animation.cpp", "blitz3d/animator.cpp", "blitz3d/brush.cpp", "blitz3d/cachedtexture.cpp", "blitz3d/camera.cpp", "blitz3d/collision.cpp", "blitz3d/entity.cpp", "blitz3d/frustum.cpp", "blitz3d/geom.cpp", "blitz3d/light.cpp", "blitz3d/listener.cpp", "blitz3d/loader_3ds.cpp", "blitz3d/loader_b3d.cpp", "blitz3d/loader_x.cpp", "blitz3d/md2model.cpp", "blitz3d/md2norms.cpp", "blitz3d/md2rep.cpp", "blitz3d/meshcollider.cpp", "blitz3d/meshloader.cpp", "blitz3d/meshmodel.cpp", "blitz3d/meshutil.cpp", "blitz3d/mirror.cpp", "blitz3d/model.cpp", "blitz3d/object.cpp", "blitz3d/pivot.cpp", "blitz3d/planemodel.cpp", "blitz3d/q3bspmodel.cpp", "blitz3d/q3bsprep.cpp", "blitz3d/sprite.cpp", "blitz3d/std.cpp", "blitz3d/surface.cpp", "blitz3d/terrain.cpp", "blitz3d/terrainrep.cpp", "blitz3d/texture.cpp", "blitz3d/world.cpp", "blitz3d/animation.h", "blitz3d/animator.h", "blitz3d/blitz3d.h", "blitz3d/brush.h", "blitz3d/cachedtexture.h", "blitz3d/camera.h", "blitz3d/collision.h", "blitz3d/entity.h", "blitz3d/frustum.h", "blitz3d/geom.h", "blitz3d/light.h", "blitz3d/listener.h", "blitz3d/loader_3ds.h", "blitz3d/loader_b3d.h", "blitz3d/loader_x.h", "blitz3d/md2model.h", "blitz3d/md2norms.h", "blitz3d/md2rep.h", "blitz3d/meshcollider.h", "blitz3d/meshloader.h", "blitz3d/meshmodel.h", "blitz3d/meshutil.h", "blitz3d/mirror.h", "blitz3d/model.h", "blitz3d/object.h", "blitz3d/pivot.h", "blitz3d/planemodel.h", "blitz3d/q3bspmodel.h", "blitz3d/q3bsprep.h", "blitz3d/rendercontext.h", "blitz3d/sprite.h", "blitz3d/std.h", "blitz3d/surface.h", "blitz3d/terrain.h", "blitz3d/terrainrep.h", "blitz3d/texture.h", "blitz3d/world.h"
+  }
+
+project "blitz2d"
+  kind "StaticLib"
+  language "C++"
+
+  files { "blitz2d/font.h", "blitz2d/font.cpp" }
+
+project "graphics"
+  kind "StaticLib"
+  language "C++"
+
+  files {
+    "graphics/graphics.h", "graphics/graphics.cpp",
+    "graphics/canvas.h", "graphics/canvas.cpp"
   }
 
 project "blitz"

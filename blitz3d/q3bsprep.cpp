@@ -220,7 +220,7 @@ void Q3BSPRep::createLightMaps(){
 	for( k=0;k<n_lmaps;++k ){
 		Texture tex( 128,128,1+8+16+32,1 );
 		tex.setBlend( gxScene::BLEND_ADD );
-		gxCanvas *c=tex.getCanvas(0);
+		BBCanvas *c=tex.getCanvas(0);
 		c->lock();
 		for( int y=0;y<128;++y ){
 			for( int x=0;x<128;++x ){

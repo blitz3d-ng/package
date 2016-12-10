@@ -250,7 +250,7 @@ void gxCanvas::damage( const RECT &r )const{
 	++mod_cnt;if( cm_mask ) updateBitMask( r );
 }
 
-void gxCanvas::setFont( gxFont *f ){
+void gxCanvas::setFont( BBFont *f ){
 	font=f;
 }
 
@@ -315,7 +315,7 @@ void gxCanvas::line( int x0,int y0,int x1,int y1 ){
 
 	while( true ){
 		clip0=0;clip1=0;
-		
+
 		if(y0>cy1)clip0|=1;else if(y0<cy0)clip0|=2;
 		if(x0>cx1)clip0|=4;else if(x0<cx0)clip0|=8;
 		if(y1>cy1)clip1|=1;else if(y1<cy0)clip1|=2;
@@ -357,7 +357,7 @@ void gxCanvas::line( int x0,int y0,int x1,int y1 ){
 			setPixelFast( x0,y0,color_argb );
 			y0+=sy;ddf+=padj;if( ddf>=0 ){ x0+=sx;ddf-=sadj; }
 		}
-	
+
 	}
 	unlock();
 }
@@ -444,7 +444,8 @@ void gxCanvas::oval( int x1,int y1,int w,int h,bool solid ){
 	damage( dest );
 }
 
-void gxCanvas::blit( int x,int y,gxCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
+void gxCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid ){
+	gxCanvas *src=(gxCanvas*)s;
 	x+=origin_x-src->handle_x;
 	y+=origin_y-src->handle_y;
 	Rect dest_r( x,y,src_w,src_h ),src_r( src_x,src_y,src_w,src_h );
@@ -519,7 +520,8 @@ unsigned gxCanvas::getClsColor()const{
 	return format.toARGB( clsColor_surf );
 }
 
-bool gxCanvas::collide( int x1,int y1,const gxCanvas *i2,int x2,int y2,bool solid )const{
+bool gxCanvas::collide( int x1,int y1,const BBCanvas *_i2,int x2,int y2,bool solid )const{
+	const gxCanvas *i2=(gxCanvas*)_i2;
 
 	x1-=handle_x;x2-=i2->handle_x;
 	if( x1+clip_rect.right<=x2 || x1>=x2+i2->clip_rect.right ) return false;
@@ -683,7 +685,12 @@ unsigned gxCanvas::getPixel( int x,int y )const{
 	return p;
 }
 
-void gxCanvas::copyPixelFast( int x,int y,gxCanvas *src,int src_x,int src_y ){
+unsigned gxCanvas::getPixelFast( int x,int y )const{
+	return format.getPixel( locked_surf+y*locked_pitch+x*format.getPitch() );
+}
+
+void gxCanvas::copyPixelFast( int x,int y,BBCanvas *s,int src_x,int src_y ){
+	gxCanvas *src=(gxCanvas*)s;
 	switch( format.getDepth() ){
 	case 16:
 		*(short*)(locked_surf+y*locked_pitch+x*2)=
@@ -701,7 +708,8 @@ void gxCanvas::copyPixelFast( int x,int y,gxCanvas *src,int src_x,int src_y ){
 	}
 }
 
-void gxCanvas::copyPixel( int x,int y,gxCanvas *src,int src_x,int src_y ){
+void gxCanvas::copyPixel( int x,int y,BBCanvas *s,int src_x,int src_y ){
+	gxCanvas *src=(gxCanvas*)s;
 	x+=origin_x;if( x<viewport.left || x>=viewport.right ) return;
 	y+=origin_y;if( y<viewport.top || y>=viewport.bottom ) return;
 	src_x+=src->origin_x;if( src_x<src->viewport.left || src_x>=src->viewport.right ) return;

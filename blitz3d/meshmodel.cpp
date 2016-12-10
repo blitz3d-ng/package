@@ -3,8 +3,6 @@
 #include "meshmodel.h"
 #include "meshcollider.h"
 
-extern gxGraphics *gx_graphics;
-
 struct MeshModel::Rep : public Surface::Monitor{
 
 	int ref_cnt;

@@ -4,11 +4,6 @@
 #include "texture.h"
 #include "cachedtexture.h"
 
-#include "../gxruntime/gxgraphics.h"
-
-extern gxScene *gx_scene;
-extern gxGraphics *gx_graphics;
-
 struct Filter{
 	string t;
 	int flags;
@@ -33,7 +28,7 @@ struct Texture::Rep{
 
 	int ref_cnt;
 	CachedTexture cached_tex;
-	vector<gxCanvas*> tex_frames;
+	vector<BBCanvas*> tex_frames;
 
 	int tex_blend,tex_flags;
 	bool transparent;
@@ -48,8 +43,8 @@ struct Texture::Rep{
 	sx(1),sy(1),tx(0),ty(0),rot(0),mat_used(false){
 		tex_frames=cached_tex.getFrames();
 		transparent=
-			(flags & gxCanvas::CANVAS_TEX_ALPHA) &&
-			!(flags & gxCanvas::CANVAS_TEX_MASK);
+			(flags & BBCanvas::CANVAS_TEX_ALPHA) &&
+			!(flags & BBCanvas::CANVAS_TEX_MASK);
 		memset( &matrix,0,sizeof( matrix ) );
 	}
 
@@ -59,8 +54,8 @@ struct Texture::Rep{
 	sx(1),sy(1),tx(0),ty(0),rot(0),mat_used(false){
 		tex_frames=cached_tex.getFrames();
 		transparent=
-			(flags & gxCanvas::CANVAS_TEX_ALPHA) &&
-			!(flags & gxCanvas::CANVAS_TEX_MASK);
+			(flags & BBCanvas::CANVAS_TEX_ALPHA) &&
+			!(flags & BBCanvas::CANVAS_TEX_MASK);
 		memset( &matrix,0,sizeof( matrix ) );
 	}
 
@@ -77,20 +72,20 @@ Texture::Texture():rep(0){
 }
 
 Texture::Texture( const string &f,int flags ){
-	flags=filterFile( f,flags )|gxCanvas::CANVAS_TEXTURE;
-	if( flags & gxCanvas::CANVAS_TEX_MASK ) flags|=gxCanvas::CANVAS_TEX_RGB|gxCanvas::CANVAS_TEX_ALPHA;
+	flags=filterFile( f,flags )|BBCanvas::CANVAS_TEXTURE;
+	if( flags & BBCanvas::CANVAS_TEX_MASK ) flags|=BBCanvas::CANVAS_TEX_RGB|BBCanvas::CANVAS_TEX_ALPHA;
 	rep=d_new Rep( f,flags,0,0,0,1 );
 }
 
 Texture::Texture( const string &f,int flags,int w,int h,int first,int cnt ){
-	flags=filterFile( f,flags )|gxCanvas::CANVAS_TEXTURE;
-	if( flags & gxCanvas::CANVAS_TEX_MASK ) flags|=gxCanvas::CANVAS_TEX_RGB|gxCanvas::CANVAS_TEX_ALPHA;
+	flags=filterFile( f,flags )|BBCanvas::CANVAS_TEXTURE;
+	if( flags & BBCanvas::CANVAS_TEX_MASK ) flags|=BBCanvas::CANVAS_TEX_RGB|BBCanvas::CANVAS_TEX_ALPHA;
 	rep=d_new Rep( f,flags,w,h,first,cnt );
 }
 
 Texture::Texture( int w,int h,int flags,int cnt ){
-	flags|=gxCanvas::CANVAS_TEXTURE;
-	if( flags & gxCanvas::CANVAS_TEX_MASK ) flags|=gxCanvas::CANVAS_TEX_RGB|gxCanvas::CANVAS_TEX_ALPHA;
+	flags|=BBCanvas::CANVAS_TEXTURE;
+	if( flags & BBCanvas::CANVAS_TEX_MASK ) flags|=BBCanvas::CANVAS_TEX_RGB|BBCanvas::CANVAS_TEX_ALPHA;
 	rep=d_new Rep( w,h,flags,cnt );
 }
 
@@ -146,7 +141,7 @@ bool Texture::isTransparent()const{
 	return rep ? rep->transparent : false;
 }
 
-gxCanvas *Texture::getCanvas( int n )const{
+BBCanvas *Texture::getCanvas( int n )const{
 	return rep && n>=0 && n<rep->tex_frames.size() ? rep->tex_frames[n] : 0;
 }
 

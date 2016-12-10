@@ -110,15 +110,15 @@ bool gxGraphics::restore(){
 	return true;
 }
 
-gxCanvas *gxGraphics::getFrontCanvas()const{
+BBCanvas *gxGraphics::getFrontCanvas()const{
 	return front_canvas;
 }
 
-gxCanvas *gxGraphics::getBackCanvas()const{
+BBCanvas *gxGraphics::getBackCanvas()const{
 	return back_canvas;
 }
 
-gxFont *gxGraphics::getDefaultFont()const{
+BBFont *gxGraphics::getDefaultFont()const{
 	return def_font;
 }
 
@@ -130,7 +130,8 @@ void gxGraphics::flip( bool v ){
 	runtime->flip( v );
 }
 
-void gxGraphics::copy( gxCanvas *dest,int dx,int dy,int dw,int dh,gxCanvas *src,int sx,int sy,int sw,int sh ){
+void gxGraphics::copy( BBCanvas *d,int dx,int dy,int dw,int dh,BBCanvas *s,int sx,int sy,int sw,int sh ){
+	gxCanvas *dest=(gxCanvas*)d,*src=(gxCanvas*)s;
 	RECT r={ dx,dy,dx+dw,dy+dh };
 	ddUtil::copy( dest->getSurface(),dx,dy,dw,dh,src->getSurface(),sx,sy,sw,sh );
 	dest->damage( r );
@@ -193,7 +194,7 @@ void gxGraphics::closeMovie( gxMovie *m ){
 	if( movie_set.erase( m ) ) delete m;
 }
 
-gxCanvas *gxGraphics::createCanvas( int w,int h,int flags ){
+BBCanvas *gxGraphics::createCanvas( int w,int h,int flags ){
 	ddSurf *s=ddUtil::createSurface( w,h,flags,this );
 	if( !s ) return 0;
 	gxCanvas *c=d_new gxCanvas( this,s,flags );
@@ -202,7 +203,7 @@ gxCanvas *gxGraphics::createCanvas( int w,int h,int flags ){
 	return c;
 }
 
-gxCanvas *gxGraphics::loadCanvas( const string &f,int flags ){
+BBCanvas *gxGraphics::loadCanvas( const string &f,int flags ){
 	ddSurf *s=ddUtil::loadSurface( f,flags,this );
 	if( !s ) return 0;
 	gxCanvas *c=d_new gxCanvas( this,s,flags );
@@ -210,11 +211,13 @@ gxCanvas *gxGraphics::loadCanvas( const string &f,int flags ){
 	return c;
 }
 
-gxCanvas *gxGraphics::verifyCanvas( gxCanvas *c ){
+BBCanvas *gxGraphics::verifyCanvas( BBCanvas *_c ){
+	gxCanvas *c=(gxCanvas*)_c;
 	return canvas_set.count( c ) || c==front_canvas || c==back_canvas ? c : 0;
 }
 
-void gxGraphics::freeCanvas( gxCanvas *c ){
+void gxGraphics::freeCanvas( BBCanvas *_c ){
+	gxCanvas *c=(gxCanvas*)_c;
 	if( canvas_set.erase( c ) ) delete c;
 }
 
@@ -230,11 +233,11 @@ int gxGraphics::getDepth()const{
 	return front_canvas->getDepth();
 }
 
-gxFont *gxGraphics::loadFont( const string &f,int height,int flags ){
+BBFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 
-	int bold=flags & gxFont::FONT_BOLD ? FW_BOLD : FW_REGULAR;
-	int italic=flags & gxFont::FONT_ITALIC ? 1 : 0;
-	int underline=flags & gxFont::FONT_UNDERLINE ? 1 : 0;
+	int bold=flags & BBFont::FONT_BOLD ? FW_BOLD : FW_REGULAR;
+	int italic=flags & BBFont::FONT_ITALIC ? 1 : 0;
+	int underline=flags & BBFont::FONT_UNDERLINE ? 1 : 0;
 	int strikeout=0;
 
 	string t;
@@ -252,7 +255,7 @@ gxFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 	SystemParametersInfo( SPI_GETFONTSMOOTHING,0,&smoothing,0 );
 	SystemParametersInfo( SPI_SETFONTSMOOTHING,FALSE,0,0 );
 
-	HFONT hfont=CreateFont( 
+	HFONT hfont=CreateFont(
 		height,0,0,0,
 		bold,italic,underline,strikeout,
 		ANSI_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
@@ -314,7 +317,7 @@ gxFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 
 	int cw=max_x,ch=y+height;
 
-	if( gxCanvas *c=createCanvas( cw,ch,0 ) ){
+	if( gxCanvas *c=(gxCanvas*)createCanvas( cw,ch,0 ) ){
 		ddSurf *surf=c->getSurface();
 
 		HDC surf_hdc;
@@ -337,7 +340,7 @@ gxFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 			delete[] as;
 
 			c->backup();
-			gxFont *font=d_new gxFont( this,c,tm.tmMaxCharWidth,height,first,last+1,tm.tmDefaultChar,offs,widths );
+			BBFont *font=d_new BBFont( this,c,tm.tmMaxCharWidth,height,first,last+1,tm.tmDefaultChar,offs,widths );
 			font_set.insert( font );
 
 			//restore font smoothing
@@ -358,11 +361,11 @@ gxFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 	return 0;
 }
 
-gxFont *gxGraphics::verifyFont( gxFont *f ){
+BBFont *gxGraphics::verifyFont( BBFont *f ){
 	return font_set.count( f ) ? f : 0;
 }
 
-void gxGraphics::freeFont( gxFont *f ){
+void gxGraphics::freeFont( BBFont *f ){
 	if( font_set.erase( f ) ) delete f;
 }
 

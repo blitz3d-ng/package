@@ -2,25 +2,25 @@
 #ifndef GXFONT_H
 #define GXFONT_H
 
-class gxCanvas;
-class gxGraphics;
+#include <string>
 
-typedef IDirectDrawSurface7 ddSurf;
+class BBCanvas;
+class BBGraphics;
 
-class gxFont{
+class BBFont{
 public:
-	gxFont(
-		gxGraphics *graphics,gxCanvas *canvas,
+	BBFont(
+		BBGraphics *graphics,BBCanvas *canvas,
 		int width,int height,int begin_char,int end_char,int def_char,
 		int *offs,int *widths );
-	~gxFont();
+	~BBFont();
 
 	int charWidth( int c )const;
-	void render( gxCanvas *dest,unsigned color_argb,int x,int y,const std::string &t );
+	void render( BBCanvas *dest,unsigned color_argb,int x,int y,const std::string &t );
 
 private:
-	gxGraphics *graphics;
-	gxCanvas *canvas,*t_canvas;
+	BBGraphics *graphics;
+	BBCanvas *canvas,*t_canvas;
 	int width,height,begin_char,end_char,def_char;
 	int *offs,*widths;
 

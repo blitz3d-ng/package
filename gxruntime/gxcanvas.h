@@ -2,14 +2,15 @@
 #ifndef GXCANVAS_H
 #define GXCANVAS_H
 
+#include "../graphics/canvas.h"
 #include "ddutil.h"
 
-class gxFont;
+class BBFont;
 class gxGraphics;
 
 typedef IDirectDrawSurface7 ddSurf;
 
-class gxCanvas{
+class gxCanvas : public BBCanvas{
 public:
 	gxCanvas( gxGraphics *graphics,ddSurf *surface,int flags );
 	~gxCanvas();
@@ -47,7 +48,7 @@ private:
 
 	PixelFormat format;
 
-	gxFont *font;
+	BBFont *font;
 	RECT viewport;
 	int origin_x,origin_y,handle_x,handle_y;
 	unsigned mask_surf,color_surf,color_argb,clsColor_surf;
@@ -56,34 +57,8 @@ private:
 
 	/***** GX INTERFACE *****/
 public:
-	enum{
-		CANVAS_TEX_RGB=			0x0001,
-		CANVAS_TEX_ALPHA=		0x0002,
-		CANVAS_TEX_MASK=		0x0004,
-		CANVAS_TEX_MIPMAP=		0x0008,
-		CANVAS_TEX_CLAMPU=		0x0010,
-		CANVAS_TEX_CLAMPV=		0x0020,
-		CANVAS_TEX_SPHERE=		0x0040,
-		CANVAS_TEX_CUBE=		0x0080,
-		CANVAS_TEX_VIDMEM=		0x0100,
-		CANVAS_TEX_HICOLOR=		0x0200,
-
-		CANVAS_TEXTURE=			0x10000,
-		CANVAS_NONDISPLAY=		0x20000,
-		CANVAS_HIGHCOLOR=		0x40000
-	};
-
-	enum{
-		CUBEMODE_REFLECTION=1,
-		CUBEMODE_NORMAL=2,
-		CUBEMODE_POSITION=3,
-
-		CUBESPACE_WORLD=0,
-		CUBESPACE_CAMERA=4
-	};
-
 	//MANIPULATORS
-	void setFont( gxFont *font );
+	void setFont( BBFont *font );
 	void setMask( unsigned argb );
 	void setColor( unsigned argb );
 	void setClsColor( unsigned argb );
@@ -97,9 +72,9 @@ public:
 	void rect( int x,int y,int w,int h,bool solid );
 	void oval( int x,int y,int w,int h,bool solid );
 	void text( int x,int y,const std::string &t );
-	void blit( int x,int y,gxCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid );
+	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid );
 
-	bool collide( int x,int y,const gxCanvas *src,int src_x,int src_y,bool solid )const;
+	bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const;
 	bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const;
 
 	bool lock()const;
@@ -108,12 +83,10 @@ public:
 		format.setPixel( locked_surf+y*locked_pitch+x*format.getPitch(),argb );
 		++mod_cnt;
 	}
-	void copyPixel( int x,int y,gxCanvas *src,int src_x,int src_y );
-	void copyPixelFast( int x,int y,gxCanvas *src,int src_x,int src_y );
+	void copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y );
+	void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y );
 	unsigned getPixel( int x,int y )const;
-	unsigned getPixelFast( int x,int y )const{
-		return format.getPixel( locked_surf+y*locked_pitch+x*format.getPitch() );
-	};
+	unsigned getPixelFast( int x,int y )const;
 	void unlock()const;
 
 	void setCubeMode( int mode );

@@ -4,7 +4,7 @@
 #include "bbinput.h"
 
 gxGraphics *gx_graphics;
-gxCanvas *gx_canvas;
+BBCanvas *gx_canvas;
 
 struct GfxMode{
 	int w,h,d,caps;
@@ -12,22 +12,22 @@ struct GfxMode{
 
 class bbImage{
 public:
-	bbImage( const vector<gxCanvas*> &f ):frames(f){
+	bbImage( const vector<BBCanvas*> &f ):frames(f){
 	}
 	~bbImage(){
 		for( int k=0;k<frames.size();++k ){
 			gx_graphics->freeCanvas( frames[k] );
 		}
 	}
-	const vector<gxCanvas*> &getFrames()const{
+	const vector<BBCanvas*> &getFrames()const{
 		return frames;
 	}
-	void replaceFrame( int n,gxCanvas *c ){
+	void replaceFrame( int n,BBCanvas *c ){
 		gx_graphics->freeCanvas( frames[n] );
 		frames[n]=c;
 	}
 private:
-	vector<gxCanvas*> frames;
+	vector<BBCanvas*> frames;
 };
 
 //degrees to radians
@@ -40,9 +40,9 @@ static bool auto_dirty;
 static bool auto_midhandle;
 static set<bbImage*> image_set;
 static int curs_x,curs_y;
-static gxCanvas *p_canvas;
+static BBCanvas *p_canvas;
 
-static gxFont *curr_font;
+static BBFont *curr_font;
 static unsigned curr_color;
 static unsigned curr_clsColor;
 
@@ -55,13 +55,13 @@ static inline void debugImage( bbImage *i,int frame=0 ){
 	}
 }
 
-static inline void debugFont( gxFont *f ){
+static inline void debugFont( BBFont *f ){
 	if( debug ){
 		if( !gx_graphics->verifyFont( f ) ) RTEX( "Font does not exist" );
 	}
 }
 
-static inline void debugCanvas( gxCanvas *c ){
+static inline void debugCanvas( BBCanvas *c ){
 	if( debug ){
 		if( !gx_graphics->verifyCanvas( c ) ) RTEX( "Buffer does not exist" );
 	}
@@ -101,7 +101,7 @@ static void freeGraphics(){
 #define GRN(_X_) ( ((_X_)>>8) & 0xff )
 #define BLU(_X_) ( (_X_) & 0xff )
 
-static int getPixel( gxCanvas *c,float x,float y ){
+static int getPixel( BBCanvas *c,float x,float y ){
 	debugCanvas( c );
 
 	x-=.5f;y-=.5f;
@@ -137,7 +137,7 @@ static float vmax( float a,float b,float c,float d ){
 	float t=a;if( b>t ) t=b;if( c>t ) t=c;if( d>t ) t=d;return t;
 }
 
-static gxCanvas *tformCanvas( gxCanvas *c,float m[2][2],int x_handle,int y_handle ){
+static BBCanvas *tformCanvas( BBCanvas *c,float m[2][2],int x_handle,int y_handle ){
 
 	vec2 v,v0,v1,v2,v3;
 	float i[2][2];
@@ -157,7 +157,7 @@ static gxCanvas *tformCanvas( gxCanvas *c,float m[2][2],int x_handle,int y_handl
 	float maxy=ceil( vmax( v0.y,v1.y,v2.y,v3.y ) );
 	int iw=maxx-minx,ih=maxy-miny;
 
-	gxCanvas *t=gx_graphics->createCanvas( iw,ih,0 );
+	BBCanvas *t=gx_graphics->createCanvas( iw,ih,0 );
 	t->setHandle( -minx,-miny );
 	t->setMask( c->getMask() );
 
@@ -180,7 +180,7 @@ static gxCanvas *tformCanvas( gxCanvas *c,float m[2][2],int x_handle,int y_handl
 	return t;
 }
 
-static bool saveCanvas( gxCanvas *c,const string &f ){
+static bool saveCanvas( BBCanvas *c,const string &f ){
 
 	ofstream out( f.c_str(),ios::binary );
 	if( !out.good() ) return false;
@@ -335,7 +335,7 @@ float BBCALL bbDPIScaleY(){
 	return y;
 }
 
-void BBCALL bbSetBuffer( gxCanvas *buff ){
+void BBCALL bbSetBuffer( BBCanvas *buff ){
 	debugCanvas( buff );
 	gx_canvas=buff;
 	curs_x=curs_y=0;
@@ -346,20 +346,20 @@ void BBCALL bbSetBuffer( gxCanvas *buff ){
 	gx_canvas->setFont( curr_font );
 }
 
-gxCanvas * BBCALL bbGraphicsBuffer(){
+BBCanvas * BBCALL bbGraphicsBuffer(){
 	return gx_canvas;
 }
 
-int BBCALL bbLoadBuffer( gxCanvas *c,BBStr *str ){
+int BBCALL bbLoadBuffer( BBCanvas *c,BBStr *str ){
 	debugCanvas( c );
 	string s=*str;delete str;
-	gxCanvas *t=gx_graphics->loadCanvas( s,0 );
+	BBCanvas *t=gx_graphics->loadCanvas( s,0 );
 	if( !t ) return 0;
 	float m[2][2];
 	m[0][0]=(float)c->getWidth()/(float)t->getWidth();
 	m[1][1]=(float)c->getHeight()/(float)t->getHeight();
 	m[1][0]=m[0][1]=0;
-	gxCanvas *p=tformCanvas( t,m,0,0 );
+	BBCanvas *p=tformCanvas( t,m,0,0 );
 	gx_graphics->freeCanvas( t );
 	int ox,oy;
 	c->getOrigin( &ox,&oy );c->setOrigin( 0,0 );
@@ -368,13 +368,13 @@ int BBCALL bbLoadBuffer( gxCanvas *c,BBStr *str ){
 	return 1;
 }
 
-int BBCALL bbSaveBuffer( gxCanvas *c,BBStr *str ){
+int BBCALL bbSaveBuffer( BBCanvas *c,BBStr *str ){
 	debugCanvas( c );
 	string t=*str;delete str;
 	return saveCanvas( c,t ) ? 1 : 0;
 }
 
-void BBCALL bbBufferDirty( gxCanvas *c ){
+void BBCALL bbBufferDirty( BBCanvas *c ){
 	debugCanvas( c );
 	c->backup();
 }
@@ -390,7 +390,7 @@ static void graphics( int w,int h,int d,int flags ){
 	curr_clsColor=0;
 	curr_color=0xffffffff;
 	curr_font=gx_graphics->getDefaultFont();
-	gxCanvas *buff=(flags & gxGraphics::GRAPHICS_3D) ?
+	BBCanvas *buff=(flags & gxGraphics::GRAPHICS_3D) ?
 		gx_graphics->getBackCanvas() : gx_graphics->getFrontCanvas();
 	bbSetBuffer( buff );
 }
@@ -478,47 +478,47 @@ float BBCALL bbGammaBlue( int n ){
 	return db;
 }
 
-gxCanvas * BBCALL bbFrontBuffer(){
+BBCanvas * BBCALL bbFrontBuffer(){
 	return gx_graphics->getFrontCanvas();
 }
 
-gxCanvas * BBCALL bbBackBuffer(){
+BBCanvas * BBCALL bbBackBuffer(){
 	return gx_graphics->getBackCanvas();
 }
 
-void BBCALL bbLockBuffer( gxCanvas *buff ){
+void BBCALL bbLockBuffer( BBCanvas *buff ){
 	if( buff ) debugCanvas( buff );
 	(buff ? buff : gx_canvas)->lock();
 }
 
-void BBCALL bbUnlockBuffer( gxCanvas *buff ){
+void BBCALL bbUnlockBuffer( BBCanvas *buff ){
 	if( buff ) debugCanvas( buff );
 	(buff ? buff : gx_canvas)->unlock();
 }
 
-int BBCALL bbReadPixel( int x,int y,gxCanvas *buff ){
+int BBCALL bbReadPixel( int x,int y,BBCanvas *buff ){
 	if( buff ) debugCanvas( buff );
 	return (buff ? buff : gx_canvas)->getPixel( x,y );
 }
 
-void BBCALL bbWritePixel( int x,int y,int argb,gxCanvas *buff ){
+void BBCALL bbWritePixel( int x,int y,int argb,BBCanvas *buff ){
 	if( buff ) debugCanvas( buff );
 	(buff ? buff : gx_canvas)->setPixel( x,y,argb );
 }
 
-int BBCALL bbReadPixelFast( int x,int y,gxCanvas *buff ){
+int BBCALL bbReadPixelFast( int x,int y,BBCanvas *buff ){
 	return (buff ? buff : gx_canvas)->getPixelFast( x,y );
 }
 
-void BBCALL bbWritePixelFast( int x,int y,int argb,gxCanvas *buff ){
+void BBCALL bbWritePixelFast( int x,int y,int argb,BBCanvas *buff ){
 	(buff ? buff : gx_canvas)->setPixelFast( x,y,argb );
 }
 
-void BBCALL bbCopyPixel( int src_x,int src_y,gxCanvas *src,int dest_x,int dest_y,gxCanvas *buff ){
+void BBCALL bbCopyPixel( int src_x,int src_y,BBCanvas *src,int dest_x,int dest_y,BBCanvas *buff ){
 	(buff ? buff : gx_canvas)->copyPixel( dest_x,dest_y,src ? src : gx_canvas,src_x,src_y );
 }
 
-void BBCALL bbCopyPixelFast( int src_x,int src_y,gxCanvas *src,int dest_x,int dest_y,gxCanvas *buff ){
+void BBCALL bbCopyPixelFast( int src_x,int src_y,BBCanvas *src,int dest_x,int dest_y,BBCanvas *buff ){
 	(buff ? buff : gx_canvas)->copyPixelFast( dest_x,dest_y,src ? src : gx_canvas,src_x,src_y );
 }
 
@@ -580,7 +580,7 @@ void BBCALL bbClsColor( int r,int g,int b ){
 	gx_canvas->setClsColor( curr_clsColor=(r<<16)|(g<<8)|b );
 }
 
-void BBCALL bbSetFont( gxFont *f ){
+void BBCALL bbSetFont( BBFont *f ){
 	debugFont( f );
 	gx_canvas->setFont( curr_font=f );
 }
@@ -612,7 +612,7 @@ void BBCALL bbText( int x,int y,BBStr *str,int centre_x,int centre_y ){
 	delete str;
 }
 
-void BBCALL bbCopyRect( int sx,int sy,int w,int h,int dx,int dy,gxCanvas *src,gxCanvas *dest ){
+void BBCALL bbCopyRect( int sx,int sy,int w,int h,int dx,int dy,BBCanvas *src,BBCanvas *dest ){
 	if( src ) debugCanvas( src );
 	else src=gx_canvas;
 	if( dest ) debugCanvas( dest );
@@ -620,17 +620,17 @@ void BBCALL bbCopyRect( int sx,int sy,int w,int h,int dx,int dy,gxCanvas *src,gx
 	dest->blit( dx,dy,src,sx,sy,w,h,true );
 }
 
-gxFont * BBCALL bbLoadFont( BBStr *name,int height,int bold,int italic,int underline ){
+BBFont * BBCALL bbLoadFont( BBStr *name,int height,int bold,int italic,int underline ){
 	int flags=
-		(bold ? gxFont::FONT_BOLD : 0 ) |
-		(italic ? gxFont::FONT_ITALIC : 0 ) |
-		(underline ? gxFont::FONT_UNDERLINE : 0 );
-	gxFont *font=gx_graphics->loadFont( *name,height,flags );
+		(bold ? BBFont::FONT_BOLD : 0 ) |
+		(italic ? BBFont::FONT_ITALIC : 0 ) |
+		(underline ? BBFont::FONT_UNDERLINE : 0 );
+	BBFont *font=gx_graphics->loadFont( *name,height,flags );
 	delete name;
 	return font;
 }
 
-void BBCALL bbFreeFont( gxFont *f ){
+void BBCALL bbFreeFont( BBFont *f ){
 	debugFont( f );
 	if( f==curr_font ) bbSetFont( gx_graphics->getDefaultFont() );
 	gx_graphics->freeFont( f );
@@ -685,11 +685,11 @@ void BBCALL bbCloseMovie( gxMovie *movie ){
 
 bbImage * BBCALL bbLoadImage( BBStr *s ){
 	string t=*s;delete s;
-	gxCanvas *c=gx_graphics->loadCanvas( t,0 );
+	BBCanvas *c=gx_graphics->loadCanvas( t,0 );
 	if( !c ) return 0;
 	if( auto_dirty ) c->backup();
 	if( auto_midhandle ) c->setHandle( c->getWidth()/2,c->getHeight()/2 );
-	vector<gxCanvas*> frames;
+	vector<BBCanvas*> frames;
 	frames.push_back( c );
 	bbImage *i=d_new bbImage( frames );
 	image_set.insert( i );
@@ -703,7 +703,7 @@ bbImage * BBCALL bbLoadAnimImage( BBStr *s,int w,int h,int first,int cnt ){
 	if( cnt<1 ) RTEX( "Illegal frame count" );
 	if( first<0 ) RTEX( "Illegal first frame" );
 
-	gxCanvas *pic=gx_graphics->loadCanvas( t,gxCanvas::CANVAS_NONDISPLAY );
+	BBCanvas *pic=gx_graphics->loadCanvas( t,BBCanvas::CANVAS_NONDISPLAY );
 	if( !pic ) return 0;
 
 	//frames per row, per picture
@@ -715,11 +715,11 @@ bbImage * BBCALL bbLoadAnimImage( BBStr *s,int w,int h,int first,int cnt ){
 	}
 
 	//x,y of first frame...
-	vector<gxCanvas*> frames;
+	vector<BBCanvas*> frames;
 	int src_x=first%fpr*w,src_y=first/fpr*h;
 
 	for( int k=0;k<cnt;++k ){
-		gxCanvas *c=gx_graphics->createCanvas( w,h,0 );
+		BBCanvas *c=gx_graphics->createCanvas( w,h,0 );
 		if( !c ){
 			for( --k;k>=0;--k ) gx_graphics->freeCanvas( frames[k] );
 			gx_graphics->freeCanvas( pic );return 0;
@@ -738,11 +738,11 @@ bbImage * BBCALL bbLoadAnimImage( BBStr *s,int w,int h,int first,int cnt ){
 
 bbImage * BBCALL bbCopyImage( bbImage *i ){
 	debugImage( i );
-	vector<gxCanvas*> frames;
-	const vector<gxCanvas*> &f=i->getFrames();
+	vector<BBCanvas*> frames;
+	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ){
-		gxCanvas *t=f[k];
-		gxCanvas *c=gx_graphics->createCanvas( t->getWidth(),t->getHeight(),0 );
+		BBCanvas *t=f[k];
+		BBCanvas *c=gx_graphics->createCanvas( t->getWidth(),t->getHeight(),0 );
 		if( !c ){
 			for( --k;k>=0;--k ) gx_graphics->freeCanvas( frames[k] );
 			return 0;
@@ -763,9 +763,9 @@ bbImage * BBCALL bbCopyImage( bbImage *i ){
 }
 
 bbImage * BBCALL bbCreateImage( int w,int h,int n ){
-	vector<gxCanvas*> frames;
+	vector<BBCanvas*> frames;
 	for( int k=0;k<n;++k ){
-		gxCanvas *c=gx_graphics->createCanvas( w,h,0 );
+		BBCanvas *c=gx_graphics->createCanvas( w,h,0 );
 		if( !c ){
 			for( --k;k>=0;--k ) gx_graphics->freeCanvas( frames[k] );
 			return 0;
@@ -781,7 +781,7 @@ bbImage * BBCALL bbCreateImage( int w,int h,int n ){
 
 void BBCALL bbFreeImage( bbImage *i ){
 	if( !image_set.erase(i) ) return;
-	const vector<gxCanvas*> &f=i->getFrames();
+	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ){
 		if( f[k]==gx_canvas ){
 			bbSetBuffer( gx_graphics->getFrontCanvas() );
@@ -794,13 +794,13 @@ void BBCALL bbFreeImage( bbImage *i ){
 int BBCALL bbSaveImage( bbImage *i,BBStr *str,int n ){
 	debugImage( i,n );
 	string t=*str;delete str;
-	gxCanvas *c=i->getFrames()[n];
+	BBCanvas *c=i->getFrames()[n];
 	return saveCanvas( c,t ) ? 1 : 0;
 }
 
 void BBCALL bbGrabImage( bbImage *i,int x,int y,int n ){
 	debugImage( i,n );
-	gxCanvas *c=i->getFrames()[n];
+	BBCanvas *c=i->getFrames()[n];
 	int src_ox,src_oy,dst_hx,dst_hy;
 	gx_canvas->getOrigin( &src_ox,&src_oy );
 	c->getHandle( &dst_hx,&dst_hy );
@@ -810,25 +810,25 @@ void BBCALL bbGrabImage( bbImage *i,int x,int y,int n ){
 	if( auto_dirty ) c->backup();
 }
 
-gxCanvas * BBCALL bbImageBuffer( bbImage *i,int n ){
+BBCanvas * BBCALL bbImageBuffer( bbImage *i,int n ){
 	debugImage( i,n );
 	return i->getFrames()[n];
 }
 
 void BBCALL bbDrawImage( bbImage *i,int x,int y,int frame ){
 	debugImage( i,frame );
-	gxCanvas *c=i->getFrames()[frame];
+	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->blit( x,y,c,0,0,c->getWidth(),c->getHeight(),false );
 }
 
 void BBCALL bbDrawBlock( bbImage *i,int x,int y,int frame ){
 	debugImage( i,frame );
-	gxCanvas *c=i->getFrames()[frame];
+	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->blit( x,y,c,0,0,c->getWidth(),c->getHeight(),true );
 }
 
 static void tile( bbImage *i,int x,int y,int frame,bool solid ){
-	gxCanvas *c=i->getFrames()[frame];
+	BBCanvas *c=i->getFrames()[frame];
 
 	int hx,hy;
 	c->getHandle( &hx,&hy );
@@ -863,32 +863,32 @@ void BBCALL bbTileBlock( bbImage *i,int x,int y,int frame ){
 
 void BBCALL bbDrawImageRect( bbImage *i,int x,int y,int r_x,int r_y,int r_w,int r_h,int frame ){
 	debugImage( i,frame );
-	gxCanvas *c=i->getFrames()[frame];
+	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->blit( x,y,c,r_x,r_y,r_w,r_h,false );
 }
 
 void BBCALL bbDrawBlockRect( bbImage *i,int x,int y,int r_x,int r_y,int r_w,int r_h,int frame ){
 	debugImage( i,frame );
-	gxCanvas *c=i->getFrames()[frame];
+	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->blit( x,y,c,r_x,r_y,r_w,r_h,true );
 }
 
 void BBCALL bbMaskImage( bbImage *i,int r,int g,int b ){
 	debugImage( i );
 	unsigned argb=(r<<16)|(g<<8)|b;
-	const vector<gxCanvas*> &f=i->getFrames();
+	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setMask( argb );
 }
 
 void BBCALL bbHandleImage( bbImage *i,int x,int y ){
 	debugImage( i );
-	const vector<gxCanvas*> &f=i->getFrames();
+	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setHandle( x,y );
 }
 
 void BBCALL bbMidHandle( bbImage *i ){
 	debugImage( i );
-	const vector<gxCanvas*> &f=i->getFrames();
+	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setHandle( f[k]->getWidth()/2,f[k]->getHeight()/2 );
 }
 
@@ -923,16 +923,16 @@ int BBCALL bbImageYHandle( bbImage *i ){
 int BBCALL bbImagesOverlap( bbImage *i1,int x1,int y1,bbImage *i2,int x2,int y2 ){
 	debugImage( i1 );
 	debugImage( i2 );
-	gxCanvas *c1=i1->getFrames()[0];
-	gxCanvas *c2=i2->getFrames()[0];
+	BBCanvas *c1=i1->getFrames()[0];
+	BBCanvas *c2=i2->getFrames()[0];
 	return c1->collide( x1,y1,c2,x2,y2,true );
 }
 
 int BBCALL bbImagesCollide( bbImage *i1,int x1,int y1,int f1,bbImage *i2,int x2,int y2,int f2 ){
 	debugImage( i1,f1 );
 	debugImage( i2,f2 );
-	gxCanvas *c1=i1->getFrames()[f1];
-	gxCanvas *c2=i2->getFrames()[f2];
+	BBCanvas *c1=i1->getFrames()[f1];
+	BBCanvas *c2=i2->getFrames()[f2];
 	return c1->collide( x1,y1,c2,x2,y2,false );
 }
 
@@ -943,19 +943,19 @@ int BBCALL bbRectsOverlap( int x1,int y1,int w1,int h1,int x2,int y2,int w2,int 
 
 int BBCALL bbImageRectOverlap( bbImage *i,int x,int y,int x2,int y2,int w2,int h2 ){
 	debugImage( i );
-	gxCanvas *c=i->getFrames()[0];
+	BBCanvas *c=i->getFrames()[0];
 	return c->rect_collide( x,y,x2,y2,w2,h2,true );
 }
 
 int BBCALL bbImageRectCollide( bbImage *i,int x,int y,int f,int x2,int y2,int w2,int h2 ){
 	debugImage( i,f );
-	gxCanvas *c=i->getFrames()[f];
+	BBCanvas *c=i->getFrames()[f];
 	return c->rect_collide( x,y,x2,y2,w2,h2,false );
 }
 
 void BBCALL bbTFormImage( bbImage *i,float a,float b,float c,float d ){
 	debugImage( i );
-	const vector<gxCanvas*> &f=i->getFrames();
+	const vector<BBCanvas*> &f=i->getFrames();
 	int k;
 	for( k=0;k<f.size();++k ){
 		if( f[k]==gx_canvas ){
@@ -966,9 +966,9 @@ void BBCALL bbTFormImage( bbImage *i,float a,float b,float c,float d ){
 	float m[2][2];
 	m[0][0]=a;m[1][0]=b;m[0][1]=c;m[1][1]=d;
 	for( k=0;k<f.size();++k ){
-		gxCanvas *c=f[k];
+		BBCanvas *c=f[k];
 		int hx,hy;c->getHandle( &hx,&hy );
-		gxCanvas *t=tformCanvas( c,m,hx,hy );
+		BBCanvas *t=tformCanvas( c,m,hx,hy );
 		i->replaceFrame( k,t );
 		t->backup();
 	}
@@ -981,7 +981,7 @@ void BBCALL bbScaleImage( bbImage *i,float w,float h ){
 
 void BBCALL bbResizeImage( bbImage *i,float w,float h ){
 	debugImage( i );
-	gxCanvas *c=i->getFrames()[0];
+	BBCanvas *c=i->getFrames()[0];
 	bbTFormImage( i,w/(float)c->getWidth(),0,0,h/(float)c->getHeight() );
 }
 
@@ -997,9 +997,9 @@ void BBCALL bbTFormFilter( int enable ){
 
 static int p_ox,p_oy,p_hx,p_hy,p_vpx,p_vpy,p_vpw,p_vph;
 
-static gxCanvas *startPrinting(){
+static BBCanvas *startPrinting(){
 
-	gxCanvas *c=gx_graphics->getFrontCanvas();
+	BBCanvas *c=gx_graphics->getFrontCanvas();
 
 	c->lock();
 	c->unlock();
@@ -1027,7 +1027,7 @@ static gxCanvas *startPrinting(){
 	return c;
 }
 
-static void endPrinting( gxCanvas *c ){
+static void endPrinting( BBCanvas *c ){
 	c->setViewport( p_vpx,p_vpy,p_vpw,p_vph );
 	c->setHandle( p_hx,p_hy );
 	c->setOrigin( p_ox,p_oy );
@@ -1036,7 +1036,7 @@ static void endPrinting( gxCanvas *c ){
 }
 
 void BBCALL bbWrite( BBStr *str ){
-	gxCanvas *c=startPrinting();
+	BBCanvas *c=startPrinting();
 	c->text( curs_x,curs_y,*str );
 	curs_x+=curr_font->getWidth( *str );
 	endPrinting( c );
@@ -1044,7 +1044,7 @@ void BBCALL bbWrite( BBStr *str ){
 }
 
 void BBCALL bbPrint( BBStr *str ){
-	gxCanvas *c=startPrinting();
+	BBCanvas *c=startPrinting();
 	c->text( curs_x,curs_y,*str );
 	curs_x=0;
 	curs_y+=curr_font->getHeight();
@@ -1053,7 +1053,7 @@ void BBCALL bbPrint( BBStr *str ){
 }
 
 BBStr * BBCALL bbInput( BBStr *prompt ){
-	gxCanvas *c=startPrinting();
+	BBCanvas *c=startPrinting();
 	string t=*prompt;delete prompt;
 
 	//get temp canvas
@@ -1176,7 +1176,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 }
 
 void BBCALL bbLocate( int x,int y ){
-	gxCanvas *c=gx_graphics->getFrontCanvas();
+	BBCanvas *c=gx_graphics->getFrontCanvas();
 	curs_x=x<0 ? 0 : (x > c->getWidth() ? c->getWidth() : x);
 	curs_y=y<0 ? 0 : (y > c->getHeight() ? c->getHeight() : y);
 }

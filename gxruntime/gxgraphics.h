@@ -8,7 +8,8 @@
 
 #include "ddutil.h"
 
-#include "gxfont.h"
+#include "../graphics/graphics.h"
+#include "../blitz2d/font.h"
 #include "gxcanvas.h"
 #include "gxscene.h"
 #include "gxmesh.h"
@@ -16,7 +17,7 @@
 
 class gxRuntime;
 
-class gxGraphics{
+class gxGraphics : public BBGraphics{
 public:
 	IDirectDraw7 *dirDraw;
 	IDirectDraw *ds_dirDraw;
@@ -39,7 +40,7 @@ public:
 private:
 
 	gxCanvas *front_canvas,*back_canvas;
-	gxFont *def_font;
+	BBFont *def_font;
 	bool gfx_lost;
 	gxMesh *dummy_mesh;
 
@@ -47,7 +48,7 @@ private:
 	ddSurf *createSurface( int width,int height,int flags );
 	ddSurf *loadSurface( const std::string &f,int flags );
 
-	std::set<gxFont*> font_set;
+	std::set<BBFont*> font_set;
 	std::set<gxCanvas*> canvas_set;
 	std::set<gxMesh*> mesh_set;
 	std::set<gxScene*> scene_set;
@@ -59,19 +60,12 @@ private:
 
 	/***** GX INTERFACE *****/
 public:
-	enum{
-		GRAPHICS_WINDOWED=1,	//windowed mode
-		GRAPHICS_SCALED=2,		//scaled window
-		GRAPHICS_3D=4,			//3d mode! Hurrah!
-		GRAPHICS_AUTOSUSPEND=8	//suspend graphics when app suspended
-	};
-
 	//MANIPULATORS
 	void vwait();
 	void flip( bool vwait );
 
 	//SPECIAL!
-	void copy( gxCanvas *dest,int dx,int dy,int dw,int dh,gxCanvas *src,int sx,int sy,int sw,int sh );
+	void copy( BBCanvas *dest,int dx,int dy,int dw,int dh,BBCanvas *src,int sx,int sy,int sw,int sh );
 
 	//NEW! Gamma control!
 	void setGamma( int r,int g,int b,float dr,float dg,float db );
@@ -86,23 +80,23 @@ public:
 	int getAvailVidmem()const;
 	int getTotalVidmem()const;
 
-	gxCanvas *getFrontCanvas()const;
-	gxCanvas *getBackCanvas()const;
-	gxFont *getDefaultFont()const;
+	BBCanvas *getFrontCanvas()const;
+	BBCanvas *getBackCanvas()const;
+	BBFont *getDefaultFont()const;
 
 	//OBJECTS
-	gxCanvas *createCanvas( int width,int height,int flags );
-	gxCanvas *loadCanvas( const std::string &file,int flags );
-	gxCanvas *verifyCanvas( gxCanvas *canvas );
-	void freeCanvas( gxCanvas *canvas );
+	BBCanvas *createCanvas( int width,int height,int flags );
+	BBCanvas *loadCanvas( const std::string &file,int flags );
+	BBCanvas *verifyCanvas( BBCanvas *canvas );
+	void freeCanvas( BBCanvas *canvas );
 
 	gxMovie *openMovie( const std::string &file,int flags );
 	gxMovie *verifyMovie( gxMovie *movie );
 	void closeMovie( gxMovie *movie );
 
-	gxFont *loadFont( const std::string &font,int height,int flags );
-	gxFont *verifyFont( gxFont *font );
-	void freeFont( gxFont *font );
+	BBFont *loadFont( const std::string &font,int height,int flags );
+	BBFont *verifyFont( BBFont *font );
+	void freeFont( BBFont *font );
 
 	gxScene *createScene( int flags );
 	gxScene *verifyScene( gxScene *scene );

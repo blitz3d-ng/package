@@ -433,22 +433,22 @@ BBStr * BBCALL bbTextureName( Texture *t ){
 
 void BBCALL bbSetCubeFace( Texture *t,int face ){
 	debugTexture(t);
-	if( gxCanvas *c=t->getCanvas( 0 ) ){
+	if( BBCanvas *c=t->getCanvas( 0 ) ){
 		c->setCubeFace(face);
 	}
 }
 
 void BBCALL bbSetCubeMode( Texture *t,int mode ){
 	debugTexture(t);
-	if( gxCanvas *c=t->getCanvas( 0 ) ){
+	if( BBCanvas *c=t->getCanvas( 0 ) ){
 		c->setCubeMode( mode );
 	}
 }
 
-gxCanvas * BBCALL bbTextureBuffer( Texture *t,int frame ){
+BBCanvas * BBCALL bbTextureBuffer( Texture *t,int frame ){
 	//v1.04
 	debugTexture(t);
-	if( gxCanvas *c=t->getCanvas( frame ) ){
+	if( BBCanvas *c=t->getCanvas( frame ) ){
 		if( c->getDepth() ) return c;
 	}
 	return 0;
@@ -1253,7 +1253,7 @@ Entity * BBCALL bbCreateTerrain( int n,Entity *p ){
 
 Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
 	debugParent(p);
-	gxCanvas *c=gx_graphics->loadCanvas( *file,gxCanvas::CANVAS_HIGHCOLOR );
+	BBCanvas *c=gx_graphics->loadCanvas( *file,gxCanvas::CANVAS_HIGHCOLOR );
 	if( !c ) RTEX( "Unable to load heightmap image" );
 	int w=c->getWidth(),h=c->getHeight();
 	if( w!=h ) RTEX( "Terrain must be square" );

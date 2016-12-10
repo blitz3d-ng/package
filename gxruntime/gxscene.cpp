@@ -490,8 +490,8 @@ void gxScene::setRenderState( const RenderState &rs ){
 		const RenderState::TexState &ts=rs.tex_states[k];
 		if( !ts.canvas || !ts.blend ) continue;
 		bool settex=false;
-		ts.canvas->getTexSurface();	//force mipmap rebuild
-		if( ts.canvas!=hw->canvas ){ hw->canvas=ts.canvas;settex=true; }
+		((gxCanvas*)ts.canvas)->getTexSurface();	//force mipmap rebuild
+		if( ts.canvas!=hw->canvas ){ hw->canvas=(gxCanvas*)ts.canvas;settex=true; }
 		if( ts.blend!=hw->blend ){ hw->blend=ts.blend;settex=true; }
 		if( ts.flags!=hw->flags ){ hw->flags=ts.flags;settex=true; }
 		if( ts.matrix || hw->mat_valid ){

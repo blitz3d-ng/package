@@ -2,7 +2,7 @@
 #ifndef CACHEDTEXTURE_H
 #define CACHEDTEXTURE_H
 
-#include "../gxruntime/gxcanvas.h"
+#include "../graphics/canvas.h"
 
 class CachedTexture{
 public:
@@ -15,7 +15,7 @@ public:
 
 	string getName()const;
 
-	const vector<gxCanvas*> &getFrames()const;
+	const vector<BBCanvas*> &getFrames()const;
 
 	bool operator<( const CachedTexture &t )const{ return rep<t.rep; }
 

@@ -30,7 +30,7 @@ private:
 	/***** GX INTERFACE *****/
 public:
 
-	bool draw( gxCanvas *dest,int x,int y,int w,int h );
+	bool draw( BBCanvas *dest,int x,int y,int w,int h );
 
 	bool isPlaying()const{ return playing; }
 	int getWidth()const{ return src_rect.right; }

@@ -2,8 +2,6 @@
 #include "std.h"
 #include "brush.h"
 
-#include "../gxruntime/gxgraphics.h"
-
 struct Brush::Rep{
 	union{ int ref_cnt;Rep *next; };
 	int blend,max_tex;
@@ -126,7 +124,7 @@ void Brush::setTexture( int index,const Texture &t,int n ){
 	gxScene::RenderState &rs=rep->rs;
 
 	rep->texs[index]=t;
-	rs.tex_states[index].canvas=t.getCanvas( n );
+	rs.tex_states[index].canvas=(gxCanvas*)t.getCanvas( n );
 
 	rep->max_tex=0;
 	for( int k=0;k<gxScene::MAX_TEXTURES;++k ){
@@ -155,7 +153,7 @@ int Brush::getBlend()const{
 	gxScene::RenderState &rs=rep->rs;
 
 	//alphatest
-	if( rep->texs[0].getCanvasFlags() & gxCanvas::CANVAS_TEX_MASK ){
+	if( rep->texs[0].getCanvasFlags() & BBCanvas::CANVAS_TEX_MASK ){
 		rs.fx|=gxScene::FX_ALPHATEST;
 	}else{
 		rs.fx&=~gxScene::FX_ALPHATEST;

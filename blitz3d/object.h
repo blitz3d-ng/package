@@ -2,6 +2,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "../stdutil/stdutil.h"
 #include <vector>
 
 #include "entity.h"

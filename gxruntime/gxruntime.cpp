@@ -3,6 +3,7 @@
 #include "gxruntime.h"
 #include "zmouse.h"
 
+#undef SPI_SETMOUSESPEED
 #define SPI_SETMOUSESPEED	113
 
 struct gxRuntime::GfxMode{
@@ -272,7 +273,7 @@ void gxRuntime::paint(){
 			POINT p;p.x=p.y=0;ClientToScreen( hwnd,&p );
 			dest.left+=p.x;dest.right+=p.x;
 			dest.top+=p.y;dest.bottom+=p.y;
-			gxCanvas *f=graphics->getFrontCanvas();
+			gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
 			primSurf->Blt( &dest,f->getSurface(),&src,0,0 );
 		}
 		break;
@@ -288,8 +289,8 @@ void gxRuntime::paint(){
 // FLIP //
 //////////
 void gxRuntime::flip( bool vwait ){
-	gxCanvas *b=graphics->getBackCanvas();
-	gxCanvas *f=graphics->getFrontCanvas();
+	gxCanvas *b=(gxCanvas*)graphics->getBackCanvas();
+	gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
 	int n;
 	switch( gfx_mode ){
 	case 1:case 2:
@@ -713,7 +714,7 @@ void gxRuntime::closeInput( gxInput *i ){
 /////////////////////////////////////////////////////
 static void CALLBACK timerCallback( UINT id,UINT msg,DWORD user,DWORD dw1,DWORD dw2 ){
 	if( gfx_mode ){
-		gxCanvas *f=runtime->graphics->getFrontCanvas();
+		gxCanvas *f=(gxCanvas*)runtime->graphics->getFrontCanvas();
 		if( f->getModify()!=mod_cnt ){
 			mod_cnt=f->getModify();
 			InvalidateRect( runtime->hwnd,0,false );

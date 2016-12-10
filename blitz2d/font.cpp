@@ -1,10 +1,9 @@
 
-#include "std.h"
-#include "gxfont.h"
-#include "gxcanvas.h"
-#include "gxgraphics.h"
+#include "font.h"
+#include "../graphics/canvas.h"
+#include "../graphics/graphics.h"
 
-gxFont::gxFont( gxGraphics *g,gxCanvas *c,int w,int h,int b,int e,int d,int *os,int *ws ):
+BBFont::BBFont( BBGraphics *g,BBCanvas *c,int w,int h,int b,int e,int d,int *os,int *ws ):
 graphics(g),canvas(c),
 width(w),height(h),begin_char(b),end_char(e),def_char(d),
 offs(os),widths(ws){
@@ -12,19 +11,19 @@ offs(os),widths(ws){
 	t_canvas=graphics->createCanvas( graphics->getWidth(),height,0 );
 }
 
-gxFont::~gxFont(){
+BBFont::~BBFont(){
 	delete[] offs;
 	delete[] widths;
 	graphics->freeCanvas( t_canvas );
 	graphics->freeCanvas( canvas );
 }
 
-int gxFont::charWidth( int c )const{
+int BBFont::charWidth( int c )const{
 	if( c<begin_char || c>=end_char ) c=def_char;
 	return widths[c-begin_char];
 }
 
-void gxFont::render( gxCanvas *dest,unsigned color_argb,int x,int y,const string &t ){
+void BBFont::render( BBCanvas *dest,unsigned color_argb,int x,int y,const std::string &t ){
 	int width=getWidth( t );
 	if( width>t_canvas->getWidth() ){
 		graphics->freeCanvas( t_canvas );
@@ -48,15 +47,15 @@ void gxFont::render( gxCanvas *dest,unsigned color_argb,int x,int y,const string
 	dest->blit( x,y,t_canvas,0,0,width,height,false );
 }
 
-int gxFont::getWidth()const{
+int BBFont::getWidth()const{
 	return width;
 }
 
-int gxFont::getHeight()const{
+int BBFont::getHeight()const{
 	return height;
 }
 
-int gxFont::getWidth( const string &t )const{
+int BBFont::getWidth( const std::string &t )const{
 	int w=0;
 	for( int k=0;k<t.size();++k ){
 		int c=t[k]&0xff;
@@ -66,6 +65,6 @@ int gxFont::getWidth( const string &t )const{
 	return w;
 }
 
-bool gxFont::isPrintable( int chr )const{
+bool BBFont::isPrintable( int chr )const{
 	return chr>=begin_char && chr<end_char;
 }

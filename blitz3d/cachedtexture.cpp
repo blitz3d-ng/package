@@ -15,13 +15,13 @@ struct CachedTexture::Rep{
 	int ref_cnt;
 	string file;
 	int flags,w,h,first;
-	vector<gxCanvas*> frames;
+	vector<BBCanvas*> frames;
 
 	Rep( int w,int h,int flags,int cnt ):
 	ref_cnt(1),flags(flags),w(w),h(h),first(0){
 		++active_texs;
 		while( cnt-->0 ){
-			if( gxCanvas *t=gx_graphics->createCanvas( w,h,flags ) ){
+			if( BBCanvas *t=gx_graphics->createCanvas( w,h,flags ) ){
 				frames.push_back( t );
 			}else break;
 		}
@@ -30,10 +30,10 @@ struct CachedTexture::Rep{
 	Rep( const string &f,int flags,int w,int h,int first,int cnt ):
 	ref_cnt(1),file(f),flags(flags),w(w),h(h),first(first){
 		++active_texs;
-		if( !(flags & gxCanvas::CANVAS_TEX_CUBE) ){
+		if( !(flags & BBCanvas::CANVAS_TEX_CUBE) ){
 			if( w<=0 || h<=0 || first<0 || cnt<=0 ){
 				w=h=first=0;
-				if( gxCanvas *t=gx_graphics->loadCanvas( f,flags ) ){
+				if( BBCanvas *t=(BBCanvas*)gx_graphics->loadCanvas( f,flags ) ){
 					frames.push_back( t );
 				}
 				return;
@@ -41,24 +41,24 @@ struct CachedTexture::Rep{
 		}
 
 		int t_flags=flags & (
-			gxCanvas::CANVAS_TEX_RGB|
-			gxCanvas::CANVAS_TEX_ALPHA|
-			gxCanvas::CANVAS_TEX_MASK|
-			gxCanvas::CANVAS_TEX_HICOLOR ) | gxCanvas::CANVAS_NONDISPLAY;
+			BBCanvas::CANVAS_TEX_RGB|
+			BBCanvas::CANVAS_TEX_ALPHA|
+			BBCanvas::CANVAS_TEX_MASK|
+			BBCanvas::CANVAS_TEX_HICOLOR ) | BBCanvas::CANVAS_NONDISPLAY;
 
-		gxCanvas *t=gx_graphics->loadCanvas( f,t_flags );
+		BBCanvas *t=gx_graphics->loadCanvas( f,t_flags );
 		if( !t ) return;
 		if( !t->getDepth() ){
 			gx_graphics->freeCanvas( t );
 			return;
 		}
 
-		if( flags & gxCanvas::CANVAS_TEX_CUBE ){
+		if( flags & BBCanvas::CANVAS_TEX_CUBE ){
 			int w=t->getWidth()/6;
 			if( w*6!=t->getWidth() ) return;
 			int h=t->getHeight();
 
-			gxCanvas *tex=gx_graphics->createCanvas( w,h,flags );
+			BBCanvas *tex=gx_graphics->createCanvas( w,h,flags );
 			if( tex ){
 				frames.push_back( tex );
 
@@ -78,7 +78,7 @@ struct CachedTexture::Rep{
 			int x=(first%x_tiles)*w;
 			int y=(first/x_tiles)*h;
 			while( cnt-- ){
-				gxCanvas *p=gx_graphics->createCanvas( w,h,flags );
+				BBCanvas *p=gx_graphics->createCanvas( w,h,flags );
 				gx_graphics->copy( p,0,0,p->getWidth(),p->getHeight(),t,x,y,w,h );
 				frames.push_back(p);
 				x=x+w;if( x+w>t->getWidth() ){ x=0;y=y+h; }
@@ -153,7 +153,7 @@ string CachedTexture::getName()const{
 	return rep->file;
 }
 
-const vector<gxCanvas*> &CachedTexture::getFrames()const{
+const vector<BBCanvas*> &CachedTexture::getFrames()const{
 	return rep->frames;
 }
 

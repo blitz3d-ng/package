@@ -1,12 +1,12 @@
 
-#ifndef BBGRAPHICS_H
-#define BBGRAPHICS_H
+#ifndef BB_RUNTIME_GRAPHICS_H
+#define BB_RUNTIME_GRAPHICS_H
 
 #include "bbsys.h"
 #include "../gxruntime/gxgraphics.h"
 
 extern gxGraphics *gx_graphics;
-extern gxCanvas *gx_canvas;
+extern BBCanvas *gx_canvas;
 extern gxScene *gx_scene;
 
 class bbImage;
@@ -31,8 +31,8 @@ int		 BBCALL bbTotalVidMem();
 
 //mode functions
 void	 BBCALL bbGraphics( int w,int h,int d,int mode );
-gxCanvas * BBCALL bbFrontBuffer();
-gxCanvas * BBCALL bbBackBuffer();
+BBCanvas * BBCALL bbFrontBuffer();
+BBCanvas * BBCALL bbBackBuffer();
 void	 BBCALL bbEndGraphics();
 int		 BBCALL bbGraphicsLost();
 int		 BBCALL bbScanLine();
@@ -40,18 +40,18 @@ void	 BBCALL bbVWait( int n );
 void	 BBCALL bbFlip( int vwait );
 
 //graphics buffer functions
-void	 BBCALL bbSetBuffer( gxCanvas *buff );
-gxCanvas * BBCALL bbGraphicsBuffer();
-int		 BBCALL bbLoadBuffer( gxCanvas *surf,BBStr *str );
-int		 BBCALL bbSaveBuffer( gxCanvas *surf,BBStr *str );
+void	 BBCALL bbSetBuffer( BBCanvas *buff );
+BBCanvas * BBCALL bbGraphicsBuffer();
+int		 BBCALL bbLoadBuffer( BBCanvas *surf,BBStr *str );
+int		 BBCALL bbSaveBuffer( BBCanvas *surf,BBStr *str );
 
 //fast read/write operations...
-void	 BBCALL bbLockBuffer( gxCanvas *buff );
-void	 BBCALL bbUnlockBuffer( gxCanvas *buff );
-int		 BBCALL bbReadPixel( int x,int y,gxCanvas *buff );
-void	 BBCALL bbWritePixel( int x,int y,int argb,gxCanvas *buff );
-int		 BBCALL bbReadPixelFast( int x,int y,gxCanvas *buff );
-void	 BBCALL bbWritePixelFast( int x,int y,int argb,gxCanvas *buff );
+void	 BBCALL bbLockBuffer( BBCanvas *buff );
+void	 BBCALL bbUnlockBuffer( BBCanvas *buff );
+int		 BBCALL bbReadPixel( int x,int y,BBCanvas *buff );
+void	 BBCALL bbWritePixel( int x,int y,int argb,BBCanvas *buff );
+int		 BBCALL bbReadPixelFast( int x,int y,BBCanvas *buff );
+void	 BBCALL bbWritePixelFast( int x,int y,int argb,BBCanvas *buff );
 
 
 //2d rendering functions
@@ -71,9 +71,9 @@ int		 BBCALL bbColorGreen();
 int		 BBCALL bbColorBlue();
 
 //font functions
-gxFont * BBCALL bbLoadFont( BBStr *name,int height,int bold,int italic,int underline );
-void	 BBCALL bbFreeFont( gxFont *f );
-void	 BBCALL bbSetFont( gxFont *f );
+BBFont * BBCALL bbLoadFont( BBStr *name,int height,int bold,int italic,int underline );
+void	 BBCALL bbFreeFont( BBFont *f );
+void	 BBCALL bbSetFont( BBFont *f );
 int		 BBCALL bbFontWidth();
 int		 BBCALL bbFontHeight();
 int		 BBCALL bbStringWidth( BBStr *str );
@@ -87,7 +87,7 @@ bbImage* BBCALL bbLoadAnimImage( BBStr *s,int w,int h,int first,int cnt );
 void	 BBCALL bbFreeImage( bbImage *i );
 int		 BBCALL bbSaveImage( bbImage *i,BBStr *filename,int frame );
 void	 BBCALL bbGrabImage( bbImage *i,int x,int y,int n );
-gxCanvas * BBCALL bbImageBuffer( bbImage *i,int n );
+BBCanvas * BBCALL bbImageBuffer( bbImage *i,int n );
 void	 BBCALL bbDrawImage( bbImage *i,int x,int y,int frame );
 void	 BBCALL bbDrawBlock( bbImage *i,int x,int y,int frame );
 void	 BBCALL bbTileImage( bbImage *i,int x,int y,int frame );
