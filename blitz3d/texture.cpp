@@ -35,11 +35,11 @@ struct Texture::Rep{
 
 	float sx,sy,tx,ty,rot;
 	bool mat_used,mat_valid;
-	gxScene::Matrix matrix;
+	BBScene::Matrix matrix;
 
 	Rep( int w,int h,int flags,int cnt ):
 	ref_cnt(1),cached_tex( w,h,flags,cnt ),
-	tex_blend(gxScene::BLEND_MULTIPLY),tex_flags(0),
+	tex_blend(BBScene::BLEND_MULTIPLY),tex_flags(0),
 	sx(1),sy(1),tx(0),ty(0),rot(0),mat_used(false){
 		tex_frames=cached_tex.getFrames();
 		transparent=
@@ -50,7 +50,7 @@ struct Texture::Rep{
 
 	Rep( const string &f,int flags,int w,int h,int first,int cnt ):
 	ref_cnt(1),cached_tex( f,flags,w,h,first,cnt ),
-	tex_blend(gxScene::BLEND_MULTIPLY),tex_flags(0),
+	tex_blend(BBScene::BLEND_MULTIPLY),tex_flags(0),
 	sx(1),sy(1),tx(0),ty(0),rot(0),mat_used(false){
 		tex_frames=cached_tex.getFrames();
 		transparent=
@@ -161,7 +161,7 @@ int Texture::getFlags()const{
 	return rep ? rep->tex_flags : 0;
 }
 
-const gxScene::Matrix *Texture::getMatrix()const{
+const BBScene::Matrix *Texture::getMatrix()const{
 	if( !rep || !rep->mat_used ) return 0;
 	if( !rep->mat_valid ){
 		float c=cos(rep->rot),s=sin(rep->rot);

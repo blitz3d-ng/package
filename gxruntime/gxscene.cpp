@@ -554,7 +554,8 @@ void gxScene::clear( const float rgb[3],float alpha,float z,bool clear_argb,bool
 	dir3dDev->Clear( 0,0,flags,argb,z,0 );
 }
 
-void gxScene::render( gxMesh *m,int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
+void gxScene::render( BBMesh *_m,int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
+	gxMesh *m=(gxMesh*)_m;
 
 	m->render( first_vert,vert_cnt,first_tri,tri_cnt );
 	tris_drawn+=tri_cnt;

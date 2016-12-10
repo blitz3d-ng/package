@@ -3,8 +3,6 @@
 #include "terrainrep.h"
 #include <queue>
 
-extern gxRuntime *gx_runtime;
-extern gxGraphics *gx_graphics;
 extern float stats3d[10];
 
 static Vector eye_vec;
@@ -146,7 +144,7 @@ shading(false),mesh(0),detail(0),morph(true){
 }
 
 TerrainRep::~TerrainRep(){
-	if( mesh ) gx_graphics->freeMesh( mesh );
+	if( mesh ) b3d_graphics->freeMesh( mesh );
 	delete[] errors;
 	delete[] cells;
 }
@@ -168,9 +166,9 @@ void TerrainRep::setDetail( int n,bool m ){
 		max_verts=n;
 		verts=new Vert[max_verts];
 	}
-	if( mesh ) gx_graphics->freeMesh( mesh );
+	if( mesh ) b3d_graphics->freeMesh( mesh );
 	mesh_verts=mesh_tris=n;
-	mesh=gx_graphics->createMesh( mesh_verts,mesh_tris,0 );
+	mesh=b3d_graphics->createMesh( mesh_verts,mesh_tris,0 );
 }
 
 void TerrainRep::setShading( bool t ){
@@ -190,7 +188,7 @@ void TerrainRep::setHeight( int x,int z,float h,bool realtime ){
 }
 
 Vector TerrainRep::getNormal( int x,int z )const{
-	Vector 
+	Vector
 		vt( x,getHeight(x,z),z ),
 		v0( x,getHeight(x,z-1),z-1 ),
 		v1( x+1,getHeight(x+1,z),z ),
@@ -472,8 +470,8 @@ void TerrainRep::render( Model *model,const RenderContext &rc ){
 	if( vert_cnt>mesh_verts || tri_cnt>mesh_tris ){
 		int vc=vert_cnt+32;if( vc>mesh_verts ) mesh_verts=vc;
 		int tc=tri_cnt+32;if( tc>mesh_tris ) mesh_tris=tc;
-		if( mesh ) gx_graphics->freeMesh( mesh );
-		mesh=gx_graphics->createMesh( mesh_verts,mesh_tris,0 );
+		if( mesh ) b3d_graphics->freeMesh( mesh );
+		mesh=b3d_graphics->createMesh( mesh_verts,mesh_tris,0 );
 	}
 
 	mesh->lock( true );
@@ -516,7 +514,7 @@ bool TerrainRep::collide( const Line &line,Collision *curr_coll,const Transform 
 	b.update( v2.v );
 
 	if( id>=end_tri_id || !errors[id].error ){
-		return ::clip( l,b ) ? 
+		return ::clip( l,b ) ?
 		curr_coll->triangleCollide( line,0,tform*v0.v,tform*v2.v,tform*v1.v )
 		: false;
 	}
@@ -539,7 +537,7 @@ bool TerrainRep::collide( const Line &line,float radius,Collision *curr_coll,con
 
 	if( id>=end_tri_id || !errors[id].error ){
 		if( v0.v==v1.v || v0.v==v2.v || v1.v==v2.v ){
-			gx_runtime->debugLog( "OUCH!" );
+			// gx_runtime->debugLog( "OUCH!" );
 		}
 		return b.overlaps(box) ?
 		curr_coll->triangleCollide( line,radius,tform*v0.v,tform*v2.v,tform*v1.v )
@@ -565,7 +563,7 @@ bool TerrainRep::collide( const Line &line,float radius,Collision *curr_coll,con
 
 	if( !radius ){
 		Line l=-tform * line;
-		return 
+		return
 		collide( line,curr_coll,tform,2,v1,v2,v0,l )|
 		collide( line,curr_coll,tform,3,v3,v0,v2,l );
 	}
@@ -575,8 +573,7 @@ bool TerrainRep::collide( const Line &line,float radius,Collision *curr_coll,con
 	b.expand( radius );
 	Box box=-tform * b;
 
-	return 
+	return
 	collide( line,radius,curr_coll,tform,2,v1,v2,v0,box )|
 	collide( line,radius,curr_coll,tform,3,v3,v0,v2,box );
 }
-

@@ -1,12 +1,13 @@
 
-#ifndef STD_H
-#define STD_H
+#ifndef B3DSTD_H
+#define B3DSTD_H
 
 #pragma warning( disable:4786 )
 
 #include "../config/config.h"
 #include "../stdutil/stdutil.h"
-#include "../gxruntime/gxruntime.h"
+
+#include "graphics.h"
 
 #include <set>
 #include <map>
@@ -16,5 +17,7 @@
 #include <fstream>
 
 using namespace std;
+
+#define b3d_graphics ((B3DGraphics*)gx_graphics)
 
 #endif

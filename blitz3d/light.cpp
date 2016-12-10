@@ -1,9 +1,9 @@
 
 #include "std.h"
 #include "light.h"
-#include "../gxruntime/gxscene.h"
+#include "scene.h"
 
-extern gxScene *gx_scene;
+extern BBScene *gx_scene;
 
 Light::Light( int type ):
 type(type),range(1000),color(1.0f,1.0f,1.0f),innerAngle(0.0f),outerAngle(0.0f){

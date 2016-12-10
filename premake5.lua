@@ -22,7 +22,7 @@ workspace "blitz3d"
     "/Gy" -- function level linking: true
   }
 
-  -- disablewarnings { "4018","4244" }
+  disablewarnings { "4018","4244" }
 
   includedirs {
     "freeimage317/Source",

@@ -2,8 +2,11 @@
 #define BBSCENE_H
 
 #include "../graphics/canvas.h"
+#include "light.h"
+#include "mesh.h"
 
 class BBScene{
+  /***** GX INTERFACE *****/
 public:
   enum{
     MAX_TEXTURES=	8
@@ -53,6 +56,43 @@ public:
       int blend,flags;
     }tex_states[MAX_TEXTURES];
   };
+
+  //state
+  virtual int  hwTexUnits()=0;
+  virtual int  gfxDriverCaps3D()=0;
+
+  virtual void setWBuffer( bool enable )=0;
+  virtual void setHWMultiTex( bool enable )=0;
+  virtual void setDither( bool enable )=0;
+  virtual void setAntialias( bool enable )=0;
+  virtual void setWireframe( bool enable )=0;
+  virtual void setFlippedTris( bool enable )=0;
+  virtual void setAmbient( const float rgb[3] )=0;
+  virtual void setAmbient2( const float rgb[3] )=0;
+  virtual void setFogColor( const float rgb[3] )=0;
+  virtual void setFogRange( float nr,float fr )=0;
+  virtual void setFogMode( int mode )=0;
+  virtual void setZMode( int mode )=0;
+  virtual void setViewport( int x,int y,int w,int h )=0;
+  virtual void setOrthoProj( float nr,float fr,float nr_w,float nr_h )=0;
+  virtual void setPerspProj( float nr,float fr,float nr_w,float nr_h )=0;
+  virtual void setViewMatrix( const Matrix *matrix )=0;
+  virtual void setWorldMatrix( const Matrix *matrix )=0;
+  virtual void setRenderState( const RenderState &state )=0;
+
+  //rendering
+  virtual bool begin( const std::vector<BBLightRep*> &lights )=0;
+  virtual void clear( const float rgb[3],float alpha,float z,bool clear_argb,bool clear_z )=0;
+  virtual void render( BBMesh *mesh,int first_vert,int vert_cnt,int first_tri,int tri_cnt )=0;
+  virtual void end()=0;
+
+  //lighting
+  virtual BBLightRep *createLight( int flags )=0;
+  virtual void freeLight( BBLightRep *l )=0;
+
+  //info
+  virtual int getTrianglesDrawn()const=0;
+
 };
 
 #endif

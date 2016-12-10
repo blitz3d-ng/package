@@ -7,8 +7,6 @@ static vector<Vector> tri_centres;
 
 extern float stats3d[10];
 
-extern gxRuntime *gx_runtime;
-
 static bool triTest( const Vector a[3],const Vector b[3] ){
 	bool pb0=false,pb1=false,pb2=false;
 	Plane p( a[0],a[1],a[2] ),p0,p1,p2;
@@ -94,7 +92,7 @@ bool MeshCollider::collide( const Box &line_box,const Line &line,float radius,co
 
 		curr_coll->surface=tri.surface;
 		curr_coll->index=tri.index;
-		
+
 		hit=true;
 	}
 	return hit;
@@ -166,7 +164,7 @@ MeshCollider::Node *MeshCollider::createNode( const vector<int> &tris ){
 bool MeshCollider::intersects( const MeshCollider &c,const Transform &t )const{
 
 	static Vector a[MAX_COLL_TRIS][3],b[3];
-	
+
 	if( !(t * tree->box).overlaps( c.tree->box ) ) return false;
 	for( unsigned int k=0;k<leaves.size();++k ){
 		Node *p=leaves[k];

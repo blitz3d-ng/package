@@ -6,11 +6,11 @@
 #include <d3d.h>
 
 #include "../blitz3d/scene.h"
+#include "../blitz3d/mesh.h"
 #include "gxlight.h"
 
 class gxCanvas;
 
-class gxMesh;
 class gxGraphics;
 class gxTexture;
 
@@ -52,7 +52,7 @@ public:
 	//rendering
 	bool begin( const std::vector<BBLightRep*> &lights );
 	void clear( const float rgb[3],float alpha,float z,bool clear_argb,bool clear_z );
-	void render( gxMesh *mesh,int first_vert,int vert_cnt,int first_tri,int tri_cnt );
+	void render( BBMesh *mesh,int first_vert,int vert_cnt,int first_tri,int tri_cnt );
 	void end();
 
 	//lighting

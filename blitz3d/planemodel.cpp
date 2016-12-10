@@ -6,20 +6,18 @@
 
 static Vector vts[17][17];
 
-extern gxGraphics *gx_graphics;
-
 struct PlaneModel::Rep{
 
 	int ref_cnt;
-	gxMesh *mesh;
+	BBMesh *mesh;
 	int sub_divs;
 
 	Rep( int n ):
 	ref_cnt(1),sub_divs(n){
-		mesh=gx_graphics->createMesh( 5*sub_divs*sub_divs,3*sub_divs*sub_divs,0 );
+		mesh=b3d_graphics->createMesh( 5*sub_divs*sub_divs,3*sub_divs*sub_divs,0 );
 	}
 	~Rep(){
-		gx_graphics->freeMesh( mesh );
+		b3d_graphics->freeMesh( mesh );
 	}
 	void render( PlaneModel *model,const RenderContext &rc ){
 

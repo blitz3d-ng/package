@@ -212,7 +212,6 @@ bool Collision::update( const Line &line,float t,const Vector &n ){
 //
 // NEW VERSION
 //
-extern gxRuntime *gx_runtime;
 
 bool Collision::sphereCollide( const Line &line,float radius,const Vector &dest,float dest_radius ){
 
@@ -329,7 +328,7 @@ bool Collision::boxCollide( const Line &line,float radius,const Box &box ){
 		//quad plane
 		Plane p( v0,v1,v2 );
 		if( p.n.dot( line.d )>=0 ) continue;
-		
+
 		//move plane out
 		p.d-=radius;
 		float t=p.t_intersect( line );

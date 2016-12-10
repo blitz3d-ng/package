@@ -3,9 +3,8 @@
 #define BBBLITZ3D_H
 
 #include "bbsys.h"
-#include "../gxruntime/gxscene.h"
+#include "../blitz3d/scene.h"
 
-extern gxScene *gx_scene;
+extern BBScene *gx_scene;
 
 #endif
-

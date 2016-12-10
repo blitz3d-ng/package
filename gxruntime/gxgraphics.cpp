@@ -519,7 +519,7 @@ static void pickTexFmts( gxGraphics *g,int hi ){
 	}
 }
 
-gxScene *gxGraphics::createScene( int flags ){
+BBScene *gxGraphics::createScene( int flags ){
 	if( scene_set.size() ) return 0;
 
 	//get d3d
@@ -557,7 +557,7 @@ gxScene *gxGraphics::createScene( int flags ){
 							gxScene *scene=d_new gxScene( this,back_canvas );
 							scene_set.insert( scene );
 
-							dummy_mesh=createMesh( 8,12,0 );
+							dummy_mesh=(gxMesh*)createMesh( 8,12,0 );
 
 							return scene;
 						}
@@ -574,12 +574,12 @@ gxScene *gxGraphics::createScene( int flags ){
 	return 0;
 }
 
-gxScene *gxGraphics::verifyScene( gxScene *s ){
-	return scene_set.count( s ) ? s : 0;
+BBScene *gxGraphics::verifyScene( BBScene *s ){
+	return scene_set.count( (gxScene*)s ) ? s : 0;
 }
 
-void gxGraphics::freeScene( gxScene *scene ){
-	if( !scene_set.erase( scene ) ) return;
+void gxGraphics::freeScene( BBScene *scene ){
+	if( !scene_set.erase( (gxScene*)scene ) ) return;
 	dummy_mesh=0;
 	while( mesh_set.size() ) freeMesh( *mesh_set.begin() );
 	back_canvas->releaseZBuffer();
@@ -588,7 +588,7 @@ void gxGraphics::freeScene( gxScene *scene ){
 	delete scene;
 }
 
-gxMesh *gxGraphics::createMesh( int max_verts,int max_tris,int flags ){
+BBMesh *gxGraphics::createMesh( int max_verts,int max_tris,int flags ){
 
 	static const int VTXFMT=
 	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX2|
@@ -611,12 +611,12 @@ gxMesh *gxGraphics::createMesh( int max_verts,int max_tris,int flags ){
 	return mesh;
 }
 
-gxMesh *gxGraphics::verifyMesh( gxMesh *m ){
-	return mesh_set.count( m ) ? m : 0;
+BBMesh *gxGraphics::verifyMesh( BBMesh *m ){
+	return mesh_set.count( (gxMesh*)m ) ? m : 0;
 }
 
-void gxGraphics::freeMesh( gxMesh *mesh ){
-	if( mesh_set.erase( mesh ) ) delete mesh;
+void gxGraphics::freeMesh( BBMesh *mesh ){
+	if( mesh_set.erase( (gxMesh*)mesh ) ) delete mesh;
 }
 
 #endif

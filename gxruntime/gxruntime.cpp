@@ -859,7 +859,7 @@ gxGraphics *gxRuntime::openExclusiveGraphics( int w,int h,int d,bool d3d ){
 	return 0;
 }
 
-gxGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
+BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	if( graphics ) return 0;
 
 	busy=true;
@@ -931,7 +931,7 @@ gxGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	return graphics;
 }
 
-void gxRuntime::closeGraphics( gxGraphics *g ){
+void gxRuntime::closeGraphics( BBGraphics *g ){
 	if( !graphics || graphics!=g ) return;
 
 	auto_suspend=false;

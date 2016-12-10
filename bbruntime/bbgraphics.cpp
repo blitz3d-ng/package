@@ -3,8 +3,10 @@
 #include "bbgraphics.h"
 #include "bbinput.h"
 
-gxGraphics *gx_graphics;
+BBGraphics *gx_graphics;
 BBCanvas *gx_canvas;
+
+#define b2d_graphics ((B2DGraphics*)gx_graphics)
 
 struct GfxMode{
 	int w,h,d,caps;
@@ -57,7 +59,7 @@ static inline void debugImage( bbImage *i,int frame=0 ){
 
 static inline void debugFont( BBFont *f ){
 	if( debug ){
-		if( !gx_graphics->verifyFont( f ) ) RTEX( "Font does not exist" );
+		if( !b2d_graphics->verifyFont( f ) ) RTEX( "Font does not exist" );
 	}
 }
 
@@ -625,7 +627,7 @@ BBFont * BBCALL bbLoadFont( BBStr *name,int height,int bold,int italic,int under
 		(bold ? BBFont::FONT_BOLD : 0 ) |
 		(italic ? BBFont::FONT_ITALIC : 0 ) |
 		(underline ? BBFont::FONT_UNDERLINE : 0 );
-	BBFont *font=gx_graphics->loadFont( *name,height,flags );
+	BBFont *font=b2d_graphics->loadFont( *name,height,flags );
 	delete name;
 	return font;
 }
@@ -633,7 +635,7 @@ BBFont * BBCALL bbLoadFont( BBStr *name,int height,int bold,int italic,int under
 void BBCALL bbFreeFont( BBFont *f ){
 	debugFont( f );
 	if( f==curr_font ) bbSetFont( gx_graphics->getDefaultFont() );
-	gx_graphics->freeFont( f );
+	b2d_graphics->freeFont( f );
 }
 
 int BBCALL bbFontWidth(){
@@ -655,7 +657,7 @@ int BBCALL bbStringHeight( BBStr *str ){
 }
 
 gxMovie * BBCALL bbOpenMovie( BBStr *s ){
-	gxMovie *movie=gx_graphics->openMovie( *s,0 );delete s;
+	gxMovie *movie=b2d_graphics->openMovie( *s,0 );delete s;
 	return movie;
 }
 
@@ -680,7 +682,7 @@ int BBCALL bbMoviePlaying( gxMovie *movie ){
 }
 
 void BBCALL bbCloseMovie( gxMovie *movie ){
-	gx_graphics->closeMovie( movie );
+	b2d_graphics->closeMovie( movie );
 }
 
 bbImage * BBCALL bbLoadImage( BBStr *s ){

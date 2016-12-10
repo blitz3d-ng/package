@@ -6,15 +6,15 @@ struct Brush::Rep{
 	union{ int ref_cnt;Rep *next; };
 	int blend,max_tex;
 	bool blend_valid;
-	gxScene::RenderState rs;
-	Texture texs[gxScene::MAX_TEXTURES];
+	BBScene::RenderState rs;
+	Texture texs[BBScene::MAX_TEXTURES];
 
 	static Rep *pool;
 
 	Rep():
 	ref_cnt(1),blend(0),max_tex(0),blend_valid(true){
 		memset( &rs,0,sizeof(rs) );
-		rs.blend=gxScene::BLEND_REPLACE;
+		rs.blend=BBScene::BLEND_REPLACE;
 		rs.color[0]=rs.color[1]=rs.color[2]=rs.alpha=1;
 	}
 
@@ -121,13 +121,13 @@ void Brush::setFX( int fx ){
 
 void Brush::setTexture( int index,const Texture &t,int n ){
 	write();
-	gxScene::RenderState &rs=rep->rs;
+	BBScene::RenderState &rs=rep->rs;
 
 	rep->texs[index]=t;
-	rs.tex_states[index].canvas=(gxCanvas*)t.getCanvas( n );
+	rs.tex_states[index].canvas=t.getCanvas( n );
 
 	rep->max_tex=0;
-	for( int k=0;k<gxScene::MAX_TEXTURES;++k ){
+	for( int k=0;k<BBScene::MAX_TEXTURES;++k ){
 		if( rs.tex_states[k].canvas ) rep->max_tex=k+1;
 	}
 	rep->blend_valid=false;
@@ -150,13 +150,13 @@ int Brush::getBlend()const{
 
 	rep->blend_valid=true;	//well, it will be...
 
-	gxScene::RenderState &rs=rep->rs;
+	BBScene::RenderState &rs=rep->rs;
 
 	//alphatest
 	if( rep->texs[0].getCanvasFlags() & BBCanvas::CANVAS_TEX_MASK ){
-		rs.fx|=gxScene::FX_ALPHATEST;
+		rs.fx|=BBScene::FX_ALPHATEST;
 	}else{
-		rs.fx&=~gxScene::FX_ALPHATEST;
+		rs.fx&=~BBScene::FX_ALPHATEST;
 	}
 
 	//0 = default/replace
@@ -164,25 +164,25 @@ int Brush::getBlend()const{
 	//2 = multiply
 	//3 = add
 	if( rep->blend ){
-		if( rep->blend!=gxScene::BLEND_ALPHA ){
+		if( rep->blend!=BBScene::BLEND_ALPHA ){
 			return rs.blend=rep->blend;
 		}
 		for( int k=0;k<rep->max_tex;++k ){
 			if( rep->texs[k].isTransparent() ){
-				return rs.blend=gxScene::BLEND_ALPHA;
+				return rs.blend=BBScene::BLEND_ALPHA;
 			}
 		}
 	}else if( rep->max_tex==1 && rep->texs[0].isTransparent() ){
 		//single transparent texture?
-		return rs.blend=gxScene::BLEND_ALPHA;
+		return rs.blend=BBScene::BLEND_ALPHA;
 	}
 
 	//vertex alpha or entityalpha?
-	if( (rs.fx&gxScene::FX_VERTEXALPHA) || rs.alpha<1 ){
-		return rs.blend=gxScene::BLEND_ALPHA;
+	if( (rs.fx&BBScene::FX_VERTEXALPHA) || rs.alpha<1 ){
+		return rs.blend=BBScene::BLEND_ALPHA;
 	}
 
-	return rs.blend=gxScene::BLEND_REPLACE;
+	return rs.blend=BBScene::BLEND_REPLACE;
 }
 
 int Brush::getFX()const{
@@ -193,10 +193,10 @@ Texture Brush::getTexture( int index )const{
 	return rep->texs[index];
 }
 
-const gxScene::RenderState &Brush::getRenderState()const{
+const BBScene::RenderState &Brush::getRenderState()const{
 	getBlend();
 	for( int k=0;k<rep->max_tex;++k ){
-		gxScene::RenderState::TexState *ts=&rep->rs.tex_states[k];
+		BBScene::RenderState::TexState *ts=&rep->rs.tex_states[k];
 		ts->matrix=rep->texs[k].getMatrix();
 		ts->blend=rep->texs[k].getBlend();
 		ts->flags=rep->texs[k].getFlags();
@@ -205,5 +205,5 @@ const gxScene::RenderState &Brush::getRenderState()const{
 }
 
 bool Brush::operator<( const Brush &t )const{
-	return memcmp( &getRenderState(),&t.getRenderState(),sizeof(gxScene::RenderState) )<0;
+	return memcmp( &getRenderState(),&t.getRenderState(),sizeof(BBScene::RenderState) )<0;
 }

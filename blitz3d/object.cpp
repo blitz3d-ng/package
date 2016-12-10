@@ -2,8 +2,6 @@
 #include "std.h"
 #include "object.h"
 
-extern gxRuntime *gx_runtime;
-
 Object::Object():
 order(0),animator(0),last_copy(0),
 coll_type(0),coll_radii(Vector(1,1,1)),coll_box(Box(Vector(-1,-1,-1),Vector(1,1,1))),

@@ -226,7 +226,7 @@ bool MeshModel::render( const RenderContext &rc ){
 	if( !surf_bones.size() ){
 		for( unsigned int k=0;k<rep->surfaces.size();++k ){
 			Surface *s=rep->surfaces[k];
-			if( gxMesh *mesh=s->getMesh() ){
+			if( BBMesh *mesh=s->getMesh() ){
 				enqueue( mesh,0,s->numVertices(),0,s->numTriangles(),brushes[k] );
 			}
 		}
@@ -246,8 +246,8 @@ bool MeshModel::render( const RenderContext &rc ){
 	bool trans=false;
 	for( unsigned int k=0;k<rep->surfaces.size();++k ){
 		Surface *s=rep->surfaces[k];
-		if( brushes[k].getBlend()==gxScene::BLEND_REPLACE ){
-			if( gxMesh *mesh=s->getMesh( surf_bones ) ){
+		if( brushes[k].getBlend()==BBScene::BLEND_REPLACE ){
+			if( BBMesh *mesh=s->getMesh( surf_bones ) ){
 				enqueue( mesh,0,s->numVertices(),0,s->numTriangles(),brushes[k] );
 			}
 		}else{
@@ -261,8 +261,8 @@ void MeshModel::renderQueue( int type ){
 	if( type==QUEUE_TRANSPARENT && surf_bones.size() ){
 		for( unsigned int k=0;k<rep->surfaces.size();++k ){
 			Surface *s=rep->surfaces[k];
-			if( brushes[k].getBlend()!=gxScene::BLEND_REPLACE ){
-				if( gxMesh *mesh=s->getMesh( surf_bones ) ){
+			if( brushes[k].getBlend()!=BBScene::BLEND_REPLACE ){
+				if( BBMesh *mesh=s->getMesh( surf_bones ) ){
 					enqueue( mesh,0,s->numVertices(),0,s->numTriangles(),brushes[k] );
 				}
 			}

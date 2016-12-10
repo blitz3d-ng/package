@@ -127,8 +127,8 @@ public:
 	gxInput *openInput( int flags );
 	void closeInput( gxInput *input );
 
-	gxGraphics *openGraphics( int w,int h,int d,int driver,int flags );
-	void closeGraphics( gxGraphics *graphics );
+	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
+	void closeGraphics( BBGraphics *graphics );
 	bool graphicsLost();
 
 	BBFileSystem *openFileSystem( int flags );

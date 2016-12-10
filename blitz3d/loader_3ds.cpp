@@ -4,10 +4,8 @@
 #include "meshmodel.h"
 #include "animation.h"
 
-extern gxRuntime *gx_runtime;
-
 #ifdef BETA
-#define _log( X ) gx_runtime->debugLog( (string(X)).c_str() );
+// #define _log( X ) gx_runtime->debugLog( (string(X)).c_str() );
 #else
 #define _log( X )
 #endif

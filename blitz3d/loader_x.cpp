@@ -5,11 +5,11 @@
 #include "animation.h"
 #include "pivot.h"
 
+#include <d3d.h>
 #include <dxfile.h>
 #include <rmxfguid.h>
 #include <rmxftmpl.h>
 
-extern gxRuntime *gx_runtime;
 static map<string,MeshModel*> frames_map;
 static int anim_len;
 

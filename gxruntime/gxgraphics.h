@@ -8,7 +8,7 @@
 
 #include "ddutil.h"
 
-#include "../graphics/graphics.h"
+#include "../blitz3d/graphics.h"
 #include "../blitz2d/font.h"
 #include "gxcanvas.h"
 #include "gxscene.h"
@@ -17,7 +17,7 @@
 
 class gxRuntime;
 
-class gxGraphics : public BBGraphics{
+class gxGraphics : public B3DGraphics{
 public:
 	IDirectDraw7 *dirDraw;
 	IDirectDraw *ds_dirDraw;
@@ -98,13 +98,13 @@ public:
 	BBFont *verifyFont( BBFont *font );
 	void freeFont( BBFont *font );
 
-	gxScene *createScene( int flags );
-	gxScene *verifyScene( gxScene *scene );
-	void freeScene( gxScene *scene );
+	BBScene *createScene( int flags );
+	BBScene *verifyScene( BBScene *scene );
+	void freeScene( BBScene *scene );
 
-	gxMesh *createMesh( int max_verts,int max_tris,int flags );
-	gxMesh *verifyMesh( gxMesh *mesh );
-	void freeMesh( gxMesh *mesh );
+	BBMesh *createMesh( int max_verts,int max_tris,int flags );
+	BBMesh *verifyMesh( BBMesh *mesh );
+	void freeMesh( BBMesh *mesh );
 };
 
 #endif

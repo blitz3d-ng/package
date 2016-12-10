@@ -3,9 +3,6 @@
 #include "md2rep.h"
 #include "md2norms.h"
 
-extern gxRuntime *gx_runtime;
-extern gxGraphics *gx_graphics;
-
 static Vector *normals=0;
 static float tex_coords[2][2]={{0,0},{0,0}};
 
@@ -145,7 +142,7 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 	}
 
 	//create mesh and setup tris
-	mesh=gx_graphics->createMesh( n_verts,n_tris,0 );
+	mesh=b3d_graphics->createMesh( n_verts,n_tris,0 );
 	mesh->lock( true );
 	for( k=0;k<n_tris;++k ){
 		const t_tri &t=t_tris[k];
@@ -163,7 +160,7 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 }
 
 MD2Rep::~MD2Rep(){
-	if( mesh ) gx_graphics->freeMesh( mesh );
+	if( mesh ) b3d_graphics->freeMesh( mesh );
 }
 
 /*

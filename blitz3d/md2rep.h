@@ -41,7 +41,7 @@ private:
 	};
 
 	Box box;
-	gxMesh *mesh;
+	BBMesh *mesh;
 	int n_frames;
 	int n_verts,n_tris;
 	vector<Frame> frames;

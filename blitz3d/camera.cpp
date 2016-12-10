@@ -2,7 +2,7 @@
 #include "std.h"
 #include "camera.h"
 
-extern gxScene *gx_scene;
+extern BBScene *gx_scene;
 
 Camera::Camera(){
 	setZoom( 1 );
@@ -13,7 +13,7 @@ Camera::Camera(){
 	setProjMode( PROJ_PERSP );
 	setFogRange( 1,1000 );
 	setFogColor( Vector() );
-	setFogMode( gxScene::FOG_NONE );
+	setFogMode( BBScene::FOG_NONE );
 }
 
 void Camera::setZoom( float z ){

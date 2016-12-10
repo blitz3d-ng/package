@@ -23,8 +23,9 @@
 #include "../blitz3d/terrain.h"
 #include "../blitz3d/listener.h"
 #include "../blitz3d/cachedtexture.h"
+#include "../blitz3d/std.h"
 
-gxScene *gx_scene;
+BBScene *gx_scene;
 
 static int tri_count;
 static World *world;
@@ -1107,7 +1108,7 @@ Entity * BBCALL bbCreatePivot( Entity *p ){
 Entity * BBCALL bbCreateSprite( Entity *p ){
 	debugParent(p);
 	Sprite *s=d_new Sprite();
-	s->setFX( gxScene::FX_FULLBRIGHT );
+	s->setFX( BBScene::FX_FULLBRIGHT );
 	return insertEntity( s,p );
 }
 
@@ -1117,11 +1118,11 @@ Entity * BBCALL bbLoadSprite( BBStr *file,int flags,Entity *p ){
 	delete file;if( !t.getCanvas(0) ) return 0;
 	Sprite *s=d_new Sprite();
 	s->setTexture( 0,t,0 );
-	s->setFX( gxScene::FX_FULLBRIGHT );
+	s->setFX( BBScene::FX_FULLBRIGHT );
 
-	if( flags & gxCanvas::CANVAS_TEX_MASK ) s->setBlend( gxScene::BLEND_REPLACE );
-	else if( flags & gxCanvas::CANVAS_TEX_ALPHA ) s->setBlend( gxScene::BLEND_ALPHA );
-	else s->setBlend( gxScene::BLEND_ADD );
+	if( flags & gxCanvas::CANVAS_TEX_MASK ) s->setBlend( BBScene::BLEND_REPLACE );
+	else if( flags & gxCanvas::CANVAS_TEX_ALPHA ) s->setBlend( BBScene::BLEND_ALPHA );
+	else s->setBlend( BBScene::BLEND_ADD );
 
 	return insertEntity( s,p );
 }
@@ -1927,7 +1928,7 @@ int BBCALL bbActiveTextures(){
 }
 
 void blitz3d_open(){
-	gx_scene=gx_graphics->createScene( 0 );
+	gx_scene=b3d_graphics->createScene( 0 );
 	if( !gx_scene ) RTEX( "Unable to create 3D Scene" );
 	world=d_new World();
 	projected=Vector();
@@ -1948,7 +1949,7 @@ void blitz3d_close(){
 	Texture::clearFilters();
 	loader_mat_map.clear();
 	delete world;
-	gx_graphics->freeScene( gx_scene );
+	b3d_graphics->freeScene( gx_scene );
 	gx_scene=0;
 }
 

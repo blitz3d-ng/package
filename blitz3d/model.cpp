@@ -2,11 +2,11 @@
 #include "std.h"
 #include "model.h"
 
-extern gxScene *gx_scene;
+extern BBScene *gx_scene;
 
 class Model::MeshQueue{
 	union{
-		gxMesh *mesh;
+		BBMesh *mesh;
 		MeshQueue *next;
 	};
 	int fv,vc,ft,tc;
@@ -19,10 +19,10 @@ class Model::MeshQueue{
 public:
 	MeshQueue(){}
 
-	MeshQueue( gxMesh *m,int fv,int vc,int ft,int tc,const Brush &b ):
+	MeshQueue( BBMesh *m,int fv,int vc,int ft,int tc,const Brush &b ):
 	mesh(m),fv(fv),vc(vc),ft(ft),tc(tc),brush(b){
 		int n=brush.getBlend();
-		q_type=(n==gxScene::BLEND_REPLACE) ? QUEUE_OPAQUE : QUEUE_TRANSPARENT;
+		q_type=(n==BBScene::BLEND_REPLACE) ? QUEUE_OPAQUE : QUEUE_TRANSPARENT;
 	}
 
 	int getQueueType()const{
@@ -111,11 +111,11 @@ void Model::enqueue( MeshQueue *q ){
 	queues[q->getQueueType()].push_back( q );
 }
 
-void Model::enqueue( gxMesh *mesh,int fv,int vc,int ft,int tc ){
+void Model::enqueue( BBMesh *mesh,int fv,int vc,int ft,int tc ){
 	enqueue( new MeshQueue( mesh,fv,vc,ft,tc,render_brush ) );
 }
 
-void Model::enqueue( gxMesh *mesh,int fv,int vc,int ft,int tc,const Brush &brush ){
+void Model::enqueue( BBMesh *mesh,int fv,int vc,int ft,int tc,const Brush &brush ){
 	enqueue( new MeshQueue( mesh,fv,vc,ft,tc,brush ) );
 }
 

@@ -109,7 +109,7 @@ struct Q3BSPFace;
 
 struct Q3BSPSurf{
 	Brush brush;
-	gxMesh *mesh;
+	BBMesh *mesh;
 	vector<Q3BSPFace*> r_faces;
 	int texture,lm_index;
 };
@@ -156,9 +156,7 @@ static Frustum r_frustum;
 static Vector r_frustedges[12];
 static map<int,Q3BSPFace*> q3face_map;
 
-extern gxScene *gx_scene;
-extern gxRuntime *gx_runtime;
-extern gxGraphics *gx_graphics;
+extern BBScene *gx_scene;
 
 //#define SWAPTRIS
 Vector static tf( const Vector &v ){
@@ -167,7 +165,7 @@ Vector static tf( const Vector &v ){
 
 #ifdef BETA
 static void log( const string &t ){
-	gx_runtime->debugLog( t.c_str() );
+	// gx_runtime->debugLog( t.c_str() );
 }
 #else
 static void log( const string &t ){}
@@ -219,7 +217,7 @@ void Q3BSPRep::createLightMaps(){
 
 	for( k=0;k<n_lmaps;++k ){
 		Texture tex( 128,128,1+8+16+32,1 );
-		tex.setBlend( gxScene::BLEND_ADD );
+		tex.setBlend( BBScene::BLEND_ADD );
 		BBCanvas *c=tex.getCanvas(0);
 		c->lock();
 		for( int y=0;y<128;++y ){
@@ -273,7 +271,7 @@ void Q3BSPRep::createSurfs(){
 	int k;
 	for( k=0;k<t_surfs.size();++k ){
 		Surf *s=t_surfs[k];
-		gxMesh *mesh=gx_graphics->createMesh( s->verts.size(),s->tris.size()/3,0 );
+		BBMesh *mesh=b3d_graphics->createMesh( s->verts.size(),s->tris.size()/3,0 );
 
 		mesh->lock( true );
 		int j;
@@ -626,7 +624,7 @@ Q3BSPRep::~Q3BSPRep(){
 	delete[] vis_data;
 	int k;
 	for( k=0;k<surfs.size();++k ){
-		gx_graphics->freeMesh( surfs[k]->mesh );
+		b3d_graphics->freeMesh( surfs[k]->mesh );
 		delete surfs[k];
 	}
 	for( k=0;k<faces.size();++k ){
@@ -699,7 +697,7 @@ void Q3BSPRep::render( Model *model,const RenderContext &rc ){
 	if( !r_surfs.size() ) return;
 
 	gx_scene->setAmbient2( &ambient.x );
-	gx_scene->setWorldMatrix( (gxScene::Matrix*)&model->getRenderTform() );
+	gx_scene->setWorldMatrix( (BBScene::Matrix*)&model->getRenderTform() );
 
 	int k;
 	for( k=0;k<r_surfs.size();++k ){
@@ -726,7 +724,7 @@ void Q3BSPRep::setAmbient( const Vector &t ){
 
 void Q3BSPRep::setLighting( bool lmap ){
 	if( lmap==use_lmap ) return;
-	int fx=gxScene::FX_CONDLIGHT;
+	int fx=BBScene::FX_CONDLIGHT;
 	if( use_lmap=lmap ){
 		int k;
 		for( k=0;k<surfs.size();++k ){
@@ -739,7 +737,7 @@ void Q3BSPRep::setLighting( bool lmap ){
 					s->brush.setTexture( 1,textures[s->texture],0 );
 				}
 			}else{
-				s->brush.setFX( fx|gxScene::FX_EMISSIVE );
+				s->brush.setFX( fx|BBScene::FX_EMISSIVE );
 				if( s->texture>=0 ){
 					s->brush.setTexture( 0,textures[s->texture],0 );
 				}
@@ -750,7 +748,7 @@ void Q3BSPRep::setLighting( bool lmap ){
 		Texture tex;
 		for( k=0;k<surfs.size();++k ){
 			Q3BSPSurf *s=surfs[k];
-			s->brush.setFX( fx|gxScene::FX_EMISSIVE );
+			s->brush.setFX( fx|BBScene::FX_EMISSIVE );
 			if( s->texture>=0 ){
 				s->brush.setTexture( 0,textures[s->texture],0 );
 			}else{

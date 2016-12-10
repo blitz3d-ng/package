@@ -7,8 +7,7 @@
 //1=max proj err of terrain
 float stats3d[10];
 
-extern gxScene *gx_scene;
-extern gxRuntime *gx_runtime;
+extern BBScene *gx_scene;
 
 static vector<Object*> _enabled,_visible;
 
@@ -608,14 +607,14 @@ void World::render( Camera *cam,Mirror *mirror ){
 	}
 
 	//set camera matrix
-	gx_scene->setViewMatrix( (gxScene::Matrix*)&(-cam_tform) );
+	gx_scene->setViewMatrix( (BBScene::Matrix*)&(-cam_tform) );
 
 	//initialize render context
 	RenderContext rc( cam_tform,cam->getFrustum(),mirror!=0 );
 
 	//draw everything in order
 	unsigned int ord=0;
-	gx_scene->setZMode( gxScene::ZMODE_DISABLE );
+	gx_scene->setZMode( BBScene::ZMODE_DISABLE );
 	while( ord<ord_mods.size() && ord_mods[ord]->getOrder()>0 ){
 		Model *mod=ord_mods[ord++];
 		if( !mod->doAutoFade( cam_tform.v ) ) continue;
@@ -623,16 +622,16 @@ void World::render( Camera *cam,Mirror *mirror ){
 		flushTransparent();
 	}
 
-	gx_scene->setZMode( gxScene::ZMODE_NORMAL );
+	gx_scene->setZMode( BBScene::ZMODE_NORMAL );
 	for( unsigned int k=0;k<unord_mods.size();++k ){
 		Model *mod=unord_mods[k];
 		if( !mod->doAutoFade( cam_tform.v ) ) continue;
 		render( mod,rc );
 	}
-	gx_scene->setZMode( gxScene::ZMODE_CMPONLY );
+	gx_scene->setZMode( BBScene::ZMODE_CMPONLY );
 	flushTransparent();
 
-	gx_scene->setZMode( gxScene::ZMODE_DISABLE );
+	gx_scene->setZMode( BBScene::ZMODE_DISABLE );
 	while( ord<ord_mods.size() ){
 		Model *mod=ord_mods[ord++];
 		if( !mod->doAutoFade( cam_tform.v ) ) continue;
@@ -647,7 +646,7 @@ void World::render( Model *mod,const RenderContext &rc ){
 
 	if( mod->queueSize( Model::QUEUE_OPAQUE ) ){
 		if( mod->getRenderSpace()==Model::RENDER_SPACE_LOCAL ){
-			gx_scene->setWorldMatrix( (gxScene::Matrix*)&mod->getRenderTform() );
+			gx_scene->setWorldMatrix( (BBScene::Matrix*)&mod->getRenderTform() );
 		}else{
 			gx_scene->setWorldMatrix( 0 );
 		}
@@ -666,7 +665,7 @@ void World::flushTransparent(){
 	for( ;transparents.size();transparents.pop() ){
 		Model *mod=transparents.top();
 		if( mod->getRenderSpace()==Model::RENDER_SPACE_LOCAL ){
-			gx_scene->setWorldMatrix( (gxScene::Matrix*)&mod->getRenderTform() );
+			gx_scene->setWorldMatrix( (BBScene::Matrix*)&mod->getRenderTform() );
 			local=true;
 		}else if( local ){
 			gx_scene->setWorldMatrix( 0 );

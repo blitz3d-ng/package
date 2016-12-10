@@ -103,7 +103,7 @@ static void readTextures(){
 		Texture tex( name,flags & 0xffff );
 
 		tex.setBlend( blend );
-		if( flags & 0x10000 ) tex.setFlags( gxScene::TEX_COORDS2 );
+		if( flags & 0x10000 ) tex.setFlags( BBScene::TEX_COORDS2 );
 
 		if( pos[0]!=0 || pos[1]!=0 ) tex.setPosition( pos[0],pos[1] );
 		if( scl[0]!=1 || scl[1]!=1 ) tex.setScale( scl[0],scl[1] );

@@ -2,11 +2,12 @@
 #ifndef GXMESH_H
 #define GXMESH_H
 
+#include "../blitz3d/mesh.h"
 #include <d3d.h>
 
 class gxGraphics;
 
-class gxMesh{
+class gxMesh : public BBMesh{
 public:
 
 	gxMesh( gxGraphics *graphics,IDirect3DVertexBuffer7 *verts,WORD *indicies,int max_verts,int max_tris );

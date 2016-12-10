@@ -18,9 +18,9 @@ public:
 
 		Vertex():color(~0){
 			bone_bones[0]=255;
-			memset(tex_coords,0,sizeof(tex_coords)); 
+			memset(tex_coords,0,sizeof(tex_coords));
 		}
-		
+
 		bool operator<( const Vertex &t )const{
 			return memcmp( this,&t,sizeof(*this) )==-1;
 		}
@@ -92,8 +92,8 @@ public:
 
 	void updateNormals();
 
-	gxMesh *getMesh();
-	gxMesh *getMesh( const vector<Bone> &bones );
+	BBMesh *getMesh();
+	BBMesh *getMesh( const vector<Bone> &bones );
 
 	string getName()const{ return name; }
 	const Brush &getBrush()const{ return brush; }
@@ -105,7 +105,7 @@ public:
 private:
 	Brush brush;
 	string name;
-	gxMesh *mesh;
+	BBMesh *mesh;
 	vector<Vertex> vertices;
 	vector<Triangle> triangles;
 	int mesh_vs,mesh_ts;

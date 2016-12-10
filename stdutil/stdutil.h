@@ -9,7 +9,10 @@
 #include <string>
 #include <iostream>
 
+#ifdef _WIN32
 #include <windows.h>
+HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height );
+#endif
 
 struct BBEnv{
 	void *window;
@@ -114,7 +117,5 @@ public:
 	void construct( pointer p,const T &q ){ new(p)T(q); }
 	void destroy( pointer p ){ p->~T(); }
 };
-
-HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height );
 
 #endif

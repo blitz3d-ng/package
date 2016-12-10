@@ -3,11 +3,10 @@
 #define BB_RUNTIME_GRAPHICS_H
 
 #include "bbsys.h"
-#include "../gxruntime/gxgraphics.h"
+#include "../blitz2d/graphics.h"
 
-extern gxGraphics *gx_graphics;
+extern BBGraphics *gx_graphics;
 extern BBCanvas *gx_canvas;
-extern gxScene *gx_scene;
 
 class bbImage;
 
