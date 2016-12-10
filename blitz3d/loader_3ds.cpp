@@ -206,8 +206,6 @@ static void parseTriMesh( MeshModel *mesh ){
 	//should really do something here...
 //	bool neg_x=tform.m.j.cross(tform.m.k).dot(tform.m.i)<0;
 
-	int k;
-
 	mesh->setWorldTform( tform );
 
 	if( animonly ){
@@ -216,12 +214,12 @@ static void parseTriMesh( MeshModel *mesh ){
 	}
 
 	Transform inv_tform=-tform;
-	for( k=0;k<MeshLoader::numVertices();++k ){
+	for( int k=0;k<MeshLoader::numVertices();++k ){
 		Surface::Vertex &v=MeshLoader::refVertex( k );
 		v.coords=inv_tform * v.coords;
 	}
 
-	for( k=0;k<faces.size();++k ){
+	for( unsigned int k=0;k<faces.size();++k ){
 		const Face3DS &f=faces[k];
 		MeshLoader::addTriangle( f.verts,f.brush );
 	}

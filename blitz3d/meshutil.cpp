@@ -204,7 +204,7 @@ void MeshUtil::lightMesh( MeshModel *m,const Vector &pos,const Vector &rgb,float
 	if( range ){
 		float att=1.0f/range;
 		const MeshModel::SurfaceList &surfs=m->getSurfaces();
-		for( int k=0;k<surfs.size();++k ){
+		for( unsigned int k=0;k<surfs.size();++k ){
 			Surface *s=surfs[k];
 			for( int j=0;j<s->numVertices();++j ){
 				const Surface::Vertex &v=s->getVertex( j );
@@ -218,7 +218,7 @@ void MeshUtil::lightMesh( MeshModel *m,const Vector &pos,const Vector &rgb,float
 		}
 	}else{
 		const MeshModel::SurfaceList &surfs=m->getSurfaces();
-		for( int k=0;k<surfs.size();++k ){
+		for( unsigned int k=0;k<surfs.size();++k ){
 			Surface *s=surfs[k];
 			for( int j=0;j<s->numVertices();++j ){
 				const Surface::Vertex &v=s->getVertex( j );

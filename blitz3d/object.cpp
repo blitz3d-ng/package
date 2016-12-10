@@ -144,7 +144,7 @@ BBChannel *Object::emitSound( BBSound *sound ){
 	if( !sound ) return 0;
 
 	BBChannel *chan=sound->play3d( &getWorldTform().v.x,&velocity.x );
-	for( int k=0;k<channels.size();++k ){
+	for( unsigned int k=0;k<channels.size();++k ){
 		if( chan==channels[k] ) return chan;
 		if( !channels[k] ) return channels[k]=chan;
 	}
@@ -153,7 +153,7 @@ BBChannel *Object::emitSound( BBSound *sound ){
 }
 
 void Object::updateSounds(){
-	for( int k=0;k<channels.size();++k ){
+	for( unsigned int k=0;k<channels.size();++k ){
 		if( BBChannel *chan=channels[k] ){
 			if( chan->isPlaying() )	chan->set3d( &getWorldTform().v.x,&velocity.x );
 			else channels[k]=0;

@@ -30,7 +30,8 @@ Animator::Animator( const vector<Object*> &objs,int frames ):_objs(objs){
 }
 
 void Animator::reset(){
-	_seq=_mode=_seq_len=_time=_speed=_trans_time=_trans_speed=0;
+	_seq=_mode=_seq_len=0;
+	_time=_speed=_trans_time=_trans_speed=0.0f;
 }
 
 void Animator::addObjs( Object *obj ){
@@ -147,7 +148,7 @@ void Animator::setAnimTime( float time,int seq ){
 
 	//if( time<0 || time>_seq_len ) time=fmod( time,_seq_len );
 	//_time=time;
-		
+
 	if( _time<0 ) _time+=+_seq_len;
 
 	updateAnim();
@@ -215,4 +216,3 @@ void Animator::update( float elapsed ){
 
 	updateAnim();
 }
-

@@ -198,8 +198,8 @@ static void parseMesh( IDirectXFileData *fileData,MeshModel *mesh ){
 
 	//setup vertices
 	int num_verts=*data++;
-	int k;
-	for( k=0;k<num_verts;++k ){
+
+	for( int k=0;k<num_verts;++k ){
 		Surface::Vertex v;
 		v.coords=*(Vector*)data;
 		if( conv ) v.coords=conv_tform * v.coords;
@@ -210,7 +210,7 @@ static void parseMesh( IDirectXFileData *fileData,MeshModel *mesh ){
 
 	//setup faces
 	int num_faces=*data++;
-	for( k=0;k<num_faces;++k ){
+	for( int k=0;k<num_faces;++k ){
 		faces.push_back( FaceX( data ) );
 		data+=*data+1;
 	}
@@ -270,7 +270,7 @@ static void parseMesh( IDirectXFileData *fileData,MeshModel *mesh ){
 	}
 	if( !mats.size() ) mats.push_back( Brush() );
 
-	for( k=0;k<faces.size();++k ){
+	for( unsigned int k=0;k<faces.size();++k ){
 		const FaceX &f=faces[k];
 		int *data=f.data;
 		int cnt=*data++;if( cnt<3 ) continue;

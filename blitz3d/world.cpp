@@ -70,7 +70,7 @@ void World::clearCollisions(){
 void World::addCollision( int src_type,int dst_type,int method,int response ){
 
 	vector<CollInfo> &info=_collInfo[src_type];
-	for( int k=0;k<info.size();++k ){
+	for( unsigned int k=0;k<info.size();++k ){
 		const CollInfo &t=info[k];
 		if( dst_type==t.dst_type ) return;
 	}
@@ -614,7 +614,7 @@ void World::render( Camera *cam,Mirror *mirror ){
 	RenderContext rc( cam_tform,cam->getFrustum(),mirror!=0 );
 
 	//draw everything in order
-	int ord=0;
+	unsigned int ord=0;
 	gx_scene->setZMode( gxScene::ZMODE_DISABLE );
 	while( ord<ord_mods.size() && ord_mods[ord]->getOrder()>0 ){
 		Model *mod=ord_mods[ord++];
@@ -624,7 +624,7 @@ void World::render( Camera *cam,Mirror *mirror ){
 	}
 
 	gx_scene->setZMode( gxScene::ZMODE_NORMAL );
-	for( int k=0;k<unord_mods.size();++k ){
+	for( unsigned int k=0;k<unord_mods.size();++k ){
 		Model *mod=unord_mods[k];
 		if( !mod->doAutoFade( cam_tform.v ) ) continue;
 		render( mod,rc );

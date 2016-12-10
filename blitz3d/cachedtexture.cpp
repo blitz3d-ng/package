@@ -89,7 +89,7 @@ struct CachedTexture::Rep{
 
 	~Rep(){
 		--active_texs;
-		for( int k=0;k<frames.size();++k ) gx_graphics->freeCanvas( frames[k] );
+		for( unsigned int k=0;k<frames.size();++k ) gx_graphics->freeCanvas( frames[k] );
 	}
 };
 
