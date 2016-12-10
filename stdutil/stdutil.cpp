@@ -4,7 +4,6 @@
 #include <set>
 #include <math.h>
 #include <stdlib.h>
-#include <windows.h>
 
 using namespace std;
 
@@ -361,6 +360,7 @@ qstreambuf::int_type qstreambuf::overflow( qstreambuf::int_type c ){
 	pbump( 1 );return traits_type::not_eof( c );
 }
 
+#ifdef _WIN32
 HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height ){
 	HDC src,dest;
 	src=CreateCompatibleDC( NULL );
@@ -375,6 +375,7 @@ HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height ){
 	SelectObject( dest, old_dest );
 	return result;
 }
+#endif
 // HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height ){
 // 	CDC src,dest;
 // 	src.CreateCompatibleDC( NULL );

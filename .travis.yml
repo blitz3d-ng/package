@@ -1,0 +1,15 @@
+language: cpp
+
+os: osx
+
+env:
+- ENV=debug
+- ENV=release
+
+compiler: clang
+
+install:
+  - curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-macosx.tar.gz | tar xvz
+
+script:
+- ./premake5 gmake && make config=${ENV}_macos

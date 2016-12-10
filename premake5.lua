@@ -1,7 +1,7 @@
 -- premake5.lua
 workspace "blitz3d"
   configurations { "debug", "release" }
-  platforms { "win32", "win64" } --, "macos", "linux" }
+  platforms { "win32", "win64", "macos" } --, "linux" }
 
   location "build"
 
@@ -17,12 +17,6 @@ workspace "blitz3d"
     "DIRECTSOUND_VERSION=0x700",
     "DIRECTINPUT_VERSION=0x800"
   }
-
-  buildoptions {
-    "/Gy" -- function level linking: true
-  }
-
-  disablewarnings { "4018","4244" }
 
   includedirs {
     "freeimage317/Source",
@@ -56,11 +50,21 @@ workspace "blitz3d"
 
     defines { "WIN32", "WIN64", "TARGETSUFFIX=\"64\"" }
 
+  filter "platforms:win32 or win64"
+    buildoptions {
+      "/Gy" -- function level linking: true
+    }
+
+    disablewarnings { "4018","4244" }
+
+  filter "platforms:macos"
+    toolset "clang"
+
 project "blitzide"
   kind "WindowedApp"
   language "C++"
 
-  -- removeplatforms "win32"
+  removeplatforms "macos"
 
   targetdir "_release/bin"
   targetname "ide"
@@ -116,7 +120,7 @@ project "debugger"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms "win64"
+  removeplatforms { "win64", "macos" }
 
   targetdir "_release/bin"
   targetname "debugger"
@@ -150,6 +154,8 @@ project "bblaunch"
   kind "WindowedApp"
   language "C++"
 
+  removeplatforms "macos"
+
   files { "bblaunch/bblaunch.cpp" }
 
   filter "platforms:win32 or win64"
@@ -168,7 +174,7 @@ project "bbruntime_dll"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms "win64"
+  removeplatforms { "win64", "macos" }
 
   targetdir "_release/bin"
   targetprefix ""
@@ -199,13 +205,15 @@ project "gxruntime"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms "win64"
+  removeplatforms { "win64", "macos" }
 
   files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxdevice.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxinput.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxdevice.h", "gxruntime/gxgraphics.h", "gxruntime/gxinput.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
 
 project "bbruntime"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms { "macos" }
 
   files {
     "bbruntime/basic.cpp", "bbruntime/basic.h",
@@ -243,6 +251,10 @@ project "audio.fmod"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos" }
+
+  includedirs "common/include"
+
   files {
     "audio.fmod/sound.cpp", "audio/sound.h",
     "audio.fmod/driver.cpp", "audio.fmod/driver.h",
@@ -260,6 +272,8 @@ project "system.windows"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos" }
+
   files { "system.windows/driver.cpp", "system.windows/driver.h" }
 
   links "system"
@@ -274,6 +288,8 @@ project "filesystem.windows"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos" }
+
   files {
     "filesystem.windows/driver.cpp", "filesystem.windows/driver.h",
     "filesystem.windows/dir.cpp", "filesystem.windows/dir.h"
@@ -284,6 +300,8 @@ project "filesystem.windows"
 project "blitz3d"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms { "macos" }
 
   files {
     "blitz3d/animation.cpp", "blitz3d/animator.cpp", "blitz3d/brush.cpp", "blitz3d/cachedtexture.cpp", "blitz3d/camera.cpp", "blitz3d/collision.cpp", "blitz3d/entity.cpp", "blitz3d/frustum.cpp", "blitz3d/geom.cpp", "blitz3d/light.cpp", "blitz3d/listener.cpp", "blitz3d/loader_3ds.cpp", "blitz3d/loader_b3d.cpp", "blitz3d/loader_x.cpp", "blitz3d/md2model.cpp", "blitz3d/md2norms.cpp", "blitz3d/md2rep.cpp", "blitz3d/meshcollider.cpp", "blitz3d/meshloader.cpp", "blitz3d/meshmodel.cpp", "blitz3d/meshutil.cpp", "blitz3d/mirror.cpp", "blitz3d/model.cpp", "blitz3d/object.cpp", "blitz3d/pivot.cpp", "blitz3d/planemodel.cpp", "blitz3d/q3bspmodel.cpp", "blitz3d/q3bsprep.cpp", "blitz3d/sprite.cpp", "blitz3d/std.cpp", "blitz3d/surface.cpp", "blitz3d/terrain.cpp", "blitz3d/terrainrep.cpp", "blitz3d/texture.cpp", "blitz3d/world.cpp", "blitz3d/animation.h", "blitz3d/animator.h", "blitz3d/blitz3d.h", "blitz3d/brush.h", "blitz3d/cachedtexture.h", "blitz3d/camera.h", "blitz3d/collision.h", "blitz3d/entity.h", "blitz3d/frustum.h", "blitz3d/geom.h", "blitz3d/light.h", "blitz3d/listener.h", "blitz3d/loader_3ds.h", "blitz3d/loader_b3d.h", "blitz3d/loader_x.h", "blitz3d/md2model.h", "blitz3d/md2norms.h", "blitz3d/md2rep.h", "blitz3d/meshcollider.h", "blitz3d/meshloader.h", "blitz3d/meshmodel.h", "blitz3d/meshutil.h", "blitz3d/mirror.h", "blitz3d/model.h", "blitz3d/object.h", "blitz3d/pivot.h", "blitz3d/planemodel.h", "blitz3d/q3bspmodel.h", "blitz3d/q3bsprep.h", "blitz3d/rendercontext.h", "blitz3d/sprite.h", "blitz3d/std.h", "blitz3d/surface.h", "blitz3d/terrain.h", "blitz3d/terrainrep.h", "blitz3d/texture.h", "blitz3d/world.h"
@@ -308,7 +326,7 @@ project "blitz"
   kind "ConsoleApp"
   language "C++"
 
-  removeplatforms "win64"
+  removeplatforms { "win64", "macos" }
 
   files { "blitz/main.cpp", "blitz/libs.cpp",  "blitz/resource.h", "blitz/blitz.rc" }
 
@@ -325,7 +343,7 @@ project "compiler"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms "win64"
+  removeplatforms { "win64", "macos" }
 
   files {
     "compiler/declnode.cpp", "compiler/declnode.h", "compiler/exprnode.cpp", "compiler/exprnode.h", "compiler/node.cpp", "compiler/node.h", "compiler/nodes.h", "compiler/prognode.cpp", "compiler/prognode.h", "compiler/stmtnode.cpp", "compiler/stmtnode.h", "compiler/varnode.cpp", "compiler/varnode.h", "compiler/decl.cpp", "compiler/decl.h", "compiler/environ.cpp", "compiler/environ.h", "compiler/label.h", "compiler/type.cpp", "compiler/type.h", "compiler/parser.cpp", "compiler/parser.h", "compiler/toker.cpp", "compiler/toker.h",
@@ -339,7 +357,7 @@ project "linker_dll"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms "win64"
+  removeplatforms { "win64", "macos" }
 
   targetdir "_release/bin"
   targetname "linker"
@@ -353,13 +371,15 @@ project "linker"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms "win64"
+  removeplatforms { "win64", "macos" }
 
   files { "linker/linker.h", "linker/linker.cpp", "linker/image_util.h", "linker/image_util.cpp" }
 
 project "stdutil"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms { "macos" }
 
   files { "stdutil/stdutil.h", "stdutil/stdutil.cpp" }
 
@@ -381,8 +401,14 @@ project "freeimage"
   }
 
   files {
-    "freeimage317/Source/FreeImage/BitmapAccess.cpp", "freeimage317/Source/FreeImage/ColorLookup.cpp", "freeimage317/Source/FreeImage/ConversionRGBA16.cpp", "freeimage317/Source/FreeImage/ConversionRGBAF.cpp", "freeimage317/Source/FreeImage/FreeImage.cpp", "freeimage317/Source/FreeImage/FreeImageC.c", "freeimage317/Source/FreeImage/FreeImageIO.cpp", "freeimage317/Source/FreeImage/GetType.cpp", "freeimage317/Source/FreeImage/LFPQuantizer.cpp", "freeimage317/Source/FreeImage/MemoryIO.cpp", "freeimage317/Source/FreeImage/PixelAccess.cpp", "freeimage317/Source/FreeImage/J2KHelper.cpp", "freeimage317/Source/FreeImage/MNGHelper.cpp", "freeimage317/Source/FreeImage/Plugin.cpp", "freeimage317/Source/FreeImage/PluginBMP.cpp", "freeimage317/Source/FreeImage/PluginCUT.cpp", "freeimage317/Source/FreeImage/PluginDDS.cpp", "freeimage317/Source/FreeImage/PluginEXR.cpp", "freeimage317/Source/FreeImage/PluginG3.cpp", "freeimage317/Source/FreeImage/PluginGIF.cpp", "freeimage317/Source/FreeImage/PluginHDR.cpp", "freeimage317/Source/FreeImage/PluginICO.cpp", "freeimage317/Source/FreeImage/PluginIFF.cpp", "freeimage317/Source/FreeImage/PluginJ2K.cpp", "freeimage317/Source/FreeImage/PluginJNG.cpp", "freeimage317/Source/FreeImage/PluginJP2.cpp", "freeimage317/Source/FreeImage/PluginJPEG.cpp", "freeimage317/Source/FreeImage/PluginJXR.cpp", "freeimage317/Source/FreeImage/PluginKOALA.cpp", "freeimage317/Source/FreeImage/PluginMNG.cpp", "freeimage317/Source/FreeImage/PluginPCD.cpp", "freeimage317/Source/FreeImage/PluginPCX.cpp", "freeimage317/Source/FreeImage/PluginPFM.cpp", "freeimage317/Source/FreeImage/PluginPICT.cpp", "freeimage317/Source/FreeImage/PluginPNG.cpp", "freeimage317/Source/FreeImage/PluginPNM.cpp", "freeimage317/Source/FreeImage/PluginPSD.cpp", "freeimage317/Source/FreeImage/PluginRAS.cpp", "freeimage317/Source/FreeImage/PluginRAW.cpp", "freeimage317/Source/FreeImage/PluginSGI.cpp", "freeimage317/Source/FreeImage/PluginTARGA.cpp", "freeimage317/Source/FreeImage/PluginTIFF.cpp", "freeimage317/Source/FreeImage/PluginWBMP.cpp", "freeimage317/Source/FreeImage/PluginWebP.cpp", "freeimage317/Source/FreeImage/PluginXBM.cpp", "freeimage317/Source/FreeImage/PluginXPM.cpp", "freeimage317/Source/FreeImage/PSDParser.cpp", "freeimage317/Source/FreeImage/TIFFLogLuv.cpp", "freeimage317/Source/FreeImage/Conversion.cpp", "freeimage317/Source/FreeImage/Conversion16_555.cpp", "freeimage317/Source/FreeImage/Conversion16_565.cpp", "freeimage317/Source/FreeImage/Conversion24.cpp", "freeimage317/Source/FreeImage/Conversion32.cpp", "freeimage317/Source/FreeImage/Conversion4.cpp", "freeimage317/Source/FreeImage/Conversion8.cpp", "freeimage317/Source/FreeImage/ConversionFloat.cpp", "freeimage317/Source/FreeImage/ConversionRGB16.cpp", "freeimage317/Source/FreeImage/ConversionRGBF.cpp", "freeimage317/Source/FreeImage/ConversionType.cpp", "freeimage317/Source/FreeImage/ConversionUINT16.cpp", "freeimage317/Source/FreeImage/Halftoning.cpp", "freeimage317/Source/FreeImage/tmoColorConvert.cpp", "freeimage317/Source/FreeImage/tmoDrago03.cpp", "freeimage317/Source/FreeImage/tmoFattal02.cpp", "freeimage317/Source/FreeImage/tmoReinhard05.cpp", "freeimage317/Source/FreeImage/ToneMapping.cpp", "freeimage317/Source/FreeImage/NNQuantizer.cpp", "freeimage317/Source/FreeImage/WuQuantizer.cpp", "freeimage317/Source/DeprecationManager/Deprecated.cpp", "freeimage317/Source/DeprecationManager/DeprecationMgr.cpp", "freeimage317/Source/FreeImage/CacheFile.cpp", "freeimage317/Source/FreeImage/MultiPage.cpp", "freeimage317/Source/FreeImage/ZLibInterface.cpp", "freeimage317/Source/Metadata/Exif.cpp", "freeimage317/Source/Metadata/FIRational.cpp", "freeimage317/Source/Metadata/FreeImageTag.cpp", "freeimage317/Source/Metadata/IPTC.cpp", "freeimage317/Source/Metadata/TagConversion.cpp", "freeimage317/Source/Metadata/TagLib.cpp", "freeimage317/Source/Metadata/XTIFF.cpp", "freeimage317/Source/FreeImageToolkit/Background.cpp", "freeimage317/Source/FreeImageToolkit/BSplineRotate.cpp", "freeimage317/Source/FreeImageToolkit/Channels.cpp", "freeimage317/Source/FreeImageToolkit/ClassicRotate.cpp", "freeimage317/Source/FreeImageToolkit/Colors.cpp", "freeimage317/Source/FreeImageToolkit/CopyPaste.cpp", "freeimage317/Source/FreeImageToolkit/Display.cpp", "freeimage317/Source/FreeImageToolkit/Flip.cpp", "freeimage317/Source/FreeImageToolkit/JPEGTransform.cpp", "freeimage317/Source/FreeImageToolkit/MultigridPoissonSolver.cpp", "freeimage317/Source/FreeImageToolkit/Rescale.cpp", "freeimage317/Source/FreeImageToolkit/Resize.cpp", "freeimage317/FreeImage.rc", "freeimage317/Source/CacheFile.h", "freeimage317/Source/DeprecationManager/DeprecationMgr.h", "freeimage317/Source/MapIntrospector.h", "freeimage317/Source/Metadata/FIRational.h", "freeimage317/Source/FreeImage.h", "freeimage317/Source/FreeImageIO.h", "freeimage317/Source/Metadata/FreeImageTag.h", "freeimage317/Source/FreeImage/J2KHelper.h", "freeimage317/Source/Plugin.h", "freeimage317/Source/FreeImage/PSDParser.h", "freeimage317/Source/Quantizers.h", "freeimage317/Source/ToneMapping.h", "freeimage317/Source/Utilities.h", "freeimage317/Source/FreeImageToolkit/Resize.h"
+    "freeimage317/Source/FreeImage/BitmapAccess.cpp", "freeimage317/Source/FreeImage/ColorLookup.cpp", "freeimage317/Source/FreeImage/ConversionRGBA16.cpp", "freeimage317/Source/FreeImage/ConversionRGBAF.cpp", "freeimage317/Source/FreeImage/FreeImage.cpp", "freeimage317/Source/FreeImage/FreeImageC.c", "freeimage317/Source/FreeImage/FreeImageIO.cpp", "freeimage317/Source/FreeImage/GetType.cpp", "freeimage317/Source/FreeImage/LFPQuantizer.cpp", "freeimage317/Source/FreeImage/MemoryIO.cpp", "freeimage317/Source/FreeImage/PixelAccess.cpp", "freeimage317/Source/FreeImage/J2KHelper.cpp", "freeimage317/Source/FreeImage/MNGHelper.cpp", "freeimage317/Source/FreeImage/Plugin.cpp", "freeimage317/Source/FreeImage/PluginBMP.cpp", "freeimage317/Source/FreeImage/PluginCUT.cpp", "freeimage317/Source/FreeImage/PluginDDS.cpp", "freeimage317/Source/FreeImage/PluginEXR.cpp", "freeimage317/Source/FreeImage/PluginG3.cpp", "freeimage317/Source/FreeImage/PluginGIF.cpp", "freeimage317/Source/FreeImage/PluginHDR.cpp", "freeimage317/Source/FreeImage/PluginICO.cpp", "freeimage317/Source/FreeImage/PluginIFF.cpp", "freeimage317/Source/FreeImage/PluginJ2K.cpp", "freeimage317/Source/FreeImage/PluginJNG.cpp", "freeimage317/Source/FreeImage/PluginJP2.cpp", "freeimage317/Source/FreeImage/PluginJPEG.cpp", "freeimage317/Source/FreeImage/PluginKOALA.cpp", "freeimage317/Source/FreeImage/PluginMNG.cpp", "freeimage317/Source/FreeImage/PluginPCD.cpp", "freeimage317/Source/FreeImage/PluginPCX.cpp", "freeimage317/Source/FreeImage/PluginPFM.cpp", "freeimage317/Source/FreeImage/PluginPICT.cpp", "freeimage317/Source/FreeImage/PluginPNG.cpp", "freeimage317/Source/FreeImage/PluginPNM.cpp", "freeimage317/Source/FreeImage/PluginPSD.cpp", "freeimage317/Source/FreeImage/PluginRAS.cpp", "freeimage317/Source/FreeImage/PluginRAW.cpp", "freeimage317/Source/FreeImage/PluginSGI.cpp", "freeimage317/Source/FreeImage/PluginTARGA.cpp", "freeimage317/Source/FreeImage/PluginTIFF.cpp", "freeimage317/Source/FreeImage/PluginWBMP.cpp", "freeimage317/Source/FreeImage/PluginWebP.cpp", "freeimage317/Source/FreeImage/PluginXBM.cpp", "freeimage317/Source/FreeImage/PluginXPM.cpp", "freeimage317/Source/FreeImage/PSDParser.cpp", "freeimage317/Source/FreeImage/TIFFLogLuv.cpp", "freeimage317/Source/FreeImage/Conversion.cpp", "freeimage317/Source/FreeImage/Conversion16_555.cpp", "freeimage317/Source/FreeImage/Conversion16_565.cpp", "freeimage317/Source/FreeImage/Conversion24.cpp", "freeimage317/Source/FreeImage/Conversion32.cpp", "freeimage317/Source/FreeImage/Conversion4.cpp", "freeimage317/Source/FreeImage/Conversion8.cpp", "freeimage317/Source/FreeImage/ConversionFloat.cpp", "freeimage317/Source/FreeImage/ConversionRGB16.cpp", "freeimage317/Source/FreeImage/ConversionRGBF.cpp", "freeimage317/Source/FreeImage/ConversionType.cpp", "freeimage317/Source/FreeImage/ConversionUINT16.cpp", "freeimage317/Source/FreeImage/Halftoning.cpp", "freeimage317/Source/FreeImage/tmoColorConvert.cpp", "freeimage317/Source/FreeImage/tmoDrago03.cpp", "freeimage317/Source/FreeImage/tmoFattal02.cpp", "freeimage317/Source/FreeImage/tmoReinhard05.cpp", "freeimage317/Source/FreeImage/ToneMapping.cpp", "freeimage317/Source/FreeImage/NNQuantizer.cpp", "freeimage317/Source/FreeImage/WuQuantizer.cpp", "freeimage317/Source/DeprecationManager/Deprecated.cpp", "freeimage317/Source/DeprecationManager/DeprecationMgr.cpp", "freeimage317/Source/FreeImage/CacheFile.cpp", "freeimage317/Source/FreeImage/MultiPage.cpp", "freeimage317/Source/FreeImage/ZLibInterface.cpp", "freeimage317/Source/Metadata/Exif.cpp", "freeimage317/Source/Metadata/FIRational.cpp", "freeimage317/Source/Metadata/FreeImageTag.cpp", "freeimage317/Source/Metadata/IPTC.cpp", "freeimage317/Source/Metadata/TagConversion.cpp", "freeimage317/Source/Metadata/TagLib.cpp", "freeimage317/Source/Metadata/XTIFF.cpp", "freeimage317/Source/FreeImageToolkit/Background.cpp", "freeimage317/Source/FreeImageToolkit/BSplineRotate.cpp", "freeimage317/Source/FreeImageToolkit/Channels.cpp", "freeimage317/Source/FreeImageToolkit/ClassicRotate.cpp", "freeimage317/Source/FreeImageToolkit/Colors.cpp", "freeimage317/Source/FreeImageToolkit/CopyPaste.cpp", "freeimage317/Source/FreeImageToolkit/Display.cpp", "freeimage317/Source/FreeImageToolkit/Flip.cpp", "freeimage317/Source/FreeImageToolkit/JPEGTransform.cpp", "freeimage317/Source/FreeImageToolkit/MultigridPoissonSolver.cpp", "freeimage317/Source/FreeImageToolkit/Rescale.cpp", "freeimage317/Source/FreeImageToolkit/Resize.cpp", "freeimage317/Source/CacheFile.h", "freeimage317/Source/DeprecationManager/DeprecationMgr.h", "freeimage317/Source/MapIntrospector.h", "freeimage317/Source/Metadata/FIRational.h", "freeimage317/Source/FreeImage.h", "freeimage317/Source/FreeImageIO.h", "freeimage317/Source/Metadata/FreeImageTag.h", "freeimage317/Source/FreeImage/J2KHelper.h", "freeimage317/Source/Plugin.h", "freeimage317/Source/FreeImage/PSDParser.h", "freeimage317/Source/Quantizers.h", "freeimage317/Source/ToneMapping.h", "freeimage317/Source/Utilities.h", "freeimage317/Source/FreeImageToolkit/Resize.h"
   }
+
+  filter "platforms:win32 or win64"
+    files {
+      "freeimage317/Source/FreeImage/PluginJXR.cpp",
+      "freeimage317/FreeImage.rc"
+    }
 
 project "jpeg"
   kind "StaticLib"
@@ -393,6 +419,7 @@ project "jpeg"
   }
 
 project "jxr"
+  removeplatforms { "macos" }
   kind "StaticLib"
   language "C"
 
