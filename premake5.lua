@@ -338,36 +338,28 @@ project "graphics"
     "graphics/canvas.h", "graphics/canvas.cpp"
   }
 
-project "blitz"
+project "compiler"
   kind "ConsoleApp"
   language "C++"
 
   removeplatforms { "win64", "macos" }
 
-  files { "blitz/main.cpp", "blitz/libs.cpp",  "blitz/resource.h", "blitz/blitz.rc" }
-
   targetdir "_release/bin"
   targetname "blitzcc"
 
-  links { "compiler", "linker", "stdutil" }
-
-  filter "platforms:win32"
-    files "bbruntime_dll/dpi.manifest"
-
-
-project "compiler"
-  kind "StaticLib"
-  language "C++"
-
-  removeplatforms { "win64", "macos" }
-
   files {
+    "compiler/main.cpp", "compiler/libs.cpp",
     "compiler/declnode.cpp", "compiler/declnode.h", "compiler/exprnode.cpp", "compiler/exprnode.h", "compiler/node.cpp", "compiler/node.h", "compiler/nodes.h", "compiler/prognode.cpp", "compiler/prognode.h", "compiler/stmtnode.cpp", "compiler/stmtnode.h", "compiler/varnode.cpp", "compiler/varnode.h", "compiler/decl.cpp", "compiler/decl.h", "compiler/environ.cpp", "compiler/environ.h", "compiler/label.h", "compiler/type.cpp", "compiler/type.h", "compiler/parser.cpp", "compiler/parser.h", "compiler/toker.cpp", "compiler/toker.h",
     "compiler/codegen_x86/codegen_x86.cpp", "compiler/codegen_x86/codegen_x86.h", "compiler/codegen_x86/tile.cpp", "compiler/codegen_x86/tile.h",
     "compiler/codegen.h",
     "compiler/assem_x86/asm_insts.cpp", "compiler/assem_x86/assem_x86.cpp", "compiler/assem_x86/assem_x86.h", "compiler/assem_x86/insts.h", "compiler/assem_x86/operand.cpp", "compiler/assem_x86/operand.h",
     "compiler/assem.h", "compiler/ex.h", "compiler/std.cpp", "compiler/std.h"
   }
+
+  links { "stdutil" }
+
+  filter "platforms:win32"
+    files { "compiler/resource.h", "compiler/blitz.rc", "bbruntime_dll/dpi.manifest" }
 
 project "linker_dll"
   kind "SharedLib"
