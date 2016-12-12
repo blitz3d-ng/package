@@ -690,11 +690,11 @@ void gxRuntime::closeAudio( BBAudioDriver *a ){
 /////////////////
 // INPUT SETUP //
 /////////////////
-gxInput *gxRuntime::openInput( int flags ){
+BBInputDriver *gxRuntime::openInput( int flags ){
 	if( input ) return 0;
 	IDirectInput8 *di;
 	if( DirectInput8Create( hinst,DIRECTINPUT_VERSION,IID_IDirectInput8,(void**)&di,0 )>=0 ){
-		input=d_new gxInput( this,di );
+		input=d_new DirectInput8Driver( this,di );
 		acquireInput();
 	}else{
 		debugInfo( "Create DirectInput failed" );
@@ -702,7 +702,7 @@ gxInput *gxRuntime::openInput( int flags ){
 	return input;
 }
 
-void gxRuntime::closeInput( gxInput *i ){
+void gxRuntime::closeInput( BBInputDriver *i ){
 	if( !input || input!=i ) return;
 	unacquireInput();
 	delete input;

@@ -4,17 +4,17 @@
 
 #include <dinput.h>
 
-#include "gxdevice.h"
+#include "../input/driver.h"
 
 class gxRuntime;
 
-class gxInput{
+class DirectInput8Driver : public BBInputDriver{
 public:
 	gxRuntime *runtime;
 	IDirectInput8 *dirInput;
 
-	gxInput( gxRuntime *runtime,IDirectInput8 *di );
-	~gxInput();
+	DirectInput8Driver( gxRuntime *runtime,IDirectInput8 *di );
+	~DirectInput8Driver();
 
 	void reset();
 	bool acquire();
@@ -31,17 +31,11 @@ private:
 
 	/***** GX INTERFACE *****/
 public:
-	enum{
-		ASC_HOME=1,ASC_END=2,ASC_INSERT=3,ASC_DELETE=4,
-		ASC_PAGEUP=5,ASC_PAGEDOWN=6,
-		ASC_UP=28,ASC_DOWN=29,ASC_RIGHT=30,ASC_LEFT=31
-	};
-
 	void moveMouse( int x,int y );
 
-	gxDevice *getMouse()const;
-	gxDevice *getKeyboard()const;
-	gxDevice *getJoystick( int port )const;
+	BBDevice *getMouse()const;
+	BBDevice *getKeyboard()const;
+	BBDevice *getJoystick( int port )const;
 	int getJoystickType( int port )const;
 	int numJoysticks()const;
 	int toAscii( int key )const;

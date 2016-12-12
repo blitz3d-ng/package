@@ -1,19 +1,18 @@
 
-#include "std.h"
-#include "gxinput.h"
-#include "gxruntime.h"
+#include "driver.h"
+#include "../gxruntime/gxruntime.h"
 
 #include <dinput.h>
 
 static const int QUE_SIZE=32;
 
-class Device : public gxDevice{
+class Device : public BBDevice{
 public:
 	bool acquired;
-	gxInput *input;
+	DirectInput8Driver *input;
 	IDirectInputDevice8 *device;
 
-	Device( gxInput *i,IDirectInputDevice8 *d ):input(i),acquired(false),device(d){
+	Device( DirectInput8Driver *i,IDirectInputDevice8 *d ):input(i),acquired(false),device(d){
 	}
 	virtual ~Device(){
 		device->Release();
@@ -29,7 +28,7 @@ public:
 
 class Keyboard : public Device{
 public:
-	Keyboard( gxInput *i,IDirectInputDevice8 *d ):Device(i,d){
+	Keyboard( DirectInput8Driver *i,IDirectInputDevice8 *d ):Device(i,d){
 	}
 	void update(){
 		if( !acquired ){
@@ -50,7 +49,7 @@ public:
 
 class Mouse : public Device{
 public:
-	Mouse( gxInput *i,IDirectInputDevice8 *d ):Device(i,d){
+	Mouse( DirectInput8Driver *i,IDirectInputDevice8 *d ):Device(i,d){
 	}
 	void update(){
 		if( !acquired ){
@@ -80,7 +79,7 @@ class Joystick : public Device{
 public:
 	int type,poll_time;
 	int mins[12],maxs[12];
-	Joystick( gxInput *i,IDirectInputDevice8 *d,int t ):Device(i,d),type(t),poll_time(0){
+	Joystick( DirectInput8Driver *i,IDirectInputDevice8 *d,int t ):Device(i,d),type(t),poll_time(0){
 		DIDEVICEINSTANCE info;
 		info.dwSize=sizeof(DIDEVICEINSTANCE);
 		if( d->GetDeviceInfo( &info )==DI_OK ){
@@ -139,7 +138,7 @@ static Keyboard *keyboard;
 static Mouse *mouse;
 static vector<Joystick*> joysticks;
 
-static Keyboard *createKeyboard( gxInput *input ){
+static Keyboard *createKeyboard( DirectInput8Driver *input ){
 	IDirectInputDevice8 *dev;
 	if( input->dirInput->CreateDevice( GUID_SysKeyboard,&dev,0 )>=0 ){
 		if( dev->SetCooperativeLevel( input->runtime->hwnd,DISCL_FOREGROUND|DISCL_EXCLUSIVE )>=0 ){
@@ -172,7 +171,7 @@ static Keyboard *createKeyboard( gxInput *input ){
 	return 0;
 }
 
-static Mouse *createMouse( gxInput *input ){
+static Mouse *createMouse( DirectInput8Driver *input ){
 	IDirectInputDevice8 *dev;
 	if( input->dirInput->CreateDevice( GUID_SysMouse,&dev,0 )>=0 ){
 		if( dev->SetCooperativeLevel( input->runtime->hwnd,DISCL_FOREGROUND|DISCL_EXCLUSIVE )>=0 ){
@@ -194,7 +193,7 @@ static Mouse *createMouse( gxInput *input ){
 	return 0;
 }
 
-static Joystick *createJoystick( gxInput *input,LPCDIDEVICEINSTANCE devinst ){
+static Joystick *createJoystick( DirectInput8Driver *input,LPCDIDEVICEINSTANCE devinst ){
 	IDirectInputDevice8 *dev;
 	if( input->dirInput->CreateDevice( devinst->guidInstance,&dev,0 )>=0 ){
 		if( dev->SetCooperativeLevel( input->runtime->hwnd,DISCL_FOREGROUND|DISCL_EXCLUSIVE )>=0 ){
@@ -211,13 +210,13 @@ static Joystick *createJoystick( gxInput *input,LPCDIDEVICEINSTANCE devinst ){
 static BOOL CALLBACK enumJoystick( LPCDIDEVICEINSTANCE devinst,LPVOID pvRef ){
 	// if( (devinst->dwDevType&0xff)!=DI8DEVCLASS_GAMECTRL ) return DIENUM_CONTINUE;
 
-	if( Joystick *joy=createJoystick( (gxInput*)pvRef,devinst ) ){
+	if( Joystick *joy=createJoystick( (DirectInput8Driver*)pvRef,devinst ) ){
 		joysticks.push_back( joy );
 	}
 	return DIENUM_CONTINUE;
 }
 
-gxInput::gxInput( gxRuntime *rt,IDirectInput8 *di ):
+DirectInput8Driver::DirectInput8Driver( gxRuntime *rt,IDirectInput8 *di ):
 runtime(rt),dirInput(di){
 	keyboard=createKeyboard( this );
 	mouse=createMouse( this );
@@ -225,7 +224,7 @@ runtime(rt),dirInput(di){
 	dirInput->EnumDevices( DI8DEVCLASS_GAMECTRL,enumJoystick,this,DIEDFL_ATTACHEDONLY );
 }
 
-gxInput::~gxInput(){
+DirectInput8Driver::~DirectInput8Driver(){
 	for( int k=0;k<joysticks.size();++k ) delete joysticks[k];
 	joysticks.clear();
 	delete mouse;
@@ -234,40 +233,40 @@ gxInput::~gxInput(){
 	dirInput->Release();
 }
 
-void gxInput::wm_keydown( int key ){
+void DirectInput8Driver::wm_keydown( int key ){
 	if( keyboard ) keyboard->downEvent( key );
 }
 
-void gxInput::wm_keyup( int key ){
+void DirectInput8Driver::wm_keyup( int key ){
 	if( keyboard ) keyboard->upEvent( key );
 }
 
-void gxInput::wm_mousedown( int key ){
+void DirectInput8Driver::wm_mousedown( int key ){
 	if( mouse ) mouse->downEvent( key );
 }
 
-void gxInput::wm_mouseup( int key ){
+void DirectInput8Driver::wm_mouseup( int key ){
 	if( mouse ) mouse->upEvent( key );
 }
 
-void gxInput::wm_mousemove( int x,int y ){
+void DirectInput8Driver::wm_mousemove( int x,int y ){
 	if( mouse ){
 		mouse->axis_states[0]=x;
 		mouse->axis_states[1]=y;
 	}
 }
 
-void gxInput::wm_mousewheel( int dz ){
+void DirectInput8Driver::wm_mousewheel( int dz ){
 	if( mouse ) mouse->axis_states[2]+=dz;
 }
 
-void gxInput::reset(){
+void DirectInput8Driver::reset(){
 	if( mouse ) mouse->reset();
 	if( keyboard ) keyboard->reset();
 	for( int k=0;k<joysticks.size();++k ) joysticks[k]->reset();
 }
 
-bool gxInput::acquire(){
+bool DirectInput8Driver::acquire(){
 	bool m_ok=true,k_ok=true;
 	if( mouse ) m_ok=mouse->acquire();
 	if( keyboard ) k_ok=keyboard->acquire();
@@ -277,39 +276,39 @@ bool gxInput::acquire(){
 	return false;
 }
 
-void gxInput::unacquire(){
+void DirectInput8Driver::unacquire(){
 	if( keyboard ) keyboard->unacquire();
 	if( mouse ) mouse->unacquire();
 }
 
-void gxInput::moveMouse( int x,int y ){
+void DirectInput8Driver::moveMouse( int x,int y ){
 	if( !mouse ) return;
 	mouse->axis_states[0]=x;
 	mouse->axis_states[1]=y;
 	runtime->moveMouse( x,y );
 }
 
-gxDevice *gxInput::getMouse()const{
+BBDevice *DirectInput8Driver::getMouse()const{
 	return mouse;
 }
 
-gxDevice *gxInput::getKeyboard()const{
+BBDevice *DirectInput8Driver::getKeyboard()const{
 	return keyboard;
 }
 
-gxDevice *gxInput::getJoystick( int n )const{
+BBDevice *DirectInput8Driver::getJoystick( int n )const{
 	return n>=0 && n<joysticks.size() ? joysticks[n] : 0;
 }
 
-int gxInput::getJoystickType( int n )const{
+int DirectInput8Driver::getJoystickType( int n )const{
 	return n>=0 && n<joysticks.size() ? joysticks[n]->type : 0;
 }
 
-int gxInput::numJoysticks()const{
+int DirectInput8Driver::numJoysticks()const{
 	return joysticks.size();
 }
 
-int gxInput::toAscii( int scan )const{
+int DirectInput8Driver::toAscii( int scan )const{
 	switch( scan ){
 	case DIK_INSERT:return ASC_INSERT;
 	case DIK_DELETE:return ASC_DELETE;

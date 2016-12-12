@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "../audio.fmod/driver.h"
-#include "gxinput.h"
+#include "../input.directinput8/driver.h"
 #include "gxgraphics.h"
 #include "../filesystem.windows/driver.h"
 #include "gxtimer.h"
@@ -23,7 +23,7 @@ public:
 	HINSTANCE hinst;
 
 	FMODAudioDriver *audio;
-	gxInput *input;
+	DirectInput8Driver *input;
 	gxGraphics *graphics;
 	WindowsFileSystem *fileSystem;
 
@@ -124,8 +124,8 @@ public:
 	BBAudioDriver *openAudio( int flags );
 	void closeAudio( BBAudioDriver *audio );
 
-	gxInput *openInput( int flags );
-	void closeInput( gxInput *input );
+	BBInputDriver *openInput( int flags );
+	void closeInput( BBInputDriver *input );
 
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
 	void closeGraphics( BBGraphics *graphics );

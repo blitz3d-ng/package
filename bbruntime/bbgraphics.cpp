@@ -1140,19 +1140,19 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 		case 27:
 			curs=0;str="";
 			break;
-		case gxInput::ASC_DELETE:
+		case BBInputDriver::ASC_DELETE:
 			if( curs<str.size() ) str=str.substr( 0,curs )+str.substr( curs+1 );
 			break;
-		case gxInput::ASC_HOME:
+		case BBInputDriver::ASC_HOME:
 			curs=0;
 			break;
-		case gxInput::ASC_END:
+		case BBInputDriver::ASC_END:
 			curs=str.size();
 			break;
-		case gxInput::ASC_LEFT:
+		case BBInputDriver::ASC_LEFT:
 			if( curs ) --curs;
 			break;
-		case gxInput::ASC_RIGHT:
+		case BBInputDriver::ASC_RIGHT:
 			if( curs<str.size() ) ++curs;
 			break;
 		case '\r':

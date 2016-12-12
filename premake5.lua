@@ -192,12 +192,12 @@ project "bbruntime_dll"
   }
 
   links {
-    "bbruntime", "audio", "system", "filesystem", "stdutil", "blitz2d", "graphics"
+    "bbruntime", "audio", "system", "filesystem", "stdutil", "blitz2d", "graphics", "input"
   }
 
   links { "dxguid" }
-  links {  "blitz3d", "gxruntime" }
-  links { "audio.fmod", "fmodvc", "system.windows", "filesystem.windows" }
+  links { "blitz3d", "gxruntime" }
+  links { "audio.fmod", "fmodvc", "system.windows", "filesystem.windows", "input.directinput8" }
   links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
   links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
 
@@ -207,7 +207,7 @@ project "gxruntime"
 
   removeplatforms { "win64", "macos" }
 
-  files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxdevice.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxinput.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxdevice.h", "gxruntime/gxgraphics.h", "gxruntime/gxinput.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
+  files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxgraphics.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
 
 project "bbruntime"
   kind "StaticLib"
@@ -296,6 +296,22 @@ project "filesystem.windows"
   }
 
   links "filesystem"
+
+project "input"
+  kind "StaticLib"
+  language "C++"
+
+  removeplatforms { "macos" }
+
+  files { "input/driver.cpp", "input/driver.h", "input/device.cpp", "input/device.h" }
+
+project "input.directinput8"
+  kind "StaticLib"
+  language "C++"
+
+  removeplatforms { "macos" }
+
+  files { "input.directinput8/driver.cpp", "input.directinput8/driver.h" }
 
 project "blitz3d"
   kind "StaticLib"

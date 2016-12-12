@@ -1,71 +1,70 @@
 
-#include "std.h"
-#include "gxdevice.h"
-#include "gxruntime.h"
+#include <cstring>
+#include "device.h"
 
-gxDevice::gxDevice(){
+BBDevice::BBDevice(){
 	memset( name,0,sizeof(name) );
 	reset();
 }
 
-gxDevice::~gxDevice(){
+BBDevice::~BBDevice(){
 }
 
-void gxDevice::reset(){
+void BBDevice::reset(){
 	memset( down_state,0,sizeof(down_state) );
 	memset( axis_states,0,sizeof(axis_states) );
 	memset( hit_count,0,sizeof(hit_count) );
 	put=get=0;
 }
 
-void gxDevice::downEvent( int key ){
+void BBDevice::downEvent( int key ){
 	down_state[key]=true;
 	++hit_count[key];
 	if( put-get<QUE_SIZE ) que[put++&QUE_MASK]=key;
 }
 
-void gxDevice::upEvent( int key ){
+void BBDevice::upEvent( int key ){
 	down_state[key]=false;
 }
 
-void gxDevice::setDownState( int key,bool down ){
+void BBDevice::setDownState( int key,bool down ){
 	if( down==down_state[key] ) return;
 	if( down ) downEvent( key );
 	else upEvent( key );
 }
 
-void gxDevice::flush(){
+void BBDevice::flush(){
 	update();
 	memset( hit_count,0,sizeof(hit_count) );
 	put=get=0;
 }
 
-bool gxDevice::keyDown( int key ){
+bool BBDevice::keyDown( int key ){
 	update();
 	return down_state[key];
 }
 
-int gxDevice::keyHit( int key ){
+int BBDevice::keyHit( int key ){
 	update();
 	int n=hit_count[key];
 	hit_count[key]-=n;
 	return n;
 }
 
-int gxDevice::getKey(){
+int BBDevice::getKey(){
 	update();
 	return get<put ? que[get++ & QUE_MASK] : 0;
 }
 
-float gxDevice::getAxisState( int axis ){
+float BBDevice::getAxisState( int axis ){
 	update();
 	return axis_states[axis];
 }
 
-const char *gxDevice::getId(){
+const char *BBDevice::getId(){
 	return id;
 }
 
-const char *gxDevice::getName(){
+const char *BBDevice::getName(){
 	return name;
 }

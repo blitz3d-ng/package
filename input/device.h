@@ -1,13 +1,13 @@
 
-#ifndef GXDEVICE_H
-#define GXDEVICE_H
+#ifndef BBDEVICE_H
+#define BBDEVICE_H
 
-class gxDevice{
+class BBDevice{
 public:
 	float axis_states[32];
 
-	gxDevice();
-	virtual ~gxDevice();
+	BBDevice();
+	virtual ~BBDevice();
 
 	virtual void update(){}
 
