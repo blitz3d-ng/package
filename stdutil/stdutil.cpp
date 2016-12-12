@@ -143,7 +143,7 @@ double atof( const string &s ){
 }
 
 string itoa( int n ){
-	char buff[32];itoa( n,buff,10 );
+	char buff[32];snprintf( buff,sizeof(buff),"%i",n );
 	return string( buff );
 }
 
@@ -198,11 +198,11 @@ string ftoa( float n ){
 //		if ( digits < 1 ) digits = 1;	// less than one digit is nonsense
 //		if ( digits > 8 ) digits = 8;	// practical maximum for float
 
-		t = _ecvt( n, digits, &dec, &sign );
+		t = ecvt( n, digits, &dec, &sign );
 
 		if ( dec <= eNeg + 1 || dec > ePos ){
 
-			_gcvt( n, digits, buffer );
+			gcvt( n, digits, buffer );
 			t = buffer;
 			return t;
 		}
@@ -319,7 +319,7 @@ const int MIN_SIZE=256;
 qstreambuf::qstreambuf(){
 	buf=d_new char[MIN_SIZE];
 	setg( buf,buf,buf );
-	setp( buf,buf,buf+MIN_SIZE );
+	setp( buf,buf+MIN_SIZE );
 }
 
 qstreambuf::~qstreambuf(){
@@ -353,7 +353,7 @@ qstreambuf::int_type qstreambuf::overflow( qstreambuf::int_type c ){
 		memcpy( n_buf,gptr(),sz );
 		delete buf;buf=n_buf;
 		setg( buf,buf,buf+sz );
-		setp( buf+sz,buf+sz,buf+n_sz );
+		setp( buf+sz,buf+n_sz );
 	}
 
 	*pptr()=traits_type::to_char_type( c );

@@ -8,10 +8,10 @@
 void DeclSeqNode::proto( DeclSeq *d,Environ *e ){
 	for( int k=0;k<decls.size();++k ){
 		try{ decls[k]->proto( d,e ); }
-		catch( Ex &x ){ 
+		catch( Ex &x ){
 			if( x.pos<0 ) x.pos=decls[k]->pos;
 			if(!x.file.size() ) x.file=decls[k]->file;
-			throw; 
+			throw;
 		}
 	}
 }
@@ -19,10 +19,10 @@ void DeclSeqNode::proto( DeclSeq *d,Environ *e ){
 void DeclSeqNode::semant( Environ *e ){
 	for( int k=0;k<decls.size();++k ){
 		try{ decls[k]->semant( e ); }
-		catch( Ex &x ){ 
+		catch( Ex &x ){
 			if( x.pos<0 ) x.pos=decls[k]->pos;
 			if(!x.file.size() ) x.file=decls[k]->file;
-			throw; 
+			throw;
 		}
 	}
 }
@@ -33,7 +33,7 @@ void DeclSeqNode::translate( Codegen *g ){
 		catch( Ex &x ){
 			if( x.pos<0 ) x.pos=decls[k]->pos;
 			if(!x.file.size() ) x.file=decls[k]->file;
-			throw; 
+			throw;
 		}
 	}
 }
@@ -41,10 +41,10 @@ void DeclSeqNode::translate( Codegen *g ){
 void DeclSeqNode::transdata( Codegen *g ){
 	for( int k=0;k<decls.size();++k ){
 		try{ decls[k]->transdata( g ); }
-		catch( Ex &x ){ 
+		catch( Ex &x ){
 			if( x.pos<0 ) x.pos=decls[k]->pos;
 			if(!x.file.size() ) x.file=decls[k]->file;
-			throw; 
+			throw;
 		}
 	}
 }
@@ -133,7 +133,7 @@ void FuncDeclNode::translate( Codegen *g ){
 	if( g->debug ){
 		string t=genLabel();
 		g->s_data( ident,t );
-		g->code( call( "__bbDebugEnter",local(0),iconst((int)sem_env),global(t) ) );
+		g->code( call( "__bbDebugEnter",local(0),iconst((bint_t)sem_env),global(t) ) );
 	}
 
 	//translate statements

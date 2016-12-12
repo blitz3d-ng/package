@@ -2,6 +2,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <cstdint>
+
 #define BASE_VER	2000
 
 #ifdef	PRO
@@ -23,5 +25,13 @@
 #endif
 
 #define VERSION		(BASE_VER|PRO_F|DEMO_F|EDU_F)
+
+#if INTPTR_MAX == INT64_MAX
+typedef long   bint_t;
+typedef double bfloat_t;
+#else
+typedef int    bint_t;
+typedef float  bfloat_t;
+#endif
 
 #endif

@@ -55,7 +55,7 @@ workspace "blitz3d"
       "/Gy" -- function level linking: true
     }
 
-    disablewarnings { "4018","4244" }
+    disablewarnings { "4018","4244","4996" }
 
   filter "platforms:macos"
     toolset "clang"

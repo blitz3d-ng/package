@@ -96,10 +96,8 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 				string inc=toker->text();toker->next();
 				inc=inc.substr( 1,inc.size()-2 );
 
-				//WIN32 KLUDGE//
-				char buff[MAX_PATH],*p;
-				if( GetFullPathName( inc.c_str(),MAX_PATH,buff,&p ) ) inc=buff;
-				inc=tolower(inc);
+				inc=fullfilename( inc );
+				inc=tolower( inc );
 
 				if( included.find( inc )!=included.end() ) break;
 
@@ -126,7 +124,7 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 			{
 				string ident=toker->text();
 				toker->next();string tag=parseTypeTag();
-				if( arrayDecls.find(ident)==arrayDecls.end() 
+				if( arrayDecls.find(ident)==arrayDecls.end()
 					&& toker->curr()!='=' && toker->curr()!='\\' && toker->curr()!='[' ){
 					//must be a function
 					ExprSeqNode *exprs;
