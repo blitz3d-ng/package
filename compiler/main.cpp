@@ -17,6 +17,12 @@
 #include <iostream>
 #include <iomanip>
 
+#ifdef WIN32
+#include <direct.h>
+#else
+#include <unistd.h>
+#endif
+
 using namespace std;
 
 #include "../linker/linker.h"
@@ -135,7 +141,7 @@ static void demoError(){
 	exit(0);
 }
 
-int _cdecl main( int argc,char *argv[] ){
+int main( int argc,char *argv[] ){
 
 	string in_file,out_file,args;
 
@@ -214,7 +220,7 @@ int _cdecl main( int argc,char *argv[] ){
 	if( n==string::npos ) n=in_file.rfind( '\\' );
 	if( n!=string::npos ){
 		if( !n || in_file[n-1]==':' ) ++n;
-		SetCurrentDirectory( in_file.substr(0,n).c_str() );
+		chdir( in_file.substr(0,n).c_str() );
 	}
 
 	ProgNode *prog=0;
