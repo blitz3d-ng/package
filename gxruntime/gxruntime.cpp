@@ -1088,7 +1088,7 @@ void gxRuntime::graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *
 	case 24:bd=DDBD_24;break;
 	case 32:bd=DDBD_32;break;
 	}
-	if( g->d3d_desc.dwDeviceRenderBitDepth & bd ) caps|=GFXMODECAPS_3D;
+	if( g->d3d_desc.dwDeviceRenderBitDepth & bd && ( m->desc.dwWidth<=2048 && m->desc.dwHeight<=1536 ) ) caps|=GFXMODECAPS_3D;
 #endif
 	*w=m->desc.dwWidth;
 	*h=m->desc.dwHeight;
