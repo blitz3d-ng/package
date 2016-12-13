@@ -145,4 +145,6 @@ public:
 	OSVERSIONINFO osinfo;
 };
 
+extern gxRuntime *gx_runtime;
+
 #endif

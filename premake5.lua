@@ -192,7 +192,7 @@ project "bbruntime_dll"
   }
 
   links {
-    "bbruntime", "audio", "system", "filesystem", "stdutil", "blitz2d", "graphics", "input"
+    "bbruntime", "audio", "system", "filesystem", "stdutil", "blitz2d", "graphics", "input", "math"
   }
 
   links { "dxguid" }
@@ -223,7 +223,6 @@ project "bbruntime"
     "bbruntime/bbfilesystem.cpp", "bbruntime/bbfilesystem.h",
     "bbruntime/bbgraphics.cpp", "bbruntime/bbgraphics.h",
     "bbruntime/bbinput.cpp", "bbruntime/bbinput.h",
-    "bbruntime/bbmath.cpp", "bbruntime/bbmath.h",
     "bbruntime/bbruntime.cpp", "bbruntime/bbruntime.h",
     "bbruntime/bbsockets.cpp", "bbruntime/bbsockets.h",
     "bbruntime/bbstream.cpp", "bbruntime/bbstream.h",
@@ -235,7 +234,19 @@ project "bbruntime"
     "bbruntime/resource.h"
   }
 
-  links { "audio" }
+  links { "blitz", "audio", "math" }
+
+project "blitz"
+  kind "StaticLib"
+  language "C++"
+
+  files {
+    "blitz/debug.cpp", "blitz/debug.h",
+    "blitz/env.cpp", "blitz/env.h",
+    "blitz/ex.h",
+    "blitz/module.h"
+  }
+
 
 project "audio"
   kind "StaticLib"
@@ -261,6 +272,14 @@ project "audio.fmod"
   }
 
   links "audio"
+
+project "math"
+  kind "StaticLib"
+  language "C++"
+
+  removeplatforms { "macos" }
+
+  files { "math/math.cpp", "math/math.h"  }
 
 project "system"
   kind "StaticLib"

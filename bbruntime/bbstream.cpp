@@ -18,45 +18,45 @@ bbStream::~bbStream(){
 }
 
 int BBCALL bbEof( bbStream *s ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	return s->eof();
 }
 
 int BBCALL bbReadAvail( bbStream *s ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	return s->avail();
 }
 
 int BBCALL bbReadByte( bbStream *s ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,1 );
 	return n;
 }
 
 int BBCALL bbReadShort( bbStream *s ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,2 );
 	return n;
 }
 
 int BBCALL bbReadInt( bbStream *s ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,4 );
 	return n;
 }
 
 float BBCALL bbReadFloat( bbStream *s ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	float n=0;
 	s->read( (char*)&n,4 );
 	return n;
 }
 
 BBStr * BBCALL bbReadString( bbStream *s ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	int len;
 	BBStr *str=d_new BBStr();
 	if( s->read( (char*)&len,4 ) ){
@@ -70,7 +70,7 @@ BBStr * BBCALL bbReadString( bbStream *s ){
 }
 
 BBStr * BBCALL bbReadLine( bbStream *s ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	unsigned char c;
 	BBStr *str=d_new BBStr();
 	for(;;){
@@ -82,27 +82,27 @@ BBStr * BBCALL bbReadLine( bbStream *s ){
 }
 
 void BBCALL bbWriteByte( bbStream *s,int n ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,1 );
 }
 
 void BBCALL bbWriteShort( bbStream *s,int n ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,2 );
 }
 
 void BBCALL bbWriteInt( bbStream *s,int n ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,4 );
 }
 
 void BBCALL bbWriteFloat( bbStream *s,float n ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,4 );
 }
 
 void BBCALL bbWriteString( bbStream *s,BBStr *t ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	int n=t->size();
 	s->write( (char*)&n,4 );
 	s->write( t->data(),t->size() );
@@ -110,14 +110,14 @@ void BBCALL bbWriteString( bbStream *s,BBStr *t ){
 }
 
 void BBCALL bbWriteLine( bbStream *s,BBStr *t ){
-	if( debug ) debugStream( s );
+	if( bb_env.debug ) debugStream( s );
 	s->write( t->data(),t->size() );
 	s->write( "\r\n",2 );
 	delete t;
 }
 
 void BBCALL bbCopyStream( bbStream *s,bbStream *d,int buff_size ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugStream( s );debugStream( d );
 		if( buff_size<1 || buff_size>1024*1024 ) RTEX( "Illegal buffer size" );
 	}

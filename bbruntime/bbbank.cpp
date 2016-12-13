@@ -3,6 +3,9 @@
 #include "bbbank.h"
 #include "bbstream.h"
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 struct bbBank{
 	char *data;
 	int size,capacity;
@@ -34,13 +37,13 @@ struct bbBank{
 static set<bbBank*> bank_set;
 
 static inline void debugBank( bbBank *b ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( !bank_set.count( b ) ) RTEX( "bbBank does not exist" );
 	}
 }
 
 static inline void debugBank( bbBank *b,int offset ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugBank( b );
 		if( offset>=b->size ) RTEX( "Offset out of range" );
 	}
@@ -67,7 +70,7 @@ void BBCALL bbResizeBank( bbBank *b,int size ){
 }
 
 void BBCALL bbCopyBank( bbBank *src,int src_p,bbBank *dest,int dest_p,int count ){
-	if( debug ){ debugBank( src,src_p+count-1 );debugBank( dest,dest_p+count-1 ); }
+	if( bb_env.debug ){ debugBank( src,src_p+count-1 );debugBank( dest,dest_p+count-1 ); }
 	memmove( dest->data+dest_p,src->data+src_p,count );
 }
 
@@ -112,7 +115,7 @@ void BBCALL bbPokeFloat( bbBank *b,int offset,float value ){
 }
 
 int BBCALL  bbReadBytes( bbBank *b,bbStream *s,int offset,int count ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugBank( b,offset+count-1 );
 		debugStream( s );
 	}
@@ -120,7 +123,7 @@ int BBCALL  bbReadBytes( bbBank *b,bbStream *s,int offset,int count ){
 }
 
 int BBCALL  bbWriteBytes( bbBank *b,bbStream *s,int offset,int count ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugBank( b,offset+count-1 );
 		debugStream( s );
 	}
@@ -128,7 +131,7 @@ int BBCALL  bbWriteBytes( bbBank *b,bbStream *s,int offset,int count ){
 }
 
 int BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( in ) debugBank( in );
 		if( out ) debugBank( out );
 	}

@@ -3,6 +3,8 @@
 #include "gxruntime.h"
 #include "zmouse.h"
 
+gxRuntime *gx_runtime;
+
 #undef SPI_SETMOUSESPEED
 #define SPI_SETMOUSESPEED	113
 

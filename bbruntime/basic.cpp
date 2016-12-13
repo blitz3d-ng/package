@@ -2,6 +2,9 @@
 #include "std.h"
 #include "bbsys.h"
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 //how many strings allocated
 static int stringCnt;
 

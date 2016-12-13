@@ -4,6 +4,9 @@
 #include "bbstream.h"
 #include <fstream>
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 BBFileSystem *gx_filesys;
 
 struct bbFile : public bbStream{
@@ -30,13 +33,13 @@ struct bbFile : public bbStream{
 static set<bbFile*> file_set;
 
 static inline void debugFile( bbFile *f ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( !file_set.count( f ) ) RTEX( "File does not exist" );
 	}
 }
 
 static inline void debugDir( BBDir *d ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( !gx_filesys->verifyDir( d ) ) RTEX( "Directory does not exist" );
 	}
 }

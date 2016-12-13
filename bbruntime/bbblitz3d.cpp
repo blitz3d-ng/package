@@ -25,6 +25,9 @@
 #include "../blitz3d/cachedtexture.h"
 #include "../blitz3d/std.h"
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 BBScene *gx_scene;
 
 static int tri_count;
@@ -58,88 +61,88 @@ static Loader_B3D loader_b3d;
 static map<string,Transform> loader_mat_map;
 
 static inline void debug3d(){
-	if( debug && !gx_scene ) RTEX( "3D Graphics mode not set" );
+	if( bb_env.debug && !gx_scene ) RTEX( "3D Graphics mode not set" );
 }
 static inline void debugTexture( Texture *t ){
-	if( debug && !texture_set.count( t ) ) RTEX( "Texture does not exist" );
+	if( bb_env.debug && !texture_set.count( t ) ) RTEX( "Texture does not exist" );
 }
 static inline void debugBrush( Brush *b ){
-	if( debug && !brush_set.count( b ) ) RTEX( "Brush does not exist" );
+	if( bb_env.debug && !brush_set.count( b ) ) RTEX( "Brush does not exist" );
 }
 static inline void debugEntity( Entity *e ){
-	if( debug && !entity_set.count(e) ) RTEX( "Entity does not exist" );
+	if( bb_env.debug && !entity_set.count(e) ) RTEX( "Entity does not exist" );
 }
 static inline void debugParent( Entity *e ){
-	if( debug ){
+	if( bb_env.debug ){
 		debug3d();
 		if( e && !entity_set.count(e) ) RTEX( "Parent entity does not exist" );
 	}
 }
 static inline void debugMesh( MeshModel *m ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(m);if( !m->getMeshModel() ) RTEX( "Entity is not a mesh" );
 	}
 }
 static inline void debugObject( Object *o ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(o);if( !o->getObject() ) RTEX( "Entity is not an object" );
 	}
 }
 static inline void debugColl( Object *o,int index ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugObject(o);
 		if( index<1 || index>o->getCollisions().size() ) RTEX( "Collision index out of range" );
 	}
 }
 static inline void debugCamera( Camera *c ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(c);if( !c->getCamera() ) RTEX( "Entity is not a camera" );
 	}
 }
 static inline void debugLight( Light *l ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(l);if( !l->getLight() ) RTEX( "Entity is not a light" );
 	}
 }
 static inline void debugModel( Model *m ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(m);if( !m->getModel() ) RTEX( "Entity is not a model" );
 	}
 }
 static inline void debugSprite( Sprite *s ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugModel(s);if( !s->getSprite() ) RTEX( "Entity is not a sprite" );
 	}
 }
 static inline void debugMD2( MD2Model *m ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugModel(m);if( !m->getMD2Model() ) RTEX( "Entity is not an MD2 Model" );
 	}
 }
 static inline void debugBSP( Q3BSPModel *m ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugModel(m);if( !m->getBSPModel() ) RTEX( "Entity is not a BSP Model" );
 	}
 }
 static inline void debugTerrain( Terrain *t ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugModel(t);if( !t->getTerrain() ) RTEX( "Entity is not a terrain" );
 	}
 }
 static inline void debugSegs( int n ){
-	if( debug ){
+	if( bb_env.debug ){
 		debug3d();
 		if( n<3 || n>50 ) RTEX( "Illegal number of segments" );
 	}
 }
 static inline void debugVertex( Surface *s,int n ){
-	if( debug ){
+	if( bb_env.debug ){
 		debug3d();
 		if( n<0 || n>=s->numVertices() ) RTEX( "Vertex index out of range" );
 	}
 }
 static inline void debugVertex( Surface *s,int n,int t ){
-	if( debug ){
+	if( bb_env.debug ){
 		debug3d();
 		if( n<0 || n>=s->numVertices() ) RTEX( "Vertex index out of range" );
 		if( t<0 || t>1 ) RTEX( "Texture coordinate set out of range" );
@@ -179,7 +182,7 @@ static void collapseMesh( MeshModel *mesh,Entity *e ){
 }
 
 static void insert( Entity *e ){
-	if( debug ) entity_set.insert( e );
+	if( bb_env.debug ) entity_set.insert( e );
 	e->setVisible(true);
 	e->setEnabled(true);
 	e->getObject()->reset();
@@ -199,7 +202,7 @@ static void erase( Entity *e ){
 		erase( p );
 	}
 	if( e->getListener() ) listener=0;
-	if( debug ) entity_set.erase( e );
+	if( bb_env.debug ) entity_set.erase( e );
 }
 
 static Entity *findChild( Entity *e,const string &t ){
@@ -374,7 +377,7 @@ Texture * BBCALL bbLoadAnimTexture( BBStr *file,int flags,int w,int h,int first,
 }
 
 Texture * BBCALL bbCreateTexture( int w,int h,int flags,int frames ){
-	if( debug ){
+	if( bb_env.debug ){
 		debug3d();
 		if( frames<=0 ){
 			RTEX( "Illegal number of texture frames" );
@@ -578,19 +581,19 @@ Entity * BBCALL bbCreateCube( Entity *p ){
 }
 
 Entity * BBCALL bbCreateSphere( int segs,Entity *p ){
-	if( debug ){ debugParent(p);if( segs<2 || segs>100 ) RTEX( "Illegal number of segments" ); }
+	if( bb_env.debug ){ debugParent(p);if( segs<2 || segs>100 ) RTEX( "Illegal number of segments" ); }
 	Entity *e=MeshUtil::createSphere( Brush(),segs );
 	return insertEntity( e,p );
 }
 
 Entity * BBCALL bbCreateCylinder( int segs,int solid,Entity *p ){
-	if( debug ){ debugParent(p);if( segs<3 || segs>100 ) RTEX( "Illegal number of segments" ); }
+	if( bb_env.debug ){ debugParent(p);if( segs<3 || segs>100 ) RTEX( "Illegal number of segments" ); }
 	Entity *e=MeshUtil::createCylinder( Brush(),segs,!!solid );
 	return insertEntity( e,p );
 }
 
 Entity * BBCALL bbCreateCone( int segs,int solid,Entity *p ){
-	if( debug ){ debugParent(p);if( segs<3 || segs>100 ) RTEX( "Illegal number of segments" ); }
+	if( bb_env.debug ){ debugParent(p);if( segs<3 || segs>100 ) RTEX( "Illegal number of segments" ); }
 	Entity *e=MeshUtil::createCone( Brush(),segs,!!solid );
 	return insertEntity( e,p );
 }
@@ -650,12 +653,12 @@ void BBCALL bbFlipMesh( MeshModel *m ){
 }
 
 void BBCALL bbPaintMesh( MeshModel *m,Brush *b ){
-	if( debug ){ debugMesh(m);debugBrush(b); }
+	if( bb_env.debug ){ debugMesh(m);debugBrush(b); }
 	m->paint( *b );
 }
 
 void BBCALL bbAddMesh( MeshModel *src,MeshModel *dest ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugMesh(src);debugMesh(dest);
 		if( src==dest ) RTEX( "A mesh cannot be added to itself" );
 	}
@@ -689,7 +692,7 @@ float BBCALL bbMeshDepth( MeshModel *m ){
 }
 
 int BBCALL bbMeshesIntersect( MeshModel *a,MeshModel *b ){
-	if( debug ){ debugMesh(a);debugMesh(b); }
+	if( bb_env.debug ){ debugMesh(a);debugMesh(b); }
 	return a->intersects( *b );
 }
 
@@ -699,7 +702,7 @@ int BBCALL bbCountSurfaces( MeshModel *m ){
 }
 
 Surface * BBCALL bbGetSurface( MeshModel *m,int index ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugMesh(m);
 		if( index<1 || index>m->getSurfaces().size() ){
 			RTEX( "Surface Index out of range" );
@@ -709,7 +712,7 @@ Surface * BBCALL bbGetSurface( MeshModel *m,int index ){
 }
 
 void BBCALL bbMeshCullBox( MeshModel *m,float x,float y,float z,float width,float height,float depth ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugMesh( m );
 	}
 	m->setCullBox( Box( Vector(x,y,z),Vector(x+width,y+height,z+depth) ) );
@@ -720,12 +723,12 @@ void BBCALL bbMeshCullBox( MeshModel *m,float x,float y,float z,float width,floa
 // SURFACE COMMANDS //
 //////////////////////
 Surface * BBCALL bbFindSurface( MeshModel *m,Brush *b ){
-	if( debug ){ debugMesh(m);debugBrush(b); }
+	if( bb_env.debug ){ debugMesh(m);debugBrush(b); }
 	return m->findSurface(*b);
 }
 
 Surface * BBCALL bbCreateSurface( MeshModel *m,Brush *b ){
-	if( debug ){ debugMesh(m);if( b ) debugBrush(b); }
+	if( bb_env.debug ){ debugMesh(m);if( b ) debugBrush(b); }
 	Surface *s=b ? m->createSurface( *b ) : m->createSurface( Brush() );
 	return s;
 }
@@ -1001,13 +1004,13 @@ Entity * BBCALL bbEntityPick( Object *src,float range ){
 }
 
 int BBCALL bbEntityVisible( Object *src,Object *dest ){
-	if( debug ){ debugObject(src);debugObject(dest); }
+	if( bb_env.debug ){ debugObject(src);debugObject(dest); }
 
 	return world->checkLOS( src,dest ) ? 1 : 0;
 }
 
 int BBCALL bbEntityInView( Entity *e,Camera *c ){
-	if( debug ){ debugEntity(e);debugCamera(c); }
+	if( bb_env.debug ){ debugEntity(e);debugCamera(c); }
 	if( Model *p=e->getModel() ){
 		if( MeshModel *m=p->getMeshModel() ){
 			const Box &b=m->getBox();
@@ -1160,7 +1163,7 @@ Entity * BBCALL bbCreateMirror( Entity *p ){
 // PLANE COMMANDS //
 ////////////////////
 Entity * BBCALL bbCreatePlane( int segs,Entity *p ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugParent(p);
 		if( segs<1 || segs>20 ) RTEX( "Illegal number of segments" );
 	}
@@ -1320,7 +1323,7 @@ void BBCALL bbModifyTerrain( Terrain *t,int x,int z,float h,int realtime ){
 // AUDIO COMMANDS //
 ////////////////////
 Entity * BBCALL bbCreateListener( Entity *p,float roll,float dopp,float dist ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugParent(p);
 		if( listener ) RTEX( "Listener already created" );
 	}
@@ -1329,7 +1332,7 @@ Entity * BBCALL bbCreateListener( Entity *p,float roll,float dopp,float dist ){
 }
 
 BBChannel * BBCALL bbEmitSound( BBSound *sound,Object *o ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugObject(o);
 		if( !listener ) RTEX( "No Listener created" );
 	}
@@ -1340,7 +1343,7 @@ BBChannel * BBCALL bbEmitSound( BBSound *sound,Object *o ){
 // ENTITY COMMANDS //
 /////////////////////
 Entity * BBCALL bbCopyEntity( Entity *e,Entity *p ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(e);
 		debugParent(p);
 	}
@@ -1351,7 +1354,7 @@ Entity * BBCALL bbCopyEntity( Entity *e,Entity *p ){
 
 void BBCALL bbFreeEntity( Entity *e ){
 	if( !e ) return;
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(e);
 		erase(e);
 	}
@@ -1372,7 +1375,7 @@ void BBCALL bbShowEntity( Entity *e ){
 }
 
 void BBCALL bbEntityParent( Entity *e,Entity *p,int global ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(e);
 		debugParent(p);
 		Entity *t=p;
@@ -1514,7 +1517,7 @@ int BBCALL bbAnimating( Object *o ){
 // ENTITY SPECIAL FX COMMANDS //
 ////////////////////////////////
 void BBCALL bbPaintEntity( Model *m,Brush *b ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugModel(m);
 		debugBrush(b);
 	}
@@ -1558,7 +1561,7 @@ void BBCALL bbEntityAutoFade( Model *m,float nr,float fr ){
 }
 
 void BBCALL bbEntityOrder( Object *o,int n ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugEntity(o);
 		if( !o->getModel() && !o->getCamera() ){
 			RTEX( "Entity is not a model or camera" );
@@ -1606,7 +1609,7 @@ float BBCALL bbGetMatElement( Entity *e,int row,int col ){
 }
 
 void BBCALL bbTFormPoint( float x,float y,float z,Entity *src,Entity *dest ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( src ) debugEntity(src);
 		if( dest ) debugEntity(dest);
 	}
@@ -1616,7 +1619,7 @@ void BBCALL bbTFormPoint( float x,float y,float z,Entity *src,Entity *dest ){
 }
 
 void BBCALL bbTFormVector( float x,float y,float z,Entity *src,Entity *dest ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( src ) debugEntity(src);
 		if( dest ) debugEntity(dest);
 	}
@@ -1626,7 +1629,7 @@ void BBCALL bbTFormVector( float x,float y,float z,Entity *src,Entity *dest ){
 }
 
 void BBCALL bbTFormNormal( float x,float y,float z,Entity *src,Entity *dest ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( src ) debugEntity(src);
 		if( dest ) debugEntity(dest);
 	}
@@ -1691,7 +1694,7 @@ static void entityType( Entity *e,int type ){
 }
 
 void BBCALL bbEntityType( Object *o,int type,int recurs ){
-	if( debug ){
+	if( bb_env.debug ){
 		debugObject(o);
 		if( type<0 || type>999 ) RTEX( "EntityType ID must be in the range 0...999" );
 	}
@@ -1847,7 +1850,7 @@ void BBCALL bbRotateEntity( Entity *e,float p,float y,float r,int global ){
 }
 
 void BBCALL bbPointEntity( Entity *e,Entity *t,float roll ){
-	if( debug ){ debugEntity(e);debugEntity(t); }
+	if( bb_env.debug ){ debugEntity(e);debugEntity(t); }
 	Vector v=t->getWorldTform().v-e->getWorldTform().v;
 	e->setWorldRotation( rotationQuat( v.pitch(),v.yaw(),roll*dtor ) );
 }

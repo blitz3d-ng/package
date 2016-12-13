@@ -5,6 +5,7 @@
 #pragma warning(disable:4786)
 
 #include "../config/config.h"
+#include "../blitz/env.h"
 
 #include <string>
 #include <iostream>
@@ -13,10 +14,6 @@
 #include <windows.h>
 HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height );
 #endif
-
-struct BBEnv{
-	void *window;
-};
 
 #ifdef MEMDEBUG
 

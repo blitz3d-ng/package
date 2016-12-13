@@ -1,6 +1,8 @@
 
-#include "std.h"
-#include "bbmath.h"
+#include <cmath>
+#include <algorithm>
+
+#include "math.h"
 
 static int rnd_state;
 static const int RND_A=48271;
@@ -50,16 +52,18 @@ int  BBCALL bbRndSeed(){
 	return rnd_state;
 }
 
-bool math_create(){
+// math module entrypoints
+
+BBMODULE_CREATE( math ){
 	bbSeedRnd( 0x1234 );
 	return true;
 }
 
-bool math_destroy(){
+BBMODULE_DESTROY( math ){
 	return true;
 }
 
-void math_link( void (*rtSym)( const char *sym,void *pc ) ){
+BBMODULE_LINK( math ){
 	rtSym( "#Sin#degrees",bbSin );
 	rtSym( "#Cos#degrees",bbCos );
 	rtSym( "#Tan#degrees",bbTan );

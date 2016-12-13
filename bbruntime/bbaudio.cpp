@@ -2,8 +2,11 @@
 #include "std.h"
 #include "bbaudio.h"
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 static inline void debugSound( BBSound *s ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( !gx_audio->verifySound( s ) ) RTEX( "Sound does not exist" );
 	}
 }

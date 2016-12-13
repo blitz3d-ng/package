@@ -3,6 +3,9 @@
 #include "bbgraphics.h"
 #include "bbinput.h"
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 BBGraphics *gx_graphics;
 BBCanvas *gx_canvas;
 
@@ -51,26 +54,26 @@ static unsigned curr_clsColor;
 static vector<GfxMode> gfx_modes;
 
 static inline void debugImage( bbImage *i,int frame=0 ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( !image_set.count(i) ) RTEX( "Image does not exist" );
 		if( frame>=i->getFrames().size() ) RTEX( "Image frame out of range" );
 	}
 }
 
 static inline void debugFont( BBFont *f ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( !b2d_graphics->verifyFont( f ) ) RTEX( "Font does not exist" );
 	}
 }
 
 static inline void debugCanvas( BBCanvas *c ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( !gx_graphics->verifyCanvas( c ) ) RTEX( "Buffer does not exist" );
 	}
 }
 
 static inline void debugDriver( int n ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( n<1 || n>gx_runtime->numGraphicsDrivers() ){
 			RTEX( "Illegal graphics driver index" );
 		}
@@ -78,7 +81,7 @@ static inline void debugDriver( int n ){
 }
 
 static inline void debugMode( int n ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( n<1 || n>gfx_modes.size() ){
 			RTEX( "Illegal graphics mode index" );
 		}
@@ -400,7 +403,7 @@ static void graphics( int w,int h,int d,int flags ){
 void BBCALL bbGraphics( int w,int h,int d,int mode ){
 	int flags=0;
 	switch( mode ){
-	case 0:flags|=debug ? gxGraphics::GRAPHICS_WINDOWED : 0 ;break;
+	case 0:flags|=bb_env.debug ? gxGraphics::GRAPHICS_WINDOWED : 0 ;break;
 	case 1:break;
 	case 2:flags|=gxGraphics::GRAPHICS_WINDOWED;break;
 	case 3:flags|=gxGraphics::GRAPHICS_WINDOWED|gxGraphics::GRAPHICS_SCALED;break;
@@ -415,7 +418,7 @@ void BBCALL bbGraphics( int w,int h,int d,int mode ){
 void BBCALL bbGraphics3D( int w,int h,int d,int mode ){
 	int flags=gxGraphics::GRAPHICS_3D;
 	switch( mode ){
-	case 0:flags|=(debug && bbWindowed3D()) ? gxGraphics::GRAPHICS_WINDOWED : 0 ;break;
+	case 0:flags|=(bb_env.debug && bbWindowed3D()) ? gxGraphics::GRAPHICS_WINDOWED : 0 ;break;
 	case 1:break;
 	case 2:flags|=gxGraphics::GRAPHICS_WINDOWED;break;
 	case 3:flags|=gxGraphics::GRAPHICS_WINDOWED|gxGraphics::GRAPHICS_SCALED;break;

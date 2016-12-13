@@ -3,8 +3,6 @@
 #include "bbsys.h"
 #include "../system/driver.h"
 
-bool debug;
-gxRuntime *gx_runtime;
 BBSystemDriver *sys_driver;
 
 // TODO: figure a more elegant way to handle this...

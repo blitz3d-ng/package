@@ -2,6 +2,9 @@
 #include "std.h"
 #include "bbsockets.h"
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 static bool socks_ok;
 static WSADATA wsadata;
 static int recv_timeout;
@@ -272,19 +275,19 @@ void TCPServer::remove( TCPStream *s ){
 }
 
 static inline void debugUDPStream( UDPStream *p ){
-	if( debug && !udp_set.count(p) ){
+	if( bb_env.debug && !udp_set.count(p) ){
 		RTEX( "UDP Stream does not exist" );
 	}
 }
 
 static inline void debugTCPStream( TCPStream *p ){
-	if( debug && !tcp_set.count(p) ){
+	if( bb_env.debug && !tcp_set.count(p) ){
 		RTEX( "TCP Stream does not exist" );
 	}
 }
 
 static inline void debugTCPServer( TCPServer *p ){
-	if( debug && !server_set.count(p) ){
+	if( bb_env.debug && !server_set.count(p) ){
 		RTEX( "TCP Server does not exist" );
 	}
 }
@@ -301,7 +304,7 @@ int BBCALL bbCountHostIPs( BBStr *host ){
 }
 
 int BBCALL bbHostIP( int index ){
-	if( debug ){
+	if( bb_env.debug ){
 		if( index<1 || index>host_ips.size() ){
 			RTEX( "Host index out of range" );
 		}

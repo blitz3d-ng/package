@@ -3,6 +3,9 @@
 #include "bbsys.h"
 #include "bbruntime.h"
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 void BBCALL bbEnd(){
 	RTEX( 0 );
 }
@@ -224,7 +227,7 @@ bool bbruntime_destroy(){
 }
 
 const char *bbruntime_run( gxRuntime *rt,void (*pc)(),bool dbg ){
-	debug=dbg;
+	bb_env.debug=dbg;
 	gx_runtime=rt;
 
 	if( !bbruntime_create() ) return "Unable to start program";

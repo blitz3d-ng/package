@@ -2,6 +2,9 @@
 #include "std.h"
 #include "bbsys.h"
 
+#include "../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
+
 BBInputDriver *gx_input;
 BBDevice *gx_mouse;
 BBDevice *gx_keyboard;
