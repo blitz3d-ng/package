@@ -17,9 +17,10 @@ addons:
     - libwxgtk-webview3.0-dev
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]];   then brew update       ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]];   then brew install wxmac; fi
-  - curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-macosx.tar.gz | tar xvz
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update       ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install wxmac; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-macosx.tar.gz | tar xvz ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-linux.tar.gz | tar xvz ; fi
 
 script:
 - ./premake5 gmake && make config=${ENV}_macos
