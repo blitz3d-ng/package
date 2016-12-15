@@ -6,6 +6,4 @@
     #include <wx/wx.h>
 #endif
 
-#define BLITZPATH "/Users/kevin/blitz3d/_release"
-
 #endif

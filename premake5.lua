@@ -100,26 +100,39 @@ project "blitzide"
     "blitzide/blitzide.rc"
   }
 
-project "blitzide2"
-  kind "WindowedApp"
-  language "C++"
+if not os.getenv("CI") then
+  project "blitzide2"
+    kind "WindowedApp"
+    language "C++"
 
-  removeplatforms { "win32", "win64" }
+    -- removeplatforms { "win32", "win64" }
 
-  targetdir "_release/bin"
-  targetname "ide"
+    characterset "Unicode"
 
-  buildoptions {
-    "-std=c++11",
-    "`wx-config --cflags std webview stc`"
-  }
-  linkoptions "`wx-config --libs std webview stc`"
+    targetdir "_release/bin"
+    targetname "ide2"
 
-  files {
-    "blitzide2/HtmlHelp.h", "blitzide2/HtmlHelp.cpp",
-    "blitzide2/FileView.h", "blitzide2/FileView.cpp",
-    "blitzide2/main.cpp"
-  }
+    files {
+      "blitzide2/HtmlHelp.h", "blitzide2/HtmlHelp.cpp",
+      "blitzide2/FileView.h", "blitzide2/FileView.cpp",
+      "blitzide2/main.cpp"
+    }
+
+    filter "platforms:win32 or win64"
+      flags "WinMain"
+      includedirs {
+        "C:\\wxWidgets-3.0.2\\include\\msvc",
+        "C:\\wxWidgets-3.0.2\\include"
+      }
+      libdirs "C:\\wxWidgets-3.0.2\\lib\\vc_lib"
+
+    filter "platforms:macos or linux"
+      buildoptions {
+        "-std=c++11",
+        "`wx-config --cflags std webview stc`"
+      }
+      linkoptions "`wx-config --libs std webview stc`"
+end
 
 project "debugger"
   kind "SharedLib"

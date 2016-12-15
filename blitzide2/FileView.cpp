@@ -18,10 +18,12 @@ static bool keywordsLoaded=false;
 // rgb_digit=RGB( 0x33,0xff,0xdd );
 // rgb_default=RGB( 0xee,0xee,0xee );
 
+extern wxString blitzpath;
+
 void FileView::LoadKeywords(){
   if (!keywordsLoaded) {
     wxArrayString keywords;
-    wxExecute( BLITZPATH "/bin/blitzcc -k",keywords );
+    wxExecute( blitzpath + "/bin/blitzcc -k",keywords );
 
     keywordsList = "";
     wxArrayString::iterator it;
@@ -39,7 +41,11 @@ FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),w
 
   // Inconsolata, Monaco, Consolas, 'Courier New', Courier
   wxFont font;
+#ifdef __WXMSW__
+  font = wxFontInfo(12).FaceName("Consolas");
+#else
   font = wxFontInfo(12).FaceName("Monaco");
+#endif
 
   wxStyledTextCtrl* text = new wxStyledTextCtrl(this, wxID_ANY);
 

@@ -10,9 +10,12 @@
 
 #include <wx/notebook.h>
 #include <wx/filedlg.h>
+#include <wx/filename.h>
 
 #include "HtmlHelp.h"
 #include "FileView.h"
+
+wxString blitzpath;
 
 class MyApp : public wxApp
 {
@@ -80,9 +83,12 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_COMMAND (wxID_ANY, OPEN_EVENT, MainFrame::OnOpen)
 wxEND_EVENT_TABLE()
 wxIMPLEMENT_APP(MyApp);
-bool MyApp::OnInit()
-{
-  MainFrame *frame = new MainFrame( "Blitz3D",wxPoint( 50,50 ),wxSize( 800,600 ) );
+bool MyApp::OnInit(){
+  if( !wxGetEnv( "blitzpath",&blitzpath ) || blitzpath.length()==0 ){
+    wxMessageBox( "blitzpath not set", "Blitz3D \"NG\"",wxOK|wxICON_ERROR );
+    return false;
+  }
+  MainFrame *frame = new MainFrame( "Blitz3D \"NG\"",wxPoint( 50,50 ),wxSize( 800,600 ) );
   frame->Show( true );
   return true;
 }
@@ -140,7 +146,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
   wxImage::AddHandler( new wxPNGHandler );
 
-  wxImage icons(wxT(BLITZPATH "/cfg/ide_toolbar.bmp"), wxBITMAP_TYPE_BMP);
+  wxImage icons(blitzpath + "/cfg/ide_toolbar.bmp", wxBITMAP_TYPE_BMP);
   icons.SetMask( true );
   icons.SetMaskColour( 0xc0,0xc0,0xc0 );
 
@@ -195,7 +201,7 @@ void MainFrame::AddFile( wxString &path ){
   if ( path.length() == 0 ){
     basename = wxT("<untitled>");
   } else {
-    basename = path.Mid( path.find_last_of("/")+1 );
+    basename=wxFileName( path ).GetFullName();
   }
 
   FileView *view = new FileView( path,nb,wxID_ANY );

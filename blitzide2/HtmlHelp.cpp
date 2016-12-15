@@ -1,6 +1,9 @@
 
 #include "HtmlHelp.h"
 #include <wx/dir.h>
+#include <wx/filename.h>
+
+extern wxString blitzpath;
 
 wxDEFINE_EVENT(OPEN_EVENT, wxCommandEvent);
 
@@ -18,9 +21,13 @@ HtmlHelp::HtmlHelp( wxWindow *parent,wxWindowID id ):wxPanel( parent,id ){
 }
 
 void HtmlHelp::OnNavigating( wxWebViewEvent& event ){
-  wxString dirPath = event.GetURL().substr( 7,std::string::npos );
+  wxString dirPath = event.GetURL();
+  if( dirPath.StartsWith("file://") ) dirPath=dirPath.substr( 7,std::string::npos );
+
   wxDir dir( dirPath );
   if ( dir.IsOpened() ){
+    event.StopPropagation();
+    
     wxCommandEvent event( OPEN_EVENT,GetId() );
     event.SetEventObject( this );
     event.SetString( dirPath );
@@ -29,8 +36,11 @@ void HtmlHelp::OnNavigating( wxWebViewEvent& event ){
 }
 
 void HtmlHelp::GoHome(){
+  wxFileName index( blitzpath+"/help/index.html" );
+  index.MakeAbsolute();
+
   browser->ClearHistory();
-  browser->LoadURL( BLITZPATH "/help/index.html" );
+  browser->LoadURL( index.GetFullPath() );
 }
 
 bool HtmlHelp::GoBack(){
