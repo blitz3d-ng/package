@@ -9,6 +9,7 @@
 
 #include <string>
 #include <iostream>
+#include <cstddef>
 
 #ifdef _WIN32
 #include <windows.h>

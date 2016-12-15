@@ -1,6 +1,8 @@
 language: cpp
 
-os: osx
+os:
+  - osx
+  - linux
 
 env:
 - ENV=debug
@@ -9,6 +11,9 @@ env:
 compiler: clang
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]];   then brew update       ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]];   then brew install wxmac; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then apt-get install -y libwxgtk3.0-dev libwxgtk-webview3.0-dev; fi
   - curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-macosx.tar.gz | tar xvz
 
 script:

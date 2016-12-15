@@ -1,0 +1,6 @@
+version: '2'
+services:
+  env:
+    build: .
+    volumes:
+    - .:/usr/local/opt/blitz3d-ng

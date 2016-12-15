@@ -188,8 +188,8 @@ void Q3BSPRep::createTextures(){
 	for( int k=0;k<n_texs;++k ){
 		string t=string(q3tex->name);
 		char fl[32],co[32];
-		itoa( q3tex->flags,fl,16 );
-		itoa( q3tex->contents,co,16 );
+		snprintf( fl,32,"%04x",q3tex->flags );
+		snprintf( co,32,"%04x",q3tex->contents );
 		log( t+", flags=0x"+fl+", contents=0x"+co );
 		Texture tex( t+".tga",1 );
 		if( !tex.getCanvas(0) ){

@@ -3,7 +3,9 @@
 
 #include <set>
 #include <math.h>
-#include <stdlib.h>
+#include <limits.h>
+#include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
@@ -295,11 +297,17 @@ string toupper( const string &s ){
 }
 
 string fullfilename( const string &t ){
+#ifdef WIN32
 	char buff[MAX_PATH+1],*p;
 	GetFullPathName( t.c_str(),MAX_PATH,buff,&p );
-	return string(buff);
+#else
+	char buff[PATH_MAX+1];
+	realpath( t.c_str(),buff );
+#endif
+	return string( buff );
 }
 
+#ifdef WIN32 // FIXME: port these to POSIX envs.
 string filenamepath( const string &t ){
 	char buff[MAX_PATH+1],*p;
 	GetFullPathName( t.c_str(),MAX_PATH,buff,&p );
@@ -313,6 +321,7 @@ string filenamefile( const string &t ){
 	if( !p ) return "";
 	return string( p );
 }
+#endif
 
 const int MIN_SIZE=256;
 

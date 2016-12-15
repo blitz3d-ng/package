@@ -1,7 +1,7 @@
 -- premake5.lua
 workspace "blitz3d"
   configurations { "debug", "release" }
-  platforms { "win32", "win64", "macos" } --, "linux" }
+  platforms { "win32", "win64", "macos", "linux" }
 
   location "build"
 
@@ -60,11 +60,14 @@ workspace "blitz3d"
   filter "platforms:macos"
     toolset "clang"
 
+  filter "platforms:linux"
+    buildoptions "-std=c++11"
+
 project "blitzide"
   kind "WindowedApp"
   language "C++"
 
-  removeplatforms "macos"
+  removeplatforms { "macos", "linux" }
 
   targetdir "_release/bin"
   targetname "ide"
@@ -97,30 +100,32 @@ project "blitzide"
     "blitzide/blitzide.rc"
   }
 
--- project "blitzide2"
---   kind "WindowedApp"
---   language "C++"
---
---   targetdir "_release/bin"
---   targetname "ide"
---
---   buildoptions {
---     "-std=c++11",
---     "`wx-config --cflags std webview stc`"
---   }
---   linkoptions "`wx-config --libs std webview stc`"
---
---   files {
---     "blitzide2/HtmlHelp.h", "blitzide2/HtmlHelp.cpp",
---     "blitzide2/FileView.h", "blitzide2/FileView.cpp",
---     "blitzide2/main.cpp"
---   }
+project "blitzide2"
+  kind "WindowedApp"
+  language "C++"
+
+  removeplatforms { "win32", "win64" }
+
+  targetdir "_release/bin"
+  targetname "ide"
+
+  buildoptions {
+    "-std=c++11",
+    "`wx-config --cflags std webview stc`"
+  }
+  linkoptions "`wx-config --libs std webview stc`"
+
+  files {
+    "blitzide2/HtmlHelp.h", "blitzide2/HtmlHelp.cpp",
+    "blitzide2/FileView.h", "blitzide2/FileView.cpp",
+    "blitzide2/main.cpp"
+  }
 
 project "debugger"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms { "win64", "macos" }
+  removeplatforms { "win64", "macos", "linux" }
 
   targetdir "_release/bin"
   targetname "debugger"
@@ -154,7 +159,7 @@ project "bblaunch"
   kind "WindowedApp"
   language "C++"
 
-  removeplatforms "macos"
+  removeplatforms { "macos", "linux" }
 
   files { "bblaunch/bblaunch.cpp" }
 
@@ -174,7 +179,7 @@ project "bbruntime_dll"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms { "win64", "macos" }
+  removeplatforms { "win64", "macos", "linux" }
 
   targetdir "_release/bin"
   targetprefix ""
@@ -205,7 +210,7 @@ project "gxruntime"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "win64", "macos" }
+  removeplatforms { "win64", "macos", "linux" }
 
   files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxgraphics.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
 
@@ -213,7 +218,7 @@ project "bbruntime"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos" }
+  removeplatforms { "macos", "linux" }
 
   files {
     "bbruntime/basic.cpp", "bbruntime/basic.h",
@@ -240,6 +245,8 @@ project "blitz"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos", "linux" }
+
   files {
     "blitz/debug.cpp", "blitz/debug.h",
     "blitz/env.cpp", "blitz/env.h",
@@ -262,7 +269,7 @@ project "audio.fmod"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos" }
+  removeplatforms { "macos", "linux" }
 
   includedirs "common/include"
 
@@ -277,7 +284,7 @@ project "math"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos" }
+  removeplatforms { "macos", "linux" }
 
   files { "math/math.cpp", "math/math.h"  }
 
@@ -291,7 +298,7 @@ project "system.windows"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos" }
+  removeplatforms { "macos", "linux" }
 
   files { "system.windows/driver.cpp", "system.windows/driver.h" }
 
@@ -307,7 +314,7 @@ project "filesystem.windows"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos" }
+  removeplatforms { "macos", "linux" }
 
   files {
     "filesystem.windows/driver.cpp", "filesystem.windows/driver.h",
@@ -328,7 +335,7 @@ project "input.directinput8"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos" }
+  removeplatforms { "macos", "linux" }
 
   files { "input.directinput8/driver.cpp", "input.directinput8/driver.h" }
 
@@ -339,8 +346,11 @@ project "blitz3d"
   removeplatforms { "macos" }
 
   files {
-    "blitz3d/animation.cpp", "blitz3d/animator.cpp", "blitz3d/brush.cpp", "blitz3d/cachedtexture.cpp", "blitz3d/camera.cpp", "blitz3d/collision.cpp", "blitz3d/entity.cpp", "blitz3d/frustum.cpp", "blitz3d/geom.cpp", "blitz3d/light.cpp", "blitz3d/listener.cpp", "blitz3d/loader_3ds.cpp", "blitz3d/loader_b3d.cpp", "blitz3d/loader_x.cpp", "blitz3d/md2model.cpp", "blitz3d/md2norms.cpp", "blitz3d/md2rep.cpp", "blitz3d/meshcollider.cpp", "blitz3d/meshloader.cpp", "blitz3d/meshmodel.cpp", "blitz3d/meshutil.cpp", "blitz3d/mirror.cpp", "blitz3d/model.cpp", "blitz3d/object.cpp", "blitz3d/pivot.cpp", "blitz3d/planemodel.cpp", "blitz3d/q3bspmodel.cpp", "blitz3d/q3bsprep.cpp", "blitz3d/sprite.cpp", "blitz3d/std.cpp", "blitz3d/surface.cpp", "blitz3d/terrain.cpp", "blitz3d/terrainrep.cpp", "blitz3d/texture.cpp", "blitz3d/world.cpp", "blitz3d/animation.h", "blitz3d/animator.h", "blitz3d/blitz3d.h", "blitz3d/brush.h", "blitz3d/cachedtexture.h", "blitz3d/camera.h", "blitz3d/collision.h", "blitz3d/entity.h", "blitz3d/frustum.h", "blitz3d/geom.h", "blitz3d/light.h", "blitz3d/listener.h", "blitz3d/loader_3ds.h", "blitz3d/loader_b3d.h", "blitz3d/loader_x.h", "blitz3d/md2model.h", "blitz3d/md2norms.h", "blitz3d/md2rep.h", "blitz3d/meshcollider.h", "blitz3d/meshloader.h", "blitz3d/meshmodel.h", "blitz3d/meshutil.h", "blitz3d/mirror.h", "blitz3d/model.h", "blitz3d/object.h", "blitz3d/pivot.h", "blitz3d/planemodel.h", "blitz3d/q3bspmodel.h", "blitz3d/q3bsprep.h", "blitz3d/rendercontext.h", "blitz3d/sprite.h", "blitz3d/std.h", "blitz3d/surface.h", "blitz3d/terrain.h", "blitz3d/terrainrep.h", "blitz3d/texture.h", "blitz3d/world.h"
+    "blitz3d/animation.cpp", "blitz3d/animator.cpp", "blitz3d/brush.cpp", "blitz3d/cachedtexture.cpp", "blitz3d/camera.cpp", "blitz3d/collision.cpp", "blitz3d/entity.cpp", "blitz3d/frustum.cpp", "blitz3d/geom.cpp", "blitz3d/light.cpp", "blitz3d/listener.cpp", "blitz3d/loader_3ds.cpp", "blitz3d/loader_b3d.cpp", "blitz3d/md2model.cpp", "blitz3d/md2norms.cpp", "blitz3d/md2rep.cpp", "blitz3d/meshcollider.cpp", "blitz3d/meshloader.cpp", "blitz3d/meshmodel.cpp", "blitz3d/meshutil.cpp", "blitz3d/mirror.cpp", "blitz3d/model.cpp", "blitz3d/object.cpp", "blitz3d/pivot.cpp", "blitz3d/planemodel.cpp", "blitz3d/q3bspmodel.cpp", "blitz3d/q3bsprep.cpp", "blitz3d/sprite.cpp", "blitz3d/std.cpp", "blitz3d/surface.cpp", "blitz3d/terrain.cpp", "blitz3d/terrainrep.cpp", "blitz3d/texture.cpp", "blitz3d/world.cpp", "blitz3d/animation.h", "blitz3d/animator.h", "blitz3d/blitz3d.h", "blitz3d/brush.h", "blitz3d/cachedtexture.h", "blitz3d/camera.h", "blitz3d/collision.h", "blitz3d/entity.h", "blitz3d/frustum.h", "blitz3d/geom.h", "blitz3d/light.h", "blitz3d/listener.h", "blitz3d/loader_3ds.h", "blitz3d/loader_b3d.h", "blitz3d/md2model.h", "blitz3d/md2norms.h", "blitz3d/md2rep.h", "blitz3d/meshcollider.h", "blitz3d/meshloader.h", "blitz3d/meshmodel.h", "blitz3d/meshutil.h", "blitz3d/mirror.h", "blitz3d/model.h", "blitz3d/object.h", "blitz3d/pivot.h", "blitz3d/planemodel.h", "blitz3d/q3bspmodel.h", "blitz3d/q3bsprep.h", "blitz3d/rendercontext.h", "blitz3d/sprite.h", "blitz3d/std.h", "blitz3d/surface.h", "blitz3d/terrain.h", "blitz3d/terrainrep.h", "blitz3d/texture.h", "blitz3d/world.h"
   }
+
+filter "platforms:win32 or win64"
+  files { "blitz3d/loader_x.cpp", "blitz3d/loader_x.h" }
 
 project "blitz2d"
   kind "StaticLib"
@@ -361,7 +371,7 @@ project "compiler"
   kind "ConsoleApp"
   language "C++"
 
-  removeplatforms { "win64", "macos" }
+  removeplatforms { "win64", "macos", "linux" }
 
   targetdir "_release/bin"
   targetname "blitzcc"
@@ -384,7 +394,7 @@ project "linker_dll"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms { "win64", "macos" }
+  removeplatforms { "win64", "macos", "linux" }
 
   targetdir "_release/bin"
   targetname "linker"
@@ -398,15 +408,13 @@ project "linker"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "win64", "macos" }
+  removeplatforms { "win64", "macos", "linux" }
 
   files { "linker/linker.h", "linker/linker.cpp", "linker/image_util.h", "linker/image_util.cpp" }
 
 project "stdutil"
   kind "StaticLib"
   language "C++"
-
-  removeplatforms { "macos" }
 
   files { "stdutil/stdutil.h", "stdutil/stdutil.cpp" }
 
@@ -452,6 +460,7 @@ project "jxr"
 
   includedirs {
     "freeimage317/Source/LibJXR/jxrgluelib",
+    "freeimage317/Source/LibJXR/common/include",
     "freeimage317/Source/LibJXR/image/sys"
   }
 
@@ -460,6 +469,9 @@ project "jxr"
   files {
     "freeimage317/Source/LibJXR/image/decode/decode.c", "freeimage317/Source/LibJXR/image/decode/JXRTranscode.c", "freeimage317/Source/LibJXR/image/decode/postprocess.c", "freeimage317/Source/LibJXR/image/decode/segdec.c", "freeimage317/Source/LibJXR/image/decode/strdec.c", "freeimage317/Source/LibJXR/image/decode/strdec_x86.c", "freeimage317/Source/LibJXR/image/decode/strInvTransform.c", "freeimage317/Source/LibJXR/image/decode/strPredQuantDec.c", "freeimage317/Source/LibJXR/image/encode/encode.c", "freeimage317/Source/LibJXR/image/encode/segenc.c", "freeimage317/Source/LibJXR/image/encode/strenc.c", "freeimage317/Source/LibJXR/image/encode/strenc_x86.c", "freeimage317/Source/LibJXR/image/encode/strFwdTransform.c", "freeimage317/Source/LibJXR/image/encode/strPredQuantEnc.c", "freeimage317/Source/LibJXR/image/sys/adapthuff.c", "freeimage317/Source/LibJXR/image/sys/image.c", "freeimage317/Source/LibJXR/image/sys/strcodec.c", "freeimage317/Source/LibJXR/image/sys/strPredQuant.c", "freeimage317/Source/LibJXR/image/sys/strTransform.c", "freeimage317/Source/LibJXR/jxrgluelib/JXRGlue.c", "freeimage317/Source/LibJXR/jxrgluelib/JXRGlueJxr.c", "freeimage317/Source/LibJXR/jxrgluelib/JXRGluePFC.c", "freeimage317/Source/LibJXR/jxrgluelib/JXRMeta.c", "freeimage317/Source/LibJXR/image/decode/decode.h", "freeimage317/Source/LibJXR/image/encode/encode.h", "freeimage317/Source/LibJXR/image/sys/ansi.h", "freeimage317/Source/LibJXR/image/sys/common.h", "freeimage317/Source/LibJXR/image/sys/perfTimer.h", "freeimage317/Source/LibJXR/image/sys/strcodec.h", "freeimage317/Source/LibJXR/image/sys/strTransform.h", "freeimage317/Source/LibJXR/image/sys/windowsmediaphoto.h", "freeimage317/Source/LibJXR/image/sys/xplatform_image.h", "freeimage317/Source/LibJXR/image/x86/x86.h", "freeimage317/Source/LibJXR/common/include/guiddef.h", "freeimage317/Source/LibJXR/common/include/wmsal.h", "freeimage317/Source/LibJXR/common/include/wmspecstring.h", "freeimage317/Source/LibJXR/common/include/wmspecstrings_adt.h", "freeimage317/Source/LibJXR/common/include/wmspecstrings_strict.h", "freeimage317/Source/LibJXR/common/include/wmspecstrings_undef.h", "freeimage317/Source/LibJXR/jxrgluelib/JXRGlue.h", "freeimage317/Source/LibJXR/jxrgluelib/JXRMeta.h"
   }
+
+  filter "platforms:linux"
+    defines { "__ANSI__" }
 
 project "openexr"
   kind "StaticLib"
