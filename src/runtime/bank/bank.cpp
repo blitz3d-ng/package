@@ -1,9 +1,12 @@
 
-#include "../../blitz/module.h"
-#include "../../blitz/ex.h"
+#include <set>
+
+#include "../../blitz/blitz.h"
+#include "../../stdutil/stdutil.h"
 #include "bank.h"
-#include "../../bbruntime/basic.h"
 #include "../stream/stream.h"
+
+using namespace std;
 
 bbBank::bbBank( int sz ):size(sz){
 	capacity=(size+15)&~15;
@@ -126,16 +129,16 @@ int BBCALL  bbWriteBytes( bbBank *b,bbStream *s,int offset,int count ){
 	return s->write( b->data+offset,count );
 }
 
-bool bank_create(){
+BBMODULE_CREATE( bank ){
 	return true;
 }
 
-bool bank_destroy(){
+BBMODULE_DESTROY( bank ){
 	while( bank_set.size() ) bbFreeBank( *bank_set.begin() );
 	return true;
 }
 
-void bank_link( void(*rtSym)(const char*,void*) ){
+BBMODULE_LINK( bank ){
 	rtSym( "%CreateBank%size=0",bbCreateBank );
 	rtSym( "FreeBank%bank",bbFreeBank );
 	rtSym( "%BankSize%bank",bbBankSize );

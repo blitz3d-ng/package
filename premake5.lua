@@ -259,6 +259,7 @@ project "blitz"
   removeplatforms { "macos", "linux" }
 
   files {
+    "blitz/basic.cpp", "blitz/basic.h",
     "blitz/debug.cpp", "blitz/debug.h",
     "blitz/env.cpp", "blitz/env.h",
     "blitz/ex.h",

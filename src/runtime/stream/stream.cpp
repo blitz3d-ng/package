@@ -2,9 +2,7 @@
 #include <set>
 
 #include "../../stdutil/stdutil.h"
-#include "../../blitz/ex.h"
-#include "../../blitz/env.h"
-#include "../../bbruntime/basic.h"
+#include "../../blitz/blitz.h"
 #include "stream.h"
 
 using namespace std;
@@ -137,15 +135,15 @@ void BBCALL bbCopyStream( bbStream *s,bbStream *d,int buff_size ){
 	delete buff;
 }
 
-bool stream_create(){
+BBMODULE_CREATE( stream ){
 	return true;
 }
 
-bool stream_destroy(){
+BBMODULE_DESTROY( stream ){
 	return true;
 }
 
-void stream_link( void(*rtSym)(const char*,void*) ){
+BBMODULE_LINK( stream ){
 	rtSym( "%Eof%stream",bbEof );
 	rtSym( "%ReadAvail%stream",bbReadAvail );
 	rtSym( "%ReadByte%stream",bbReadByte );

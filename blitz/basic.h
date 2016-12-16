@@ -2,7 +2,7 @@
 #ifndef BASIC_H
 #define BASIC_H
 
-#include "std.h"
+#include <string>
 
 enum{
 	BBTYPE_END=0,
