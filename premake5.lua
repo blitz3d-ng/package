@@ -210,7 +210,7 @@ project "bbruntime_dll"
   }
 
   links {
-    "bbruntime", "audio", "system", "filesystem", "stdutil", "blitz2d", "graphics", "input", "math"
+    "bbruntime", "audio", "bank", "system", "filesystem", "stdutil", "blitz2d", "graphics", "input", "math", "stream"
   }
 
   links { "dxguid" }
@@ -236,14 +236,12 @@ project "bbruntime"
   files {
     "bbruntime/basic.cpp", "bbruntime/basic.h",
     "bbruntime/bbaudio.cpp", "bbruntime/bbaudio.h",
-    "bbruntime/bbbank.cpp", "bbruntime/bbbank.h",
     "bbruntime/bbblitz3d.cpp", "bbruntime/bbblitz3d.h",
     "bbruntime/bbfilesystem.cpp", "bbruntime/bbfilesystem.h",
     "bbruntime/bbgraphics.cpp", "bbruntime/bbgraphics.h",
     "bbruntime/bbinput.cpp", "bbruntime/bbinput.h",
     "bbruntime/bbruntime.cpp", "bbruntime/bbruntime.h",
     "bbruntime/bbsockets.cpp", "bbruntime/bbsockets.h",
-    "bbruntime/bbstream.cpp", "bbruntime/bbstream.h",
     "bbruntime/bbstring.cpp", "bbruntime/bbstring.h",
     "bbruntime/bbsys.cpp", "bbruntime/bbsys.h",
     -- "bbruntime/multiplay.cpp", "bbruntime/multiplay_setup.cpp", "bbruntime/multiplay.h", "bbruntime/multiplay_setup.h",
@@ -293,6 +291,14 @@ project "audio.fmod"
 
   links "audio"
 
+project "bank"
+  kind "StaticLib"
+  language "C++"
+
+  files {
+    "src/runtime/bank/bank.cpp", "src/runtime/bank/bank.h"
+  }
+
 project "math"
   kind "StaticLib"
   language "C++"
@@ -313,7 +319,10 @@ project "system.windows"
 
   removeplatforms { "macos", "linux" }
 
-  files { "system.windows/driver.cpp", "system.windows/driver.h" }
+  files {
+    "system.windows/driver.cpp", "system.windows/driver.h",
+    "system.windows/system.windows.cpp", "system.windows/system.windows.h"
+  }
 
   links "system"
 
@@ -364,6 +373,14 @@ project "blitz3d"
 
 filter "platforms:win32 or win64"
   files { "blitz3d/loader_x.cpp", "blitz3d/loader_x.h" }
+
+project "stream"
+  kind "StaticLib"
+  language "C++"
+
+  files {
+    "src/runtime/stream/stream.cpp", "src/runtime/stream/stream.h"
+  }
 
 project "blitz2d"
   kind "StaticLib"

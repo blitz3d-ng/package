@@ -1,6 +1,13 @@
 
-#include "std.h"
-#include "bbstream.h"
+#include <set>
+
+#include "../../stdutil/stdutil.h"
+#include "../../blitz/ex.h"
+#include "../../blitz/env.h"
+#include "../../bbruntime/basic.h"
+#include "stream.h"
+
+using namespace std;
 
 static set<bbStream*> stream_set;
 
