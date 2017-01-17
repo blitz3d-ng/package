@@ -78,16 +78,16 @@ BBStr*	BBCALL	 _bbCStrToStr( const char *str ){
 	return new BBStr( str );
 }
 
-bool userlibs_create(){
+BBMODULE_CREATE( userlibs ){
 	return true;
 }
 
-bool userlibs_destroy(){
+BBMODULE_DESTROY( userlibs ){
 	for( ;_mods.size();_mods.pop_back() ) FreeLibrary( _mods.back() );
 	return true;
 }
 
-void userlibs_link( void(*rtSym)(const char*,void*) ){
+BBMODULE_LINK( userlibs ){
 	rtSym( "_bbLoadLibs",_bbLoadLibs );
 	rtSym( "_bbStrToCStr",_bbStrToCStr );
 	rtSym( "_bbCStrToStr",_bbCStrToStr );

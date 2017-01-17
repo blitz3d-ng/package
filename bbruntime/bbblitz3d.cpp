@@ -1956,18 +1956,18 @@ void blitz3d_close(){
 	gx_scene=0;
 }
 
-bool blitz3d_create(){
+BBMODULE_CREATE( blitz3d ){
 	tri_count=0;
 	gx_scene=0;world=0;
 	return true;
 }
 
-bool blitz3d_destroy(){
+BBMODULE_DESTROY( blitz3d ){
 	blitz3d_close();
 	return true;
 }
 
-void blitz3d_link( void (*rtSym)( const char *sym,void *pc ) ){
+BBMODULE_LINK( blitz3d ){
 	rtSym( "LoaderMatrix$file_ext#xx#xy#xz#yx#yy#yz#zx#zy#zz",bbLoaderMatrix );
 	rtSym( "HWMultiTex%enable",bbHWMultiTex );
 	rtSym( "%HWTexUnits",bbHWTexUnits );

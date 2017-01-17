@@ -14,7 +14,7 @@ static int mouse_x,mouse_y,mouse_z;
 static const float JLT=-1.0f/3.0f;
 static const float JHT=1.0f/3.0f;
 
-bool input_create(){
+BBMODULE_CREATE( input ){
 	if( gx_input=gx_runtime->openInput( 0 ) ){
 		if( gx_keyboard=gx_input->getKeyboard() ){
 			if( gx_mouse=gx_input->getMouse() ){
@@ -32,7 +32,7 @@ bool input_create(){
 	return false;
 }
 
-bool input_destroy(){
+BBMODULE_DESTROY( input ){
 	gx_joysticks.clear();
 	gx_runtime->closeInput( gx_input );
 	gx_input=0;
@@ -264,7 +264,7 @@ int  BBCALL bbDirectInputEnabled(){
 	return gx_runtime->directInputEnabled();
 }
 
-void input_link( void (*rtSym)( const char *sym,void *pc ) ){
+BBMODULE_LINK( input ){
 	rtSym( "%KeyDown%key",bbKeyDown );
 	rtSym( "%KeyHit%key",bbKeyHit );
 	rtSym( "%GetKey",bbGetKey );

@@ -466,7 +466,7 @@ void BBCALL bbTCPTimeouts( int rt,int at ){
 	accept_timeout=at;
 }
 
-bool sockets_create(){
+BBMODULE_CREATE( sockets ){
 	socks_ok=WSAStartup( 0x0101,&wsadata )==0;
 	recv_timeout=0;
 	read_timeout=10000;
@@ -474,7 +474,7 @@ bool sockets_create(){
 	return true;
 }
 
-bool sockets_destroy(){
+BBMODULE_DESTROY( sockets ){
 	while( udp_set.size() ) bbCloseUDPStream( *udp_set.begin() );
 	while( tcp_set.size() ) bbCloseTCPStream( *tcp_set.begin() );
 	while( server_set.size() ) bbCloseTCPServer( *server_set.begin() );
@@ -482,7 +482,7 @@ bool sockets_destroy(){
 	return true;
 }
 
-void sockets_link( void(*rtSym)(const char*,void*) ){
+BBMODULE_LINK( sockets ){
 	rtSym( "$DottedIP%IP",bbDottedIP );
 	rtSym( "%CountHostIPs$host_name",bbCountHostIPs );
 	rtSym( "%HostIP%host_index",bbHostIP );

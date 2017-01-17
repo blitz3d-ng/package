@@ -1194,7 +1194,7 @@ void BBCALL bbHidePointer(){
 	gx_runtime->setPointerVisible( false );
 }
 
-bool graphics_create(){
+BBMODULE_CREATE( graphics ){
 	p_canvas=0;
 	filter=true;
 	gx_driver=0;
@@ -1212,7 +1212,7 @@ bool graphics_create(){
 	return false;
 }
 
-bool graphics_destroy(){
+BBMODULE_DESTROY( graphics ){
 	freeGraphics();
 	gfx_modes.clear();
 	if( gx_graphics ){
@@ -1222,7 +1222,7 @@ bool graphics_destroy(){
 	return true;
 }
 
-void graphics_link( void (*rtSym)( const char *sym,void *pc ) ){
+BBMODULE_LINK( graphics ){
 
 	//gfx driver info
 	rtSym( "%CountGfxDrivers",bbCountGfxDrivers );

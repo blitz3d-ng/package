@@ -210,7 +210,7 @@ project "bbruntime_dll"
   }
 
   links {
-    "bbruntime", "audio", "bank", "system", "filesystem", "stdutil", "blitz2d", "graphics", "input", "math", "stream"
+    "bbruntime", "blitz", "audio", "bank", "system", "filesystem", "stdutil", "blitz2d", "graphics", "input", "math", "stream"
   }
 
   links { "dxguid" }
@@ -234,7 +234,6 @@ project "bbruntime"
   removeplatforms { "macos", "linux" }
 
   files {
-    "bbruntime/basic.cpp", "bbruntime/basic.h",
     "bbruntime/bbaudio.cpp", "bbruntime/bbaudio.h",
     "bbruntime/bbblitz3d.cpp", "bbruntime/bbblitz3d.h",
     "bbruntime/bbfilesystem.cpp", "bbruntime/bbfilesystem.h",

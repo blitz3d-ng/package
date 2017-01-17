@@ -109,18 +109,18 @@ BBSound * BBCALL bbLoad3DSound( BBStr *f ){
 }
 #endif
 
-bool audio_create(){
+BBMODULE_CREATE( audio ){
 	gx_audio=gx_runtime->openAudio( 0 );
 	return true;
 }
 
-bool audio_destroy(){
+BBMODULE_DESTROY( audio ){
 	if( gx_audio ) gx_runtime->closeAudio( gx_audio );
 	gx_audio=0;
 	return true;
 }
 
-void audio_link( void(*rtSym)(const char*,void*) ){
+BBMODULE_LINK( audio ){
 	rtSym( "%LoadSound$filename",bbLoadSound );
 	rtSym( "FreeSound%sound",bbFreeSound );
 	rtSym( "LoopSound%sound",bbLoopSound );

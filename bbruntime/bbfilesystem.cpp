@@ -137,20 +137,20 @@ void BBCALL bbDeleteFile( BBStr *f ){
 	delete f;
 }
 
-bool filesystem_create(){
+BBMODULE_CREATE( filesystem ){
 	if( gx_filesys=gx_runtime->openFileSystem( 0 ) ){
 		return true;
 	}
 	return false;
 }
 
-bool filesystem_destroy(){
+BBMODULE_DESTROY( filesystem ){
 	while( file_set.size() ) bbCloseFile( *file_set.begin() );
 	gx_runtime->closeFileSystem( gx_filesys );
 	return true;
 }
 
-void filesystem_link( void(*rtSym)(const char*,void*) ){
+BBMODULE_LINK( filesystem ){
 	rtSym( "%OpenFile$filename",bbOpenFile );
 	rtSym( "%ReadFile$filename",bbReadFile );
 	rtSym( "%WriteFile$filename",bbWriteFile );

@@ -132,15 +132,15 @@ BBStr * BBCALL bbCurrentTime(){
 	return d_new BBStr( buff );
 }
 
-bool string_create(){
+BBMODULE_CREATE( string ){
 	return true;
 }
 
-bool string_destroy(){
+BBMODULE_DESTROY( string ){
 	return true;
 }
 
-void string_link( void(*rtSym)(const char*,void*) ){
+BBMODULE_LINK( string ){
 	rtSym( "$String$string%repeat",bbString );
 	rtSym( "$Left$string%count",bbLeft );
 	rtSym( "$Right$string%count",bbRight );

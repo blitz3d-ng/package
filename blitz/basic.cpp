@@ -1,6 +1,5 @@
 
-#include "std.h"
-#include "bbsys.h"
+#include "blitz.h"
 
 #include "../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
@@ -520,7 +519,7 @@ void BBCALL bbRuntimeStats(){
 	*/
 }
 
-bool basic_create(){
+BBMODULE_CREATE( basic ){
 	next_handle=0;
 //	memBlks.clear();
 	handle_map.clear();
@@ -531,7 +530,7 @@ bool basic_create(){
 	return true;
 }
 
-bool basic_destroy(){
+BBMODULE_DESTROY( basic ){
 	while( usedStrs.next!=&usedStrs ) delete usedStrs.next;
 //	while( memBlks.size() ) bbFree( memBlks.back() );
 	handle_map.clear();
@@ -539,7 +538,7 @@ bool basic_destroy(){
 	return true;
 }
 
-void basic_link( void (*rtSym)( const char *sym,void *pc ) ){
+BBMODULE_LINK( basic ){
 
 	rtSym( "_bbIntType",&_bbIntType );
 	rtSym( "_bbFltType",&_bbFltType );

@@ -4,7 +4,7 @@
 
 #include "../config/config.h"
 #include "../stdutil/stdutil.h"
-#include "../blitz/module.h"
+#include "../blitz/blitz.h"
 
 #include <set>
 #include <map>

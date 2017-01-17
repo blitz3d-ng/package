@@ -4,5 +4,6 @@
 #include "module.h"
 #include "ex.h"
 #include "basic.h"
+#include "env.h"
 
 #endif

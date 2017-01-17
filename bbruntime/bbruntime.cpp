@@ -102,7 +102,6 @@ BBMODULE_DECL( basic );
 BBMODULE_DECL( math );
 BBMODULE_DECL( string );
 BBMODULE_DECL( system );
-BBMODULE_DECL( system_windows );
 BBMODULE_DECL( stream );
 BBMODULE_DECL( sockets );
 BBMODULE_DECL( filesystem );
@@ -119,6 +118,9 @@ bool blitz3d_create(){ return true; }
 bool blitz3d_destroy(){ return true; }
 void blitz3d_link( void (*rtSym)( const char *sym,void *pc ) ){}
 #endif
+
+// TODO: fix this later
+#undef rtSym
 
 void bbruntime_link( void (*rtSym)( const char *sym,void *pc ) ){
 
@@ -170,38 +172,35 @@ bool bbruntime_create(){
 		if( math_create() ){
 			if( string_create() ){
 				if( system_create() ){
-					if( system_windows_create() ){
-						if( stream_create() ){
-							if( sockets_create() ){
-								if( filesystem_create() ){
-									if( bank_create() ){
-										if( graphics_create() ){
-											if( input_create() ){
-												if( audio_create() ){
-													// if( multiplay_create() ){
-														if( blitz3d_create() ){
-															if( userlibs_create() ){
-																return true;
-															}
-														}else sue( "blitz3d_create failed" );
-													// 	multiplay_destroy();
-													// }else sue( "multiplay_create failed" );
-													audio_destroy();
-												}else sue( "audio_create failed" );
-												input_destroy();
-											}else sue( "input_create failed" );
-											graphics_destroy();
-										}else sue( "graphics_create failed" );
-										bank_destroy();
-									}else sue( "bank_create failed" );
-									filesystem_destroy();
-								}else sue( "filesystem_create failed" );
-								sockets_destroy();
-							}else sue( "sockets_create failed" );
-							stream_destroy();
-						}else sue( "stream_create failed" );
-						system_windows_destroy();
-					}else sue( "stream_windows_create failed" );
+					if( stream_create() ){
+						if( sockets_create() ){
+							if( filesystem_create() ){
+								if( bank_create() ){
+									if( graphics_create() ){
+										if( input_create() ){
+											if( audio_create() ){
+												// if( multiplay_create() ){
+													if( blitz3d_create() ){
+														if( userlibs_create() ){
+															return true;
+														}
+													}else sue( "blitz3d_create failed" );
+												// 	multiplay_destroy();
+												// }else sue( "multiplay_create failed" );
+												audio_destroy();
+											}else sue( "audio_create failed" );
+											input_destroy();
+										}else sue( "input_create failed" );
+										graphics_destroy();
+									}else sue( "graphics_create failed" );
+									bank_destroy();
+								}else sue( "bank_create failed" );
+								filesystem_destroy();
+							}else sue( "filesystem_create failed" );
+							sockets_destroy();
+						}else sue( "sockets_create failed" );
+						stream_destroy();
+					}else sue( "stream_create failed" );
 					system_destroy();
 				}else sue( "system_create failed" );
 				string_destroy();
