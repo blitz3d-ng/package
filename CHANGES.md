@@ -22,6 +22,7 @@ This document lays out what we've changed from the original Blitz3D.
 ### System
 
 - Add ScreenWidth & ScreenHeight for getting the desktop width/height.
+- CallDLL may not work on the 64-bit build.
 
 ## IDE
 

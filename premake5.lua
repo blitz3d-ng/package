@@ -105,7 +105,9 @@ if not os.getenv("CI") then
     kind "WindowedApp"
     language "C++"
 
-    -- removeplatforms { "win32", "win64" }
+    if not os.getenv("WXWIDGETS") then
+      removeplatforms { "win32", "win64" }
+    end
 
     characterset "Unicode"
 
@@ -124,7 +126,12 @@ if not os.getenv("CI") then
         "C:\\wxWidgets-3.0.2\\include\\msvc",
         "C:\\wxWidgets-3.0.2\\include"
       }
+
+    filter "platforms:win32"
       libdirs "C:\\wxWidgets-3.0.2\\lib\\vc_lib"
+
+    filter "platforms:win64"
+      libdirs "C:\\wxWidgets-3.0.2\\lib\\vc_x64_lib"
 
     filter "platforms:macos or linux"
       buildoptions {

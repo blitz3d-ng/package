@@ -33,6 +33,7 @@ int WindowsSystemDriver::getScreenHeight( int i ){
   return GetSystemMetrics( SM_CYSCREEN );
 }
 
+// TODO: figure out if this is broken on x64.
 int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func,const void *in,int in_sz,void *out,int out_sz ){
 
 	map<string,gxDll*>::const_iterator lib_it=libs.find( dll );
@@ -54,17 +55,21 @@ int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func
 		fun_it=t->funcs.insert( make_pair( func,f ) ).first;
 	}
 
+#ifndef WIN64
 	static void *save_esp;
 
 	_asm{
 		mov	[save_esp],esp
 	};
+#endif
 
 	int n=fun_it->second( in,in_sz,out,out_sz );
 
+#ifndef WIN64
 	_asm{
 		mov esp,[save_esp]
 	};
+#endif
 
 	return n;
 }
