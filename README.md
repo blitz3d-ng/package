@@ -52,6 +52,18 @@ $ docker-compose run env bash
 $ premake5 gmake && make config=release_linux
 ```
 
+## Documentation
+
+The original Blitz3D help is available in the [\_release/help](_release/help) directory
+in HTML form. We've started replacing it with a Markdown based system.
+
+If you have ruby 2+ installed, you can rebuild it.
+
+```bash
+$ bundle install
+$ bin/makedocs
+```
+
 ## Roadmap
 
 - Add misc. quick fixes & improvements (i.e., add "missing" features like [BlitzClose](http://www.blitzbasic.com/codearcs/codearcs.php?code=832).)

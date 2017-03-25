@@ -1,32 +1,78 @@
+<!DOCTYPE html>
 <html>
-<head>
-<title>Blitz3D Docs</title>
-<link rel=stylesheet href=../css/commands.css type=text/css>
-</head>
-<body>
-<h1>CountSurfaces ( mesh )</h1>
-<h1>Parameters</h1>
-<table>
-<tr>
-<td>
-mesh - mesh handle
-</td>
-</tr>
-</table>
-<h1>Description</h1>
-<table>
-<tr>
-<td>
-Returns the number of surfaces in a mesh.<br />
-<br />
-Surfaces are sections of mesh.  A mesh may contain only one section, or very many. <br />
-<br />
-See also: GetSurface.
-</td>
-</tr>
-</table>
-<br>
-<a target=_top href=../index.htm>Index</a><br>
-<br>
-Click <a href=http://www.blitzbasic.co.nz/b3ddocs/command.php?name=CountSurfaces&ref=comments target=_blank>here</a> to view the latest version of this page online</body>
+  <head>
+    <title>Blitz3D Docs</title>
+    <link rel="stylesheet" href="../css/normalize.css" type="text/css" />
+    <link rel="stylesheet" href="../css/commands.css" type="text/css" />
+  </head>
+  <body>
+    <div class="command">
+      <h1>CountSurfaces ( mesh )</h1>
+      <h2>Parameters</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>mesh</td>
+            <td>a mesh handle</td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>Description</h2>
+      <p>Returns the number of surfaces in a mesh.</p>
+      <p>Surfaces are sections of mesh.  A mesh may contain only one section, or very many.</p>
+      <h3>See also</h3>
+      <ul>
+        <li><a href="./GetSurface.htm">GetSurface</a></li>
+      </ul>
+      <h2>
+        <a href="../3d_examples/CountSurfaces.bb">Example</a>
+      </h2>
+      <code>
+        <pre>
+; LoadMesh Example
+; ----------------
+
+Graphics3D 640,480
+SetBuffer BackBuffer()
+
+camera=CreateCamera()
+CameraClsColor camera,0,0,255
+
+light=CreateLight()
+RotateEntity light,90,0,0
+
+drum=LoadMesh( "media/teapot.x" )
+PositionEntity drum,0,0,10
+RotateEntity drum,0,45,0
+
+While Not KeyDown( 1 )
+	RenderWorld
+	
+	; Count no. of surfaces in mesh
+	count_surf=CountSurfaces(drum)
+	Text 0,0,"This mesh has "+count_surf+" surface(s)"
+	
+	; Press space
+	If KeyDown( 57 )=True Then surf=GetSurface(drum,1) : ClearSurface surf
+	
+	Flip
+Wend
+
+End
+        </pre>
+      </code>
+    </div>
+    <p>
+      <a target="_top" href="../index.htm">Index</a>
+    </p>
+    <p>
+      Click <a href="http://www.blitzbasic.com/b3ddocs/command.php?name=CountSurfaces&ref=comments" target="_blank">here</a> to view the latest version of this page online.
+    </p>
+  </body>
 </html>

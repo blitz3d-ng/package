@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blitz3D Docs</title>
+  <link rel="stylesheet" href="../css/normalize.css" type="text/css" />
+  <link rel="stylesheet" href="../css/commands.css" type="text/css" />
+</head>
+<body>
+  <div class="command">
+    <%= yield %>
+
+    <% if example_exists? %>
+      <h2>
+        <a href="<%= example_path %>">Example</a>
+      </h2>
+
+      <code>
+        <pre>
+<%= example_source %>
+        </pre>
+      </code>
+    <% end %>
+  </div>
+
+  <p>
+    <a target="_top" href="../index.htm">Index</a>
+  </p>
+
+  <p>
+    Click <a href="http://www.blitzbasic.com/b3ddocs/command.php?name=<%= command_name %>&ref=comments" target="_blank">here</a> to view the latest version of this page online.
+  </p>
+</body>
+</html>
