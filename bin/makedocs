@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require 'bundler'
+Bundler.require :default
+
+require 'erb'
+
+template = File.read('_release/help/commands/_layout.html.erb')
+
+def render(temp)
+  ERB.new(temp).result(binding)
+end
+
+Dir.glob('_release/help/**/*.md') do |path|
+  html = GitHub::Markup.render_s(GitHub::Markups::MARKUP_MARKDOWN, File.read(path))
+
+  define_method :command_name do
+    File.basename(path, '.md')
+  end
+
+  define_method :example_path do
+    File.join('..', '3d_examples', [File.basename(path, '.md'), 'bb'].join('.'))
+  end
+
+  define_method :example_source do
+    File.read(File.join(File.dirname(path), example_path))
+  end
+
+  define_method :example_exists? do
+    File.exist?(File.join(File.dirname(path), example_path))
+  end
+
+  out = render(template) { html }
+  out = HtmlBeautifier.beautify(out)
+
+  out_file = File.join(File.dirname(path), [command_name, 'htm'].join('.'))
+  File.open(out_file, 'w') { |f| f.write out }
+
+  puts "Rendered: #{out_file}"
+end
