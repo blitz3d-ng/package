@@ -38,18 +38,18 @@ void BBCALL _bbLoadLibs( char *p ){
 		if( mod ){
 			_mods.push_back( mod );
 			while( *p ){
-				void *proc=GetProcAddress( mod,p );
+				void *proc=(void*)GetProcAddress( mod,p );
 				p+=strlen(p)+1;
 				void *ptr=*(void**)p;
 				p+=4;
-				*(void**)ptr=proc ? proc : procNotFound;
+				*(void**)ptr=proc ? proc : (void*)procNotFound;
 			}
 		}else{
 			while( *p ){
 				p+=strlen(p)+1;
 				void *ptr=*(void**)p;
 				p+=4;
-				*(void**)ptr=libNotFound;
+				*(void**)ptr=(void*)libNotFound;
 			}
 		}
 		++p;

@@ -99,8 +99,10 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 
 	trackmem( true );
 
+#ifndef __MINGW32__
 	_se_translator_function old_trans=_set_se_translator( seTranslator );
 	_control87( _RC_NEAR|_PC_24|_EM_INVALID|_EM_ZERODIVIDE|_EM_OVERFLOW|_EM_UNDERFLOW|_EM_INEXACT|_EM_DENORMAL,0xfffff );
+#endif
 
 	//strip spaces from ends of args...
 	string params=args;
@@ -119,8 +121,10 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 		gxRuntime::closeRuntime( t );
 	}
 
+#ifndef __MINGW32__
 	_control87( _CW_DEFAULT,0xfffff );
 	_set_se_translator( old_trans );
+#endif
 }
 
 void Runtime::asyncStop(){
@@ -259,7 +263,9 @@ int __stdcall bbWinMain(){
 
 	HINSTANCE inst=GetModuleHandle( 0 );
 
+#ifndef __MINGW32__
 	_DllMainCRTStartup( inst,DLL_PROCESS_ATTACH,0 );
+#endif
 
 #ifdef BETA
 	int ver=VERSION & 0x7fff;
@@ -296,7 +302,9 @@ int __stdcall bbWinMain(){
 	runtime->execute( (void(*)())module_pc,params.c_str(),0 );
 	runtime->shutdown();
 
+#ifndef __MINGW32__
 	_DllMainCRTStartup( inst,DLL_PROCESS_DETACH,0 );
+#endif
 
 	ExitProcess(0);
 	return 0;

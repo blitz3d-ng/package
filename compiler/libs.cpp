@@ -19,7 +19,7 @@ vector<UserFunc> userFuncs;
 
 static HMODULE linkerHMOD,runtimeHMOD;
 
-static Type *typeof( int c ){
+static Type *_typeof( int c ){
 	switch( c ){
 	case '%':return Type::int_type;
 	case '#':return Type::float_type;
@@ -84,7 +84,7 @@ static const char *linkRuntime(){
 		//global!
 		int start=0,end;
 		Type *t=Type::void_type;
-		if( !isalpha( s[0] ) ){ start=1;t=typeof( s[0] ); }
+		if( !isalpha( s[0] ) ){ start=1;t=_typeof( s[0] ); }
 		int k;
 		for( k=1;k<s.size();++k ){
 			if( !isalnum( s[k] ) && s[k]!='_' ) break;
@@ -93,7 +93,7 @@ static const char *linkRuntime(){
 		DeclSeq *params=d_new DeclSeq();
 		string n=s.substr( start,end-start );
 		while( k<s.size() ){
-			Type *t=typeof(s[k++]);
+			Type *t=_typeof(s[k++]);
 			int from=k;
 			for( ;isalnum(s[k])||s[k]=='_';++k ){}
 			string str=s.substr( from,k-from );

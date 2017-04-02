@@ -44,7 +44,7 @@ static inline void debugDir( BBDir *d ){
 	}
 }
 
-static bbFile *open( BBStr *f,int n ){
+static bbFile *open( BBStr *f,ios_base::openmode n ){
 	string t=*f;
 	filebuf *buf=d_new filebuf();
 	if( buf->open( t.c_str(),n|ios_base::binary ) ){

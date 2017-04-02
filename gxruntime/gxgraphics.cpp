@@ -3,6 +3,11 @@
 #include "gxgraphics.h"
 #include "gxruntime.h"
 
+// for some reason the mingw headers are missing this...
+#ifndef DDSGR_CALIBRATE
+#define DDSGR_CALIBRATE 0x00000001L
+#endif
+
 extern gxRuntime *gx_runtime;
 
 gxGraphics::gxGraphics( gxRuntime *rt,IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurface7 *bs,bool d3d ):

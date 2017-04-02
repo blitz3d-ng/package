@@ -87,10 +87,10 @@ struct BBData{
 
 void basic_link();
 
-extern BBType _bbIntType;
-extern BBType _bbFltType;
-extern BBType _bbStrType;
-extern BBType _bbCStrType;
+// extern BBType _bbIntType;
+// extern BBType _bbFltType;
+// extern BBType _bbStrType;
+// extern BBType _bbCStrType;
 
 BBStr *	 BBCALL _bbStrLoad( BBStr **var );
 void	 BBCALL _bbStrRelease( BBStr *str );

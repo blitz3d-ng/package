@@ -28,7 +28,7 @@ enum{
 //an instruction
 struct Inst{
 	const char *name;	//0, then same as last.
-	int lmode,rmode,flags;	//left mode,right mode,flags
+	unsigned int lmode,rmode,flags;	//left mode,right mode,flags
 	const char *bytes;	//the bytes.
 };
 

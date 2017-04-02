@@ -1,7 +1,7 @@
 -- premake5.lua
 workspace "blitz3d"
   configurations { "debug", "release" }
-  platforms { "win32", "win64", "macos", "linux" }
+  platforms { "win32", "win64", "mingw32", "macos", "linux" }
 
   location "build"
 
@@ -55,7 +55,30 @@ workspace "blitz3d"
       "/Gy" -- function level linking: true
     }
 
+    targetsuffix ".exe"
+
     disablewarnings { "4018","4244","4996" }
+
+  filter "platforms:mingw32"
+    libdirs "common/x86"
+    includedirs "common/include"
+
+    toolset "gcc"
+    gccprefix "i686-w64-mingw32-"
+
+    defines { "WIN32", "_WIN32", "__MINGW64_TOOLCHAIN__", "TARGETSUFFIX=" }
+
+    defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall", "_declspec=__declspec", "_set_se_translator=set_se_translator" }
+    buildoptions "-std=c++11"
+
+  filter { "platforms:mingw32", "kind:SharedLib" }
+    targetprefix ""
+    targetextension ".dll"
+    linkoptions { "-static-libstdc++", "-static-libgcc" }
+
+  filter { "platforms:mingw32", "kind:WindowedApp or ConsoleApp" }
+    targetextension ".exe"
+    linkoptions { "-static-libstdc++", "-static-libgcc" }
 
   filter "platforms:macos"
     toolset "clang"
@@ -67,7 +90,7 @@ project "blitzide"
   kind "WindowedApp"
   language "C++"
 
-  removeplatforms { "macos", "linux" }
+  removeplatforms { "macos", "linux", "mingw32" }
 
   targetdir "_release/bin"
   targetname "ide"
@@ -106,7 +129,7 @@ if not os.getenv("CI") then
     language "C++"
 
     if not os.getenv("WXWIDGETS") then
-      removeplatforms { "win32", "win64" }
+      removeplatforms { "win32", "win64", "mingw32" }
     end
 
     characterset "Unicode"
@@ -145,7 +168,7 @@ project "debugger"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms { "win64", "macos", "linux" }
+  removeplatforms { "win64", "mingw32", "macos", "linux" }
 
   targetdir "_release/bin"
   targetname "debugger"
@@ -183,7 +206,7 @@ project "bblaunch"
 
   files { "bblaunch/bblaunch.cpp" }
 
-  filter "platforms:win32 or win64"
+  filter "platforms:win32 or win64 or mingw32"
     files { "bblaunch/checkdx.cpp", "bblaunch/checkdx.h", "bblaunch/checkie.cpp", "bblaunch/checkie.h", "bblaunch/bblaunch.rc", "re" }
     flags "WinMain"
 
@@ -192,6 +215,7 @@ project "bblaunch"
   targetextension ".exe"
 
   characterset "Unicode"
+  defines "UNICODE" -- needed for mingw32
 
   links { "dxguid", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
 
@@ -205,9 +229,6 @@ project "bbruntime_dll"
   targetprefix ""
   targetname "runtime"
 
-  -- suppress libraw warnings
-  linkoptions "/ignore:4217"
-
   files {
     "bbruntime_dll/bbruntime_dll.h",
     "bbruntime_dll/bbruntime_dll.cpp",
@@ -216,15 +237,22 @@ project "bbruntime_dll"
     "bbruntime_dll/dpi.manifest"
   }
 
-  links {
-    "bbruntime", "blitz", "audio", "bank", "system", "filesystem", "stdutil", "blitz2d", "graphics", "input", "math", "stream"
-  }
-
-  links { "dxguid" }
-  links { "blitz3d", "gxruntime" }
-  links { "audio.fmod", "fmodvc", "system.windows", "filesystem.windows", "input.directinput8" }
+  links { "gxruntime", "bbruntime" }
+  links { "audio.fmod", "fmodvc", "system", "system.windows", "filesystem.windows", "input.directinput8" }
+  links { "blitz", "audio", "bank", "filesystem", "stdutil", "blitz2d", "blitz3d", "graphics", "input", "math", "stream" }
   links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
-  links { "wsock32", "amstrmid", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
+  links { "dxguid" }
+  links { "wsock32", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
+
+  filter "platforms:win32 or win64"
+    links "amstrmid"
+
+  filter "platforms:mingw32"
+    links "strmiids"
+
+  -- suppress libraw warnings
+  filter "platforms:win32 or win64"
+    linkoptions "/ignore:4217"
 
 project "gxruntime"
   kind "StaticLib"
@@ -378,7 +406,7 @@ project "blitz3d"
     "blitz3d/animation.cpp", "blitz3d/animator.cpp", "blitz3d/brush.cpp", "blitz3d/cachedtexture.cpp", "blitz3d/camera.cpp", "blitz3d/collision.cpp", "blitz3d/entity.cpp", "blitz3d/frustum.cpp", "blitz3d/geom.cpp", "blitz3d/light.cpp", "blitz3d/listener.cpp", "blitz3d/loader_3ds.cpp", "blitz3d/loader_b3d.cpp", "blitz3d/md2model.cpp", "blitz3d/md2norms.cpp", "blitz3d/md2rep.cpp", "blitz3d/meshcollider.cpp", "blitz3d/meshloader.cpp", "blitz3d/meshmodel.cpp", "blitz3d/meshutil.cpp", "blitz3d/mirror.cpp", "blitz3d/model.cpp", "blitz3d/object.cpp", "blitz3d/pivot.cpp", "blitz3d/planemodel.cpp", "blitz3d/q3bspmodel.cpp", "blitz3d/q3bsprep.cpp", "blitz3d/sprite.cpp", "blitz3d/std.cpp", "blitz3d/surface.cpp", "blitz3d/terrain.cpp", "blitz3d/terrainrep.cpp", "blitz3d/texture.cpp", "blitz3d/world.cpp", "blitz3d/animation.h", "blitz3d/animator.h", "blitz3d/blitz3d.h", "blitz3d/brush.h", "blitz3d/cachedtexture.h", "blitz3d/camera.h", "blitz3d/collision.h", "blitz3d/entity.h", "blitz3d/frustum.h", "blitz3d/geom.h", "blitz3d/light.h", "blitz3d/listener.h", "blitz3d/loader_3ds.h", "blitz3d/loader_b3d.h", "blitz3d/md2model.h", "blitz3d/md2norms.h", "blitz3d/md2rep.h", "blitz3d/meshcollider.h", "blitz3d/meshloader.h", "blitz3d/meshmodel.h", "blitz3d/meshutil.h", "blitz3d/mirror.h", "blitz3d/model.h", "blitz3d/object.h", "blitz3d/pivot.h", "blitz3d/planemodel.h", "blitz3d/q3bspmodel.h", "blitz3d/q3bsprep.h", "blitz3d/rendercontext.h", "blitz3d/sprite.h", "blitz3d/std.h", "blitz3d/surface.h", "blitz3d/terrain.h", "blitz3d/terrainrep.h", "blitz3d/texture.h", "blitz3d/world.h"
   }
 
-filter "platforms:win32 or win64"
+filter "platforms:win32 or win64 or mingw32"
   files { "blitz3d/loader_x.cpp", "blitz3d/loader_x.h" }
 
 project "stream"
@@ -424,6 +452,9 @@ project "compiler"
 
   links { "stdutil" }
 
+  filter "platforms:mingw32" -- FIXME: move ScaleBitmap out of stdutil so this isn't needed.
+    links "gdi32"
+
   filter "platforms:win32"
     files { "compiler/resource.h", "compiler/blitz.rc", "bbruntime_dll/dpi.manifest" }
 
@@ -440,6 +471,9 @@ project "linker_dll"
 
   files { "linker_dll/linker_dll.h", "linker_dll/linker_dll.cpp" }
   links { "linker", "stdutil" }
+
+  filter "platforms:mingw32" -- FIXME: move ScaleBitmap out of stdutil so this isn't needed.
+    links "gdi32"
 
 project "linker"
   kind "StaticLib"
@@ -458,6 +492,8 @@ project "stdutil"
 project "freeimage"
   kind "StaticLib"
   language "C++"
+
+  defines "LIBRAW_NODLL"
 
   includedirs {
     "freeimage317/Source/LibJXR/jxrgluelib",
@@ -481,6 +517,9 @@ project "freeimage"
       "freeimage317/Source/FreeImage/PluginJXR.cpp",
       "freeimage317/FreeImage.rc"
     }
+
+  filter { "platforms:mingw32" }
+    files "common/freeimage_jxr_stub.cpp"
 
 project "jpeg"
   kind "StaticLib"
@@ -553,6 +592,9 @@ project "raw"
   includedirs "freeimage317/Source/LibRawLite"
 
   defines "LIBRAW_NODLL"
+
+  filter "platforms:mingw32"
+    buildoptions "-Wno-narrowing"
 
   files {
     "freeimage317/Source/LibRawLite/internal/dcraw_common.cpp", "freeimage317/Source/LibRawLite/internal/dcraw_fileio.cpp", "freeimage317/Source/LibRawLite/internal/demosaic_packs.cpp", "freeimage317/Source/LibRawLite/src/libraw_c_api.cpp", "freeimage317/Source/LibRawLite/src/libraw_cxx.cpp", "freeimage317/Source/LibRawLite/src/libraw_datastream.cpp", "freeimage317/Source/LibRawLite/internal/defines.h", "freeimage317/Source/LibRawLite/internal/libraw_internal_funcs.h", "freeimage317/Source/LibRawLite/internal/var_defines.h", "freeimage317/Source/LibRawLite/libraw/libraw.h", "freeimage317/Source/LibRawLite/libraw/libraw_alloc.h", "freeimage317/Source/LibRawLite/libraw/libraw_const.h", "freeimage317/Source/LibRawLite/libraw/libraw_datastream.h", "freeimage317/Source/LibRawLite/libraw/libraw_internal.h", "freeimage317/Source/LibRawLite/libraw/libraw_types.h", "freeimage317/Source/LibRawLite/libraw/libraw_version.h"

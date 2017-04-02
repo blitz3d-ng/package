@@ -55,7 +55,7 @@ int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func
 		fun_it=t->funcs.insert( make_pair( func,f ) ).first;
 	}
 
-#ifndef WIN64
+#if defined(_MSC_VER) && !defined(WIN64)
 	static void *save_esp;
 
 	_asm{
@@ -65,7 +65,7 @@ int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func
 
 	int n=fun_it->second( in,in_sz,out,out_sz );
 
-#ifndef WIN64
+#if defined(_MSC_VER) && !defined(WIN64)
 	_asm{
 		mov esp,[save_esp]
 	};

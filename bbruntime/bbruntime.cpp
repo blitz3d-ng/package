@@ -121,6 +121,7 @@ void blitz3d_link( void (*rtSym)( const char *sym,void *pc ) ){}
 
 // TODO: fix this later
 #undef rtSym
+#define rtSym( sym,pc ) rtSym( sym,(void*)pc );
 
 void bbruntime_link( void (*rtSym)( const char *sym,void *pc ) ){
 

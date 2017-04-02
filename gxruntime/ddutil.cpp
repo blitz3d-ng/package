@@ -9,6 +9,13 @@ extern gxRuntime *gx_runtime;
 
 #include <FreeImage.h>
 
+// For some reason, these aren't in the mingw headers...
+#if !defined(FOURCC_DXT1) && !defined(FOURCC_DXT1) && !defined(FOURCC_DXT1)
+#define FOURCC_DXT1 0x31545844 // Equivalent to "DXT1" in ASCII
+#define FOURCC_DXT3 0x33545844 // Equivalent to "DXT3" in ASCII
+#define FOURCC_DXT5 0x35545844 // Equivalent to "DXT5" in ASCII
+#endif
+
 static AsmCoder asm_coder;
 
 static void calcShifts( unsigned mask,unsigned char *shr,unsigned char *shl ){

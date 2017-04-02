@@ -78,3 +78,10 @@ int _stdcall wWinMain( HINSTANCE inst,HINSTANCE prev,wchar_t *cmd,int show ){
 
 	return 0;
 }
+
+#ifdef __MINGW32__
+int _stdcall WinMain( HINSTANCE inst,HINSTANCE prev,char *cmd,int show ){
+	wchar_t *w_cmd=GetCommandLineW();
+	return wWinMain( inst,prev,w_cmd,show );
+}
+#endif
