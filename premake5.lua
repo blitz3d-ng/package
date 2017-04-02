@@ -55,9 +55,10 @@ workspace "blitz3d"
       "/Gy" -- function level linking: true
     }
 
-    targetsuffix ".exe"
-
     disablewarnings { "4018","4244","4996" }
+
+  filter { "platforms:win32 or win64", "kind:WindowedApp or ConsoleApp" }
+    targetextension ".exe"
 
   filter "platforms:mingw32"
     libdirs "common/x86"
