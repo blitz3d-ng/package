@@ -475,30 +475,21 @@ project "compiler"
   filter "platforms:win32"
     files { "compiler/resource.h", "compiler/blitz.rc", "bbruntime_dll/dpi.manifest" }
 
-project "linker_dll"
+project "linker"
   kind "SharedLib"
   language "C++"
 
   removeplatforms { "win64", "macos", "linux" }
 
   targetdir "_release/bin"
-  targetname "linker"
 
   linkoptions { "-shared" }
 
-  files { "linker_dll/linker_dll.h", "linker_dll/linker_dll.cpp" }
-  links { "linker", "stdutil" }
+  files { "linker/main.cpp", "linker/linker.h", "linker/linker.cpp", "linker/image_util.h", "linker/image_util.cpp" }
+  links { "stdutil" }
 
   filter "platforms:mingw32" -- FIXME: move ScaleBitmap out of stdutil so this isn't needed.
     links "gdi32"
-
-project "linker"
-  kind "StaticLib"
-  language "C++"
-
-  removeplatforms { "win64", "macos", "linux" }
-
-  files { "linker/linker.h", "linker/linker.cpp", "linker/image_util.h", "linker/image_util.cpp" }
 
 project "stdutil"
   kind "StaticLib"
