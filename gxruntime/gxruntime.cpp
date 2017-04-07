@@ -1,6 +1,7 @@
 
 #include "std.h"
 #include "gxruntime.h"
+#include "../src/runtime/timer.windows/timer.windows.h"
 #include "zmouse.h"
 
 gxRuntime *gx_runtime;
@@ -50,7 +51,7 @@ static IDirectDrawClipper *clipper;
 static IDirectDrawSurface7 *primSurf;
 static Debugger *debugger;
 
-static set<gxTimer*> timers;
+static set<BBTimer*> timers;
 
 enum{
 	WM_STOP=WM_USER+1,WM_RUN,WM_END
@@ -1111,13 +1112,13 @@ void gxRuntime::windowedModeInfo( int *c ){
 	*c=caps;
 }
 
-gxTimer *gxRuntime::createTimer( int hertz ){
-	gxTimer *t=d_new gxTimer( this,hertz );
+BBTimer *gxRuntime::createTimer( int hertz ){
+	BBTimer *t=d_new WindowsTimer( hertz );
 	timers.insert( t );
 	return t;
 }
 
-void gxRuntime::freeTimer( gxTimer *t ){
+void gxRuntime::freeTimer( BBTimer *t ){
 	if( !timers.count( t ) ) return;
 	timers.erase( t );
 	delete t;

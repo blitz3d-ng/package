@@ -65,18 +65,18 @@ void BBCALL bbSetEnv( BBStr *env_var,BBStr *val ){
 	delete val;
 }
 
-gxTimer * BBCALL bbCreateTimer( int hertz ){
-	gxTimer *t=gx_runtime->createTimer( hertz );
+BBTimer * BBCALL bbCreateTimer( int hertz ){
+	BBTimer *t=gx_runtime->createTimer( hertz );
 	return t;
 }
 
-int BBCALL bbWaitTimer( gxTimer *t ){
+int BBCALL bbWaitTimer( BBTimer *t ){
 	int n=t->wait();
 	if( !gx_runtime->idle() ) RTEX( 0 );
 	return n;
 }
 
-void BBCALL bbFreeTimer( gxTimer *t ){
+void BBCALL bbFreeTimer( BBTimer *t ){
 	gx_runtime->freeTimer( t );
 }
 

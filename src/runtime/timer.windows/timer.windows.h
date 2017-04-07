@@ -2,17 +2,17 @@
 #ifndef GXTIMER_H
 #define GXTIMER_H
 
-class gxRuntime;
+#include <windows.h>
+#include "../timer/timer.h"
 
-class gxTimer{
+class WindowsTimer : public BBTimer{
 public:
-	gxTimer( gxRuntime *rt,int hertz );
-	~gxTimer();
+	WindowsTimer( int hertz );
+	~WindowsTimer();
 
 	static void CALLBACK timerCallback( UINT id,UINT msg,DWORD user,DWORD dw1,DWORD dw2 );
 
 private:
-	gxRuntime *runtime;
 	HANDLE event;
 	MMRESULT timerID;
 	int ticks_put,ticks_get;

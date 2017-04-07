@@ -1,26 +1,24 @@
 
-#include "std.h"
-#include "gxtimer.h"
-#include "gxruntime.h"
+#include "timer.windows.h"
 
-gxTimer::gxTimer( gxRuntime *rt,int hertz ):
-runtime(rt),ticks_get(0),ticks_put(0){
+WindowsTimer::WindowsTimer( int hertz ):
+ticks_get(0),ticks_put(0){
 	event=CreateEvent( 0,false,false,0 );
 	timerID=timeSetEvent( 1000/hertz,0,timerCallback,(DWORD)this,TIME_PERIODIC );
 }
 
-gxTimer::~gxTimer(){
+WindowsTimer::~WindowsTimer(){
 	timeKillEvent( timerID );
 	CloseHandle( event );
 }
 
-void CALLBACK gxTimer::timerCallback( UINT id,UINT msg,DWORD user,DWORD dw1,DWORD dw2 ){
-	gxTimer *t=(gxTimer*)user;
+void CALLBACK WindowsTimer::timerCallback( UINT id,UINT msg,DWORD user,DWORD dw1,DWORD dw2 ){
+	WindowsTimer *t=(WindowsTimer*)user;
 	++t->ticks_put;
 	SetEvent( t->event );
 }
 
-int gxTimer::wait(){
+int WindowsTimer::wait(){
 	for(;;){
 		if( WaitForSingleObject( event,1000 )==WAIT_OBJECT_0 ) break;
 	}
@@ -28,4 +26,3 @@ int gxTimer::wait(){
 	ticks_get+=n;
 	return n;
 }
-

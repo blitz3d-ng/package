@@ -10,7 +10,7 @@
 #include "../input.directinput8/driver.h"
 #include "gxgraphics.h"
 #include "../filesystem.windows/driver.h"
-#include "gxtimer.h"
+#include "../src/runtime/timer/timer.h"
 
 #include "../debugger/debugger.h"
 
@@ -134,8 +134,8 @@ public:
 	BBFileSystem *openFileSystem( int flags );
 	void closeFileSystem( BBFileSystem *filesys );
 
-	gxTimer *createTimer( int hertz );
-	void freeTimer( gxTimer *timer );
+	BBTimer *createTimer( int hertz );
+	void freeTimer( BBTimer *timer );
 
 	void enableDirectInput( bool use );
 	int  directInputEnabled(){ return use_di; }

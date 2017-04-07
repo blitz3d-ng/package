@@ -241,6 +241,7 @@ project "bbruntime_dll"
 
   links { "gxruntime", "bbruntime" }
   links { "audio.fmod", "fmodvc", "system", "system.windows", "filesystem.windows", "input.directinput8" }
+  links { "timer.windows", "timer" }
   links { "blitz", "audio", "bank", "filesystem", "stdutil", "blitz2d", "blitz3d", "graphics", "input", "math", "stream" }
   links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
   links { "dxguid" }
@@ -262,7 +263,7 @@ project "gxruntime"
 
   removeplatforms { "win64", "macos", "linux" }
 
-  files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/gxtimer.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxgraphics.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/gxtimer.h", "gxruntime/std.h" }
+  files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxgraphics.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/std.h" }
 
 project "bbruntime"
   kind "StaticLib"
@@ -418,6 +419,20 @@ project "stream"
   files {
     "src/runtime/stream/stream.cpp", "src/runtime/stream/stream.h"
   }
+
+project "timer"
+  kind "StaticLib"
+  language "C++"
+
+  files { "src/runtime/timer/timer.h", "src/runtime/timer/timer.cpp" }
+
+project "timer.windows"
+  kind "StaticLib"
+  language "C++"
+
+  removeplatforms { "macos", "linux" }
+
+  files { "src/runtime/timer.windows/timer.windows.h", "src/runtime/timer.windows/timer.windows.cpp" }
 
 project "blitz2d"
   kind "StaticLib"
