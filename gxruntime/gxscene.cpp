@@ -295,8 +295,7 @@ void gxScene::setAntialias( bool n ){
 }
 
 void gxScene::setWireframe( bool n ){
-	if( n==wireframe ) return;
-	wireframe=n;setRS( D3DRENDERSTATE_FILLMODE,wireframe ? D3DFILL_WIREFRAME : D3DFILL_SOLID );
+	wireframe=n;
 }
 
 void gxScene::setFlippedTris( bool n ){
@@ -464,6 +463,9 @@ void gxScene::setRenderState( const RenderState &rs ){
 		if( t&FX_DOUBLESIDED ){
 			setTriCull();
 		}
+		if( !wireframe && t&FX_WIREFRAME ){
+			setRS( D3DRENDERSTATE_FILLMODE,fx&FX_WIREFRAME ? D3DFILL_WIREFRAME : D3DFILL_SOLID );
+		}
 		if( t&FX_EMISSIVE ){
 			//Q3 Hack!
 			int n=fx & FX_EMISSIVE;
@@ -543,6 +545,8 @@ bool gxScene::begin( const vector<BBLightRep*> &lights ){
 		}
 	}
 	setLights();
+
+	setRS( D3DRENDERSTATE_FILLMODE,wireframe ? D3DFILL_WIREFRAME : D3DFILL_SOLID );
 
 	return true;
 }
