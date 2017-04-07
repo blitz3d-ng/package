@@ -1,7 +1,7 @@
 
 #include "blitz.h"
 
-#include "../gxruntime/gxruntime.h"
+#include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
 //how many strings allocated

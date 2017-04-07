@@ -2,7 +2,7 @@
 #ifndef GXSOUND_H
 #define GXSOUND_H
 
-#include "../audio/driver.h"
+#include <bb/audio/driver.h>
 
 class FMODAudioDriver;
 struct FSOUND_SAMPLE;

@@ -2,7 +2,7 @@
 #ifndef BBMATH_H
 #define BBMATH_H
 
-#include "../blitz/module.h"
+#include <bb/blitz/module.h>
 
 float	 BBCALL bbSin( float n );
 float	 BBCALL bbCos( float n );

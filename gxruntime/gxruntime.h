@@ -6,11 +6,11 @@
 #include <string>
 #include <vector>
 
-#include "../audio.fmod/driver.h"
+#include <bb/audio.fmod/driver.h>
 #include "../input.directinput8/driver.h"
 #include "gxgraphics.h"
 #include "../filesystem.windows/driver.h"
-#include "../src/runtime/timer/timer.h"
+#include <bb/timer/timer.h>
 
 #include "../debugger/debugger.h"
 

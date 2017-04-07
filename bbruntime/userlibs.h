@@ -2,7 +2,7 @@
 #ifndef USERLIBS_H
 #define USERLIBS_H
 
-#include "../blitz/basic.h"
+#include <bb/blitz/basic.h>
 
 void	BBCALL	 _bbLoadLibs( char *p );
 

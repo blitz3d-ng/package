@@ -9,7 +9,7 @@
 #include "animator.h"
 #include "collision.h"
 
-#include "../audio/driver.h"
+#include <bb/audio/driver.h>
 
 struct ObjCollision{
 	Object *with;

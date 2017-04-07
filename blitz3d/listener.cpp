@@ -1,7 +1,7 @@
 
 #include "std.h"
 #include "listener.h"
-#include "../audio/driver.h"
+#include <bb/audio/driver.h>
 
 Listener::Listener( float roll,float dopp,float dist ){
 	if( !gx_audio ) return;

@@ -1,12 +1,12 @@
 
-#include "../stdutil/stdutil.h"
+#include "../../stdutil/stdutil.h"
 #include "driver.h"
 
 BBSystemDriver *sys_driver;
 
 // TODO: figure a more elegant way to handle this...
 #if defined(WIN32) || defined(WIN64)
-#include "../system.windows/driver.h"
+#include <bb/system.windows/driver.h>
 #endif
 
 int BBCALL bbScreenWidth( int i ){

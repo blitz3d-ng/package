@@ -2,7 +2,7 @@
 #include <set>
 
 #include "../../stdutil/stdutil.h"
-#include "../../blitz/blitz.h"
+#include <bb/blitz/blitz.h>
 #include "stream.h"
 
 using namespace std;

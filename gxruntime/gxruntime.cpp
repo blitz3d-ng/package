@@ -1,7 +1,7 @@
 
 #include "std.h"
 #include "gxruntime.h"
-#include "../src/runtime/timer.windows/timer.windows.h"
+#include <bb/timer.windows/timer.windows.h>
 #include "zmouse.h"
 
 gxRuntime *gx_runtime;

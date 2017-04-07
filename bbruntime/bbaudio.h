@@ -3,7 +3,7 @@
 #define BBAUDIO_H
 
 #include "bbsys.h"
-#include "../audio/driver.h"
+#include <bb/audio/driver.h>
 
 BBSound *	 BBCALL bbLoadSound( BBStr *file );
 void		 BBCALL bbFreeSound( BBSound *sound );

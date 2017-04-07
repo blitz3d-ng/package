@@ -1,7 +1,7 @@
 
 #include "std.h"
 #include "bbfilesystem.h"
-#include "../src/runtime/stream/stream.h"
+#include <bb/stream/stream.h>
 #include <fstream>
 
 #include "../gxruntime/gxruntime.h"

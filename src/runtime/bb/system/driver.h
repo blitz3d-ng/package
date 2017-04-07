@@ -1,7 +1,7 @@
 #ifndef BBSYSTEM_DRIVER_H
 #define BBSYSTEM_DRIVER_H
 
-#include "../blitz/module.h"
+#include <bb/blitz/module.h>
 
 class BBSystemDriver{
 public:

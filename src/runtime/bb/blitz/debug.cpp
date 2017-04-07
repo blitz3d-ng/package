@@ -1,7 +1,7 @@
 
 #include "debug.h"
 
-#include "../gxruntime/gxruntime.h"
+#include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
 void BBCALL bbDebugError( const char *e ){

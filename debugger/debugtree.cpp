@@ -3,7 +3,7 @@
 #include "debugtree.h"
 #include "prefs.h"
 
-#include "../blitz/blitz.h"
+#include <bb/blitz/blitz.h>
 
 IMPLEMENT_DYNAMIC( DebugTree,CTreeCtrl )
 BEGIN_MESSAGE_MAP( DebugTree,CTreeCtrl )

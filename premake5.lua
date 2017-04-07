@@ -20,6 +20,7 @@ workspace "blitz3d"
 
   includedirs {
     "freeimage317/Source",
+    "src/runtime"
   }
 
   filter "kind:StaticLib"
@@ -296,22 +297,21 @@ project "blitz"
   removeplatforms { "macos", "linux" }
 
   files {
-    "blitz/basic.cpp", "blitz/basic.h",
-    "blitz/debug.cpp", "blitz/debug.h",
-    "blitz/env.cpp", "blitz/env.h",
-    "blitz/ex.h",
-    "blitz/module.h"
+    "src/runtime/bb/blitz/basic.cpp", "src/runtime/bb/blitz/basic.h",
+    "src/runtime/bb/blitz/debug.cpp", "src/runtime/bb/blitz/debug.h",
+    "src/runtime/bb/blitz/env.cpp", "src/runtime/bb/blitz/env.h",
+    "src/runtime/bb/blitz/ex.h",
+    "src/runtime/bb/blitz/module.h"
   }
-
 
 project "audio"
   kind "StaticLib"
   language "C++"
 
   files {
-    "audio/channel.cpp", "audio/channel.h",
-    "audio/sound.h",
-    "audio/driver.cpp", "audio/driver.h",
+    "src/runtime/bb/audio/channel.cpp", "src/runtime/bb/audio/channel.h",
+    "src/runtime/bb/audio/sound.h",
+    "src/runtime/bb/audio/driver.cpp", "src/runtime/bb/audio/driver.h",
   }
 
 project "audio.fmod"
@@ -323,8 +323,8 @@ project "audio.fmod"
   includedirs "common/include"
 
   files {
-    "audio.fmod/sound.cpp", "audio/sound.h",
-    "audio.fmod/driver.cpp", "audio.fmod/driver.h",
+    "src/runtime/bb/audio.fmod/sound.cpp", "src/runtime/bb/audio.fmod/sound.h",
+    "src/runtime/bb/audio.fmod/driver.cpp", "src/runtime/bb/audio.fmod/driver.h"
   }
 
   links "audio"
@@ -334,7 +334,7 @@ project "bank"
   language "C++"
 
   files {
-    "src/runtime/bank/bank.cpp", "src/runtime/bank/bank.h"
+    "src/runtime/bb/bank/bank.cpp", "src/runtime/bb/bank/bank.h"
   }
 
 project "math"
@@ -343,13 +343,13 @@ project "math"
 
   removeplatforms { "macos", "linux" }
 
-  files { "math/math.cpp", "math/math.h"  }
+  files { "src/runtime/bb/math/math.cpp", "src/runtime/bb/math/math.h"  }
 
 project "system"
   kind "StaticLib"
   language "C++"
 
-  files { "system/driver.cpp", "system/driver.h" }
+  files { "src/runtime/bb/system/driver.cpp", "src/runtime/bb/system/driver.h" }
 
 project "system.windows"
   kind "StaticLib"
@@ -358,8 +358,8 @@ project "system.windows"
   removeplatforms { "macos", "linux" }
 
   files {
-    "system.windows/driver.cpp", "system.windows/driver.h",
-    "system.windows/system.windows.cpp", "system.windows/system.windows.h"
+    "src/runtime/bb/system.windows/driver.cpp", "src/runtime/bb/system.windows/driver.h",
+    "src/runtime/bb/system.windows/system.windows.cpp", "src/runtime/bb/system.windows/system.windows.h"
   }
 
   links "system"
@@ -417,14 +417,14 @@ project "stream"
   language "C++"
 
   files {
-    "src/runtime/stream/stream.cpp", "src/runtime/stream/stream.h"
+    "src/runtime/bb/stream/stream.cpp", "src/runtime/bb/stream/stream.h"
   }
 
 project "timer"
   kind "StaticLib"
   language "C++"
 
-  files { "src/runtime/timer/timer.h", "src/runtime/timer/timer.cpp" }
+  files { "src/runtime/bb/timer/timer.h", "src/runtime/bb/timer/timer.cpp" }
 
 project "timer.windows"
   kind "StaticLib"
@@ -432,7 +432,7 @@ project "timer.windows"
 
   removeplatforms { "macos", "linux" }
 
-  files { "src/runtime/timer.windows/timer.windows.h", "src/runtime/timer.windows/timer.windows.cpp" }
+  files { "src/runtime/bb/timer.windows/timer.windows.h", "src/runtime/bb/timer.windows/timer.windows.cpp" }
 
 project "blitz2d"
   kind "StaticLib"
