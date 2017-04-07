@@ -67,19 +67,20 @@ workspace "blitz3d"
     toolset "gcc"
     gccprefix "i686-w64-mingw32-"
 
-    defines { "WIN32", "_WIN32", "__MINGW64_TOOLCHAIN__", "TARGETSUFFIX=" }
+    defines { "WIN32", "_WIN32", "__MINGW64_TOOLCHAIN__", "TARGETSUFFIX=", "PTW32_STATIC_LIB" }
 
     defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall", "_declspec=__declspec", "_set_se_translator=set_se_translator" }
-    buildoptions "-std=c++11"
+    buildoptions { "-std=c++11" }
+    linkoptions { "-static" }
 
   filter { "platforms:mingw32", "kind:SharedLib" }
     targetprefix ""
     targetextension ".dll"
-    linkoptions { "-static-libstdc++", "-static-libgcc" }
+    -- linkoptions { "-static-libstdc++", "-static-libgcc" }
 
   filter { "platforms:mingw32", "kind:WindowedApp or ConsoleApp" }
     targetextension ".exe"
-    linkoptions { "-static-libstdc++", "-static-libgcc" }
+    -- linkoptions { "-static-libstdc++", "-static-libgcc" }
 
   filter "platforms:macos"
     toolset "clang"
@@ -589,17 +590,18 @@ project "png"
 
 project "raw"
   kind "StaticLib"
+  language "C++"
 
   includedirs "freeimage317/Source/LibRawLite"
 
   defines "LIBRAW_NODLL"
 
-  filter "platforms:mingw32"
-    buildoptions "-Wno-narrowing"
-
   files {
     "freeimage317/Source/LibRawLite/internal/dcraw_common.cpp", "freeimage317/Source/LibRawLite/internal/dcraw_fileio.cpp", "freeimage317/Source/LibRawLite/internal/demosaic_packs.cpp", "freeimage317/Source/LibRawLite/src/libraw_c_api.cpp", "freeimage317/Source/LibRawLite/src/libraw_cxx.cpp", "freeimage317/Source/LibRawLite/src/libraw_datastream.cpp", "freeimage317/Source/LibRawLite/internal/defines.h", "freeimage317/Source/LibRawLite/internal/libraw_internal_funcs.h", "freeimage317/Source/LibRawLite/internal/var_defines.h", "freeimage317/Source/LibRawLite/libraw/libraw.h", "freeimage317/Source/LibRawLite/libraw/libraw_alloc.h", "freeimage317/Source/LibRawLite/libraw/libraw_const.h", "freeimage317/Source/LibRawLite/libraw/libraw_datastream.h", "freeimage317/Source/LibRawLite/libraw/libraw_internal.h", "freeimage317/Source/LibRawLite/libraw/libraw_types.h", "freeimage317/Source/LibRawLite/libraw/libraw_version.h"
   }
+
+  filter "platforms:mingw32"
+    buildoptions "-Wno-narrowing"
 
 project "tiff4"
   kind "StaticLib"
