@@ -6,7 +6,7 @@
 
 #include "cachedtexture.h"
 
-#include "../graphics/canvas.h"
+#include <bb/graphics/canvas.h>
 
 class Texture{
 public:

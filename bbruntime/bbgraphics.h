@@ -3,7 +3,7 @@
 #define BB_RUNTIME_GRAPHICS_H
 
 #include "bbsys.h"
-#include "../blitz2d/graphics.h"
+#include <bb/blitz2d/graphics.h>
 
 extern BBGraphics *gx_graphics;
 extern BBCanvas *gx_canvas;

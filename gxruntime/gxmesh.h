@@ -2,7 +2,7 @@
 #ifndef GXMESH_H
 #define GXMESH_H
 
-#include "../blitz3d/mesh.h"
+#include <bb/blitz3d/mesh.h>
 #include <d3d.h>
 
 class gxGraphics;

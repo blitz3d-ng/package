@@ -1,7 +1,7 @@
 #ifndef B2DGRAPHICS_H
 #define B2DGRAPHICS_H
 
-#include "../graphics/graphics.h"
+#include <bb/graphics/graphics.h>
 #include "font.h"
 
 class gxMovie;

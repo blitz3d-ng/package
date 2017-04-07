@@ -2,7 +2,7 @@
 #ifndef CACHEDTEXTURE_H
 #define CACHEDTEXTURE_H
 
-#include "../graphics/canvas.h"
+#include <bb/graphics/canvas.h>
 
 class CachedTexture{
 public:

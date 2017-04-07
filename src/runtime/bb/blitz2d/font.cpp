@@ -1,7 +1,7 @@
 
 #include "font.h"
-#include "../graphics/canvas.h"
-#include "../graphics/graphics.h"
+#include <bb/graphics/canvas.h>
+#include <bb/graphics/graphics.h>
 
 BBFont::BBFont( BBGraphics *g,BBCanvas *c,int w,int h,int b,int e,int d,int *os,int *ws ):
 graphics(g),canvas(c),

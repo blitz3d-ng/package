@@ -5,8 +5,8 @@
 #include <map>
 #include <d3d.h>
 
-#include "../blitz3d/scene.h"
-#include "../blitz3d/mesh.h"
+#include <bb/blitz3d/scene.h>
+#include <bb/blitz3d/mesh.h>
 #include "gxlight.h"
 
 class gxCanvas;

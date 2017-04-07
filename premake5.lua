@@ -368,7 +368,7 @@ project "filesystem"
   kind "StaticLib"
   language "C++"
 
-  files { "filesystem/driver.cpp", "filesystem/driver.h" }
+  files { "src/runtime/bb/filesystem/driver.cpp", "src/runtime/bb/filesystem/driver.h" }
 
 project "filesystem.windows"
   kind "StaticLib"
@@ -377,8 +377,8 @@ project "filesystem.windows"
   removeplatforms { "macos", "linux" }
 
   files {
-    "filesystem.windows/driver.cpp", "filesystem.windows/driver.h",
-    "filesystem.windows/dir.cpp", "filesystem.windows/dir.h"
+    "src/runtime/bb/filesystem.windows/driver.cpp", "src/runtime/bb/filesystem.windows/driver.h",
+    "src/runtime/bb/filesystem.windows/dir.cpp", "src/runtime/bb/filesystem.windows/dir.h"
   }
 
   links "filesystem"
@@ -389,7 +389,7 @@ project "input"
 
   removeplatforms { "macos" }
 
-  files { "input/driver.cpp", "input/driver.h", "input/device.cpp", "input/device.h" }
+  files { "src/runtime/bb/input/driver.cpp", "src/runtime/bb/input/driver.h", "src/runtime/bb/input/device.cpp", "src/runtime/bb/input/device.h" }
 
 project "input.directinput8"
   kind "StaticLib"
@@ -397,7 +397,7 @@ project "input.directinput8"
 
   removeplatforms { "macos", "linux" }
 
-  files { "input.directinput8/driver.cpp", "input.directinput8/driver.h" }
+  files { "src/runtime/bb/input.directinput8/driver.cpp", "src/runtime/bb/input.directinput8/driver.h" }
 
 project "blitz3d"
   kind "StaticLib"
@@ -406,11 +406,11 @@ project "blitz3d"
   removeplatforms { "macos" }
 
   files {
-    "blitz3d/animation.cpp", "blitz3d/animator.cpp", "blitz3d/brush.cpp", "blitz3d/cachedtexture.cpp", "blitz3d/camera.cpp", "blitz3d/collision.cpp", "blitz3d/entity.cpp", "blitz3d/frustum.cpp", "blitz3d/geom.cpp", "blitz3d/light.cpp", "blitz3d/listener.cpp", "blitz3d/loader_3ds.cpp", "blitz3d/loader_b3d.cpp", "blitz3d/md2model.cpp", "blitz3d/md2norms.cpp", "blitz3d/md2rep.cpp", "blitz3d/meshcollider.cpp", "blitz3d/meshloader.cpp", "blitz3d/meshmodel.cpp", "blitz3d/meshutil.cpp", "blitz3d/mirror.cpp", "blitz3d/model.cpp", "blitz3d/object.cpp", "blitz3d/pivot.cpp", "blitz3d/planemodel.cpp", "blitz3d/q3bspmodel.cpp", "blitz3d/q3bsprep.cpp", "blitz3d/sprite.cpp", "blitz3d/std.cpp", "blitz3d/surface.cpp", "blitz3d/terrain.cpp", "blitz3d/terrainrep.cpp", "blitz3d/texture.cpp", "blitz3d/world.cpp", "blitz3d/animation.h", "blitz3d/animator.h", "blitz3d/blitz3d.h", "blitz3d/brush.h", "blitz3d/cachedtexture.h", "blitz3d/camera.h", "blitz3d/collision.h", "blitz3d/entity.h", "blitz3d/frustum.h", "blitz3d/geom.h", "blitz3d/light.h", "blitz3d/listener.h", "blitz3d/loader_3ds.h", "blitz3d/loader_b3d.h", "blitz3d/md2model.h", "blitz3d/md2norms.h", "blitz3d/md2rep.h", "blitz3d/meshcollider.h", "blitz3d/meshloader.h", "blitz3d/meshmodel.h", "blitz3d/meshutil.h", "blitz3d/mirror.h", "blitz3d/model.h", "blitz3d/object.h", "blitz3d/pivot.h", "blitz3d/planemodel.h", "blitz3d/q3bspmodel.h", "blitz3d/q3bsprep.h", "blitz3d/rendercontext.h", "blitz3d/sprite.h", "blitz3d/std.h", "blitz3d/surface.h", "blitz3d/terrain.h", "blitz3d/terrainrep.h", "blitz3d/texture.h", "blitz3d/world.h"
+    "src/runtime/bb/blitz3d/animation.cpp", "src/runtime/bb/blitz3d/animator.cpp", "src/runtime/bb/blitz3d/brush.cpp", "src/runtime/bb/blitz3d/cachedtexture.cpp", "src/runtime/bb/blitz3d/camera.cpp", "src/runtime/bb/blitz3d/collision.cpp", "src/runtime/bb/blitz3d/entity.cpp", "src/runtime/bb/blitz3d/frustum.cpp", "src/runtime/bb/blitz3d/geom.cpp", "src/runtime/bb/blitz3d/light.cpp", "src/runtime/bb/blitz3d/listener.cpp", "src/runtime/bb/blitz3d/loader_3ds.cpp", "src/runtime/bb/blitz3d/loader_b3d.cpp", "src/runtime/bb/blitz3d/md2model.cpp", "src/runtime/bb/blitz3d/md2norms.cpp", "src/runtime/bb/blitz3d/md2rep.cpp", "src/runtime/bb/blitz3d/meshcollider.cpp", "src/runtime/bb/blitz3d/meshloader.cpp", "src/runtime/bb/blitz3d/meshmodel.cpp", "src/runtime/bb/blitz3d/meshutil.cpp", "src/runtime/bb/blitz3d/mirror.cpp", "src/runtime/bb/blitz3d/model.cpp", "src/runtime/bb/blitz3d/object.cpp", "src/runtime/bb/blitz3d/pivot.cpp", "src/runtime/bb/blitz3d/planemodel.cpp", "src/runtime/bb/blitz3d/q3bspmodel.cpp", "src/runtime/bb/blitz3d/q3bsprep.cpp", "src/runtime/bb/blitz3d/sprite.cpp", "src/runtime/bb/blitz3d/std.cpp", "src/runtime/bb/blitz3d/surface.cpp", "src/runtime/bb/blitz3d/terrain.cpp", "src/runtime/bb/blitz3d/terrainrep.cpp", "src/runtime/bb/blitz3d/texture.cpp", "src/runtime/bb/blitz3d/world.cpp", "src/runtime/bb/blitz3d/animation.h", "src/runtime/bb/blitz3d/animator.h", "src/runtime/bb/blitz3d/blitz3d.h", "src/runtime/bb/blitz3d/brush.h", "src/runtime/bb/blitz3d/cachedtexture.h", "src/runtime/bb/blitz3d/camera.h", "src/runtime/bb/blitz3d/collision.h", "src/runtime/bb/blitz3d/entity.h", "src/runtime/bb/blitz3d/frustum.h", "src/runtime/bb/blitz3d/geom.h", "src/runtime/bb/blitz3d/light.h", "src/runtime/bb/blitz3d/listener.h", "src/runtime/bb/blitz3d/loader_3ds.h", "src/runtime/bb/blitz3d/loader_b3d.h", "src/runtime/bb/blitz3d/md2model.h", "src/runtime/bb/blitz3d/md2norms.h", "src/runtime/bb/blitz3d/md2rep.h", "src/runtime/bb/blitz3d/meshcollider.h", "src/runtime/bb/blitz3d/meshloader.h", "src/runtime/bb/blitz3d/meshmodel.h", "src/runtime/bb/blitz3d/meshutil.h", "src/runtime/bb/blitz3d/mirror.h", "src/runtime/bb/blitz3d/model.h", "src/runtime/bb/blitz3d/object.h", "src/runtime/bb/blitz3d/pivot.h", "src/runtime/bb/blitz3d/planemodel.h", "src/runtime/bb/blitz3d/q3bspmodel.h", "src/runtime/bb/blitz3d/q3bsprep.h", "src/runtime/bb/blitz3d/rendercontext.h", "src/runtime/bb/blitz3d/sprite.h", "src/runtime/bb/blitz3d/std.h", "src/runtime/bb/blitz3d/surface.h", "src/runtime/bb/blitz3d/terrain.h", "src/runtime/bb/blitz3d/terrainrep.h", "src/runtime/bb/blitz3d/texture.h", "src/runtime/bb/blitz3d/world.h"
   }
 
 filter "platforms:win32 or win64 or mingw32"
-  files { "blitz3d/loader_x.cpp", "blitz3d/loader_x.h" }
+  files { "src/runtime/bb/blitz3d/loader_x.cpp", "src/runtime/bb/blitz3d/loader_x.h" }
 
 project "stream"
   kind "StaticLib"
@@ -438,15 +438,15 @@ project "blitz2d"
   kind "StaticLib"
   language "C++"
 
-  files { "blitz2d/font.h", "blitz2d/font.cpp" }
+  files { "src/runtime/bb/blitz2d/font.h", "src/runtime/bb/blitz2d/font.cpp", "src/runtime/bb/blitz2d/graphics.h" }
 
 project "graphics"
   kind "StaticLib"
   language "C++"
 
   files {
-    "graphics/graphics.h", "graphics/graphics.cpp",
-    "graphics/canvas.h", "graphics/canvas.cpp"
+    "src/runtime/bb/graphics/graphics.h", "src/runtime/bb/graphics/graphics.cpp",
+    "src/runtime/bb/graphics/canvas.h", "src/runtime/bb/graphics/canvas.cpp"
   }
 
 project "compiler"

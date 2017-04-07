@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "bbsys.h"
-#include "../input/driver.h"
+#include <bb/input/driver.h>
 
 extern BBInputDriver *gx_input;
 extern BBDevice *gx_mouse;

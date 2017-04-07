@@ -4,8 +4,8 @@
 
 #pragma warning( disable:4786 )
 
-#include "../config/config.h"
-#include "../stdutil/stdutil.h"
+#include "../../config/config.h"
+#include "../../stdutil/stdutil.h"
 
 #include "graphics.h"
 

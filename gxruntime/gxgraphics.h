@@ -8,8 +8,8 @@
 
 #include "ddutil.h"
 
-#include "../blitz3d/graphics.h"
-#include "../blitz2d/font.h"
+#include <bb/blitz3d/graphics.h>
+#include <bb/blitz2d/font.h>
 #include "gxcanvas.h"
 #include "gxscene.h"
 #include "gxmesh.h"

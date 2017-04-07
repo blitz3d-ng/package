@@ -2,7 +2,7 @@
 #ifndef GXLIGHT_H
 #define GXLIGHT_H
 
-#include "../blitz3d/light.h"
+#include <bb/blitz3d/light.h>
 
 class gxScene;
 

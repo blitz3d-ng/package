@@ -4,7 +4,7 @@
 
 #include <dinput.h>
 
-#include "../input/driver.h"
+#include <bb/input/driver.h>
 
 class gxRuntime;
 

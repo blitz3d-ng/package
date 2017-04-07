@@ -2,7 +2,7 @@
 #ifndef GXCANVAS_H
 #define GXCANVAS_H
 
-#include "../graphics/canvas.h"
+#include <bb/graphics/canvas.h>
 #include "ddutil.h"
 
 class BBFont;

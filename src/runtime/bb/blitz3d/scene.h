@@ -1,7 +1,7 @@
 #ifndef BBSCENE_H
 #define BBSCENE_H
 
-#include "../graphics/canvas.h"
+#include <bb/graphics/canvas.h>
 #include "light.h"
 #include "mesh.h"
 

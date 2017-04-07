@@ -1,7 +1,7 @@
 #ifndef B3DGRAPHICS_H
 #define B3DGRAPHICS_H
 
-#include "../blitz2d/graphics.h"
+#include <bb/blitz2d/graphics.h>
 #include "mesh.h"
 #include "scene.h"
 

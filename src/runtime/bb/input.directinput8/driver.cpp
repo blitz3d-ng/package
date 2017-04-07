@@ -1,6 +1,6 @@
 
 #include "driver.h"
-#include "../gxruntime/gxruntime.h"
+#include "../../gxruntime/gxruntime.h"
 
 #include <dinput.h>
 
