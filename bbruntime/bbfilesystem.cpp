@@ -56,15 +56,15 @@ static bbFile *open( BBStr *f,ios_base::openmode n ){
 	return 0;
 }
 
-bbFile *bbReadFile( BBStr *f ){
+bbFile* BBCALL bbReadFile( BBStr *f ){
 	return open( f,ios_base::in );
 }
 
-bbFile *bbWriteFile( BBStr *f ){
+bbFile* BBCALL bbWriteFile( BBStr *f ){
 	return open( f,ios_base::out|ios_base::trunc );
 }
 
-bbFile *bbOpenFile( BBStr *f ){
+bbFile* BBCALL bbOpenFile( BBStr *f ){
 	return open( f,ios_base::in|ios_base::out );
 }
 
@@ -82,7 +82,7 @@ int BBCALL bbSeekFile( bbFile *f,int pos ){
 	return f->buf->pubseekoff( pos,ios_base::beg );
 }
 
-BBDir *bbReadDir( BBStr *d ){
+BBDir* BBCALL bbReadDir( BBStr *d ){
 	string t=*d;delete d;
 	return gx_filesys->openDir( t,0 );
 }
@@ -91,12 +91,12 @@ void BBCALL bbCloseDir( BBDir *d ){
 	gx_filesys->closeDir( d );
 }
 
-BBStr *bbNextFile( BBDir *d ){
+BBStr* BBCALL bbNextFile( BBDir *d ){
 	debugDir( d );
 	return d_new BBStr( d->getNextFile() );
 }
 
-BBStr *bbCurrentDir(){
+BBStr* BBCALL bbCurrentDir(){
 	return d_new BBStr( gx_filesys->getCurrentDir() );
 }
 
