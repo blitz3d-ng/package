@@ -1,10 +1,9 @@
 
-#include "std.h"
-#include "bbfilesystem.h"
+#include "filesystem.h"
 #include <bb/stream/stream.h>
 #include <fstream>
 
-#include "../gxruntime/gxruntime.h"
+#include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
 BBFileSystem *gx_filesys;

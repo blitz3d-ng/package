@@ -3,7 +3,7 @@
 #define GXFILESYSTEM_H
 
 #include <string>
-#include "../filesystem/driver.h"
+#include <bb/filesystem/driver.h>
 
 class WindowsFileSystem : public BBFileSystem{
 public:

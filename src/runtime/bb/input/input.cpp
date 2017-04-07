@@ -1,8 +1,7 @@
 
-#include "std.h"
-#include "bbsys.h"
+#include <bb/blitz/blitz.h>
 
-#include "../gxruntime/gxruntime.h"
+#include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
 BBInputDriver *gx_input;

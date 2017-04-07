@@ -1,6 +1,5 @@
 
 #include "std.h"
-#include "bbsys.h"
 #include "bbruntime.h"
 
 #include "../gxruntime/gxruntime.h"

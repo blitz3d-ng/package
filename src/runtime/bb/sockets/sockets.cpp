@@ -1,8 +1,7 @@
 
-#include "std.h"
-#include "bbsockets.h"
+#include "sockets.h"
 
-#include "../gxruntime/gxruntime.h"
+#include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
 static bool socks_ok;

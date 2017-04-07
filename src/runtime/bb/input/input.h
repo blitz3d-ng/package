@@ -4,7 +4,6 @@
 
 #include <vector>
 
-#include "bbsys.h"
 #include <bb/input/driver.h>
 
 extern BBInputDriver *gx_input;

@@ -4,10 +4,6 @@
 #include "bbruntime_dll.h"
 #include "../debugger/debugger.h"
 
-#ifdef PRODEMO
-#include "../shareprot/shareprot.h"
-#endif
-
 using namespace std;
 
 #include <map>
@@ -15,6 +11,7 @@ using namespace std;
 #include <float.h>
 
 #include "../bbruntime/bbruntime.h"
+#undef rtSym
 
 class DummyDebugger : public Debugger{
 public:

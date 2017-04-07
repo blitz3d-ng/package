@@ -3,8 +3,8 @@
 
 #ifdef PRO
 
-#include "bbblitz3d.h"
-#include "bbgraphics.h"
+#include "blitz3d.h"
+#include <bb/graphics/graphics.h>
 #include <bb/blitz3d/blitz3d.h>
 #include <bb/blitz3d/world.h>
 #include <bb/blitz3d/texture.h>
@@ -25,7 +25,7 @@
 #include <bb/blitz3d/cachedtexture.h>
 #include <bb/blitz3d/std.h>
 
-#include "../gxruntime/gxruntime.h"
+#include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
 BBScene *gx_scene;

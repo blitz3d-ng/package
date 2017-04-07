@@ -2,8 +2,8 @@
 #ifndef BBFILESYSTEM_H
 #define BBFILESYSTEM_H
 
-#include "bbsys.h"
-#include "../filesystem/driver.h"
+#include <bb/blitz/blitz.h>
+#include "driver.h"
 
 extern BBFileSystem *gx_filesys;
 

@@ -1,8 +1,7 @@
 
-#include "std.h"
-#include "bbaudio.h"
+#include "module.h"
 
-#include "../gxruntime/gxruntime.h"
+#include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
 static inline void debugSound( BBSound *s ){
