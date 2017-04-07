@@ -243,7 +243,7 @@ project "bbruntime_dll"
   links { "gxruntime", "bbruntime" }
   links { "audio.fmod", "fmodvc", "system", "system.windows", "filesystem.windows", "input.directinput8" }
   links { "timer.windows", "timer" }
-  links { "blitz", "audio", "bank", "filesystem", "stdutil", "blitz2d", "blitz3d", "graphics", "input", "math", "stream" }
+  links { "blitz", "audio", "bank", "filesystem", "stdutil", "blitz2d", "blitz3d", "graphics", "input", "math", "stream", "string" }
   links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
   links { "dxguid" }
   links { "wsock32", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
@@ -280,7 +280,6 @@ project "bbruntime"
     "bbruntime/bbinput.cpp", "bbruntime/bbinput.h",
     "bbruntime/bbruntime.cpp", "bbruntime/bbruntime.h",
     "bbruntime/bbsockets.cpp", "bbruntime/bbsockets.h",
-    "bbruntime/bbstring.cpp", "bbruntime/bbstring.h",
     "bbruntime/bbsys.cpp", "bbruntime/bbsys.h",
     -- "bbruntime/multiplay.cpp", "bbruntime/multiplay_setup.cpp", "bbruntime/multiplay.h", "bbruntime/multiplay_setup.h",
     "bbruntime/std.cpp", "bbruntime/std.h",
@@ -418,6 +417,14 @@ project "stream"
 
   files {
     "src/runtime/bb/stream/stream.cpp", "src/runtime/bb/stream/stream.h"
+  }
+
+project "string"
+  kind "StaticLib"
+  language "C++"
+
+  files {
+    "src/runtime/bb/string/string.cpp", "src/runtime/bb/string/string.h"
   }
 
 project "timer"

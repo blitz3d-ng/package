@@ -1,6 +1,9 @@
 
-#include "std.h"
-#include "bbsys.h"
+#include "string.h"
+#include "../../stdutil/stdutil.h"
+#include <string>
+using namespace std;
+
 #include <time.h>
 
 #define CHKPOS(x) if( (x)<0 ) RTEX( "parameter must be positive" );

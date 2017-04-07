@@ -2,7 +2,7 @@
 #ifndef BBSTRING_H
 #define BBSTRING_H
 
-#include "basic.h"
+#include <bb/blitz/blitz.h>
 
 BBStr *  BBCALL bbString( BBStr *s,int n );
 BBStr *	 BBCALL bbLeft( BBStr *s,int n );
