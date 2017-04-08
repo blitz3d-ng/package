@@ -10,8 +10,7 @@ using namespace std;
 #include <eh.h>
 #include <float.h>
 
-#include "../bbruntime/bbruntime.h"
-#undef rtSym
+#include <bb/stub/stub.h>
 
 class DummyDebugger : public Debugger{
 public:
@@ -32,7 +31,7 @@ static map<const char*,void*> syms;
 map<const char*,void*>::iterator sym_it;
 static gxRuntime *gx_runtime;
 
-static void rtSym( const char *sym,void *pc ){
+static void linkSym( const char *sym,void *pc ){
 	syms[sym]=pc;
 }
 
@@ -62,7 +61,7 @@ int Runtime::version(){
 
 const char *Runtime::nextSym(){
 	if( !syms.size() ){
-		bbruntime_link( rtSym );
+		bbruntime_link( linkSym );
 		sym_it=syms.begin();
 	}
 	if( sym_it==syms.end() ){

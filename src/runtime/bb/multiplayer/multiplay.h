@@ -2,7 +2,7 @@
 #ifndef MULTIPLAY_H
 #define MULTIPLAY_H
 
-#include "bbsys.h"
+#include <bb/blitz/blitz.h>
 #include <dplay.h>
 
 void multiplay_link();

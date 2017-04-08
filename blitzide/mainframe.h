@@ -5,6 +5,7 @@
 #include "editor.h"
 #include "htmlhelp.h"
 #include "tabber.h"
+#include "libs.h"
 
 class MainFrame : public CFrameWnd,public HelpListener,EditorListener,TabberListener{
 public:
@@ -46,6 +47,7 @@ public:
 	afx_msg void programReExecute();
 	afx_msg void programCompile();
 	afx_msg void programPublish();
+	afx_msg void programRuntime( UINT id );
 	afx_msg void programCommandLine();
 	afx_msg void programDebug();
 
@@ -64,6 +66,7 @@ public:
 
 	afx_msg void updateCmdUI( CCmdUI *ui );
 	afx_msg void updateCmdUIRange( CCmdUI *ui );
+	afx_msg void updateRuntimeCmdUI( CCmdUI *ui );
 	afx_msg void ctrlTab();
 	afx_msg void ctrlShiftTab();
 	afx_msg void escape();
@@ -78,6 +81,8 @@ private:
 	map<CWnd*,HelpView*> helps;
 
 	string last_quick_help;
+
+	Runtime rt;
 
 	HelpView *getHelp();
 	HelpView *getHelp( int index );
@@ -96,6 +101,7 @@ private:
 
 	void compile( const string &cmd );
 	void build( bool exec,bool publish );
+	void switchRuntime( int i );
 
 	//editorlistener
 	void cursorMoved( Editor *editor );
@@ -104,7 +110,7 @@ private:
 	void currentSet( Tabber *tabber,int index );
 
 	//htmlhelplistener
-	void helpOpen( HelpView *help,const string &file );
+	void helpOpen( HelpView *help,const string &file,bool dir );
 	void helpTitleChange( HelpView *help,const string &title );
 };
 

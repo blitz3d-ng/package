@@ -47,6 +47,7 @@ BEGIN_MESSAGE_MAP( MainFrame,CFrameWnd )
 	ON_COMMAND( ID_REEXECUTE,programReExecute )
 	ON_COMMAND( ID_COMPILE,programCompile )
 	ON_COMMAND( ID_PUBLISH,programPublish )
+	ON_COMMAND_RANGE( 8888,8888+100,programRuntime )
 	ON_COMMAND( ID_COMMANDLINE,programCommandLine )
 	ON_COMMAND( ID_DEBUG,programDebug )
 
@@ -82,6 +83,7 @@ BEGIN_MESSAGE_MAP( MainFrame,CFrameWnd )
 	ON_UPDATE_COMMAND_UI( ID_ESCAPE,updateCmdUI )
 	ON_UPDATE_COMMAND_UI( ID_QUICKHELP,updateCmdUI )
 	ON_UPDATE_COMMAND_UI_RANGE( 333,343,updateCmdUIRange )
+	ON_UPDATE_COMMAND_UI_RANGE( 8888,8888+100,updateRuntimeCmdUI ) // NASTY: should fix this...
 END_MESSAGE_MAP()
 
 enum{
@@ -179,6 +181,12 @@ int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 	CMenu *file=GetMenu()->GetSubMenu( 0 );
 	file->InsertMenu( 12,MF_BYPOSITION|MF_ENABLED|MF_POPUP,(UINT)menu.m_hMenu,"&Recent Files" );
 	menu.Detach();
+
+	CMenu *program=GetMenu()->GetSubMenu( 2 );
+	for( unsigned i=0;i<runtimes.size();i++ ){
+		program->InsertMenu( 5+i,MF_BYPOSITION|MF_ENABLED,8888+i,runtimes[i].name.c_str() );
+	}
+	switchRuntime( 0 );
 
 	helpHome();
 
@@ -318,8 +326,8 @@ void MainFrame::currentSet( Tabber *tabber,int index ){
 	}
 }
 
-void MainFrame::helpOpen( HelpView *help,const string &file ){
-	load( "",file );
+void MainFrame::helpOpen( HelpView *help,const string &file,bool dir ){
+	!dir ? load( "",file ) : open( file );
 }
 
 void MainFrame::helpTitleChange( HelpView *help,const string &title ){
@@ -751,9 +759,15 @@ void MainFrame::build( bool exec,bool publish ){
 		prefs.prg_lastbuild=e->getName();
 	}
 
-	compile( prefs.homeDir+"/bin/blitzcc -q "+opts+" \""+src+"\" "+prefs.cmd_line );
+	compile( prefs.homeDir+"/bin/blitzcc -r "+rt.id+" -q "+opts+" \""+src+"\" "+prefs.cmd_line );
 
 	if( !src_file.size() ) e->setName( "" );
+}
+
+void MainFrame::switchRuntime( int i ){
+	CMenu *program=GetMenu()->GetSubMenu( 2 );
+	program->CheckMenuRadioItem( 5,4+runtimes.size(),5+i,MF_BYPOSITION|MF_ENABLED );
+	rt=runtimes[i];
 }
 
 void MainFrame::programExecute(){
@@ -783,6 +797,11 @@ void MainFrame::programPublish(){
 		if( MessageBox( t.c_str(),0,MB_OKCANCEL )==IDCANCEL ) return;
 	}
 	build( false,true );
+}
+
+void MainFrame::programRuntime( UINT id ){
+	int n=id-8888;
+	switchRuntime( n );
 }
 
 struct CmdLineDialog : public CDialog{
@@ -871,6 +890,10 @@ void MainFrame::updateCmdUIRange( CCmdUI *ui ){
 	}else{
 		ui->Enable( false );
 	}
+}
+
+void MainFrame::updateRuntimeCmdUI( CCmdUI *ui ){
+	ui->Enable( true );
 }
 
 void MainFrame::updateCmdUI( CCmdUI *ui ){

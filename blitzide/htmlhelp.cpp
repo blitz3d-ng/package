@@ -24,7 +24,7 @@ void HelpView::OnBeforeNavigate2( LPCTSTR url,DWORD flags,LPCTSTR target,CByteAr
 		(t.rfind( ".bb" )+3==t.size()) ||
 		(isMediaFile( t )) ){
 
-		listener->helpOpen( this,t );
+		listener->helpOpen( this,t,attr&FILE_ATTRIBUTE_DIRECTORY );
 		*cancel=true;
 		return;
 

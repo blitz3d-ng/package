@@ -5,9 +5,12 @@
 
   */
 
-#include "std.h"
+#include "../../stdutil/stdutil.h"
 #include "multiplay.h"
 #include "multiplay_setup.h"
+#include <map>
+#include <list>
+using namespace std;
 
 struct Player;
 
@@ -80,7 +83,7 @@ static BOOL FAR PASCAL enumPlayer( DPID id,DWORD type,LPCDPNAME name,DWORD flags
 	return TRUE;
 }
 
-void multiplay_link( void(*rtSym)(const char*,void*) ){
+BBMODULE_LINK( multiplayer ) {
 	rtSym( "%StartNetGame",bbStartNetGame );
 	rtSym( "%HostNetGame$game_name",bbHostNetGame );
 	rtSym( "%JoinNetGame$game_name$ip_address",bbJoinNetGame );
@@ -100,8 +103,7 @@ void multiplay_link( void(*rtSym)(const char*,void*) ){
 	rtSym( "$NetMsgData",bbNetMsgData );
 }
 
-bool multiplay_create(){
-
+BBMODULE_CREATE( multiplayer ){
 	recv_buff_sz=send_buff_sz=1024;
 	recv_buff=d_new char[recv_buff_sz];
 	send_buff=d_new char[send_buff_sz];
@@ -111,8 +113,7 @@ bool multiplay_create(){
 	return true;
 }
 
-bool multiplay_destroy(){
-
+BBMODULE_DESTROY( multiplayer ){
 	bbStopNetGame();
 
 	multiplay_setup_destroy();

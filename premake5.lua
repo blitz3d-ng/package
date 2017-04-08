@@ -224,41 +224,85 @@ project "bblaunch"
 
   links { "dxguid", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
 
-project "bbruntime_dll"
-  kind "SharedLib"
+runtimes = { 'default', 'dplay' }
+
+for i,rt in ipairs(runtimes) do
+  project("runtime." .. rt)
+    kind "SharedLib"
+    language "C++"
+
+    removeplatforms { "win64", "macos", "linux" }
+
+    targetdir "_release/bin"
+    targetprefix ""
+
+    local STUB_PATH="src/runtime/" .. rt .. ".stub.cpp"
+
+    files {
+      "bbruntime_dll/bbruntime_dll.h",
+      "bbruntime_dll/bbruntime_dll.cpp",
+      "bbruntime_dll/bbruntime_dll.rc",
+      "bbruntime_dll/resource.h",
+      "bbruntime_dll/dpi.manifest",
+      STUB_PATH
+    }
+
+    links "stub"
+
+    local config = require("src/runtime/" .. rt)
+
+    local stub = io.open( STUB_PATH,"w" )
+
+    stub:write("\n#include <bb/stub/stub.h>\n\n")
+
+    for j,mod in ipairs(config.modules) do
+      stub:write("BBMODULE_DECL( " .. mod .. " );\n")
+    end
+
+    local function write_create_calls(modules, i)
+      local function write(s)
+        for j=1,i do stub:write("\t") end
+        stub:write(s)
+      end
+
+      write("if ( " .. modules[i] .. "_create() ){\n")
+      if i < #modules then
+        write_create_calls( modules,i+1 )
+        write("\t" .. modules[i] .. "_destroy();\n");
+      else
+        write("\treturn true;\n")
+      end
+      write("}else sue( \"" .. modules[i] .. "_create failed\" );\n")
+    end
+
+    stub:write("\nbool bbruntime_create(){\n")
+    write_create_calls(config.modules, 1)
+    stub:write("\treturn false;\n")
+    stub:write("}\n")
+
+    stub:write("\nvoid bbruntime_link( void (*link)( const char *sym,void *pc ) ){\n")
+    for j,mod in ipairs(config.modules) do
+      stub:write("\t" .. mod .. "_link( link );\n")
+    end
+    stub:write("}\n")
+
+    stub:write("\nbool bbruntime_destroy(){\n")
+    for j=#config.modules,1,-1 do
+      stub:write("\t" .. config.modules[j] .. "_destroy();\n")
+    end
+    stub:write("\treturn true;\n")
+    stub:write("}\n")
+    stub:close()
+
+    filter {}
+    links(config.modules)
+end
+
+project "stub"
+  kind "StaticLib"
   language "C++"
 
-  removeplatforms { "win64", "macos", "linux" }
-
-  targetdir "_release/bin"
-  targetprefix ""
-  targetname "runtime"
-
-  files {
-    "bbruntime_dll/bbruntime_dll.h",
-    "bbruntime_dll/bbruntime_dll.cpp",
-    "bbruntime_dll/bbruntime_dll.rc",
-    "bbruntime_dll/resource.h",
-    "bbruntime_dll/dpi.manifest"
-  }
-
-  links { "gxruntime", "bbruntime" }
-  links { "audio.fmod", "fmodvc", "system", "system.windows", "filesystem.windows", "input.directinput8" }
-  links { "timer.windows", "timer" }
-  links { "blitz", "audio", "bank", "filesystem", "stdutil", "blitz2d", "blitz3d", "graphics", "input", "math", "stream", "string", "sockets" }
-  links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
-  links { "dxguid" }
-  links { "wsock32", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
-
-  filter "platforms:win32 or win64"
-    links "amstrmid"
-
-  filter "platforms:mingw32"
-    links "strmiids"
-
-  -- suppress libraw warnings
-  filter "platforms:win32 or win64"
-    linkoptions "/ignore:4217"
+  files { "src/runtime/bb/stub/stub.cpp", "src/runtime/bb/stub/stub.h" }
 
 project "gxruntime"
   kind "StaticLib"
@@ -268,21 +312,23 @@ project "gxruntime"
 
   files { "gxruntime/ddutil.cpp", "gxruntime/gxcanvas.cpp", "gxruntime/gxgraphics.cpp", "gxruntime/gxlight.cpp", "gxruntime/gxmesh.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxscene.cpp", "gxruntime/std.cpp", "gxruntime/asmcoder.h", "gxruntime/ddutil.h", "gxruntime/gxcanvas.h", "gxruntime/gxgraphics.h", "gxruntime/gxlight.h", "gxruntime/gxmesh.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/gxscene.h", "gxruntime/std.h" }
 
-project "bbruntime"
+project "multiplayer"
   kind "StaticLib"
   language "C++"
 
   removeplatforms { "macos", "linux" }
 
   files {
-    "bbruntime/bbruntime.cpp", "bbruntime/bbruntime.h",
-    -- "bbruntime/multiplay.cpp", "bbruntime/multiplay_setup.cpp", "bbruntime/multiplay.h", "bbruntime/multiplay_setup.h",
-    "bbruntime/std.h",
-    "bbruntime/userlibs.cpp", "bbruntime/userlibs.h",
-    "bbruntime/resource.h"
+    "src/runtime/bb/multiplayer/multiplay.cpp", "src/runtime/bb/multiplayer/multiplay.h",
+    "src/runtime/bb/multiplayer/multiplay_setup.cpp", "src/runtime/bb/multiplayer/multiplay_setup.h",
+    "src/runtime/bb/multiplayer/multiplay_setup.rc"
   }
 
-  links { "blitz", "audio", "math" }
+project "userlibs"
+  kind "StaticLib"
+  language "C++"
+
+  files { "src/runtime/bb/userlibs/userlibs.cpp", "src/runtime/bb/userlibs/userlibs.h" }
 
 project "blitz"
   kind "StaticLib"

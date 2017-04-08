@@ -1,8 +1,13 @@
 
-#include "std.h"
-#include "bbsys.h"
+#include "../../stdutil/stdutil.h"
 #include "resource.h"
 #include "multiplay_setup.h"
+#include <string>
+#include <vector>
+using namespace std;
+
+#include "../../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
 
 IDirectPlay4 *dirPlay;
 
@@ -186,7 +191,7 @@ static void endDialog( HWND hwnd,int rc ){
 	EndDialog( hwnd,rc );
 }
 
-static BOOL CALLBACK dialogProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
+static INT_PTR CALLBACK dialogProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 
 	int k,lo=LOWORD(wparam),hi=HIWORD(wparam);
 
@@ -270,12 +275,24 @@ static BOOL CALLBACK dialogProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam 
 	return 1;
 }
 
+HINSTANCE dplayx;
+typedef HRESULT (WINAPI *DirectPlayLobbyCreateFunc)(LPGUID, LPDIRECTPLAYLOBBYA *, IUnknown *, LPVOID, DWORD );
+DirectPlayLobbyCreateFunc lobbyCreate;
+
 void multiplay_setup_create(){
+	lobbyCreate=0;
+	dplayx=LoadLibrary( "dplayx" );
+	if ( dplayx ) lobbyCreate=(DirectPlayLobbyCreateFunc)GetProcAddress( dplayx,"DirectPlayLobbyCreate" );
+
 	dirPlay=0;
 }
 
 void multiplay_setup_destroy(){
 	multiplay_setup_close();
+	if ( dplayx ){
+		lobbyCreate=0;
+		FreeLibrary( dplayx );
+	}
 }
 
 int multiplay_setup_open(){
@@ -299,11 +316,13 @@ void multiplay_setup_close(){
 }
 
 int multiplay_setup_host( const string &game_name ){
+	if( !lobbyCreate ) return 0;
+
 	int ret=0;
 	IDirectPlayLobby *lobby;
 	IDirectPlayLobby3 *lobby3;
 	if( CoCreateInstance( CLSID_DirectPlay,0,CLSCTX_ALL,IID_IDirectPlay4A,(void**)&dirPlay )>=0 ){
-		if( DirectPlayLobbyCreate( 0,&lobby,0,0,0 )>=0 ){
+		if( lobbyCreate( 0,&lobby,0,0,0 )>=0 ){
 			if( lobby->QueryInterface( IID_IDirectPlayLobby3,(void**)&lobby3 )>=0 ){
 				//ok, create an address for initializeconnection
 				string ip( "\0" );
@@ -340,11 +359,13 @@ int multiplay_setup_host( const string &game_name ){
 }
 
 int multiplay_setup_join( const string &game_name,const string &ip_add ){
+	if( !lobbyCreate ) return 0;
+
 	int ret=0;
 	IDirectPlayLobby *lobby;
 	IDirectPlayLobby3 *lobby3;
 	if( CoCreateInstance( CLSID_DirectPlay,0,CLSCTX_ALL,IID_IDirectPlay4A,(void**)&dirPlay )>=0 ){
-		if( DirectPlayLobbyCreate( 0,&lobby,0,0,0 )>=0 ){
+		if( lobbyCreate( 0,&lobby,0,0,0 )>=0 ){
 			if( lobby->QueryInterface( IID_IDirectPlayLobby3,(void**)&lobby3 )>=0 ){
 				//ok, create an address for initializeconnection
 				string ip=ip_add+'\0';

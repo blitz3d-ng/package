@@ -30,7 +30,7 @@ extern Environ *runtimeEnviron;
 extern vector<string> keyWords;
 extern vector<UserFunc> userFuncs;
 
-const char *openLibs();
+const char *openLibs( const string rt );
 
 const char *linkLibs();
 

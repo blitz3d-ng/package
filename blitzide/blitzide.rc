@@ -25,18 +25,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE
 BEGIN
     "\r\n"
     "\r\n"
@@ -92,6 +92,7 @@ BEGIN
         MENUITEM "Run program again\tF6",       ID_REEXECUTE
         MENUITEM "&Check for errors\tF7",       ID_COMPILE
         MENUITEM "Create &Executable...",       ID_PUBLISH
+        MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Program Command Line...",    ID_COMMANDLINE
         MENUITEM "&Debug Enabled?",             ID_DEBUG
@@ -371,4 +372,3 @@ IDB_BITMAP2             BITMAP                  "b3dlogo.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

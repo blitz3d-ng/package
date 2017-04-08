@@ -519,7 +519,7 @@ void BBCALL bbRuntimeStats(){
 	*/
 }
 
-BBMODULE_CREATE( basic ){
+BBMODULE_CREATE( blitz ){
 	next_handle=0;
 //	memBlks.clear();
 	handle_map.clear();
@@ -530,7 +530,7 @@ BBMODULE_CREATE( basic ){
 	return true;
 }
 
-BBMODULE_DESTROY( basic ){
+BBMODULE_DESTROY( blitz ){
 	while( usedStrs.next!=&usedStrs ) delete usedStrs.next;
 //	while( memBlks.size() ) bbFree( memBlks.back() );
 	handle_map.clear();
@@ -538,7 +538,7 @@ BBMODULE_DESTROY( basic ){
 	return true;
 }
 
-BBMODULE_LINK( basic ){
+BBMODULE_LINK( blitz ){
 
 	rtSym( "_bbIntType",&_bbIntType );
 	rtSym( "_bbFltType",&_bbFltType );

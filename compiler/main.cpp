@@ -141,13 +141,37 @@ static void demoError(){
 	exit(0);
 }
 
+
+static const char *enumRuntimes( vector<string> &rts ){
+	char *p=getenv( "blitzpath" );
+	if( !p ) return "Can't find blitzpath environment variable";
+	string home=string(p);
+
+	WIN32_FIND_DATA ffd;
+	HANDLE find;
+	find=FindFirstFile( (home+"/bin/runtime.*.dll").c_str(),&ffd );
+	do{
+		if( !(ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) ){
+			string fname(ffd.cFileName);
+			fname=fname.substr( 8 );
+			fname=fname.substr( 0,fname.length()-4 );
+			rts.push_back( fname );
+		}
+	} while (FindNextFile(find, &ffd) != 0);
+	FindClose(find);
+
+	if( rts.size() == 0 ) return "No runtimes found";
+	return 0;
+}
+
 int main( int argc,char *argv[] ){
 
-	string in_file,out_file,args;
+	string in_file,out_file,rt,args;
+	vector<string> rts;
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
 	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false;
-	bool versinfo=false;
+	bool versinfo=false,rtinfo=false;
 
 	for( int k=1;k<argc;++k ){
 
@@ -173,6 +197,11 @@ int main( int argc,char *argv[] ){
 			dumpkeys=dumphelp=true;
 		}else if( t=="-v" ){
 			versinfo=true;
+		}else if( t=="-l" ){
+			rtinfo=true;
+		}else if( t=="-r" ){
+			if( out_file.size() || k==argc-1 ) usageErr();
+			rt=argv[++k];
 		}else if( t=="-o" ){
 			if( out_file.size() || k==argc-1 ) usageErr();
 			out_file=argv[++k];
@@ -188,9 +217,25 @@ int main( int argc,char *argv[] ){
 		}
 	}
 
+	if( const char *er=enumRuntimes( rts ) ) err( er );
+
+	if( rtinfo ){
+		if( !quiet ) cout<<"Found "<<rts.size()<<" runtimes:"<<endl;
+		for ( unsigned i=0;i<rts.size();i++ ){
+			cout<<rts[i]<<endl;
+		}
+		return 0;
+	}
+
+	if( rt=="" ) rt=rts[0];
+
+	if( std::find( std::begin(rts),std::end(rts),rt )==std::end(rts) ){
+		err( ("Invalid runtime: "+rt).c_str() );
+	}
+
 	if( out_file.size() && !in_file.size() ) usageErr();
 
-	if( const char *er=openLibs() ) err( er );
+	if( const char *er=openLibs( rt ) ) err( er );
 
 	if( const char *er=linkLibs() ) err( er );
 

@@ -5,6 +5,7 @@
 #include "blitzide.h"
 
 static map<string,string> keyhelps;
+std::vector<Runtime> runtimes;
 
 int linker_ver,runtime_ver;
 
@@ -90,6 +91,17 @@ void initLibs(){
 
 		Editor::addKeyword(t);
 		keyhelps[t]=help;
+		pos=n+1;
+	}
+
+	string rts=execProc( prefs.homeDir+"/bin/blitzcc -q -l" );
+	pos=0;
+	while( (n=rts.find( '\n',pos ))!=string::npos ){
+		string t=rts.substr( pos,n-pos-1 );
+		for( int q=0;(q=t.find('\r',q))!=string::npos; ) t=t.replace( q,1,"" );
+		Runtime rt;
+		rt.id=rt.name=t;		
+		runtimes.push_back(rt);
 		pos=n+1;
 	}
 }

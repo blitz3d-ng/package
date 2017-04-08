@@ -33,3 +33,5 @@ _release/tmp
 
 /build
 /innosetup/installs
+
+/src/runtime/*.stub.cpp

@@ -6,7 +6,7 @@ class HelpView;
 
 class HelpListener{
 public:
-	virtual void helpOpen( HelpView *help,const string &file )=0;
+	virtual void helpOpen( HelpView *help,const string &file,bool dir )=0;
 	virtual void helpTitleChange( HelpView *help,const string &title )=0;
 };
 

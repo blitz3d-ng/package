@@ -1,8 +1,9 @@
 
-#include "std.h"
 #include "userlibs.h"
 
 #include <windows.h>
+#include <vector>
+using namespace std;
 
 static vector<HMODULE> _mods;
 
