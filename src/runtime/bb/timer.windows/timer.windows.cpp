@@ -4,7 +4,7 @@
 WindowsTimer::WindowsTimer( int hertz ):
 ticks_get(0),ticks_put(0){
 	event=CreateEvent( 0,false,false,0 );
-	timerID=timeSetEvent( 1000/hertz,0,timerCallback,(DWORD)this,TIME_PERIODIC );
+	timerID=timeSetEvent( 1000/hertz,0,timerCallback,(DWORD_PTR )this,TIME_PERIODIC );
 }
 
 WindowsTimer::~WindowsTimer(){
@@ -12,7 +12,7 @@ WindowsTimer::~WindowsTimer(){
 	CloseHandle( event );
 }
 
-void CALLBACK WindowsTimer::timerCallback( UINT id,UINT msg,DWORD user,DWORD dw1,DWORD dw2 ){
+void CALLBACK WindowsTimer::timerCallback( UINT id,UINT msg,DWORD_PTR user,DWORD_PTR dw1,DWORD_PTR dw2 ){
 	WindowsTimer *t=(WindowsTimer*)user;
 	++t->ticks_put;
 	SetEvent( t->event );

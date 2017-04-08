@@ -71,8 +71,10 @@ workspace "blitz3d"
     defines { "WIN32", "_WIN32", "__MINGW64_TOOLCHAIN__", "TARGETSUFFIX=", "PTW32_STATIC_LIB" }
 
     defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall", "_declspec=__declspec", "_set_se_translator=set_se_translator" }
-    buildoptions { "-std=c++11" }
     linkoptions { "-static" }
+
+  filter { "platforms:mingw32", "language:C++"}
+    buildoptions { "-std=c++11" }
 
   filter { "platforms:mingw32", "kind:SharedLib" }
     targetprefix ""
@@ -86,7 +88,7 @@ workspace "blitz3d"
   filter "platforms:macos"
     toolset "clang"
 
-  filter "platforms:linux"
+  filter { "platforms:linux", "language:C++"}
     buildoptions "-std=c++11"
 
 project "blitzide"
