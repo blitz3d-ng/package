@@ -319,7 +319,7 @@ void MainFrame::currentSet( Tabber *tabber,int index ){
 }
 
 void MainFrame::helpOpen( HelpView *help,const string &file ){
-	open( file );
+	load( "",file );
 }
 
 void MainFrame::helpTitleChange( HelpView *help,const string &title ){
@@ -367,6 +367,24 @@ void MainFrame::newed( const string &t ){
 	string s=t.size() ? getFile( t ) : "<untitled>";
 	tabber.insert( n,e,s.c_str() );
 	tabber.setCurrent( n );
+}
+
+bool MainFrame::load( const string &t, const string &f ){
+	string file=f;
+
+	ifstream in( file.c_str() );
+	if( !in.good() ){
+		string e="Error reading file \""+f+"\"";
+		AfxMessageBox( e.c_str(),MB_ICONWARNING );
+		return false;
+	}
+	newed( t );
+	tabber.UpdateWindow();
+	Editor *e=getEditor();
+	e->setText( in );
+	e->setModified( false );
+	cursorMoved( e );
+	return true;
 }
 
 bool MainFrame::open( const string &f ){
@@ -423,14 +441,12 @@ bool MainFrame::open( const string &f ){
 		AfxMessageBox( e.c_str(),MB_ICONWARNING );
 		return false;
 	}
-	newed( file );
-	tabber.UpdateWindow();
+	if ( !load( file,file ) ){
+		return false;
+	}
 	Editor *e=getEditor();
-	e->setText( in );
 	e->setName( file );
-	e->setModified( false );
 	insertRecent( file );
-	cursorMoved( e );
 	return true;
 }
 

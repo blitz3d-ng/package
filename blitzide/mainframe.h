@@ -89,6 +89,7 @@ private:
 
 	void insertRecent( const string &f );
 	void newed( const string &t );
+	bool load( const string &t,const string &f );
 	bool open( const string &f );
 	bool close( int n );
 	bool save( int n );
