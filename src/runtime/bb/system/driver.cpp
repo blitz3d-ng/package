@@ -93,21 +93,17 @@ int BBCALL bbScreenHeight( int i ){
 	return sys_driver->getScreenHeight( i );
 }
 
-// TODO: figure a more elegant way to handle this...
-#if defined(WIN32) || defined(WIN64)
-#include <bb/system.windows/driver.h>
-#endif
 
 BBMODULE_CREATE( system ){
-#if defined(WIN32) || defined(WIN64)
-	sys_driver=d_new WindowsSystemDriver();
+	sys_driver=0;
 	return true;
-#else
-	return false;
-#endif
 }
 
 BBMODULE_DESTROY( system ){
+	if( sys_driver ){
+		delete sys_driver;
+		sys_driver=0;
+	}
 	return true;
 }
 

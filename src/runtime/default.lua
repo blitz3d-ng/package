@@ -8,6 +8,7 @@ local MODULE_CONFIG = {
     'stream',
     'sockets',
     'system',
+    'system.windows',
     'filesystem',
     'timer',
     'bank',
@@ -20,7 +21,7 @@ local MODULE_CONFIG = {
 }
 
 links { "gxruntime" }
-links { "audio.fmod", "fmodvc", "system", "system.windows", "filesystem.windows", "input.directinput8" }
+links { "audio.fmod", "fmodvc", "filesystem.windows", "input.directinput8" }
 links { "timer.windows", "timer" }
 links { "blitz", "audio", "bank", "filesystem", "stdutil", "blitz2d", "blitz3d", "graphics", "input", "math", "stream", "string", "sockets" }
 links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
