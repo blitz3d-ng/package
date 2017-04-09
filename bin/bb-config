@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+HOME       = File.realpath(File.join(File.dirname(__FILE__), '..'))
+LIBDIR     = "#{HOME}/_release/lib/macos".freeze
+INCLUDEDIR = "#{HOME}/src/runtime".freeze
+
+rt = ARGV.first
+
+modules = File.open("#{HOME}/src/runtime/#{rt}.modules.txt").read.split("\n")
+
+modules.keep_if { |mod| File.exist?("#{LIBDIR}/lib#{mod}.a") }
+
+puts "-I#{INCLUDEDIR} -L#{LIBDIR} -lruntime.#{rt} -lstub #{modules.reverse.map { |mod| "-l#{mod}" }.join(' ')}"

@@ -30,6 +30,7 @@ UpgradeLog.htm
 *.bb_bak*
 
 _release/bin
+_release/lib
 _release/cfg/blitzide.prefs
 _release/tmp
 
@@ -37,3 +38,4 @@ _release/tmp
 /innosetup/installs
 
 /src/runtime/*.stub.cpp
+/src/runtime/*.modules.txt

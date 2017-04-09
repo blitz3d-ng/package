@@ -89,6 +89,9 @@ workspace "blitz3d"
   filter "platforms:macos"
     toolset "clang"
 
+  filter { "platforms:macos", "kind:StaticLib" }
+    targetdir "_release/lib/%{cfg.platform}"
+
   filter { "platforms:linux", "language:C++"}
     buildoptions "-std=c++11"
 
@@ -235,24 +238,31 @@ runtimes = { 'default', 'dplay' }
 
 for i,rt in ipairs(runtimes) do
   project("runtime." .. rt)
-    kind "SharedLib"
+    local config = require("src/runtime/" .. rt)
+    filter {}
+
     language "C++"
 
-    removeplatforms { "win64", "macos", "linux" }
-
-    targetdir "_release/bin"
-    targetprefix ""
-
     local STUB_PATH="src/runtime/" .. rt .. ".stub.cpp"
+    files { STUB_PATH }
 
-    files {
-      "bbruntime_dll/bbruntime_dll.h",
-      "bbruntime_dll/bbruntime_dll.cpp",
-      "bbruntime_dll/bbruntime_dll.rc",
-      "bbruntime_dll/resource.h",
-      "bbruntime_dll/dpi.manifest",
-      STUB_PATH
-    }
+    filter "platforms:macos"
+      kind "StaticLib"
+
+    filter "platforms:win32 or win64 or mingw32"
+      kind "SharedLib"
+      targetdir "_release/bin"
+      targetprefix ""
+
+      files {
+        "bbruntime_dll/bbruntime_dll.h",
+        "bbruntime_dll/bbruntime_dll.cpp",
+        "bbruntime_dll/bbruntime_dll.rc",
+        "bbruntime_dll/resource.h",
+        "bbruntime_dll/dpi.manifest"
+      }
+
+    filter {}
 
     links "stub"
 
@@ -260,7 +270,11 @@ for i,rt in ipairs(runtimes) do
       return mod:gsub( "%.","_" )
     end
 
-    local config = require("src/runtime/" .. rt)
+    local list = io.open( "src/runtime/" .. rt .. ".modules.txt","w" )
+    for j,mod in ipairs(config.modules) do
+      list:write(mod .. "\n")
+    end
+    list:close()
 
     local stub = io.open( STUB_PATH .. ".tmp","w" )
 
@@ -327,9 +341,15 @@ project "stub"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos", "linux" }
+  removeplatforms { "linux" }
 
-  files { "src/runtime/bb/stub/stub.cpp", "src/runtime/bb/stub/stub.h" }
+  files "src/runtime/bb/stub/stub.h"
+
+  filter "platforms:win32 or win64 or mingw32"
+    files "src/runtime/bb/stub/stub.windows.cpp"
+
+  filter "platforms:macos"
+    files "src/runtime/bb/stub/stub.macos.cpp"
 
 project "gxruntime"
   kind "StaticLib"
