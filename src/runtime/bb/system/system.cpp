@@ -1,7 +1,7 @@
 
 #include "../../stdutil/stdutil.h"
 #include <bb/blitz/blitz.h>
-#include "driver.h"
+#include "system.h"
 
 BBSystemDriver *sys_driver;
 

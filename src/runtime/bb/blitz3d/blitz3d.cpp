@@ -4,6 +4,7 @@
 #ifdef PRO
 
 #include "blitz3d.h"
+#include <bb/system/system.h>
 #include <bb/graphics/graphics.h>
 #include <bb/blitz3d/blitz3d.h>
 #include <bb/blitz3d/world.h>
@@ -24,9 +25,6 @@
 #include <bb/blitz3d/listener.h>
 #include <bb/blitz3d/cachedtexture.h>
 #include <bb/blitz3d/std.h>
-
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
 
 BBScene *gx_scene;
 
@@ -283,9 +281,9 @@ void BBCALL bbUpdateWorld( float elapsed ){
 	return;
 #endif
 
-	update_ms=gx_runtime->getMilliSecs();
+	update_ms=bbMilliSecs();
 	world->update( elapsed );
-	update_ms=gx_runtime->getMilliSecs()-update_ms;
+	update_ms=bbMilliSecs()-update_ms;
 }
 
 void BBCALL bbCaptureWorld(){
@@ -304,9 +302,9 @@ void BBCALL bbRenderWorld( float tween ){
 #endif
 
 	int tris=gx_scene->getTrianglesDrawn();
-	int render_ms=gx_runtime->getMilliSecs();
+	int render_ms=bbMilliSecs();
 	world->render( tween );
-	render_ms=gx_runtime->getMilliSecs()-render_ms;
+	render_ms=bbMilliSecs()-render_ms;
 
 	extern int BBCALL bbKeyHit(int);
 	extern void BBCALL bbDelay(int);
@@ -325,7 +323,7 @@ void BBCALL bbRenderWorld( float tween ){
 	tris=gx_scene->getTrianglesDrawn()-tris;
 
 	static int time;
-	int frame_ms=gx_runtime->getMilliSecs()-time;
+	int frame_ms=bbMilliSecs()-time;
 	time+=frame_ms;
 
 	int fps=frame_ms ? 1000/frame_ms : 1000;
@@ -1161,8 +1159,8 @@ Entity * BBCALL bbLoadSprite( BBStr *file,int flags,Entity *p ){
 	s->setTexture( 0,t,0 );
 	s->setFX( BBScene::FX_FULLBRIGHT );
 
-	if( flags & gxCanvas::CANVAS_TEX_MASK ) s->setBlend( BBScene::BLEND_REPLACE );
-	else if( flags & gxCanvas::CANVAS_TEX_ALPHA ) s->setBlend( BBScene::BLEND_ALPHA );
+	if( flags & BBCanvas::CANVAS_TEX_MASK ) s->setBlend( BBScene::BLEND_REPLACE );
+	else if( flags & BBCanvas::CANVAS_TEX_ALPHA ) s->setBlend( BBScene::BLEND_ALPHA );
 	else s->setBlend( BBScene::BLEND_ADD );
 
 	return insertEntity( s,p );
@@ -1295,7 +1293,7 @@ Entity * BBCALL bbCreateTerrain( int n,Entity *p ){
 
 Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
 	debugParent(p);
-	BBCanvas *c=gx_graphics->loadCanvas( *file,gxCanvas::CANVAS_HIGHCOLOR );
+	BBCanvas *c=gx_graphics->loadCanvas( *file,BBCanvas::CANVAS_HIGHCOLOR );
 	if( !c ) RTEX( "Unable to load heightmap image" );
 	int w=c->getWidth(),h=c->getHeight();
 	if( w!=h ) RTEX( "Terrain must be square" );
@@ -1976,7 +1974,7 @@ void blitz3d_open(){
 	picked.collision=Collision();
 	picked.with=0;picked.coords=Vector();
 	Texture::clearFilters();
-	Texture::addFilter( "",gxCanvas::CANVAS_TEX_RGB|gxCanvas::CANVAS_TEX_MIPMAP );
+	Texture::addFilter( "",BBCanvas::CANVAS_TEX_RGB|BBCanvas::CANVAS_TEX_MIPMAP );
 	loader_mat_map.clear();
 	loader_mat_map["x"]=Transform();
 	loader_mat_map["3ds"]=Transform(Matrix(Vector(1,0,0),Vector(0,0,1),Vector(0,1,0)));
