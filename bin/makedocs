@@ -19,7 +19,8 @@ Dir.glob('_release/help/**/*.md') do |path|
   end
 
   define_method :example_path do
-    File.join('..', '3d_examples', [File.basename(path, '.md'), 'bb'].join('.'))
+    dim = path.match(/\/([23]d)_commands\//).to_a[1]
+    File.join('..', "#{dim}_examples", [File.basename(path, '.md'), 'bb'].join('.'))
   end
 
   define_method :example_source do
