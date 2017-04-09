@@ -47,7 +47,7 @@ struct Player{
 		player_map.clear();
 	}
 
-	Player::~Player(){
+	~Player(){
 		new_players.remove( this );
 		players.remove( this );
 		player_map.clear();
