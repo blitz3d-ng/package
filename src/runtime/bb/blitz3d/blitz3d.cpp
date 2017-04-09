@@ -509,14 +509,42 @@ void BBCALL bbBrushColor( Brush *br,float r,float g,float b ){
 	br->setColor( Vector( r*ctof,g*ctof,b*ctof ) );
 }
 
+int BBCALL bbGetBrushRed( Brush *b ){
+	debugBrush(b);
+	Vector c=b->getColor( );
+	return c.x*255.0f;
+}
+
+int BBCALL bbGetBrushGreen( Brush *b ){
+	debugBrush(b);
+	Vector c=b->getColor( );
+	return c.y*255.0f;
+}
+
+int BBCALL bbGetBrushBlue( Brush *b ){
+	debugBrush(b);
+	Vector c=b->getColor( );
+	return c.z*255.0f;
+}
+
 void BBCALL bbBrushAlpha( Brush *b,float alpha ){
 	debugBrush(b);
 	b->setAlpha( alpha );
 }
 
+float BBCALL bbGetBrushAlpha( Brush *b ){
+	debugBrush(b);
+	return b->getAlpha( );
+}
+
 void BBCALL bbBrushShininess( Brush *b,float n ){
 	debugBrush(b);
 	b->setShininess( n );
+}
+
+float BBCALL bbGetBrushShininess( Brush *b ){
+	debugBrush(b);
+	return b->getShininess( );
 }
 
 void BBCALL bbBrushTexture( Brush *b,Texture *t,int frame,int index ){
@@ -537,9 +565,19 @@ void BBCALL bbBrushBlend( Brush *b,int blend ){
 	b->setBlend( blend );
 }
 
+int BBCALL bbGetBrushBlend( Brush *b ){
+	debugBrush(b);
+	return b->getBlend( );
+}
+
 void BBCALL bbBrushFX( Brush *b,int fx ){
 	debugBrush(b);
 	b->setFX( fx );
+}
+
+int BBCALL bbGetBrushFX( Brush *b ){
+	debugBrush(b);
+	return b->getFX( );
 }
 
 ///////////////////
@@ -2009,12 +2047,19 @@ BBMODULE_LINK( blitz3d ){
 	rtSym( "%LoadBrush$file%texture_flags=1#u_scale=1#v_scale=1",bbLoadBrush );
 	rtSym( "FreeBrush%brush",bbFreeBrush );
 	rtSym( "BrushColor%brush#red#green#blue",bbBrushColor );
+	rtSym( "%GetBrushRed%brush",bbGetBrushRed );
+	rtSym( "%GetBrushGreen%brush",bbGetBrushGreen );
+	rtSym( "%GetBrushBlue%brush",bbGetBrushBlue );
 	rtSym( "BrushAlpha%brush#alpha",bbBrushAlpha );
+	rtSym( "#GetBrushAlpha%brush",bbGetBrushAlpha );
 	rtSym( "BrushShininess%brush#shininess",bbBrushShininess );
+	rtSym( "#GetBrushShininess%brush",bbGetBrushShininess );
 	rtSym( "BrushTexture%brush%texture%frame=0%index=0",bbBrushTexture );
 	rtSym( "%GetBrushTexture%brush%index=0",bbGetBrushTexture );
 	rtSym( "BrushBlend%brush%blend",bbBrushBlend );
+	rtSym( "%GetBrushFX%brush",bbGetBrushBlend );
 	rtSym( "BrushFX%brush%fx",bbBrushFX );
+	rtSym( "%GetBrushFX%brush",bbGetBrushFX );
 
 	rtSym( "%LoadMesh$file%parent=0",bbLoadMesh );
 	rtSym( "%LoadAnimMesh$file%parent=0",bbLoadAnimMesh );
