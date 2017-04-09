@@ -1,6 +1,6 @@
 # Blitz3D "NG"
-[![Build status](https://ci.appveyor.com/api/projects/status/vsucgrijg8uk3b44/branch/master?svg=true)](https://ci.appveyor.com/project/kfprimm/blitz3d-ng/branch/master)
- [![Build Status](https://travis-ci.org/kfprimm/blitz3d-ng.svg?branch=master)](https://travis-ci.org/kfprimm/blitz3d-ng)
+[![Build status](https://ci.appveyor.com/api/projects/status/ww8qjywqm6rb5rnu/branch/master?svg=true)](https://ci.appveyor.com/project/kfprimm/blitz3d-ng-gj3xh/branch/master)
+[![Build Status](https://travis-ci.org/blitz3d-ng/blitz3d-ng.svg?branch=master)](https://travis-ci.org/blitz3d-ng/blitz3d-ng)
 
 This project is an attempt to revive & modernize Blitz3D.
 
