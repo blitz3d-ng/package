@@ -6,10 +6,8 @@
 #include <string>
 #include <vector>
 
-#include <bb/audio.fmod/driver.h>
 #include <bb/input.directinput8/driver.h>
 #include "gxgraphics.h"
-#include <bb/timer/timer.h>
 
 #include "../debugger/debugger.h"
 
@@ -21,7 +19,6 @@ public:
 	HWND hwnd;
 	HINSTANCE hinst;
 
-	FMODAudioDriver *audio;
 	DirectInput8Driver *input;
 	gxGraphics *graphics;
 
@@ -119,18 +116,12 @@ public:
 
 	void windowedModeInfo( int *caps );
 
-	BBAudioDriver *openAudio( int flags );
-	void closeAudio( BBAudioDriver *audio );
-
 	BBInputDriver *openInput( int flags );
 	void closeInput( BBInputDriver *input );
 
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
 	void closeGraphics( BBGraphics *graphics );
 	bool graphicsLost();
-
-	BBTimer *createTimer( int hertz );
-	void freeTimer( BBTimer *timer );
 
 	void enableDirectInput( bool use );
 	int  directInputEnabled(){ return use_di; }

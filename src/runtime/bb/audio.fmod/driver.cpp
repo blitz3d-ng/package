@@ -1,5 +1,7 @@
 
 #include "../../stdutil/stdutil.h"
+#include <bb/blitz/module.h>
+#include <bb/runtime/runtime.h>
 #include <vector>
 #include <map>
 #include <set>
@@ -190,12 +192,12 @@ FMODAudioDriver::~FMODAudioDriver(){
 	FSOUND_Close();
 }
 
-bool FMODAudioDriver::init( const BBEnv &env ){
+bool FMODAudioDriver::init(){
 	int f_flags=
 		FSOUND_INIT_GLOBALFOCUS|
 		FSOUND_INIT_USEDEFAULTMIDISYNTH;
 
-	FSOUND_SetHWND( (HWND)env.window );
+	FSOUND_SetHWND( (HWND)bbRuntimeWindow() );
 	if( !FSOUND_Init( 44100,1024,f_flags ) ){
 		return false;
 	}
@@ -223,12 +225,6 @@ BBChannel *FMODAudioDriver::play3d( FSOUND_SAMPLE *sample,const float pos[3],con
 	FSOUND_3D_SetAttributes( n,(float*)pos,(float*)vel );
 	FSOUND_SetPaused( n,false );
 	return allocSoundChannel( n );
-}
-
-void FMODAudioDriver::pause(){
-}
-
-void FMODAudioDriver::resume(){
 }
 
 BBSound *FMODAudioDriver::loadSound( const string &f,bool use3d ){
@@ -301,4 +297,21 @@ BBChannel *FMODAudioDriver::playFile( const string &t,bool use_3d ){
 BBChannel *FMODAudioDriver::playCDTrack( int track,int mode ){
 	cdChannel->play( track,mode );
 	return cdChannel;
+}
+
+BBMODULE_CREATE( audio_fmod ){
+	if( !gx_audio ){
+		gx_audio=d_new FMODAudioDriver();
+		if( !gx_audio->init() ){
+			gx_audio=0;
+		}
+	}
+	return true;
+}
+
+BBMODULE_DESTROY( audio_fmod ){
+	return true;
+}
+
+BBMODULE_LINK( audio_fmod ){
 }

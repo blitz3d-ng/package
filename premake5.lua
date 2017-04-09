@@ -316,7 +316,11 @@ for i,rt in ipairs(runtimes) do
     new_stub:close()
 
     filter {}
-    links(config.modules)
+
+    -- link in reverse order
+    for i=#config.modules,1,-1 do
+      links(config.modules[i])
+    end
 end
 
 project "stub"
@@ -372,8 +376,6 @@ project "blitz"
 project "audio"
   kind "StaticLib"
   language "C++"
-
-  removeplatforms { "macos", "linux" }
 
   files {
     "src/runtime/bb/audio/channel.cpp", "src/runtime/bb/audio/channel.h",
@@ -521,9 +523,10 @@ project "timer"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos", "linux" }
-
-  files { "src/runtime/bb/timer/timer.h", "src/runtime/bb/timer/timer.cpp" }
+  files {
+    "src/runtime/bb/timer/timer.h",
+    "src/runtime/bb/timer/timer.cpp"
+  }
 
 project "timer.windows"
   kind "StaticLib"
@@ -531,7 +534,10 @@ project "timer.windows"
 
   removeplatforms { "macos", "linux" }
 
-  files { "src/runtime/bb/timer.windows/timer.windows.h", "src/runtime/bb/timer.windows/timer.windows.cpp" }
+  files {
+    "src/runtime/bb/timer.windows/timer.windows.h",
+    "src/runtime/bb/timer.windows/timer.windows.cpp"
+  }
 
 project "blitz2d"
   kind "StaticLib"

@@ -1,8 +1,7 @@
 
 #include "module.h"
-
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
+#include <string>
+using namespace std;
 
 static inline void debugSound( BBSound *s ){
 	if( bb_env.debug ){
@@ -109,13 +108,15 @@ BBSound * BBCALL bbLoad3DSound( BBStr *f ){
 #endif
 
 BBMODULE_CREATE( audio ){
-	gx_audio=gx_runtime->openAudio( 0 );
+	gx_audio=0;
 	return true;
 }
 
 BBMODULE_DESTROY( audio ){
-	if( gx_audio ) gx_runtime->closeAudio( gx_audio );
-	gx_audio=0;
+	if( gx_audio ){
+		delete gx_audio;
+		gx_audio=0;
+	}
 	return true;
 }
 

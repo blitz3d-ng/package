@@ -4,7 +4,6 @@
 
 #include "sound.h"
 
-struct BBEnv;
 struct FSOUND_SAMPLE;
 
 class FMODAudioDriver : public BBAudioDriver{
@@ -15,14 +14,11 @@ public:
 	BBChannel *play( FSOUND_SAMPLE *sample );
 	BBChannel *play3d( FSOUND_SAMPLE *sample,const float pos[3],const float vel[3] );
 
-	void pause();
-	void resume();
-
 private:
 
 	/***** GX INTERFACE *****/
 public:
-	bool init( const BBEnv &env );
+	bool init();
 
 	BBSound *loadSound( const std::string &filename,bool use_3d );
 	BBSound *verifySound( BBSound *sound );

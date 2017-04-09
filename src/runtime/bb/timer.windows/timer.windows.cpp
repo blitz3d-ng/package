@@ -26,3 +26,9 @@ int WindowsTimer::wait(){
 	ticks_get+=n;
 	return n;
 }
+
+BBTimer *_bbCreateTimer( int hertz ){
+	return new WindowsTimer( hertz );
+}
+
+BBMODULE_EMPTY( timer_windows );

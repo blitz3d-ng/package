@@ -22,4 +22,9 @@
 	BBMODULE_DESTROY( name ); \
 	BBMODULE_LINK( name );
 
+#define BBMODULE_EMPTY( name ) \
+	BBMODULE_CREATE( name ) { return true; } \
+	BBMODULE_DESTROY( name ) { return true; } \
+	BBMODULE_LINK( name ) { }
+
 #endif

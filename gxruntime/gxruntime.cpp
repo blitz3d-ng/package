@@ -1,7 +1,9 @@
 
 #include "std.h"
 #include "gxruntime.h"
+#include <bb/runtime/runtime.h>
 #include <bb/timer.windows/timer.windows.h>
+#include <bb/audio/driver.h>
 #include "zmouse.h"
 
 gxRuntime *gx_runtime;
@@ -31,6 +33,15 @@ static bool busy,suspended;
 static volatile bool run_flag;
 static DDSURFACEDESC2 desktop_desc;
 
+// TODO: Move these to the proper place...
+void *bbRuntimeWindow(){
+	return runtime->hwnd;
+}
+
+bool bbRuntimeIdle(){
+	return runtime->idle();
+}
+
 static LRESULT CALLBACK windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam );
 
 //current gfx mode
@@ -50,8 +61,6 @@ static MMRESULT timerID;
 static IDirectDrawClipper *clipper;
 static IDirectDrawSurface7 *primSurf;
 static Debugger *debugger;
-
-static set<BBTimer*> timers;
 
 enum{
 	WM_STOP=WM_USER+1,WM_RUN,WM_END
@@ -108,7 +117,7 @@ typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
 gxRuntime::gxRuntime( HINSTANCE hi,const string &cl,HWND hw ):
 hinst(hi),cmd_line(cl),hwnd(hw),curr_driver(0),enum_all(false),
-pointer_visible(true),audio(0),input(0),graphics(0),use_di(false){
+pointer_visible(true),input(0),graphics(0),use_di(false){
 
 	CoInitialize( 0 );
 
@@ -132,8 +141,6 @@ pointer_visible(true),audio(0),input(0),graphics(0),use_di(false){
 }
 
 gxRuntime::~gxRuntime(){
-	while( timers.size() ) freeTimer( *timers.begin() );
-	if( audio ) closeAudio( audio );
 	if( graphics ) closeGraphics( graphics );
 	if( input ) closeInput( input );
 	TIMECAPS tc;
@@ -147,11 +154,11 @@ gxRuntime::~gxRuntime(){
 }
 
 void gxRuntime::pauseAudio(){
-	if( audio ) audio->pause();
+	if( gx_audio ) gx_audio->setPaused( true );
 }
 
 void gxRuntime::resumeAudio(){
-	if( audio ) audio->resume();
+	if( gx_audio ) gx_audio->setPaused( false );
 }
 
 void gxRuntime::backupGraphics(){
@@ -656,26 +663,6 @@ void gxRuntime::setPointerVisible( bool vis ){
 }
 
 /////////////////
-// AUDIO SETUP //
-/////////////////
-BBAudioDriver *gxRuntime::openAudio( int flags ){
-	if( audio ) return 0;
-	audio=d_new FMODAudioDriver();
-	if( audio->init( env ) ){
-		return audio;
-	}else{
-		closeAudio( audio );
-		return 0;
-	}
-}
-
-void gxRuntime::closeAudio( BBAudioDriver *a ){
-	if( !audio || audio!=a ) return;
-	delete audio;
-	audio=0;
-}
-
-/////////////////
 // INPUT SETUP //
 /////////////////
 BBInputDriver *gxRuntime::openInput( int flags ){
@@ -1096,18 +1083,6 @@ void gxRuntime::windowedModeInfo( int *c ){
 	if( drivers[0]->d3d_desc.dwDeviceRenderBitDepth & bd ) caps|=GFXMODECAPS_3D;
 #endif
 	*c=caps;
-}
-
-BBTimer *gxRuntime::createTimer( int hertz ){
-	BBTimer *t=d_new WindowsTimer( hertz );
-	timers.insert( t );
-	return t;
-}
-
-void gxRuntime::freeTimer( BBTimer *t ){
-	if( !timers.count( t ) ) return;
-	timers.erase( t );
-	delete t;
 }
 
 static string toDir( string t ){

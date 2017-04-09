@@ -6,16 +6,16 @@
 #include "channel.h"
 #include "sound.h"
 
-struct BBEnv;
-
 class BBAudioDriver{
+public:
+  virtual ~BBAudioDriver();
   /***** GX INTERFACE *****/
 public:
   enum{
     CD_MODE_ONCE=1,CD_MODE_LOOP,CD_MODE_ALL
   };
 
-  virtual bool init( const BBEnv &env )=0;
+  virtual bool init()=0;
 
   virtual BBSound *loadSound( const std::string &filename,bool use_3d )=0;
   virtual BBSound *verifySound( BBSound *sound )=0;

@@ -6,13 +6,13 @@
 
 class BBTimer{
 public:
-	// BBTimer( int hertz );
-	// ~BBTimer();
+	virtual ~BBTimer();
 	/***** GX INTERFACE *****/
 public:
 	virtual int wait()=0;
 };
 
+BBTimer * BBCALL _bbCreateTimer( int hertz );
 BBTimer * BBCALL bbCreateTimer( int hertz );
 int BBCALL bbWaitTimer( BBTimer *t );
 void BBCALL bbFreeTimer( BBTimer *t );

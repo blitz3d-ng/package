@@ -12,19 +12,20 @@ local MODULE_CONFIG = {
     'filesystem',
     'filesystem.windows',
     'timer',
+    'timer.windows',
     'bank',
     'graphics',
     'input',
     'audio',
+    'audio.fmod',
     'blitz3d',
     'userlibs'
   }
 }
 
 links { "gxruntime" }
-links { "audio.fmod", "fmodvc", "filesystem.windows", "input.directinput8" }
-links { "timer.windows", "timer" }
-links { "blitz", "audio", "bank", "filesystem", "stdutil", "blitz2d", "blitz3d", "graphics", "input", "math", "stream", "string", "sockets" }
+links { "fmodvc", "input.directinput8" }
+links { "filesystem", "stdutil", "blitz2d" }
 links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
 links { "dxguid" }
 links { "wsock32", "winmm", "dxguid", "d3dxof", "ddraw", "dinput8", "dsound", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32" }
