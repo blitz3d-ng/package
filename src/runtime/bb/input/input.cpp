@@ -1,10 +1,13 @@
 
+#include "../../stdutil/stdutil.h"
 #include <bb/blitz/blitz.h>
 #include <bb/runtime/runtime.h>
 #include <bb/system/system.h>
+#include "input.h"
 
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
+#include <vector>
+#include <string.h>
+using namespace std;
 
 BBInputDriver *gx_input;
 BBDevice *gx_mouse;
@@ -15,8 +18,8 @@ static int mouse_x,mouse_y,mouse_z;
 static const float JLT=-1.0f/3.0f;
 static const float JHT=1.0f/3.0f;
 
-BBMODULE_CREATE( input ){
-	if( gx_input=gx_runtime->openInput( 0 ) ){
+int BBCALL bbEnumInput(){
+	if( gx_input ){
 		if( gx_keyboard=gx_input->getKeyboard() ){
 			if( gx_mouse=gx_input->getMouse() ){
 				gx_joysticks.clear();
@@ -27,16 +30,22 @@ BBMODULE_CREATE( input ){
 				return true;
 			}
 		}
-		gx_runtime->closeInput( gx_input );
-		gx_input=0;
+		return true;
 	}
 	return false;
 }
 
+BBMODULE_CREATE( input ){
+	gx_input=0;
+	return true;
+}
+
 BBMODULE_DESTROY( input ){
 	gx_joysticks.clear();
-	gx_runtime->closeInput( gx_input );
-	gx_input=0;
+	if( gx_input ){
+		delete gx_input;
+		gx_input=0;
+	}
 	return true;
 }
 

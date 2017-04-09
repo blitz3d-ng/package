@@ -225,6 +225,8 @@ runtime(rt),dirInput(di){
 }
 
 DirectInput8Driver::~DirectInput8Driver(){
+	unacquire();
+
 	for( int k=0;k<joysticks.size();++k ) delete joysticks[k];
 	joysticks.clear();
 	delete mouse;
@@ -350,6 +352,19 @@ int  BBCALL bbDirectInputEnabled(){
 }
 
 BBMODULE_CREATE( input_directinput8 ){
+	if( !gx_input ){
+		IDirectInput8 *di;
+		if( DirectInput8Create( GetModuleHandle(0),DIRECTINPUT_VERSION,IID_IDirectInput8,(void**)&di,0 )>=0 ){
+			gx_input=d_new DirectInput8Driver( gx_runtime,di );
+			((DirectInput8Driver*)gx_input)->acquire(); // TODO: original code called gx_runtime->aquireInput(). Figure out when this should be called.
+			if( !bbEnumInput() ){
+				gx_runtime->debugInfo( "Failed to enumerate input devices" );
+				gx_input=0;
+			}
+		}else{
+			gx_runtime->debugInfo( "Create DirectInput failed" );
+		}
+	}
 	return true;
 }
 

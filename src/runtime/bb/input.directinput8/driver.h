@@ -3,7 +3,7 @@
 #define GXINPUT_H
 
 #include <bb/blitz/module.h>
-#include <bb/input/driver.h>
+#include <bb/input/input.h>
 #include <dinput.h>
 
 class gxRuntime;

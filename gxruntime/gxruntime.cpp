@@ -2,9 +2,11 @@
 #include "std.h"
 #include "gxruntime.h"
 #include <bb/runtime/runtime.h>
-#include <bb/timer.windows/timer.windows.h>
+#include <bb/input.directinput8/driver.h>
 #include <bb/audio/driver.h>
 #include "zmouse.h"
+
+#define dx_input ((DirectInput8Driver*)gx_input)
 
 gxRuntime *gx_runtime;
 
@@ -117,7 +119,7 @@ typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
 gxRuntime::gxRuntime( HINSTANCE hi,const string &cl,HWND hw ):
 hinst(hi),cmd_line(cl),hwnd(hw),curr_driver(0),enum_all(false),
-pointer_visible(true),input(0),graphics(0),use_di(false){
+pointer_visible(true),graphics(0),use_di(false){
 
 	CoInitialize( 0 );
 
@@ -142,7 +144,6 @@ pointer_visible(true),input(0),graphics(0),use_di(false){
 
 gxRuntime::~gxRuntime(){
 	if( graphics ) closeGraphics( graphics );
-	if( input ) closeInput( input );
 	TIMECAPS tc;
 	timeGetDevCaps( &tc,sizeof(tc) );
 	timeEndPeriod( tc.wPeriodMin );
@@ -174,24 +175,24 @@ void gxRuntime::restoreGraphics(){
 }
 
 void gxRuntime::resetInput(){
-	if( input ) input->reset();
+	if( gx_input ) dx_input->reset();
 }
 
 void gxRuntime::acquireInput(){
-	if( !input ) return;
+	if( !gx_input ) return;
 	if( gfx_mode==3 ){
 		if( use_di ){
-			use_di=input->acquire();
+			use_di=dx_input->acquire();
 		}else{
 		}
 	}
-	input->reset();
+	dx_input->reset();
 }
 
 void gxRuntime::unacquireInput(){
-	if( !input ) return;
-	if( gfx_mode==3 && use_di ) input->unacquire();
-	input->reset();
+	if( !gx_input ) return;
+	if( gfx_mode==3 && use_di ) dx_input->unacquire();
+	dx_input->reset();
 }
 
 /////////////
@@ -392,10 +393,10 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 		break;
 	}
 
-	if( !input || suspended ) return DefWindowProc( hwnd,msg,wparam,lparam );
+	if( !gx_input || suspended ) return DefWindowProc( hwnd,msg,wparam,lparam );
 
 	if( gfx_mode==3 && use_di ){
-		use_di=input->acquire();
+		use_di=dx_input->acquire();
 		return DefWindowProc( hwnd,msg,wparam,lparam );
 	}
 
@@ -404,34 +405,34 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 	//handle input messages
 	switch( msg ){
 	case WM_LBUTTONDOWN:
-		input->wm_mousedown(1);
+		dx_input->wm_mousedown(1);
 		SetCapture(hwnd);
 		break;
 	case WM_LBUTTONUP:
-		input->wm_mouseup(1);
+		dx_input->wm_mouseup(1);
 		if( !(wparam&MK_ALLBUTTONS) ) ReleaseCapture();
 		break;
 	case WM_RBUTTONDOWN:
-		input->wm_mousedown(2);
+		dx_input->wm_mousedown(2);
 		SetCapture( hwnd );
 		break;
 	case WM_RBUTTONUP:
-		input->wm_mouseup(2);
+		dx_input->wm_mouseup(2);
 		if( !(wparam&MK_ALLBUTTONS) ) ReleaseCapture();
 		break;
 	case WM_MBUTTONDOWN:
-		input->wm_mousedown(3);
+		dx_input->wm_mousedown(3);
 		SetCapture( hwnd );
 		break;
 	case WM_MBUTTONUP:
-		input->wm_mouseup(3);
+		dx_input->wm_mouseup(3);
 		if( !(wparam&MK_ALLBUTTONS) ) ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
 		if( !graphics ) break;
 		if( gfx_mode==3 && !use_di ){
 			POINT p;GetCursorPos( &p );
-			input->wm_mousemove( p.x,p.y );
+			dx_input->wm_mousemove( p.x,p.y );
 		}else{
 			int x=(short)(lparam&0xffff),y=lparam>>16;
 			if( gfx_mode==1 ){
@@ -443,18 +444,18 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 			else if( x>=graphics->getWidth() ) x=graphics->getWidth()-1;
 			if( y<0 ) y=0;
 			else if( y>=graphics->getHeight() ) y=graphics->getHeight()-1;
-			input->wm_mousemove( x,y );
+			dx_input->wm_mousemove( x,y );
 		}
 		break;
 	case WM_MOUSEWHEEL:
-		input->wm_mousewheel( (short)HIWORD( wparam ) );
+		dx_input->wm_mousewheel( (short)HIWORD( wparam ) );
 		break;
 	case WM_KEYDOWN:case WM_SYSKEYDOWN:
 		if( lparam & 0x40000000 ) break;
-		if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) input->wm_keydown( n );
+		if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) dx_input->wm_keydown( n );
 		break;
 	case WM_KEYUP:case WM_SYSKEYUP:
-		if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) input->wm_keyup( n );
+		if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) dx_input->wm_keyup( n );
 		break;
 	default:
 		return DefWindowProc( hwnd,msg,wparam,lparam );
@@ -660,28 +661,6 @@ void gxRuntime::setPointerVisible( bool vis ){
 	POINT pt;
 	GetCursorPos( &pt );
 	SetCursorPos( pt.x,pt.y );
-}
-
-/////////////////
-// INPUT SETUP //
-/////////////////
-BBInputDriver *gxRuntime::openInput( int flags ){
-	if( input ) return 0;
-	IDirectInput8 *di;
-	if( DirectInput8Create( hinst,DIRECTINPUT_VERSION,IID_IDirectInput8,(void**)&di,0 )>=0 ){
-		input=d_new DirectInput8Driver( this,di );
-		acquireInput();
-	}else{
-		debugInfo( "Create DirectInput failed" );
-	}
-	return input;
-}
-
-void gxRuntime::closeInput( BBInputDriver *i ){
-	if( !input || input!=i ) return;
-	unacquireInput();
-	delete input;
-	input=0;
 }
 
 /////////////////////////////////////////////////////
@@ -1147,7 +1126,7 @@ string gxRuntime::systemProperty( const std::string &p ){
 	}else if( t=="directdraw7" ){
 		if( graphics ) return itoa( (int)graphics->dirDraw );
 	}else if( t=="directinput7" ){
-		if( input ) return itoa( (int)input->dirInput );
+		if( gx_input ) return itoa( (int)dx_input->dirInput );
 	}
 	return "";
 }

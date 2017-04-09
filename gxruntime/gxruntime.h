@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <bb/input.directinput8/driver.h>
 #include "gxgraphics.h"
 
 #include "../debugger/debugger.h"
@@ -19,7 +18,6 @@ public:
 	HWND hwnd;
 	HINSTANCE hinst;
 
-	DirectInput8Driver *input;
 	gxGraphics *graphics;
 
 	void flip( bool vwait );
@@ -115,9 +113,6 @@ public:
 	void dpiInfo( float *scale_x,float *scale_y );
 
 	void windowedModeInfo( int *caps );
-
-	BBInputDriver *openInput( int flags );
-	void closeInput( BBInputDriver *input );
 
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
 	void closeGraphics( BBGraphics *graphics );

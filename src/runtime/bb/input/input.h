@@ -2,14 +2,16 @@
 #ifndef BBINPUT_H
 #define BBINPUT_H
 
-#include <vector>
-
+#include <bb/blitz/blitz.h>
 #include <bb/input/driver.h>
+#include <vector>
 
 extern BBInputDriver *gx_input;
 extern BBDevice *gx_mouse;
 extern BBDevice *gx_keyboard;
 extern std::vector<BBDevice*> gx_joysticks;
+
+int BBCALL bbEnumInput();
 
 //keyboard
 int  BBCALL bbKeyDown( int n );
