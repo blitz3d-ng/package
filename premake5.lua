@@ -58,6 +58,9 @@ workspace "blitz3d"
 
     disablewarnings { "4018","4244","4996" }
 
+  filter { "platforms:macos or linux or mingw32" }
+    defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall" }
+
   filter { "platforms:win32 or win64", "kind:WindowedApp or ConsoleApp" }
     targetextension ".exe"
 
@@ -69,8 +72,7 @@ workspace "blitz3d"
     gccprefix "i686-w64-mingw32-"
 
     defines { "WIN32", "_WIN32", "__MINGW64_TOOLCHAIN__", "TARGETSUFFIX=", "PTW32_STATIC_LIB" }
-
-    defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall", "_declspec=__declspec", "_set_se_translator=set_se_translator" }
+    defines { "_declspec=__declspec", "_set_se_translator=set_se_translator" }
     linkoptions { "-static" }
 
   filter { "platforms:mingw32", "language:C++"}
@@ -436,11 +438,9 @@ project "filesystem"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos", "linux" }
-
   files {
-    "src/runtime/bb/filesystem/filesystem.cpp", "src/runtime/bb/filesystem/filesystem.h",
-    "src/runtime/bb/filesystem/driver.cpp", "src/runtime/bb/filesystem/driver.h"
+    "src/runtime/bb/filesystem/filesystem.cpp",
+    "src/runtime/bb/filesystem/filesystem.h"
   }
 
 project "filesystem.windows"
@@ -451,7 +451,8 @@ project "filesystem.windows"
 
   files {
     "src/runtime/bb/filesystem.windows/driver.cpp", "src/runtime/bb/filesystem.windows/driver.h",
-    "src/runtime/bb/filesystem.windows/dir.cpp", "src/runtime/bb/filesystem.windows/dir.h"
+    "src/runtime/bb/filesystem.windows/dir.cpp", "src/runtime/bb/filesystem.windows/dir.h",
+    "src/runtime/bb/filesystem.windows/module.cpp"
   }
 
   links "filesystem"
@@ -552,7 +553,7 @@ project "compiler"
   kind "ConsoleApp"
   language "C++"
 
-  removeplatforms { "win64", "linux" }
+  removeplatforms { "win64", "macos", "linux" }
 
   targetdir "_release/bin"
   targetname "blitzcc"

@@ -108,7 +108,7 @@ typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
 gxRuntime::gxRuntime( HINSTANCE hi,const string &cl,HWND hw ):
 hinst(hi),cmd_line(cl),hwnd(hw),curr_driver(0),enum_all(false),
-pointer_visible(true),audio(0),input(0),graphics(0),fileSystem(0),use_di(false){
+pointer_visible(true),audio(0),input(0),graphics(0),use_di(false){
 
 	CoInitialize( 0 );
 
@@ -945,20 +945,6 @@ void gxRuntime::closeGraphics( BBGraphics *g ){
 
 bool gxRuntime::graphicsLost(){
 	return gfx_lost;
-}
-
-BBFileSystem *gxRuntime::openFileSystem( int flags ){
-	if( fileSystem ) return 0;
-
-	fileSystem=d_new WindowsFileSystem();
-	return fileSystem;
-}
-
-void gxRuntime::closeFileSystem( BBFileSystem *f ){
-	if( !fileSystem || fileSystem!=f ) return;
-
-	delete fileSystem;
-	fileSystem=0;
 }
 
 ////////////////////

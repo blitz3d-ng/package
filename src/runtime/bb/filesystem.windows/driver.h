@@ -2,8 +2,7 @@
 #ifndef GXFILESYSTEM_H
 #define GXFILESYSTEM_H
 
-#include <string>
-#include <bb/filesystem/driver.h>
+#include <bb/filesystem/filesystem.h>
 
 class WindowsFileSystem : public BBFileSystem{
 public:

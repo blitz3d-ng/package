@@ -5,7 +5,7 @@
 #include <string>
 #include <windows.h>
 
-#include <bb/filesystem/driver.h>
+#include <bb/filesystem/filesystem.h>
 
 class WindowsDir : public BBDir{
 public:

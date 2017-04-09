@@ -1,12 +1,16 @@
 
+#include "../../stdutil/stdutil.h"
 #include "filesystem.h"
 #include <bb/stream/stream.h>
 #include <fstream>
-
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
+#include <string>
+#include <set>
+using namespace std;
 
 BBFileSystem *gx_filesys;
+
+BBFileSystem::~BBFileSystem(){
+}
 
 struct bbFile : public bbStream{
 	filebuf *buf;
@@ -137,15 +141,17 @@ void BBCALL bbDeleteFile( BBStr *f ){
 }
 
 BBMODULE_CREATE( filesystem ){
-	if( gx_filesys=gx_runtime->openFileSystem( 0 ) ){
-		return true;
-	}
-	return false;
+	gx_filesys=0;
+	return true;
 }
 
 BBMODULE_DESTROY( filesystem ){
-	while( file_set.size() ) bbCloseFile( *file_set.begin() );
-	gx_runtime->closeFileSystem( gx_filesys );
+	if( gx_filesys ){
+		while( file_set.size() ) bbCloseFile( *file_set.begin() );
+
+		delete gx_filesys;
+		gx_filesys=0;
+	}
 	return true;
 }
 

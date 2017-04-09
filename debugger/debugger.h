@@ -2,6 +2,8 @@
 #ifndef DEBUGGER_H
 #define DEBUGGER_H
 
+#include <bb/blitz/module.h>
+
 class Debugger{
 public:
 	virtual void debugRun()=0;
@@ -14,6 +16,6 @@ public:
 	virtual void debugSys( void *msg )=0;
 };
 
-extern "C" _declspec(dllexport) Debugger * _cdecl debuggerGetDebugger( void *mod,void *env );
+extern "C" BBDECL Debugger * _cdecl debuggerGetDebugger( void *mod,void *env );
 
 #endif

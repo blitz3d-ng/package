@@ -10,6 +10,7 @@ local MODULE_CONFIG = {
     'system',
     'system.windows',
     'filesystem',
+    'filesystem.windows',
     'timer',
     'bank',
     'graphics',

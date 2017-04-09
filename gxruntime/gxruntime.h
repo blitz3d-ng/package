@@ -9,7 +9,6 @@
 #include <bb/audio.fmod/driver.h>
 #include <bb/input.directinput8/driver.h>
 #include "gxgraphics.h"
-#include <bb/filesystem.windows/driver.h>
 #include <bb/timer/timer.h>
 
 #include "../debugger/debugger.h"
@@ -25,7 +24,6 @@ public:
 	FMODAudioDriver *audio;
 	DirectInput8Driver *input;
 	gxGraphics *graphics;
-	WindowsFileSystem *fileSystem;
 
 	void flip( bool vwait );
 	void moveMouse( int x,int y );
@@ -130,9 +128,6 @@ public:
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
 	void closeGraphics( BBGraphics *graphics );
 	bool graphicsLost();
-
-	BBFileSystem *openFileSystem( int flags );
-	void closeFileSystem( BBFileSystem *filesys );
 
 	BBTimer *createTimer( int hertz );
 	void freeTimer( BBTimer *timer );

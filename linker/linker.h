@@ -2,6 +2,8 @@
 #ifndef LINKER_H
 #define LINKER_H
 
+#include <bb/blitz/module.h>
+
 class Module{
 public:
 	virtual ~Module(){}
@@ -30,6 +32,6 @@ public:
 	virtual void deleteModule( Module *mod );
 };
 
-extern "C" _declspec(dllexport) Linker * _cdecl linkerGetLinker();
+extern "C" BBDECL Linker * _cdecl linkerGetLinker();
 
 #endif
