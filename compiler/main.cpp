@@ -16,6 +16,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
 
 #ifdef WIN32
 #include <direct.h>
@@ -31,6 +32,12 @@ using namespace std;
 #include "../compiler/assem_x86/assem_x86.h"
 #include "../compiler/codegen_x86/codegen_x86.h"
 #include "../bbruntime_dll/bbruntime_dll.h"
+
+#if defined(WIN32) && !defined(__MINGW32__)
+#define DEBUGGER "debugger"
+#else
+#define DEBUGGER "debugger.console"
+#endif
 
 static void showInfo(){
 	const int major=(VERSION&0xffff)/100,minor=(VERSION&0xffff)%100;
@@ -151,8 +158,8 @@ static const char *enumRuntimes( vector<string> &rts ){
 	HANDLE find;
 	find=FindFirstFile( (home+"/bin/runtime.*.dll").c_str(),&ffd );
 	do{
-		if( !(ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) ){
-			string fname(ffd.cFileName);
+		string fname(ffd.cFileName);
+		if( !(ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) && fname.length()>0 ){
 			fname=fname.substr( 8 );
 			fname=fname.substr( 0,fname.length()-4 );
 			rts.push_back( fname );
@@ -324,7 +331,7 @@ int main( int argc,char *argv[] ){
 		Debugger *debugger=0;
 
 		if( debug ){
-			dbgHandle=LoadLibrary( (home+"/bin/debugger.dll").c_str() );
+			dbgHandle=LoadLibrary( (home+"/bin/" DEBUGGER ".dll").c_str() );
 			if( dbgHandle ){
 				typedef Debugger *(_cdecl*GetDebugger)( Module*,Environ* );
 				GetDebugger gd=(GetDebugger)GetProcAddress( dbgHandle,"debuggerGetDebugger" );

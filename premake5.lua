@@ -79,11 +79,10 @@ workspace "blitz3d"
   filter { "platforms:mingw32", "kind:SharedLib" }
     targetprefix ""
     targetextension ".dll"
-    -- linkoptions { "-static-libstdc++", "-static-libgcc" }
+    linkoptions "-shared"
 
   filter { "platforms:mingw32", "kind:WindowedApp or ConsoleApp" }
     targetextension ".exe"
-    -- linkoptions { "-static-libstdc++", "-static-libgcc" }
 
   filter "platforms:macos"
     toolset "clang"
@@ -176,8 +175,6 @@ project "debugger"
   removeplatforms { "win64", "mingw32", "macos", "linux" }
 
   targetdir "_release/bin"
-  targetname "debugger"
-  targetextension ".dll"
 
   buildoptions "/w"
 
@@ -202,6 +199,14 @@ project "debugger"
     "debugger/dpi.cpp", "debugger/dpi.h",
     "debugger/debugger.h"
   }
+
+project "debugger.console"
+  kind "SharedLib"
+  language "C++"
+
+  targetdir "_release/bin"
+
+  files "src/debugger.console/main.cpp"
 
 project "bblaunch"
   kind "WindowedApp"
@@ -249,14 +254,18 @@ for i,rt in ipairs(runtimes) do
 
     links "stub"
 
+    local function to_ident(mod)
+      return mod:gsub( "%.","_" )
+    end
+
     local config = require("src/runtime/" .. rt)
 
-    local stub = io.open( STUB_PATH,"w" )
+    local stub = io.open( STUB_PATH .. ".tmp","w" )
 
     stub:write("\n#include <bb/stub/stub.h>\n\n")
 
     for j,mod in ipairs(config.modules) do
-      stub:write("BBMODULE_DECL( " .. mod .. " );\n")
+      stub:write("BBMODULE_DECL( " .. to_ident(mod) .. " );\n")
     end
 
     local function write_create_calls(modules, i)
@@ -265,14 +274,14 @@ for i,rt in ipairs(runtimes) do
         stub:write(s)
       end
 
-      write("if ( " .. modules[i] .. "_create() ){\n")
+      write("if ( " .. to_ident(modules[i]) .. "_create() ){\n")
       if i < #modules then
         write_create_calls( modules,i+1 )
-        write("\t" .. modules[i] .. "_destroy();\n");
+        write("\t" .. to_ident(modules[i]) .. "_destroy();\n");
       else
         write("\treturn true;\n")
       end
-      write("}else sue( \"" .. modules[i] .. "_create failed\" );\n")
+      write("}else sue( \"" .. to_ident(modules[i]) .. "_create failed\" );\n")
     end
 
     stub:write("\nbool bbruntime_create(){\n")
@@ -282,17 +291,27 @@ for i,rt in ipairs(runtimes) do
 
     stub:write("\nvoid bbruntime_link( void (*link)( const char *sym,void *pc ) ){\n")
     for j,mod in ipairs(config.modules) do
-      stub:write("\t" .. mod .. "_link( link );\n")
+      stub:write("\t" .. to_ident(mod) .. "_link( link );\n")
     end
     stub:write("}\n")
 
     stub:write("\nbool bbruntime_destroy(){\n")
     for j=#config.modules,1,-1 do
-      stub:write("\t" .. config.modules[j] .. "_destroy();\n")
+      stub:write("\t" .. to_ident(config.modules[j]) .. "_destroy();\n")
     end
     stub:write("\treturn true;\n")
     stub:write("}\n")
     stub:close()
+
+    old_stub = io.open( STUB_PATH,"r" )
+    new_stub = io.open( STUB_PATH .. ".tmp","r" )
+    if old_stub == nil or old_stub:read("*all") ~= new_stub:read("*all") then
+      os.rename( STUB_PATH .. ".tmp",STUB_PATH )
+    else
+      os.remove( STUB_PATH .. ".tmp" )
+    end
+    if old_stub ~= nil then old_stub:close() end
+    new_stub:close()
 
     filter {}
     links(config.modules)
@@ -533,7 +552,7 @@ project "compiler"
   kind "ConsoleApp"
   language "C++"
 
-  removeplatforms { "win64", "macos", "linux" }
+  removeplatforms { "win64", "linux" }
 
   targetdir "_release/bin"
   targetname "blitzcc"
@@ -562,8 +581,6 @@ project "linker"
   removeplatforms { "win64", "macos", "linux" }
 
   targetdir "_release/bin"
-
-  linkoptions { "-shared" }
 
   files { "linker/main.cpp", "linker/linker.h", "linker/linker.cpp", "linker/image_util.h", "linker/image_util.cpp" }
   links { "stdutil" }

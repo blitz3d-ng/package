@@ -251,7 +251,9 @@ const char *openLibs( string rt ){
 
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
-	home=string(p);
+	char buff[MAX_PATH];
+	GetFullPathName( p,MAX_PATH,buff,NULL );
+	home=string(buff);
 
 	linkerHMOD=LoadLibrary( (home+"/bin/linker.dll").c_str() );
 	if( !linkerHMOD ) return "Unable to open linker.dll";
