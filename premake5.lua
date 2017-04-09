@@ -330,6 +330,8 @@ project "userlibs"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos", "linux" }
+
   files { "src/runtime/bb/userlibs/userlibs.cpp", "src/runtime/bb/userlibs/userlibs.h" }
 
 project "blitz"
@@ -488,6 +490,8 @@ project "sockets"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos", "linux" }
+
   files {
     "src/runtime/bb/sockets/sockets.cpp", "src/runtime/bb/sockets/sockets.h"
   }
@@ -495,6 +499,8 @@ project "sockets"
 project "timer"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms { "macos", "linux" }
 
   files { "src/runtime/bb/timer/timer.h", "src/runtime/bb/timer/timer.cpp" }
 
@@ -515,6 +521,8 @@ project "blitz2d"
 project "graphics"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms { "macos", "linux" }
 
   files {
     "src/runtime/bb/graphics/graphics.h", "src/runtime/bb/graphics/graphics.cpp",
