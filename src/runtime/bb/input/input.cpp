@@ -1,5 +1,7 @@
 
 #include <bb/blitz/blitz.h>
+#include <bb/runtime/runtime.h>
+#include <bb/system/system.h>
 
 #include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
@@ -52,11 +54,11 @@ int BBCALL bbGetKey(){
 
 int BBCALL bbWaitKey(){
 	for(;;){
-		if( !gx_runtime->idle() ) RTEX( 0 );
+		if( !bbRuntimeIdle() ) RTEX( 0 );
 		if( int key=gx_keyboard->getKey( ) ){
 			if( key=gx_input->toAscii( key ) ) return key;
 		}
-		gx_runtime->delay( 20 );
+		bbDelay( 20 );
 	}
 }
 
@@ -78,9 +80,9 @@ int BBCALL bbGetMouse(){
 
 int BBCALL bbWaitMouse(){
 	for(;;){
-		if( !gx_runtime->idle() ) RTEX( 0 );
+		if( !bbRuntimeIdle()) RTEX( 0 );
 		if( int key=gx_mouse->getKey() ) return key;
-		gx_runtime->delay( 20 );
+		bbDelay( 20 );
 	}
 }
 
@@ -170,9 +172,9 @@ int BBCALL bbGetJoy( int port ){
 int BBCALL bbWaitJoy( int port ){
 	if( port<0 || port>=gx_joysticks.size() ) return 0;
 	for(;;){
-		if( !gx_runtime->idle() ) RTEX( 0 );
+		if( !bbRuntimeIdle() ) RTEX( 0 );
 		if( int key=gx_joysticks[port]->getKey() ) return key;
-		gx_runtime->delay( 20 );
+		bbDelay( 20 );
 	}
 }
 
@@ -255,14 +257,6 @@ void BBCALL bbFlushJoy(){
 	for( int k=0;k<gx_joysticks.size();++k ) gx_joysticks[k]->flush();
 }
 
-void  BBCALL bbEnableDirectInput( int enable ){
-	gx_runtime->enableDirectInput( !!enable );
-}
-
-int  BBCALL bbDirectInputEnabled(){
-	return gx_runtime->directInputEnabled();
-}
-
 BBMODULE_LINK( input ){
 	rtSym( "%KeyDown%key",bbKeyDown );
 	rtSym( "%KeyHit%key",bbKeyHit );
@@ -309,7 +303,4 @@ BBMODULE_LINK( input ){
 	rtSym( "%JoyUDir%port=0",bbJoyUDir );
 	rtSym( "%JoyVDir%port=0",bbJoyVDir );
 	rtSym( "FlushJoy",bbFlushJoy );
-
-	rtSym( "EnableDirectInput%enable",bbEnableDirectInput );
-	rtSym( "%DirectInputEnabled",bbDirectInputEnabled );
 }

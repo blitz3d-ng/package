@@ -16,6 +16,7 @@ local MODULE_CONFIG = {
     'bank',
     'graphics',
     'input',
+    'input.directinput8',
     'audio',
     'audio.fmod',
     'blitz3d',
@@ -24,7 +25,7 @@ local MODULE_CONFIG = {
 }
 
 links { "gxruntime" }
-links { "fmodvc", "input.directinput8" }
+links { "fmodvc" }
 links { "filesystem", "stdutil", "blitz2d" }
 links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
 links { "dxguid" }

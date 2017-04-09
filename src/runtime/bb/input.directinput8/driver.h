@@ -2,9 +2,9 @@
 #ifndef GXINPUT_H
 #define GXINPUT_H
 
-#include <dinput.h>
-
+#include <bb/blitz/module.h>
 #include <bb/input/driver.h>
+#include <dinput.h>
 
 class gxRuntime;
 
@@ -40,5 +40,8 @@ public:
 	int numJoysticks()const;
 	int toAscii( int key )const;
 };
+
+void BBCALL bbEnableDirectInput( int enable );
+int  BBCALL bbDirectInputEnabled();
 
 #endif

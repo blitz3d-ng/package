@@ -1,8 +1,8 @@
 
 #include "driver.h"
-#include "../../gxruntime/gxruntime.h"
 
-#include <dinput.h>
+#include "../../gxruntime/gxruntime.h"
+extern gxRuntime *gx_runtime;
 
 static const int QUE_SIZE=32;
 
@@ -339,4 +339,25 @@ int DirectInput8Driver::toAscii( int scan )const{
 	WORD ch;
 	if( ToAscii( virt,scan,mat,&ch,0 )!=1 ) return 0;
 	return ch & 255;
+}
+
+void BBCALL bbEnableDirectInput( int enable ){
+	gx_runtime->enableDirectInput( !!enable );
+}
+
+int  BBCALL bbDirectInputEnabled(){
+	return gx_runtime->directInputEnabled();
+}
+
+BBMODULE_CREATE( input_directinput8 ){
+	return true;
+}
+
+BBMODULE_DESTROY( input_directinput8 ){
+	return true;
+}
+
+BBMODULE_LINK( input_directinput8 ){
+	rtSym( "EnableDirectInput%enable",bbEnableDirectInput );
+	rtSym( "%DirectInputEnabled",bbDirectInputEnabled );
 }
