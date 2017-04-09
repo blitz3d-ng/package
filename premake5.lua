@@ -302,6 +302,8 @@ project "stub"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos", "linux" }
+
   files { "src/runtime/bb/stub/stub.cpp", "src/runtime/bb/stub/stub.h" }
 
 project "gxruntime"
@@ -348,6 +350,8 @@ project "audio"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos", "linux" }
+
   files {
     "src/runtime/bb/audio/channel.cpp", "src/runtime/bb/audio/channel.h",
     "src/runtime/bb/audio/sound.h",
@@ -390,6 +394,8 @@ project "system"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms { "macos", "linux" }
+
   files { "src/runtime/bb/system/driver.cpp", "src/runtime/bb/system/driver.h" }
 
 project "system.windows"
@@ -408,6 +414,8 @@ project "system.windows"
 project "filesystem"
   kind "StaticLib"
   language "C++"
+
+  removeplatforms { "macos", "linux" }
 
   files {
     "src/runtime/bb/filesystem/filesystem.cpp", "src/runtime/bb/filesystem/filesystem.h",

@@ -25,6 +25,8 @@
 *.lastbuildstate
 UpgradeLog.htm
 
+.DS_Store
+
 *.bb_bak*
 
 _release/bin
