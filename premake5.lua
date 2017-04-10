@@ -393,6 +393,24 @@ project "multiplayer"
     "src/runtime/bb/multiplayer/multiplay_setup.rc"
   }
 
+project "runtime"
+  kind "StaticLib"
+  language "C++"
+
+  files {
+    "src/runtime/bb/runtime/runtime.h",
+    "src/runtime/bb/runtime/runtime.cpp"
+  }
+
+project "hook"
+  kind "StaticLib"
+  language "C++"
+
+  files {
+    "src/runtime/bb/hook/hook.h",
+    "src/runtime/bb/hook/hook.cpp"
+  }
+
 project "userlibs"
   kind "StaticLib"
   language "C++"

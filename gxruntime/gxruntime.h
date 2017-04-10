@@ -52,8 +52,6 @@ private:
 	void enumGfx();
 	void denumGfx();
 
-	void pauseAudio();
-	void resumeAudio();
 	void backupGraphics();
 	void restoreGraphics();
 	void acquireInput();

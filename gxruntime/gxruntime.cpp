@@ -137,14 +137,6 @@ gxRuntime::~gxRuntime(){
 	CoUninitialize();
 }
 
-void gxRuntime::pauseAudio(){
-	if( gx_audio ) gx_audio->setPaused( true );
-}
-
-void gxRuntime::resumeAudio(){
-	if( gx_audio ) gx_audio->setPaused( false );
-}
-
 void gxRuntime::backupGraphics(){
 	if( auto_suspend ){
 		graphics->backup();
@@ -179,7 +171,7 @@ void gxRuntime::unacquireInput(){
 /////////////
 void gxRuntime::suspend(){
 	busy=true;
-	pauseAudio();
+	bbRuntimeOnSuspend->run( this );
 	backupGraphics();
 	unacquireInput();
 	suspended=true;
@@ -196,9 +188,9 @@ void gxRuntime::suspend(){
 void gxRuntime::resume(){
 	if( gfx_mode==3 ) ShowCursor(0);
 	busy=true;
+	bbRuntimeOnResume->run( this );
 	acquireInput();
 	restoreGraphics();
-	resumeAudio();
 	suspended=false;
 	busy=false;
 

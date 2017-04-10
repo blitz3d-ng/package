@@ -3,6 +3,8 @@ local MODULE_CONFIG = {
   id = 'default',
   modules = {
     'blitz',
+    'runtime',
+    'hook',
     'math',
     'string',
     'stream',

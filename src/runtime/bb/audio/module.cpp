@@ -1,5 +1,7 @@
 
+#include <bb/runtime/runtime.h>
 #include "module.h"
+
 #include <string>
 using namespace std;
 
@@ -107,8 +109,18 @@ BBSound * BBCALL bbLoad3DSound( BBStr *f ){
 }
 #endif
 
+void pauseAudio( void *data,void *context ){
+	if( gx_audio ) gx_audio->setPaused( true );
+}
+
+void resumeAudio( void *data,void *context ){
+	if( gx_audio ) gx_audio->setPaused( false );
+}
+
 BBMODULE_CREATE( audio ){
 	gx_audio=0;
+	bbRuntimeOnSuspend->add( pauseAudio,0 );
+	bbRuntimeOnResume->add( resumeAudio,0 );
 	return true;
 }
 
