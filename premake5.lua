@@ -147,10 +147,14 @@ if not os.getenv("CI") then
     targetname "ide2"
 
     files {
+      "blitzide2/dpi.h", "blitzide2/dpi.cpp",
       "blitzide2/HtmlHelp.h", "blitzide2/HtmlHelp.cpp",
       "blitzide2/FileView.h", "blitzide2/FileView.cpp",
       "blitzide2/main.cpp"
     }
+
+    filter "platforms:win32 or win64 or mingw32"
+      files "blitzide2/blitzide2.rc"
 
     filter "platforms:win32 or win64"
       flags "WinMain"

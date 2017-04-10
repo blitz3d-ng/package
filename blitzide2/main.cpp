@@ -14,6 +14,7 @@
 
 #include "HtmlHelp.h"
 #include "FileView.h"
+#include "dpi.h"
 
 wxString blitzpath;
 
@@ -88,13 +89,15 @@ bool MyApp::OnInit(){
     wxMessageBox( "blitzpath not set", "Blitz3D \"NG\"",wxOK|wxICON_ERROR );
     return false;
   }
-  MainFrame *frame = new MainFrame( "Blitz3D \"NG\"",wxPoint( 50,50 ),wxSize( 800,600 ) );
+  MainFrame *frame = new MainFrame( "Blitz3D \"NG\"",wxPoint( 50*GetDPIScaleX(),50*GetDPIScaleY() ),wxSize( 800*GetDPIScaleX(),600*GetDPIScaleY() ) );
   frame->Show( true );
   return true;
 }
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
         : wxFrame(NULL, wxID_ANY, title, pos, size, wxDEFAULT_FRAME_STYLE|wxNO_FULL_REPAINT_ON_RESIZE)
 {
+  SetIcon(wxIcon("IDI_ICON1"));
+
   wxMenu *menuFile = new wxMenu;
   menuFile->Append(ID_NEW, "&New...\tCtrl-N", "Help string shown in status bar for this menu item");
   menuFile->Append(ID_OPEN, "&Open...\tCtrl-O", "Help string shown in status bar for this menu item");
@@ -150,18 +153,20 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
   icons.SetMask( true );
   icons.SetMaskColour( 0xc0,0xc0,0xc0 );
 
-  wxImage icon_new     = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*0,0));
-  wxImage icon_open    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*1,0));
-  wxImage icon_save    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*2,0));
-  wxImage icon_close   = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*3,0));
-  wxImage icon_cut     = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*4,0));
-  wxImage icon_copy    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*5,0));
-  wxImage icon_paste   = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*6,0));
-  wxImage icon_find    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*7,0));
-  wxImage icon_run     = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*8,0));
-  wxImage icon_home    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*9,0));
-  wxImage icon_back    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*10,0));
-  wxImage icon_forward = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*11,0));
+  wxSize iconSize=wxSize( 16*GetDPIScaleX(),16*GetDPIScaleY() );
+
+  wxImage icon_new     = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*0,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_open    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*1,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_save    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*2,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_close   = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*3,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_cut     = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*4,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_copy    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*5,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_paste   = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*6,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_find    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*7,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_run     = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*8,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_home    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*9,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_back    = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*10,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
+  wxImage icon_forward = wxImage(icons).Resize(wxSize(16,16),wxPoint(-16*11,0)).Scale(iconSize.GetWidth(),iconSize.GetHeight());
 
   toolbar = CreateToolBar();
   toolbar->AddTool( ID_NEW,wxT("New"),icon_new );
