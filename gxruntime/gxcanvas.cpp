@@ -10,8 +10,6 @@
 static int canvas_cnt;
 static DDBLTFX bltfx={sizeof(DDBLTFX)};
 
-extern gxRuntime *gx_runtime;
-
 static unsigned FWMS[]={
 	0xffffffff,0x7fffffff,0x3fffffff,0x1fffffff,
 	0x0fffffff,0x07ffffff,0x03ffffff,0x01ffffff,
@@ -207,7 +205,7 @@ void gxCanvas::updateBitMask( const RECT &r )const{
 			}
 #ifdef DEBUG_BITMASK
 			if( dest<cm_mask || dest>=cm_mask_end ){
-				gx_runtime->debugError( "gxCanvas::updateBitMask dest out of range" );
+				_bbDebugError( "gxCanvas::updateBitMask dest out of range" );
 			}
 #endif
 			*dest++=mask;
@@ -580,10 +578,10 @@ bool gxCanvas::collide( int x1,int y1,const BBCanvas *_i2,int x2,int y2,bool sol
 		for( int x=0;x<cnt;++x ){
 #ifdef DEBUG_BITMASK
 			if( row1<i1->cm_mask || row2<i2->cm_mask ){
-				gx_runtime->debugError( "gxCanvas::collide row underflow" );
+				_bbDebugError( "gxCanvas::collide row underflow" );
 			}
 			if( row1>=cm_mask_end1 || row2>=cm_mask_end2 ){
-				gx_runtime->debugError( "gxCanvas::collide row overflow" );
+				_bbDebugError( "gxCanvas::collide row overflow" );
 			}
 #endif
 			unsigned n=*row2++;
@@ -592,10 +590,10 @@ bool gxCanvas::collide( int x1,int y1,const BBCanvas *_i2,int x2,int y2,bool sol
 		}
 #ifdef DEBUG_BITMASK
 		if( row1<i1->cm_mask || row2<i2->cm_mask ){
-			gx_runtime->debugError( "gxCanvas::collide row underflow" );
+			_bbDebugError( "gxCanvas::collide row underflow" );
 		}
 		if( row1>=cm_mask_end1 || row2>=cm_mask_end2 ){
-			gx_runtime->debugError( "gxCanvas::collide row overflow" );
+			_bbDebugError( "gxCanvas::collide row overflow" );
 		}
 #endif
 		if( ((*row2>>shr)|p) & *row1 & lwm ) return true;

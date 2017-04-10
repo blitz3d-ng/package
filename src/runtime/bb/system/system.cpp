@@ -12,10 +12,6 @@ extern gxRuntime *gx_runtime;
 void BBCALL bbEnd(){
 	RTEX( 0 );
 }
-void BBCALL bbStop(){
-	gx_runtime->debugStop();
-	if( !bbRuntimeIdle() ) RTEX( 0 );
-}
 
 void BBCALL bbAppTitle( BBStr *ti,BBStr *cp ){
 	gx_runtime->setTitle( *ti,*cp );
@@ -68,24 +64,6 @@ void BBCALL bbSetEnv( BBStr *env_var,BBStr *val ){
 	delete val;
 }
 
-void BBCALL bbDebugLog( BBStr *t ){
-	gx_runtime->debugLog( t->c_str() );
-	delete t;
-}
-
-void BBCALL _bbDebugStmt( int pos,const char *file ){
-	gx_runtime->debugStmt( pos,file );
-	if( !bbRuntimeIdle() ) RTEX( 0 );
-}
-
-void BBCALL _bbDebugEnter( void *frame,void *env,const char *func ){
-	gx_runtime->debugEnter( frame,env,func );
-}
-
-void BBCALL _bbDebugLeave(){
-	gx_runtime->debugLeave();
-}
-
 int BBCALL bbScreenWidth( int i ){
 	return sys_driver->getScreenWidth( i );
 }
@@ -110,7 +88,6 @@ BBMODULE_DESTROY( system ){
 
 BBMODULE_LINK( system ){
 	rtSym( "End",bbEnd );
-	rtSym( "Stop",bbStop );
 	rtSym( "AppTitle$title$close_prompt=\"\"",bbAppTitle );
 	rtSym( "RuntimeError$message",bbRuntimeError );
 	rtSym( "ExecFile$command",bbExecFile );
@@ -120,12 +97,6 @@ BBMODULE_LINK( system ){
 	rtSym( "$SystemProperty$property",bbSystemProperty );
 	rtSym( "$GetEnv$env_var",bbGetEnv );
 	rtSym( "SetEnv$env_var$value",bbSetEnv );
-
-	rtSym( "DebugLog$text",bbDebugLog );
-
-	rtSym( "_bbDebugStmt",_bbDebugStmt );
-	rtSym( "_bbDebugEnter",_bbDebugEnter );
-	rtSym( "_bbDebugLeave",_bbDebugLeave );
 
 	rtSym( "%ScreenWidth%i=-1",bbScreenWidth );
 	rtSym( "%ScreenHeight%i=-1",bbScreenHeight );

@@ -105,7 +105,7 @@ struct MD2Model::Rep{
 
 		//load frames
 		string tt="MD2 Frames:"+itoa( header.numFrames );
-		gx_runtime->debugLog( tt.c_str() );
+		_bbDebugLog( tt.c_str() );
 
 		in.pubseekpos( header.offsetFrames );
 		frames.resize( header.numFrames );
@@ -290,7 +290,7 @@ ref_cnt(1),mesh(0){
 
 	//load frames
 	string tt="MD2 Frames:"+itoa( header.numFrames );
-	gx_runtime->debugLog( tt.c_str() );
+	_bbDebugLog( tt.c_str() );
 
 	in.pubseekpos( header.offsetFrames );
 	frames.resize( header.numFrames );

@@ -537,7 +537,7 @@ bool TerrainRep::collide( const Line &line,float radius,Collision *curr_coll,con
 
 	if( id>=end_tri_id || !errors[id].error ){
 		if( v0.v==v1.v || v0.v==v2.v || v1.v==v2.v ){
-			// gx_runtime->debugLog( "OUCH!" );
+			// _bbDebugLog( "OUCH!" );
 		}
 		return b.overlaps(box) ?
 		curr_coll->triangleCollide( line,radius,tform*v0.v,tform*v2.v,tform*v1.v )

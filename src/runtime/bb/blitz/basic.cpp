@@ -304,7 +304,7 @@ void BBCALL _bbObjDeleteEach( BBObjType *type ){
 	}
 }
 
-extern void BBCALL bbDebugLog( BBStr *t );
+extern void BBCALL _bbDebugLog( BBStr *t );
 extern void BBCALL bbStop( );
 
 void BBCALL _bbObjRelease( BBObj *obj ){
@@ -506,9 +506,9 @@ float BBCALL _bbFPow( float x,float y ){
 }
 
 void BBCALL bbRuntimeStats(){
-	gx_runtime->debugLog( ("Active strings :"+itoa(stringCnt)).c_str() );
-	gx_runtime->debugLog( ("Active objects :"+itoa(objCnt)).c_str() );
-	gx_runtime->debugLog( ("Unreleased objs:"+itoa(unrelObjCnt)).c_str() );
+	_bbDebugLog( ("Active strings :"+itoa(stringCnt)).c_str() );
+	_bbDebugLog( ("Active objects :"+itoa(objCnt)).c_str() );
+	_bbDebugLog( ("Unreleased objs:"+itoa(unrelObjCnt)).c_str() );
 	/*
 	clog<<"Active strings:"<<stringCnt<<endl;
 	clog<<"Active objects:"<<objCnt<<endl;
@@ -593,4 +593,13 @@ BBMODULE_LINK( blitz ){
 	rtSym( "_bbFMod",_bbFMod );
 	rtSym( "_bbFPow",_bbFPow );
 	rtSym( "RuntimeStats",bbRuntimeStats );
+
+
+	rtSym( "_bbDebugStmt",_bbDebugStmt );
+	rtSym( "_bbDebugEnter",_bbDebugEnter );
+	rtSym( "_bbDebugLeave",_bbDebugLeave );
+
+	rtSym( "Stop",bbDebugStop );
+	rtSym( "DebugStop",bbDebugStop );
+	rtSym( "DebugLog$text",bbDebugLog );
 }

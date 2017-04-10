@@ -17,7 +17,6 @@ public:
 };
 
 void BBCALL bbEnd();
-void BBCALL bbStop();
 
 void BBCALL bbAppTitle( BBStr *ti,BBStr *cp );
 
@@ -33,8 +32,6 @@ BBStr * BBCALL bbCommandLine();
 BBStr * BBCALL bbSystemProperty( BBStr *p );
 BBStr * BBCALL bbGetEnv( BBStr *env_var );
 void BBCALL bbSetEnv( BBStr *env_var,BBStr *val );
-
-void BBCALL bbDebugLog( BBStr *t );
 
 int BBCALL bbScreenWidth( int i );
 int BBCALL bbScreenHeight( int i );

@@ -7,7 +7,7 @@ extern gxRuntime *gx_runtime;
 //start up error
 void sue( const char *t ){
 	string p=string( "Startup Error: " )+t;
-	gx_runtime->debugInfo( p.c_str() );
+	_bbDebugInfo( p.c_str() );
 }
 
 const char *bbruntime_run( gxRuntime *rt,void (*pc)(),bool dbg ){
@@ -19,7 +19,7 @@ const char *bbruntime_run( gxRuntime *rt,void (*pc)(),bool dbg ){
 	try{
 		if( !gx_runtime->idle() ) RTEX( 0 );
 		pc();
-		gx_runtime->debugInfo( "Program has ended" );
+		_bbDebugInfo( "Program has ended" );
 	}catch( bbEx x ){
 		t=x.err;
 	}

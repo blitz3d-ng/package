@@ -165,7 +165,7 @@ Vector static tf( const Vector &v ){
 
 #ifdef BETA
 static void log( const string &t ){
-	// gx_runtime->debugLog( t.c_str() );
+	// _bbDebugLog( t.c_str() );
 }
 #else
 static void log( const string &t ){}

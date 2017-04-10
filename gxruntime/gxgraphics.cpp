@@ -8,8 +8,6 @@
 #define DDSGR_CALIBRATE 0x00000001L
 #endif
 
-extern gxRuntime *gx_runtime;
-
 gxGraphics::gxGraphics( gxRuntime *rt,IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurface7 *bs,bool d3d ):
 runtime(rt),dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
 
@@ -448,15 +446,15 @@ static string itobin( int n ){
 static void debugPF( const DDPIXELFORMAT &pf ){
 	string t;
 	t="Bits:"+itoa( pf.dwRGBBitCount );
-	gx_runtime->debugLog( t.c_str() );
+	_bbDebugLog( t.c_str() );
 	t="R Mask:"+itobin( pf.dwRBitMask );
-	gx_runtime->debugLog( t.c_str() );
+	_bbDebugLog( t.c_str() );
 	t="G Mask:"+itobin( pf.dwGBitMask );
-	gx_runtime->debugLog( t.c_str() );
+	_bbDebugLog( t.c_str() );
 	t="B Mask:"+itobin( pf.dwBBitMask );
-	gx_runtime->debugLog( t.c_str() );
+	_bbDebugLog( t.c_str() );
 	t="A Mask:"+itobin( pf.dwRGBAlphaBitMask );
-	gx_runtime->debugLog( t.c_str() );
+	_bbDebugLog( t.c_str() );
 }
 
 static void pickTexFmts( gxGraphics *g,int hi ){
@@ -546,18 +544,18 @@ BBScene *gxGraphics::createScene( int flags ){
 							pickTexFmts( this,1 );
 							tex_fmts.clear();
 #ifdef BETA
-							gx_runtime->debugLog( "Texture RGB format:" );
+							_bbDebugLog( "Texture RGB format:" );
 							debugPF( texRGBFmt );
-							gx_runtime->debugLog( "Texture Alpha format:" );
+							_bbDebugLog( "Texture Alpha format:" );
 							debugPF( texAlphaFmt );
-							gx_runtime->debugLog( "Texture RGB Alpha format:" );
+							_bbDebugLog( "Texture RGB Alpha format:" );
 							debugPF( texRGBAlphaFmt );
-							gx_runtime->debugLog( "Texture RGB Mask format:" );
+							_bbDebugLog( "Texture RGB Mask format:" );
 							debugPF( texRGBMaskFmt );
-							gx_runtime->debugLog( "Texture Primary format:" );
+							_bbDebugLog( "Texture Primary format:" );
 							debugPF( primFmt );
 							string ts="ZBuffer Bit Depth:"+itoa( zbuffFmt.dwZBufferBitDepth );
-							gx_runtime->debugLog( ts.c_str() );
+							_bbDebugLog( ts.c_str() );
 #endif
 							gxScene *scene=d_new gxScene( this,back_canvas );
 							scene_set.insert( scene );

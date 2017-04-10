@@ -429,7 +429,7 @@ project "blitz"
     "src/runtime/bb/blitz/basic.cpp", "src/runtime/bb/blitz/basic.h",
     "src/runtime/bb/blitz/debug.cpp", "src/runtime/bb/blitz/debug.h",
     "src/runtime/bb/blitz/env.cpp", "src/runtime/bb/blitz/env.h",
-    "src/runtime/bb/blitz/ex.h",
+    "src/runtime/bb/blitz/ex.cpp", "src/runtime/bb/blitz/ex.h",
     "src/runtime/bb/blitz/module.h"
   }
 

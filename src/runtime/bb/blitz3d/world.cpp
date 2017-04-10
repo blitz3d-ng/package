@@ -567,7 +567,7 @@ void World::render( float tween ){
 
 	for( ;ord_que.size();ord_que.pop() ) ord_mods.push_back( ord_que.top() );
 
-//	gx_runtime->debugLog( "RenderWorld" );
+//	_bbDebugLog( "RenderWorld" );
 
 	if( !gx_scene->begin( _lights ) ) return;
 
@@ -587,7 +587,7 @@ void World::render( float tween ){
 
 	gx_scene->end();
 
-//	gx_runtime->debugLog( "End RenderWorld" );
+//	_bbDebugLog( "End RenderWorld" );
 
 	vector<Listener*>::const_iterator lis_it;
 	for( lis_it=_listeners.begin();lis_it!=_listeners.end();++lis_it ){
