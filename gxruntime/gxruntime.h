@@ -2,7 +2,7 @@
 #ifndef GXRUNTIME_H
 #define GXRUNTIME_H
 
-#include <windows.h>
+#include <bb/frame/frame.h>
 #include <string>
 #include <vector>
 
@@ -10,12 +10,11 @@
 
 #include "../debugger/debugger.h"
 
-class gxRuntime{
+class gxRuntime : public Frame{
 	/***** INTERNAL INTERFACE *****/
 public:
 	BBEnv env;
 
-	HWND hwnd;
 	HINSTANCE hinst;
 
 	gxGraphics *graphics;
@@ -37,15 +36,9 @@ private:
 	void forceSuspend();
 	void resume();
 	void forceResume();
-	void backupWindowState();
-	void restoreWindowState();
 
-	RECT t_rect;
-	int t_style;
 	std::string cmd_line;
 	bool pointer_visible;
-	std::string app_title;
-	std::string app_close;
 
 	bool setDisplayMode( int w,int h,int d,bool d3d,IDirectDraw7 *dd );
 	gxGraphics *openWindowedGraphics( int w,int h,int d,bool d3d );
@@ -59,7 +52,6 @@ private:
 	void enumGfx();
 	void denumGfx();
 
-	void resetInput();
 	void pauseAudio();
 	void resumeAudio();
 	void backupGraphics();
@@ -76,6 +68,8 @@ public:
 	void asyncRun();
 	void asyncEnd();
 
+	void invalidateRect();
+
 	/***** GX INTERFACE *****/
 public:
 	enum{
@@ -84,9 +78,7 @@ public:
 
 	//return true if program should continue, or false for quit.
 	bool idle();
-	bool delay( int ms );
 
-	void setTitle( const std::string &title,const std::string &close );
 	void setPointerVisible( bool vis );
 
 	std::string commandLine();

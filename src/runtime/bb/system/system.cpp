@@ -38,7 +38,7 @@ int BBCALL bbExecFile( BBStr *f ){
 }
 
 void BBCALL bbDelay( int ms ){
-	if( !gx_runtime->delay( ms ) ) RTEX( 0 );
+	if( !sys_driver->delay( ms ) ) RTEX( 0 );
 }
 
 int BBCALL bbMilliSecs(){

@@ -25,11 +25,6 @@ struct gxRuntime::GfxDriver{
 #endif
 };
 
-static const int static_ws=WS_VISIBLE|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX;
-static const int scaled_ws=WS_VISIBLE|WS_CAPTION|WS_SYSMENU|WS_SIZEBOX|WS_MINIMIZEBOX|WS_MAXIMIZEBOX;
-
-static string app_title;
-static string app_close;
 static gxRuntime *runtime;
 static bool busy,suspended;
 static volatile bool run_flag;
@@ -46,14 +41,6 @@ bool bbRuntimeIdle(){
 
 static LRESULT CALLBACK windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam );
 
-//current gfx mode
-//
-//0=NONE
-//1=SCALED WINDOW
-//2=FIXED SIZE WINDOW
-//3=EXCLUSIVE
-//
-static int gfx_mode;
 static bool gfx_lost;
 static bool auto_suspend;
 
@@ -88,7 +75,6 @@ gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst,const string &cmd_line,Debugg
 	wndclass.hbrBackground=(HBRUSH)GetStockObject( BLACK_BRUSH );
 	RegisterClass( &wndclass );
 
-	gfx_mode=0;
 	clipper=0;primSurf=0;
 	busy=suspended=false;
 	run_flag=true;
@@ -118,8 +104,8 @@ void gxRuntime::closeRuntime( gxRuntime *r ){
 typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
 gxRuntime::gxRuntime( HINSTANCE hi,const string &cl,HWND hw ):
-hinst(hi),cmd_line(cl),hwnd(hw),curr_driver(0),enum_all(false),
-pointer_visible(true),graphics(0),use_di(false){
+hinst(hi),cmd_line(cl),curr_driver(0),enum_all(false),
+pointer_visible(true),graphics(0),use_di(false),Frame(hw){
 
 	CoInitialize( 0 );
 
@@ -169,10 +155,6 @@ void gxRuntime::restoreGraphics(){
 	if( auto_suspend ){
 		if( !graphics->restore() ) gfx_lost=true;
 	}
-}
-
-void gxRuntime::resetInput(){
-	if( gx_input ) dx_input->reset();
 }
 
 void gxRuntime::acquireInput(){
@@ -516,20 +498,6 @@ bool gxRuntime::idle(){
 	return run_flag;
 }
 
-///////////
-// DELAY //
-///////////
-bool gxRuntime::delay( int ms ){
-	int t=timeGetTime()+ms;
-	for(;;){
-		if( !idle() ) return false;
-		int d=t-timeGetTime();	//how long left to wait
-		if( d<=0 ) return true;
-		if( d>100 ) d=100;
-		Sleep( d );
-	}
-}
-
 ///////////////
 // DEBUGSTMT //
 ///////////////
@@ -598,15 +566,6 @@ string gxRuntime::commandLine(){
 	return cmd_line;
 }
 
-///////////////
-// APP TITLE //
-///////////////
-void gxRuntime::setTitle( const string &t,const string &e ){
-	app_title=t;
-	app_close=e;
-	SetWindowText( hwnd,app_title.c_str() );
-}
-
 /////////////////////
 // POINTER VISIBLE //
 /////////////////////
@@ -626,11 +585,15 @@ void gxRuntime::setPointerVisible( bool vis ){
 // TIMER CALLBACK FOR AUTOREFRESH OF WINDOWED MODE //
 /////////////////////////////////////////////////////
 static void CALLBACK timerCallback( UINT id,UINT msg,DWORD user,DWORD dw1,DWORD dw2 ){
+	if ( runtime ) runtime->invalidateRect();
+}
+
+void gxRuntime::invalidateRect(){
 	if( gfx_mode ){
-		gxCanvas *f=(gxCanvas*)runtime->graphics->getFrontCanvas();
+		gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
 		if( f->getModify()!=mod_cnt ){
 			mod_cnt=f->getModify();
-			InvalidateRect( runtime->hwnd,0,false );
+			InvalidateRect( hwnd,0,false );
 		}
 	}
 }
@@ -638,19 +601,6 @@ static void CALLBACK timerCallback( UINT id,UINT msg,DWORD user,DWORD dw1,DWORD 
 ////////////////////
 // GRAPHICS SETUP //
 ////////////////////
-void gxRuntime::backupWindowState(){
-	GetWindowRect( hwnd,&t_rect );
-	t_style=GetWindowLong( hwnd,GWL_STYLE );
-}
-
-void gxRuntime::restoreWindowState(){
-	SetWindowLong( hwnd,GWL_STYLE,t_style );
-	SetWindowPos(
-		hwnd,0,t_rect.left,t_rect.top,
-		t_rect.right-t_rect.left,t_rect.bottom-t_rect.top,
-		SWP_NOZORDER|SWP_FRAMECHANGED );
-}
-
 bool gxRuntime::setDisplayMode( int w,int h,int d,bool d3d,IDirectDraw7 *dirDraw ){
 
 	if( d ) return dirDraw->SetDisplayMode( w,h,d,0,0 )>=0;
@@ -788,41 +738,11 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 		if( graphics=openWindowedGraphics( w,h,d,d3d ) ){
 			gfx_mode=(flags & gxGraphics::GRAPHICS_SCALED) ? 1 : 2;
 			auto_suspend=(flags & gxGraphics::GRAPHICS_AUTOSUSPEND) ? true : false;
-			int ws,ww,hh;
-			if( gfx_mode==1 ){
-				ws=scaled_ws;
-				RECT c_r;
-				GetClientRect( hwnd,&c_r );
-				ww=c_r.right-c_r.left;
-				hh=c_r.bottom-c_r.top;
-			}else{
-				ws=static_ws;
-				ww=w;
-				hh=h;
-			}
-
-			SetWindowLong( hwnd,GWL_STYLE,ws );
-			SetWindowPos( hwnd,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED );
-
-			RECT w_r,c_r;
-			GetWindowRect( hwnd,&w_r );
-			GetClientRect( hwnd,&c_r );
-			int tw=(w_r.right-w_r.left)-(c_r.right-c_r.left);
-			int th=(w_r.bottom-w_r.top)-(c_r.bottom-c_r.top );
-			int cx=( GetSystemMetrics( SM_CXSCREEN )-ww )/2;
-			int cy=( GetSystemMetrics( SM_CYSCREEN )-hh )/2;
-			POINT zz={0,0};
-			ClientToScreen( hwnd,&zz );
-			int bw=zz.x-w_r.left,bh=zz.y-w_r.top;
-			int wx=cx-bw,wy=cy-bh;if( wy<0 ) wy=0;		//not above top!
-			MoveWindow( hwnd,wx,wy,ww+tw,hh+th,true );
+			resize( w,h );
 		}
 	}else{
 		backupWindowState();
-
-		SetWindowLong( hwnd,GWL_STYLE,WS_VISIBLE|WS_POPUP );
-		SetWindowPos( hwnd,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED );
-
+		fullscreen();
 		ShowCursor( 0 );
 		if( graphics=openExclusiveGraphics( w,h,d,d3d ) ){
 			gfx_mode=3;

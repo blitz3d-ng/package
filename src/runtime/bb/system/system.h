@@ -7,6 +7,8 @@
 
 class BBSystemDriver{
 public:
+  virtual bool delay( int ms )=0;
+
   virtual bool execute( const std::string &cmd )=0;
   virtual int getMilliSecs()=0;
 

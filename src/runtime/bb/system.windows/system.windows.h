@@ -10,6 +10,8 @@ public:
 	WindowsSystemDriver();
 	~WindowsSystemDriver();
 
+	bool delay( int ms );
+
 	bool execute( const std::string &cmd );
 	int getMilliSecs();
 

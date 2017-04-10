@@ -1,6 +1,7 @@
 
 #include "../../stdutil/stdutil.h"
 #include <bb/blitz/module.h>
+#include <bb/runtime/runtime.h>
 #include "system.windows.h"
 
 #include <windows.h>
@@ -28,6 +29,17 @@ WindowsSystemDriver::~WindowsSystemDriver(){
     FreeLibrary( it->second->hinst );
   }
   libs.clear();
+}
+
+bool WindowsSystemDriver::delay( int ms ){
+	int t=timeGetTime()+ms;
+	for(;;){
+		if( !bbRuntimeIdle() ) return false;
+		int d=t-timeGetTime();	//how long left to wait
+		if( d<=0 ) return true;
+		if( d>100 ) d=100;
+		Sleep( d );
+	}
 }
 
 bool WindowsSystemDriver::execute( const string &cmd_line ){

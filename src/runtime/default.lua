@@ -26,7 +26,7 @@ local MODULE_CONFIG = {
 
 removeplatforms { "win64", "linux" }
 
-links { "gxruntime" }
+links { "gxruntime", "frame" }
 links { "stdutil", "blitz2d" }
 links { "freeimage", "jpeg", "jxr", "openexr", "openjpeg", "png", "raw", "tiff4", "webp", "zlib" }
 

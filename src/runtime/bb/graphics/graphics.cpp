@@ -1128,7 +1128,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 					}
 				}
 			}else last_key=0;
-			gx_runtime->delay( 20 );
+			bbDelay( 20 );
 		}
 
 		//check the key

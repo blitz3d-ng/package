@@ -362,6 +362,17 @@ project "stub"
   filter "platforms:macos"
     files "src/runtime/bb/stub/stub.macos.cpp"
 
+project "frame"
+  kind "StaticLib"
+  language "C++"
+
+  removeplatforms { "macos", "linux" }
+
+  files {
+    "src/runtime/bb/frame/frame.cpp",
+    "src/runtime/bb/frame/frame.h"
+  }
+
 project "gxruntime"
   kind "StaticLib"
   language "C++"
