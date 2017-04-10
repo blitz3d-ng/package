@@ -7,6 +7,9 @@
 
 class BBSystemDriver{
 public:
+  virtual bool execute( const std::string &cmd )=0;
+  virtual int getMilliSecs()=0;
+
   virtual int getScreenWidth( int i )=0;
   virtual int getScreenHeight( int i )=0;
 };

@@ -7,7 +7,11 @@
 
 class WindowsSystemDriver : public BBSystemDriver{
 public:
+	WindowsSystemDriver();
 	~WindowsSystemDriver();
+
+	bool execute( const std::string &cmd );
+	int getMilliSecs();
 
 	int getScreenWidth( int i );
 	int getScreenHeight( int i );

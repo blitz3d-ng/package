@@ -16,12 +16,50 @@ struct gxDll{
 
 static map<string,gxDll*> libs;
 
+WindowsSystemDriver::WindowsSystemDriver(){
+	TIMECAPS tc;
+	timeGetDevCaps( &tc,sizeof(tc) );
+	timeBeginPeriod( tc.wPeriodMin );
+}
+
 WindowsSystemDriver::~WindowsSystemDriver(){
   map<string,gxDll*>::const_iterator it;
   for( it=libs.begin();it!=libs.end();++it ){
     FreeLibrary( it->second->hinst );
   }
   libs.clear();
+}
+
+bool WindowsSystemDriver::execute( const string &cmd_line ){
+
+	if( !cmd_line.size() ) return false;
+
+	//convert cmd_line to cmd and params
+	string cmd=cmd_line,params;
+	while( cmd.size() && cmd[0]==' ' ) cmd=cmd.substr( 1 );
+	if( cmd.find( '\"' )==0 ){
+		int n=cmd.find( '\"',1 );
+		if( n!=string::npos ){
+			params=cmd.substr( n+1 );
+			cmd=cmd.substr( 1,n-1 );
+		}
+	}else{
+		int n=cmd.find( ' ' );
+		if( n!=string::npos ){
+			params=cmd.substr( n+1 );
+			cmd=cmd.substr( 0,n );
+		}
+	}
+	while( params.size() && params[0]==' ' ) params=params.substr( 1 );
+	while( params.size() && params[params.size()-1]==' ' ) params=params.substr( 0,params.size()-1 );
+
+	SetForegroundWindow( GetDesktopWindow() );
+
+	return (int)ShellExecute( GetDesktopWindow(),0,cmd.c_str(),params.size() ? params.c_str() : 0,0,SW_SHOW )>32;
+}
+
+int WindowsSystemDriver::getMilliSecs(){
+	return timeGetTime();
 }
 
 int WindowsSystemDriver::getScreenWidth( int i ){

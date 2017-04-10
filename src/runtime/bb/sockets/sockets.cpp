@@ -1,8 +1,14 @@
 
+#include "../../stdutil/stdutil.h"
 #include "sockets.h"
+#include <bb/runtime/runtime.h>
+#include <bb/system/system.h>
 
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
+#include <set>
+#include <vector>
+using namespace std;
+
+#include <windows.h>
 
 static bool socks_ok;
 static WSADATA wsadata;
@@ -88,11 +94,11 @@ int UDPStream::eof(){
 int UDPStream::recv(){
 	if( e ) return 0;
 	int tout;
-	if( recv_timeout ) tout=gx_runtime->getMilliSecs()+recv_timeout;
+	if( recv_timeout ) tout=bbMilliSecs()+recv_timeout;
 	for(;;){
 		int dt=0;
 		if( recv_timeout ){
-			dt=tout-gx_runtime->getMilliSecs();
+			dt=tout-bbMilliSecs();
 			if( dt<0 ) dt=0;
 		}
 		fd_set fd={ 1,sock };
@@ -194,11 +200,11 @@ int TCPStream::read( char *buff,int size ){
 	if( e ) return 0;
 	char *b=buff,*l=buff+size;
 	int tout;
-	if( read_timeout ) tout=gx_runtime->getMilliSecs()+read_timeout;
+	if( read_timeout ) tout=bbMilliSecs()+read_timeout;
 	while( b<l ){
 		int dt=0;
 		if( read_timeout ){
-			dt=tout-gx_runtime->getMilliSecs();
+			dt=tout-bbMilliSecs();
 			if( dt<0 ) dt=0;
 		}
 		fd_set fd={ 1,sock };
@@ -442,7 +448,7 @@ void BBCALL bbCloseTCPServer( TCPServer *p ){
 
 TCPStream * BBCALL bbAcceptTCPStream( TCPServer *server ){
 	debugTCPServer( server );
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( TCPStream *tcp=server->accept() ){
 		tcp_set.insert( tcp );
 		return tcp;

@@ -1,6 +1,8 @@
 
 #include "graphics.h"
 #include <bb/input/input.h>
+#include <bb/system/system.h>
+#include <bb/runtime/runtime.h>
 
 #include <fstream>
 
@@ -389,7 +391,7 @@ static void graphics( int w,int h,int d,int flags ){
 	freeGraphics();
 	gx_runtime->closeGraphics( gx_graphics );
 	gx_graphics=gx_runtime->openGraphics( w,h,d,gx_driver,flags );
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( !gx_graphics ){
 		RTEX( "Unable to set graphics mode" );
 	}
@@ -437,7 +439,7 @@ void BBCALL bbEndGraphics(){
 	freeGraphics();
 	gx_runtime->closeGraphics( gx_graphics );
 	gx_graphics=gx_runtime->openGraphics( 400,300,0,0,gxGraphics::GRAPHICS_WINDOWED );
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( gx_graphics ){
 		curr_clsColor=0;
 		curr_color=0xffffffff;
@@ -534,12 +536,12 @@ int BBCALL bbScanLine(){
 
 void BBCALL bbVWait( int n ){
 	gx_graphics->vwait();
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
 void BBCALL bbFlip( int vwait ){
 	gx_graphics->flip( vwait ? true : false );
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
 int BBCALL bbGraphicsWidth(){
@@ -669,7 +671,7 @@ int BBCALL bbDrawMovie( gxMovie *movie,int x,int y,int w,int h ){
 	if( w<0 ) w=movie->getWidth();
 	if( h<0 ) h=movie->getHeight();
 	int playing=movie->draw( gx_canvas,x,y,w,h );
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 	return playing;
 }
 
@@ -1038,7 +1040,7 @@ static void endPrinting( BBCanvas *c ){
 	c->setHandle( p_hx,p_hy );
 	c->setOrigin( p_ox,p_oy );
 	if( c==gx_canvas ) c->setColor( curr_color );
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
 void BBCALL bbWrite( BBStr *str ){
@@ -1091,10 +1093,10 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 		int cw=curr_font->getWidth( curs<str.size() ? str.substr( curs,1 ) : "X" );
 
 		//wait for a key
-		int key=0,st=gx_runtime->getMilliSecs(),tc=-1;
+		int key=0,st=bbMilliSecs(),tc=-1;
 
-		while( gx_runtime->idle() ){
-			int t=gx_runtime->getMilliSecs();
+		while( bbRuntimeIdle() ){
+			int t=bbMilliSecs();
 			int n=(t-st)/320;
 			if( n!=tc ){
 				tc=n;

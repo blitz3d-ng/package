@@ -126,9 +126,6 @@ pointer_visible(true),graphics(0),use_di(false){
 	env.window=hwnd;
 
 	enumGfx();
-	TIMECAPS tc;
-	timeGetDevCaps( &tc,sizeof(tc) );
-	timeBeginPeriod( tc.wPeriodMin );
 
 	memset( &osinfo,0,sizeof(osinfo) );
 	osinfo.dwOSVersionInfoSize=sizeof(osinfo);
@@ -601,37 +598,6 @@ string gxRuntime::commandLine(){
 	return cmd_line;
 }
 
-/////////////
-// EXECUTE //
-/////////////
-bool gxRuntime::execute( const string &cmd_line ){
-
-	if( !cmd_line.size() ) return false;
-
-	//convert cmd_line to cmd and params
-	string cmd=cmd_line,params;
-	while( cmd.size() && cmd[0]==' ' ) cmd=cmd.substr( 1 );
-	if( cmd.find( '\"' )==0 ){
-		int n=cmd.find( '\"',1 );
-		if( n!=string::npos ){
-			params=cmd.substr( n+1 );
-			cmd=cmd.substr( 1,n-1 );
-		}
-	}else{
-		int n=cmd.find( ' ' );
-		if( n!=string::npos ){
-			params=cmd.substr( n+1 );
-			cmd=cmd.substr( 0,n );
-		}
-	}
-	while( params.size() && params[0]==' ' ) params=params.substr( 1 );
-	while( params.size() && params[params.size()-1]==' ' ) params=params.substr( 0,params.size()-1 );
-
-	SetForegroundWindow( GetDesktopWindow() );
-
-	return (int)ShellExecute( GetDesktopWindow(),0,cmd.c_str(),params.size() ? params.c_str() : 0,0,SW_SHOW )>32;
-}
-
 ///////////////
 // APP TITLE //
 ///////////////
@@ -639,13 +605,6 @@ void gxRuntime::setTitle( const string &t,const string &e ){
 	app_title=t;
 	app_close=e;
 	SetWindowText( hwnd,app_title.c_str() );
-}
-
-//////////////////
-// GETMILLISECS //
-//////////////////
-int gxRuntime::getMilliSecs(){
-	return timeGetTime();
 }
 
 /////////////////////

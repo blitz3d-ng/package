@@ -1,6 +1,7 @@
 
 #include "../../stdutil/stdutil.h"
 #include <bb/blitz/blitz.h>
+#include <bb/runtime/runtime.h>
 #include "system.h"
 
 BBSystemDriver *sys_driver;
@@ -13,7 +14,7 @@ void BBCALL bbEnd(){
 }
 void BBCALL bbStop(){
 	gx_runtime->debugStop();
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
 void BBCALL bbAppTitle( BBStr *ti,BBStr *cp ){
@@ -31,8 +32,8 @@ void BBCALL bbRuntimeError( BBStr *str ){
 
 int BBCALL bbExecFile( BBStr *f ){
 	string t=*f;delete f;
-	int n=gx_runtime->execute( t );
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	int n=sys_driver->execute( t );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 	return n;
 }
 
@@ -41,7 +42,7 @@ void BBCALL bbDelay( int ms ){
 }
 
 int BBCALL bbMilliSecs(){
-	return gx_runtime->getMilliSecs();
+	return sys_driver->getMilliSecs();
 }
 
 BBStr * BBCALL bbCommandLine(){
@@ -74,7 +75,7 @@ void BBCALL bbDebugLog( BBStr *t ){
 
 void BBCALL _bbDebugStmt( int pos,const char *file ){
 	gx_runtime->debugStmt( pos,file );
-	if( !gx_runtime->idle() ) RTEX( 0 );
+	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
 void BBCALL _bbDebugEnter( void *frame,void *env,const char *func ){
