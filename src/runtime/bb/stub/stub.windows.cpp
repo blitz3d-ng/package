@@ -1,5 +1,6 @@
 
 #include <bb/stub/stub.h>
+#include <bb/runtime/runtime.h>
 
 #include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
@@ -17,7 +18,7 @@ const char *bbruntime_run( gxRuntime *rt,void (*pc)(),bool dbg ){
 	if( !bbruntime_create() ) return "Unable to start program";
 	const char *t=0;
 	try{
-		if( !gx_runtime->idle() ) RTEX( 0 );
+		if( !bbRuntimeIdle() ) RTEX( 0 );
 		pc();
 		_bbDebugInfo( "Program has ended" );
 	}catch( bbEx x ){

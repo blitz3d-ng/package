@@ -6,31 +6,30 @@
 static Vector *normals;
 static float white[]={1,1,1};
 
-extern gxRuntime *gx_runtime;
 extern gxGraphics *gx_graphics;
 
 struct MD2Model::Rep{
 
 	struct md2_header{
-		int magic; 
-		int version; 
-		int skinWidth; 
-		int skinHeight; 
-		int frameSize; 
-		int numSkins; 
-		int numVertices; 
-		int numTexCoords; 
-		int numTriangles; 
-		int numGlCommands; 
-		int numFrames; 
-		int offsetSkins; 
-		int offsetTexCoords; 
-		int offsetTriangles; 
-		int offsetFrames; 
-		int offsetGlCommands; 
+		int magic;
+		int version;
+		int skinWidth;
+		int skinHeight;
+		int frameSize;
+		int numSkins;
+		int numVertices;
+		int numTexCoords;
+		int numTriangles;
+		int numGlCommands;
+		int numFrames;
+		int offsetSkins;
+		int offsetTexCoords;
+		int offsetTriangles;
+		int offsetFrames;
+		int offsetGlCommands;
 		int offsetEnd;
 	};
-	
+
 	struct md2_vertex{
 		unsigned char x,y,z,n;
 	};
@@ -169,22 +168,22 @@ struct MD2Model::Rep{
 #pragma pack( push,1 )
 
 	struct Header{
-		int magic; 
-		int version; 
-		int skinWidth; 
-		int skinHeight; 
-		int frameSize; 
-		int numSkins; 
-		int numVertices; 
-		int numTexCoords; 
-		int numTriangles; 
-		int numGlCommands; 
-		int numFrames; 
-		int offsetSkins; 
-		int offsetTexCoords; 
-		int offsetTriangles; 
-		int offsetFrames; 
-		int offsetGlCommands; 
+		int magic;
+		int version;
+		int skinWidth;
+		int skinHeight;
+		int frameSize;
+		int numSkins;
+		int numVertices;
+		int numTexCoords;
+		int numTriangles;
+		int numGlCommands;
+		int numFrames;
+		int offsetSkins;
+		int offsetTexCoords;
+		int offsetTriangles;
+		int offsetFrames;
+		int offsetGlCommands;
 		int offsetEnd;
 	};
 

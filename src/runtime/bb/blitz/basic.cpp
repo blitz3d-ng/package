@@ -1,8 +1,10 @@
 
+#include "../../stdutil/stdutil.h"
 #include "blitz.h"
+#include "debug.h"
 
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
+#include <map>
+using namespace std;
 
 //how many strings allocated
 static int stringCnt;

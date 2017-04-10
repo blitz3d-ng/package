@@ -1,5 +1,6 @@
 
 #include "../../stdutil/stdutil.h"
+#include <bb/runtime/runtime.h>
 #include "resource.h"
 #include "multiplay_setup.h"
 #include <string>
@@ -296,7 +297,7 @@ void multiplay_setup_destroy(){
 }
 
 int multiplay_setup_open(){
-	gx_runtime->idle();
+	bbRuntimeIdle();
 
 	int n=DialogBox( GetModuleHandle( "runtime" ),MAKEINTRESOURCE( IDD_MULTIPLAYER ),GetDesktopWindow(),dialogProc );
 
@@ -307,7 +308,7 @@ int multiplay_setup_open(){
 
 	//NAUGHTY!
 	gx_runtime->asyncRun();
-	gx_runtime->idle();
+	bbRuntimeIdle();
 	return n;
 }
 
