@@ -27,7 +27,7 @@ int WindowsTimer::wait(){
 	return n;
 }
 
-BBTimer *_bbCreateTimer( int hertz ){
+BBTimer * BBCALL _bbCreateTimer( int hertz ){
 	return new WindowsTimer( hertz );
 }
 

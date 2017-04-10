@@ -243,7 +243,7 @@ for i,rt in ipairs(runtimes) do
 
     language "C++"
 
-    local STUB_PATH="src/runtime/" .. rt .. ".stub.cpp"
+    local STUB_PATH="src\\runtime\\" .. rt .. ".stub.cpp"
     files { STUB_PATH }
 
     filter "platforms:macos"
@@ -319,15 +319,22 @@ for i,rt in ipairs(runtimes) do
     stub:write("}\n")
     stub:close()
 
-    old_stub = io.open( STUB_PATH,"r" )
-    new_stub = io.open( STUB_PATH .. ".tmp","r" )
-    if old_stub == nil or old_stub:read("*all") ~= new_stub:read("*all") then
+    local function read_all( path )
+      file = io.open( path,"r" )
+      if file == nil then return "" end
+      contents = file:read("*all")
+      file:close()
+      return contents
+    end
+
+    old_stub = read_all( STUB_PATH )
+    new_stub = read_all( STUB_PATH .. ".tmp" )
+    if #old_stub == 0 or old_stub ~= new_stub then
+      os.remove( STUB_PATH )
       os.rename( STUB_PATH .. ".tmp",STUB_PATH )
     else
       os.remove( STUB_PATH .. ".tmp" )
     end
-    if old_stub ~= nil then old_stub:close() end
-    new_stub:close()
 
     filter {}
 
