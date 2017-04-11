@@ -3,6 +3,7 @@
 #include "blitz.h"
 #include "debug.h"
 
+#include <math.h>
 #include <map>
 using namespace std;
 
