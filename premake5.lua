@@ -58,8 +58,8 @@ workspace "blitz3d"
 
     disablewarnings { "4018","4244","4996" }
 
-  -- filter { "platforms:macos or mingw32" }
-  --   defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall" }
+  filter { "platforms:macos or mingw32" }
+    defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall" }
 
   filter { "platforms:linux" }
     defines { "_cdecl=__attribute__((__cdecl__))", "_fastcall=__fastcall", "_stdcall=__stdcall" }
