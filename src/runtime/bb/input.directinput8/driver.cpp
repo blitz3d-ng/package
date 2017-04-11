@@ -143,7 +143,7 @@ static vector<Joystick*> joysticks;
 static Keyboard *createKeyboard( DirectInput8Driver *input ){
 	IDirectInputDevice8 *dev;
 	if( input->dirInput->CreateDevice( GUID_SysKeyboard,&dev,0 )>=0 ){
-		if( dev->SetCooperativeLevel( (HWND)bbRuntimeWindow(),DISCL_FOREGROUND|DISCL_EXCLUSIVE )>=0 ){
+		if( dev->SetCooperativeLevel( (HWND)bbRuntimeWindow(),DISCL_FOREGROUND|DISCL_NONEXCLUSIVE )>=0 ){
 
 			if( dev->SetDataFormat( &c_dfDIKeyboard )>=0 ){
 				DIPROPDWORD dword;
@@ -176,7 +176,7 @@ static Keyboard *createKeyboard( DirectInput8Driver *input ){
 static Mouse *createMouse( DirectInput8Driver *input ){
 	IDirectInputDevice8 *dev;
 	if( input->dirInput->CreateDevice( GUID_SysMouse,&dev,0 )>=0 ){
-		if( dev->SetCooperativeLevel( (HWND)bbRuntimeWindow(),DISCL_FOREGROUND|DISCL_EXCLUSIVE )>=0 ){
+		if( dev->SetCooperativeLevel( (HWND)bbRuntimeWindow(),DISCL_FOREGROUND|DISCL_NONEXCLUSIVE )>=0 ){
 
 			if( dev->SetDataFormat( &c_dfDIMouse )>=0 ){
 				return d_new Mouse( input,dev );
@@ -198,7 +198,7 @@ static Mouse *createMouse( DirectInput8Driver *input ){
 static Joystick *createJoystick( DirectInput8Driver *input,LPCDIDEVICEINSTANCE devinst ){
 	IDirectInputDevice8 *dev;
 	if( input->dirInput->CreateDevice( devinst->guidInstance,&dev,0 )>=0 ){
-		if( dev->SetCooperativeLevel( (HWND)bbRuntimeWindow(),DISCL_FOREGROUND|DISCL_EXCLUSIVE )>=0 ){
+		if( dev->SetCooperativeLevel( (HWND)bbRuntimeWindow(),DISCL_FOREGROUND|DISCL_NONEXCLUSIVE )>=0 ){
 			if( dev->SetDataFormat( &c_dfDIJoystick )>=0 ){
 				int t=((devinst->dwDevType>>8)&0xff)==DI8DEVCLASS_GAMECTRL ? 1 : 2;
 				return d_new Joystick( input,dev,t );
