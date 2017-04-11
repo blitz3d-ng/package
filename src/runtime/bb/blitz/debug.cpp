@@ -5,8 +5,14 @@
 #include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
+static Debugger *debugger;
+
+void BBCALL bbAttachDebugger( Debugger *d ){
+	debugger=d;
+}
+
 void BBCALL _bbDebugLog( const char *t ){
-	gx_runtime->debugLog( t );
+	if( debugger ) debugger->debugLog( t );
 }
 
 void BBCALL _bbDebugInfo( const char *e ){
@@ -18,16 +24,16 @@ void BBCALL _bbDebugError( const char *e ){
 }
 
 void BBCALL _bbDebugStmt( int pos,const char *file ){
-	gx_runtime->debugStmt( pos,file );
+	if( debugger ) debugger->debugStmt( pos,file );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
 void BBCALL _bbDebugEnter( void *frame,void *env,const char *func ){
-	gx_runtime->debugEnter( frame,env,func );
+	if( debugger ) debugger->debugEnter( frame,env,func );
 }
 
 void BBCALL _bbDebugLeave(){
-	gx_runtime->debugLeave();
+	if( debugger ) debugger->debugLeave();
 }
 
 void BBCALL bbDebugStop(){

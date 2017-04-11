@@ -1,5 +1,6 @@
 
 #include <bb/runtime/runtime.h>
+#include <bb/system/system.h>
 #include "driver.h"
 
 #include "../../gxruntime/gxruntime.h"
@@ -361,6 +362,8 @@ BBMODULE_CREATE( input_directinput8 ){
 			if( !bbEnumInput() ){
 				_bbDebugInfo( "Failed to enumerate input devices" );
 				gx_input=0;
+			} else {
+				bbSystemProperties["directinput8"]=itoa( (int)di );
 			}
 		}else{
 			_bbDebugInfo( "Create DirectInput failed" );

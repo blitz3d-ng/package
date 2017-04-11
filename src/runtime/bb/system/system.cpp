@@ -3,7 +3,9 @@
 #include <bb/blitz/blitz.h>
 #include <bb/runtime/runtime.h>
 #include "system.h"
+using namespace std;
 
+map<string,string> bbSystemProperties;
 BBSystemDriver *sys_driver;
 
 #include "../../gxruntime/gxruntime.h"
@@ -46,8 +48,8 @@ BBStr * BBCALL bbCommandLine(){
 }
 
 BBStr * BBCALL bbSystemProperty( BBStr *p ){
-	string t=gx_runtime->systemProperty( *p );
-	delete p;return d_new BBStr( t );
+	string t=tolower(*p);
+	delete p;return d_new BBStr( bbSystemProperties[t] );
 }
 
 BBStr * BBCALL bbGetEnv( BBStr *env_var ){

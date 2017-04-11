@@ -2,6 +2,7 @@
 #include "std.h"
 #include "gxgraphics.h"
 #include "gxruntime.h"
+#include <bb/system/system.h>
 
 // for some reason the mingw headers are missing this...
 #ifndef DDSGR_CALIBRATE
@@ -60,6 +61,18 @@ gxGraphics::~gxGraphics(){
 
 	dirDraw->RestoreDisplayMode();
 	dirDraw->Release();
+}
+
+void gxGraphics::wipeSystemProperties(){
+	bbSystemProperties.erase( "direct3d7" );
+	bbSystemProperties.erase( "direct3ddevice7" );
+	bbSystemProperties.erase( "directdraw7" );
+}
+
+void gxGraphics::setSystemProperties(){
+	bbSystemProperties["direct3d7"]=itoa( (int)dir3d );
+	bbSystemProperties["direct3ddevice7"]=itoa( (int)dir3dDev );
+	bbSystemProperties["directdraw7"]=itoa( (int)dirDraw );
 }
 
 void gxGraphics::setGamma( int r,int g,int b,float dr,float dg,float db ){

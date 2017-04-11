@@ -31,6 +31,8 @@ private:
 	gxRuntime( HINSTANCE hinst,const std::string &cmd_line,HWND hwnd );
 	~gxRuntime();
 
+	void refreshSystemProperties();
+
 	void paint();
 	void suspend();
 	void forceSuspend();
@@ -80,8 +82,6 @@ public:
 	void setPointerVisible( bool vis );
 
 	std::string commandLine();
-
-	std::string systemProperty( const std::string &t );
 
 	void debugStop();
 	void debugProfile( int per );

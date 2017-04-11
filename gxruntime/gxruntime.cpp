@@ -3,7 +3,7 @@
 #include "gxruntime.h"
 #include <bb/runtime/runtime.h>
 #include <bb/input.directinput8/driver.h>
-#include <bb/audio/driver.h>
+#include <bb/system/system.h>
 #include "zmouse.h"
 
 #define dx_input ((DirectInput8Driver*)gx_input)
@@ -62,7 +62,7 @@ gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst,const string &cmd_line,Debugg
 	if( runtime ) return 0;
 
 	//create debugger
-	debugger=d;
+	bbAttachDebugger( (debugger=d) );
 
 	//create WNDCLASS
 	WNDCLASS wndclass;
@@ -116,6 +116,7 @@ pointer_visible(true),graphics(0),use_di(false),Frame(hw){
 	memset( &osinfo,0,sizeof(osinfo) );
 	osinfo.dwOSVersionInfoSize=sizeof(osinfo);
 	GetVersionEx( &osinfo );
+	refreshSystemProperties();
 
 	HMODULE ddraw=LoadLibraryA( "ddraw.dll" );
 	if( ddraw ){
@@ -278,7 +279,7 @@ void gxRuntime::flip( bool vwait ){
 		}
 		if( n>=0 ) return;
 		string t="Flip Failed! Return code:"+itoa(n&0x7fff);
-		debugLog( t.c_str() );
+		_bbDebugLog( t.c_str() );
 		break;
 	}
 }
@@ -480,7 +481,7 @@ bool gxRuntime::idle(){
 			if( suspended ) forceResume();
 			break;
 		case WM_END:
-			debugger=0;
+			bbAttachDebugger( (debugger=0) );
 			run_flag=false;
 			break;
 		default:
@@ -491,32 +492,12 @@ bool gxRuntime::idle(){
 }
 
 ///////////////
-// DEBUGSTMT //
-///////////////
-void gxRuntime::debugStmt( int pos,const char *file ){
-	if( debugger ) debugger->debugStmt( pos,file );
-}
-
-///////////////
 // DEBUGSTOP //
 ///////////////
 void gxRuntime::debugStop(){
 	if( !suspended ) forceSuspend();
 }
 
-////////////////
-// DEBUGENTER //
-////////////////
-void gxRuntime::debugEnter( void *frame,void *env,const char *func ){
-	if( debugger ) debugger->debugEnter( frame,env,func );
-}
-
-////////////////
-// DEBUGLEAVE //
-////////////////
-void gxRuntime::debugLeave(){
-	if( debugger ) debugger->debugLeave();
-}
 
 ////////////////
 // DEBUGERROR //
@@ -542,13 +523,6 @@ void gxRuntime::debugInfo( const char *t ){
 		forceSuspend();
 	}
 	d->debugMsg( t,false );
-}
-
-//////////////
-// DEBUGLOG //
-//////////////
-void gxRuntime::debugLog( const char *t ){
-	if( debugger ) debugger->debugLog( t );
 }
 
 /////////////////////////
@@ -747,7 +721,12 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 		}
 	}
 
-	if( !graphics ) curr_driver=0;
+	if( !graphics ){
+		gxGraphics::wipeSystemProperties();
+		curr_driver=0;
+	}else{
+		graphics->setSystemProperties();
+	}
 
 	gfx_lost=false;
 
@@ -940,67 +919,63 @@ static string toDir( string t ){
 	return t;
 }
 
-string gxRuntime::systemProperty( const std::string &p ){
+void gxRuntime::refreshSystemProperties(){
 	char buff[MAX_PATH+1];
-	string t=tolower(p);
-	if( t=="cpu" ){
-		return "Intel";
-	}else if( t=="os" ){
-		switch( osinfo.dwMajorVersion ){
-		case 3:
-			switch( osinfo.dwMinorVersion ){
-			case 51:return "Windows NT 3.1";
-			}
-			break;
-		case 4:
-			switch( osinfo.dwMinorVersion ){
-			case 0:return "Windows 95";
-			case 10:return "Windows 98";
-			case 90:return "Windows ME";
-			}
-			break;
-		case 5:
-			switch( osinfo.dwMinorVersion ){
-			case 0:return "Windows 2000";
-			case 1:return "Windows XP";
-			case 2:return "Windows Server 2003";
-			}
-			break;
-		case 6:
-			switch( osinfo.dwMinorVersion ){
-			case 0:return "Windows Vista";
-			case 1:return "Windows 7";
-			}
-			break;
+
+	bbSystemProperties["cpu"]="Intel";
+
+	string os="Unknown";
+	switch( osinfo.dwMajorVersion ){
+	case 3:
+		switch( osinfo.dwMinorVersion ){
+		case 51:os="Windows NT 3.1";break;
 		}
-	}else if( t=="appdir" ){
-		if( GetModuleFileName( 0,buff,MAX_PATH ) ){
-			string t=buff;
-			int n=t.find_last_of( '\\' );
-			if( n!=string::npos ) t=t.substr( 0,n );
-			return toDir( t );
+		break;
+	case 4:
+		switch( osinfo.dwMinorVersion ){
+		case 0:os="Windows 95";break;
+		case 10:os="Windows 98";break;
+		case 90:os="Windows ME";break;
 		}
-	}else if( t=="apphwnd" ){
-		return itoa( (int)hwnd );
-	}else if( t=="apphinstance" ){
-		return itoa( (int)hinst );
-	}else if( t=="windowsdir" ){
-		if( GetWindowsDirectory( buff,MAX_PATH ) ) return toDir( buff );
-	}else if( t=="systemdir" ){
-		if( GetSystemDirectory( buff,MAX_PATH ) ) return toDir( buff );
-	}else if( t=="tempdir" ){
-		if( GetTempPath( MAX_PATH,buff ) ) return toDir( buff );
-	}else if( t=="direct3d7" ){
-		if( graphics ) return itoa( (int)graphics->dir3d );
-	}else if( t=="direct3ddevice7" ){
-		if( graphics ) return itoa( (int)graphics->dir3dDev );
-	}else if( t=="directdraw7" ){
-		if( graphics ) return itoa( (int)graphics->dirDraw );
-	}else if( t=="directinput7" ){
-		if( gx_input ) return itoa( (int)dx_input->dirInput );
+		break;
+	case 5:
+		switch( osinfo.dwMinorVersion ){
+		case 0:os="Windows 2000";break;
+		case 1:os="Windows XP";break;
+		case 2:os="Windows Server 2003";break;
+		}
+		break;
+	case 6:
+		switch( osinfo.dwMinorVersion ){
+		case 0:os="Windows Vista";break;
+		case 1:os="Windows 7";break;
+		case 2:os="Windows 8";break;
+		case 3:os="Windows 8.1";break;
+		}
+	case 10:
+		switch( osinfo.dwMinorVersion ){
+		case 0:os="Windows 10";break;
+		}
+		break;
 	}
-	return "";
+
+	bbSystemProperties["os"]=os;
+
+	if( GetModuleFileName( 0,buff,MAX_PATH ) ){
+		string t=buff;
+		int n=t.find_last_of( '\\' );
+		if( n!=string::npos ) t=t.substr( 0,n );
+		bbSystemProperties["appdir"]=toDir( t );
+	}
+
+	if( GetWindowsDirectory( buff,MAX_PATH ) ) bbSystemProperties["windowsdir"]=toDir( buff );
+	if( GetSystemDirectory( buff,MAX_PATH ) )  bbSystemProperties["systemdir"]=toDir( buff );
+	if( GetTempPath( MAX_PATH,buff ) )         bbSystemProperties["tempdir"]=toDir( buff );
+
+	bbSystemProperties["apphwnd"]=itoa( (int)hwnd );
+	bbSystemProperties["apphinstance"]=itoa( (int)hinst );
 }
+
 
 void gxRuntime::enableDirectInput( bool enable ){
 	if( use_di=enable ){

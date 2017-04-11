@@ -37,6 +37,8 @@ public:
 
 	gxRuntime *runtime;
 
+	static void wipeSystemProperties();
+	void setSystemProperties();
 private:
 
 	gxCanvas *front_canvas,*back_canvas;

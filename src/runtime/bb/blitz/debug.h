@@ -15,6 +15,8 @@ public:
 	virtual void debugSys( void *msg )=0;
 };
 
+void BBCALL bbAttachDebugger( Debugger *d );
+
 void BBCALL _bbDebugLog( const char *t );
 void BBCALL _bbDebugInfo( const char *e );
 void BBCALL _bbDebugError( const char *e );

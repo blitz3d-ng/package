@@ -2,8 +2,8 @@
 #define BB_SYSTEM_SYSTEM_H
 
 #include <bb/blitz/blitz.h>
-
 #include <bb/blitz/module.h>
+#include <map>
 
 class BBSystemDriver{
 public:
@@ -37,5 +37,6 @@ int BBCALL bbScreenWidth( int i );
 int BBCALL bbScreenHeight( int i );
 
 extern BBSystemDriver *sys_driver;
+extern std::map<std::string,std::string> bbSystemProperties;
 
 #endif
