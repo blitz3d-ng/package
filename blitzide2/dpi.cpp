@@ -1,4 +1,7 @@
 #include "dpi.h"
+
+#ifdef _WIN32
+
 #include <windows.h>
 
 bool _dpi_scale_calculated=false;
@@ -17,3 +20,10 @@ void _CalculateDPIScale(){
 
 float GetDPIScaleX(){ _CalculateDPIScale();return dpi_scale_x; }
 float GetDPIScaleY(){ _CalculateDPIScale();return dpi_scale_y; }
+
+#else
+
+float GetDPIScaleX() { return 1.0f; }
+float GetDPIScaleY() { return 1.0f; }
+
+#endif

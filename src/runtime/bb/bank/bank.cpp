@@ -1,11 +1,12 @@
 
-#include <set>
 
 #include <bb/blitz/blitz.h>
 #include "../../stdutil/stdutil.h"
 #include "bank.h"
 #include "../stream/stream.h"
 
+#include <cstring>
+#include <set>
 using namespace std;
 
 bbBank::bbBank( int sz ):size(sz){

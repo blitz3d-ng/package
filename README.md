@@ -1,5 +1,5 @@
 # Blitz3D "NG"
-[![Build status](https://ci.appveyor.com/api/projects/status/ww8qjywqm6rb5rnu/branch/master?svg=true)](https://ci.appveyor.com/project/kfprimm/blitz3d-ng-gj3xh/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/ww8qjywqm6rb5rnu/branch/master?svg=true)](https://ci.appveyor.com/project/blitz3d-ng/blitz3d-ng-gj3xh/branch/master)
 [![Build Status](https://travis-ci.org/blitz3d-ng/blitz3d-ng.svg?branch=master)](https://travis-ci.org/blitz3d-ng/blitz3d-ng)
 
 This project is an attempt to revive & modernize Blitz3D.
@@ -15,7 +15,7 @@ You'll need a copy of [Visual Studio](https://www.visualstudio.com/vs/community/
 Open up a command prompt via `Start -> Visual Studio 2015 -> Developer Command Prompt for VS2015`.
 
 ```
-> git clone --recursive https://github.com/kfprimm/blitz3d-ng
+> git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 > cd blitz3d-ng
 > premake5 vs2015 && devenv build\blitz3d.sln /build release
 ```
@@ -25,7 +25,7 @@ Open up a command prompt via `Start -> Visual Studio 2015 -> Developer Command P
 Install [Xcode](https://developer.apple.com/xcode/), [premake](https://premake.github.io/download.html), and  [brew](http://brew.sh/).
 
 ```bash
-$ git clone --recursive https://github.com/kfprimm/blitz3d-ng
+$ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
 $ brew install wxmac
 $ premake5 gmake && make config=release_macos
@@ -36,7 +36,7 @@ $ premake5 gmake && make config=release_macos
 Install [premake](https://premake.github.io/download.html).
 
 ```bash
-$ git clone --recursive https://github.com/kfprimm/blitz3d-ng
+$ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
 $ apt-get install build-essential libwxgtk3.0-dev
 $ premake5 gmake && make config=release_linux
@@ -45,11 +45,10 @@ $ premake5 gmake && make config=release_linux
 Alternatively, you can build everything with [docker](https://docker.io).
 
 ```bash
-$ git clone --recursive https://github.com/kfprimm/blitz3d-ng
+$ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
 $ docker-compose build
-$ docker-compose run env bash
-$ premake5 gmake && make config=release_linux
+$ docker-compose run env
 ```
 
 ## Documentation
@@ -69,7 +68,7 @@ $ bin/makedocs
 - Add misc. quick fixes & improvements (i.e., add "missing" features like [BlitzClose](http://www.blitzbasic.com/codearcs/codearcs.php?code=832).)
 - Improve help files & styling.
 - Swap out FMOD for something with a more permissive license.
-- Integrate [Assimp](http://www.assimp.org/) to that we don't depend on the DirectX X library anymore.
+- Integrate [Assimp](http://www.assimp.org/) so that we don't depend on the DirectX X library anymore.
 - OpenGL & newer Direct3D renderers.
 - 64-bit support.
 - macOS, Linux, Android, iOS support.

@@ -14,8 +14,8 @@ git:
   depth: 1
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-macosx.tar.gz | tar xvz ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-linux.tar.gz | tar xvz ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-macosx.tar.gz | tar xvz ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz | tar xvz ; fi
 
 script:
 - ./premake5 gmake

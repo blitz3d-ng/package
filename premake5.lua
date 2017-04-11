@@ -58,8 +58,11 @@ workspace "blitz3d"
 
     disablewarnings { "4018","4244","4996" }
 
-  filter { "platforms:macos or linux or mingw32" }
+  filter { "platforms:macos or mingw32" }
     defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall" }
+
+  filter { "platforms:linux" }
+    defines { "_cdecl=__attribute__((__cdecl__))", "_fastcall=__fastcall", "_stdcall=__stdcall" }
 
   filter { "platforms:win32 or win64", "kind:WindowedApp or ConsoleApp" }
     targetextension ".exe"
@@ -247,7 +250,7 @@ for i,rt in ipairs(runtimes) do
 
     language "C++"
 
-    local STUB_PATH="src\\runtime\\" .. rt .. ".stub.cpp"
+    local STUB_PATH="src/runtime/" .. rt .. ".stub.cpp"
     files { STUB_PATH }
 
     filter "platforms:macos"
@@ -352,8 +355,6 @@ project "stub"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "linux" }
-
   files "src/runtime/bb/stub/stub.h"
 
   filter "platforms:win32 or win64 or mingw32"
@@ -361,6 +362,9 @@ project "stub"
 
   filter "platforms:macos"
     files "src/runtime/bb/stub/stub.macos.cpp"
+
+  filter "platforms:linux"
+    files "src/runtime/bb/stub/stub.linux.cpp"
 
 project "frame"
   kind "StaticLib"

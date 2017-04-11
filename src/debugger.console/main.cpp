@@ -19,6 +19,6 @@ public:
 	virtual void debugSys( void *msg ){}
 };
 
-Debugger * _cdecl debuggerGetDebugger( void *mod,void *env ){
+extern "C" Debugger * _cdecl debuggerGetDebugger( void *mod,void *env ){
 	return d_new ConsoleDebugger();
 }
