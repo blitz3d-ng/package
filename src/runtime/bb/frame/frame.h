@@ -10,8 +10,6 @@ public:
 public: // TODO: make these protected
   HWND hwnd;
 
-  std::string app_title;
-  std::string app_close;
 protected:
   //current gfx mode
   //
@@ -30,8 +28,10 @@ protected:
 
   void resize( int w,int h );
   void fullscreen();
+
+  static void _refreshTitle( void *data,void *context );
 public:
-  void setTitle( const std::string &title,const std::string &close );
+  void setTitle( const std::string &title );
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 #include "bbruntime_dll.h"
 #include "../debugger/debugger.h"
+#include <bb/blitz/app.h>
 
 using namespace std;
 
@@ -104,6 +105,8 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 	string params=args;
 	while( params.size() && params[0]==' ' ) params=params.substr( 1 );
 	while( params.size() && params[params.size()-1]==' ' ) params=params.substr( 0,params.size()-1 );
+
+	bbStartup( params );
 
 	if( gx_runtime=gxRuntime::openRuntime( hinst,params,dbg ) ){
 

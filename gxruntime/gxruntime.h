@@ -39,7 +39,6 @@ private:
 	void resume();
 	void forceResume();
 
-	std::string cmd_line;
 	bool pointer_visible;
 
 	bool setDisplayMode( int w,int h,int d,bool d3d,IDirectDraw7 *dd );
@@ -80,8 +79,6 @@ public:
 	bool idle();
 
 	void setPointerVisible( bool vis );
-
-	std::string commandLine();
 
 	void debugStop();
 	void debugProfile( int per );

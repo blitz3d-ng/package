@@ -436,6 +436,7 @@ project "blitz"
   removeplatforms { "macos", "linux" }
 
   files {
+    "src/runtime/bb/blitz/app.cpp", "src/runtime/bb/blitz/app.h",
     "src/runtime/bb/blitz/basic.cpp", "src/runtime/bb/blitz/basic.h",
     "src/runtime/bb/blitz/debug.cpp", "src/runtime/bb/blitz/debug.h",
     "src/runtime/bb/blitz/env.cpp", "src/runtime/bb/blitz/env.h",

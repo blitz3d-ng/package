@@ -8,18 +8,6 @@ using namespace std;
 map<string,string> bbSystemProperties;
 BBSystemDriver *sys_driver;
 
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
-
-void BBCALL bbEnd(){
-	RTEX( 0 );
-}
-
-void BBCALL bbAppTitle( BBStr *ti,BBStr *cp ){
-	gx_runtime->setTitle( *ti,*cp );
-	delete ti;delete cp;
-}
-
 void BBCALL bbRuntimeError( BBStr *str ){
 	string t=*str;delete str;
 	if( t.size()>255 ) t[255]=0;
@@ -41,10 +29,6 @@ void BBCALL bbDelay( int ms ){
 
 int BBCALL bbMilliSecs(){
 	return sys_driver->getMilliSecs();
-}
-
-BBStr * BBCALL bbCommandLine(){
-	return d_new BBStr( gx_runtime->commandLine() );
 }
 
 BBStr * BBCALL bbSystemProperty( BBStr *p ){
@@ -89,13 +73,10 @@ BBMODULE_DESTROY( system ){
 }
 
 BBMODULE_LINK( system ){
-	rtSym( "End",bbEnd );
-	rtSym( "AppTitle$title$close_prompt=\"\"",bbAppTitle );
 	rtSym( "RuntimeError$message",bbRuntimeError );
 	rtSym( "ExecFile$command",bbExecFile );
 	rtSym( "Delay%millisecs",bbDelay );
 	rtSym( "%MilliSecs",bbMilliSecs );
-	rtSym( "$CommandLine",bbCommandLine );
 	rtSym( "$SystemProperty$property",bbSystemProperty );
 	rtSym( "$GetEnv$env_var",bbGetEnv );
 	rtSym( "SetEnv$env_var$value",bbSetEnv );

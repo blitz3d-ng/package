@@ -1,6 +1,7 @@
 
 #include "../../stdutil/stdutil.h"
 #include "blitz.h"
+#include "app.h"
 #include "debug.h"
 
 #include <math.h>
@@ -597,7 +598,7 @@ BBMODULE_LINK( blitz ){
 	rtSym( "_bbFPow",_bbFPow );
 	rtSym( "RuntimeStats",bbRuntimeStats );
 
-
+	// debug
 	rtSym( "_bbDebugStmt",_bbDebugStmt );
 	rtSym( "_bbDebugEnter",_bbDebugEnter );
 	rtSym( "_bbDebugLeave",_bbDebugLeave );
@@ -605,4 +606,8 @@ BBMODULE_LINK( blitz ){
 	rtSym( "Stop",bbDebugStop );
 	rtSym( "DebugStop",bbDebugStop );
 	rtSym( "DebugLog$text",bbDebugLog );
+
+	rtSym( "End",bbEnd );
+	rtSym( "AppTitle$title$close_prompt=\"\"",bbAppTitle );
+	rtSym( "$CommandLine",bbCommandLine );
 }

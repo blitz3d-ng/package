@@ -1,6 +1,7 @@
 
 #include "std.h"
 #include "gxruntime.h"
+#include <bb/blitz/app.h>
 #include <bb/runtime/runtime.h>
 #include <bb/input.directinput8/driver.h>
 #include <bb/system/system.h>
@@ -104,7 +105,7 @@ void gxRuntime::closeRuntime( gxRuntime *r ){
 typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
 gxRuntime::gxRuntime( HINSTANCE hi,const string &cl,HWND hw ):
-hinst(hi),cmd_line(cl),curr_driver(0),enum_all(false),
+hinst(hi),curr_driver(0),enum_all(false),
 pointer_visible(true),graphics(0),use_di(false),Frame(hw){
 
 	CoInitialize( 0 );
@@ -331,8 +332,8 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 	case WM_ERASEBKGND:
 		return gfx_mode ? 1 : DefWindowProc( hwnd,msg,wparam,lparam );
 	case WM_CLOSE:
-		if( app_close.size() ){
-			int n=MessageBox( hwnd,app_close.c_str(),app_title.c_str(),MB_OKCANCEL|MB_ICONWARNING|MB_SETFOREGROUND|MB_TOPMOST );
+		if( bbApp().close.size() ){
+			int n=MessageBox( hwnd,bbApp().close.c_str(),bbApp().title.c_str(),MB_OKCANCEL|MB_ICONWARNING|MB_SETFOREGROUND|MB_TOPMOST );
 			if( n!=IDOK ) return 0;
 		}
 		asyncEnd();
@@ -523,13 +524,6 @@ void gxRuntime::debugInfo( const char *t ){
 		forceSuspend();
 	}
 	d->debugMsg( t,false );
-}
-
-/////////////////////////
-// RETURN COMMAND LINE //
-/////////////////////////
-string gxRuntime::commandLine(){
-	return cmd_line;
 }
 
 /////////////////////

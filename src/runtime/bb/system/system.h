@@ -16,18 +16,12 @@ public:
   virtual int getScreenHeight( int i )=0;
 };
 
-void BBCALL bbEnd();
-
-void BBCALL bbAppTitle( BBStr *ti,BBStr *cp );
-
 void BBCALL bbRuntimeError( BBStr *str );
 
 int BBCALL bbExecFile( BBStr *f );
 
 void BBCALL bbDelay( int ms );
 int BBCALL bbMilliSecs();
-
-BBStr * BBCALL bbCommandLine();
 
 BBStr * BBCALL bbSystemProperty( BBStr *p );
 BBStr * BBCALL bbGetEnv( BBStr *env_var );
