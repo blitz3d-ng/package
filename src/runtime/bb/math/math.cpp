@@ -62,23 +62,3 @@ BBMODULE_CREATE( math ){
 BBMODULE_DESTROY( math ){
 	return true;
 }
-
-BBMODULE_LINK( math ){
-	rtSym( "#Sin#degrees",bbSin );
-	rtSym( "#Cos#degrees",bbCos );
-	rtSym( "#Tan#degrees",bbTan );
-	rtSym( "#ASin#float",bbASin );
-	rtSym( "#ACos#float",bbACos );
-	rtSym( "#ATan#float",bbATan );
-	rtSym( "#ATan2#floata#floatb",bbATan2 );
-	rtSym( "#Sqr#float",bbSqr );
-	rtSym( "#Floor#float",bbFloor );
-	rtSym( "#Ceil#float",bbCeil );
-	rtSym( "#Exp#float",bbExp );
-	rtSym( "#Log#float",bbLog );
-	rtSym( "#Log10#float",bbLog10 );
-	rtSym( "#Rnd#from#to=0",bbRnd );
-	rtSym( "%Rand%from%to=1",bbRand );
-	rtSym( "SeedRnd%seed",bbSeedRnd );
-	rtSym( "%RndSeed",bbRndSeed );
-}

@@ -1,0 +1,16 @@
+name: Timer
+description: Provides access to reliable timing.
+
+dependencies:
+  - blitz
+  - runtime
+
+commands:
+  - CreateTimer%( hertz% ):"bbCreateTimer"
+  - WaitTimer%( timer% ):"bbWaitTimer"
+  - FreeTimer( timer% ):"bbFreeTimer"
+
+premake5:
+  files:
+    - timer.cpp
+    - timer.h

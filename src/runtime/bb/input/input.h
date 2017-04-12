@@ -27,8 +27,10 @@ int  BBCALL bbGetMouse();
 int  BBCALL bbWaitMouse();
 int  BBCALL bbMouseX();
 int  BBCALL bbMouseY();
+int  BBCALL bbMouseZ();
 int  BBCALL bbMouseXSpeed();
 int  BBCALL bbMouseYSpeed();
+int  BBCALL bbMouseZSpeed();
 void BBCALL bbMoveMouse( int x,int y );
 void BBCALL bbFlushMouse();
 
@@ -50,6 +52,7 @@ float	BBCALL bbJoyV( int port );
 float	BBCALL bbJoyPitch( int port );
 float	BBCALL bbJoyYaw( int port );
 float	BBCALL bbJoyRoll( int port );
+int		BBCALL bbJoyHat( int port );
 int		BBCALL bbJoyXDir( int port );
 int		BBCALL bbJoyYDir( int port );
 int		BBCALL bbJoyZDir( int port );

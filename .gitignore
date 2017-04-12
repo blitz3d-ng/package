@@ -33,6 +33,10 @@ _release/bin
 _release/lib
 _release/cfg/blitzide.prefs
 _release/tmp
+_release/help/reference/modules
+_release/help/reference/index.html
+
+src/runtime/premake
 
 /build
 /innosetup/installs

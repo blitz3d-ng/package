@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Blitz3D Docs</title>
-  <link rel="stylesheet" href="<%= relative_to_root %>/css/menu.css" type="text/css" />
+  <link rel="stylesheet" href="<%= relative_to_root %>/assets/style.css" type="text/css" />
 </head>
 <body>
   <div class="list">
@@ -31,11 +31,11 @@
     <ul>
     <% modules.each do |mod| %>
       <li>
-        <a href="<%= relative_to(File.dirname(mod.output_path)) %>/<%= File.basename(mod.output_path) %>/index.html"><%= mod.name %></a>
+        <a href="<%= relative_to module_path(mod) %>/<%= relative_to module_path(mod) %>/index.html"><%= mod.name %></a>
         <ul>
         <% mod.commands.each do |comm| %>
           <li>
-            <a class="<%= 'active' if defined?(command) && command == comm %>" href="<%= relative_to(File.dirname(comm.output_path)) %>/<%= File.basename(comm.output_path) %>"><%= comm.name %></a>
+            <a class="<%= 'active' if defined?(command) && command == comm %>" href="<%= relative_to(File.dirname(command_path(comm))) %>/<%= File.basename(command_path(comm)) %>"><%= comm.name %></a>
           </li>
         <% end %>
         </ul>

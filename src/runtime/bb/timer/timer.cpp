@@ -5,7 +5,7 @@ using namespace std;
 
 static set<BBTimer*> timers;
 
-BBTimer::~BBTimer(){	
+BBTimer::~BBTimer(){
 }
 
 BBTimer * BBCALL bbCreateTimer( int hertz ){
@@ -33,10 +33,4 @@ BBMODULE_CREATE( timer ){
 BBMODULE_DESTROY( timer ){
 	while( timers.size() ) bbFreeTimer( *timers.begin() );
   return true;
-}
-
-BBMODULE_LINK( timer ){
-  rtSym( "%CreateTimer%hertz",bbCreateTimer );
-  rtSym( "%WaitTimer%timer",bbWaitTimer );
-  rtSym( "FreeTimer%timer",bbFreeTimer );
 }

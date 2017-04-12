@@ -142,24 +142,3 @@ BBMODULE_CREATE( string ){
 BBMODULE_DESTROY( string ){
 	return true;
 }
-
-BBMODULE_LINK( string ){
-	rtSym( "$String$string%repeat",bbString );
-	rtSym( "$Left$string%count",bbLeft );
-	rtSym( "$Right$string%count",bbRight );
-	rtSym( "$Replace$string$from$to",bbReplace );
-	rtSym( "%Instr$string$find%from=1",bbInstr );
-	rtSym( "$Mid$string%start%count=-1",bbMid );
-	rtSym( "$Upper$string",bbUpper );
-	rtSym( "$Lower$string",bbLower );
-	rtSym( "$Trim$string",bbTrim );
-	rtSym( "$LSet$string%size",bbLSet );
-	rtSym( "$RSet$string%size",bbRSet );
-	rtSym( "$Chr%ascii",bbChr );
-	rtSym( "%Asc$string",bbAsc );
-	rtSym( "%Len$string",bbLen );
-	rtSym( "$Hex%value",bbHex );
-	rtSym( "$Bin%value",bbBin );
-	rtSym( "$CurrentDate",bbCurrentDate );
-	rtSym( "$CurrentTime",bbCurrentTime );
-}

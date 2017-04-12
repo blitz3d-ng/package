@@ -1,0 +1,9 @@
+name: Blitz2D
+description: Provides drawing functions.
+
+premake5:
+  files:
+  - font.h
+  - font.cpp
+  - graphics.h
+  - blitz2d.h

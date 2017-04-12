@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+
+## WARNING: This file is VERY ugly & quite the hackjob.
+
+require 'bundler'
+Bundler.require :default
+
+require 'yaml'
+require 'erb'
+
+require_relative '../lib/blitz3d/cli'
+
+command = ARGV[0]
+
+case command
+when 'help'
+  if ARGV.include?('--lint')
+    Class.new { extend Blitz3D::Tools::Lint }.run
+  end
+
+  if ARGV.include?('--build')
+    # begin
+      Class.new { extend Blitz3D::Tools::Help }.run
+    # rescue StandardError => e
+    #   puts e
+    # end
+
+    if ARGV.include?('--watch')
+      puts 'Watching for changes...'.yellow
+      FileWatcher.new(['src/docs', 'src/runtime/**/*.md']).watch do
+        begin
+          Class.new { extend Blitz3D::Tools::Help }.run
+        rescue StandardError => e
+          puts e
+        end
+      end
+    end
+  end
+when 'config'
+  Class.new { extend Blitz3D::Tools::Config }.run
+else
+  puts 'blitz3d - build tool'
+  puts 'usage: blitz3d [action] [options]'
+  puts
+  puts 'available actions:'
+  puts "  #{'help'.bold}     build help pages"
+  puts "            #{'--lint'.bold}: check help files for problems"
+  puts
+  puts "  #{'config'.bold}   generate module & runtime configs"
+  puts
+end

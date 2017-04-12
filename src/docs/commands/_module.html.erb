@@ -5,7 +5,7 @@
 <ul>
 <% mod.commands.each do |comm| %>
   <li>
-    <a class="<%= 'active' if defined?(command) && command == comm %>" href="<%= relative_to(File.dirname(comm.output_path)) %>/<%= File.basename(comm.output_path) %>"><%= comm.name %></a>
+    <a class="<%= 'active' if defined?(command) && command == comm %>" href="<%= relative_to(File.dirname(Blitz3D::Help::Reference::Command.new([], comm).output_path)) %>/<%= File.basename(Blitz3D::Help::Reference::Command.new([], comm).output_path) %>"><%= comm.name %></a>
   </li>
 <% end %>
 </ul>

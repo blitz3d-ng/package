@@ -6,6 +6,7 @@
 #include <bb/audio/driver.h>
 
 BBSound *	 BBCALL bbLoadSound( BBStr *file );
+BBSound *	 BBCALL bbLoad3DSound( BBStr *file );
 void		 BBCALL bbFreeSound( BBSound *sound );
 BBChannel *	 BBCALL bbPlaySound( BBSound *sound );
 void		 BBCALL bbLoopSound( BBSound *sound );

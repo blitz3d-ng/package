@@ -1,7 +1,7 @@
 name: System
 description: Provides access to various operating system functions.
 
-depends_on:
+dependencies:
   - blitz
   - runtime
 
@@ -15,3 +15,8 @@ commands:
   - SetEnv( env_var$,value$ ):"bbSetEnv"
   - ScreenWidth%( i%=-1 ):"bbScreenWidth"
   - ScreenHeight%( i%=-1 ):"bbScreenHeight"
+
+premake5:
+  files:
+    - system.cpp
+    - system.h

@@ -104,6 +104,8 @@ workspace "blitz3d"
   filter { "platforms:linux", "files:**.cpp" }
     buildoptions "-std=c++11"
 
+require './src/runtime/premake/init'
+
 project "blitzide"
   kind "WindowedApp"
   language "C++"
@@ -444,17 +446,6 @@ project "blitz"
     "src/runtime/bb/blitz/module.h"
   }
 
-project "audio"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/audio/channel.cpp", "src/runtime/bb/audio/channel.h",
-    "src/runtime/bb/audio/sound.h",
-    "src/runtime/bb/audio/driver.cpp", "src/runtime/bb/audio/driver.h",
-    "src/runtime/bb/audio/module.cpp", "src/runtime/bb/audio/module.h"
-  }
-
 project "audio.fmod"
   kind "StaticLib"
   language "C++"
@@ -470,29 +461,6 @@ project "audio.fmod"
 
   links "audio"
 
-project "bank"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/bank/bank.cpp", "src/runtime/bb/bank/bank.h"
-  }
-
-project "math"
-  kind "StaticLib"
-  language "C++"
-
-  files { "src/runtime/bb/math/math.cpp", "src/runtime/bb/math/math.h"  }
-
-project "system"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/system/system.cpp",
-    "src/runtime/bb/system/system.h"
-  }
-
 project "system.windows"
   kind "StaticLib"
   language "C++"
@@ -505,15 +473,6 @@ project "system.windows"
   }
 
   links "system"
-
-project "filesystem"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/filesystem/filesystem.cpp",
-    "src/runtime/bb/filesystem/filesystem.h"
-  }
 
 project "filesystem.windows"
   kind "StaticLib"
@@ -528,16 +487,6 @@ project "filesystem.windows"
   }
 
   links "filesystem"
-
-project "input"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/input/input.cpp", "src/runtime/bb/input/input.h",
-    "src/runtime/bb/input/driver.cpp", "src/runtime/bb/input/driver.h",
-    "src/runtime/bb/input/device.cpp", "src/runtime/bb/input/device.h"
-  }
 
 project "input.directinput8"
   kind "StaticLib"
@@ -558,22 +507,6 @@ project "blitz3d"
 filter "platforms:win32 or win64 or mingw32"
   files { "src/runtime/bb/blitz3d/loader_x.cpp", "src/runtime/bb/blitz3d/loader_x.h" }
 
-project "stream"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/stream/stream.cpp", "src/runtime/bb/stream/stream.h"
-  }
-
-project "string"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/string/string.cpp", "src/runtime/bb/string/string.h"
-  }
-
 project "sockets"
   kind "StaticLib"
   language "C++"
@@ -582,15 +515,6 @@ project "sockets"
 
   files {
     "src/runtime/bb/sockets/sockets.cpp", "src/runtime/bb/sockets/sockets.h"
-  }
-
-project "timer"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/timer/timer.h",
-    "src/runtime/bb/timer/timer.cpp"
   }
 
 project "timer.windows"
@@ -603,12 +527,6 @@ project "timer.windows"
     "src/runtime/bb/timer.windows/timer.windows.h",
     "src/runtime/bb/timer.windows/timer.windows.cpp"
   }
-
-project "blitz2d"
-  kind "StaticLib"
-  language "C++"
-
-  files { "src/runtime/bb/blitz2d/font.h", "src/runtime/bb/blitz2d/font.cpp", "src/runtime/bb/blitz2d/graphics.h" }
 
 project "graphics"
   kind "StaticLib"

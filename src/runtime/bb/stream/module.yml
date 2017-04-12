@@ -1,0 +1,30 @@
+name: Stream
+description: Provides stream functions.
+
+dependencies:
+  - blitz
+
+commands:
+  - Eof%( stream% ):"bbEof"
+  - ReadAvail%( stream% ):"bbReadAvail"
+
+  - ReadByte%( stream% ):"bbReadByte"
+  - ReadShort%( stream% ):"bbReadShort"
+  - ReadInt%( stream% ):"bbReadInt"
+  - ReadFloat#( stream% ):"bbReadFloat"
+  - ReadString$( stream% ):"bbReadString"
+  - ReadLine$( stream% ):"bbReadLine"
+
+  - WriteByte%( stream%,byte% ):"bbWriteByte"
+  - WriteShort%( stream%,short% ):"bbWriteShort"
+  - WriteInt%( stream%,int% ):"bbWriteInt"
+  - WriteFloat%( stream%,float# ):"bbWriteFloat"
+  - WriteString%( stream%,string$ ):"bbWriteString"
+  - WriteLine%( stream%,string$ ):"bbWriteLine"
+
+  - CopyStream( src_stream%,dest_stream%,buffer_size%=16384 ):"bbCopyStream"
+
+premake5:
+  files:
+    - stream.cpp
+    - stream.h

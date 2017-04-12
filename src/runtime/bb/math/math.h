@@ -21,6 +21,8 @@ float	 BBCALL bbExp( float n );
 float	 BBCALL bbLog( float n );
 float	 BBCALL bbLog10( float n );
 float	 BBCALL bbRnd( float from,float to );
+int	 BBCALL bbRand( int from,int to );
 void	 BBCALL bbSeedRnd( int seed );
+int BBCALL bbRndSeed();
 
 #endif

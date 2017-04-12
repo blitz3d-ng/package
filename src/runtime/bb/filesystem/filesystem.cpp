@@ -154,25 +154,3 @@ BBMODULE_DESTROY( filesystem ){
 	}
 	return true;
 }
-
-BBMODULE_LINK( filesystem ){
-	rtSym( "%OpenFile$filename",bbOpenFile );
-	rtSym( "%ReadFile$filename",bbReadFile );
-	rtSym( "%WriteFile$filename",bbWriteFile );
-	rtSym( "CloseFile%file_stream",bbCloseFile );
-	rtSym( "%FilePos%file_stream",bbFilePos );
-	rtSym( "%SeekFile%file_stream%pos",bbSeekFile );
-
-	rtSym( "%ReadDir$dirname",bbReadDir );
-	rtSym( "CloseDir%dir",bbCloseDir );
-	rtSym( "$NextFile%dir",bbNextFile );
-	rtSym( "$CurrentDir",bbCurrentDir );
-	rtSym( "ChangeDir$dir",bbChangeDir );
-	rtSym( "CreateDir$dir",bbCreateDir );
-	rtSym( "DeleteDir$dir",bbDeleteDir );
-
-	rtSym( "%FileSize$file",bbFileSize );
-	rtSym( "%FileType$file",bbFileType );
-	rtSym( "CopyFile$file$to",bbCopyFile );
-	rtSym( "DeleteFile$file",bbDeleteFile );
-}

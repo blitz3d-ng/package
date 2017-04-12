@@ -1,6 +1,6 @@
 
 #include <bb/runtime/runtime.h>
-#include "module.h"
+#include "audio.h"
 
 #include <string>
 using namespace std;
@@ -103,11 +103,9 @@ int BBCALL bbChannelPlaying( BBChannel *channel ){
 	return channel ? channel->isPlaying() : 0;
 }
 
-#ifdef PRO
 BBSound * BBCALL bbLoad3DSound( BBStr *f ){
 	return loadSound( f,true );
 }
-#endif
 
 void pauseAudio( void *data,void *context ){
 	if( gx_audio ) gx_audio->setPaused( true );
@@ -130,26 +128,4 @@ BBMODULE_DESTROY( audio ){
 		gx_audio=0;
 	}
 	return true;
-}
-
-BBMODULE_LINK( audio ){
-	rtSym( "%LoadSound$filename",bbLoadSound );
-	rtSym( "FreeSound%sound",bbFreeSound );
-	rtSym( "LoopSound%sound",bbLoopSound );
-	rtSym( "SoundPitch%sound%pitch",bbSoundPitch );
-	rtSym( "SoundVolume%sound#volume",bbSoundVolume );
-	rtSym( "SoundPan%sound#pan",bbSoundPan );
-	rtSym( "%PlaySound%sound",bbPlaySound );
-	rtSym( "%PlayMusic$midifile",bbPlayMusic );
-	rtSym( "%PlayCDTrack%track%mode=1",bbPlayCDTrack );
-	rtSym( "StopChannel%channel",bbStopChannel );
-	rtSym( "PauseChannel%channel",bbPauseChannel );
-	rtSym( "ResumeChannel%channel",bbResumeChannel );
-	rtSym( "ChannelPitch%channel%pitch",bbChannelPitch );
-	rtSym( "ChannelVolume%channel#volume",bbChannelVolume );
-	rtSym( "ChannelPan%channel#pan",bbChannelPan );
-	rtSym( "%ChannelPlaying%channel",bbChannelPlaying );
-#ifdef PRO
-	rtSym( "%Load3DSound$filename",bbLoad3DSound );
-#endif
 }

@@ -3,7 +3,6 @@
 #include <bb/blitz/blitz.h>
 #include "../../stdutil/stdutil.h"
 #include "bank.h"
-#include "../stream/stream.h"
 
 #include <cstring>
 #include <set>
@@ -137,22 +136,4 @@ BBMODULE_CREATE( bank ){
 BBMODULE_DESTROY( bank ){
 	while( bank_set.size() ) bbFreeBank( *bank_set.begin() );
 	return true;
-}
-
-BBMODULE_LINK( bank ){
-	rtSym( "%CreateBank%size=0",bbCreateBank );
-	rtSym( "FreeBank%bank",bbFreeBank );
-	rtSym( "%BankSize%bank",bbBankSize );
-	rtSym( "ResizeBank%bank%size",bbResizeBank );
-	rtSym( "CopyBank%src_bank%src_offset%dest_bank%dest_offset%count",bbCopyBank );
-	rtSym( "%PeekByte%bank%offset",bbPeekByte );
-	rtSym( "%PeekShort%bank%offset",bbPeekShort );
-	rtSym( "%PeekInt%bank%offset",bbPeekInt );
-	rtSym( "#PeekFloat%bank%offset",bbPeekFloat );
-	rtSym( "PokeByte%bank%offset%value",bbPokeByte );
-	rtSym( "PokeShort%bank%offset%value",bbPokeShort );
-	rtSym( "PokeInt%bank%offset%value",bbPokeInt );
-	rtSym( "PokeFloat%bank%offset#value",bbPokeFloat );
-	rtSym( "%ReadBytes%bank%file%offset%count",bbReadBytes );
-	rtSym( "%WriteBytes%bank%file%offset%count",bbWriteBytes );
 }

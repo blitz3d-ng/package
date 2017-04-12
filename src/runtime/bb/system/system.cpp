@@ -75,16 +75,3 @@ BBMODULE_DESTROY( system ){
 	}
 	return true;
 }
-
-BBMODULE_LINK( system ){
-	rtSym( "RuntimeError$message",bbRuntimeError );
-	rtSym( "ExecFile$command",bbExecFile );
-	rtSym( "Delay%millisecs",bbDelay );
-	rtSym( "%MilliSecs",bbMilliSecs );
-	rtSym( "$SystemProperty$property",bbSystemProperty );
-	rtSym( "$GetEnv$env_var",bbGetEnv );
-	rtSym( "SetEnv$env_var$value",bbSetEnv );
-
-	rtSym( "%ScreenWidth%i=-1",bbScreenWidth );
-	rtSym( "%ScreenHeight%i=-1",bbScreenHeight );
-}

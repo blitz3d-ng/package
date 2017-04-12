@@ -142,21 +142,3 @@ BBMODULE_CREATE( stream ){
 BBMODULE_DESTROY( stream ){
 	return true;
 }
-
-BBMODULE_LINK( stream ){
-	rtSym( "%Eof%stream",bbEof );
-	rtSym( "%ReadAvail%stream",bbReadAvail );
-	rtSym( "%ReadByte%stream",bbReadByte );
-	rtSym( "%ReadShort%stream",bbReadShort );
-	rtSym( "%ReadInt%stream",bbReadInt );
-	rtSym( "#ReadFloat%stream",bbReadFloat );
-	rtSym( "$ReadString%stream",bbReadString );
-	rtSym( "$ReadLine%stream",bbReadLine );
-	rtSym( "WriteByte%stream%byte",bbWriteByte );
-	rtSym( "WriteShort%stream%short",bbWriteShort );
-	rtSym( "WriteInt%stream%int",bbWriteInt );
-	rtSym( "WriteFloat%stream#float",bbWriteFloat );
-	rtSym( "WriteString%stream$string",bbWriteString );
-	rtSym( "WriteLine%stream$string",bbWriteLine );
-	rtSym( "CopyStream%src_stream%dest_stream%buffer_size=16384",bbCopyStream );
-}
