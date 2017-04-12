@@ -10,17 +10,30 @@ require 'erb'
 
 require_relative '../lib/blitz3d/cli'
 
+def run(mod, &block)
+  Class.new { extend mod }.run(*block.try(:yield))
+end
+
 command = ARGV[0]
 
 case command
 when 'help'
   if ARGV.include?('--lint')
-    Class.new { extend Blitz3D::Tools::Lint }.run
+    run Blitz3D::Tools::Lint
+  end
+
+  if ARGV.include?('--import')
+    module_name = ARGV[ARGV.find_index('--import') + 1]
+    if module_name.blank?
+      puts "Invalid module name given for import.".red
+      exit 1
+    end
+    run(Blitz3D::Tools::Import) { module_name }
   end
 
   if ARGV.include?('--build')
     # begin
-      Class.new { extend Blitz3D::Tools::Help }.run
+      run Blitz3D::Tools::Help
     # rescue StandardError => e
     #   puts e
     # end
@@ -29,15 +42,16 @@ when 'help'
       puts 'Watching for changes...'.yellow
       FileWatcher.new(['src/docs', 'src/runtime/**/*.md']).watch do
         begin
-          Class.new { extend Blitz3D::Tools::Help }.run
+          run extend Blitz3D::Tools::Help
         rescue StandardError => e
           puts e
         end
       end
     end
   end
+when 'import'
 when 'config'
-  Class.new { extend Blitz3D::Tools::Config }.run
+  run Blitz3D::Tools::Config
 else
   puts 'blitz3d - build tool'
   puts 'usage: blitz3d [action] [options]'
