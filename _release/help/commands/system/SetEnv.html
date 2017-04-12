@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blitz3D Docs</title>
+    <link rel="stylesheet" href="../css/menu.css" type="text/css" />
+  </head>
+  <body>
+    <div class="list">
+      <h1>Command Ref.</h1>
+      <a href=command_list_2d_cat.htm>2D - Category</a>
+      <br />
+      <a href=command_list_3d_cat.htm>3D - Category</a>
+      <br />
+      <br />
+      <a href=command_list_2d_a-z.htm>2D - A-Z</a>
+      <br />
+      <a href=command_list_3d_a-z.htm>3D - A-Z</a>
+      <br />
+      <br />
+      <a href=ascii.htm target="main">ASCII Codes</a>
+      <br />
+      <br />
+      <a href=scancodes.htm target="main">Scancodes</a>
+      <br />
+      <a href=scancode/keyboard.htm target="main">Scancodes Picker</a>
+      <br />
+      <br />
+      <a target=_top href="../index.html">Index</a>
+      <hr>
+      <ul>
+        <li>
+          <a href="../system/index.html">System</a>
+          <ul>
+            <li>
+              <a class="" href="./Delay.html">Delay</a>
+            </li>
+            <li>
+              <a class="" href="./ExecFile.html">ExecFile</a>
+            </li>
+            <li>
+              <a class="" href="./GetEnv.html">GetEnv</a>
+            </li>
+            <li>
+              <a class="" href="./MilliSecs.html">MilliSecs</a>
+            </li>
+            <li>
+              <a class="" href="./RuntimeError.html">RuntimeError</a>
+            </li>
+            <li>
+              <a class="" href="./ScreenHeight.html">ScreenHeight</a>
+            </li>
+            <li>
+              <a class="" href="./ScreenWidth.html">ScreenWidth</a>
+            </li>
+            <li>
+              <a class="active" href="./SetEnv.html">SetEnv</a>
+            </li>
+            <li>
+              <a class="" href="./SystemProperty.html">SystemProperty</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="main">
+      <h1>SetEnv env_var$,value$</h1>
+      <h2>Parameters</h2>
+      <ul>
+        <li>env_var$ - the name of the environment variable</li>
+        <li>value$ - the value of the environment variable</li>
+      </ul>
+      <h2>Description</h2>
+      <p>Sets an environment variable.</p>
+      <p>However, it should be noted that the command does not set a Windows environment variable. It only sets an environment variable which is local to a single Blitz program - i.e. from the moment the SetEnv command is used, it will only exist for the duration of time the source code file is open in the Blitz IDE, or the program EXE is running.</p>
+      <h2>See Also</h2>
+      <ul>
+        <li>GetEnv</li>
+      </ul>
+      <h2><a href="false">Example</a></h2>
+      <code>
+        <pre>
+; SetEnv Example
+; --------------
+
+SetEnv "mypath","c:\program files\my game\"
+
+Print GetEnv$("mypath")
+
+WaitKey()
+</pre>
+      </code>
+    </div>
+  </body>

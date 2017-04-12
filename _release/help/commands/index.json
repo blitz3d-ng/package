@@ -1,0 +1,34 @@
+[
+  {
+    "name": "System",
+    "commands": [
+      {
+        "name": "Delay"
+      },
+      {
+        "name": "ExecFile"
+      },
+      {
+        "name": "GetEnv"
+      },
+      {
+        "name": "MilliSecs"
+      },
+      {
+        "name": "RuntimeError"
+      },
+      {
+        "name": "ScreenHeight"
+      },
+      {
+        "name": "ScreenWidth"
+      },
+      {
+        "name": "SetEnv"
+      },
+      {
+        "name": "SystemProperty"
+      }
+    ]
+  }
+]

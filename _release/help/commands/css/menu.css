@@ -1,5 +1,9 @@
-body
-{
+html, body {
+  height: 100%;
+  margin: 0;padding: 0;
+}
+
+body {
 	color: #ffffff;
 	font: 8pt verdana;
 	background: #003d78;
@@ -13,26 +17,24 @@ h1
 ul
 {
 	margin: 0px 32px;
+  padding: 0;
 }
 
 table
 {
-	font: 8pt verdana;	
 	background: #003566;
 	width: 100%;
 }
 
 a
 {
-  	color: #fff000;
-	font: 8pt verdana;
+	color: #fff000;
 	text-decoration: none;
 }
 
 a:hover
 {
 	color: #fff000;
-	font: 8pt verdana;
 	background: #0088ee;
 	text-decoration: none;
 }
@@ -42,4 +44,40 @@ pre.code
 	color: #44ff00;
 	background: #000000;
 	margin: 8px;
+}
+
+
+/* new */
+
+code pre {
+  background: #003566;
+  padding: 10px;
+}
+
+code {
+  background: #003566;
+}
+
+.list, .main {
+  box-sizing: content-box;
+}
+
+.list {
+  float: left;
+
+  width: 200px;
+  height: 100%;
+
+  border-right: 1px solid #fff;
+  padding: 10px;
+  margin-right: 20px;
+}
+
+.main {
+  padding-right: 10px;
+  padding-left: 230px;
+}
+
+.list li a.active {
+  color: #fff;
 }

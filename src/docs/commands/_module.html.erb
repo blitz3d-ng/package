@@ -1,0 +1,11 @@
+<h1><%= mod.name %></h1>
+
+<p><%= mod.description %><p>
+
+<ul>
+<% mod.commands.each do |comm| %>
+  <li>
+    <a class="<%= 'active' if defined?(command) && command == comm %>" href="<%= relative_to(File.dirname(comm.output_path)) %>/<%= File.basename(comm.output_path) %>"><%= comm.name %></a>
+  </li>
+<% end %>
+</ul>

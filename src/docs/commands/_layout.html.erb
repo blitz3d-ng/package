@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blitz3D Docs</title>
+  <link rel="stylesheet" href="<%= relative_to_root %>/css/menu.css" type="text/css" />
+</head>
+<body>
+  <div class="list">
+    <h1>Command Ref.</h1>
+    <a href=command_list_2d_cat.htm>2D - Category</a>
+    <br />
+    <a href=command_list_3d_cat.htm>3D - Category</a>
+    <br />
+    <br />
+    <a href=command_list_2d_a-z.htm>2D - A-Z</a>
+    <br />
+    <a href=command_list_3d_a-z.htm>3D - A-Z</a>
+    <br />
+    <br />
+    <a href=ascii.htm target="main">ASCII Codes</a>
+    <br />
+    <br />
+    <a href=scancodes.htm target="main">Scancodes</a>
+    <br />
+    <a href=scancode/keyboard.htm target="main">Scancodes Picker</a>
+    <br />
+    <br />
+    <a target=_top href="<%= relative_to_root %>/index.html">Index</a>
+    <hr>
+
+    <ul>
+    <% modules.each do |mod| %>
+      <li>
+        <a href="<%= relative_to(File.dirname(mod.output_path)) %>/<%= File.basename(mod.output_path) %>/index.html"><%= mod.name %></a>
+        <ul>
+        <% mod.commands.each do |comm| %>
+          <li>
+            <a class="<%= 'active' if defined?(command) && command == comm %>" href="<%= relative_to(File.dirname(comm.output_path)) %>/<%= File.basename(comm.output_path) %>"><%= comm.name %></a>
+          </li>
+        <% end %>
+        </ul>
+      </li>
+    <% end %>
+    </ul>
+
+  </div>
+  <div class="main">
+    <%= yield %>
+  </div>
+</body>
