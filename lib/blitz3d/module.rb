@@ -8,6 +8,10 @@ module Blitz3D
       Dir.glob('src/runtime/bb/*/module.yml').map { |path| new(path) }
     end
 
+    def self.find(id)
+      all.find { |mod| mod.id == id }
+    end
+
     def initialize(config_file)
       begin
         config = YAML.load(File.open(config_file).read)

@@ -3,15 +3,20 @@ html, body {
   margin: 0;padding: 0;
 }
 
+* {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
 body {
 	color: #ffffff;
-	font: 8pt verdana;
+	/*font: 8pt verdana;*/
 	background: #003d78;
 }
 
 h1
 {
-	font: bold 10pt verdana;
+	/*font: bold 10pt verdana;*/
+  margin-top: 0;
 }
 
 ul
@@ -26,8 +31,7 @@ table
 	width: 100%;
 }
 
-a
-{
+a {
 	color: #fff000;
 	text-decoration: none;
 }
@@ -52,6 +56,7 @@ pre.code
 code pre {
   background: #003566;
   padding: 10px;
+  font-family: monospace;
 }
 
 code {
@@ -59,27 +64,55 @@ code {
 }
 
 .list, .main {
+  box-sizing: border-box;
+}
+
+.list-container {
   box-sizing: content-box;
+
+  position: fixed;
+  top: 0;
+  bottom: 0;left: 0;
+
+  width: 250px;
 }
 
 .list {
-  float: left;
-
-  overflow: scroll;
-
-  width: 200px;
-  height: 100%;
+  width: 100%;
+  padding: 10px;
 
   border-right: 1px solid #fff;
-  padding: 10px;
-  margin-right: 20px;
 }
 
 .main {
-  padding-right: 10px;
-  padding-left: 230px;
+  position: absolute;
+  left: 250px;
+  padding: 10px;
+}
+
+.command-list {
+  overflow: scroll;
+  position: fixed;
+  top: 370px;
+  width: 100%;
+  bottom: 0;
+}
+
+.list ul  {
+  margin: 0;
+}
+
+.list ul ul {
+  margin-left: 20px;
 }
 
 .list li a.active {
   color: #fff;
+}
+
+#search {
+  width: 100%;
+  border: 0;
+  padding: 5px;
+  box-sizing: border-box;
 }

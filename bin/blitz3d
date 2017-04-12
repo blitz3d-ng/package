@@ -19,7 +19,8 @@ command = ARGV[0]
 case command
 when 'help'
   if ARGV.include?('--lint')
-    run Blitz3D::Tools::Lint
+    module_names = [ARGV[ARGV.find_index('--lint') + 1]] || []
+    run(Blitz3D::Tools::Lint) { [module_names] }
   end
 
   if ARGV.include?('--import')
@@ -42,7 +43,7 @@ when 'help'
       puts 'Watching for changes...'.yellow
       FileWatcher.new(['src/docs', 'src/runtime/**/*.md']).watch do
         begin
-          run extend Blitz3D::Tools::Help
+          run Blitz3D::Tools::Help
         rescue StandardError => e
           puts e
         end

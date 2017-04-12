@@ -14,7 +14,7 @@ commands:
   - SoundVolume( sound%,volume# ):"bbSoundVolume"
   - SoundPan( sound%,pan# ):"bbSoundPan"
   - PlaySound%( sound%,sound% ):"bbPlaySound"
-  - PlayMusic%( file$ ):"bbPlayMusic"
+  - PlayMusic%( filename$ ):"bbPlayMusic"
   - PlayCDTrack%( track%,mode%=1 ):"bbPlayCDTrack"
   - StopChannel( channel% ):"bbStopChannel"
   - PauseChannel( channel% ):"bbPauseChannel"
@@ -22,7 +22,7 @@ commands:
   - ChannelPitch( channel%,pitch% ):"bbChannelPitch"
   - ChannelVolume( channel%,volume# ):"bbChannelVolume"
   - ChannelPan( channel%,pan# ):"bbChannelPan"
-  - ChannelPlaying%( channel%,pan# ):"bbChannelPan"
+  - ChannelPlaying%( channel% ):"bbChannelPlaying"
 
 premake5:
   files:

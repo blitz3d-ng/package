@@ -1,8 +1,11 @@
 module Blitz3D
   module Tools
     module Lint
-      def run
-        Module.all.each do |mod|
+      def run(module_names = [])
+        modules = module_names.empty? ? Module.all : module_names.map { |name| Module.find name }.compact
+        modules.empty? && modules = Module.all
+
+        modules.each do |mod|
           puts "Checking #{mod.name.bold}..."
 
           justsize = mod.commands.map { |command| command.name.size }.max
@@ -11,7 +14,6 @@ module Blitz3D
             errors, warnings = [], []
 
             warnings << 'missing example' unless command.example_exists?
-
 
             if command.help_exists?
               html = command.html_help
