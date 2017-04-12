@@ -488,8 +488,6 @@ project "system"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos", "linux" }
-
   files {
     "src/runtime/bb/system/system.cpp",
     "src/runtime/bb/system/system.h"

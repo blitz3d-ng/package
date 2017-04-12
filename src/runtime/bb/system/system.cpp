@@ -44,8 +44,12 @@ BBStr * BBCALL bbGetEnv( BBStr *env_var ){
 }
 
 void BBCALL bbSetEnv( BBStr *env_var,BBStr *val ){
+#ifndef _WIN32
+	setenv( (*env_var).c_str(),(*val).c_str(),1 );
+#else
 	std::string t=*env_var+"="+*val;
 	_putenv( t.c_str() );
+#endif
 	delete env_var;
 	delete val;
 }
