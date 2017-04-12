@@ -5,6 +5,7 @@
 *.opt
 *.exe
 *.dll
+*.dylib
 *.lib
 *.log
 *.exp
@@ -35,6 +36,7 @@ _release/cfg/blitzide.prefs
 _release/tmp
 _release/help/reference/modules
 _release/help/reference/index.html
+_release/help/reference/commands.json
 
 src/runtime/premake
 
