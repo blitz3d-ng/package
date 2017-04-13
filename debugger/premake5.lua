@@ -18,14 +18,14 @@ project "debugger"
   flags "MFC"
 
   files {
-    "debugger/debugger.rc",
-    "debugger/debuggerapp.cpp", "debugger/debuggerapp.h",
-    "debugger/debugtree.cpp", "debugger/debugtree.h",
-    "debugger/mainframe.cpp", "debugger/mainframe.h",
-    "debugger/prefs.cpp", "debugger/prefs.h",
-    "debugger/sourcefile.cpp", "debugger/sourcefile.h",
-    "debugger/stdafx.cpp", "debugger/stdafx.h",
-    "debugger/tabber.cpp", "debugger/tabber.h",
-    "debugger/dpi.cpp", "debugger/dpi.h",
-    "debugger/debugger.h"
+    "debugger.rc",
+    "debuggerapp.cpp", "debuggerapp.h",
+    "debugtree.cpp", "debugtree.h",
+    "mainframe.cpp", "mainframe.h",
+    "prefs.cpp", "prefs.h",
+    "sourcefile.cpp", "sourcefile.h",
+    "stdafx.cpp", "stdafx.h",
+    "tabber.cpp", "tabber.h",
+    "dpi.cpp", "dpi.h",
+    "debugger.h"
   }

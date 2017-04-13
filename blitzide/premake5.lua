@@ -21,16 +21,16 @@ project "blitzide"
   flags { "WinMain", "MFC" }
 
   files {
-    "blitzide/about.cpp", "blitzide/about.h",
-    "blitzide/blitzide.cpp", "blitzide/blitzide.h",
-    "blitzide/editor.cpp", "blitzide/editor.h",
-    "blitzide/funclist.cpp", "blitzide/funclist.h",
-    "blitzide/htmlhelp.cpp", "blitzide/htmlhelp.h",
-    "blitzide/libs.cpp", "blitzide/libs.h",
-    "blitzide/mainframe.cpp", "blitzide/mainframe.h",
-    "blitzide/prefs.cpp", "blitzide/prefs.h",
-    "blitzide/stdafx.cpp", "blitzide/stdafx.h",
-    "blitzide/tabber.cpp", "blitzide/tabber.h",
-    "blitzide/dpi.cpp", "blitzide/dpi.h",
-    "blitzide/blitzide.rc"
+    "about.cpp", "about.h",
+    "blitzide.cpp", "blitzide.h",
+    "editor.cpp", "editor.h",
+    "funclist.cpp", "funclist.h",
+    "htmlhelp.cpp", "htmlhelp.h",
+    "libs.cpp", "libs.h",
+    "mainframe.cpp", "mainframe.h",
+    "prefs.cpp", "prefs.h",
+    "stdafx.cpp", "stdafx.h",
+    "tabber.cpp", "tabber.h",
+    "dpi.cpp", "dpi.h",
+    "blitzide.rc"
   }

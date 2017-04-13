@@ -24,7 +24,7 @@ project "freeimage"
   filter "platforms:win32 or win64"
     files {
       "../freeimage317/Source/FreeImage/PluginJXR.cpp",
-      "freeimage317/FreeImage.rc"
+      "../freeimage317/FreeImage.rc"
     }
 
   filter { "platforms:mingw32" }

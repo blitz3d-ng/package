@@ -12,6 +12,8 @@ clone_script:
     git clone -q --recursive --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
 
 install:
+  - bundle install
+  - ruby bin\blitz3d config
   - ps: Start-FileDownload 'https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-windows.zip' 'premake.zip'
   - 7z x premake.zip
   - premake5.exe %TOOLSET%
