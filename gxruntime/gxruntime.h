@@ -28,7 +28,7 @@ public:
 	struct GfxDriver;
 
 private:
-	gxRuntime( HINSTANCE hinst,const std::string &cmd_line,HWND hwnd );
+	gxRuntime( HINSTANCE hinst,HWND hwnd );
 	~gxRuntime();
 
 	void refreshSystemProperties();
@@ -60,7 +60,7 @@ private:
 
 	/***** APP INTERFACE *****/
 public:
-	static gxRuntime *openRuntime( HINSTANCE hinst,const std::string &cmd_line,Debugger *debugger );
+	static gxRuntime *openRuntime( HINSTANCE hinst,Debugger *debugger );
 	static void closeRuntime( gxRuntime *runtime );
 
 	void asyncStop();

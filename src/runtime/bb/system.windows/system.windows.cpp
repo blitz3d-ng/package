@@ -24,11 +24,15 @@ WindowsSystemDriver::WindowsSystemDriver(){
 }
 
 WindowsSystemDriver::~WindowsSystemDriver(){
-  map<string,gxDll*>::const_iterator it;
-  for( it=libs.begin();it!=libs.end();++it ){
-    FreeLibrary( it->second->hinst );
-  }
-  libs.clear();
+	TIMECAPS tc;
+	timeGetDevCaps( &tc,sizeof(tc) );
+	timeEndPeriod( tc.wPeriodMin );
+
+	map<string,gxDll*>::const_iterator it;
+	for( it=libs.begin();it!=libs.end();++it ){
+		FreeLibrary( it->second->hinst );
+	}
+	libs.clear();
 }
 
 bool WindowsSystemDriver::delay( int ms ){

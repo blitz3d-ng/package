@@ -59,7 +59,7 @@ enum{
 ////////////////////
 // STATIC STARTUP //
 ////////////////////
-gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst,const string &cmd_line,Debugger *d ){
+gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst,Debugger *d ){
 	if( runtime ) return 0;
 
 	//create debugger
@@ -87,7 +87,7 @@ gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst,const string &cmd_line,Debugg
 
 	UpdateWindow( hwnd );
 
-	runtime=d_new gxRuntime( hinst,cmd_line,hwnd );
+	runtime=d_new gxRuntime( hinst,hwnd );
 	return runtime;
 }
 
@@ -104,7 +104,7 @@ void gxRuntime::closeRuntime( gxRuntime *r ){
 //////////////////////////
 typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
-gxRuntime::gxRuntime( HINSTANCE hi,const string &cl,HWND hw ):
+gxRuntime::gxRuntime( HINSTANCE hi,HWND hw ):
 hinst(hi),curr_driver(0),enum_all(false),
 pointer_visible(true),graphics(0),use_di(false),Frame(hw){
 
@@ -129,9 +129,6 @@ pointer_visible(true),graphics(0),use_di(false),Frame(hw){
 
 gxRuntime::~gxRuntime(){
 	if( graphics ) closeGraphics( graphics );
-	TIMECAPS tc;
-	timeGetDevCaps( &tc,sizeof(tc) );
-	timeEndPeriod( tc.wPeriodMin );
 	denumGfx();
 	DestroyWindow( hwnd );
 	UnregisterClass( "Blitz Runtime Class",hinst );
