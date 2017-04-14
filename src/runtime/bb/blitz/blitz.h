@@ -5,5 +5,6 @@
 #include "ex.h"
 #include "basic.h"
 #include "env.h"
+#include "debug.h"
 
 #endif

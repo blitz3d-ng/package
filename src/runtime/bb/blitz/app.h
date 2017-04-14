@@ -11,6 +11,7 @@ struct BBApp{
 
 extern BBHook bbAppOnChange;
 
+void BBCALL bbStop();
 void BBCALL bbEnd();
 void BBCALL bbAppTitle( BBStr *ti,BBStr *cp );
 BBStr * BBCALL bbCommandLine();

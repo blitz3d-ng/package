@@ -1,11 +1,18 @@
 
 #include "../../stdutil/stdutil.h"
+#include <bb/runtime/runtime.h>
 #include "app.h"
 #include "ex.h"
+#include "debug.h"
 using namespace std;
 
 static BBApp app;
 BBHook bbAppOnChange;
+
+void BBCALL bbStop(){
+	_bbDebugStop();
+	if( !bbRuntimeIdle() ) RTEX( 0 );
+}
 
 void BBCALL bbEnd(){
 	RTEX( 0 );

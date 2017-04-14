@@ -2,7 +2,7 @@
 #include "std.h"
 #include "gxgraphics.h"
 #include "gxruntime.h"
-#include <bb/system/system.h>
+#include <bb/system.windows/system.windows.h>
 
 // for some reason the mingw headers are missing this...
 #ifndef DDSGR_CALIBRATE
@@ -613,7 +613,7 @@ BBMesh *gxGraphics::createMesh( int max_verts,int max_tris,int flags ){
 	int vbflags=0;
 
 	//XP or less?
-	if( runtime->osinfo.dwMajorVersion<6 ){
+	if( bbWindowsSystemDriver->isXPorLess() ){
 		vbflags|=D3DVBCAPS_WRITEONLY;
 	}
 

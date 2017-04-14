@@ -23,8 +23,9 @@ void BBCALL _bbDebugError( const char *e );
 void BBCALL _bbDebugStmt( int pos,const char *file );
 void BBCALL _bbDebugEnter( void *frame,void *env,const char *func );
 void BBCALL _bbDebugLeave();
+void BBCALL _bbDebugStop();
+void BBCALL _bbDebugRun();
 
-void BBCALL bbDebugStop();
 void BBCALL bbDebugLog( BBStr *t );
 
 #endif

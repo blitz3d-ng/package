@@ -105,8 +105,6 @@ public:
 
 	void enableDirectInput( bool use );
 	int  directInputEnabled(){ return use_di; }
-
-	OSVERSIONINFO osinfo;
 };
 
 #endif

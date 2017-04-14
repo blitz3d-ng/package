@@ -6,7 +6,7 @@
 using namespace std;
 
 map<string,string> bbSystemProperties;
-BBSystemDriver *sys_driver;
+BBSystemDriver *bbSystemDriver=0;
 
 void BBCALL bbRuntimeError( BBStr *str ){
 	string t=*str;delete str;
@@ -18,17 +18,17 @@ void BBCALL bbRuntimeError( BBStr *str ){
 
 int BBCALL bbExecFile( BBStr *f ){
 	string t=*f;delete f;
-	int n=sys_driver->execute( t );
+	int n=bbSystemDriver->execute( t );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	return n;
 }
 
 void BBCALL bbDelay( int ms ){
-	if( !sys_driver->delay( ms ) ) RTEX( 0 );
+	if( !bbSystemDriver->delay( ms ) ) RTEX( 0 );
 }
 
 int BBCALL bbMilliSecs(){
-	return sys_driver->getMilliSecs();
+	return bbSystemDriver->getMilliSecs();
 }
 
 BBStr * BBCALL bbSystemProperty( BBStr *p ){
@@ -55,23 +55,23 @@ void BBCALL bbSetEnv( BBStr *env_var,BBStr *val ){
 }
 
 int BBCALL bbScreenWidth( int i ){
-	return sys_driver->getScreenWidth( i );
+	return bbSystemDriver->getScreenWidth( i );
 }
 
 int BBCALL bbScreenHeight( int i ){
-	return sys_driver->getScreenHeight( i );
+	return bbSystemDriver->getScreenHeight( i );
 }
 
 
 BBMODULE_CREATE( system ){
-	sys_driver=0;
+	bbSystemDriver=0;
 	return true;
 }
 
 BBMODULE_DESTROY( system ){
-	if( sys_driver ){
-		delete sys_driver;
-		sys_driver=0;
+	if( bbSystemDriver ){
+		delete bbSystemDriver;
+		bbSystemDriver=0;
 	}
 	return true;
 }

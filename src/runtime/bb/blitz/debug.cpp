@@ -36,9 +36,12 @@ void BBCALL _bbDebugLeave(){
 	if( debugger ) debugger->debugLeave();
 }
 
-void BBCALL bbDebugStop(){
+void BBCALL _bbDebugStop(){
 	gx_runtime->debugStop();
-	if( !bbRuntimeIdle() ) RTEX( 0 );
+}
+
+void BBCALL _bbDebugRun(){
+	if( debugger ) debugger->debugRun();
 }
 
 void BBCALL bbDebugLog( BBStr *t ){

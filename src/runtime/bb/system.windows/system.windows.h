@@ -3,9 +3,17 @@
 
 #include <bb/system/system.h>
 #include <bb/bank/bank.h>
+#include <windows.h>
 #include <string>
 
 class WindowsSystemDriver : public BBSystemDriver{
+private:
+	OSVERSIONINFO osinfo;
+
+	void refreshSystemProperties();
+public:
+	bool isXPorLess();
+
 public:
 	WindowsSystemDriver();
 	~WindowsSystemDriver();
@@ -22,5 +30,7 @@ public:
 };
 
 int BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out );
+
+#define bbWindowsSystemDriver ((WindowsSystemDriver*)bbSystemDriver)
 
 #endif

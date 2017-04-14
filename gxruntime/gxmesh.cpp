@@ -1,11 +1,8 @@
 
+#include <bb/system.windows/system.windows.h>
 #include "std.h"
 #include "gxmesh.h"
 #include "gxgraphics.h"
-
-#include "gxruntime.h"
-
-extern gxRuntime *gx_runtime;
 
 gxMesh::gxMesh( gxGraphics *g,IDirect3DVertexBuffer7 *vs,WORD *is,int max_vs,int max_ts ):
 graphics(g),locked_verts(0),vertex_buff(vs),tri_indices(is),max_verts(max_vs),max_tris(max_ts),mesh_dirty(false){
@@ -35,7 +32,7 @@ bool gxMesh::lock( bool all ){
 	int flags=DDLOCK_WAIT|DDLOCK_WRITEONLY;
 
 	//XP or less?
-	if( graphics->runtime->osinfo.dwMajorVersion<6 ){
+	if( bbWindowsSystemDriver->isXPorLess() ){
 		flags|=(all ? DDLOCK_DISCARDCONTENTS : DDLOCK_NOOVERWRITE);
 	}
 

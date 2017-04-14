@@ -2,10 +2,7 @@
 #include "std.h"
 #include "ddutil.h"
 #include "asmcoder.h"
-#include "gxcanvas.h"
-#include "gxruntime.h"
-
-extern gxRuntime *gx_runtime;
+#include "gxgraphics.h"
 
 #include <FreeImage.h>
 

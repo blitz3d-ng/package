@@ -603,8 +603,7 @@ BBMODULE_LINK( blitz ){
 	rtSym( "_bbDebugEnter",_bbDebugEnter );
 	rtSym( "_bbDebugLeave",_bbDebugLeave );
 
-	rtSym( "Stop",bbDebugStop );
-	rtSym( "DebugStop",bbDebugStop );
+	rtSym( "Stop",bbStop );
 	rtSym( "DebugLog$text",bbDebugLog );
 
 	rtSym( "End",bbEnd );

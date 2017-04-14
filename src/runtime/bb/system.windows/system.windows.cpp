@@ -18,6 +18,10 @@ struct gxDll{
 static map<string,gxDll*> libs;
 
 WindowsSystemDriver::WindowsSystemDriver(){
+	memset( &osinfo,0,sizeof(osinfo) );
+	osinfo.dwOSVersionInfoSize=sizeof(osinfo);
+	GetVersionEx( &osinfo );
+
 	TIMECAPS tc;
 	timeGetDevCaps( &tc,sizeof(tc) );
 	timeBeginPeriod( tc.wPeriodMin );
@@ -33,6 +37,69 @@ WindowsSystemDriver::~WindowsSystemDriver(){
 		FreeLibrary( it->second->hinst );
 	}
 	libs.clear();
+}
+
+bool WindowsSystemDriver::isXPorLess(){
+	return osinfo.dwMajorVersion<6;
+}
+
+static string toDir( string t ){
+	if( t.size() && t[t.size()-1]!='\\' ) t+='\\';
+	return t;
+}
+
+void WindowsSystemDriver::refreshSystemProperties(){
+	char buff[MAX_PATH+1];
+
+	bbSystemProperties["cpu"]="Intel";
+
+	string os="Unknown";
+	switch( osinfo.dwMajorVersion ){
+	case 3:
+		switch( osinfo.dwMinorVersion ){
+		case 51:os="Windows NT 3.1";break;
+		}
+		break;
+	case 4:
+		switch( osinfo.dwMinorVersion ){
+		case 0:os="Windows 95";break;
+		case 10:os="Windows 98";break;
+		case 90:os="Windows ME";break;
+		}
+		break;
+	case 5:
+		switch( osinfo.dwMinorVersion ){
+		case 0:os="Windows 2000";break;
+		case 1:os="Windows XP";break;
+		case 2:os="Windows Server 2003";break;
+		}
+		break;
+	case 6:
+		switch( osinfo.dwMinorVersion ){
+		case 0:os="Windows Vista";break;
+		case 1:os="Windows 7";break;
+		case 2:os="Windows 8";break;
+		case 3:os="Windows 8.1";break;
+		}
+	case 10:
+		switch( osinfo.dwMinorVersion ){
+		case 0:os="Windows 10";break;
+		}
+		break;
+	}
+
+	bbSystemProperties["os"]=os;
+
+	if( GetModuleFileName( 0,buff,MAX_PATH ) ){
+		string t=buff;
+		int n=t.find_last_of( '\\' );
+		if( n!=string::npos ) t=t.substr( 0,n );
+		bbSystemProperties["appdir"]=toDir( t );
+	}
+
+	if( GetWindowsDirectory( buff,MAX_PATH ) ) bbSystemProperties["windowsdir"]=toDir( buff );
+	if( GetSystemDirectory( buff,MAX_PATH ) )  bbSystemProperties["systemdir"]=toDir( buff );
+	if( GetTempPath( MAX_PATH,buff ) )         bbSystemProperties["tempdir"]=toDir( buff );
 }
 
 bool WindowsSystemDriver::delay( int ms ){
@@ -135,7 +202,7 @@ int BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out ){
 		if( in ) debugBank( in );
 		if( out ) debugBank( out );
 	}
-	int t=((WindowsSystemDriver*)sys_driver)->callDll( *dll,*fun,
+	int t=((WindowsSystemDriver*)bbSystemDriver)->callDll( *dll,*fun,
 		in ? in->data : 0,in ? in->size : 0,
 		out ? out->data : 0,out ? out->size : 0 );
 	delete dll;delete fun;
@@ -143,8 +210,8 @@ int BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out ){
 }
 
 BBMODULE_CREATE( system_windows ){
-	if( !sys_driver ){
-		sys_driver=d_new WindowsSystemDriver();
+	if( !bbSystemDriver ){
+		bbSystemDriver=d_new WindowsSystemDriver();
 	}
 	return true;
 }

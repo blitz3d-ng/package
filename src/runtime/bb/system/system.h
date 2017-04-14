@@ -30,7 +30,7 @@ void BBCALL bbSetEnv( BBStr *env_var,BBStr *val );
 int BBCALL bbScreenWidth( int i );
 int BBCALL bbScreenHeight( int i );
 
-extern BBSystemDriver *sys_driver;
+extern BBSystemDriver *bbSystemDriver;
 extern std::map<std::string,std::string> bbSystemProperties;
 
 #endif

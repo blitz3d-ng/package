@@ -114,11 +114,6 @@ pointer_visible(true),graphics(0),use_di(false),Frame(hw){
 
 	enumGfx();
 
-	memset( &osinfo,0,sizeof(osinfo) );
-	osinfo.dwOSVersionInfoSize=sizeof(osinfo);
-	GetVersionEx( &osinfo );
-	refreshSystemProperties();
-
 	HMODULE ddraw=LoadLibraryA( "ddraw.dll" );
 	if( ddraw ){
 		SetAppCompatDataFunc SetAppCompatData=(SetAppCompatDataFunc)GetProcAddress( ddraw,"SetAppCompatData" );
@@ -178,7 +173,7 @@ void gxRuntime::suspend(){
 
 	if( gfx_mode==3 ) ShowCursor(1);
 
-	if( debugger ) debugger->debugStop();
+	_bbDebugStop();
 }
 
 ////////////
@@ -193,7 +188,7 @@ void gxRuntime::resume(){
 	suspended=false;
 	busy=false;
 
-	if( debugger ) debugger->debugRun();
+	_bbDebugRun();
 }
 
 ///////////////////
@@ -905,68 +900,10 @@ void gxRuntime::windowedModeInfo( int *c ){
 	*c=caps;
 }
 
-static string toDir( string t ){
-	if( t.size() && t[t.size()-1]!='\\' ) t+='\\';
-	return t;
-}
-
 void gxRuntime::refreshSystemProperties(){
-	char buff[MAX_PATH+1];
-
-	bbSystemProperties["cpu"]="Intel";
-
-	string os="Unknown";
-	switch( osinfo.dwMajorVersion ){
-	case 3:
-		switch( osinfo.dwMinorVersion ){
-		case 51:os="Windows NT 3.1";break;
-		}
-		break;
-	case 4:
-		switch( osinfo.dwMinorVersion ){
-		case 0:os="Windows 95";break;
-		case 10:os="Windows 98";break;
-		case 90:os="Windows ME";break;
-		}
-		break;
-	case 5:
-		switch( osinfo.dwMinorVersion ){
-		case 0:os="Windows 2000";break;
-		case 1:os="Windows XP";break;
-		case 2:os="Windows Server 2003";break;
-		}
-		break;
-	case 6:
-		switch( osinfo.dwMinorVersion ){
-		case 0:os="Windows Vista";break;
-		case 1:os="Windows 7";break;
-		case 2:os="Windows 8";break;
-		case 3:os="Windows 8.1";break;
-		}
-	case 10:
-		switch( osinfo.dwMinorVersion ){
-		case 0:os="Windows 10";break;
-		}
-		break;
-	}
-
-	bbSystemProperties["os"]=os;
-
-	if( GetModuleFileName( 0,buff,MAX_PATH ) ){
-		string t=buff;
-		int n=t.find_last_of( '\\' );
-		if( n!=string::npos ) t=t.substr( 0,n );
-		bbSystemProperties["appdir"]=toDir( t );
-	}
-
-	if( GetWindowsDirectory( buff,MAX_PATH ) ) bbSystemProperties["windowsdir"]=toDir( buff );
-	if( GetSystemDirectory( buff,MAX_PATH ) )  bbSystemProperties["systemdir"]=toDir( buff );
-	if( GetTempPath( MAX_PATH,buff ) )         bbSystemProperties["tempdir"]=toDir( buff );
-
 	bbSystemProperties["apphwnd"]=itoa( (int)hwnd );
 	bbSystemProperties["apphinstance"]=itoa( (int)hinst );
 }
-
 
 void gxRuntime::enableDirectInput( bool enable ){
 	if( use_di=enable ){
