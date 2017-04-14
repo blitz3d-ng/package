@@ -60,13 +60,13 @@ public:
 		}
 		DIMOUSESTATE state;
 		if( device->GetDeviceState(sizeof(state),&state)<0 ) return;
-		if( gxGraphics *g=input->runtime->graphics ){
+		if( bbGraphicsOpen() ){
 			int mx=axis_states[0]+state.lX;
 			int my=axis_states[1]+state.lY;
 			if( mx<0 ) mx=0;
-			else if( mx>=g->getWidth() ) mx=g->getWidth()-1;
+			else if( mx>=bbGraphicsWidth() ) mx=bbGraphicsWidth()-1;
 			if( my<0 ) my=0;
-			else if( my>=g->getHeight() ) my=g->getHeight()-1;
+			else if( my>=bbGraphicsHeight() ) my=bbGraphicsHeight()-1;
 			axis_states[0]=mx;
 			axis_states[1]=my;
 			axis_states[2]+=state.lZ;

@@ -1,5 +1,6 @@
 
 #include "../../stdutil/stdutil.h"
+#include "../../gxruntime/gxgraphics.h"
 #include "graphics.d3d7.h"
 #include <windows.h>
 #include <d3d.h>
@@ -19,12 +20,18 @@ struct D3D7ContextDriver::GfxDriver{
 #endif
 };
 
-D3D7ContextDriver::D3D7ContextDriver():curr_driver(0),enum_all(false){
+D3D7ContextDriver::D3D7ContextDriver( HWND hwnd )
+:hwnd(hwnd),curr_driver(0),enum_all(false),
+timerID(0),clipper(0),primSurf(0),exclusive(false){
 }
 
 D3D7ContextDriver::~D3D7ContextDriver(){
+	freeInvalidationTimer();
 }
 
+////////////////////
+// GRAPHICS SETUP //
+////////////////////
 bool D3D7ContextDriver::setDisplayMode( int w,int h,int d,bool d3d,IDirectDraw7 *dirDraw ){
 
 	if( d ) return dirDraw->SetDisplayMode( w,h,d,0,0 )>=0;
@@ -58,6 +65,94 @@ bool D3D7ContextDriver::setDisplayMode( int w,int h,int d,bool d3d,IDirectDraw7 
 		}
 	}
 	return best_d ? dirDraw->SetDisplayMode( w,h,best_d,0,0 )>=0 : false;
+}
+
+gxGraphics *D3D7ContextDriver::openWindowedGraphics( int w,int h,int d,bool d3d ){
+
+	IDirectDraw7 *dd=createDD();
+	if( !dd ) return 0;
+
+	//set coop level
+	if( dd->SetCooperativeLevel( D3D7ContextDriver::hwnd,DDSCL_NORMAL )>=0 ){
+		//create primary surface
+		IDirectDrawSurface7 *ps;
+		DDSURFACEDESC2 desc={sizeof(desc)};
+		desc.dwFlags=DDSD_CAPS;
+		desc.ddsCaps.dwCaps=DDSCAPS_PRIMARYSURFACE;
+		if( dd->CreateSurface( &desc,&ps,0 )>=0 ){
+			//create clipper
+			IDirectDrawClipper *cp;
+			if( dd->CreateClipper( 0,&cp,0 )>=0 ){
+				//attach clipper
+				if( ps->SetClipper( cp )>=0 ){
+					//set clipper HWND
+					if( cp->SetHWnd( 0,D3D7ContextDriver::hwnd )>=0 ){
+						//create front buffer
+						IDirectDrawSurface7 *fs;
+						DDSURFACEDESC2 desc={sizeof(desc)};
+						desc.dwFlags=DDSD_WIDTH|DDSD_HEIGHT|DDSD_CAPS;
+						desc.dwWidth=w;desc.dwHeight=h;
+						desc.ddsCaps.dwCaps=DDSCAPS_OFFSCREENPLAIN;
+
+						if( d3d ) desc.ddsCaps.dwCaps|=DDSCAPS_3DDEVICE;
+
+						if( dd->CreateSurface( &desc,&fs,0 )>=0 ){
+							if( createInvalidationTimer() ){
+								//Success!
+								clipper=cp;
+								primSurf=ps;
+								mod_cnt=0;
+								exclusive=false;
+								fs->AddRef();
+								return d_new gxGraphics( dd,fs,fs,d3d );
+							}
+							fs->Release();
+						}
+					}
+				}
+				cp->Release();
+			}
+			ps->Release();
+		}
+	}
+	dd->Release();
+	return 0;
+}
+
+gxGraphics *D3D7ContextDriver::openExclusiveGraphics( int w,int h,int d,bool d3d ){
+
+	IDirectDraw7 *dd=createDD();
+	if( !dd ) return 0;
+
+	//Set coop level
+	if( dd->SetCooperativeLevel( D3D7ContextDriver::hwnd,DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN|DDSCL_ALLOWREBOOT )>=0 ){
+		//Set display mode
+		if( setDisplayMode( w,h,d,d3d,dd ) ){
+			//create primary surface
+			IDirectDrawSurface7 *ps;
+			DDSURFACEDESC2 desc={sizeof(desc)};
+			desc.dwFlags=DDSD_CAPS|DDSD_BACKBUFFERCOUNT;
+			desc.ddsCaps.dwCaps=DDSCAPS_PRIMARYSURFACE|DDSCAPS_COMPLEX|DDSCAPS_FLIP;
+
+			desc.dwBackBufferCount=1;
+			if( d3d ) desc.ddsCaps.dwCaps|=DDSCAPS_3DDEVICE;
+
+			if( dd->CreateSurface( &desc,&ps,0 )>=0 ){
+				//find back surface
+				IDirectDrawSurface7 *bs;
+				DDSCAPS2 caps={sizeof caps};
+				caps.dwCaps=DDSCAPS_BACKBUFFER;
+				if( ps->GetAttachedSurface( &caps,&bs )>=0 ){
+					exclusive=true;
+					return d_new gxGraphics( dd,ps,bs,d3d );
+				}
+				ps->Release();
+			}
+			dd->RestoreDisplayMode();
+		}
+	}
+	dd->Release();
+	return 0;
 }
 
 ////////////////////
@@ -119,6 +214,31 @@ static BOOL WINAPI enumDriver( GUID FAR *guid,LPSTR desc,LPSTR name,LPVOID conte
 	dd->EnumDisplayModes( 0,0,d,enumMode );
 	dd->Release();
 	return 1;
+}
+
+/////////////////////////////////////////////////////
+// TIMER CALLBACK FOR AUTOREFRESH OF WINDOWED MODE //
+/////////////////////////////////////////////////////
+void CALLBACK D3D7ContextDriver::timerCallback( UINT id,UINT msg,DWORD_PTR driver,DWORD dw1,DWORD dw2 ){
+	((D3D7ContextDriver*)driver)->invalidateRect();
+}
+
+void D3D7ContextDriver::invalidateRect(){
+	if( graphics ){
+		gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
+		if( f->getModify()!=mod_cnt ){
+			mod_cnt=f->getModify();
+			InvalidateRect( hwnd,0,false );
+		}
+	}
+}
+
+bool D3D7ContextDriver::createInvalidationTimer(){
+	return (timerID=timeSetEvent( 100,10,timerCallback,(DWORD_PTR)this,TIME_PERIODIC ));
+}
+
+void D3D7ContextDriver::freeInvalidationTimer(){
+	if( timerID ){ timeKillEvent( timerID );timerID=0; }
 }
 
 IDirectDraw7 *D3D7ContextDriver::createDD(){
@@ -199,6 +319,54 @@ void D3D7ContextDriver::windowedModeInfo( int *c ){
 	if( drivers[0]->d3d_desc.dwDeviceRenderBitDepth & bd ) caps|=GFXMODECAPS_3D;
 #endif
 	*c=caps;
+}
+
+///////////
+// PAINT //
+///////////
+void D3D7ContextDriver::paint(){
+	if( !exclusive ){
+		RECT src,dest;
+		src.left=src.top=0;
+		GetClientRect( D3D7ContextDriver::hwnd,&dest );
+		// src.right=gfx_mode==1 ? graphics->getWidth() : dest.right;
+		// src.bottom=gfx_mode==1 ? graphics->getHeight() : dest.bottom;
+		src.right=dest.right;
+		src.bottom=dest.bottom;
+		POINT p;p.x=p.y=0;ClientToScreen( D3D7ContextDriver::hwnd,&p );
+		dest.left+=p.x;dest.right+=p.x;
+		dest.top+=p.y;dest.bottom+=p.y;
+		gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
+		primSurf->Blt( &dest,f->getSurface(),&src,0,0 );
+	}
+}
+
+//////////
+// FLIP //
+//////////
+void D3D7ContextDriver::flip( bool vwait ){
+	gxCanvas *b=(gxCanvas*)graphics->getBackCanvas();
+	gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
+	int n;
+	if( !exclusive ){
+		if( vwait ) graphics->vwait();
+		f->setModify( b->getModify() );
+		if( f->getModify()!=mod_cnt ){
+			mod_cnt=f->getModify();
+			paint();
+		}
+	}else{
+		if( vwait ){
+			BOOL vb;
+			while( ((gxGraphics*)graphics)->dirDraw->GetVerticalBlankStatus( &vb )>=0 && vb ) {}
+			n=f->getSurface()->Flip( 0,DDFLIP_WAIT );
+		}else{
+			n=f->getSurface()->Flip( 0,DDFLIP_NOVSYNC|DDFLIP_WAIT );
+		}
+		if( n>=0 ) return;
+		string t="Flip Failed! Return code:"+itoa(n&0x7fff);
+		_bbDebugLog( t.c_str() );
+	}
 }
 
 BBMODULE_CREATE( graphics_d3d7 ){

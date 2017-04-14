@@ -29,13 +29,11 @@ public:
 
 	DDPIXELFORMAT texRGBFmt[2],texAlphaFmt[2],texRGBAlphaFmt[2],texRGBMaskFmt[2];
 
-	gxGraphics( gxRuntime *runtime,IDirectDraw7 *dirDraw,IDirectDrawSurface7 *front,IDirectDrawSurface7 *back,bool d3d );
+	gxGraphics( IDirectDraw7 *dirDraw,IDirectDrawSurface7 *front,IDirectDrawSurface7 *back,bool d3d );
 	~gxGraphics();
 
 	void backup();
 	bool restore();
-
-	gxRuntime *runtime;
 
 	static void wipeSystemProperties();
 	void setSystemProperties();
@@ -64,7 +62,6 @@ private:
 public:
 	//MANIPULATORS
 	void vwait();
-	void flip( bool vwait );
 
 	//SPECIAL!
 	void copy( BBCanvas *dest,int dx,int dy,int dw,int dh,BBCanvas *src,int sx,int sy,int sw,int sh );

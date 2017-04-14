@@ -18,9 +18,6 @@ public:
 
 	HINSTANCE hinst;
 
-	gxGraphics *graphics;
-
-	void flip( bool vwait );
 	void moveMouse( int x,int y );
 
 	LRESULT windowProc( HWND hwnd,UINT msg,WPARAM w,LPARAM l );
@@ -31,16 +28,12 @@ private:
 
 	void refreshSystemProperties();
 
-	void paint();
 	void suspend();
 	void forceSuspend();
 	void resume();
 	void forceResume();
 
 	bool pointer_visible;
-
-	gxGraphics *openWindowedGraphics( int w,int h,int d,bool d3d );
-	gxGraphics *openExclusiveGraphics( int w,int h,int d,bool d3d );
 
 	int use_di;
 
@@ -57,8 +50,6 @@ public:
 	void asyncStop();
 	void asyncRun();
 	void asyncEnd();
-
-	void invalidateRect();
 
 	/***** GX INTERFACE *****/
 public:

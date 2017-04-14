@@ -4,13 +4,6 @@
 #include <bb/blitz/blitz.h>
 #include "canvas.h"
 
-class BBContextDriver{
-public:
-  enum{
-    GFXMODECAPS_3D=1
-  };
-};
-
 class BBGraphics{
   /***** GX INTERFACE *****/
 public:
@@ -21,9 +14,11 @@ public:
     GRAPHICS_AUTOSUSPEND=8	//suspend graphics when app suspended
   };
 
+	virtual void backup()=0;
+	virtual bool restore()=0;
+
   //MANIPULATORS
   virtual void vwait()=0;
-  virtual void flip( bool vwait )=0;
 
   //SPECIAL!
   virtual void copy( BBCanvas *dest,int dx,int dy,int dw,int dh,BBCanvas *src,int sx,int sy,int sw,int sh )=0;
@@ -52,6 +47,28 @@ public:
   virtual void freeCanvas( BBCanvas *canvas )=0;
 };
 
+class BBContextDriver{
+public:
+	BBContextDriver();
+protected:
+	BBGraphics *graphics;
+
+public:
+  enum{
+    GFXMODECAPS_3D=1
+  };
+
+	bool graphicsOpened();
+
+  virtual int numGraphicsDrivers()=0;
+  virtual void graphicsDriverInfo( int driver,std::string *name,int *c )=0;
+  virtual int numGraphicsModes( int driver )=0;
+  virtual void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c )=0;
+  virtual void windowedModeInfo( int *c )=0;
+
+  virtual void flip( bool vwait )=0;
+};
+
 class bbImage;
 
 //general graphics functions
@@ -76,6 +93,7 @@ BBCanvas * BBCALL bbFrontBuffer();
 BBCanvas * BBCALL bbBackBuffer();
 void	 BBCALL bbEndGraphics();
 int		 BBCALL bbGraphicsLost();
+int		 BBCALL bbGraphicsOpen();
 int		 BBCALL bbScanLine();
 void	 BBCALL bbVWait( int n );
 void	 BBCALL bbFlip( int vwait );

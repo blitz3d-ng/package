@@ -2,7 +2,6 @@
 #include "std.h"
 #include "gxcanvas.h"
 #include "gxgraphics.h"
-#include "gxruntime.h"
 #include "asmcoder.h"
 
 #define DEBUG_BITMASK

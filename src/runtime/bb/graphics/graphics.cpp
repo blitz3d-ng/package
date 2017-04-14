@@ -3,6 +3,7 @@
 #include <bb/input/input.h>
 #include <bb/system/system.h>
 #include <bb/runtime/runtime.h>
+#include <bb/graphics/graphics.h>
 
 #include <fstream>
 
@@ -78,7 +79,7 @@ static inline void debugCanvas( BBCanvas *c ){
 
 static inline void debugDriver( int n ){
 	if( bb_env.debug ){
-		if( n<1 || n>gx_runtime->numGraphicsDrivers() ){
+		if( n<1 || n>bbContextDriver->numGraphicsDrivers() ){
 			RTEX( "Illegal graphics driver index" );
 		}
 	}
@@ -231,14 +232,21 @@ static bool saveCanvas( BBCanvas *c,const string &f ){
 	return out.good();
 }
 
+BBContextDriver::BBContextDriver():graphics(0){
+}
+
+bool BBContextDriver::graphicsOpened(){
+	return !!graphics;
+}
+
 int BBCALL bbCountGfxDrivers(){
-	return gx_runtime->numGraphicsDrivers();
+	return bbContextDriver->numGraphicsDrivers();
 }
 
 BBStr *	BBCALL bbGfxDriverName( int n ){
 	debugDriver( n );
 	string t;int caps;
-	gx_runtime->graphicsDriverInfo( n-1,&t,&caps );
+	bbContextDriver->graphicsDriverInfo( n-1,&t,&caps );
 	return d_new BBStr( t );
 }
 
@@ -250,10 +258,10 @@ void  BBCALL bbSetGfxDriver( int n ){
 
 int  BBCALL bbCountGfxModes(){
 	gfx_modes.clear();
-	int n=gx_runtime->numGraphicsModes( gx_driver );
+	int n=bbContextDriver->numGraphicsModes( gx_driver );
 	for( int k=0;k<n;++k ){
 		GfxMode m;
-		gx_runtime->graphicsModeInfo( gx_driver,k,&m.w,&m.h,&m.d,&m.caps );
+		bbContextDriver->graphicsModeInfo( gx_driver,k,&m.w,&m.h,&m.d,&m.caps );
 		gfx_modes.push_back( m );
 	}
 	return gfx_modes.size();
@@ -275,10 +283,10 @@ int  BBCALL bbGfxModeDepth( int n ){
 }
 
 static int modeExists( int w,int h,int d,bool bb3d ){
-	int cnt=gx_runtime->numGraphicsModes( gx_driver );
+	int cnt=bbContextDriver->numGraphicsModes( gx_driver );
 	for( int k=0;k<cnt;++k ){
 		int tw,th,td,tc;
-		gx_runtime->graphicsModeInfo( gx_driver,k,&tw,&th,&td,&tc );
+		bbContextDriver->graphicsModeInfo( gx_driver,k,&tw,&th,&td,&tc );
 		if( bb3d && !(tc&BBContextDriver::GFXMODECAPS_3D) ) continue;
 		if( w==tw && h==th && d==td ) return 1;
 	}
@@ -293,16 +301,16 @@ int  BBCALL bbGfxModeExists( int w,int h,int d ){
 int  BBCALL bbGfxDriver3D( int n ){
 	debugDriver( n );
 	string t;int caps;
-	gx_runtime->graphicsDriverInfo( n-1,&t,&caps );
+	bbContextDriver->graphicsDriverInfo( n-1,&t,&caps );
 	return (caps & BBContextDriver::GFXMODECAPS_3D) ? 1 : 0;
 }
 
 int BBCALL bbCountGfxModes3D(){
 	gfx_modes.clear();
-	int n=gx_runtime->numGraphicsModes( gx_driver );
+	int n=bbContextDriver->numGraphicsModes( gx_driver );
 	for( int k=0;k<n;++k ){
 		GfxMode m;
-		gx_runtime->graphicsModeInfo( gx_driver,k,&m.w,&m.h,&m.d,&m.caps );
+		bbContextDriver->graphicsModeInfo( gx_driver,k,&m.w,&m.h,&m.d,&m.caps );
 		if( m.caps & BBContextDriver::GFXMODECAPS_3D) gfx_modes.push_back( m );
 	}
 	return gfx_modes.size();
@@ -319,7 +327,7 @@ int BBCALL bbGfxMode3D( int n ){
 
 int BBCALL bbWindowed3D(){
 	int tc;
-	gx_runtime->windowedModeInfo( &tc );
+	bbContextDriver->windowedModeInfo( &tc );
 	return (tc & BBContextDriver::GFXMODECAPS_3D) ? 1 : 0;
 }
 #endif
@@ -443,6 +451,10 @@ int BBCALL bbGraphicsLost(){
 	return gx_runtime->graphicsLost();
 }
 
+int BBCALL bbGraphicsOpen(){
+	return !!bbContextDriver->graphicsOpened();
+}
+
 void BBCALL bbSetGamma( int r,int g,int b,float dr,float dg,float db ){
 	if( dr<0 ) dr=0;
 	else if( dr>255.0f ) dr=255.0f;
@@ -529,7 +541,7 @@ void BBCALL bbVWait( int n ){
 }
 
 void BBCALL bbFlip( int vwait ){
-	gx_graphics->flip( vwait ? true : false );
+	bbContextDriver->flip( vwait ? true : false );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
@@ -1187,7 +1199,7 @@ void BBCALL bbHidePointer(){
 }
 
 BBMODULE_CREATE( graphics ){
-	bbContextDriver=0;
+	// bbContextDriver=0; // FIXME: bbContextDriver is currently being set in gxRuntime.
 	p_canvas=0;
 	filter=true;
 	gx_driver=0;
@@ -1247,6 +1259,7 @@ BBMODULE_LINK( graphics ){
 #endif
 	rtSym( "EndGraphics",bbEndGraphics );
 	rtSym( "%GraphicsLost",bbGraphicsLost );
+	rtSym( "%GraphicsOpen",bbGraphicsOpen );
 
 	rtSym( "SetGamma%src_red%src_green%src_blue#dest_red#dest_green#dest_blue",bbSetGamma );
 	rtSym( "UpdateGamma%calibrate=0",bbUpdateGamma );

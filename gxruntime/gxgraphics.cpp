@@ -9,8 +9,8 @@
 #define DDSGR_CALIBRATE 0x00000001L
 #endif
 
-gxGraphics::gxGraphics( gxRuntime *rt,IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurface7 *bs,bool d3d ):
-runtime(rt),dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
+gxGraphics::gxGraphics( IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurface7 *bs,bool d3d ):
+dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
 
 	dirDraw->QueryInterface( IID_IDirectDraw,(void**)&ds_dirDraw );
 
@@ -140,10 +140,6 @@ BBFont *gxGraphics::getDefaultFont()const{
 
 void gxGraphics::vwait(){
 	dirDraw->WaitForVerticalBlank( DDWAITVB_BLOCKBEGIN,0 );
-}
-
-void gxGraphics::flip( bool v ){
-	runtime->flip( v );
 }
 
 void gxGraphics::copy( BBCanvas *d,int dx,int dy,int dw,int dh,BBCanvas *s,int sx,int sy,int sw,int sh ){

@@ -20,7 +20,7 @@ static volatile bool run_flag;
 
 // TODO: Move these to the proper place...
 void *bbRuntimeWindow(){
-	return runtime->hwnd;
+	return runtime->Frame::hwnd;
 }
 
 bool bbRuntimeIdle(){
@@ -32,11 +32,6 @@ static LRESULT CALLBACK windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lpar
 static bool gfx_lost;
 static bool auto_suspend;
 
-//for modes 1 and 2
-static int mod_cnt;
-static MMRESULT timerID;
-static IDirectDrawClipper *clipper;
-static IDirectDrawSurface7 *primSurf;
 static Debugger *debugger;
 
 enum{
@@ -63,7 +58,6 @@ gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst,Debugger *d ){
 	wndclass.hbrBackground=(HBRUSH)GetStockObject( BLACK_BRUSH );
 	RegisterClass( &wndclass );
 
-	clipper=0;primSurf=0;
 	busy=suspended=false;
 	run_flag=true;
 
@@ -94,11 +88,11 @@ typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
 gxRuntime::gxRuntime( HINSTANCE hi,HWND hw ):
 hinst(hi),
-pointer_visible(true),graphics(0),use_di(false),Frame(hw){
+pointer_visible(true),use_di(false),D3D7ContextDriver(hw),Frame(hw){
 
 	CoInitialize( 0 );
 
-	env.window=hwnd;
+	env.window=Frame::hwnd;
 
 	enumGfx();
 
@@ -113,7 +107,7 @@ pointer_visible(true),graphics(0),use_di(false),Frame(hw){
 gxRuntime::~gxRuntime(){
 	if( graphics ) closeGraphics( graphics );
 	denumGfx();
-	DestroyWindow( hwnd );
+	DestroyWindow( Frame::hwnd );
 	UnregisterClass( "Blitz Runtime Class",hinst );
 
 	CoUninitialize();
@@ -196,72 +190,10 @@ void gxRuntime::forceSuspend(){
 //////////////////
 void gxRuntime::forceResume(){
 	if( gfx_mode==3 ){
-		SetForegroundWindow( hwnd );
-		ShowWindow( hwnd,SW_SHOWMAXIMIZED );
+		SetForegroundWindow( Frame::hwnd );
+		ShowWindow( Frame::hwnd,SW_SHOWMAXIMIZED );
 	}else{
 		resume();
-	}
-}
-
-///////////
-// PAINT //
-///////////
-void gxRuntime::paint(){
-	switch( gfx_mode ){
-	case 0:
-		{
-		}
-		break;
-	case 1:case 2:	//scaled windowed mode.
-		{
-			RECT src,dest;
-			src.left=src.top=0;
-			GetClientRect( hwnd,&dest );
-			src.right=gfx_mode==1 ? graphics->getWidth() : dest.right;
-			src.bottom=gfx_mode==1 ? graphics->getHeight() : dest.bottom;
-			POINT p;p.x=p.y=0;ClientToScreen( hwnd,&p );
-			dest.left+=p.x;dest.right+=p.x;
-			dest.top+=p.y;dest.bottom+=p.y;
-			gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
-			primSurf->Blt( &dest,f->getSurface(),&src,0,0 );
-		}
-		break;
-	case 3:
-		{
-			//exclusive mode
-		}
-		break;
-	}
-}
-
-//////////
-// FLIP //
-//////////
-void gxRuntime::flip( bool vwait ){
-	gxCanvas *b=(gxCanvas*)graphics->getBackCanvas();
-	gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
-	int n;
-	switch( gfx_mode ){
-	case 1:case 2:
-		if( vwait ) graphics->vwait();
-		f->setModify( b->getModify() );
-		if( f->getModify()!=mod_cnt ){
-			mod_cnt=f->getModify();
-			paint();
-		}
-		break;
-	case 3:
-		if( vwait ){
-			BOOL vb;
-			while( graphics->dirDraw->GetVerticalBlankStatus( &vb )>=0 && vb ) {}
-			n=f->getSurface()->Flip( 0,DDFLIP_WAIT );
-		}else{
-			n=f->getSurface()->Flip( 0,DDFLIP_NOVSYNC|DDFLIP_WAIT );
-		}
-		if( n>=0 ) return;
-		string t="Flip Failed! Return code:"+itoa(n&0x7fff);
-		_bbDebugLog( t.c_str() );
-		break;
 	}
 }
 
@@ -273,11 +205,11 @@ void gxRuntime::moveMouse( int x,int y ){
 	RECT rect;
 	switch( gfx_mode ){
 	case 1:
-		GetClientRect( hwnd,&rect );
+		GetClientRect( D3D7ContextDriver::hwnd,&rect );
 		x=x*(rect.right-rect.left)/graphics->getWidth();
 		y=y*(rect.bottom-rect.top)/graphics->getHeight();
 	case 2:
-		p.x=x;p.y=y;ClientToScreen( hwnd,&p );x=p.x;y=p.y;
+		p.x=x;p.y=y;ClientToScreen( D3D7ContextDriver::hwnd,&p );x=p.x;y=p.y;
 		break;
 	case 3:
 		if( use_di ) return;
@@ -426,21 +358,21 @@ static LRESULT CALLBACK windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lpar
 //STOP FROM EXTERNAL SOURCE //
 //////////////////////////////
 void gxRuntime::asyncStop(){
-	PostMessage( hwnd,WM_STOP,0,0 );
+	PostMessage( Frame::hwnd,WM_STOP,0,0 );
 }
 
 //////////////////////////////
 //RUN  FROM EXTERNAL SOURCE //
 //////////////////////////////
 void gxRuntime::asyncRun(){
-	PostMessage( hwnd,WM_RUN,0,0 );
+	PostMessage( Frame::hwnd,WM_RUN,0,0 );
 }
 
 //////////////////////////////
 // END FROM EXTERNAL SOURCE //
 //////////////////////////////
 void gxRuntime::asyncEnd(){
-	PostMessage( hwnd,WM_END,0,0 );
+	PostMessage( Frame::hwnd,WM_END,0,0 );
 }
 
 //////////
@@ -521,112 +453,6 @@ void gxRuntime::setPointerVisible( bool vis ){
 	SetCursorPos( pt.x,pt.y );
 }
 
-/////////////////////////////////////////////////////
-// TIMER CALLBACK FOR AUTOREFRESH OF WINDOWED MODE //
-/////////////////////////////////////////////////////
-static void CALLBACK timerCallback( UINT id,UINT msg,DWORD user,DWORD dw1,DWORD dw2 ){
-	if ( runtime ) runtime->invalidateRect();
-}
-
-void gxRuntime::invalidateRect(){
-	if( gfx_mode ){
-		gxCanvas *f=(gxCanvas*)graphics->getFrontCanvas();
-		if( f->getModify()!=mod_cnt ){
-			mod_cnt=f->getModify();
-			InvalidateRect( hwnd,0,false );
-		}
-	}
-}
-
-////////////////////
-// GRAPHICS SETUP //
-////////////////////
-gxGraphics *gxRuntime::openWindowedGraphics( int w,int h,int d,bool d3d ){
-
-	IDirectDraw7 *dd=createDD();
-	if( !dd ) return 0;
-
-	//set coop level
-	if( dd->SetCooperativeLevel( hwnd,DDSCL_NORMAL )>=0 ){
-		//create primary surface
-		IDirectDrawSurface7 *ps;
-		DDSURFACEDESC2 desc={sizeof(desc)};
-		desc.dwFlags=DDSD_CAPS;
-		desc.ddsCaps.dwCaps=DDSCAPS_PRIMARYSURFACE;
-		if( dd->CreateSurface( &desc,&ps,0 )>=0 ){
-			//create clipper
-			IDirectDrawClipper *cp;
-			if( dd->CreateClipper( 0,&cp,0 )>=0 ){
-				//attach clipper
-				if( ps->SetClipper( cp )>=0 ){
-					//set clipper HWND
-					if( cp->SetHWnd( 0,hwnd )>=0 ){
-						//create front buffer
-						IDirectDrawSurface7 *fs;
-						DDSURFACEDESC2 desc={sizeof(desc)};
-						desc.dwFlags=DDSD_WIDTH|DDSD_HEIGHT|DDSD_CAPS;
-						desc.dwWidth=w;desc.dwHeight=h;
-						desc.ddsCaps.dwCaps=DDSCAPS_OFFSCREENPLAIN;
-
-						if( d3d ) desc.ddsCaps.dwCaps|=DDSCAPS_3DDEVICE;
-
-						if( dd->CreateSurface( &desc,&fs,0 )>=0 ){
-							if( timerID=timeSetEvent( 100,10,timerCallback,0,TIME_PERIODIC ) ){
-								//Success!
-								clipper=cp;
-								primSurf=ps;
-								mod_cnt=0;
-								fs->AddRef();
-								return d_new gxGraphics( this,dd,fs,fs,d3d );
-							}
-							fs->Release();
-						}
-					}
-				}
-				cp->Release();
-			}
-			ps->Release();
-		}
-	}
-	dd->Release();
-	return 0;
-}
-
-gxGraphics *gxRuntime::openExclusiveGraphics( int w,int h,int d,bool d3d ){
-
-	IDirectDraw7 *dd=createDD();
-	if( !dd ) return 0;
-
-	//Set coop level
-	if( dd->SetCooperativeLevel( hwnd,DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN|DDSCL_ALLOWREBOOT )>=0 ){
-		//Set display mode
-		if( setDisplayMode( w,h,d,d3d,dd ) ){
-			//create primary surface
-			IDirectDrawSurface7 *ps;
-			DDSURFACEDESC2 desc={sizeof(desc)};
-			desc.dwFlags=DDSD_CAPS|DDSD_BACKBUFFERCOUNT;
-			desc.ddsCaps.dwCaps=DDSCAPS_PRIMARYSURFACE|DDSCAPS_COMPLEX|DDSCAPS_FLIP;
-
-			desc.dwBackBufferCount=1;
-			if( d3d ) desc.ddsCaps.dwCaps|=DDSCAPS_3DDEVICE;
-
-			if( dd->CreateSurface( &desc,&ps,0 )>=0 ){
-				//find back surface
-				IDirectDrawSurface7 *bs;
-				DDSCAPS2 caps={sizeof caps};
-				caps.dwCaps=DDSCAPS_BACKBUFFER;
-				if( ps->GetAttachedSurface( &caps,&bs )>=0 ){
-					return d_new gxGraphics( this,dd,ps,bs,d3d );
-				}
-				ps->Release();
-			}
-			dd->RestoreDisplayMode();
-		}
-	}
-	dd->Release();
-	return 0;
-}
-
 BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	if( graphics ) return 0;
 
@@ -664,7 +490,7 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 		gxGraphics::wipeSystemProperties();
 		curr_driver=0;
 	}else{
-		graphics->setSystemProperties();
+		((gxGraphics*)graphics)->setSystemProperties();
 	}
 
 	gfx_lost=false;
@@ -682,7 +508,7 @@ void gxRuntime::closeGraphics( BBGraphics *g ){
 	busy=true;
 
 	unacquireInput();
-	if( timerID ){ timeKillEvent( timerID );timerID=0; }
+	freeInvalidationTimer();
 	if( clipper ){ clipper->Release();clipper=0; }
 	if( primSurf ){ primSurf->Release();primSurf=0; }
 	delete graphics;graphics=0;
@@ -703,7 +529,7 @@ bool gxRuntime::graphicsLost(){
 }
 
 void gxRuntime::refreshSystemProperties(){
-	bbSystemProperties["apphwnd"]=itoa( (int)hwnd );
+	bbSystemProperties["apphwnd"]=itoa( (int)Frame::hwnd );
 	bbSystemProperties["apphinstance"]=itoa( (int)hinst );
 }
 
