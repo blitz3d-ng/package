@@ -4,6 +4,13 @@
 #include <bb/blitz/blitz.h>
 #include "canvas.h"
 
+class BBContextDriver{
+public:
+  enum{
+    GFXMODECAPS_3D=1
+  };
+};
+
 class BBGraphics{
   /***** GX INTERFACE *****/
 public:
@@ -57,8 +64,6 @@ int		 BBCALL bbCountGfxModes();
 int		 BBCALL bbGfxModeWidth( int n );
 int		 BBCALL bbGfxModeHeight( int n );
 int		 BBCALL bbGfxModeDepth( int n );
-float  BBCALL bbDPIScaleX();
-float  BBCALL bbDPIScaleY();
 int		 BBCALL bbGraphicsWidth();
 int		 BBCALL bbGraphicsHeight();
 int		 BBCALL bbGraphicsDepth();
@@ -157,5 +162,7 @@ void	 BBCALL bbLocate( int x,int y );
 
 extern BBGraphics *gx_graphics;
 extern BBCanvas *gx_canvas;
+
+extern BBContextDriver *bbContextDriver;
 
 #endif

@@ -14,22 +14,9 @@ gxRuntime *gx_runtime;
 #undef SPI_SETMOUSESPEED
 #define SPI_SETMOUSESPEED	113
 
-struct gxRuntime::GfxMode{
-	DDSURFACEDESC2 desc;
-};
-struct gxRuntime::GfxDriver{
-	GUID *guid;
-	std::string name;
-	std::vector<GfxMode*> modes;
-#ifdef PRO
-	D3DDEVICEDESC7 d3d_desc;
-#endif
-};
-
 static gxRuntime *runtime;
 static bool busy,suspended;
 static volatile bool run_flag;
-static DDSURFACEDESC2 desktop_desc;
 
 // TODO: Move these to the proper place...
 void *bbRuntimeWindow(){
@@ -88,6 +75,7 @@ gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst,Debugger *d ){
 	UpdateWindow( hwnd );
 
 	runtime=d_new gxRuntime( hinst,hwnd );
+	bbContextDriver=runtime;
 	return runtime;
 }
 
@@ -105,7 +93,7 @@ void gxRuntime::closeRuntime( gxRuntime *r ){
 typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
 gxRuntime::gxRuntime( HINSTANCE hi,HWND hw ):
-hinst(hi),curr_driver(0),enum_all(false),
+hinst(hi),
 pointer_visible(true),graphics(0),use_di(false),Frame(hw){
 
 	CoInitialize( 0 );
@@ -553,45 +541,10 @@ void gxRuntime::invalidateRect(){
 ////////////////////
 // GRAPHICS SETUP //
 ////////////////////
-bool gxRuntime::setDisplayMode( int w,int h,int d,bool d3d,IDirectDraw7 *dirDraw ){
-
-	if( d ) return dirDraw->SetDisplayMode( w,h,d,0,0 )>=0;
-
-	int best_d=0;
-
-	if( d3d ){
-#ifdef PRO
-		int bd=curr_driver->d3d_desc.dwDeviceRenderBitDepth;
-		if( bd & DDBD_32 ) best_d=32;
-		else if( bd & DDBD_24 ) best_d=24;
-		else if( bd & DDBD_16 ) best_d=16;
-#endif
-	}else{
-		int best_n=0;
-		for( d=16;d<=32;d+=8 ){
-			if( dirDraw->SetDisplayMode( w,h,d,0,0 )<0 ) continue;
-			DDCAPS caps={ sizeof(caps)  };
-			dirDraw->GetCaps( &caps,0 );
-			int n=0;
-			if( caps.dwCaps & DDCAPS_BLT ) ++n;
-			if( caps.dwCaps & DDCAPS_BLTCOLORFILL ) ++n;
-			if( caps.dwCKeyCaps & DDCKEYCAPS_SRCBLT ) ++n;
-			if( caps.dwCaps2 & DDCAPS2_WIDESURFACES ) ++n;
-			if( n==4 ) return true;
-			if( n>best_n ){
-				best_d=d;
-				best_n=n;
-			}
-			dirDraw->RestoreDisplayMode();
-		}
-	}
-	return best_d ? dirDraw->SetDisplayMode( w,h,best_d,0,0 )>=0 : false;
-}
-
 gxGraphics *gxRuntime::openWindowedGraphics( int w,int h,int d,bool d3d ){
 
-	IDirectDraw7 *dd;
-	if( DirectDrawCreateEx( curr_driver->guid,(void**)&dd,IID_IDirectDraw7,0 )<0 ) return 0;
+	IDirectDraw7 *dd=createDD();
+	if( !dd ) return 0;
 
 	//set coop level
 	if( dd->SetCooperativeLevel( hwnd,DDSCL_NORMAL )>=0 ){
@@ -641,8 +594,8 @@ gxGraphics *gxRuntime::openWindowedGraphics( int w,int h,int d,bool d3d ){
 
 gxGraphics *gxRuntime::openExclusiveGraphics( int w,int h,int d,bool d3d ){
 
-	IDirectDraw7 *dd;
-	if( DirectDrawCreateEx( curr_driver->guid,(void**)&dd,IID_IDirectDraw7,0 )<0 ) return 0;
+	IDirectDraw7 *dd=createDD();
+	if( !dd ) return 0;
 
 	//Set coop level
 	if( dd->SetCooperativeLevel( hwnd,DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN|DDSCL_ALLOWREBOOT )>=0 ){
@@ -747,157 +700,6 @@ void gxRuntime::closeGraphics( BBGraphics *g ){
 
 bool gxRuntime::graphicsLost(){
 	return gfx_lost;
-}
-
-////////////////////
-// GFX ENUM STUFF //
-////////////////////
-static HRESULT WINAPI enumMode( DDSURFACEDESC2 *desc,void *context ){
-	int dp=desc->ddpfPixelFormat.dwRGBBitCount;
-	if( dp==16 || dp==24 || dp==32 ){
-		gxRuntime::GfxMode *m=d_new gxRuntime::GfxMode;
-		m->desc=*desc;
-		gxRuntime::GfxDriver *d=(gxRuntime::GfxDriver*)context;
-		d->modes.push_back( m );
-	}
-	return DDENUMRET_OK;
-}
-
-#ifdef PRO
-static int maxDevType;
-static HRESULT CALLBACK enumDevice( char *desc,char *name,D3DDEVICEDESC7 *devDesc,void *context ){
-	int t=0;
-	GUID guid=devDesc->deviceGUID;
-	if( guid==IID_IDirect3DRGBDevice ) t=1;
-	else if( guid==IID_IDirect3DHALDevice ) t=2;
-	else if( guid==IID_IDirect3DTnLHalDevice ) t=3;
-	if( t>1 && t>maxDevType ){
-		maxDevType=t;
-		gxRuntime::GfxDriver *d=(gxRuntime::GfxDriver*)context;
-		d->d3d_desc=*devDesc;
-	}
-	return D3DENUMRET_OK;
-}
-#endif
-
-static BOOL WINAPI enumDriver( GUID FAR *guid,LPSTR desc,LPSTR name,LPVOID context,HMONITOR hm ){
-	IDirectDraw7 *dd;
-	if( DirectDrawCreateEx( guid,(void**)&dd,IID_IDirectDraw7,0 )<0 ) return 0;
-
-	if( !guid && !desktop_desc.ddpfPixelFormat.dwRGBBitCount ){
-		desktop_desc.dwSize=sizeof(desktop_desc);
-		dd->GetDisplayMode( &desktop_desc );
-	}
-
-	gxRuntime::GfxDriver *d=d_new gxRuntime::GfxDriver;
-
-	d->guid=guid ? d_new GUID( *guid ) : 0;
-	d->name=desc;//string( name )+" "+string( desc );
-
-#ifdef PRO
-	memset( &d->d3d_desc,0,sizeof(d->d3d_desc) );
-	IDirect3D7 *dir3d;
-	if( dd->QueryInterface( IID_IDirect3D7,(void**)&dir3d )>=0 ){
-		maxDevType=0;
-		dir3d->EnumDevices( enumDevice,d );
-		dir3d->Release();
-	}
-#endif
-	vector<gxRuntime::GfxDriver*> *drivers=(vector<gxRuntime::GfxDriver*>*)context;
-	drivers->push_back( d );
-	dd->EnumDisplayModes( 0,0,d,enumMode );
-	dd->Release();
-	return 1;
-}
-
-void gxRuntime::enumGfx(){
-	denumGfx();
-	if( enum_all ){
-		DirectDrawEnumerateEx( enumDriver,&drivers,DDENUM_ATTACHEDSECONDARYDEVICES|DDENUM_NONDISPLAYDEVICES );
-	}else{
-		DirectDrawEnumerateEx( enumDriver,&drivers,0 );
-	}
-}
-
-void gxRuntime::denumGfx(){
-	for( int k=0;k<drivers.size();++k ){
-		gxRuntime::GfxDriver *d=drivers[k];
-		for( int j=0;j<d->modes.size();++j ) delete d->modes[j];
-		delete d->guid;
-		delete d;
-	}
-	drivers.clear();
-}
-
-int gxRuntime::numGraphicsDrivers(){
-	if( !enum_all ){
-		enum_all=true;
-		enumGfx();
-	}
-	return drivers.size();
-}
-
-void gxRuntime::graphicsDriverInfo( int driver,string *name,int *c ){
-	GfxDriver *g=drivers[driver];
-	int caps=0;
-#ifdef PRO
-	if( g->d3d_desc.dwDeviceRenderBitDepth ) caps|=GFXMODECAPS_3D;
-#endif
-	*name=g->name;
-	*c=caps;
-}
-
-int gxRuntime::numGraphicsModes( int driver ){
-	return drivers[driver]->modes.size();
-}
-
-void gxRuntime::graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c ){
-	GfxDriver *g=drivers[driver];
-	GfxMode *m=g->modes[mode];
-	int caps=0;
-#ifdef PRO
-	int bd=0;
-	switch( m->desc.ddpfPixelFormat.dwRGBBitCount ){
-	case 16:bd=DDBD_16;break;
-	case 24:bd=DDBD_24;break;
-	case 32:bd=DDBD_32;break;
-	}
-	if( g->d3d_desc.dwDeviceRenderBitDepth & bd && ( m->desc.dwWidth<=2048 && m->desc.dwHeight<=1536 ) ) caps|=GFXMODECAPS_3D;
-#endif
-	*w=m->desc.dwWidth;
-	*h=m->desc.dwHeight;
-	*d=m->desc.ddpfPixelFormat.dwRGBBitCount;
-	*c=caps;
-}
-
-void gxRuntime::dpiInfo( float *scale_x,float *scale_y ){
-	static bool calculated=false;
-	static float _scale_x=1.0f,_scale_y=1.0f;
-
-  if ( !calculated ){
-		HDC hdc=GetDC( GetDesktopWindow() );
-		_scale_x=GetDeviceCaps( hdc,LOGPIXELSX ) / 96.0f;
-		_scale_y=GetDeviceCaps( hdc,LOGPIXELSY ) / 96.0f;
-		ReleaseDC( GetDesktopWindow(),hdc );
-		calculated=true;
-	}
-
-	*scale_x=_scale_x;
-	*scale_y=_scale_y;
-}
-
-void gxRuntime::windowedModeInfo( int *c ){
-	int caps=0;
-#ifdef PRO
-	int bd=0;
-	switch( desktop_desc.ddpfPixelFormat.dwRGBBitCount ){
-	case 16:bd=DDBD_16;break;
-	case 24:bd=DDBD_24;break;
-	case 32:bd=DDBD_32;break;
-	}
-	if( drivers[0]->d3d_desc.dwDeviceRenderBitDepth & bd ) caps|=GFXMODECAPS_3D;
-#endif
-	*c=caps;
 }
 
 void gxRuntime::refreshSystemProperties(){

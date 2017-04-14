@@ -153,6 +153,22 @@ int WindowsSystemDriver::getScreenHeight( int i ){
   return GetSystemMetrics( SM_CYSCREEN );
 }
 
+void WindowsSystemDriver::dpiInfo( float &scale_x,float &scale_y ){
+	static bool calculated=false;
+	static float _scale_x=1.0f,_scale_y=1.0f;
+
+  if ( !calculated ){
+		HDC hdc=GetDC( GetDesktopWindow() );
+		_scale_x=GetDeviceCaps( hdc,LOGPIXELSX ) / 96.0f;
+		_scale_y=GetDeviceCaps( hdc,LOGPIXELSY ) / 96.0f;
+		ReleaseDC( GetDesktopWindow(),hdc );
+		calculated=true;
+	}
+
+	scale_x=_scale_x;
+	scale_y=_scale_y;
+}
+
 // TODO: figure out if this is broken on x64.
 int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func,const void *in,int in_sz,void *out,int out_sz ){
 

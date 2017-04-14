@@ -26,6 +26,8 @@ public:
 	int getScreenWidth( int i );
 	int getScreenHeight( int i );
 
+	void dpiInfo( float &scale_x,float &scale_y );
+
 	int callDll( const std::string &dll,const std::string &func,const void *in,int in_sz,void *out,int out_sz );
 };
 

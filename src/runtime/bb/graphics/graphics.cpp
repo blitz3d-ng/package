@@ -9,6 +9,7 @@
 #include "../../gxruntime/gxruntime.h"
 extern gxRuntime *gx_runtime;
 
+BBContextDriver *bbContextDriver;
 BBGraphics *gx_graphics;
 BBCanvas *gx_canvas;
 
@@ -278,7 +279,7 @@ static int modeExists( int w,int h,int d,bool bb3d ){
 	for( int k=0;k<cnt;++k ){
 		int tw,th,td,tc;
 		gx_runtime->graphicsModeInfo( gx_driver,k,&tw,&th,&td,&tc );
-		if( bb3d && !(tc&gxRuntime::GFXMODECAPS_3D) ) continue;
+		if( bb3d && !(tc&BBContextDriver::GFXMODECAPS_3D) ) continue;
 		if( w==tw && h==th && d==td ) return 1;
 	}
 	return 0;
@@ -293,7 +294,7 @@ int  BBCALL bbGfxDriver3D( int n ){
 	debugDriver( n );
 	string t;int caps;
 	gx_runtime->graphicsDriverInfo( n-1,&t,&caps );
-	return (caps & gxRuntime::GFXMODECAPS_3D) ? 1 : 0;
+	return (caps & BBContextDriver::GFXMODECAPS_3D) ? 1 : 0;
 }
 
 int BBCALL bbCountGfxModes3D(){
@@ -302,7 +303,7 @@ int BBCALL bbCountGfxModes3D(){
 	for( int k=0;k<n;++k ){
 		GfxMode m;
 		gx_runtime->graphicsModeInfo( gx_driver,k,&m.w,&m.h,&m.d,&m.caps );
-		if( m.caps & gxRuntime::GFXMODECAPS_3D) gfx_modes.push_back( m );
+		if( m.caps & BBContextDriver::GFXMODECAPS_3D) gfx_modes.push_back( m );
 	}
 	return gfx_modes.size();
 }
@@ -313,13 +314,13 @@ int BBCALL bbGfxMode3DExists( int w,int h,int d ){
 
 int BBCALL bbGfxMode3D( int n ){
 	debugMode( n );
-	return gfx_modes[n-1].caps & gxRuntime::GFXMODECAPS_3D ? 1 :0;
+	return gfx_modes[n-1].caps & BBContextDriver::GFXMODECAPS_3D ? 1 :0;
 }
 
 int BBCALL bbWindowed3D(){
 	int tc;
 	gx_runtime->windowedModeInfo( &tc );
-	return (tc & gxRuntime::GFXMODECAPS_3D) ? 1 : 0;
+	return (tc & BBContextDriver::GFXMODECAPS_3D) ? 1 : 0;
 }
 #endif
 
@@ -329,18 +330,6 @@ int BBCALL bbTotalVidMem(){
 
 int BBCALL bbAvailVidMem(){
 	return gx_graphics->getAvailVidmem();
-}
-
-float BBCALL bbDPIScaleX(){
-	float x,y;
-	gx_runtime->dpiInfo( &x,&y );
-	return x;
-}
-
-float BBCALL bbDPIScaleY(){
-	float x,y;
-	gx_runtime->dpiInfo( &x,&y );
-	return y;
 }
 
 void BBCALL bbSetBuffer( BBCanvas *buff ){
@@ -1198,6 +1187,7 @@ void BBCALL bbHidePointer(){
 }
 
 BBMODULE_CREATE( graphics ){
+	bbContextDriver=0;
 	p_canvas=0;
 	filter=true;
 	gx_driver=0;
@@ -1241,8 +1231,6 @@ BBMODULE_LINK( graphics ){
 	rtSym( "%GfxModeDepth%mode",bbGfxModeDepth );
 	rtSym( "%AvailVidMem",bbAvailVidMem );
 	rtSym( "%TotalVidMem",bbTotalVidMem );
-	rtSym( "#DPIScaleX",bbDPIScaleX );
-	rtSym( "#DPIScaleY",bbDPIScaleY );
 
 #ifdef PRO
 	rtSym( "%GfxDriver3D%driver",bbGfxDriver3D );

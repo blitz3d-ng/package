@@ -14,6 +14,7 @@ public:
 
   virtual int getScreenWidth( int i )=0;
   virtual int getScreenHeight( int i )=0;
+  virtual void dpiInfo( float &scale_x,float &scale_y )=0;
 };
 
 void BBCALL bbRuntimeError( BBStr *str );
@@ -29,6 +30,9 @@ void BBCALL bbSetEnv( BBStr *env_var,BBStr *val );
 
 int BBCALL bbScreenWidth( int i );
 int BBCALL bbScreenHeight( int i );
+
+float  BBCALL bbDPIScaleX();
+float  BBCALL bbDPIScaleY();
 
 extern BBSystemDriver *bbSystemDriver;
 extern std::map<std::string,std::string> bbSystemProperties;

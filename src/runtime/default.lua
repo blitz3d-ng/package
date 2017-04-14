@@ -17,6 +17,7 @@ local MODULE_CONFIG = {
     'timer.windows',
     'bank',
     'graphics',
+    'graphics.d3d7',
     'input',
     'input.directinput8',
     'audio',

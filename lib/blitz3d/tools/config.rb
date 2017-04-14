@@ -16,7 +16,7 @@ module Blitz3D
         f.write "// RUN `bin/blitz3d config` TO UPDATE.\n\n"
         f.write "#include <bb/blitz/module.h>\n"
         f.write "#include <bb/#{mod.id}/#{mod.id}.h>\n\n"
-        f.write "BBMODULE_LINK( #{mod.id} ){\n"
+        f.write "BBMODULE_LINK( #{mod.id.gsub('.', '_')} ){\n"
         mod.commands.each do |command|
           params = command.params.map(&:to_rtsym)
           f.write "\trtSym( \"#{command.return_type}#{command.name}#{params.join('')}\",#{command.symbol} );\n"

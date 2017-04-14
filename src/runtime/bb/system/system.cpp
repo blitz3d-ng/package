@@ -62,6 +62,17 @@ int BBCALL bbScreenHeight( int i ){
 	return bbSystemDriver->getScreenHeight( i );
 }
 
+float BBCALL bbDPIScaleX(){
+	float x,y;
+	bbSystemDriver->dpiInfo( x,y );
+	return x;
+}
+
+float BBCALL bbDPIScaleY(){
+	float x,y;
+	bbSystemDriver->dpiInfo( x,y );
+	return y;
+}
 
 BBMODULE_CREATE( system ){
 	bbSystemDriver=0;

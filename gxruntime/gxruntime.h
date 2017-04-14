@@ -3,6 +3,7 @@
 #define GXRUNTIME_H
 
 #include <bb/frame/frame.h>
+#include <bb/graphics.d3d7/graphics.d3d7.h>
 #include <string>
 #include <vector>
 
@@ -10,7 +11,7 @@
 
 #include "../debugger/debugger.h"
 
-class gxRuntime : public Frame{
+class gxRuntime : public D3D7ContextDriver, public Frame{
 	/***** INTERNAL INTERFACE *****/
 public:
 	BBEnv env;
@@ -23,9 +24,6 @@ public:
 	void moveMouse( int x,int y );
 
 	LRESULT windowProc( HWND hwnd,UINT msg,WPARAM w,LPARAM l );
-
-	struct GfxMode;
-	struct GfxDriver;
 
 private:
 	gxRuntime( HINSTANCE hinst,HWND hwnd );
@@ -41,17 +39,10 @@ private:
 
 	bool pointer_visible;
 
-	bool setDisplayMode( int w,int h,int d,bool d3d,IDirectDraw7 *dd );
 	gxGraphics *openWindowedGraphics( int w,int h,int d,bool d3d );
 	gxGraphics *openExclusiveGraphics( int w,int h,int d,bool d3d );
 
-	bool enum_all;
-	std::vector<GfxDriver*> drivers;
-	GfxDriver *curr_driver;
 	int use_di;
-
-	void enumGfx();
-	void denumGfx();
 
 	void backupGraphics();
 	void restoreGraphics();
@@ -71,10 +62,6 @@ public:
 
 	/***** GX INTERFACE *****/
 public:
-	enum{
-		GFXMODECAPS_3D=1
-	};
-
 	//return true if program should continue, or false for quit.
 	bool idle();
 
@@ -88,16 +75,6 @@ public:
 	void debugInfo( const char *t );
 	void debugError( const char *t );
 	void debugLog( const char *t );
-
-	int numGraphicsDrivers();
-	void graphicsDriverInfo( int driver,std::string *name,int *caps );
-
-	int numGraphicsModes( int driver );
-	void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *caps );
-
-	void dpiInfo( float *scale_x,float *scale_y );
-
-	void windowedModeInfo( int *caps );
 
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
 	void closeGraphics( BBGraphics *graphics );
