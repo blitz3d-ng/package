@@ -1,7 +1,6 @@
 
 #include "std.h"
 #include "gxgraphics.h"
-#include "gxruntime.h"
 #include <bb/system.windows/system.windows.h>
 
 // for some reason the mingw headers are missing this...
@@ -11,11 +10,10 @@
 
 gxGraphics::gxGraphics( IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurface7 *bs,bool d3d ):
 dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
-
 	dirDraw->QueryInterface( IID_IDirectDraw,(void**)&ds_dirDraw );
 
-	front_canvas=d_new gxCanvas( this,fs,0 );
-	back_canvas=d_new gxCanvas( this,bs,0 );
+	front_canvas=d_new gxCanvas( dirDraw,fs,def_font,0 );
+	back_canvas=d_new gxCanvas( dirDraw,bs,def_font,0 );
 
 	front_canvas->cls();
 	back_canvas->cls();
@@ -209,7 +207,7 @@ void gxGraphics::closeMovie( gxMovie *m ){
 BBCanvas *gxGraphics::createCanvas( int w,int h,int flags ){
 	ddSurf *s=ddUtil::createSurface( w,h,flags,this );
 	if( !s ) return 0;
-	gxCanvas *c=d_new gxCanvas( this,s,flags );
+	gxCanvas *c=d_new gxCanvas( dirDraw,s,def_font,flags );
 	canvas_set.insert( c );
 	c->cls();
 	return c;
@@ -218,7 +216,7 @@ BBCanvas *gxGraphics::createCanvas( int w,int h,int flags ){
 BBCanvas *gxGraphics::loadCanvas( const string &f,int flags ){
 	ddSurf *s=ddUtil::loadSurface( f,flags,this );
 	if( !s ) return 0;
-	gxCanvas *c=d_new gxCanvas( this,s,flags );
+	gxCanvas *c=d_new gxCanvas( dirDraw,s,def_font,flags );
 	canvas_set.insert( c );
 	return c;
 }
@@ -246,7 +244,6 @@ int gxGraphics::getDepth()const{
 }
 
 BBFont *gxGraphics::loadFont( const string &f,int height,int flags ){
-
 	int bold=flags & BBFont::FONT_BOLD ? FW_BOLD : FW_REGULAR;
 	int italic=flags & BBFont::FONT_ITALIC ? 1 : 0;
 	int underline=flags & BBFont::FONT_UNDERLINE ? 1 : 0;
@@ -278,7 +275,6 @@ BBFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 		SystemParametersInfo( SPI_SETFONTSMOOTHING,smoothing,0,0 );
 		return 0;
 	}
-
 	HDC hdc=CreateCompatibleDC( 0 );
 	HFONT pfont=(HFONT)SelectObject( hdc,hfont );
 
@@ -328,7 +324,6 @@ BBFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 	DeleteDC( hdc );
 
 	int cw=max_x,ch=y+height;
-
 	if( gxCanvas *c=(gxCanvas*)createCanvas( cw,ch,0 ) ){
 		ddSurf *surf=c->getSurface();
 
@@ -543,7 +538,7 @@ BBScene *gxGraphics::createScene( int flags ){
 			zbuffFmt.dwZBufferBitDepth=0;
 			if( dir3d->EnumZBufferFormats( dir3dDevDesc.deviceGUID,enumZbuffFormat,this )>=0 ){
 				//create zbuff for back buffer
-				if( back_canvas->attachZBuffer() ){
+				if( back_canvas->attachZBuffer( zbuffFmt ) ){
 					//create 3d device
 					if( dir3d->CreateDevice( dir3dDevDesc.deviceGUID,back_canvas->getSurface(),&dir3dDev )>=0 ){
 						//enum texture formats

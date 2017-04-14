@@ -10,5 +10,11 @@ platforms:
 
 premake5:
   files:
-    - graphics.d3d7.cpp
     - graphics.d3d7.h
+    - driver.cpp
+    - driver.h
+    - canvas.cpp
+    - canvas.h
+    - ddutil.cpp
+    - ddutil.h
+    - asmcoder.h

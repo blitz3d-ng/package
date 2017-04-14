@@ -6,11 +6,9 @@
 #include <string>
 #include <d3d.h>
 
-#include "ddutil.h"
-
 #include <bb/blitz3d/graphics.h>
 #include <bb/blitz2d/font.h>
-#include "gxcanvas.h"
+#include <bb/graphics.d3d7/canvas.h>
 #include "gxscene.h"
 #include "gxmesh.h"
 #include "gxmovie.h"

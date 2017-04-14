@@ -3,16 +3,14 @@
 #define GXCANVAS_H
 
 #include <bb/graphics/canvas.h>
+#include <bb/blitz2d/font.h>
 #include "ddutil.h"
-
-class BBFont;
-class gxGraphics;
 
 typedef IDirectDrawSurface7 ddSurf;
 
 class gxCanvas : public BBCanvas{
 public:
-	gxCanvas( gxGraphics *graphics,ddSurf *surface,int flags );
+	gxCanvas( IDirectDraw7 *dirDraw,ddSurf *surface,BBFont *font,int flags );
 	~gxCanvas();
 
 	void backup()const;
@@ -22,7 +20,7 @@ public:
 	void setModify( int n );
 	int getModify()const;
 
-	bool attachZBuffer();
+	bool attachZBuffer( DDPIXELFORMAT zbuffFmt );
 	void releaseZBuffer();
 
 	bool clip( RECT *d )const;
@@ -31,8 +29,8 @@ public:
 
 private:
 	int flags,cube_mode;
-	gxGraphics *graphics;
 
+	IDirectDraw7 *dirDraw;
 	ddSurf *main_surf,*surf,*z_surf,*cube_surfs[6];
 
 	mutable int mod_cnt;

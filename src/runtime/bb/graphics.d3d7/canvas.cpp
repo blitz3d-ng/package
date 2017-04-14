@@ -1,8 +1,10 @@
 
-#include "std.h"
-#include "gxcanvas.h"
-#include "gxgraphics.h"
+#include "../../stdutil/stdutil.h"
+#include <bb/blitz/blitz.h>
+#include "canvas.h"
 #include "asmcoder.h"
+#include <cmath>
+using namespace std;
 
 #define DEBUG_BITMASK
 
@@ -72,8 +74,8 @@ static bool clip( const RECT &viewport,RECT *d,RECT *s ){
 	return true;
 }
 
-gxCanvas::gxCanvas( gxGraphics *g,IDirectDrawSurface7 *s,int f ):
-graphics(g),main_surf(s),surf(0),z_surf(0),flags(f),cube_mode(CUBEMODE_REFLECTION|CUBESPACE_WORLD),
+gxCanvas::gxCanvas( IDirectDraw7 *dd,ddSurf *s,BBFont *font,int f ):
+dirDraw(dd),main_surf(s),surf(0),z_surf(0),flags(f),cube_mode(CUBEMODE_REFLECTION|CUBESPACE_WORLD),
 t_surf(0),cm_mask(0),locked_cnt(0),mod_cnt(0),remip_cnt(0){
 
 	if( flags & CANVAS_TEX_CUBE ){
@@ -113,7 +115,7 @@ t_surf(0),cm_mask(0),locked_cnt(0),mod_cnt(0),remip_cnt(0){
 	setClsColor( 0 );
 	setOrigin( 0,0 );
 	setHandle( 0,0 );
-	setFont( graphics->getDefaultFont() );
+	setFont( font );
 	setViewport( 0,0,getWidth(),getHeight() );
 	if( flags & gxCanvas::CANVAS_TEXTURE ) ddUtil::buildMipMaps( surf );
 }
@@ -140,7 +142,7 @@ void gxCanvas::backup()const{
 		t_desc.dwWidth=desc.dwWidth;t_desc.dwHeight=desc.dwHeight;
 		t_desc.ddpfPixelFormat=desc.ddpfPixelFormat;
 
-		if( graphics->dirDraw->CreateSurface( &t_desc,&t_surf,0 )<0 ){
+		if( dirDraw->CreateSurface( &t_desc,&t_surf,0 )<0 ){
 			t_surf=0;
 			return;
 		}
@@ -223,15 +225,15 @@ int gxCanvas::getModify()const{
 	return mod_cnt;
 }
 
-bool gxCanvas::attachZBuffer(){
+bool gxCanvas::attachZBuffer( DDPIXELFORMAT zbuffFmt ){
 	if( z_surf ) return true;
 	DDSURFACEDESC2 desc={sizeof(desc)};
 	desc.dwFlags=DDSD_WIDTH|DDSD_HEIGHT|DDSD_CAPS|DDSD_PIXELFORMAT;
 	desc.dwWidth=getWidth();
 	desc.dwHeight=getHeight();
 	desc.ddsCaps.dwCaps=DDSCAPS_ZBUFFER|DDSCAPS_VIDEOMEMORY;
-	desc.ddpfPixelFormat=graphics->zbuffFmt;
-	if( graphics->dirDraw->CreateSurface( &desc,&z_surf,0 )<0 ) return false;
+	desc.ddpfPixelFormat=zbuffFmt;
+	if( dirDraw->CreateSurface( &desc,&z_surf,0 )<0 ) return false;
 	surf->AddAttachedSurface( z_surf );
 	return true;
 }
