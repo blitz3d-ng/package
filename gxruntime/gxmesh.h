@@ -10,7 +10,7 @@ class gxGraphics;
 class gxMesh : public BBMesh{
 public:
 
-	gxMesh( gxGraphics *graphics,IDirect3DVertexBuffer7 *verts,WORD *indicies,int max_verts,int max_tris );
+	gxMesh( IDirect3DDevice7 *dir3dDev,IDirect3DVertexBuffer7 *verts,WORD *indicies,int max_verts,int max_tris );
 	~gxMesh();
 
 	int maxVerts()const{ return max_verts; }
@@ -32,6 +32,7 @@ private:
 	};
 
 	gxGraphics *graphics;
+	IDirect3DDevice7 *dir3dDev;
 	IDirect3DVertexBuffer7 *vertex_buff;
 	WORD *tri_indices;
 

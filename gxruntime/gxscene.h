@@ -5,21 +5,19 @@
 #include <map>
 #include <d3d.h>
 
+#include <bb/graphics.d3d7/canvas.h>
+
 #include <bb/blitz3d/scene.h>
 #include <bb/blitz3d/mesh.h>
 #include "gxlight.h"
 
-class gxCanvas;
-
-class gxGraphics;
 class gxTexture;
 
 class gxScene : public BBScene{
 public:
-	gxGraphics *graphics;
 	IDirect3DDevice7 *dir3dDev;
 
-	gxScene( gxGraphics *graphics,gxCanvas *target );
+	gxScene( IDirect3DDevice7 *d,gxCanvas *target );
 	~gxScene();
 
 	void setEnabled( BBLightRep *light,bool enabled );

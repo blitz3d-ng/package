@@ -12,8 +12,7 @@ void BBLightRep::markDirty(){
 	dirty=true;
 }
 
-gxLight::gxLight( gxScene *s,int type ):BBLightRep(),
-scene(s){
+gxLight::gxLight( int type ):BBLightRep(){
 
 	memset(&d3d_light,0,sizeof(d3d_light));
 

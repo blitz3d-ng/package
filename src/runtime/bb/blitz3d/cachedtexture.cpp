@@ -18,7 +18,7 @@ struct CachedTexture::Rep{
 	ref_cnt(1),flags(flags),w(w),h(h),first(0){
 		++active_texs;
 		while( cnt-->0 ){
-			if( BBCanvas *t=b3d_graphics->createCanvas( w,h,flags ) ){
+			if( BBCanvas *t=gx_graphics->createCanvas( w,h,flags ) ){
 				frames.push_back( t );
 			}else break;
 		}
@@ -30,7 +30,7 @@ struct CachedTexture::Rep{
 		if( !(flags & BBCanvas::CANVAS_TEX_CUBE) ){
 			if( w<=0 || h<=0 || first<0 || cnt<=0 ){
 				w=h=first=0;
-				if( BBCanvas *t=(BBCanvas*)b3d_graphics->loadCanvas( f,flags ) ){
+				if( BBCanvas *t=(BBCanvas*)gx_graphics->loadCanvas( f,flags ) ){
 					frames.push_back( t );
 				}
 				return;
@@ -43,10 +43,10 @@ struct CachedTexture::Rep{
 			BBCanvas::CANVAS_TEX_MASK|
 			BBCanvas::CANVAS_TEX_HICOLOR ) | BBCanvas::CANVAS_NONDISPLAY;
 
-		BBCanvas *t=b3d_graphics->loadCanvas( f,t_flags );
+		BBCanvas *t=gx_graphics->loadCanvas( f,t_flags );
 		if( !t ) return;
 		if( !t->getDepth() ){
-			b3d_graphics->freeCanvas( t );
+			gx_graphics->freeCanvas( t );
 			return;
 		}
 
@@ -55,13 +55,13 @@ struct CachedTexture::Rep{
 			if( w*6!=t->getWidth() ) return;
 			int h=t->getHeight();
 
-			BBCanvas *tex=b3d_graphics->createCanvas( w,h,flags );
+			BBCanvas *tex=gx_graphics->createCanvas( w,h,flags );
 			if( tex ){
 				frames.push_back( tex );
 
 				for( int face=0;face<6;++face ){
 					tex->setCubeFace(face);
-					b3d_graphics->copy( tex,0,0,tex->getWidth(),tex->getHeight(),t,face*w,0,w,h );
+					gx_graphics->copy( tex,0,0,tex->getWidth(),tex->getHeight(),t,face*w,0,w,h );
 				}
 				tex->setCubeFace(1);
 			}
@@ -69,24 +69,24 @@ struct CachedTexture::Rep{
 			int x_tiles=t->getWidth()/w;
 			int y_tiles=t->getHeight()/h;
 			if( first+cnt>x_tiles*y_tiles ){
-				b3d_graphics->freeCanvas( t );
+				gx_graphics->freeCanvas( t );
 				return;
 			}
 			int x=(first%x_tiles)*w;
 			int y=(first/x_tiles)*h;
 			while( cnt-- ){
-				BBCanvas *p=b3d_graphics->createCanvas( w,h,flags );
-				b3d_graphics->copy( p,0,0,p->getWidth(),p->getHeight(),t,x,y,w,h );
+				BBCanvas *p=gx_graphics->createCanvas( w,h,flags );
+				gx_graphics->copy( p,0,0,p->getWidth(),p->getHeight(),t,x,y,w,h );
 				frames.push_back(p);
 				x=x+w;if( x+w>t->getWidth() ){ x=0;y=y+h; }
 			}
 		}
-		b3d_graphics->freeCanvas( t );
+		gx_graphics->freeCanvas( t );
 	}
 
 	~Rep(){
 		--active_texs;
-		for( unsigned int k=0;k<frames.size();++k ) b3d_graphics->freeCanvas( frames[k] );
+		for( unsigned int k=0;k<frames.size();++k ) gx_graphics->freeCanvas( frames[k] );
 	}
 };
 

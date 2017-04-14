@@ -1,8 +1,7 @@
 
 #include "std.h"
 #include "gxscene.h"
-#include "gxgraphics.h"
-#include "gxruntime.h"
+#include "gxmesh.h"
 
 static bool can_wb;
 static int  hw_tex_stages,tex_stages;
@@ -23,9 +22,8 @@ void gxScene::setTSS( int n,int s,int t ){
 	d3d_tss[n][s]=t;
 }
 
-gxScene::gxScene( gxGraphics *g,gxCanvas *t ):
-graphics(g),target(t),dir3dDev( g->dir3dDev ),
-n_texs(0),tris_drawn(0){
+gxScene::gxScene( IDirect3DDevice7 *d,gxCanvas *t ):
+target(t),dir3dDev(d),n_texs(0),tris_drawn(0){
 
 	memset( d3d_rs,0x55,sizeof(d3d_rs) );
 	memset( d3d_tss,0x55,sizeof(d3d_tss) );
@@ -58,7 +56,7 @@ n_texs(0),tris_drawn(0){
 		//texture stages
 		hw_tex_stages=devDesc.wMaxSimultaneousTextures;
 		//depth buffer mode
-		if( (caps & D3DPRASTERCAPS_WBUFFER) && graphics->zbuffFmt.dwRGBBitCount==16 ) can_wb=true;
+		// if( (caps & D3DPRASTERCAPS_WBUFFER) && graphics->zbuffFmt.dwRGBBitCount==16 ) can_wb=true;
 		//fog mode
 		if( (caps&D3DPRASTERCAPS_FOGTABLE)&&(caps&D3DPRASTERCAPS_WFOG) ){
 			setRS( D3DRENDERSTATE_FOGVERTEXMODE,D3DFOG_NONE );
@@ -609,7 +607,7 @@ void gxScene::end(){
 }
 
 BBLightRep *gxScene::createLight( int flags ){
-	BBLightRep *l=d_new gxLight( this,flags );
+	BBLightRep *l=d_new gxLight( flags );
 	_allLights.insert(l);
 	return l;
 }

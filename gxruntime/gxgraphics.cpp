@@ -561,7 +561,7 @@ BBScene *gxGraphics::createScene( int flags ){
 							string ts="ZBuffer Bit Depth:"+itoa( zbuffFmt.dwZBufferBitDepth );
 							_bbDebugLog( ts.c_str() );
 #endif
-							gxScene *scene=d_new gxScene( this,back_canvas );
+							gxScene *scene=d_new gxScene( dir3dDev,back_canvas );
 							scene_set.insert( scene );
 
 							dummy_mesh=(gxMesh*)createMesh( 8,12,0 );
@@ -613,7 +613,7 @@ BBMesh *gxGraphics::createMesh( int max_verts,int max_tris,int flags ){
 	IDirect3DVertexBuffer7 *buff;
 	if( dir3d->CreateVertexBuffer( &desc,&buff,0 )<0 ) return 0;
 	WORD *indices=d_new WORD[max_tris*3];
-	gxMesh *mesh=d_new gxMesh( this,buff,indices,max_verts,max_tris );
+	gxMesh *mesh=d_new gxMesh( dir3dDev,buff,indices,max_verts,max_tris );
 	mesh_set.insert( mesh );
 	return mesh;
 }

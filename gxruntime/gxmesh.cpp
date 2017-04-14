@@ -2,10 +2,9 @@
 #include <bb/system.windows/system.windows.h>
 #include "std.h"
 #include "gxmesh.h"
-#include "gxgraphics.h"
 
-gxMesh::gxMesh( gxGraphics *g,IDirect3DVertexBuffer7 *vs,WORD *is,int max_vs,int max_ts ):
-graphics(g),locked_verts(0),vertex_buff(vs),tri_indices(is),max_verts(max_vs),max_tris(max_ts),mesh_dirty(false){
+gxMesh::gxMesh( IDirect3DDevice7 *d,IDirect3DVertexBuffer7 *vs,WORD *is,int max_vs,int max_ts ):
+dir3dDev(d),locked_verts(0),vertex_buff(vs),tri_indices(is),max_verts(max_vs),max_tris(max_ts),mesh_dirty(false){
 }
 
 gxMesh::~gxMesh(){
@@ -97,7 +96,7 @@ void gxMesh::restore(){
 
 void gxMesh::render( int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
 	unlock();
-	graphics->dir3dDev->DrawIndexedPrimitiveVB(
+	dir3dDev->DrawIndexedPrimitiveVB(
 		D3DPT_TRIANGLELIST,
 		vertex_buff,first_vert,vert_cnt,
 		tri_indices+first_tri*3,tri_cnt*3,0 );
