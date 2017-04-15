@@ -7,8 +7,6 @@
 #include <string>
 #include <vector>
 
-#include "gxgraphics.h"
-
 #include "../debugger/debugger.h"
 
 class gxRuntime : public D3D7ContextDriver, public Frame{

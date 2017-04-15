@@ -14,6 +14,7 @@ premake5:
     - driver.cpp
     - driver.h
     - canvas.cpp
+    - canvas2.cpp
     - canvas.h
     - ddutil.cpp
     - ddutil.h

@@ -3,6 +3,7 @@
 #define GXLIGHT_H
 
 #include <bb/blitz3d/light.h>
+#include <d3d.h>
 
 class gxLight : public BBLightRep{
 public:

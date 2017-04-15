@@ -12,7 +12,7 @@ gxMovie::gxMovie( gxGraphics *g,IMultiMediaStream *mm )
 	DDSURFACEDESC desc={sizeof(desc)};
 	dd_stream->GetFormat( &desc,0,0,0 );
 
-	canvas=(gxCanvas*)gfx->createCanvas( desc.dwWidth,desc.dwHeight,0 );	//gxCanvas::CANVAS_NONDISPLAY );
+	canvas=(D3D7Canvas*)gfx->createCanvas( desc.dwWidth,desc.dwHeight,0 );	//D3D7Canvas::CANVAS_NONDISPLAY );
 	canvas->getSurface()->QueryInterface( IID_IDirectDrawSurface,(void**)&dd_surf );
 
 	src_rect.left=src_rect.top=0;
@@ -36,7 +36,7 @@ gxMovie::~gxMovie(){
 }
 
 bool gxMovie::draw( BBCanvas *d,int x,int y,int w,int h ){
-	gxCanvas *dest=(gxCanvas*)d;
+	D3D7Canvas *dest=(D3D7Canvas*)d;
 	if( !playing ) return false;
 	if( !dd_sample->Update( 0,0,0,0 ) ){
 		RECT dest_rect={x,y,x+w,y+h};

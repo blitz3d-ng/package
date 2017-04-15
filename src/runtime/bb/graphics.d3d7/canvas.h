@@ -8,10 +8,10 @@
 
 typedef IDirectDrawSurface7 ddSurf;
 
-class gxCanvas : public BBCanvas{
+class D3D7Canvas : public BBCanvas{
 public:
-	gxCanvas( IDirectDraw7 *dirDraw,ddSurf *surface,BBFont *font,int flags );
-	~gxCanvas();
+	D3D7Canvas( IDirectDraw7 *dirDraw,IDirectDrawSurface7 *surface,int flags );
+	virtual ~D3D7Canvas();
 
 	void backup()const;
 	void restore()const;
@@ -22,14 +22,10 @@ public:
 
 	bool attachZBuffer( DDPIXELFORMAT zbuffFmt );
 	void releaseZBuffer();
-
-	bool clip( RECT *d )const;
-	bool clip( RECT *d,RECT *s )const;
-	void damage( const RECT &r )const;
-
 	bool getZBufferFormat( DDPIXELFORMAT &fmt );
 
-private:
+	virtual void damage( const RECT &r )const;
+protected:
 	int flags,cube_mode;
 
 	IDirectDraw7 *dirDraw;
@@ -41,12 +37,24 @@ private:
 	mutable int locked_pitch,locked_cnt,lock_mod_cnt,remip_cnt;
 	mutable unsigned char *locked_surf;
 
+	PixelFormat format;
+};
+
+class gxCanvas : public D3D7Canvas{
+public:
+	gxCanvas( IDirectDraw7 *dirDraw,ddSurf *surface,BBFont *font,int flags );
+	~gxCanvas();
+
+	void damage( const RECT &r )const;
+
+private:
+	bool clip( RECT *d )const;
+	bool clip( RECT *d,RECT *s )const;
+
 	mutable int cm_pitch;
 	mutable unsigned *cm_mask;
 
 	RECT clip_rect;
-
-	PixelFormat format;
 
 	BBFont *font;
 	RECT viewport;

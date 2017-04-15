@@ -5,8 +5,6 @@
 #include <bb/blitz3d/mesh.h>
 #include <d3d.h>
 
-class gxGraphics;
-
 class gxMesh : public BBMesh{
 public:
 
@@ -31,7 +29,6 @@ private:
 		float tex_coords[4];
 	};
 
-	gxGraphics *graphics;
 	IDirect3DDevice7 *dir3dDev;
 	IDirect3DVertexBuffer7 *vertex_buff;
 	WORD *tri_indices;

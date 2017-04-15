@@ -1,9 +1,5 @@
 
-#include "std.h"
 #include "gxlight.h"
-#include "gxscene.h"
-#include "gxgraphics.h"
-#include <bb/blitz3d/light.h>
 
 BBLightRep::BBLightRep():dirty(true){
 }

@@ -20,7 +20,7 @@ private:
 	bool playing;
 	RECT src_rect;
 	gxGraphics *gfx;
-	gxCanvas *canvas;
+	D3D7Canvas *canvas;
 	IDirectDrawSurface *dd_surf;
 	IMediaStream *vid_stream;
 	IDirectDrawMediaStream *dd_stream;

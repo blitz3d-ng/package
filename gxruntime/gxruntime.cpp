@@ -5,6 +5,7 @@
 #include <bb/runtime/runtime.h>
 #include <bb/input.directinput8/driver.h>
 #include <bb/system/system.h>
+#include "gxgraphics.h"
 #include "zmouse.h"
 
 #define dx_input ((DirectInput8Driver*)gx_input)
@@ -458,8 +459,8 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 
 	busy=true;
 
-	bool d3d=flags & gxGraphics::GRAPHICS_3D ? true : false;
-	bool windowed=flags & gxGraphics::GRAPHICS_WINDOWED ? true : false;
+	bool d3d=flags & BBGraphics::GRAPHICS_3D ? true : false;
+	bool windowed=flags & BBGraphics::GRAPHICS_WINDOWED ? true : false;
 
 	if( windowed ) driver=0;
 
@@ -467,8 +468,8 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 
 	if( windowed ){
 		if( graphics=openWindowedGraphics( w,h,d,d3d ) ){
-			gfx_mode=(flags & gxGraphics::GRAPHICS_SCALED) ? 1 : 2;
-			auto_suspend=(flags & gxGraphics::GRAPHICS_AUTOSUSPEND) ? true : false;
+			gfx_mode=(flags & BBGraphics::GRAPHICS_SCALED) ? 1 : 2;
+			auto_suspend=(flags & BBGraphics::GRAPHICS_AUTOSUSPEND) ? true : false;
 			resize( w,h );
 		}
 	}else{
