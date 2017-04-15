@@ -56,7 +56,10 @@ target(t),dir3dDev(d),n_texs(0),tris_drawn(0){
 		//texture stages
 		hw_tex_stages=devDesc.wMaxSimultaneousTextures;
 		//depth buffer mode
-		// if( (caps & D3DPRASTERCAPS_WBUFFER) && graphics->zbuffFmt.dwRGBBitCount==16 ) can_wb=true;
+		if( (caps & D3DPRASTERCAPS_WBUFFER) ){
+			DDPIXELFORMAT zbuffFmt;
+			if( target->getZBufferFormat( zbuffFmt ) && zbuffFmt.dwRGBBitCount==16 ) can_wb=true;
+		}
 		//fog mode
 		if( (caps&D3DPRASTERCAPS_FOGTABLE)&&(caps&D3DPRASTERCAPS_WFOG) ){
 			setRS( D3DRENDERSTATE_FOGVERTEXMODE,D3DFOG_NONE );

@@ -136,7 +136,7 @@ module Blitz3D
 
             f.write "  filter 'platforms:win32 or win64 or mingw32'\n"
             f.write "    kind 'SharedLib'\n"
-            f.write "    targetdir '_release/bin'\n"
+            f.write "    targetdir '../../../_release/bin'\n"
             f.write "    targetprefix ''\n\n"
 
             f.write "    files {\n"

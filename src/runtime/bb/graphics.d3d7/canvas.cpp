@@ -249,6 +249,14 @@ void gxCanvas::damage( const RECT &r )const{
 	++mod_cnt;if( cm_mask ) updateBitMask( r );
 }
 
+bool gxCanvas::getZBufferFormat( DDPIXELFORMAT &fmt ){
+	if( !z_surf ) return false;
+	DDSURFACEDESC2 desc={sizeof(desc)};
+	z_surf->GetSurfaceDesc( &desc );
+	fmt=desc.ddpfPixelFormat;
+	return true;
+}
+
 void gxCanvas::setFont( BBFont *f ){
 	font=f;
 }

@@ -27,6 +27,8 @@ public:
 	bool clip( RECT *d,RECT *s )const;
 	void damage( const RECT &r )const;
 
+	bool getZBufferFormat( DDPIXELFORMAT &fmt );
+
 private:
 	int flags,cube_mode;
 
