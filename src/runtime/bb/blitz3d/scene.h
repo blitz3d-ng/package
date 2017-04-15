@@ -4,8 +4,14 @@
 #include <bb/graphics/canvas.h>
 #include "light.h"
 #include "mesh.h"
+#include <set>
 
 class BBScene{
+public:
+  ~BBScene();
+protected:
+  std::set<BBMesh*> mesh_set;
+
   /***** GX INTERFACE *****/
 public:
   enum{
@@ -91,9 +97,16 @@ public:
   virtual BBLightRep *createLight( int flags )=0;
   virtual void freeLight( BBLightRep *l )=0;
 
+  //meshes
+  virtual BBMesh *createMesh( int max_verts,int max_tris,int flags )=0;
+  BBMesh *verifyMesh( BBMesh *m );
+  void freeMesh( BBMesh *mesh );
+
   //info
   virtual int getTrianglesDrawn()const=0;
 
 };
+
+extern BBScene *bbScene;
 
 #endif

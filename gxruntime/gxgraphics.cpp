@@ -113,10 +113,9 @@ bool gxGraphics::restore(){
 	}
 
 #ifdef PRO
-	//restore all meshes (b3d surfaces)
-	set<gxMesh*>::iterator mesh_it;
-	for( mesh_it=mesh_set.begin();mesh_it!=mesh_set.end();++mesh_it ){
-		(*mesh_it)->restore();
+	set<gxScene*>::iterator scene_it;
+	for( scene_it=scene_set.begin();scene_it!=scene_set.end();++scene_it ){
+		(*scene_it)->restore();
 	}
 	if( dir3d ) dir3d->EvictManagedTextures();
 #endif
@@ -561,10 +560,10 @@ BBScene *gxGraphics::createScene( int flags ){
 							string ts="ZBuffer Bit Depth:"+itoa( zbuffFmt.dwZBufferBitDepth );
 							_bbDebugLog( ts.c_str() );
 #endif
-							gxScene *scene=d_new gxScene( dir3dDev,back_canvas );
+							gxScene *scene=d_new gxScene( dir3d,dir3dDev,back_canvas );
 							scene_set.insert( scene );
 
-							dummy_mesh=(gxMesh*)createMesh( 8,12,0 );
+							dummy_mesh=(gxMesh*)scene->createMesh( 8,12,0 );
 
 							return scene;
 						}
@@ -588,42 +587,10 @@ BBScene *gxGraphics::verifyScene( BBScene *s ){
 void gxGraphics::freeScene( BBScene *scene ){
 	if( !scene_set.erase( (gxScene*)scene ) ) return;
 	dummy_mesh=0;
-	while( mesh_set.size() ) freeMesh( *mesh_set.begin() );
+	delete scene;
 	back_canvas->releaseZBuffer();
 	if( dir3dDev ){ dir3dDev->Release();dir3dDev=0; }
 	if( dir3d ){ dir3d->Release();dir3d=0; }
-	delete scene;
-}
-
-BBMesh *gxGraphics::createMesh( int max_verts,int max_tris,int flags ){
-
-	static const int VTXFMT=
-	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX2|
-	D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE2(1);
-
-	int vbflags=0;
-
-	//XP or less?
-	if( bbWindowsSystemDriver->isXPorLess() ){
-		vbflags|=D3DVBCAPS_WRITEONLY;
-	}
-
-	D3DVERTEXBUFFERDESC desc={ sizeof(desc),vbflags,VTXFMT,max_verts };
-
-	IDirect3DVertexBuffer7 *buff;
-	if( dir3d->CreateVertexBuffer( &desc,&buff,0 )<0 ) return 0;
-	WORD *indices=d_new WORD[max_tris*3];
-	gxMesh *mesh=d_new gxMesh( dir3dDev,buff,indices,max_verts,max_tris );
-	mesh_set.insert( mesh );
-	return mesh;
-}
-
-BBMesh *gxGraphics::verifyMesh( BBMesh *m ){
-	return mesh_set.count( (gxMesh*)m ) ? m : 0;
-}
-
-void gxGraphics::freeMesh( BBMesh *mesh ){
-	if( mesh_set.erase( (gxMesh*)mesh ) ) delete mesh;
 }
 
 #endif

@@ -3,15 +3,15 @@
 #include "light.h"
 #include "scene.h"
 
-extern BBScene *gx_scene;
+extern BBScene *bbScene;
 
 Light::Light( int type ):
 type(type),range(1000),color(1.0f,1.0f,1.0f),innerAngle(0.0f),outerAngle(0.0f){
-	rep=gx_scene->createLight( type );
+	rep=bbScene->createLight( type );
 }
 
 Light::~Light(){
-	gx_scene->freeLight( rep );
+	bbScene->freeLight( rep );
 	rep->markDirty();
 }
 

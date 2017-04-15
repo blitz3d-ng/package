@@ -15,12 +15,15 @@ class gxTexture;
 
 class gxScene : public BBScene{
 public:
+	IDirect3D7 *dir3d;
 	IDirect3DDevice7 *dir3dDev;
 
-	gxScene( IDirect3DDevice7 *d,gxCanvas *target );
+	gxScene( IDirect3D7 *dir3d,IDirect3DDevice7 *d,gxCanvas *target );
 	~gxScene();
 
 	void setEnabled( BBLightRep *light,bool enabled );
+
+	void restore();
 
 	/***** GX INTERFACE *****/
 public:
@@ -56,6 +59,11 @@ public:
 	//lighting
 	BBLightRep *createLight( int flags );
 	void freeLight( BBLightRep *l );
+
+	//meshes
+	BBMesh *createMesh( int max_verts,int max_tris,int flags );
+	BBMesh *verifyMesh( BBMesh *mesh );
+	void freeMesh( BBMesh *mesh );
 
 	//info
 	int getTrianglesDrawn()const;

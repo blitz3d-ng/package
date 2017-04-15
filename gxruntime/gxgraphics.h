@@ -48,7 +48,6 @@ private:
 
 	std::set<BBFont*> font_set;
 	std::set<gxCanvas*> canvas_set;
-	std::set<gxMesh*> mesh_set;
 	std::set<gxScene*> scene_set;
 	std::set<gxMovie*> movie_set;
 	std::set<std::string> font_res;
@@ -98,10 +97,6 @@ public:
 	BBScene *createScene( int flags );
 	BBScene *verifyScene( BBScene *scene );
 	void freeScene( BBScene *scene );
-
-	BBMesh *createMesh( int max_verts,int max_tris,int flags );
-	BBMesh *verifyMesh( BBMesh *mesh );
-	void freeMesh( BBMesh *mesh );
 };
 
 #endif

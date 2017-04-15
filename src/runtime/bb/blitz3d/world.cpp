@@ -7,7 +7,7 @@
 //1=max proj err of terrain
 float stats3d[10];
 
-extern BBScene *gx_scene;
+extern BBScene *bbScene;
 
 static vector<Object*> _enabled,_visible;
 
@@ -569,7 +569,7 @@ void World::render( float tween ){
 
 //	_bbDebugLog( "RenderWorld" );
 
-	if( !gx_scene->begin( _lights ) ) return;
+	if( !bbScene->begin( _lights ) ) return;
 
 	for( ;cam_que.size();cam_que.pop() ){
 
@@ -585,7 +585,7 @@ void World::render( float tween ){
 		render( cam,0 );
 	}
 
-	gx_scene->end();
+	bbScene->end();
 
 //	_bbDebugLog( "End RenderWorld" );
 
@@ -600,21 +600,21 @@ void World::render( Camera *cam,Mirror *mirror ){
 	if( mirror ){
 		const Transform &t=mirror->getRenderTform();
 		cam_tform=t * Transform( scaleMatrix( 1,-1,1 ) ) * -t * cam->getRenderTform();
-		gx_scene->setFlippedTris( true );
+		bbScene->setFlippedTris( true );
 	}else{
 		cam_tform=cam->getRenderTform();
-		gx_scene->setFlippedTris( false );
+		bbScene->setFlippedTris( false );
 	}
 
 	//set camera matrix
-	gx_scene->setViewMatrix( (BBScene::Matrix*)&(-cam_tform) );
+	bbScene->setViewMatrix( (BBScene::Matrix*)&(-cam_tform) );
 
 	//initialize render context
 	RenderContext rc( cam_tform,cam->getFrustum(),mirror!=0 );
 
 	//draw everything in order
 	unsigned int ord=0;
-	gx_scene->setZMode( BBScene::ZMODE_DISABLE );
+	bbScene->setZMode( BBScene::ZMODE_DISABLE );
 	while( ord<ord_mods.size() && ord_mods[ord]->getOrder()>0 ){
 		Model *mod=ord_mods[ord++];
 		if( !mod->doAutoFade( cam_tform.v ) ) continue;
@@ -622,16 +622,16 @@ void World::render( Camera *cam,Mirror *mirror ){
 		flushTransparent();
 	}
 
-	gx_scene->setZMode( BBScene::ZMODE_NORMAL );
+	bbScene->setZMode( BBScene::ZMODE_NORMAL );
 	for( unsigned int k=0;k<unord_mods.size();++k ){
 		Model *mod=unord_mods[k];
 		if( !mod->doAutoFade( cam_tform.v ) ) continue;
 		render( mod,rc );
 	}
-	gx_scene->setZMode( BBScene::ZMODE_CMPONLY );
+	bbScene->setZMode( BBScene::ZMODE_CMPONLY );
 	flushTransparent();
 
-	gx_scene->setZMode( BBScene::ZMODE_DISABLE );
+	bbScene->setZMode( BBScene::ZMODE_DISABLE );
 	while( ord<ord_mods.size() ){
 		Model *mod=ord_mods[ord++];
 		if( !mod->doAutoFade( cam_tform.v ) ) continue;
@@ -646,9 +646,9 @@ void World::render( Model *mod,const RenderContext &rc ){
 
 	if( mod->queueSize( Model::QUEUE_OPAQUE ) ){
 		if( mod->getRenderSpace()==Model::RENDER_SPACE_LOCAL ){
-			gx_scene->setWorldMatrix( (BBScene::Matrix*)&mod->getRenderTform() );
+			bbScene->setWorldMatrix( (BBScene::Matrix*)&mod->getRenderTform() );
 		}else{
-			gx_scene->setWorldMatrix( 0 );
+			bbScene->setWorldMatrix( 0 );
 		}
 		mod->renderQueue( Model::QUEUE_OPAQUE );
 	}
@@ -665,10 +665,10 @@ void World::flushTransparent(){
 	for( ;transparents.size();transparents.pop() ){
 		Model *mod=transparents.top();
 		if( mod->getRenderSpace()==Model::RENDER_SPACE_LOCAL ){
-			gx_scene->setWorldMatrix( (BBScene::Matrix*)&mod->getRenderTform() );
+			bbScene->setWorldMatrix( (BBScene::Matrix*)&mod->getRenderTform() );
 			local=true;
 		}else if( local ){
-			gx_scene->setWorldMatrix( 0 );
+			bbScene->setWorldMatrix( 0 );
 			local=false;
 		}
 		mod->renderQueue( Model::QUEUE_TRANSPARENT );

@@ -144,7 +144,7 @@ shading(false),mesh(0),detail(0),morph(true){
 }
 
 TerrainRep::~TerrainRep(){
-	if( mesh ) b3d_graphics->freeMesh( mesh );
+	if( mesh ) bbScene->freeMesh( mesh );
 	delete[] errors;
 	delete[] cells;
 }
@@ -166,9 +166,9 @@ void TerrainRep::setDetail( int n,bool m ){
 		max_verts=n;
 		verts=new Vert[max_verts];
 	}
-	if( mesh ) b3d_graphics->freeMesh( mesh );
+	if( mesh ) bbScene->freeMesh( mesh );
 	mesh_verts=mesh_tris=n;
-	mesh=b3d_graphics->createMesh( mesh_verts,mesh_tris,0 );
+	mesh=bbScene->createMesh( mesh_verts,mesh_tris,0 );
 }
 
 void TerrainRep::setShading( bool t ){
@@ -470,8 +470,8 @@ void TerrainRep::render( Model *model,const RenderContext &rc ){
 	if( vert_cnt>mesh_verts || tri_cnt>mesh_tris ){
 		int vc=vert_cnt+32;if( vc>mesh_verts ) mesh_verts=vc;
 		int tc=tri_cnt+32;if( tc>mesh_tris ) mesh_tris=tc;
-		if( mesh ) b3d_graphics->freeMesh( mesh );
-		mesh=b3d_graphics->createMesh( mesh_verts,mesh_tris,0 );
+		if( mesh ) bbScene->freeMesh( mesh );
+		mesh=bbScene->createMesh( mesh_verts,mesh_tris,0 );
 	}
 
 	mesh->lock( true );

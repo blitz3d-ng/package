@@ -2,7 +2,7 @@
 #include "std.h"
 #include "camera.h"
 
-extern BBScene *gx_scene;
+extern BBScene *bbScene;
 
 Camera::Camera(){
 	setZoom( 1 );
@@ -89,15 +89,15 @@ void Camera::getViewport( int *x,int *y,int *w,int *h )const{
 bool Camera::beginRenderFrame(){
 	if( !proj_mode ) return false;
 	getFrustum();
-	gx_scene->setViewport( vp_x,vp_y,vp_w,vp_h );
-	gx_scene->clear( &(cls_color.x),1,1,cls_argb,cls_z );
+	bbScene->setViewport( vp_x,vp_y,vp_w,vp_h );
+	bbScene->clear( &(cls_color.x),1,1,cls_argb,cls_z );
 	if( proj_mode==PROJ_ORTHO ){
-		gx_scene->setOrthoProj( frustum_nr,frustum_fr,frustum_w,frustum_h );
+		bbScene->setOrthoProj( frustum_nr,frustum_fr,frustum_w,frustum_h );
 	}else{
-		gx_scene->setPerspProj( frustum_nr,frustum_fr,frustum_w,frustum_h );
+		bbScene->setPerspProj( frustum_nr,frustum_fr,frustum_w,frustum_h );
 	}
-	gx_scene->setFogRange( fog_nr,fog_fr );
-	gx_scene->setFogColor( (float*)&fog_color.x );
-	gx_scene->setFogMode( fog_mode );
+	bbScene->setFogRange( fog_nr,fog_fr );
+	bbScene->setFogColor( (float*)&fog_color.x );
+	bbScene->setFogMode( fog_mode );
 	return true;
 }

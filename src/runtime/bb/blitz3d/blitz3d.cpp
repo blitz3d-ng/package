@@ -26,7 +26,7 @@
 #include <bb/blitz3d/cachedtexture.h>
 #include <bb/blitz3d/std.h>
 
-BBScene *gx_scene;
+BBScene *bbScene;
 
 static int tri_count;
 static World *world;
@@ -59,7 +59,7 @@ static Loader_B3D loader_b3d;
 static map<string,Transform> loader_mat_map;
 
 static inline void debug3d(){
-	if( bb_env.debug && !gx_scene ) RTEX( "3D Graphics mode not set" );
+	if( bb_env.debug && !bbScene ) RTEX( "3D Graphics mode not set" );
 }
 static inline void debugTexture( Texture *t ){
 	if( bb_env.debug && !texture_set.count( t ) ) RTEX( "Texture does not exist" );
@@ -222,43 +222,43 @@ void BBCALL bbLoaderMatrix( BBStr *ext,float xx,float xy,float xz,float yx,float
 
 int  BBCALL bbHWTexUnits(){
 	debug3d();
-	return gx_scene->hwTexUnits();
+	return bbScene->hwTexUnits();
 }
 
 int	 BBCALL bbGfxDriverCaps3D(){
 	debug3d();
-	return gx_scene->gfxDriverCaps3D();
+	return bbScene->gfxDriverCaps3D();
 }
 
 void BBCALL bbHWMultiTex( int enable ){
 	debug3d();
-	gx_scene->setHWMultiTex( !!enable );
+	bbScene->setHWMultiTex( !!enable );
 }
 
 void BBCALL bbWBuffer( int enable ){
 	debug3d();
-	gx_scene->setWBuffer( !!enable );
+	bbScene->setWBuffer( !!enable );
 }
 
 void BBCALL bbDither( int enable ){
 	debug3d();
-	gx_scene->setDither( !!enable );
+	bbScene->setDither( !!enable );
 }
 
 void BBCALL bbAntiAlias( int enable ){
 	debug3d();
-	gx_scene->setAntialias( !!enable );
+	bbScene->setAntialias( !!enable );
 }
 
 void BBCALL bbWireFrame( int enable ){
 	debug3d();
-	gx_scene->setWireframe( !!enable );
+	bbScene->setWireframe( !!enable );
 }
 
 void BBCALL bbAmbientLight( float r,float g,float b ){
 	debug3d();
 	Vector t( r*ctof,g*ctof,b*ctof );
-	gx_scene->setAmbient( &(t.x) );
+	bbScene->setAmbient( &(t.x) );
 }
 
 void BBCALL bbClearCollisions(){
@@ -295,13 +295,13 @@ void BBCALL bbRenderWorld( float tween ){
 	debug3d();
 
 #ifndef BETA
-	tri_count=gx_scene->getTrianglesDrawn();
+	tri_count=bbScene->getTrianglesDrawn();
 	world->render( tween );
-	tri_count=gx_scene->getTrianglesDrawn()-tri_count;
+	tri_count=bbScene->getTrianglesDrawn()-tri_count;
 	return;
 #endif
 
-	int tris=gx_scene->getTrianglesDrawn();
+	int tris=bbScene->getTrianglesDrawn();
 	int render_ms=bbMilliSecs();
 	world->render( tween );
 	render_ms=bbMilliSecs()-render_ms;
@@ -320,7 +320,7 @@ void BBCALL bbRenderWorld( float tween ){
 
 	if( !stats_mode ) return;
 
-	tris=gx_scene->getTrianglesDrawn()-tris;
+	tris=bbScene->getTrianglesDrawn()-tris;
 
 	static int time;
 	int frame_ms=bbMilliSecs()-time;
@@ -1967,8 +1967,8 @@ int BBCALL bbActiveTextures(){
 }
 
 void blitz3d_open(){
-	gx_scene=b3d_graphics->createScene( 0 );
-	if( !gx_scene ) RTEX( "Unable to create 3D Scene" );
+	bbScene=b3d_graphics->createScene( 0 );
+	if( !bbScene ) RTEX( "Unable to create 3D Scene" );
 	world=d_new World();
 	projected=Vector();
 	picked.collision=Collision();
@@ -1983,18 +1983,18 @@ void blitz3d_open(){
 }
 
 void blitz3d_close(){
-	if( !gx_scene ) return;
+	if( !bbScene ) return;
 	bbClearWorld( 1,1,1 );
 	Texture::clearFilters();
 	loader_mat_map.clear();
 	delete world;
-	b3d_graphics->freeScene( gx_scene );
-	gx_scene=0;
+	b3d_graphics->freeScene( bbScene );
+	bbScene=0;
 }
 
 BBMODULE_CREATE( blitz3d ){
 	tri_count=0;
-	gx_scene=0;world=0;
+	bbScene=0;world=0;
 	return true;
 }
 

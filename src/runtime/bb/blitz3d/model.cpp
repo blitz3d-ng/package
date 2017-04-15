@@ -2,7 +2,7 @@
 #include "std.h"
 #include "model.h"
 
-extern BBScene *gx_scene;
+extern BBScene *bbScene;
 
 class Model::MeshQueue{
 	union{
@@ -29,8 +29,8 @@ public:
 		return q_type;
 	}
 	void render(){
-		gx_scene->setRenderState( brush.getRenderState() );
-		gx_scene->render( mesh,fv,vc,ft,tc );
+		bbScene->setRenderState( brush.getRenderState() );
+		bbScene->render( mesh,fv,vc,ft,tc );
 	}
 	void *operator new( size_t sz ){
 		static const int GROW=256;

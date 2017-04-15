@@ -1,6 +1,7 @@
 
 #include "std.h"
 #include "q3bsprep.h"
+#include "scene.h"
 
 /* Quake3 File format types */
 
@@ -156,7 +157,7 @@ static Frustum r_frustum;
 static Vector r_frustedges[12];
 static map<int,Q3BSPFace*> q3face_map;
 
-extern BBScene *gx_scene;
+extern BBScene *bbScene;
 
 //#define SWAPTRIS
 Vector static tf( const Vector &v ){
@@ -271,7 +272,7 @@ void Q3BSPRep::createSurfs(){
 	int k;
 	for( k=0;k<t_surfs.size();++k ){
 		Surf *s=t_surfs[k];
-		BBMesh *mesh=b3d_graphics->createMesh( s->verts.size(),s->tris.size()/3,0 );
+		BBMesh *mesh=bbScene->createMesh( s->verts.size(),s->tris.size()/3,0 );
 
 		mesh->lock( true );
 		int j;
@@ -624,7 +625,7 @@ Q3BSPRep::~Q3BSPRep(){
 	delete[] vis_data;
 	int k;
 	for( k=0;k<surfs.size();++k ){
-		b3d_graphics->freeMesh( surfs[k]->mesh );
+		bbScene->freeMesh( surfs[k]->mesh );
 		delete surfs[k];
 	}
 	for( k=0;k<faces.size();++k ){
@@ -696,17 +697,17 @@ void Q3BSPRep::render( Model *model,const RenderContext &rc ){
 
 	if( !r_surfs.size() ) return;
 
-	gx_scene->setAmbient2( &ambient.x );
-	gx_scene->setWorldMatrix( (BBScene::Matrix*)&model->getRenderTform() );
+	bbScene->setAmbient2( &ambient.x );
+	bbScene->setWorldMatrix( (BBScene::Matrix*)&model->getRenderTform() );
 
 	int k;
 	for( k=0;k<r_surfs.size();++k ){
 		Q3BSPSurf *s=r_surfs[k];
-		gx_scene->setRenderState( s->brush.getRenderState() );
+		bbScene->setRenderState( s->brush.getRenderState() );
 		int j;
 		for( j=0;j<s->r_faces.size();++j ){
 			Q3BSPFace *f=s->r_faces[j];
-			gx_scene->render( s->mesh,f->vert,f->n_verts,f->tri,f->n_tris );
+			bbScene->render( s->mesh,f->vert,f->n_verts,f->tri,f->n_tris );
 			f->surf=s;
 		}
 		s->r_faces.clear();

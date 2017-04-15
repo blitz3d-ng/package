@@ -2,6 +2,7 @@
 #include "std.h"
 #include "gxscene.h"
 #include "gxmesh.h"
+#include <bb/system.windows/system.windows.h>
 
 static bool can_wb;
 static int  hw_tex_stages,tex_stages;
@@ -22,8 +23,8 @@ void gxScene::setTSS( int n,int s,int t ){
 	d3d_tss[n][s]=t;
 }
 
-gxScene::gxScene( IDirect3DDevice7 *d,gxCanvas *t ):
-target(t),dir3dDev(d),n_texs(0),tris_drawn(0){
+gxScene::gxScene( IDirect3D7 *d, IDirect3DDevice7 *dd,gxCanvas *t ):
+target(t),dir3d(d),dir3dDev(dd),n_texs(0),tris_drawn(0){
 
 	memset( d3d_rs,0x55,sizeof(d3d_rs) );
 	memset( d3d_tss,0x55,sizeof(d3d_tss) );
@@ -129,6 +130,14 @@ target(t),dir3dDev(d),n_texs(0),tris_drawn(0){
 
 gxScene::~gxScene(){
 	while( _allLights.size() ) freeLight( *_allLights.begin() );
+}
+
+void gxScene::restore(){
+	//restore all meshes (b3d surfaces)
+	set<BBMesh*>::iterator mesh_it;
+	for( mesh_it=mesh_set.begin();mesh_it!=mesh_set.end();++mesh_it ){
+		((gxMesh*)(*mesh_it))->restore();
+	}
 }
 
 void gxScene::setTexState( int n,const TexState &state,bool tex_blend ){
@@ -617,6 +626,29 @@ BBLightRep *gxScene::createLight( int flags ){
 
 void gxScene::freeLight( BBLightRep *l ){
 	_allLights.erase(l);
+}
+
+BBMesh *gxScene::createMesh( int max_verts,int max_tris,int flags ){
+
+	static const int VTXFMT=
+	D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX2|
+	D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE2(1);
+
+	int vbflags=0;
+
+	//XP or less?
+	if( bbWindowsSystemDriver->isXPorLess() ){
+		vbflags|=D3DVBCAPS_WRITEONLY;
+	}
+
+	D3DVERTEXBUFFERDESC desc={ sizeof(desc),vbflags,VTXFMT,max_verts };
+
+	IDirect3DVertexBuffer7 *buff;
+	if( dir3d->CreateVertexBuffer( &desc,&buff,0 )<0 ) return 0;
+	WORD *indices=d_new WORD[max_tris*3];
+	gxMesh *mesh=d_new gxMesh( dir3dDev,buff,indices,max_verts,max_tris );
+	mesh_set.insert( mesh );
+	return mesh;
 }
 
 int gxScene::getTrianglesDrawn()const{

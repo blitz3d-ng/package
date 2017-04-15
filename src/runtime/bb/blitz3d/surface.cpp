@@ -1,6 +1,7 @@
 
 #include "std.h"
 #include "surface.h"
+#include "scene.h"
 
 static Surface::Monitor nop_mon;
 
@@ -13,7 +14,7 @@ mesh(0),mesh_vs(0),mesh_ts(0),valid_vs(0),valid_ts(0),mon(m){
 }
 
 Surface::~Surface(){
-	if( mesh ) b3d_graphics->freeMesh( mesh );
+	if( mesh ) bbScene->freeMesh( mesh );
 }
 
 void Surface::setBrush( const Brush &b ){
@@ -88,14 +89,14 @@ BBMesh *Surface::getMesh(){
 
 	if( mesh_vs<vertices.size() || mesh_ts<triangles.size() ){
 		if( mesh ){
-			b3d_graphics->freeMesh( mesh );
+			bbScene->freeMesh( mesh );
 			mesh_vs=vertices.size()+mesh_vs/2;
 			mesh_ts=triangles.size()+mesh_ts/2;
 		}else{
 			mesh_vs=vertices.size();
 			mesh_ts=triangles.size();
 		}
-		mesh=b3d_graphics->createMesh( mesh_vs,mesh_ts,0 );
+		mesh=bbScene->createMesh( mesh_vs,mesh_ts,0 );
 	}
 
 	mesh->lock( true );
@@ -115,10 +116,10 @@ BBMesh *Surface::getMesh( const vector<Bone> &bones ){
 	valid_vs=valid_ts=0;
 
 	if( mesh_vs<vertices.size() || mesh_ts<triangles.size() ){
-		if( mesh ) b3d_graphics->freeMesh( mesh );
+		if( mesh ) bbScene->freeMesh( mesh );
 		mesh_vs=vertices.size();
 		mesh_ts=triangles.size();
-		mesh=b3d_graphics->createMesh( mesh_vs,mesh_ts,0 );
+		mesh=bbScene->createMesh( mesh_vs,mesh_ts,0 );
 	}
 
 	mesh->lock( true );
@@ -165,11 +166,11 @@ gxMesh *Surface::getMesh(){
 	if( mesh ){
 		int maxvs=mesh->maxVerts(),maxts=mesh->maxTris();
 		if( maxvs<vertices.size() || maxts<triangles.size() ){
-			b3d_graphics->freeMesh( mesh );
-			mesh=b3d_graphics->createMesh( vertices.size()+maxvs/2,triangles.size()+maxts/2,0 );
+			bbScene->freeMesh( mesh );
+			mesh=bbScene->createMesh( vertices.size()+maxvs/2,triangles.size()+maxts/2,0 );
 		}
 	}else if( vertices.size() || triangles.size() ){
-		mesh=b3d_graphics->createMesh( vertices.size(),triangles.size(),0 );
+		mesh=bbScene->createMesh( vertices.size(),triangles.size(),0 );
 	}
 
 	mesh->lock( true );
@@ -192,12 +193,12 @@ gxMesh *Surface::getMesh( const vector<Bone> &bones,gxMesh *mesh ){
 	if( mesh ){
 		int maxvs=mesh->maxVerts(),maxts=mesh->maxTris();
 		if( maxvs<vertices.size() || maxts<triangles.size() ){
-			b3d_graphics->freeMesh( mesh );
-			mesh=b3d_graphics->createMesh( vertices.size(),triangles.size(),0 );
+			bbScene->freeMesh( mesh );
+			mesh=bbScene->createMesh( vertices.size(),triangles.size(),0 );
 
 		}
 	}else if( vertices.size() || triangles.size() ){
-		mesh=b3d_graphics->createMesh( vertices.size(),triangles.size(),0 );
+		mesh=bbScene->createMesh( vertices.size(),triangles.size(),0 );
 	}
 
 	mesh->lock( true );

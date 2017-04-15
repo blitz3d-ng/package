@@ -1,6 +1,7 @@
 
 #include "std.h"
 #include "sprite.h"
+#include "scene.h"
 
 extern float stats3d[];
 
@@ -17,11 +18,11 @@ static vector<int> mesh_indices;
 
 static int allocIndex(){
 	if( !mesh_indices.size() ){
-		if( mesh_size ) b3d_graphics->freeMesh( mesh );
+		if( mesh_size ) bbScene->freeMesh( mesh );
 		for( int k=0;k<256;++k ){
 			mesh_indices.push_back( mesh_size++ );
 		}
-		mesh=b3d_graphics->createMesh( mesh_size*4,mesh_size*2,0 );
+		mesh=bbScene->createMesh( mesh_size*4,mesh_size*2,0 );
 	}
 	int n=mesh_indices.back();
 	mesh_indices.pop_back();
@@ -31,7 +32,7 @@ static int allocIndex(){
 static void freeIndex( int n ){
 	mesh_indices.push_back( n );
 	if( mesh_indices.size()!=mesh_size ) return;
-	b3d_graphics->freeMesh( mesh );
+	bbScene->freeMesh( mesh );
 	mesh_indices.clear();
 	mesh_size=0;
 }

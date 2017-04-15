@@ -3,6 +3,7 @@
 #include "planemodel.h"
 #include "frustum.h"
 #include "camera.h"
+#include "scene.h"
 
 static Vector vts[17][17];
 
@@ -14,10 +15,10 @@ struct PlaneModel::Rep{
 
 	Rep( int n ):
 	ref_cnt(1),sub_divs(n){
-		mesh=b3d_graphics->createMesh( 5*sub_divs*sub_divs,3*sub_divs*sub_divs,0 );
+		mesh=bbScene->createMesh( 5*sub_divs*sub_divs,3*sub_divs*sub_divs,0 );
 	}
 	~Rep(){
-		b3d_graphics->freeMesh( mesh );
+		bbScene->freeMesh( mesh );
 	}
 	void render( PlaneModel *model,const RenderContext &rc ){
 

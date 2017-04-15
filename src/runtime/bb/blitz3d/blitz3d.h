@@ -5,6 +5,4 @@
 #include <bb/blitz/blitz.h>
 #include <bb/blitz3d/scene.h>
 
-extern BBScene *gx_scene;
-
 #endif
