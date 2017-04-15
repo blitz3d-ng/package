@@ -1,11 +1,13 @@
 
+#include <bb/blitz/ex.h>
 #include <bb/runtime/runtime.h>
 #include "debug.h"
 
-#include "../../gxruntime/gxruntime.h"
-#define gx_runtime ((gxRuntime*)bbRuntime)
-
 static Debugger *debugger;
+
+BBHook bbOnDebugStop;
+BBHook bbOnDebugError;
+BBHook bbOnDebugInfo;
 
 void BBCALL bbAttachDebugger( Debugger *d ){
 	debugger=d;
@@ -16,11 +18,17 @@ void BBCALL _bbDebugLog( const char *t ){
 }
 
 void BBCALL _bbDebugInfo( const char *e ){
-  gx_runtime->debugInfo( e );
+	if( debugger ) {
+		bbOnDebugInfo.run( (void*)e );
+		debugger->debugMsg( e,false );
+	}
 }
 
 void BBCALL _bbDebugError( const char *e ){
-  gx_runtime->debugError( e );
+	if( debugger ){
+		bbOnDebugInfo.run( (void*)e );
+		debugger->debugMsg( e,true );
+	}
 }
 
 void BBCALL _bbDebugStmt( int pos,const char *file ){
@@ -37,7 +45,9 @@ void BBCALL _bbDebugLeave(){
 }
 
 void BBCALL _bbDebugStop(){
-	gx_runtime->debugStop();
+	if( debugger ) {
+		bbOnDebugStop.run( 0 );
+	}
 }
 
 void BBCALL _bbDebugRun(){

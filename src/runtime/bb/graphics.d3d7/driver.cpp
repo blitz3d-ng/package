@@ -20,9 +20,17 @@ struct D3D7ContextDriver::GfxDriver{
 #endif
 };
 
+typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
+
 D3D7ContextDriver::D3D7ContextDriver( HWND hwnd )
 :hwnd(hwnd),curr_driver(0),enum_all(false),
 timerID(0),clipper(0),primSurf(0),exclusive(false){
+	HMODULE ddraw=LoadLibraryA( "ddraw.dll" );
+	if( ddraw ){
+		SetAppCompatDataFunc SetAppCompatData=(SetAppCompatDataFunc)GetProcAddress( ddraw,"SetAppCompatData" );
+		if( SetAppCompatData ) SetAppCompatData( 12,0 );
+		FreeLibrary( ddraw );
+	}
 }
 
 D3D7ContextDriver::~D3D7ContextDriver(){

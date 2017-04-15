@@ -177,8 +177,6 @@ project "blitz"
   kind "StaticLib"
   language "C++"
 
-  removeplatforms { "macos", "linux" }
-
   files {
     "src/runtime/bb/blitz/app.cpp", "src/runtime/bb/blitz/app.h",
     "src/runtime/bb/blitz/basic.cpp", "src/runtime/bb/blitz/basic.h",

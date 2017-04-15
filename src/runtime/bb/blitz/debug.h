@@ -1,6 +1,7 @@
 #ifndef BLITZ_DEBUG_H
 #define BLITZ_DEBUG_H
 
+#include <bb/hook/hook.h>
 #include "basic.h"
 
 class Debugger{
@@ -27,5 +28,9 @@ void BBCALL _bbDebugStop();
 void BBCALL _bbDebugRun();
 
 void BBCALL bbDebugLog( BBStr *t );
+
+extern BBHook bbOnDebugStop;
+extern BBHook bbOnDebugError;
+extern BBHook bbOnDebugInfo;
 
 #endif

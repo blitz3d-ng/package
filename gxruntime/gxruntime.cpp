@@ -83,8 +83,6 @@ void gxRuntime::closeRuntime( gxRuntime *r ){
 //////////////////////////
 // RUNTIME CONSTRUCTION //
 //////////////////////////
-typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
-
 gxRuntime::gxRuntime( HINSTANCE hi,HWND hw ):
 hinst(hi),
 pointer_visible(true),D3D7ContextDriver(hw),Frame(hw){
@@ -93,14 +91,11 @@ pointer_visible(true),D3D7ContextDriver(hw),Frame(hw){
 
 	env.window=Frame::hwnd;
 
-	enumGfx();
+	bbOnDebugStop.add( _onDebugStop,this );
+	bbOnDebugError.add( _onDebugError,this );
+	bbOnDebugInfo.add( _onDebugInfo,this );
 
-	HMODULE ddraw=LoadLibraryA( "ddraw.dll" );
-	if( ddraw ){
-		SetAppCompatDataFunc SetAppCompatData=(SetAppCompatDataFunc)GetProcAddress( ddraw,"SetAppCompatData" );
-		if( SetAppCompatData ) SetAppCompatData( 12,0 );
-		FreeLibrary( ddraw );
-	}
+	enumGfx();
 }
 
 gxRuntime::~gxRuntime(){
@@ -390,7 +385,11 @@ bool gxRuntime::idle(){
 ///////////////
 // DEBUGSTOP //
 ///////////////
-void gxRuntime::debugStop(){
+void gxRuntime::_onDebugStop( void *data,void *context ){
+	((gxRuntime*)context)->onDebugStop();
+}
+
+void gxRuntime::onDebugStop(){
 	if( !suspended ) forceSuspend();
 }
 
@@ -398,20 +397,27 @@ void gxRuntime::debugStop(){
 ////////////////
 // DEBUGERROR //
 ////////////////
-void gxRuntime::debugError( const char *t ){
+void gxRuntime::_onDebugError( void *data,void *context ){
+	((gxRuntime*)context)->onDebugError( (const char *)data );
+}
+
+void gxRuntime::onDebugError( const char *t ){
 	if( !debugger ) return;
 	Debugger *d=debugger;
 	asyncEnd();
 	if( !suspended ){
 		forceSuspend();
 	}
-	d->debugMsg( t,true );
 }
 
 ///////////////
 // DEBUGINFO //
 ///////////////
-void gxRuntime::debugInfo( const char *t ){
+void gxRuntime::_onDebugInfo( void *data,void *context ){
+	((gxRuntime*)context)->onDebugInfo( (const char *)data );
+}
+
+void gxRuntime::onDebugInfo( const char *t ){
 	if( !debugger ) return;
 	Debugger *d=debugger;
 	asyncEnd();

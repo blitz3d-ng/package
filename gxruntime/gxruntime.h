@@ -51,14 +51,13 @@ public:
 
 	void setPointerVisible( bool vis );
 
-	void debugStop();
-	void debugProfile( int per );
-	void debugStmt( int pos,const char *file );
-	void debugEnter( void *frame,void *env,const char *func );
-	void debugLeave();
-	void debugInfo( const char *t );
-	void debugError( const char *t );
-	void debugLog( const char *t );
+
+	static void _onDebugStop( void *data,void *context );
+	void onDebugStop();
+	static void _onDebugError( void *data,void *context );
+	void onDebugError( const char *t );
+	static void _onDebugInfo( void *data,void *context );
+	void onDebugInfo( const char *t );
 
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
 	void closeGraphics( BBGraphics *graphics );
