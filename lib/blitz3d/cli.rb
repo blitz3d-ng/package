@@ -1,5 +1,6 @@
 require_relative './module'
 require_relative './command'
+require_relative './runtime'
 
 require_relative './help/template'
 require_relative './help/index'

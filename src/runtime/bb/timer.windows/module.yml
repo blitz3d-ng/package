@@ -1,0 +1,13 @@
+name: Windows Timer Driver
+description: Provides timer functions in Windows.
+
+platforms:
+  - windows
+
+dependencies:
+  - timer
+
+premake5:
+  files:
+    - timer.windows.cpp
+    - timer.windows.h

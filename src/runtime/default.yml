@@ -1,5 +1,102 @@
 name: Default
 
 modules:
+  - blitz
+  - runtime
+  - hook
+  - math
+  - string
+  - stream
+  - sockets
   - system
+  - system.windows
+  - filesystem
+  - filesystem.windows
   - timer
+  - timer.windows
+  - bank
+  - graphics
+  - graphics.d3d7
+  - input
+  - input.directinput8
+  - audio
+  - audio.fmod
+  - blitz3d
+  - userlibs
+
+premake5:
+  - links:
+    - gxruntime
+    - runtime
+    - frame
+    - blitz2d
+    - blitz3d
+
+    - system
+    - system.windows
+
+    - timer.windows
+    - timer
+
+    - audio.fmod
+    - audio
+
+    - graphics.d3d7
+    - graphics
+
+    - filesystem.windows
+    - filesystem
+
+    - input
+    - input.directinput8
+    - dinput8
+
+    - string
+    - userlibs
+    - sockets
+    - bank
+    - stream
+    - math
+    - blitz
+    - stdutil
+    - hook
+
+    - freeimage
+    - jpeg
+    - jxr
+    - openexr
+    - openjpeg
+    - png
+    - raw
+    - tiff4
+    - webp
+    - zlib
+
+  - filter: platforms:win32 or win64 or mingw32
+  - links:
+    - fmodvc
+    - dxguid
+    - wsock32
+    - winmm
+    - dxguid
+    - d3dxof
+    - ddraw
+    - dsound
+    - kernel32
+    - user32
+    - gdi32
+    - winspool
+    - comdlg32
+    - advapi32
+    - shell32
+    - ole32
+    - oleaut32
+    - uuid
+    - odbc32
+    - odbccp32
+
+  - filter: platforms:win32 or win64
+  - links: amstrmid
+
+  - filter: platforms:mingw32
+  - links: strmiids

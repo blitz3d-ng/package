@@ -1,0 +1,7 @@
+name: Hooks
+description: Provides hooks.
+
+premake5:
+  files:
+    - hook.cpp
+    - hook.h

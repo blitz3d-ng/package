@@ -1,0 +1,13 @@
+name: DirectInput8 Input Driver
+description: Provides keyboard/mouse/jotstick data.
+
+platforms:
+  - windows
+
+dependencies:
+  - input
+
+premake5:
+  files:
+    - driver.cpp
+    - driver.h

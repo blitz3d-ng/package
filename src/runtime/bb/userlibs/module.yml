@@ -1,0 +1,13 @@
+name: Userlibs
+description: Provides access to DLLs.
+
+dependencies:
+  - blitz
+
+platforms:
+  - windows
+
+premake5:
+  files:
+    - userlibs.cpp
+    - userlibs.h

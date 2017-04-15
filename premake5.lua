@@ -116,116 +116,6 @@ require './compiler/premake5'
 require './src/debugger.console/premake5'
 require './src/freeimage.premake5'
 
-runtimes = { 'default', 'dplay' }
-
-for i,rt in ipairs(runtimes) do
-  project("runtime." .. rt)
-    local config = require("src/runtime/" .. rt)
-    filter {}
-
-    language "C++"
-
-    local STUB_PATH="src/runtime/" .. rt .. ".stub.cpp"
-    files { STUB_PATH }
-
-    filter "platforms:macos"
-      kind "StaticLib"
-
-    filter "platforms:win32 or win64 or mingw32"
-      kind "SharedLib"
-      targetdir "_release/bin"
-      targetprefix ""
-
-      files {
-        "bbruntime_dll/bbruntime_dll.h",
-        "bbruntime_dll/bbruntime_dll.cpp",
-        "bbruntime_dll/bbruntime_dll.rc",
-        "bbruntime_dll/resource.h",
-        "bbruntime_dll/dpi.manifest"
-      }
-
-    filter {}
-
-    links "stub"
-
-    local function to_ident(mod)
-      return mod:gsub( "%.","_" )
-    end
-
-    local list = io.open( "src/runtime/" .. rt .. ".modules.txt","w" )
-    for j,mod in ipairs(config.modules) do
-      list:write(mod .. "\n")
-    end
-    list:close()
-
-    local stub = io.open( STUB_PATH .. ".tmp","w" )
-
-    stub:write("\n#include <bb/stub/stub.h>\n\n")
-
-    for j,mod in ipairs(config.modules) do
-      stub:write("BBMODULE_DECL( " .. to_ident(mod) .. " );\n")
-    end
-
-    local function write_create_calls(modules, i)
-      local function write(s)
-        for j=1,i do stub:write("\t") end
-        stub:write(s)
-      end
-
-      write("if ( " .. to_ident(modules[i]) .. "_create() ){\n")
-      if i < #modules then
-        write_create_calls( modules,i+1 )
-        write("\t" .. to_ident(modules[i]) .. "_destroy();\n");
-      else
-        write("\treturn true;\n")
-      end
-      write("}else sue( \"" .. to_ident(modules[i]) .. "_create failed\" );\n")
-    end
-
-    stub:write("\nbool bbruntime_create(){\n")
-    write_create_calls(config.modules, 1)
-    stub:write("\treturn false;\n")
-    stub:write("}\n")
-
-    stub:write("\nvoid bbruntime_link( void (*link)( const char *sym,void *pc ) ){\n")
-    for j,mod in ipairs(config.modules) do
-      stub:write("\t" .. to_ident(mod) .. "_link( link );\n")
-    end
-    stub:write("}\n")
-
-    stub:write("\nbool bbruntime_destroy(){\n")
-    for j=#config.modules,1,-1 do
-      stub:write("\t" .. to_ident(config.modules[j]) .. "_destroy();\n")
-    end
-    stub:write("\treturn true;\n")
-    stub:write("}\n")
-    stub:close()
-
-    local function read_all( path )
-      file = io.open( path,"r" )
-      if file == nil then return "" end
-      contents = file:read("*all")
-      file:close()
-      return contents
-    end
-
-    old_stub = read_all( STUB_PATH )
-    new_stub = read_all( STUB_PATH .. ".tmp" )
-    if #old_stub == 0 or old_stub ~= new_stub then
-      os.remove( STUB_PATH )
-      os.rename( STUB_PATH .. ".tmp",STUB_PATH )
-    else
-      os.remove( STUB_PATH .. ".tmp" )
-    end
-
-    filter {}
-
-    -- link in reverse order
-    for i=#config.modules,1,-1 do
-      links(config.modules[i])
-    end
-end
-
 project "stub"
   kind "StaticLib"
   language "C++"
@@ -281,23 +171,6 @@ project "runtime"
     "src/runtime/bb/runtime/runtime.cpp"
   }
 
-project "hook"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/hook/hook.h",
-    "src/runtime/bb/hook/hook.cpp"
-  }
-
-project "userlibs"
-  kind "StaticLib"
-  language "C++"
-
-  removeplatforms { "macos", "linux" }
-
-  files { "src/runtime/bb/userlibs/userlibs.cpp", "src/runtime/bb/userlibs/userlibs.h" }
-
 project "blitz"
   kind "StaticLib"
   language "C++"
@@ -341,28 +214,6 @@ project "system.windows"
 
   links "system"
 
-project "filesystem.windows"
-  kind "StaticLib"
-  language "C++"
-
-  removeplatforms { "macos", "linux" }
-
-  files {
-    "src/runtime/bb/filesystem.windows/driver.cpp", "src/runtime/bb/filesystem.windows/driver.h",
-    "src/runtime/bb/filesystem.windows/dir.cpp", "src/runtime/bb/filesystem.windows/dir.h",
-    "src/runtime/bb/filesystem.windows/module.cpp"
-  }
-
-  links "filesystem"
-
-project "input.directinput8"
-  kind "StaticLib"
-  language "C++"
-
-  removeplatforms { "macos", "linux" }
-
-  files { "src/runtime/bb/input.directinput8/driver.cpp", "src/runtime/bb/input.directinput8/driver.h" }
-
 project "blitz3d"
   kind "StaticLib"
   language "C++"
@@ -382,17 +233,6 @@ project "sockets"
 
   files {
     "src/runtime/bb/sockets/sockets.cpp", "src/runtime/bb/sockets/sockets.h"
-  }
-
-project "timer.windows"
-  kind "StaticLib"
-  language "C++"
-
-  removeplatforms { "macos", "linux" }
-
-  files {
-    "src/runtime/bb/timer.windows/timer.windows.h",
-    "src/runtime/bb/timer.windows/timer.windows.cpp"
   }
 
 project "graphics"

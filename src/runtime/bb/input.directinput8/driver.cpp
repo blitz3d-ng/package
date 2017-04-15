@@ -377,6 +377,7 @@ BBMODULE_DESTROY( input_directinput8 ){
 }
 
 BBMODULE_LINK( input_directinput8 ){
+	cout<<"yoo!!!"<<endl;
 	rtSym( "EnableDirectInput%enable",bbEnableDirectInput );
 	rtSym( "%DirectInputEnabled",bbDirectInputEnabled );
 }
