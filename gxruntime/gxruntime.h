@@ -2,14 +2,13 @@
 #ifndef GXRUNTIME_H
 #define GXRUNTIME_H
 
+#include <bb/runtime/runtime.h>
 #include <bb/frame/frame.h>
 #include <bb/graphics.d3d7/graphics.d3d7.h>
 #include <string>
 #include <vector>
 
-#include "../debugger/debugger.h"
-
-class gxRuntime : public D3D7ContextDriver, public Frame{
+class gxRuntime : public BBRuntime, public D3D7ContextDriver, public Frame{
 	/***** INTERNAL INTERFACE *****/
 public:
 	BBEnv env;
@@ -33,12 +32,8 @@ private:
 
 	bool pointer_visible;
 
-	int use_di;
-
 	void backupGraphics();
 	void restoreGraphics();
-	void acquireInput();
-	void unacquireInput();
 
 	/***** APP INTERFACE *****/
 public:
@@ -68,9 +63,6 @@ public:
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
 	void closeGraphics( BBGraphics *graphics );
 	bool graphicsLost();
-
-	void enableDirectInput( bool use );
-	int  directInputEnabled(){ return use_di; }
 };
 
 #endif

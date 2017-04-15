@@ -120,7 +120,9 @@ project "stub"
   kind "StaticLib"
   language "C++"
 
-  files "src/runtime/bb/stub/stub.h"
+  files {
+    "src/runtime/bb/stub/stub.h"
+  }
 
   filter "platforms:win32 or win64 or mingw32"
     files "src/runtime/bb/stub/stub.windows.cpp"

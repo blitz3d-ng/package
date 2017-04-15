@@ -3,8 +3,21 @@
 #include <bb/blitz/blitz.h>
 #include "runtime.h"
 
+BBRuntime *bbRuntime;
 BBHook *bbRuntimeOnSuspend;
 BBHook *bbRuntimeOnResume;
+
+void BBCALL bbMoveMouse( int x,int y ){
+  bbRuntime->moveMouse( x,y );
+}
+
+void BBCALL bbShowPointer(){
+	bbRuntime->setPointerVisible( true );
+}
+
+void BBCALL bbHidePointer(){
+	bbRuntime->setPointerVisible( false );
+}
 
 BBMODULE_CREATE( runtime ){
   bbRuntimeOnSuspend=d_new BBHook();
@@ -16,7 +29,4 @@ BBMODULE_DESTROY( runtime ){
   delete bbRuntimeOnSuspend;
   delete bbRuntimeOnResume;
   return true;
-}
-
-BBMODULE_LINK( runtime ){
 }

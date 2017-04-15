@@ -1,10 +1,14 @@
 
+#include "../../stdutil/stdutil.h"
+
 #include <bb/runtime/runtime.h>
 #include <bb/system/system.h>
 #include "driver.h"
 
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
+#include <math.h>
+#include <vector>
+
+using namespace std;
 
 static const int QUE_SIZE=32;
 
@@ -25,55 +29,6 @@ public:
 	void unacquire(){
 		device->Unacquire();
 		acquired=false;
-	}
-};
-
-class Keyboard : public Device{
-public:
-	Keyboard( DirectInput8Driver *i,IDirectInputDevice8 *d ):Device(i,d){
-	}
-	void update(){
-		if( !acquired ){
-			bbRuntimeIdle();
-			return;
-		}
-		int k,cnt=32;
-		DIDEVICEOBJECTDATA data[32],*curr;
-		if( device->GetDeviceData( sizeof(DIDEVICEOBJECTDATA),data,(DWORD*)&cnt,0 )<0 ) return;
-		curr=data;
-		for( k=0;k<cnt;++curr,++k ){
-			int n=curr->dwOfs;if( !n || n>255 ) continue;
-			if( curr->dwData&0x80 ) downEvent( n );
-			else upEvent( n );
-		}
-	}
-};
-
-class Mouse : public Device{
-public:
-	Mouse( DirectInput8Driver *i,IDirectInputDevice8 *d ):Device(i,d){
-	}
-	void update(){
-		if( !acquired ){
-			bbRuntimeIdle();
-			return;
-		}
-		DIMOUSESTATE state;
-		if( device->GetDeviceState(sizeof(state),&state)<0 ) return;
-		if( bbGraphicsOpen() ){
-			int mx=axis_states[0]+state.lX;
-			int my=axis_states[1]+state.lY;
-			if( mx<0 ) mx=0;
-			else if( mx>=bbGraphicsWidth() ) mx=bbGraphicsWidth()-1;
-			if( my<0 ) my=0;
-			else if( my>=bbGraphicsHeight() ) my=bbGraphicsHeight()-1;
-			axis_states[0]=mx;
-			axis_states[1]=my;
-			axis_states[2]+=state.lZ;
-		}
-		for( int k=0;k<3;++k ){
-			setDownState( k+1,state.rgbButtons[k]&0x80 ? true : false );
-		}
 	}
 };
 
@@ -136,64 +91,7 @@ public:
 	}
 };
 
-static Keyboard *keyboard;
-static Mouse *mouse;
 static vector<Joystick*> joysticks;
-
-static Keyboard *createKeyboard( DirectInput8Driver *input ){
-	IDirectInputDevice8 *dev;
-	if( input->dirInput->CreateDevice( GUID_SysKeyboard,&dev,0 )>=0 ){
-		if( dev->SetCooperativeLevel( (HWND)bbRuntimeWindow(),DISCL_FOREGROUND|DISCL_NONEXCLUSIVE )>=0 ){
-
-			if( dev->SetDataFormat( &c_dfDIKeyboard )>=0 ){
-				DIPROPDWORD dword;
-	 			memset( &dword,0,sizeof(dword) );
-				dword.diph.dwSize=sizeof(DIPROPDWORD);
-				dword.diph.dwHeaderSize=sizeof(DIPROPHEADER);
-				dword.diph.dwObj=0;
-				dword.diph.dwHow=DIPH_DEVICE;
-				dword.dwData=32;
-				if( dev->SetProperty( DIPROP_BUFFERSIZE,&dword.diph )>=0 ){
-					return d_new Keyboard( input,dev );
-				}else{
-//					_bbDebugInfo( "keyboard: SetProperty failed" );
-				}
-			}else{
-//				_bbDebugInfo( "keyboard: SetDataFormat failed" );
-			}
-			return d_new Keyboard( input,dev );
-
-		}else{
-			_bbDebugInfo( "keyboard: SetCooperativeLevel failed" );
-		}
-		dev->Release();
-	}else{
-		_bbDebugInfo( "keyboard: CreateDeviceEx failed" );
-	}
-	return 0;
-}
-
-static Mouse *createMouse( DirectInput8Driver *input ){
-	IDirectInputDevice8 *dev;
-	if( input->dirInput->CreateDevice( GUID_SysMouse,&dev,0 )>=0 ){
-		if( dev->SetCooperativeLevel( (HWND)bbRuntimeWindow(),DISCL_FOREGROUND|DISCL_NONEXCLUSIVE )>=0 ){
-
-			if( dev->SetDataFormat( &c_dfDIMouse )>=0 ){
-				return d_new Mouse( input,dev );
-			}else{
-//				_bbDebugInfo( "mouse: SetDataFormat failed" );
-			}
-			return d_new Mouse( input,dev );
-
-		}else{
-			_bbDebugInfo( "mouse: SetCooperativeLevel failed" );
-		}
-		dev->Release();
-	}else{
-		_bbDebugInfo( "mouse: CreateDeviceEx failed" );
-	}
-	return 0;
-}
 
 static Joystick *createJoystick( DirectInput8Driver *input,LPCDIDEVICEINSTANCE devinst ){
 	IDirectInputDevice8 *dev;
@@ -218,86 +116,21 @@ static BOOL CALLBACK enumJoystick( LPCDIDEVICEINSTANCE devinst,LPVOID pvRef ){
 	return DIENUM_CONTINUE;
 }
 
-DirectInput8Driver::DirectInput8Driver( gxRuntime *rt,IDirectInput8 *di ):
-runtime(rt),dirInput(di){
-	keyboard=createKeyboard( this );
-	mouse=createMouse( this );
+DirectInput8Driver::DirectInput8Driver( IDirectInput8 *di ):
+dirInput(di){
 	joysticks.clear();
 	dirInput->EnumDevices( DI8DEVCLASS_GAMECTRL,enumJoystick,this,DIEDFL_ATTACHEDONLY );
 }
 
 DirectInput8Driver::~DirectInput8Driver(){
-	unacquire();
-
 	for( int k=0;k<joysticks.size();++k ) delete joysticks[k];
 	joysticks.clear();
-	delete mouse;
-	delete keyboard;
 
 	dirInput->Release();
 }
 
-void DirectInput8Driver::wm_keydown( int key ){
-	if( keyboard ) keyboard->downEvent( key );
-}
-
-void DirectInput8Driver::wm_keyup( int key ){
-	if( keyboard ) keyboard->upEvent( key );
-}
-
-void DirectInput8Driver::wm_mousedown( int key ){
-	if( mouse ) mouse->downEvent( key );
-}
-
-void DirectInput8Driver::wm_mouseup( int key ){
-	if( mouse ) mouse->upEvent( key );
-}
-
-void DirectInput8Driver::wm_mousemove( int x,int y ){
-	if( mouse ){
-		mouse->axis_states[0]=x;
-		mouse->axis_states[1]=y;
-	}
-}
-
-void DirectInput8Driver::wm_mousewheel( int dz ){
-	if( mouse ) mouse->axis_states[2]+=dz;
-}
-
 void DirectInput8Driver::reset(){
-	if( mouse ) mouse->reset();
-	if( keyboard ) keyboard->reset();
 	for( int k=0;k<joysticks.size();++k ) joysticks[k]->reset();
-}
-
-bool DirectInput8Driver::acquire(){
-	bool m_ok=true,k_ok=true;
-	if( mouse ) m_ok=mouse->acquire();
-	if( keyboard ) k_ok=keyboard->acquire();
-	if( m_ok && k_ok ) return true;
-	if( k_ok ) keyboard->unacquire();
-	if( m_ok ) mouse->unacquire();
-	return false;
-}
-
-void DirectInput8Driver::unacquire(){
-	if( keyboard ) keyboard->unacquire();
-	if( mouse ) mouse->unacquire();
-}
-
-void DirectInput8Driver::moveMouse( int x,int y ){
-	if( !mouse ) return;
-	mouse->axis_states[0]=x;
-	mouse->axis_states[1]=y;
-	runtime->moveMouse( x,y );
-}
-
-BBDevice *DirectInput8Driver::getMouse()const{
-	return mouse;
-}
-
-BBDevice *DirectInput8Driver::getKeyboard()const{
-	return keyboard;
 }
 
 BBDevice *DirectInput8Driver::getJoystick( int n )const{
@@ -330,14 +163,14 @@ int DirectInput8Driver::toAscii( int scan )const{
 	if( !virt ) return 0;
 
 	static unsigned char mat[256];
-	mat[VK_LSHIFT]=keyboard->keyDown( DIK_LSHIFT ) ? 0x80 : 0;
-	mat[VK_RSHIFT]=keyboard->keyDown( DIK_RSHIFT ) ? 0x80 : 0;
+	// mat[VK_LSHIFT]=keyboard->keyDown( DIK_LSHIFT ) ? 0x80 : 0;
+	// mat[VK_RSHIFT]=keyboard->keyDown( DIK_RSHIFT ) ? 0x80 : 0;
 	mat[VK_SHIFT]=mat[VK_LSHIFT]|mat[VK_RSHIFT];
-	mat[VK_LCONTROL]=keyboard->keyDown( DIK_LCONTROL ) ? 0x80 : 0;
-	mat[VK_RCONTROL]=keyboard->keyDown( DIK_RCONTROL ) ? 0x80 : 0;
+	// mat[VK_LCONTROL]=keyboard->keyDown( DIK_LCONTROL ) ? 0x80 : 0;
+	// mat[VK_RCONTROL]=keyboard->keyDown( DIK_RCONTROL ) ? 0x80 : 0;
 	mat[VK_CONTROL]=mat[VK_LCONTROL]|mat[VK_RCONTROL];
-	mat[VK_LMENU]=keyboard->keyDown( DIK_LMENU ) ? 0x80 : 0;
-	mat[VK_RMENU]=keyboard->keyDown( DIK_RMENU ) ? 0x80 : 0;
+	// mat[VK_LMENU]=keyboard->keyDown( DIK_LMENU ) ? 0x80 : 0;
+	// mat[VK_RMENU]=keyboard->keyDown( DIK_RMENU ) ? 0x80 : 0;
 	mat[VK_MENU]=mat[VK_LMENU]|mat[VK_RMENU];
 
 	WORD ch;
@@ -346,19 +179,17 @@ int DirectInput8Driver::toAscii( int scan )const{
 }
 
 void BBCALL bbEnableDirectInput( int enable ){
-	gx_runtime->enableDirectInput( !!enable );
 }
 
 int  BBCALL bbDirectInputEnabled(){
-	return gx_runtime->directInputEnabled();
+	return false;
 }
 
 BBMODULE_CREATE( input_directinput8 ){
 	if( !gx_input ){
 		IDirectInput8 *di;
 		if( DirectInput8Create( GetModuleHandle(0),DIRECTINPUT_VERSION,IID_IDirectInput8,(void**)&di,0 )>=0 ){
-			gx_input=d_new DirectInput8Driver( gx_runtime,di );
-			((DirectInput8Driver*)gx_input)->acquire(); // TODO: original code called gx_runtime->aquireInput(). Figure out when this should be called.
+			gx_input=d_new DirectInput8Driver( di );
 			if( !bbEnumInput() ){
 				_bbDebugInfo( "Failed to enumerate input devices" );
 				gx_input=0;

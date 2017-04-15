@@ -108,7 +108,7 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 
 	bbStartup( params );
 
-	if( gx_runtime=gxRuntime::openRuntime( hinst,dbg ) ){
+	if( bbRuntime=gx_runtime=gxRuntime::openRuntime( hinst,dbg ) ){
 
 #ifdef PRODEMO
 		shareProtCheck( killer );

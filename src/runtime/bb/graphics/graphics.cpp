@@ -8,7 +8,7 @@
 #include <fstream>
 
 #include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
+#define gx_runtime ((gxRuntime*)bbRuntime)
 
 BBContextDriver *bbContextDriver;
 BBGraphics *gx_graphics;
@@ -1112,7 +1112,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 				}
 				c->text( cx,curs_y,str.substr( curs,1 ) );
 			}
-			if( key=gx_keyboard->getKey() ){
+			if( key=bbGetKey( false ) ){
 				if( int asc=gx_input->toAscii( key ) ){
 					rep_delay=280;
 					last_key=key;
@@ -1121,7 +1121,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 					break;
 				}
 			}
-			if( last_key && gx_keyboard->keyDown( last_key ) ){
+			if( last_key && bbKeyDown( last_key ) ){
 				if( t-last_time>rep_delay ){
 					if( key=gx_input->toAscii( last_key ) ){
 						last_time+=rep_delay;
@@ -1189,14 +1189,6 @@ void BBCALL bbLocate( int x,int y ){
 	BBCanvas *c=gx_graphics->getFrontCanvas();
 	curs_x=x<0 ? 0 : (x > c->getWidth() ? c->getWidth() : x);
 	curs_y=y<0 ? 0 : (y > c->getHeight() ? c->getHeight() : y);
-}
-
-void BBCALL bbShowPointer(){
-	gx_runtime->setPointerVisible( true );
-}
-
-void BBCALL bbHidePointer(){
-	gx_runtime->setPointerVisible( false );
 }
 
 BBMODULE_CREATE( graphics ){
@@ -1368,7 +1360,4 @@ BBMODULE_LINK( graphics ){
 	rtSym( "Print$string=\"\"",bbPrint );
 	rtSym( "$Input$prompt=\"\"",bbInput );
 	rtSym( "Locate%x%y",bbLocate );
-
-	rtSym( "ShowPointer",bbShowPointer );
-	rtSym( "HidePointer",bbHidePointer );
 }

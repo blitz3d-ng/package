@@ -3,12 +3,10 @@
 #include "gxruntime.h"
 #include <bb/blitz/app.h>
 #include <bb/runtime/runtime.h>
-#include <bb/input.directinput8/driver.h>
 #include <bb/system/system.h>
+#include <bb/event/event.h>
 #include "gxgraphics.h"
 #include "zmouse.h"
-
-#define dx_input ((DirectInput8Driver*)gx_input)
 
 gxRuntime *gx_runtime;
 
@@ -89,7 +87,7 @@ typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
 
 gxRuntime::gxRuntime( HINSTANCE hi,HWND hw ):
 hinst(hi),
-pointer_visible(true),use_di(false),D3D7ContextDriver(hw),Frame(hw){
+pointer_visible(true),D3D7ContextDriver(hw),Frame(hw){
 
 	CoInitialize( 0 );
 
@@ -126,23 +124,6 @@ void gxRuntime::restoreGraphics(){
 	}
 }
 
-void gxRuntime::acquireInput(){
-	if( !gx_input ) return;
-	if( gfx_mode==3 ){
-		if( use_di ){
-			use_di=dx_input->acquire();
-		}else{
-		}
-	}
-	dx_input->reset();
-}
-
-void gxRuntime::unacquireInput(){
-	if( !gx_input ) return;
-	if( gfx_mode==3 && use_di ) dx_input->unacquire();
-	dx_input->reset();
-}
-
 /////////////
 // SUSPEND //
 /////////////
@@ -150,7 +131,6 @@ void gxRuntime::suspend(){
 	busy=true;
 	bbRuntimeOnSuspend->run( this );
 	backupGraphics();
-	unacquireInput();
 	suspended=true;
 	busy=false;
 
@@ -166,7 +146,6 @@ void gxRuntime::resume(){
 	if( gfx_mode==3 ) ShowCursor(0);
 	busy=true;
 	bbRuntimeOnResume->run( this );
-	acquireInput();
 	restoreGraphics();
 	suspended=false;
 	busy=false;
@@ -213,7 +192,6 @@ void gxRuntime::moveMouse( int x,int y ){
 		p.x=x;p.y=y;ClientToScreen( D3D7ContextDriver::hwnd,&p );x=p.x;y=p.y;
 		break;
 	case 3:
-		if( use_di ) return;
 		break;
 	default:
 		return;
@@ -279,73 +257,77 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 		break;
 	}
 
-	if( !gx_input || suspended ) return DefWindowProc( hwnd,msg,wparam,lparam );
+	if( suspended ) return DefWindowProc( hwnd,msg,wparam,lparam );
 
-	if( gfx_mode==3 && use_di ){
-		use_di=dx_input->acquire();
-		return DefWindowProc( hwnd,msg,wparam,lparam );
-	}
+	// if( gfx_mode==3 ){
+	// 	return DefWindowProc( hwnd,msg,wparam,lparam );
+	// }
 
 	static const int MK_ALLBUTTONS=MK_LBUTTON|MK_RBUTTON|MK_MBUTTON;
 
 	//handle input messages
+	BBEvent ev;
+	memset( &ev,0,sizeof(BBEvent) );
+
 	switch( msg ){
 	case WM_LBUTTONDOWN:
-		dx_input->wm_mousedown(1);
+		ev=BBEvent( BBEVENT_MOUSEDOWN,1 );
 		SetCapture(hwnd);
 		break;
 	case WM_LBUTTONUP:
-		dx_input->wm_mouseup(1);
+		ev=BBEvent( BBEVENT_MOUSEUP,1 );
 		if( !(wparam&MK_ALLBUTTONS) ) ReleaseCapture();
 		break;
 	case WM_RBUTTONDOWN:
-		dx_input->wm_mousedown(2);
+		ev=BBEvent( BBEVENT_MOUSEDOWN,2 );
 		SetCapture( hwnd );
 		break;
 	case WM_RBUTTONUP:
-		dx_input->wm_mouseup(2);
+		ev=BBEvent( BBEVENT_MOUSEUP,2 );
 		if( !(wparam&MK_ALLBUTTONS) ) ReleaseCapture();
 		break;
 	case WM_MBUTTONDOWN:
-		dx_input->wm_mousedown(3);
+		ev=BBEvent( BBEVENT_MOUSEDOWN,3 );
 		SetCapture( hwnd );
 		break;
 	case WM_MBUTTONUP:
-		dx_input->wm_mouseup(3);
+		ev=BBEvent( BBEVENT_MOUSEUP,3 );
 		if( !(wparam&MK_ALLBUTTONS) ) ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
-		if( !graphics ) break;
-		if( gfx_mode==3 && !use_di ){
-			POINT p;GetCursorPos( &p );
-			dx_input->wm_mousemove( p.x,p.y );
-		}else{
-			int x=(short)(lparam&0xffff),y=lparam>>16;
-			if( gfx_mode==1 ){
-				RECT rect;GetClientRect( hwnd,&rect );
-				x=x*graphics->getWidth()/(rect.right-rect.left);
-				y=y*graphics->getHeight()/(rect.bottom-rect.top);
-			}
-			if( x<0 ) x=0;
-			else if( x>=graphics->getWidth() ) x=graphics->getWidth()-1;
-			if( y<0 ) y=0;
-			else if( y>=graphics->getHeight() ) y=graphics->getHeight()-1;
-			dx_input->wm_mousemove( x,y );
-		}
+		ev=BBEvent( BBEVENT_MOUSEMOVE,3,LOWORD( lparam ),HIWORD( lparam ) );
+		// if( !graphics ) break;
+		// if( gfx_mode==3 && !use_di ){
+		// 	POINT p;GetCursorPos( &p );
+		// 	dx_input->wm_mousemove( p.x,p.y );
+		// }else{
+		// 	int x=(short)(lparam&0xffff),y=lparam>>16;
+		// 	if( gfx_mode==1 ){
+		// 		RECT rect;GetClientRect( hwnd,&rect );
+		// 		x=x*graphics->getWidth()/(rect.right-rect.left);
+		// 		y=y*graphics->getHeight()/(rect.bottom-rect.top);
+		// 	}
+		// 	if( x<0 ) x=0;
+		// 	else if( x>=graphics->getWidth() ) x=graphics->getWidth()-1;
+		// 	if( y<0 ) y=0;
+		// 	else if( y>=graphics->getHeight() ) y=graphics->getHeight()-1;
+		// 	dx_input->wm_mousemove( x,y );
+		// }
 		break;
 	case WM_MOUSEWHEEL:
-		dx_input->wm_mousewheel( (short)HIWORD( wparam ) );
+		ev=BBEvent( BBEVENT_MOUSEWHEEL,(short)HIWORD( wparam ) );
 		break;
 	case WM_KEYDOWN:case WM_SYSKEYDOWN:
 		if( lparam & 0x40000000 ) break;
-		if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) dx_input->wm_keydown( n );
+		if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) ev=BBEvent( BBEVENT_KEYDOWN,n );
 		break;
 	case WM_KEYUP:case WM_SYSKEYUP:
-		if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) dx_input->wm_keyup( n );
+		if( int n=((lparam>>17)&0x80)|((lparam>>16)&0x7f) ) ev=BBEvent( BBEVENT_KEYUP,n );
 		break;
 	default:
 		return DefWindowProc( hwnd,msg,wparam,lparam );
 	}
+	if( ev.id ) bbOnEvent.run( &ev );
 
 	return 0;
 }
@@ -480,7 +462,6 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 			gfx_mode=3;
 			auto_suspend=true;
 			SetCursorPos(0,0);
-			acquireInput();
 		}else{
 			ShowCursor( 1 );
 			restoreWindowState();
@@ -508,7 +489,6 @@ void gxRuntime::closeGraphics( BBGraphics *g ){
 
 	busy=true;
 
-	unacquireInput();
 	freeInvalidationTimer();
 	if( clipper ){ clipper->Release();clipper=0; }
 	if( primSurf ){ primSurf->Release();primSurf=0; }
@@ -532,12 +512,4 @@ bool gxRuntime::graphicsLost(){
 void gxRuntime::refreshSystemProperties(){
 	bbSystemProperties["apphwnd"]=itoa( (int)Frame::hwnd );
 	bbSystemProperties["apphinstance"]=itoa( (int)hinst );
-}
-
-void gxRuntime::enableDirectInput( bool enable ){
-	if( use_di=enable ){
-		acquireInput();
-	}else{
-		unacquireInput();
-	}
 }

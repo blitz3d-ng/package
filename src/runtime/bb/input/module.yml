@@ -4,7 +4,7 @@ description: Provides input functions.
 commands:
   - KeyDown%( key% ):"bbKeyDown"
   - KeyHit%( key% ):"bbKeyHit"
-  - GetKey%():"bbGetKey"
+  - GetKey%( ascii%=1 ):"bbGetKey"
   - WaitKey%():"bbWaitKey"
   - FlushKeys():"bbFlushKeys"
 
@@ -20,7 +20,7 @@ commands:
   - MouseYSpeed%():"bbMouseYSpeed"
   - MouseZSpeed%():"bbMouseZSpeed"
   - FlushMouse():"bbFlushMouse"
-  - MoveMouse( x%,y% ):"bbFlushMouse"
+  - MoveMouse( x%,y% ):"bbMoveMouse"
 
   - CountJoys%():"bbCountJoys"
   - FindJoy%( id$ ):"bbFindJoy"
@@ -52,7 +52,6 @@ premake5:
   files:
     - input.cpp
     - input.h
-    - driver.cpp
     - driver.h
     - device.cpp
     - device.h

@@ -4,6 +4,7 @@ modules:
   - blitz
   - runtime
   - hook
+  - event
   - math
   - string
   - stream
@@ -62,9 +63,10 @@ premake5:
     - bank
     - stream
     - math
+    - event
     - blitz
-    - stdutil
     - hook
+    - stdutil
 
     - freeimage
     - jpeg

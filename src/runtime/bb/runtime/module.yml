@@ -1,0 +1,11 @@
+name: Runtime
+description: Provides runtime.
+
+commands:
+  - ShowPointer():"bbShowPointer"
+  - HidePointer():"bbHidePointer"
+
+premake5:
+  files:
+    - runtime.cpp
+    - runtime.h

@@ -7,16 +7,13 @@
 #include <vector>
 
 extern BBInputDriver *gx_input;
-extern BBDevice *gx_mouse;
-extern BBDevice *gx_keyboard;
-extern std::vector<BBDevice*> gx_joysticks;
 
 int BBCALL bbEnumInput();
 
 //keyboard
 int  BBCALL bbKeyDown( int n );
 int  BBCALL bbKeyHit( int n );
-int  BBCALL bbGetKey();
+int  BBCALL bbGetKey( int ascii );
 int  BBCALL bbWaitKey();
 void BBCALL bbFlushKeys();
 

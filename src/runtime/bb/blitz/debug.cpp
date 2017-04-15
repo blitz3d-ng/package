@@ -3,7 +3,7 @@
 #include "debug.h"
 
 #include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
+#define gx_runtime ((gxRuntime*)bbRuntime)
 
 static Debugger *debugger;
 
