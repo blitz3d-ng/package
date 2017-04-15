@@ -395,7 +395,7 @@ static void graphics( int w,int h,int d,int flags ){
 	curr_clsColor=0;
 	curr_color=0xffffffff;
 	curr_font=gx_graphics->getDefaultFont();
-	BBCanvas *buff=(flags & gxGraphics::GRAPHICS_3D) ?
+	BBCanvas *buff=(flags & BBGraphics::GRAPHICS_3D) ?
 		gx_graphics->getBackCanvas() : gx_graphics->getFrontCanvas();
 	bbSetBuffer( buff );
 }
@@ -403,39 +403,40 @@ static void graphics( int w,int h,int d,int flags ){
 void BBCALL bbGraphics( int w,int h,int d,int mode ){
 	int flags=0;
 	switch( mode ){
-	case 0:flags|=bb_env.debug ? gxGraphics::GRAPHICS_WINDOWED : 0 ;break;
+	case 0:flags|=bb_env.debug ? BBGraphics::GRAPHICS_WINDOWED : 0 ;break;
 	case 1:break;
-	case 2:flags|=gxGraphics::GRAPHICS_WINDOWED;break;
-	case 3:flags|=gxGraphics::GRAPHICS_WINDOWED|gxGraphics::GRAPHICS_SCALED;break;
-	case 6:flags|=gxGraphics::GRAPHICS_WINDOWED|gxGraphics::GRAPHICS_AUTOSUSPEND;break;
-	case 7:flags|=gxGraphics::GRAPHICS_WINDOWED|gxGraphics::GRAPHICS_SCALED|gxGraphics::GRAPHICS_AUTOSUSPEND;break;
+	case 2:flags|=BBGraphics::GRAPHICS_WINDOWED;break;
+	case 3:flags|=BBGraphics::GRAPHICS_WINDOWED|BBGraphics::GRAPHICS_SCALED;break;
+	case 6:flags|=BBGraphics::GRAPHICS_WINDOWED|BBGraphics::GRAPHICS_AUTOSUSPEND;break;
+	case 7:flags|=BBGraphics::GRAPHICS_WINDOWED|BBGraphics::GRAPHICS_SCALED|BBGraphics::GRAPHICS_AUTOSUSPEND;break;
 	default:RTEX( "Illegal Graphics mode" );
 	}
 	graphics( w,h,d,flags );
 }
 
 #ifdef PRO
+
 void BBCALL bbGraphics3D( int w,int h,int d,int mode ){
-	int flags=gxGraphics::GRAPHICS_3D;
+	int flags=BBGraphics::GRAPHICS_3D;
 	switch( mode ){
-	case 0:flags|=(bb_env.debug && bbWindowed3D()) ? gxGraphics::GRAPHICS_WINDOWED : 0 ;break;
+	case 0:flags|=(bb_env.debug && bbWindowed3D()) ? BBGraphics::GRAPHICS_WINDOWED : 0 ;break;
 	case 1:break;
-	case 2:flags|=gxGraphics::GRAPHICS_WINDOWED;break;
-	case 3:flags|=gxGraphics::GRAPHICS_WINDOWED|gxGraphics::GRAPHICS_SCALED;break;
-	case 6:flags|=gxGraphics::GRAPHICS_WINDOWED|gxGraphics::GRAPHICS_AUTOSUSPEND;break;
-	case 7:flags|=gxGraphics::GRAPHICS_WINDOWED|gxGraphics::GRAPHICS_SCALED|gxGraphics::GRAPHICS_AUTOSUSPEND;break;
+	case 2:flags|=BBGraphics::GRAPHICS_WINDOWED;break;
+	case 3:flags|=BBGraphics::GRAPHICS_WINDOWED|BBGraphics::GRAPHICS_SCALED;break;
+	case 6:flags|=BBGraphics::GRAPHICS_WINDOWED|BBGraphics::GRAPHICS_AUTOSUSPEND;break;
+	case 7:flags|=BBGraphics::GRAPHICS_WINDOWED|BBGraphics::GRAPHICS_SCALED|BBGraphics::GRAPHICS_AUTOSUSPEND;break;
 	default:RTEX( "Illegal Graphics3D mode" );
 	}
 	graphics( w,h,d,flags );
-	extern void blitz3d_open();
-	blitz3d_open();
+	extern void blitz3d_open( BBScene *scene );
+	blitz3d_open( ((B3DGraphics*)((gxGraphics*)gx_graphics))->createScene( 0 ) );
 }
 #endif
 
 void BBCALL bbEndGraphics(){
 	freeGraphics();
 	gx_runtime->closeGraphics( gx_graphics );
-	gx_graphics=gx_runtime->openGraphics( 400,300,0,0,gxGraphics::GRAPHICS_WINDOWED );
+	gx_graphics=gx_runtime->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( gx_graphics ){
 		curr_clsColor=0;
@@ -1206,7 +1207,7 @@ BBMODULE_CREATE( graphics ){
 	freeGraphics();
 	auto_dirty=true;
 	auto_midhandle=false;
-	gx_graphics=gx_runtime->openGraphics( 400,300,0,0,gxGraphics::GRAPHICS_WINDOWED );
+	gx_graphics=gx_runtime->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
 	if( gx_graphics ){
 		curr_clsColor=0;
 		curr_color=0xffffffff;

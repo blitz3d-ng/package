@@ -1,6 +1,7 @@
 
 #include "std.h"
 #include "cachedtexture.h"
+#include <bb/graphics/graphics.h>
 
 int active_texs;
 

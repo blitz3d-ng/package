@@ -1966,8 +1966,8 @@ int BBCALL bbActiveTextures(){
 	return active_texs;
 }
 
-void blitz3d_open(){
-	bbScene=b3d_graphics->createScene( 0 );
+void blitz3d_open( BBScene *scene ){
+	bbScene=scene;
 	if( !bbScene ) RTEX( "Unable to create 3D Scene" );
 	world=d_new World();
 	projected=Vector();
@@ -1988,7 +1988,7 @@ void blitz3d_close(){
 	Texture::clearFilters();
 	loader_mat_map.clear();
 	delete world;
-	b3d_graphics->freeScene( bbScene );
+	delete bbScene;
 	bbScene=0;
 }
 

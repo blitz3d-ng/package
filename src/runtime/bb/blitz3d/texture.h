@@ -5,6 +5,7 @@
 #include <string>
 
 #include "cachedtexture.h"
+#include "scene.h"
 
 #include <bb/graphics/canvas.h>
 

@@ -7,7 +7,7 @@
 #include <d3d.h>
 
 #include <bb/blitz3d/graphics.h>
-#include <bb/blitz2d/font.h>
+#include <bb/blitz2d/graphics.h>
 #include <bb/graphics.d3d7/canvas.h>
 #include "gxscene.h"
 #include "gxmesh.h"
@@ -15,7 +15,7 @@
 
 class gxRuntime;
 
-class gxGraphics : public B3DGraphics{
+class gxGraphics : public B3DGraphics, public B2DGraphics{
 public:
 	IDirectDraw7 *dirDraw;
 	IDirectDraw *ds_dirDraw;
