@@ -9,9 +9,7 @@
 
 #include <bb/blitz3d/scene.h>
 #include <bb/blitz3d/mesh.h>
-#include "gxlight.h"
-
-class gxTexture;
+#include "light.h"
 
 class gxScene : public BBScene{
 public:
@@ -62,8 +60,6 @@ public:
 
 	//meshes
 	BBMesh *createMesh( int max_verts,int max_tris,int flags );
-	BBMesh *verifyMesh( BBMesh *mesh );
-	void freeMesh( BBMesh *mesh );
 
 	//info
 	int getTrianglesDrawn()const;

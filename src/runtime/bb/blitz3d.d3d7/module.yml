@@ -1,0 +1,20 @@
+name: Direct3D7 Blitz3D
+description: Provides Direct3D7 Blitz3D.
+
+platforms:
+  - windows
+
+dependencies:
+  - blitz3d
+  - graphics.d3d7
+
+premake5:
+  files:
+    - blitz3d.d3d7.cpp
+    - blitz3d.d3d7.h
+    - scene.cpp
+    - scene.h
+    - mesh.cpp
+    - mesh.h
+    - light.cpp
+    - light.h

@@ -22,15 +22,20 @@ modules:
   - audio
   - audio.fmod
   - blitz3d
+  - blitz3d.d3d7
   - userlibs
 
 premake5:
   - links:
     - gxruntime
     - runtime
-    - frame
-    - blitz2d
+
+    - blitz3d.d3d7
     - blitz3d
+
+    - blitz2d
+
+    - frame
 
     - system
     - system.windows

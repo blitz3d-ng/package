@@ -1,8 +1,7 @@
 
-#include "std.h"
-#include "gxscene.h"
-#include "gxmesh.h"
 #include <bb/system.windows/system.windows.h>
+#include "scene.h"
+#include "mesh.h"
 
 static bool can_wb;
 static int  hw_tex_stages,tex_stages;

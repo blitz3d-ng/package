@@ -3,7 +3,12 @@
 #include "light.h"
 #include "scene.h"
 
-extern BBScene *bbScene;
+BBLightRep::BBLightRep():dirty(true){
+}
+
+void BBLightRep::markDirty(){
+	dirty=true;
+}
 
 Light::Light( int type ):
 type(type),range(1000),color(1.0f,1.0f,1.0f),innerAngle(0.0f),outerAngle(0.0f){

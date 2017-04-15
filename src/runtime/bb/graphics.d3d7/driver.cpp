@@ -27,6 +27,7 @@ timerID(0),clipper(0),primSurf(0),exclusive(false){
 
 D3D7ContextDriver::~D3D7ContextDriver(){
 	freeInvalidationTimer();
+	denumGfx();
 }
 
 ////////////////////

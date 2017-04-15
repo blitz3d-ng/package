@@ -1,12 +1,5 @@
 
-#include "gxlight.h"
-
-BBLightRep::BBLightRep():dirty(true){
-}
-
-void BBLightRep::markDirty(){
-	dirty=true;
-}
+#include "light.h"
 
 gxLight::gxLight( int type ):BBLightRep(){
 
