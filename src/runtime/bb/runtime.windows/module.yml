@@ -1,0 +1,21 @@
+name: Windows Runtime
+description: Provides Windows runtime.
+
+platforms:
+  - win32
+  - mingw32
+
+dependencies:
+  - blitz3d.d3d7
+  - frame
+
+premake5:
+  files:
+    - gxgraphics.cpp
+    - gxgraphics.h
+    - gxmovie.cpp
+    - gxmovie.h
+    - gxruntime.cpp
+    - gxruntime.h
+    - module.cpp
+    - std.h

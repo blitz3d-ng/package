@@ -1,6 +1,9 @@
 name: Graphics
 description: Provides graphics.
 
+dependencies:
+  - blitz
+
 premake5:
   files:
     - graphics.h

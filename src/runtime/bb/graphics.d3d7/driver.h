@@ -2,7 +2,7 @@
 #define BB_GRAPHICS_D3D7_DRIVER_H
 
 #include <bb/graphics/graphics.h>
-#include "../../gxruntime/gxgraphics.h"
+#include <bb/runtime.windows/gxgraphics.h>
 #include <ddraw.h>
 #include <vector>
 

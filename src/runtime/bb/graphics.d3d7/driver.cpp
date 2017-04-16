@@ -1,6 +1,6 @@
 
 #include "../../stdutil/stdutil.h"
-#include "../../gxruntime/gxgraphics.h"
+#include <bb/runtime.windows/gxgraphics.h>
 #include "graphics.d3d7.h"
 #include <windows.h>
 #include <d3d.h>

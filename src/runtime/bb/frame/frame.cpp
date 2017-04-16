@@ -68,3 +68,11 @@ void Frame::fullscreen(){
   SetWindowLong( hwnd,GWL_STYLE,WS_VISIBLE|WS_POPUP );
   SetWindowPos( hwnd,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED );
 }
+
+BBMODULE_CREATE( frame ){
+	return true;
+}
+
+BBMODULE_DESTROY( frame ){
+	return true;
+}

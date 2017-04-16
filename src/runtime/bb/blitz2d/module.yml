@@ -1,8 +1,12 @@
 name: Blitz2D
 description: Provides drawing functions.
 
+dependencies:
+  - graphics
+
 premake5:
   files:
+  - module.cpp
   - font.h
   - font.cpp
   - graphics.h

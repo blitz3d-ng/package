@@ -11,4 +11,6 @@ public:
   virtual void freeScene( BBScene *scene )=0;
 };
 
+extern B3DGraphics *bbSceneDriver;
+
 #endif

@@ -10,6 +10,10 @@ public:
   virtual void asyncRun()=0;
   virtual void asyncEnd()=0;
 
+  virtual bool idle()=0;
+
+  virtual void *window()=0;
+
   virtual void moveMouse( int x,int y )=0;
   virtual void setPointerVisible( bool vis )=0;
 };

@@ -15,5 +15,4 @@ premake5:
     - driver.cpp
     - driver.h
 
-premake5:
   includedirs: common/include

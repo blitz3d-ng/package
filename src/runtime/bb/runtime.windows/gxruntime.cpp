@@ -17,15 +17,6 @@ static gxRuntime *runtime;
 static bool busy,suspended;
 static volatile bool run_flag;
 
-// TODO: Move these to the proper place...
-void *bbRuntimeWindow(){
-	return runtime->Frame::hwnd;
-}
-
-bool bbRuntimeIdle(){
-	return runtime->idle();
-}
-
 static LRESULT CALLBACK windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam );
 
 static bool gfx_lost;
@@ -353,9 +344,10 @@ void gxRuntime::asyncEnd(){
 	PostMessage( Frame::hwnd,WM_END,0,0 );
 }
 
-//////////
-// IDLE //
-//////////
+void *gxRuntime::window(){
+	return Frame::hwnd;
+}
+
 bool gxRuntime::idle(){
 	for(;;){
 		MSG msg;

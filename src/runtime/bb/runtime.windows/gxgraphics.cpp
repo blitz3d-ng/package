@@ -12,6 +12,8 @@ gxGraphics::gxGraphics( IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurf
 dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
 	dirDraw->QueryInterface( IID_IDirectDraw,(void**)&ds_dirDraw );
 
+	bbSceneDriver=this;
+
 	front_canvas=d_new gxCanvas( dirDraw,fs,def_font,0 );
 	back_canvas=d_new gxCanvas( dirDraw,bs,def_font,0 );
 
@@ -564,7 +566,6 @@ BBScene *gxGraphics::createScene( int flags ){
 							scene_set.insert( scene );
 
 							dummy_mesh=(gxMesh*)scene->createMesh( 8,12,0 );
-
 							return scene;
 						}
 						dir3dDev->Release();

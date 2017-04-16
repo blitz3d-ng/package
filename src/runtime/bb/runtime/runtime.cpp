@@ -7,6 +7,14 @@ BBRuntime *bbRuntime;
 BBHook *bbRuntimeOnSuspend;
 BBHook *bbRuntimeOnResume;
 
+void *bbRuntimeWindow(){
+	return bbRuntime->window();
+}
+
+bool bbRuntimeIdle(){
+	return bbRuntime->idle();
+}
+
 void BBCALL bbMoveMouse( int x,int y ){
   bbRuntime->moveMouse( x,y );
 }

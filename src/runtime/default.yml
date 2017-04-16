@@ -9,63 +9,22 @@ modules:
   - string
   - stream
   - sockets
-  - system
   - system.windows
-  - filesystem
+  - system.macos
   - filesystem.windows
-  - timer
   - timer.windows
   - bank
-  - graphics
   - graphics.d3d7
-  - input
   - input.directinput8
-  - audio
   - audio.fmod
-  - blitz3d
   - blitz3d.d3d7
   - userlibs
+  - runtime.windows
 
 premake5:
   - links:
-    - gxruntime
-    - runtime
-
-    - blitz3d.d3d7
-    - blitz3d
-
-    - blitz2d
-
-    - frame
-
-    - system
-    - system.windows
-
-    - timer.windows
-    - timer
-
-    - audio.fmod
-    - audio
-
-    - graphics.d3d7
-    - graphics
-
-    - filesystem.windows
-    - filesystem
-
-    - input
-    - input.directinput8
     - dinput8
 
-    - string
-    - userlibs
-    - sockets
-    - bank
-    - stream
-    - math
-    - event
-    - blitz
-    - hook
     - stdutil
 
     - freeimage

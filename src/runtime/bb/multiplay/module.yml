@@ -4,6 +4,9 @@ description: Provides multiplayer commands.
 platforms:
   - windows
 
+dependencies:
+  - runtime
+
 premake5:
   files:
   - multiplay.cpp

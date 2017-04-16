@@ -1,0 +1,13 @@
+name: macOS System
+description: Provides access to various macOS operating system functions.
+
+platforms:
+  - macos
+
+dependencies:
+  - system
+
+premake5:
+  files:
+    - system.macos.cpp
+    - system.macos.h

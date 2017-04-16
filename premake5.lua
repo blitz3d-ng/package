@@ -133,23 +133,6 @@ project "stub"
   filter "platforms:linux"
     files "src/runtime/bb/stub/stub.linux.cpp"
 
-project "gxruntime"
-  kind "StaticLib"
-  language "C++"
-
-  removeplatforms { "win64", "macos", "linux" }
-
-  files { "gxruntime/gxgraphics.cpp", "gxruntime/gxmovie.cpp", "gxruntime/gxruntime.cpp", "gxruntime/gxgraphics.h", "gxruntime/gxmovie.h", "gxruntime/gxruntime.h", "gxruntime/std.h" }
-
-project "runtime"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/runtime/runtime.h",
-    "src/runtime/bb/runtime/runtime.cpp"
-  }
-
 project "stdutil"
   kind "StaticLib"
   language "C++"

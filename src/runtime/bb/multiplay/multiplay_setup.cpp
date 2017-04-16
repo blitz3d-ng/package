@@ -7,9 +7,6 @@
 #include <vector>
 using namespace std;
 
-#include "../../gxruntime/gxruntime.h"
-extern gxRuntime *gx_runtime;
-
 IDirectPlay4 *dirPlay;
 
 struct Connection{
@@ -307,7 +304,7 @@ int multiplay_setup_open(){
 	clearConnections();
 
 	//NAUGHTY!
-	gx_runtime->asyncRun();
+	bbRuntime->asyncRun();
 	bbRuntimeIdle();
 	return n;
 }

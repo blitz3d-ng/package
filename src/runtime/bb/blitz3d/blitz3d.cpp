@@ -27,6 +27,7 @@
 #include <bb/blitz3d/std.h>
 #include "graphics.h"
 
+B3DGraphics *bbSceneDriver;
 BBScene *bbScene;
 
 static int tri_count;
@@ -1967,8 +1968,8 @@ int BBCALL bbActiveTextures(){
 	return active_texs;
 }
 
-void blitz3d_open( BBGraphics *graphics ){
-	bbScene=((B3DGraphics*)gx_graphics)->createScene( 0 );
+void blitz3d_open( ){
+	bbScene=bbSceneDriver->createScene( 0 );
 	if( !bbScene ) RTEX( "Unable to create 3D Scene" );
 	world=d_new World();
 	projected=Vector();
@@ -1981,6 +1982,7 @@ void blitz3d_open( BBGraphics *graphics ){
 	loader_mat_map["3ds"]=Transform(Matrix(Vector(1,0,0),Vector(0,0,1),Vector(0,1,0)));
 	listener=0;
 	stats_mode=false;
+	printf("....\n");
 }
 
 void blitz3d_close(){

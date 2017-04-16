@@ -9,7 +9,7 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) );
 bool bbruntime_destroy();
 
 #ifdef WIN32
-#include "../../gxruntime/gxruntime.h"
+#include <bb/runtime.windows/gxruntime.h>
 const char *bbruntime_run( gxRuntime *runtime,void (*pc)(),bool debug );
 void bbruntime_panic( const char *err );
 #endif

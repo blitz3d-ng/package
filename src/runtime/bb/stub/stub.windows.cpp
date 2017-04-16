@@ -2,7 +2,7 @@
 #include <bb/stub/stub.h>
 #include <bb/runtime/runtime.h>
 
-#include "../../gxruntime/gxruntime.h"
+#include <bb/runtime.windows/gxruntime.h>
 extern gxRuntime *gx_runtime;
 
 //start up error

@@ -46,6 +46,8 @@ public:
 
 	/***** GX INTERFACE *****/
 public:
+	void *window();
+
 	//return true if program should continue, or false for quit.
 	bool idle();
 
