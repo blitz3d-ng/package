@@ -232,10 +232,6 @@ BBMODULE_CREATE( system_windows ){
 	return true;
 }
 
-BBMODULE_LINK( system_windows ){
-	rtSym( "%CallDLL$dll_name$func_name%in_bank=0%out_bank=0",bbCallDLL );
-}
-
 BBMODULE_DESTROY( system_windows ){
 	return true;
 }

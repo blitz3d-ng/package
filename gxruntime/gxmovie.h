@@ -7,10 +7,11 @@
 #include <ddstream.h>    // DirectDraw multimedia stream interfaces
 
 #include <bb/graphics.d3d7/canvas.h>
+#include <bb/blitz2d/movie.h>
 
 class gxGraphics;
 
-class gxMovie{
+class gxMovie : public BBMovie{
 
 public:
 	gxMovie( gxGraphics *gfx,IMultiMediaStream *mm_stream );

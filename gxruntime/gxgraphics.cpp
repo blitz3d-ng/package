@@ -164,7 +164,7 @@ int gxGraphics::getAvailVidmem()const{
 	return caps.dwVidMemFree;
 }
 
-gxMovie *gxGraphics::openMovie( const string &file,int flags ){
+BBMovie *gxGraphics::openMovie( const string &file,int flags ){
 
 	IAMMultiMediaStream *iam_stream;
 
@@ -195,12 +195,12 @@ gxMovie *gxGraphics::openMovie( const string &file,int flags ){
 	return 0;
 }
 
-gxMovie *gxGraphics::verifyMovie( gxMovie *m ){
-	return movie_set.count( m ) ? m : 0;
+BBMovie *gxGraphics::verifyMovie( BBMovie *m ){
+	return movie_set.count( (gxMovie*)m ) ? m : 0;
 }
 
-void gxGraphics::closeMovie( gxMovie *m ){
-	if( movie_set.erase( m ) ) delete m;
+void gxGraphics::closeMovie( BBMovie *m ){
+	if( movie_set.erase( (gxMovie*)m ) ) delete m;
 }
 
 BBCanvas *gxGraphics::createCanvas( int w,int h,int flags ){

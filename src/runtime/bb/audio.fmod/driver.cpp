@@ -312,6 +312,3 @@ BBMODULE_CREATE( audio_fmod ){
 BBMODULE_DESTROY( audio_fmod ){
 	return true;
 }
-
-BBMODULE_LINK( audio_fmod ){
-}

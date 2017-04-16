@@ -1,0 +1,13 @@
+name: DirectPlay
+description: Provides multiplayer commands.
+
+platforms:
+  - windows
+
+premake5:
+  files:
+  - multiplay.cpp
+  - multiplay.h
+  - multiplay_setup.cpp
+  - multiplay_setup.h
+  - multiplay_setup.rc

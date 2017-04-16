@@ -1,0 +1,9 @@
+name: Graphics
+description: Provides graphics.
+
+premake5:
+  files:
+    - graphics.h
+    - graphics.cpp
+    - canvas.h
+    - canvas.cpp

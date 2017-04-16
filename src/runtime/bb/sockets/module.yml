@@ -1,0 +1,37 @@
+name: Sockets
+description: Provides low-level access to networking sockets.
+
+platforms:
+  - windows
+
+dependencies:
+  - stream
+
+commands:
+  - DottedIP$( IP% ):"bbDottedIP"
+  - CountHostIPs%( host_name$ ):"bbCountHostIPs"
+  - HostIP%( host_index% ):"bbHostIP"
+
+  - CreateUDPStream%( port%=0 ):"bbCreateUDPStream"
+  - CloseUDPStream( udp_stream% ):"bbCloseUDPStream"
+  - SendUDPMsg( udp_stream%,dest_ip%,dest_port%=0 ):"bbSendUDPMsg"
+  - RecvUDPMsg%( udp_stream% ):"bbRecvUDPMsg"
+  - UDPStreamIP%( udp_stream% ):"bbUDPStreamIP"
+  - UDPStreamPort%( udp_stream% ):"bbUDPStreamPort"
+  - UDPMsgIP%( udp_stream% ):"bbUDPMsgIP"
+  - UDPMsgPort%( udp_stream% ):"bbUDPMsgPort"
+  - UDPTimeouts( recv_timeout% ):"bbUDPTimeouts"
+
+  - OpenTCPStream%( server$,server_port%,local_port%=0 ):"bbOpenTCPStream"
+  - CloseTCPStream( tcp_stream% ):"bbCloseTCPStream"
+  - CreateTCPServer%( port% ):"bbCreateTCPServer"
+  - CloseTCPServer( tcp_server% ):"bbCloseTCPServer"
+  - AcceptTCPStream%( tcp_server% ):"bbAcceptTCPStream"
+  - TCPStreamIP%( tcp_stream% ):"bbTCPStreamIP"
+  - TCPStreamPort%( tcp_stream% ):"bbTCPStreamPort"
+  - TCPTimeouts( read_millis%,accept_millis% ):"bbTCPTimeouts"
+
+premake5:
+  files:
+    - sockets.cpp
+    - sockets.h

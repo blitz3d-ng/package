@@ -57,16 +57,25 @@ module Blitz3D
 
           f.write "  files 'stubs/#{mod.id}.cpp'\n\n"
 
-          mod.premake5.each_pair do |key, value|
-            case key
-            when 'files'
-              files = value.map { |path| File.join('..', '..', '..', mod.path, path) }
+          options = [mod.premake5].flatten
+          options.each do |option|
+            option.each_pair do |key, value|
+              case key
+              when 'files'
+                files = value.map { |path| File.join('..', '..', '..', mod.path, path) }
 
-              f.write "  files { "
-              f.write files.map { |f| "'#{f}'" }.join(', ')
-              f.write " }\n"
-            else
-              throw "unhandled key: '#{key}' in #{mod.name.bold}"
+                f.write "  files { "
+                f.write files.map { |f| "'#{f}'" }.join(', ')
+                f.write " }\n"
+              when 'filter'
+                filters = [value].flatten.map(&:inspect)
+                f.write "  filter { #{filters.join(', ')} }\n"
+              when 'includedirs'
+                dirs = [value].flatten.map { |path| File.join('..', '..', '..', mod.path, path) }.map(&:inspect)
+                f.write "  includedirs { #{dirs.join(', ')} }\n"
+              else
+                throw "unhandled key: '#{key}' in #{mod.name.bold}"
+              end
             end
           end
         end

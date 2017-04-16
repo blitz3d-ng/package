@@ -7,6 +7,10 @@
 #include <cstdlib>
 #include <cstring>
 
+#ifndef WIN32
+#include <libgen.h>
+#endif
+
 using namespace std;
 
 #ifdef MEMDEBUG
@@ -314,12 +318,26 @@ string filenamepath( const string &t ){
 	if( !p ) return "";
 	*p=0;return string(buff);
 }
+#else
+string filenamepath( const string &t ){
+	char buff[PATH_MAX+1];
+	strcpy( buff,t.c_str() );
+	return string( dirname( buff ) );
+}
+#endif
 
+#ifdef WIN32
 string filenamefile( const string &t ){
 	char buff[MAX_PATH+1],*p;
 	GetFullPathName( t.c_str(),MAX_PATH,buff,&p );
 	if( !p ) return "";
 	return string( p );
+}
+#else
+string filenamefile( const string &t ){
+	char buff[PATH_MAX+1];
+	strcpy( buff,t.c_str() );
+	return string( basename( buff ) );
 }
 #endif
 

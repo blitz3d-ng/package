@@ -66,6 +66,10 @@ public:
   virtual void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c )=0;
   virtual void windowedModeInfo( int *c )=0;
 
+  virtual BBGraphics *openGraphics( int w,int h,int d,int driver,int flags )=0;
+  virtual void closeGraphics( BBGraphics *graphics )=0;
+  virtual bool graphicsLost()=0;
+
   virtual void flip( bool vwait )=0;
 };
 

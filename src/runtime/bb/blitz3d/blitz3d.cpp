@@ -25,6 +25,7 @@
 #include <bb/blitz3d/listener.h>
 #include <bb/blitz3d/cachedtexture.h>
 #include <bb/blitz3d/std.h>
+#include "graphics.h"
 
 BBScene *bbScene;
 
@@ -1966,8 +1967,8 @@ int BBCALL bbActiveTextures(){
 	return active_texs;
 }
 
-void blitz3d_open( BBScene *scene ){
-	bbScene=scene;
+void blitz3d_open( BBGraphics *graphics ){
+	bbScene=((B3DGraphics*)gx_graphics)->createScene( 0 );
 	if( !bbScene ) RTEX( "Unable to create 3D Scene" );
 	world=d_new World();
 	projected=Vector();

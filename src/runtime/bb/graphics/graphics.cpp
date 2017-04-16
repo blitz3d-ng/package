@@ -1,14 +1,18 @@
 
+#include "../../stdutil/stdutil.h"
 #include "graphics.h"
 #include <bb/input/input.h>
 #include <bb/system/system.h>
 #include <bb/runtime/runtime.h>
 #include <bb/graphics/graphics.h>
+#include <bb/blitz2d/blitz2d.h>
 
 #include <fstream>
+#include <vector>
+#include <set>
+using namespace std;
 
-#include "../../gxruntime/gxruntime.h"
-#define gx_runtime ((gxRuntime*)bbRuntime)
+#include <math.h>
 
 BBContextDriver *bbContextDriver;
 BBGraphics *gx_graphics;
@@ -191,7 +195,9 @@ static BBCanvas *tformCanvas( BBCanvas *c,float m[2][2],int x_handle,int y_handl
 }
 
 static bool saveCanvas( BBCanvas *c,const string &f ){
-
+#ifndef WIN32 // FIXME: port to posix
+	return false;
+#else
 	ofstream out( f.c_str(),ios::binary );
 	if( !out.good() ) return false;
 
@@ -230,6 +236,7 @@ static bool saveCanvas( BBCanvas *c,const string &f ){
 	delete [] temp;
 
 	return out.good();
+#endif
 }
 
 BBContextDriver::BBContextDriver():graphics(0){
@@ -386,8 +393,8 @@ void BBCALL bbBufferDirty( BBCanvas *c ){
 
 static void graphics( int w,int h,int d,int flags ){
 	freeGraphics();
-	gx_runtime->closeGraphics( gx_graphics );
-	gx_graphics=gx_runtime->openGraphics( w,h,d,gx_driver,flags );
+	bbContextDriver->closeGraphics( gx_graphics );
+	gx_graphics=bbContextDriver->openGraphics( w,h,d,gx_driver,flags );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( !gx_graphics ){
 		RTEX( "Unable to set graphics mode" );
@@ -428,15 +435,15 @@ void BBCALL bbGraphics3D( int w,int h,int d,int mode ){
 	default:RTEX( "Illegal Graphics3D mode" );
 	}
 	graphics( w,h,d,flags );
-	extern void blitz3d_open( BBScene *scene );
-	blitz3d_open( ((B3DGraphics*)((gxGraphics*)gx_graphics))->createScene( 0 ) );
+	extern void blitz3d_open( BBGraphics *graphics );
+	blitz3d_open( gx_graphics );
 }
 #endif
 
 void BBCALL bbEndGraphics(){
 	freeGraphics();
-	gx_runtime->closeGraphics( gx_graphics );
-	gx_graphics=gx_runtime->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
+	bbContextDriver->closeGraphics( gx_graphics );
+	gx_graphics=bbContextDriver->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( gx_graphics ){
 		curr_clsColor=0;
@@ -449,7 +456,7 @@ void BBCALL bbEndGraphics(){
 }
 
 int BBCALL bbGraphicsLost(){
-	return gx_runtime->graphicsLost();
+	return bbContextDriver->graphicsLost();
 }
 
 int BBCALL bbGraphicsOpen(){
@@ -664,12 +671,12 @@ int BBCALL bbStringHeight( BBStr *str ){
 	return curr_font->getHeight();
 }
 
-gxMovie * BBCALL bbOpenMovie( BBStr *s ){
-	gxMovie *movie=b2d_graphics->openMovie( *s,0 );delete s;
+BBMovie * BBCALL bbOpenMovie( BBStr *s ){
+	BBMovie *movie=b2d_graphics->openMovie( *s,0 );delete s;
 	return movie;
 }
 
-int BBCALL bbDrawMovie( gxMovie *movie,int x,int y,int w,int h ){
+int BBCALL bbDrawMovie( BBMovie *movie,int x,int y,int w,int h ){
 	if( w<0 ) w=movie->getWidth();
 	if( h<0 ) h=movie->getHeight();
 	int playing=movie->draw( gx_canvas,x,y,w,h );
@@ -677,19 +684,19 @@ int BBCALL bbDrawMovie( gxMovie *movie,int x,int y,int w,int h ){
 	return playing;
 }
 
-int BBCALL bbMovieWidth( gxMovie *movie ){
+int BBCALL bbMovieWidth( BBMovie *movie ){
 	return movie->getWidth();
 }
 
-int BBCALL bbMovieHeight( gxMovie *movie ){
+int BBCALL bbMovieHeight( BBMovie *movie ){
 	return movie->getHeight();
 }
 
-int BBCALL bbMoviePlaying( gxMovie *movie ){
+int BBCALL bbMoviePlaying( BBMovie *movie ){
 	return movie->isPlaying();
 }
 
-void BBCALL bbCloseMovie( gxMovie *movie ){
+void BBCALL bbCloseMovie( BBMovie *movie ){
 	b2d_graphics->closeMovie( movie );
 }
 
@@ -1199,7 +1206,7 @@ BBMODULE_CREATE( graphics ){
 	freeGraphics();
 	auto_dirty=true;
 	auto_midhandle=false;
-	gx_graphics=gx_runtime->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
+	gx_graphics=bbContextDriver->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
 	if( gx_graphics ){
 		curr_clsColor=0;
 		curr_color=0xffffffff;
@@ -1214,7 +1221,7 @@ BBMODULE_DESTROY( graphics ){
 	freeGraphics();
 	gfx_modes.clear();
 	if( gx_graphics ){
-		gx_runtime->closeGraphics( gx_graphics );
+		bbContextDriver->closeGraphics( gx_graphics );
 		gx_graphics=0;
 	}
 	return true;

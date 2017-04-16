@@ -11,7 +11,7 @@ module Blitz3D
 
       def initialize(code)
         _, @identifier, @type, @default = code.match(REGEX).to_a
-        throw 'invalid param' unless @identifier.present? && @type.present?
+        throw "invalid param for #{code.red}" unless @identifier.present? && @type.present?
       end
 
       def to_s

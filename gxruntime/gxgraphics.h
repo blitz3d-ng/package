@@ -84,9 +84,9 @@ public:
 	BBCanvas *verifyCanvas( BBCanvas *canvas );
 	void freeCanvas( BBCanvas *canvas );
 
-	gxMovie *openMovie( const std::string &file,int flags );
-	gxMovie *verifyMovie( gxMovie *movie );
-	void closeMovie( gxMovie *movie );
+	BBMovie *openMovie( const std::string &file,int flags );
+	BBMovie *verifyMovie( BBMovie *movie );
+	void closeMovie( BBMovie *movie );
 
 	BBFont *loadFont( const std::string &font,int height,int flags );
 	BBFont *verifyFont( BBFont *font );
