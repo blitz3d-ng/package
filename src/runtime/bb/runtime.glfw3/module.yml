@@ -1,0 +1,17 @@
+name: GLFW3 Runtime
+description: Provides runtime via GLFW3.
+
+platforms:
+  - macos
+  - linux
+
+dependencies:
+  - runtime
+  - graphics
+  - blitz2d
+  - blitz3d.gl
+
+premake5:
+  files:
+    - runtime.glfw3.cpp
+    - runtime.glfw3.h

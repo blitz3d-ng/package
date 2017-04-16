@@ -6,25 +6,11 @@
 #include "blitz3d.h"
 #include <bb/system/system.h>
 #include <bb/graphics/graphics.h>
-#include <bb/blitz3d/blitz3d.h>
-#include <bb/blitz3d/world.h>
-#include <bb/blitz3d/texture.h>
-#include <bb/blitz3d/brush.h>
-#include <bb/blitz3d/camera.h>
-#include <bb/blitz3d/sprite.h>
-#include <bb/blitz3d/meshmodel.h>
-#include <bb/blitz3d/loader_x.h>
-#include <bb/blitz3d/loader_3ds.h>
-#include <bb/blitz3d/loader_b3d.h>
-#include <bb/blitz3d/md2model.h>
-#include <bb/blitz3d/q3bspmodel.h>
-#include <bb/blitz3d/meshutil.h>
-#include <bb/blitz3d/pivot.h>
-#include <bb/blitz3d/planemodel.h>
-#include <bb/blitz3d/terrain.h>
-#include <bb/blitz3d/listener.h>
-#include <bb/blitz3d/cachedtexture.h>
-#include <bb/blitz3d/std.h>
+#include "blitz3d.h"
+#include "loader_x.h"
+#include "loader_3ds.h"
+#include "loader_b3d.h"
+#include "std.h"
 #include "graphics.h"
 
 B3DGraphics *bbSceneDriver;
@@ -54,7 +40,9 @@ static ObjCollision picked;
 
 extern float stats3d[10];
 
+#ifdef WIN32
 static Loader_X loader_x;
+#endif
 static Loader_3DS loader_3ds;
 static Loader_B3D loader_b3d;
 
@@ -155,9 +143,11 @@ static Entity *loadEntity( string t,int hint ){
 	string ext=t.substr( n+1 );
 	MeshLoader *l;
 
-	if( ext=="x" ) l=&loader_x;
-	else if( ext=="3ds" ) l=&loader_3ds;
+	if( ext=="3ds" ) l=&loader_3ds;
 	else if( ext=="b3d" ) l=&loader_b3d;
+#ifdef WIN32
+	else if( ext=="x" ) l=&loader_x;
+#endif
 	else return 0;
 
 	const Transform &conv=loader_mat_map[ext];
@@ -1982,7 +1972,6 @@ void blitz3d_open( ){
 	loader_mat_map["3ds"]=Transform(Matrix(Vector(1,0,0),Vector(0,0,1),Vector(0,1,0)));
 	listener=0;
 	stats_mode=false;
-	printf("....\n");
 }
 
 void blitz3d_close(){

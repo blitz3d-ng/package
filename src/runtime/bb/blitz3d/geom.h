@@ -27,6 +27,9 @@ public:
 	}
 	Vector( float x,float y,float z ):x(x),y(y),z(z){
 	}
+	Vector( const float *xyz ){
+		x=xyz[0];y=xyz[1];z=xyz[2];
+	}
 	operator float*(){
 		return &x;
 	}

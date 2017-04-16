@@ -20,6 +20,7 @@ modules:
   - blitz3d.d3d7
   - userlibs
   - runtime.windows
+  - runtime.glfw3
 
 premake5:
   - links:

@@ -3,10 +3,18 @@
 
 #include <bb/blitz/blitz.h>
 #include "canvas.h"
+#include <set>
 
 class BBGraphics{
+protected:
+  std::set<BBCanvas*> canvas_set;
+
+  BBCanvas *front_canvas,*back_canvas;
+
   /***** GX INTERFACE *****/
 public:
+  BBGraphics();
+
   enum{
     GRAPHICS_WINDOWED=1,	//windowed mode
     GRAPHICS_SCALED=2,		//scaled window
@@ -36,15 +44,16 @@ public:
   virtual int getAvailVidmem()const=0;
   virtual int getTotalVidmem()const=0;
 
-  virtual BBCanvas *getFrontCanvas()const=0;
-  virtual BBCanvas *getBackCanvas()const=0;
+  BBCanvas *getFrontCanvas()const;
+  BBCanvas *getBackCanvas()const;
+
   virtual BBFont *getDefaultFont()const=0;
 
   //OBJECTS
   virtual BBCanvas *createCanvas( int width,int height,int flags )=0;
   virtual BBCanvas *loadCanvas( const std::string &file,int flags )=0;
-  virtual BBCanvas *verifyCanvas( BBCanvas *canvas )=0;
-  virtual void freeCanvas( BBCanvas *canvas )=0;
+  BBCanvas *verifyCanvas( BBCanvas *canvas );
+  void freeCanvas( BBCanvas *canvas );
 };
 
 class BBContextDriver{
@@ -93,6 +102,7 @@ int		 BBCALL bbTotalVidMem();
 
 //mode functions
 void	 BBCALL bbGraphics( int w,int h,int d,int mode );
+void	 BBCALL bbGraphics3D( int w,int h,int d,int mode );
 BBCanvas * BBCALL bbFrontBuffer();
 BBCanvas * BBCALL bbBackBuffer();
 void	 BBCALL bbEndGraphics();

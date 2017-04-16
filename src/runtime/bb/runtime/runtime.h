@@ -28,4 +28,6 @@ extern BBRuntime *bbRuntime;
 extern BBHook *bbRuntimeOnSuspend;
 extern BBHook *bbRuntimeOnResume;
 
+BBRuntime *bbCreateRuntime();
+
 #endif

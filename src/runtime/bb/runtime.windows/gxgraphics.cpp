@@ -8,6 +8,8 @@
 #define DDSGR_CALIBRATE 0x00000001L
 #endif
 
+#define D3D7CANVAS(c) ((D3D7Canvas*)c)
+
 gxGraphics::gxGraphics( IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurface7 *bs,bool d3d ):
 dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
 	dirDraw->QueryInterface( IID_IDirectDraw,(void**)&ds_dirDraw );
@@ -104,14 +106,14 @@ bool gxGraphics::restore(){
 		Sleep( 100 );
 	}
 
-	if( back_canvas->getSurface()->IsLost()==DD_OK ) return true;
+	if( D3D7CANVAS(back_canvas)->getSurface()->IsLost()==DD_OK ) return true;
 
 	dirDraw->RestoreAllSurfaces();
 
 	//restore all canvases
-	set<gxCanvas*>::iterator it;
+	set<BBCanvas*>::iterator it;
 	for( it=canvas_set.begin();it!=canvas_set.end();++it ){
-		(*it)->restore();
+		D3D7CANVAS(*it)->restore();
 	}
 
 #ifdef PRO
@@ -123,14 +125,6 @@ bool gxGraphics::restore(){
 #endif
 
 	return true;
-}
-
-BBCanvas *gxGraphics::getFrontCanvas()const{
-	return front_canvas;
-}
-
-BBCanvas *gxGraphics::getBackCanvas()const{
-	return back_canvas;
 }
 
 BBFont *gxGraphics::getDefaultFont()const{
@@ -220,16 +214,6 @@ BBCanvas *gxGraphics::loadCanvas( const string &f,int flags ){
 	gxCanvas *c=d_new gxCanvas( dirDraw,s,def_font,flags );
 	canvas_set.insert( c );
 	return c;
-}
-
-BBCanvas *gxGraphics::verifyCanvas( BBCanvas *_c ){
-	gxCanvas *c=(gxCanvas*)_c;
-	return canvas_set.count( c ) || c==front_canvas || c==back_canvas ? c : 0;
-}
-
-void gxGraphics::freeCanvas( BBCanvas *_c ){
-	gxCanvas *c=(gxCanvas*)_c;
-	if( canvas_set.erase( c ) ) delete c;
 }
 
 int gxGraphics::getWidth()const{
@@ -539,9 +523,9 @@ BBScene *gxGraphics::createScene( int flags ){
 			zbuffFmt.dwZBufferBitDepth=0;
 			if( dir3d->EnumZBufferFormats( dir3dDevDesc.deviceGUID,enumZbuffFormat,this )>=0 ){
 				//create zbuff for back buffer
-				if( back_canvas->attachZBuffer( zbuffFmt ) ){
+				if( D3D7CANVAS(back_canvas)->attachZBuffer( zbuffFmt ) ){
 					//create 3d device
-					if( dir3d->CreateDevice( dir3dDevDesc.deviceGUID,back_canvas->getSurface(),&dir3dDev )>=0 ){
+					if( dir3d->CreateDevice( dir3dDevDesc.deviceGUID,D3D7CANVAS(back_canvas)->getSurface(),&dir3dDev )>=0 ){
 						//enum texture formats
 						tex_fmts.clear();
 						if( dir3dDev->EnumTextureFormats( enumTextureFormat,this )>=0 ){
@@ -562,7 +546,7 @@ BBScene *gxGraphics::createScene( int flags ){
 							string ts="ZBuffer Bit Depth:"+itoa( zbuffFmt.dwZBufferBitDepth );
 							_bbDebugLog( ts.c_str() );
 #endif
-							gxScene *scene=d_new gxScene( dir3d,dir3dDev,back_canvas );
+							gxScene *scene=d_new gxScene( dir3d,dir3dDev,(gxCanvas*)back_canvas );
 							scene_set.insert( scene );
 
 							dummy_mesh=(gxMesh*)scene->createMesh( 8,12,0 );
@@ -571,7 +555,7 @@ BBScene *gxGraphics::createScene( int flags ){
 						dir3dDev->Release();
 						dir3dDev=0;
 					}
-					back_canvas->releaseZBuffer();
+					D3D7CANVAS(back_canvas)->releaseZBuffer();
 				}
 			}
 		}
@@ -589,7 +573,7 @@ void gxGraphics::freeScene( BBScene *scene ){
 	if( !scene_set.erase( (gxScene*)scene ) ) return;
 	dummy_mesh=0;
 	delete scene;
-	back_canvas->releaseZBuffer();
+	D3D7CANVAS(back_canvas)->releaseZBuffer();
 	if( dir3dDev ){ dir3dDev->Release();dir3dDev=0; }
 	if( dir3d ){ dir3d->Release();dir3d=0; }
 }

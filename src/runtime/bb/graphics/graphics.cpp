@@ -62,6 +62,25 @@ static unsigned curr_clsColor;
 
 static vector<GfxMode> gfx_modes;
 
+BBGraphics::BBGraphics():front_canvas(0),back_canvas(0){
+}
+
+BBCanvas *BBGraphics::getFrontCanvas()const{
+	return front_canvas;
+}
+
+BBCanvas *BBGraphics::getBackCanvas()const{
+	return back_canvas;
+}
+
+BBCanvas *BBGraphics::verifyCanvas( BBCanvas *c ){
+	return canvas_set.count( c ) || c==front_canvas || c==back_canvas ? c : 0;
+}
+
+void BBGraphics::freeCanvas( BBCanvas *c ){
+	if( canvas_set.erase( c ) ) delete c;
+}
+
 static inline void debugImage( bbImage *i,int frame=0 ){
 	if( bb_env.debug ){
 		if( !image_set.count(i) ) RTEX( "Image does not exist" );
@@ -1199,6 +1218,8 @@ void BBCALL bbLocate( int x,int y ){
 }
 
 BBMODULE_CREATE( graphics ){
+	if( !bbContextDriver ) return false;
+
 	// bbContextDriver=0; // FIXME: bbContextDriver is currently being set in gxRuntime.
 	p_canvas=0;
 	filter=true;

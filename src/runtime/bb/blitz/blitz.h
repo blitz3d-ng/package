@@ -6,5 +6,6 @@
 #include "basic.h"
 #include "env.h"
 #include "debug.h"
+#include "app.h"
 
 #endif

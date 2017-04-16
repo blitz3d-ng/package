@@ -35,7 +35,6 @@ public:
 	void setSystemProperties();
 private:
 
-	gxCanvas *front_canvas,*back_canvas;
 	BBFont *def_font;
 	bool gfx_lost;
 	gxMesh *dummy_mesh;
@@ -45,7 +44,6 @@ private:
 	ddSurf *loadSurface( const std::string &f,int flags );
 
 	std::set<BBFont*> font_set;
-	std::set<gxCanvas*> canvas_set;
 	std::set<gxScene*> scene_set;
 	std::set<gxMovie*> movie_set;
 	std::set<std::string> font_res;
@@ -81,8 +79,6 @@ public:
 	//OBJECTS
 	BBCanvas *createCanvas( int width,int height,int flags );
 	BBCanvas *loadCanvas( const std::string &file,int flags );
-	BBCanvas *verifyCanvas( BBCanvas *canvas );
-	void freeCanvas( BBCanvas *canvas );
 
 	BBMovie *openMovie( const std::string &file,int flags );
 	BBMovie *verifyMovie( BBMovie *movie );

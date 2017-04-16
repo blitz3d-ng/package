@@ -537,7 +537,6 @@ void World::capture(){
 }
 
 void World::render( float tween ){
-	cout<<"render"<<endl;
 	//set render tweens, and build ordered and unordered model lists...
 	ord_mods.clear();
 	unord_mods.clear();
