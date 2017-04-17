@@ -41,13 +41,13 @@ static void freeReg( int n ){
 static void pushReg( int n ){
 	frameSize+=4;
 	if( frameSize>maxFrameSize ) maxFrameSize=frameSize;
-	char buff[32];itoa( frameSize,buff,10 );
+	char buff[32];snprintf( buff,sizeof(buff),"%i",frameSize );
 	string s="\tmov\t[ebp-";s+=buff;s+="],";s+=regs[n];s+='\n';
 	codeFrags.push_back( s );
 }
 
 static void popReg( int n ){
-	char buff[32];itoa( frameSize,buff,10 );
+	char buff[32];snprintf( buff,sizeof(buff),"%i",frameSize );
 	string s="\tmov\t";s+=regs[n];s+=",[ebp-";s+=buff;s+="]\n";
 	codeFrags.push_back( s );
 	frameSize-=4;
@@ -252,13 +252,13 @@ void Codegen_x86::label( const string &l ){
 }
 
 void Codegen_x86::align_data( int n ){
-	char buff[32];itoa( n,buff,10 );
+	char buff[32];snprintf( buff,sizeof(buff),"%i",n );
 	dataFrags.push_back( string( "\t.align\t" )+buff+'\n' );
 }
 
 void Codegen_x86::i_data( int i,const string &l ){
 	if( l.size() ) dataFrags.push_back( l );
-	char buff[32];itoa( i,buff,10 );
+	char buff[32];snprintf( buff,sizeof(buff),"%i",i );
 	dataFrags.push_back( string( "\t.dd\t" )+buff+'\n' );
 }
 

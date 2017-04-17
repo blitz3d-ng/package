@@ -26,12 +26,8 @@
 
 using namespace std;
 
-#include "../linker/linker.h"
-#include "../compiler/environ.h"
-#include "../compiler/parser.h"
 #include "../compiler/assem_x86/assem_x86.h"
 #include "../compiler/codegen_x86/codegen_x86.h"
-#include "../bbruntime_dll/bbruntime_dll.h"
 
 #if defined(WIN32) && !defined(__MINGW32__)
 #define DEBUGGER "debugger"
@@ -41,8 +37,7 @@ using namespace std;
 
 static void showInfo(){
 	const int major=(VERSION&0xffff)/100,minor=(VERSION&0xffff)%100;
-	cout<<"BlitzCC V"<<major<<"."<<minor<<endl;
-	cout<<"(C)opyright 2000-2003 Blitz Research Ltd"<<endl;
+	cout<<"Blitz3D-NG V"<<major<<"."<<setfill('0')<<setw(2)<<minor<<endl;
 }
 
 static void showUsage(){
@@ -51,6 +46,7 @@ static void showUsage(){
 
 static void showHelp(){
 	showUsage();
+	cout<<"-a         : dump asm"<<endl;
 	cout<<"-h         : show this help"<<endl;
 	cout<<"-q         : quiet mode"<<endl;
 	cout<<"+q         : very quiet mode"<<endl;
@@ -58,6 +54,7 @@ static void showHelp(){
 	cout<<"-d         : debug compile"<<endl;
 	cout<<"-k         : dump keywords"<<endl;
 	cout<<"+k         : dump keywords and syntax"<<endl;
+	cout<<"-r         : list available runtimes"<<endl;
 	cout<<"-v         : version info"<<endl;
 	cout<<"-o exefile : generate executable"<<endl;
 
@@ -148,7 +145,7 @@ static void demoError(){
 	exit(0);
 }
 
-
+#ifdef WIN32
 static const char *enumRuntimes( vector<string> &rts ){
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
@@ -170,6 +167,7 @@ static const char *enumRuntimes( vector<string> &rts ){
 	if( rts.size() == 0 ) return "No runtimes found";
 	return 0;
 }
+#endif
 
 int main( int argc,char *argv[] ){
 
@@ -224,6 +222,7 @@ int main( int argc,char *argv[] ){
 		}
 	}
 
+#ifdef WIN32
 	if( const char *er=enumRuntimes( rts ) ) err( er );
 
 	if( rtinfo ){
@@ -239,6 +238,7 @@ int main( int argc,char *argv[] ){
 	if( std::find( std::begin(rts),std::end(rts),rt )==std::end(rts) ){
 		err( ("Invalid runtime: "+rt).c_str() );
 	}
+#endif
 
 	if( out_file.size() && !in_file.size() ) usageErr();
 
@@ -277,7 +277,9 @@ int main( int argc,char *argv[] ){
 
 	ProgNode *prog=0;
 	Environ *env=0;
+#ifdef WIN32
 	Module *module=0;
+#endif
 
 	try{
 		//parse
@@ -304,9 +306,11 @@ int main( int argc,char *argv[] ){
 
 		//assemble
 		if( !veryquiet ) cout<<"Assembling..."<<endl;
+#ifdef WIN32
 		module=linkerLib->createModule();
 		Assem_x86 assem( asmcode,module );
 		assem.assemble();
+#endif
 
 	}catch( Ex &x ){
 
@@ -320,10 +324,13 @@ int main( int argc,char *argv[] ){
 
 	if( out_file.size() ){
 		if( !veryquiet ) cout<<"Creating executable \""<<out_file<<"\"..."<<endl;
+#ifdef WIN32
 		if( !module->createExe( out_file.c_str(),(home+"/bin/runtime.dll").c_str() ) ){
 			err( "Error creating executable" );
 		}
+#endif
 	}else if( !compileonly ){
+#ifdef WIN32
 		void *entry=module->link( runtimeModule );
 		if( !entry ) return 0;
 
@@ -345,9 +352,12 @@ int main( int argc,char *argv[] ){
 		runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
 
 		if( dbgHandle ) FreeLibrary( dbgHandle );
+#endif
 	}
 
+#ifdef WIN32
 	delete module;
+#endif
 	delete env;
 
 	closeLibs();

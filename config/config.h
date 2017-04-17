@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-#define BASE_VER	2000
+#define BASE_VER	200
 
 #ifdef	PRO
 #define	PRO_F	0x010000

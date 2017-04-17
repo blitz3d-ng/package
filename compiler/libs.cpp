@@ -1,7 +1,9 @@
 
 #include "libs.h"
 
+#ifdef WIN32
 #include <windows.h>
+#endif
 
 int bcc_ver;
 int lnk_ver;
@@ -9,15 +11,19 @@ int run_ver;
 int dbg_ver;
 
 string home;
+#ifdef WIN32
 Linker *linkerLib;
 Runtime *runtimeLib;
 
 Module *runtimeModule;
+#endif
 Environ *runtimeEnviron;
 vector<string> keyWords;
 vector<UserFunc> userFuncs;
 
+#ifdef WIN32
 static HMODULE linkerHMOD,runtimeHMOD;
+#endif
 
 static Type *_typeof( int c ){
 	switch( c ){
@@ -59,7 +65,7 @@ static int next( istream &in ){
 }
 
 static const char *linkRuntime(){
-
+#ifdef WIN32
 	while( const char *sym=runtimeLib->nextSym() ){
 
 		string s( sym );
@@ -124,6 +130,7 @@ static const char *linkRuntime(){
 		runtimeEnviron->funcDecls->insertDecl( n,f,DECL_FUNC );
 		runtimeModule->addSymbol( ("_f"+n).c_str(),pc );
 	}
+#endif
 	return 0;
 }
 
@@ -223,6 +230,7 @@ static const char *linkUserLibs(){
 
 	_ulibkws.clear();
 
+#ifdef WIN32
 	WIN32_FIND_DATA fd;
 
 	HANDLE h=FindFirstFile( (home+"/userlibs/*.decls").c_str(),&fd );
@@ -241,6 +249,9 @@ static const char *linkUserLibs(){
 	}while( FindNextFile( h,&fd ) );
 
 	FindClose( h );
+#else
+	const char *err=0;
+#endif
 
 	_ulibkws.clear();
 
@@ -251,10 +262,15 @@ const char *openLibs( string rt ){
 
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
+#ifdef WIN32
 	char buff[MAX_PATH];
 	GetFullPathName( p,MAX_PATH,buff,NULL );
 	home=string(buff);
+#else
+	home=string(p);
+#endif
 
+#ifdef WIN32
 	linkerHMOD=LoadLibrary( (home+"/bin/linker.dll").c_str() );
 	if( !linkerHMOD ) return "Unable to open linker.dll";
 
@@ -270,18 +286,25 @@ const char *openLibs( string rt ){
 	GetRuntime gr=(GetRuntime)GetProcAddress( runtimeHMOD,"runtimeGetRuntime" );
 	if( !gr ) return ("Error in runtime."+rt+".dll").c_str();
 	runtimeLib=gr();
+#endif
 
 	bcc_ver=VERSION;
+#ifdef WIN32
 	lnk_ver=linkerLib->version();
 	run_ver=runtimeLib->version();
+#else
+	lnk_ver=run_ver=bcc_ver;
+#endif
 
 	if( (lnk_ver>>16)!=(bcc_ver>>16) ||
 		(run_ver>>16)!=(bcc_ver>>16) ||
 		(lnk_ver>>16)!=(bcc_ver>>16) ) return "Library version error";
 
+#ifdef WIN32
 	runtimeLib->startup( GetModuleHandle(0) );
 
 	runtimeModule=linkerLib->createModule();
+#endif
 	runtimeEnviron=d_new Environ( "",Type::int_type,0,0 );
 
 	keyWords.clear();
@@ -302,14 +325,18 @@ const char *linkLibs(){
 void closeLibs(){
 
 	delete runtimeEnviron;
+#ifdef WIN32
 	if( linkerLib ) linkerLib->deleteModule( runtimeModule );
 	if( runtimeLib ) runtimeLib->shutdown();
 	if( runtimeHMOD ) FreeLibrary( runtimeHMOD );
 	if( linkerHMOD ) FreeLibrary( linkerHMOD );
+#endif
 
 	runtimeEnviron=0;
+#ifdef WIN32
 	linkerLib=0;
 	runtimeLib=0;
 	runtimeHMOD=0;
 	linkerHMOD=0;
+#endif
 }

@@ -2,13 +2,13 @@ project "compiler"
   kind "ConsoleApp"
   language "C++"
 
-  removeplatforms { "win64", "macos", "linux" }
+  removeplatforms { "win64" }
 
   targetdir "../_release/bin"
   targetname "blitzcc"
 
   files {
-    "main.cpp", "libs.cpp",
+    "main.cpp", "libs.cpp", "libs.h",
     "declnode.cpp", "declnode.h", "exprnode.cpp", "exprnode.h", "node.cpp", "node.h", "nodes.h", "prognode.cpp", "prognode.h", "stmtnode.cpp", "stmtnode.h", "varnode.cpp", "varnode.h", "decl.cpp", "decl.h", "environ.cpp", "environ.h", "label.h", "type.cpp", "type.h", "parser.cpp", "parser.h", "toker.cpp", "toker.h",
     "codegen_x86/codegen_x86.cpp", "codegen_x86/codegen_x86.h", "codegen_x86/tile.cpp", "codegen_x86/tile.h",
     "codegen.h",
