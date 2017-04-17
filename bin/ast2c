@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require 'bundler'
+Bundler.require :default
+
+require_relative '../lib/blitz3d/translator/node'
+
+ast = JSON.parse(ARGF.read)
+
+puts JSON.pretty_generate(ast).blue
+
+module Blitz3D
+  module AST
+    class StructDeclNode
+      attr_accessor :ident, :fields
+
+      def initialize(json)
+        @ident  = json["ident"]
+        @fields = json["fields"]
+
+        self
+      end
+    end
+  end
+end
+
+puts Blitz3D::AST::Node.load(ast).to_c
+
+# structs = ast['stmts'].map { |struct| Blitz3D::Struct.new.load(struct) }
+#
+# structs = ast['structs'].map { |struct| Blitz3D::Struct.new.load(struct) }
+#
+# structs.each do |struct|
+#   puts "struct _bb_#{struct.ident}{"
+#   puts "};"
+# end

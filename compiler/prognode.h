@@ -18,22 +18,29 @@ struct ProgNode : public Node{
 	DeclSeqNode *funcs;
 	DeclSeqNode *datas;
 	StmtSeqNode *stmts;
-	
+
 	Environ *sem_env;
 
 	string file_lab;
 
 	ProgNode( DeclSeqNode *c,DeclSeqNode *s,DeclSeqNode *f,DeclSeqNode *d,StmtSeqNode *ss ):consts(c),structs(s),funcs(f),datas(d),stmts(ss){}
-	~ProgNode(){ 
+	~ProgNode(){
 		delete consts;
 		delete structs;
 		delete funcs;
 		delete datas;
-		delete stmts; 
+		delete stmts;
 	}
 
 	Environ *semant( Environ *e );
 	void translate( Codegen *g,const vector<UserFunc> &userfuncs );
+
+	json toJSON(){
+		json tree;tree["kind"]="ProgNode";
+		tree["structs"]=structs->toJSON();
+		tree["stmts"]=stmts->toJSON();
+		return tree;
+	}
 };
 
 #endif

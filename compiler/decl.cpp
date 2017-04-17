@@ -6,6 +6,16 @@
 Decl::~Decl(){
 }
 
+json Decl::toJSON(){
+	json tree;tree["@class"]="Decl";
+	tree["name"]=name;
+	tree["type"]=type->toJSON();
+	tree["kind"]=kind;
+	tree["offset"]=offset;
+	if( defType ) tree["defType"]=defType->toJSON();
+	return tree;
+}
+
 DeclSeq::DeclSeq(){
 }
 
@@ -32,4 +42,3 @@ Decl *DeclSeq::insertDecl( const string &s,Type *t,int kind,ConstType *d ){
 	decls.push_back( d_new Decl( s,t,kind,d ) );
 	return decls.back();
 }
-

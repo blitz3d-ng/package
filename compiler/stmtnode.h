@@ -24,6 +24,16 @@ struct StmtSeqNode : public Node{
 	int  size(){ return stmts.size(); }
 
 	static void reset( const string &file,const string &lab );
+
+	json toJSON(){
+		json tree;tree["kind"]="StmtSeqNode";
+		tree["file"]=file;
+		tree["stmts"]=json::array();
+		for( int k=0;k<stmts.size();++k ){
+			tree["stmts"].push_back( stmts[k]->toJSON() );
+		}
+		return tree;
+	}
 };
 
 #include "exprnode.h"
@@ -37,6 +47,8 @@ struct IncludeNode : public StmtNode{
 
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( IncludeNode );
 };
 
 struct DeclStmtNode : public StmtNode{
@@ -45,6 +57,8 @@ struct DeclStmtNode : public StmtNode{
 	~DeclStmtNode(){ delete decl; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( DeclStmtNode );
 };
 
 struct DimNode : public StmtNode{
@@ -56,6 +70,8 @@ struct DimNode : public StmtNode{
 	~DimNode(){ delete exprs; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( DimNode );
 };
 
 struct AssNode : public StmtNode{
@@ -65,6 +81,13 @@ struct AssNode : public StmtNode{
 	~AssNode(){ delete var;delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="AssNode";
+		tree["var"]=var->toJSON();
+		tree["expr"]=expr->toJSON();
+		return tree;
+	}
 };
 
 struct ExprStmtNode : public StmtNode{
@@ -73,6 +96,12 @@ struct ExprStmtNode : public StmtNode{
 	~ExprStmtNode(){ delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="ExprStmtNode";
+		tree["expr"]=expr->toJSON();
+		return tree;
+	}
 };
 
 struct LabelNode : public StmtNode{
@@ -81,6 +110,8 @@ struct LabelNode : public StmtNode{
 	LabelNode( const string &s,int sz ):ident(s),data_sz(sz){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( LabelNode );
 };
 
 struct GotoNode : public StmtNode{
@@ -88,6 +119,8 @@ struct GotoNode : public StmtNode{
 	GotoNode( const string &s ):ident(s){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( GotoNode );
 };
 
 struct GosubNode : public StmtNode{
@@ -95,6 +128,8 @@ struct GosubNode : public StmtNode{
 	GosubNode( const string &s ):ident(s){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( GosubNode );
 };
 
 struct IfNode : public StmtNode{
@@ -104,12 +139,22 @@ struct IfNode : public StmtNode{
 	~IfNode(){ delete expr;delete stmts;delete elseOpt; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="IfNode";
+		tree["expr"]=expr->toJSON();
+		tree["stmts"]=stmts->toJSON();
+		if( elseOpt ) tree["elseOpt"]=elseOpt->toJSON();
+		return tree;
+	}
 };
 
 struct ExitNode : public StmtNode{
 	string sem_brk;
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ExitNode );
 };
 
 struct WhileNode : public StmtNode{
@@ -121,6 +166,8 @@ struct WhileNode : public StmtNode{
 	~WhileNode(){ delete expr;delete stmts; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( WhileNode );
 };
 
 struct ForNode : public StmtNode{
@@ -133,6 +180,8 @@ struct ForNode : public StmtNode{
 	~ForNode();
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ForNode );
 };
 
 struct ForEachNode : public StmtNode{
@@ -145,6 +194,8 @@ struct ForEachNode : public StmtNode{
 	~ForEachNode(){ delete var;delete stmts; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ForEachNode );
 };
 
 struct ReturnNode : public StmtNode{
@@ -154,6 +205,8 @@ struct ReturnNode : public StmtNode{
 	~ReturnNode(){ delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ReturnNode );
 };
 
 struct DeleteNode : public StmtNode{
@@ -162,6 +215,8 @@ struct DeleteNode : public StmtNode{
 	~DeleteNode(){ delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( DeleteNode );
 };
 
 struct DeleteEachNode : public StmtNode{
@@ -169,6 +224,12 @@ struct DeleteEachNode : public StmtNode{
 	DeleteEachNode( const string &t ):typeIdent(t){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="DeleteEachNode";
+		tree["typeIdent"]=typeIdent;
+		return tree;
+	}
 };
 
 struct InsertNode : public StmtNode{
@@ -178,6 +239,8 @@ struct InsertNode : public StmtNode{
 	~InsertNode(){ delete expr1;delete expr2; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( InsertNode );
 };
 
 struct CaseNode : public Node{
@@ -185,6 +248,8 @@ struct CaseNode : public Node{
 	StmtSeqNode *stmts;
 	CaseNode( ExprSeqNode *e,StmtSeqNode *s ):exprs(e),stmts(s){}
 	~CaseNode(){ delete exprs;delete stmts; }
+
+	DEFAULT_NODE_JSON( CaseNode );
 };
 
 struct SelectNode : public StmtNode{
@@ -197,6 +262,8 @@ struct SelectNode : public StmtNode{
 	void push_back( CaseNode *c ){ cases.push_back( c ); }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( SelectNode );
 };
 
 struct RepeatNode : public StmtNode{
@@ -208,6 +275,8 @@ struct RepeatNode : public StmtNode{
 	~RepeatNode(){ delete stmts;delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( RepeatNode );
 };
 
 struct ReadNode : public StmtNode{
@@ -216,6 +285,8 @@ struct ReadNode : public StmtNode{
 	~ReadNode(){ delete var; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ReadNode );
 };
 
 struct RestoreNode : public StmtNode{
@@ -224,6 +295,8 @@ struct RestoreNode : public StmtNode{
 	RestoreNode( const string &i ):ident(i){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( RestoreNode );
 };
 
 #endif

@@ -6,14 +6,22 @@ static struct v_type : public Type{
 	bool canCastTo( Type *t ){
 		return t==Type::void_type;
 	}
+
+	json toJSON(){
+		return "void";
+	}
 }v;
 
 static struct i_type : public Type{
-	bool intType(){ 
-		return true; 
+	bool intType(){
+		return true;
 	}
 	bool canCastTo( Type *t ){
 		return t==Type::int_type || t==Type::float_type || t==Type::string_type;
+	}
+
+	json toJSON(){
+		return "integer";
 	}
 }i;
 
@@ -24,6 +32,9 @@ static struct f_type : public Type{
 	bool canCastTo( Type *t ){
 		return t==Type::int_type || t==Type::float_type || t==Type::string_type;
 	}
+	json toJSON(){
+		return "float";
+	}
 }f;
 
 static struct s_type : public Type{
@@ -32,6 +43,9 @@ static struct s_type : public Type{
 	}
 	bool canCastTo( Type *t ){
 		return t==Type::int_type || t==Type::float_type || t==Type::string_type;
+	}
+	json toJSON(){
+		return "string";
 	}
 }s;
 

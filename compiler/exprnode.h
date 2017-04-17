@@ -17,6 +17,8 @@ struct ExprNode : public Node{
 	virtual ExprNode *semant( Environ *e )=0;
 	virtual TNode *translate( Codegen *g )=0;
 	virtual ConstNode *constNode(){ return 0; }
+
+	DEFAULT_NODE_JSON( ExprNode );
 };
 
 struct ExprSeqNode : public Node{
@@ -28,6 +30,14 @@ struct ExprSeqNode : public Node{
 	TNode *translate( Codegen *g,bool userlib );
 	void castTo( DeclSeq *ds,Environ *e,bool userlib );
 	void castTo( Type *t,Environ *e );
+
+	json toJSON(){
+		json tree=json::array();
+		for( int i=0;i<exprs.size();i++ ){
+			tree.push_back( exprs[i]->toJSON() );
+		}
+		return tree;
+	}
 };
 
 #include "varnode.h"
@@ -39,6 +49,13 @@ struct CastNode : public ExprNode{
 	~CastNode(){ delete expr; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="CastNode";
+		tree["type"]=type->toJSON();
+		tree["expr"]=expr->toJSON();
+		return tree;
+	}
 };
 
 struct CallNode : public ExprNode{
@@ -49,6 +66,15 @@ struct CallNode : public ExprNode{
 	~CallNode(){ delete exprs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="CallNode";
+		tree["ident"]=ident;
+		tree["tag"]=tag;
+		tree["sem_decl"]=sem_decl->toJSON();
+		tree["exprs"]=exprs->toJSON();
+		return tree;
+	}
 };
 
 struct VarExprNode : public ExprNode{
@@ -57,6 +83,12 @@ struct VarExprNode : public ExprNode{
 	~VarExprNode(){ delete var; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="VarExprNode";
+		tree["var"]=var->toJSON();
+		return tree;
+	}
 };
 
 struct ConstNode : public ExprNode{
@@ -65,6 +97,8 @@ struct ConstNode : public ExprNode{
 	virtual int intValue()=0;
 	virtual float floatValue()=0;
 	virtual string stringValue()=0;
+
+	DEFAULT_NODE_JSON( ConstNode );
 };
 
 struct IntConstNode : public ConstNode{
@@ -74,6 +108,12 @@ struct IntConstNode : public ConstNode{
 	int intValue();
 	float floatValue();
 	string stringValue();
+
+	json toJSON(){
+		json tree;tree["kind"]="IntConstNode";
+		tree["value"]=value;
+		return tree;
+	}
 };
 
 struct FloatConstNode : public ConstNode{
@@ -83,6 +123,12 @@ struct FloatConstNode : public ConstNode{
 	int intValue();
 	float floatValue();
 	string stringValue();
+
+	json toJSON(){
+		json tree;tree["kind"]="FloatConstNode";
+		tree["value"]=value;
+		return tree;
+	}
 };
 
 struct StringConstNode : public ConstNode{
@@ -92,6 +138,12 @@ struct StringConstNode : public ConstNode{
 	int intValue();
 	float floatValue();
 	string stringValue();
+
+	json toJSON(){
+		json tree;tree["kind"]="StringConstNode";
+		tree["value"]=value;
+		return tree;
+	}
 };
 
 struct UniExprNode : public ExprNode{
@@ -101,6 +153,8 @@ struct UniExprNode : public ExprNode{
 	ExprNode *constize();
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( UniExprNode );
 };
 
 // and, or, eor, lsl, lsr, asr
@@ -110,6 +164,8 @@ struct BinExprNode : public ExprNode{
 	~BinExprNode(){ delete lhs;delete rhs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( BinExprNode );
 };
 
 // *,/,Mod,+,-
@@ -119,6 +175,8 @@ struct ArithExprNode : public ExprNode{
 	~ArithExprNode(){ delete lhs;delete rhs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ArithExprNode );
 };
 
 //<,=,>,<=,<>,>=
@@ -129,6 +187,15 @@ struct RelExprNode : public ExprNode{
 	~RelExprNode(){ delete lhs;delete rhs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="RelExprNode";
+		tree["op"]=op;
+		tree["lhs"]=lhs->toJSON();
+		tree["rhs"]=rhs->toJSON();
+		tree["opType"]=opType->toJSON();
+		return tree;
+	}
 };
 
 struct NewNode : public ExprNode{
@@ -136,6 +203,12 @@ struct NewNode : public ExprNode{
 	NewNode( const string &i ):ident(i){}
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="NewNode";
+		tree["ident"]=ident;
+		return tree;
+	}
 };
 
 struct FirstNode : public ExprNode{
@@ -143,6 +216,8 @@ struct FirstNode : public ExprNode{
 	FirstNode( const string &i ):ident(i){}
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( FirstNode );
 };
 
 struct LastNode : public ExprNode{
@@ -150,6 +225,8 @@ struct LastNode : public ExprNode{
 	LastNode( const string &i ):ident(i){}
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( LastNode );
 };
 
 struct AfterNode : public ExprNode{
@@ -158,6 +235,8 @@ struct AfterNode : public ExprNode{
 	~AfterNode(){ delete expr; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( AfterNode );
 };
 
 struct BeforeNode : public ExprNode{
@@ -166,11 +245,15 @@ struct BeforeNode : public ExprNode{
 	~BeforeNode(){ delete expr; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( BeforeNode );
 };
 
 struct NullNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( NullNode );
 };
 
 struct ObjectCastNode : public ExprNode{
@@ -180,6 +263,8 @@ struct ObjectCastNode : public ExprNode{
 	~ObjectCastNode(){ delete expr; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ObjectCastNode );
 };
 
 struct ObjectHandleNode : public ExprNode{
@@ -188,6 +273,8 @@ struct ObjectHandleNode : public ExprNode{
 	~ObjectHandleNode(){ delete expr; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ObjectHandleNode );
 };
 
 #endif

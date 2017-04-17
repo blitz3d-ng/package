@@ -2,6 +2,9 @@
 #ifndef DECL_H
 #define DECL_H
 
+#include <json.hpp>
+using namespace nlohmann;
+
 enum{
 	DECL_FUNC=1,DECL_ARRAY=2,DECL_STRUCT=4,						//NOT vars
 	DECL_GLOBAL=8,DECL_LOCAL=16,DECL_PARAM=32,DECL_FIELD=64		//ARE vars
@@ -19,6 +22,8 @@ struct Decl{
 	~Decl();
 
 	virtual void getName( char *buff );
+
+	virtual json toJSON();
 };
 
 struct DeclSeq{
@@ -28,6 +33,14 @@ struct DeclSeq{
 	Decl *findDecl( const string &s );
 	Decl *insertDecl( const string &s,Type *t,int kind,ConstType *d=0 );
 	int size(){ return decls.size(); }
+
+	json toJSON(){
+		json tree;
+		for( int i=0;i<decls.size();i++ ){
+			tree[i]=decls[i]->toJSON();
+		}
+		return tree;
+	}
 };
 
 #endif

@@ -52,6 +52,7 @@ static void showHelp(){
 	cout<<"+q         : very quiet mode"<<endl;
 	cout<<"-c         : compile only"<<endl;
 	cout<<"-d         : debug compile"<<endl;
+	cout<<"-j         : dump json ast"<<endl;
 	cout<<"-k         : dump keywords"<<endl;
 	cout<<"+k         : dump keywords and syntax"<<endl;
 	cout<<"-r         : list available runtimes"<<endl;
@@ -175,7 +176,7 @@ int main( int argc,char *argv[] ){
 	vector<string> rts;
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
-	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false;
+	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false,dumptree;
 	bool versinfo=false,rtinfo=false;
 
 	for( int k=1;k<argc;++k ){
@@ -196,6 +197,8 @@ int main( int argc,char *argv[] ){
 			compileonly=true;
 		}else if( t=="-d" ){
 			debug=true;
+		}else if( t=="-j" ){
+			dumptree=true;
 		}else if( t=="-k" ){
 			dumpkeys=true;
 		}else if( t=="+k" ){
@@ -299,6 +302,10 @@ int main( int argc,char *argv[] ){
 		Codegen_x86 codegen( asmcode,debug );
 
 		prog->translate( &codegen,userFuncs );
+
+		if( dumptree ){
+			cout<<prog->toJSON().dump(2)<<endl;
+		}
 
 		if( dumpasm ){
 			cout<<endl<<string( qbuf.data(),qbuf.size() )<<endl;

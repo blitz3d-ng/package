@@ -29,6 +29,8 @@ struct Type{
 
 	//built in types
 	static Type *void_type,*int_type,*float_type,*string_type,*null_type;
+
+	virtual json toJSON(){ return json(); }
 };
 
 struct FuncType : public Type{
@@ -54,6 +56,13 @@ struct StructType : public Type{
 	~StructType(){ delete fields; }
 	StructType *structType(){ return this; }
 	virtual bool canCastTo( Type *t );
+
+	json toJSON(){
+		json tree;tree["@class"]="StructType";
+		tree["ident"]=ident;
+		tree["fields"]=fields->toJSON();
+		return tree;
+	}
 };
 
 struct ConstType : public Type{

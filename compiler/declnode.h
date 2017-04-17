@@ -2,6 +2,8 @@
 #ifndef DECLNODE_H
 #define DECLNODE_H
 
+#include "node.h"
+
 struct DeclNode : public Node{
 	int pos;
 	string file;
@@ -10,6 +12,8 @@ struct DeclNode : public Node{
 	virtual void semant( Environ *e ){}
 	virtual void translate( Codegen *g ){}
 	virtual void transdata( Codegen *g ){}
+
+	DEFAULT_NODE_JSON( DeclNode );
 };
 
 struct DeclSeqNode : public Node{
@@ -22,6 +26,14 @@ struct DeclSeqNode : public Node{
 	void transdata( Codegen *g );
 	void push_back( DeclNode *d ){ decls.push_back( d ); }
 	int  size(){ return decls.size(); }
+
+	json toJSON(){
+		json tree;
+		for( int i=0;i<decls.size();i++ ){
+			tree.push_back( decls[i]->toJSON() );
+		}
+		return tree;
+	}
 };
 
 #include "exprnode.h"
@@ -39,6 +51,17 @@ struct VarDeclNode : public DeclNode{
 	void proto( DeclSeq *d,Environ *e );
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="StructDeclNode";
+		tree["ident"]=ident;
+		tree["tag"]=tag;
+		tree["kind"]=kind;
+		tree["constant"]=constant;
+		if( expr ) tree["expr"]=expr->toJSON();
+		if( sem_var ) tree["sem_var"]=sem_var->toJSON();
+		return tree;
+	}
 };
 
 struct FuncDeclNode : public DeclNode{
@@ -52,6 +75,8 @@ struct FuncDeclNode : public DeclNode{
 	void proto( DeclSeq *d,Environ *e );
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( FuncDeclNode );
 };
 
 struct StructDeclNode : public DeclNode{
@@ -63,6 +88,14 @@ struct StructDeclNode : public DeclNode{
 	void proto( DeclSeq *d,Environ *e );
 	void semant( Environ *e );
 	void translate( Codegen *g );
+
+	json toJSON(){
+		json tree;tree["kind"]="StructDeclNode";
+		tree["ident"]=ident;
+		tree["fields"]=fields->toJSON();
+		tree["sem_type"]=sem_type->toJSON();
+		return tree;
+	}
 };
 
 struct DataDeclNode : public DeclNode{
@@ -74,6 +107,8 @@ struct DataDeclNode : public DeclNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 	void transdata( Codegen *g );
+
+	DEFAULT_NODE_JSON( DataDeclNode );
 };
 
 struct VectorDeclNode : public DeclNode{
@@ -85,6 +120,8 @@ struct VectorDeclNode : public DeclNode{
 	~VectorDeclNode(){ delete exprs; }
 	void proto( DeclSeq *d,Environ *e );
 	void translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( VectorDeclNode );
 };
 
 #endif

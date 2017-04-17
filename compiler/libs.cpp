@@ -5,6 +5,9 @@
 #include <windows.h>
 #endif
 
+#include <json.hpp>
+using namespace nlohmann;
+
 int bcc_ver;
 int lnk_ver;
 int run_ver;
@@ -130,6 +133,35 @@ static const char *linkRuntime(){
 		runtimeEnviron->funcDecls->insertDecl( n,f,DECL_FUNC );
 		runtimeModule->addSymbol( ("_f"+n).c_str(),pc );
 	}
+#else
+	json index;
+	ifstream i("default.commands.json");
+	i >> index;
+
+	for( auto& command:index ) {
+		string n=command["name"];
+		bool cfunc=false;
+
+		keyWords.push_back( n );
+
+		string return_type=command["return_type"].is_string() ? command["return_type"] : "";
+
+		Type *t;
+
+		DeclSeq *params=d_new DeclSeq();
+		for( auto& param:command["parameters"] ) {
+			ConstType *defType=0;
+			string ty=param["type"].is_string() ? param["type"] : "";
+			t=_typeof( ty[0] );
+			Decl *d=params->insertDecl( param["ident"],t,DECL_PARAM,defType );
+		}
+
+		t=_typeof( return_type[0] );
+		FuncType *f=d_new FuncType( t,params,false,cfunc );
+		n=tolower(n);
+		runtimeEnviron->funcDecls->insertDecl( n,f,DECL_FUNC );
+	}
+
 #endif
 	return 0;
 }

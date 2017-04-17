@@ -32,6 +32,13 @@ struct IdentVarNode : public DeclVarNode{
 	string ident,tag;
 	IdentVarNode( const string &i,const string &t ):ident(i),tag(t){}
 	void semant( Environ *e );
+
+	json toJSON(){
+		json tree;tree["kind"]="IdentVarNode";
+		tree["ident"]=ident;
+		tree["tag"]=tag;
+		return tree;
+	}
 };
 
 struct ArrayVarNode : public VarNode{
@@ -42,6 +49,8 @@ struct ArrayVarNode : public VarNode{
 	~ArrayVarNode(){ delete exprs; }
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( ArrayVarNode );
 };
 
 struct FieldVarNode : public VarNode{
@@ -52,6 +61,8 @@ struct FieldVarNode : public VarNode{
 	~FieldVarNode(){ delete expr; }
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( FieldVarNode );
 };
 
 struct VectorVarNode : public VarNode{
@@ -62,6 +73,8 @@ struct VectorVarNode : public VarNode{
 	~VectorVarNode(){ delete expr;delete exprs; }
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );
+
+	DEFAULT_NODE_JSON( VectorVarNode );
 };
 
 #endif

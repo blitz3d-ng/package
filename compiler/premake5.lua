@@ -4,6 +4,8 @@ project "compiler"
 
   removeplatforms { "win64" }
 
+  includedirs "../common/include"
+
   targetdir "../_release/bin"
   targetname "blitzcc"
 
@@ -17,6 +19,9 @@ project "compiler"
   }
 
   links { "stdutil" }
+
+  filter "platforms:macos or linux"
+    buildoptions "-std=c++11"
 
   filter "platforms:mingw32" -- FIXME: move ScaleBitmap out of stdutil so this isn't needed.
     links "gdi32"
