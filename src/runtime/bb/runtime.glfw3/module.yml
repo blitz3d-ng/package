@@ -10,6 +10,7 @@ dependencies:
   - graphics
   - blitz2d
   - blitz3d.gl
+  - pixmap
 
 premake5:
   files:

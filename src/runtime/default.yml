@@ -15,6 +15,7 @@ modules:
   - timer.windows
   - bank
   - graphics.d3d7
+  - input
   - input.directinput8
   - audio.fmod
   - blitz3d.d3d7
@@ -24,8 +25,6 @@ modules:
 
 premake5:
   - links:
-    - dinput8
-
     - stdutil
 
     - freeimage
@@ -41,6 +40,7 @@ premake5:
 
   - filter: platforms:win32 or win64 or mingw32
   - links:
+    - dinput8
     - fmodvc
     - dxguid
     - wsock32
@@ -67,3 +67,6 @@ premake5:
 
   - filter: platforms:mingw32
   - links: strmiids
+
+  - filter: platforms:macos or linux
+  - links: assimp

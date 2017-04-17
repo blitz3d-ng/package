@@ -1,3 +1,6 @@
 [submodule "freeimage317"]
 	path = freeimage317
 	url = https://github.com/kfprimm/freeimage317
+[submodule "src/assimp"]
+	path = src/assimp
+	url = https://github.com/assimp/assimp

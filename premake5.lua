@@ -115,6 +115,7 @@ if not os.getenv("CI") then require 'src/blitzide2/premake5' end
 require './compiler/premake5'
 require './src/debugger.console/premake5'
 require './src/freeimage.premake5'
+-- require './src/premake5.assimp'
 
 project "stub"
   kind "StaticLib"

@@ -1,0 +1,13 @@
+name: Pixmap
+description: Provides image/texture data loading.
+
+dependencies:
+  - blitz
+
+premake5:
+  files:
+    - pixmap.cpp
+    - pixmap.h
+
+  links:
+    - freeimage

@@ -27,7 +27,7 @@ project "freeimage"
       "../freeimage317/FreeImage.rc"
     }
 
-  filter { "platforms:mingw32" }
+  filter { "platforms:mingw32 or macos or linux" }
     files "../common/freeimage_jxr_stub.cpp"
 
 project "jpeg"

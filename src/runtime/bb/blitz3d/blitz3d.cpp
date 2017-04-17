@@ -10,6 +10,7 @@
 #include "loader_x.h"
 #include "loader_3ds.h"
 #include "loader_b3d.h"
+#include "loader_assimp.h"
 #include "std.h"
 #include "graphics.h"
 
@@ -42,6 +43,8 @@ extern float stats3d[10];
 
 #ifdef WIN32
 static Loader_X loader_x;
+#else
+static Loader_Assimp loader_x;
 #endif
 static Loader_3DS loader_3ds;
 static Loader_B3D loader_b3d;
@@ -145,9 +148,7 @@ static Entity *loadEntity( string t,int hint ){
 
 	if( ext=="3ds" ) l=&loader_3ds;
 	else if( ext=="b3d" ) l=&loader_b3d;
-#ifdef WIN32
 	else if( ext=="x" ) l=&loader_x;
-#endif
 	else return 0;
 
 	const Transform &conv=loader_mat_map[ext];

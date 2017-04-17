@@ -64,6 +64,9 @@ module Blitz3D
                 f.write "  files { "
                 f.write files.map { |f| "'#{f}'" }.join(', ')
                 f.write " }\n"
+              when 'links'
+                deps = [value].flatten.map(&:inspect)
+                f.write "  links { #{deps.join(', ')} }\n"
               when 'filter'
                 filters = [value].flatten.map(&:inspect)
                 f.write "  filter { #{filters.join(', ')} }\n"
@@ -176,6 +179,9 @@ module Blitz3D
                 when 'links'
                   parameters = [parameters]
                   f.write "  links { #{parameters.flatten.map(&:inspect).join(', ')} }\n"
+                when 'filter'
+                  filters = [parameters].flatten.map(&:inspect)
+                  f.write "\n  filter { #{filters.join(', ')} }\n"
                 end
               end
             end
