@@ -5,13 +5,18 @@ module Blitz3D
     attr_accessor :mod, :name, :return_type, :params, :symbol
 
     class Parameter
-      REGEX = /^([_A-Za-z]?[_A-Za-z0-9]*)(%|#|\$)(?:=(-?[0-9]+))?/
+      REGEX = /^([_A-Za-z]?[_A-Za-z0-9]*)(%|#|\$)(?:=((-?[0-9]+)|".*"))?/
 
       attr_accessor :identifier, :type, :default
 
       def initialize(code)
         _, @identifier, @type, @default = code.match(REGEX).to_a
         throw "invalid param for #{code.red}" unless @identifier.present? && @type.present?
+        if @default.present?
+          @default =~ /^-?[0-9]+$/ && @default = @default.to_i
+          @default =~ /^-?[0-9]\.[0-9]+$/ && @default = @default.to_f
+          @default =~ /^"(.*)"$/ && @default = $2
+        end
       end
 
       def to_s
@@ -29,6 +34,8 @@ module Blitz3D
       _, @name, @return_type, @params, _, @symbol = match.to_a
       @params.strip!
       @params = @params.split(',').map { |s| Parameter.new(s) }
+    rescue
+      throw "error parsing: #{code}"
     end
 
     def signature

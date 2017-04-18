@@ -55,7 +55,7 @@ void ProgNode::translate( Codegen *g,const vector<UserFunc> &usrfuncs ){
 	if( g->debug ){
 		string t=genLabel();
 		g->s_data( "<main program>",t );
-		g->code( call( "__bbDebugEnter",local(0),iconst((bint_t)sem_env),global(t) ) );
+		g->code( call( "__bbDebugEnter",local(0),iconst((bb_int_t)sem_env),global(t) ) );
 	}
 
 	//no user funcs used!

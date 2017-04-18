@@ -26,7 +26,7 @@ struct StmtSeqNode : public Node{
 	static void reset( const string &file,const string &lab );
 
 	json toJSON(){
-		json tree;tree["kind"]="StmtSeqNode";
+		json tree;tree["@class"]="StmtSeqNode";
 		tree["file"]=file;
 		tree["stmts"]=json::array();
 		for( int k=0;k<stmts.size();++k ){
@@ -83,7 +83,7 @@ struct AssNode : public StmtNode{
 	void translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="AssNode";
+		json tree;tree["@class"]="AssNode";
 		tree["var"]=var->toJSON();
 		tree["expr"]=expr->toJSON();
 		return tree;
@@ -98,7 +98,7 @@ struct ExprStmtNode : public StmtNode{
 	void translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="ExprStmtNode";
+		json tree;tree["@class"]="ExprStmtNode";
 		tree["expr"]=expr->toJSON();
 		return tree;
 	}
@@ -141,7 +141,7 @@ struct IfNode : public StmtNode{
 	void translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="IfNode";
+		json tree;tree["@class"]="IfNode";
 		tree["expr"]=expr->toJSON();
 		tree["stmts"]=stmts->toJSON();
 		if( elseOpt ) tree["elseOpt"]=elseOpt->toJSON();
@@ -167,7 +167,14 @@ struct WhileNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( WhileNode );
+	json toJSON(){
+		json tree;tree["@class"]="WhileNode";
+		tree["wendPos"]=wendPos;
+		tree["expr"]=expr->toJSON();
+		tree["stmts"]=stmts->toJSON();
+		tree["sem_brk"]=sem_brk;
+		return tree;
+	}
 };
 
 struct ForNode : public StmtNode{
@@ -226,7 +233,7 @@ struct DeleteEachNode : public StmtNode{
 	void translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="DeleteEachNode";
+		json tree;tree["@class"]="DeleteEachNode";
 		tree["typeIdent"]=typeIdent;
 		return tree;
 	}

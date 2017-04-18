@@ -27,7 +27,7 @@ Install [Xcode](https://developer.apple.com/xcode/), [premake](https://premake.g
 ```bash
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
-$ brew install wxmac
+$ brew install wxmac glfw3
 $ premake5 gmake && make config=release_macos
 ```
 

@@ -7,7 +7,7 @@ require_relative '../lib/blitz3d/translator/node'
 
 ast = JSON.parse(ARGF.read)
 
-puts JSON.pretty_generate(ast).blue
+STDERR.puts JSON.pretty_generate(ast).blue
 
 module Blitz3D
   module AST
@@ -23,6 +23,9 @@ module Blitz3D
     end
   end
 end
+
+
+
 
 puts Blitz3D::AST::Node.load(ast).to_c
 

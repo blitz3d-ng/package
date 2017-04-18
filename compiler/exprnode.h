@@ -51,7 +51,7 @@ struct CastNode : public ExprNode{
 	TNode *translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="CastNode";
+		json tree;tree["@class"]="CastNode";
 		tree["type"]=type->toJSON();
 		tree["expr"]=expr->toJSON();
 		return tree;
@@ -68,7 +68,7 @@ struct CallNode : public ExprNode{
 	TNode *translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="CallNode";
+		json tree;tree["@class"]="CallNode";
 		tree["ident"]=ident;
 		tree["tag"]=tag;
 		tree["sem_decl"]=sem_decl->toJSON();
@@ -85,7 +85,7 @@ struct VarExprNode : public ExprNode{
 	TNode *translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="VarExprNode";
+		json tree;tree["@class"]="VarExprNode";
 		tree["var"]=var->toJSON();
 		return tree;
 	}
@@ -110,7 +110,7 @@ struct IntConstNode : public ConstNode{
 	string stringValue();
 
 	json toJSON(){
-		json tree;tree["kind"]="IntConstNode";
+		json tree;tree["@class"]="IntConstNode";
 		tree["value"]=value;
 		return tree;
 	}
@@ -125,7 +125,7 @@ struct FloatConstNode : public ConstNode{
 	string stringValue();
 
 	json toJSON(){
-		json tree;tree["kind"]="FloatConstNode";
+		json tree;tree["@class"]="FloatConstNode";
 		tree["value"]=value;
 		return tree;
 	}
@@ -140,7 +140,7 @@ struct StringConstNode : public ConstNode{
 	string stringValue();
 
 	json toJSON(){
-		json tree;tree["kind"]="StringConstNode";
+		json tree;tree["@class"]="StringConstNode";
 		tree["value"]=value;
 		return tree;
 	}
@@ -189,8 +189,15 @@ struct RelExprNode : public ExprNode{
 	TNode *translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="RelExprNode";
-		tree["op"]=op;
+		json tree;tree["@class"]="RelExprNode";
+		switch( op ){
+		case '<': tree["op"]="LT";break;
+		case '=': tree["op"]="EQ";break;
+		case '>': tree["op"]="GT";break;
+		case LE: tree["op"]="LE";break;
+		case NE: tree["op"]="NE";break;
+		case GE: tree["op"]="GE";break;
+		}
 		tree["lhs"]=lhs->toJSON();
 		tree["rhs"]=rhs->toJSON();
 		tree["opType"]=opType->toJSON();
@@ -205,7 +212,7 @@ struct NewNode : public ExprNode{
 	TNode *translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="NewNode";
+		json tree;tree["@class"]="NewNode";
 		tree["ident"]=ident;
 		return tree;
 	}

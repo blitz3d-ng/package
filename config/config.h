@@ -2,7 +2,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#ifdef __cplusplus
 #include <cstdint>
+#else
+#include <stdint.h>
+#endif
 
 #define BASE_VER	200
 
@@ -27,11 +31,12 @@
 #define VERSION		(BASE_VER|PRO_F|DEMO_F|EDU_F)
 
 #if INTPTR_MAX == INT64_MAX
-typedef long   bint_t;
-typedef double bfloat_t;
+typedef long   bb_int_t;
+typedef double bb_float_t;
 #else
-typedef int    bint_t;
-typedef float  bfloat_t;
+typedef int    bb_int_t;
+typedef float  bb_float_t;
 #endif
+typedef bb_int_t bb_ptr_t;
 
 #endif

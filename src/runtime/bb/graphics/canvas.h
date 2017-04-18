@@ -1,6 +1,8 @@
 #ifndef BBCANVAS_H
 #define BBCANVAS_H
 
+#include "../../config/config.h"
+#include <bb/blitz/module.h>
 #include <string>
 
 class BBFont;
@@ -82,6 +84,9 @@ public:
   virtual unsigned getMask()const=0;
   virtual unsigned getColor()const=0;
   virtual unsigned getClsColor()const=0;
+
+	BBCanvas(){}
+	BBCanvas( bb_int_t t ){}
 };
 
 #endif

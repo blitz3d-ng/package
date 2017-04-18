@@ -39,6 +39,7 @@ workspace "blitz3d"
     architecture "x86"
     libdirs "common/x86"
     includedirs "common/include"
+    defines "BB_PLATFORM=\"windows\""
 
     defines { "WIN32", "TARGETSUFFIX=" }
 
@@ -50,6 +51,7 @@ workspace "blitz3d"
     targetsuffix "64"
 
     defines { "WIN32", "WIN64", "TARGETSUFFIX=\"64\"" }
+    defines "BB_PLATFORM=\"windows\""
 
   filter "platforms:win32 or win64"
     buildoptions {
@@ -63,6 +65,7 @@ workspace "blitz3d"
 
   filter { "platforms:linux" }
     defines { "_cdecl=__attribute__((__cdecl__))", "_fastcall=__fastcall", "_stdcall=__stdcall" }
+    defines "BB_PLATFORM=\"linux\""
 
   filter { "platforms:win32 or win64", "kind:WindowedApp or ConsoleApp" }
     targetextension ".exe"
@@ -76,6 +79,7 @@ workspace "blitz3d"
     toolset "gcc"
     gccprefix "i686-w64-mingw32-"
 
+    defines "BB_PLATFORM=\"windows\""
     defines { "WIN32", "_WIN32", "__MINGW64_TOOLCHAIN__", "TARGETSUFFIX=", "PTW32_STATIC_LIB" }
     defines { "_declspec=__declspec", "_set_se_translator=set_se_translator" }
     linkoptions { "-static" }
@@ -94,6 +98,7 @@ workspace "blitz3d"
   filter "platforms:macos"
     toolset "clang"
     system "macosx"
+    defines "BB_PLATFORM=\"macos\""
 
   filter { "platforms:macos", "kind:StaticLib" }
     targetdir "_release/lib/%{cfg.platform}"

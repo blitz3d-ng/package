@@ -95,6 +95,10 @@ public:
   GLFW3Graphics( GLFWwindow *wnd ):wnd(wnd){
     front_canvas=d_new GLFW3DefaultCanvas( wnd );
     back_canvas=d_new GLFW3DefaultCanvas( wnd );
+
+		int w,h;
+		glfwGetFramebufferSize( wnd,&w,&h );
+		resize( w,h );
   }
 
   ~GLFW3Graphics(){
@@ -198,6 +202,7 @@ void GLFW3Runtime::asyncEnd(){
 }
 
 bool GLFW3Runtime::idle(){
+  glfwPollEvents();
   return true;
 }
 

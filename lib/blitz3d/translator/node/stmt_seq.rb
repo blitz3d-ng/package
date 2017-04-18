@@ -11,9 +11,9 @@ module Blitz3D
       def to_c
         f = StringIO.new
 
-        f.write "// #{file}\n\n"
+        f.write "// #{file}\n"
         @stmts.each do |stmt|
-          f.write "#{stmt.to_c}\n"
+          f.write "#{stmt.to_c};\n"
         end
 
         f.string

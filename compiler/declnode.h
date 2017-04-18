@@ -28,7 +28,7 @@ struct DeclSeqNode : public Node{
 	int  size(){ return decls.size(); }
 
 	json toJSON(){
-		json tree;
+		json tree=json::array();
 		for( int i=0;i<decls.size();i++ ){
 			tree.push_back( decls[i]->toJSON() );
 		}
@@ -53,10 +53,10 @@ struct VarDeclNode : public DeclNode{
 	void translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="StructDeclNode";
+		json tree;tree["@class"]="StructDeclNode";
 		tree["ident"]=ident;
 		tree["tag"]=tag;
-		tree["kind"]=kind;
+		tree["@class"]=kind;
 		tree["constant"]=constant;
 		if( expr ) tree["expr"]=expr->toJSON();
 		if( sem_var ) tree["sem_var"]=sem_var->toJSON();
@@ -90,7 +90,7 @@ struct StructDeclNode : public DeclNode{
 	void translate( Codegen *g );
 
 	json toJSON(){
-		json tree;tree["kind"]="StructDeclNode";
+		json tree;tree["@class"]="StructDeclNode";
 		tree["ident"]=ident;
 		tree["fields"]=fields->toJSON();
 		tree["sem_type"]=sem_type->toJSON();

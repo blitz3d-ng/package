@@ -4,6 +4,15 @@ description: Provides drawing functions.
 dependencies:
   - graphics
 
+commands:
+  # movies
+  - OpenMovie%( file$ ):"bbOpenMovie"
+  - DrawMovie%( movie%,x%=0,y%=0,w%=-1h%=-1 ):"bbDrawMovie"
+  - MovieWidth%( movie% ):"bbMovieWidth"
+  - MovieHeight%( movie% ):"bbMovieHeight"
+  - MoviePlaying%( movie% ):"bbMoviePlaying"
+  - CloseMovie( movie% ):"bbCloseMovie"
+
 premake5:
   files:
   - module.cpp
@@ -11,3 +20,5 @@ premake5:
   - font.cpp
   - graphics.h
   - blitz2d.h
+  - movie.h
+  - movie.cpp

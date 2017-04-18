@@ -31,6 +31,7 @@ extern Runtime *runtimeLib;
 extern Module *runtimeModule;
 #endif
 extern Environ *runtimeEnviron;
+extern vector<string> modules;
 extern vector<string> keyWords;
 extern vector<UserFunc> userFuncs;
 

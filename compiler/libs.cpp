@@ -21,6 +21,7 @@ Runtime *runtimeLib;
 Module *runtimeModule;
 #endif
 Environ *runtimeEnviron;
+vector<string> modules;
 vector<string> keyWords;
 vector<UserFunc> userFuncs;
 
@@ -135,10 +136,14 @@ static const char *linkRuntime(){
 	}
 #else
 	json index;
-	ifstream i("default.commands.json");
+	ifstream i(home+"/lib/default." BB_PLATFORM ".config.json");
 	i >> index;
 
-	for( auto& command:index ) {
+	for( auto& module:index["modules"] ) {
+		modules.push_back( module );
+	}
+
+	for( auto& command:index["commands"] ) {
 		string n=command["name"];
 		bool cfunc=false;
 
@@ -150,14 +155,27 @@ static const char *linkRuntime(){
 
 		DeclSeq *params=d_new DeclSeq();
 		for( auto& param:command["parameters"] ) {
-			ConstType *defType=0;
 			string ty=param["type"].is_string() ? param["type"] : "";
 			t=_typeof( ty[0] );
+
+			ConstType *defType=0;
+
+			json defValue=param["default"];
+			if( defValue.is_string() ){
+				defType=new ConstType( defValue.get<string>() );
+			}else if( defValue.is_number() ){
+				if( t==Type::int_type ){
+					defType=new ConstType( defValue.get<int>() );
+				}else{
+					defType=new ConstType( defValue.get<float>() );
+				}
+			}
 			Decl *d=params->insertDecl( param["ident"],t,DECL_PARAM,defType );
 		}
 
 		t=_typeof( return_type[0] );
 		FuncType *f=d_new FuncType( t,params,false,cfunc );
+		f->symbol=command["symbol"];
 		n=tolower(n);
 		runtimeEnviron->funcDecls->insertDecl( n,f,DECL_FUNC );
 	}

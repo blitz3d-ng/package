@@ -37,9 +37,20 @@ struct FuncType : public Type{
 	Type *returnType;
 	DeclSeq *params;
 	bool userlib,cfunc;
+	string symbol;
 	FuncType( Type *t,DeclSeq *p,bool ulib,bool cfn ):returnType(t),params(p),userlib(ulib),cfunc(cfn){}
 	~FuncType(){ delete params; }
 	FuncType *funcType(){ return this; }
+
+	json toJSON(){
+		json tree;tree["@class"]="FuncType";
+		tree["return_type"]=returnType->toJSON();
+		tree["params"]=params->toJSON();
+		tree["userlib"]=userlib;
+		tree["cfunc"]=cfunc;
+		tree["symbol"]=symbol;
+		return tree;
+	}
 };
 
 struct ArrayType : public Type{

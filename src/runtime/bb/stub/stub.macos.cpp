@@ -12,7 +12,7 @@ void sue( const char *t ){
   exit(1);
 }
 
-void bbMain();
+extern "C" void bbMain();
 
 int main( int argc,char *argv[] ){
 #ifdef DEBUG

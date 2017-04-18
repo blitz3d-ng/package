@@ -15,3 +15,7 @@ require_relative './node/rel_expr'
 require_relative './node/stmt_seq'
 require_relative './node/string_const'
 require_relative './node/var_expr'
+require_relative './node/while'
+
+require_relative './type/base'
+require_relative './type/int'

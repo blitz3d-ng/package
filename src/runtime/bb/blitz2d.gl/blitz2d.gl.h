@@ -56,6 +56,7 @@ public:
     glOrtho( 0.0f,w,h,0.0f,-1.0f,1.0f );
 
     glViewport( 0,0,w,h );
+    std::cout<<"viewport: "<<w<<", "<<h<<std::endl;
   }
 
   void cls(){

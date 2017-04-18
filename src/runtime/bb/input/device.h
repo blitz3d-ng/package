@@ -2,6 +2,8 @@
 #ifndef BBDEVICE_H
 #define BBDEVICE_H
 
+#include <bb/runtime/runtime.h>
+
 class BBDevice{
 public:
 	float axis_states[32];
@@ -9,7 +11,9 @@ public:
 	BBDevice();
 	virtual ~BBDevice();
 
-	virtual void update(){}
+	virtual void update(){
+		bbRuntimeIdle();
+	}
 
 	void reset();
 	void downEvent( int key );

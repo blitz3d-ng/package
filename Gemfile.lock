@@ -19,6 +19,7 @@ GEM
     minitest (5.10.1)
     nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
+    os (1.0.0)
     ruby-enum (0.7.1)
       i18n
     thread_safe (0.3.6)
@@ -37,6 +38,7 @@ DEPENDENCIES
   github-markup
   htmlbeautifier
   nokogiri
+  os
 
 BUNDLED WITH
    1.14.5

@@ -63,6 +63,8 @@ BBMODULE_DESTROY( input ){
 	return true;
 }
 
+extern "C" {
+
 int BBCALL bbKeyDown( int n ){
 	return bbKeyboard.keyDown( n );
 }
@@ -275,4 +277,6 @@ int	BBCALL bbJoyVDir( int port ){
 
 void BBCALL bbFlushJoy(){
 	for( int k=0;k<bbJoysticks.size();++k ) bbJoysticks[k]->flush();
+}
+
 }

@@ -34,7 +34,7 @@ struct IdentVarNode : public DeclVarNode{
 	void semant( Environ *e );
 
 	json toJSON(){
-		json tree;tree["kind"]="IdentVarNode";
+		json tree;tree["@class"]="IdentVarNode";
 		tree["ident"]=ident;
 		tree["tag"]=tag;
 		return tree;

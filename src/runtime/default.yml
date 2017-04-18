@@ -17,6 +17,7 @@ modules:
   - graphics.d3d7
   - input
   - input.directinput8
+  - audio
   - audio.fmod
   - blitz3d.d3d7
   - userlibs

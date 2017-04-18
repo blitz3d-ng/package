@@ -20,7 +20,6 @@ commands:
   - MouseYSpeed%():"bbMouseYSpeed"
   - MouseZSpeed%():"bbMouseZSpeed"
   - FlushMouse():"bbFlushMouse"
-  - MoveMouse( x%,y% ):"bbMoveMouse"
 
   - CountJoys%():"bbCountJoys"
   - FindJoy%( id$ ):"bbFindJoy"

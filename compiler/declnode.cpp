@@ -133,7 +133,7 @@ void FuncDeclNode::translate( Codegen *g ){
 	if( g->debug ){
 		string t=genLabel();
 		g->s_data( ident,t );
-		g->code( call( "__bbDebugEnter",local(0),iconst((bint_t)sem_env),global(t) ) );
+		g->code( call( "__bbDebugEnter",local(0),iconst((bb_int_t)sem_env),global(t) ) );
 	}
 
 	//translate statements

@@ -1,7 +1,7 @@
 
 #include <bb/stub/stub.h>
 
-void bbMain();
+extern "C" void bbMain();
 
 int main(){
   if( !bbruntime_create() ) return 1;

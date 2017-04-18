@@ -8,7 +8,8 @@ static struct v_type : public Type{
 	}
 
 	json toJSON(){
-		return "void";
+		json tree;tree["@class"]="VoidType";
+		return tree;
 	}
 }v;
 
@@ -21,7 +22,8 @@ static struct i_type : public Type{
 	}
 
 	json toJSON(){
-		return "integer";
+		json tree;tree["@class"]="IntType";
+		return tree;
 	}
 }i;
 
@@ -32,8 +34,10 @@ static struct f_type : public Type{
 	bool canCastTo( Type *t ){
 		return t==Type::int_type || t==Type::float_type || t==Type::string_type;
 	}
+
 	json toJSON(){
-		return "float";
+		json tree;tree["@class"]="FloatType";
+		return tree;
 	}
 }f;
 
@@ -44,8 +48,10 @@ static struct s_type : public Type{
 	bool canCastTo( Type *t ){
 		return t==Type::int_type || t==Type::float_type || t==Type::string_type;
 	}
+
 	json toJSON(){
-		return "string";
+		json tree;tree["@class"]="StringType";
+		return tree;
 	}
 }s;
 

@@ -1,13 +1,27 @@
 #!/usr/bin/env ruby
 
-HOME       = File.realpath(File.join(File.dirname(__FILE__), '..'))
-LIBDIR     = "#{HOME}/_release/lib/macos".freeze
-INCLUDEDIR = "#{HOME}/src/runtime".freeze
+require 'json'
+require 'os'
 
-rt = ARGV.first
+PLATFORM ||= (OS.mac? && 'macos')
+PLATFORM ||= (OS.linux? && 'linux')
 
-modules = File.open("#{HOME}/src/runtime/#{rt}.modules.txt").read.split("\n")
+INCLUDE_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'runtime'))
+LIB_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '_release', 'lib'))
 
-modules.keep_if { |mod| File.exist?("#{LIBDIR}/lib#{mod}.a") }
+IDENTIFIER_REGEX = /[A-Za-z0-9]+/
 
-puts "-I#{INCLUDEDIR} -L#{LIBDIR} -lruntime.#{rt} -lstub #{modules.reverse.map { |mod| "-l#{mod}" }.join(' ')}"
+configs = Dir.glob(File.join(LIB_PATH, '*.*.config.json')).inject({}) do |cfgs, path|
+  _, rt, platform = path.match(/(#{IDENTIFIER_REGEX})\.(#{IDENTIFIER_REGEX})\.config\.json$/).to_a
+  cfgs[rt] ||= {}
+  cfgs[rt][platform] = JSON.parse(File.open(path).read)
+  cfgs
+end
+
+RUNTIME = 'default'
+
+config = configs[RUNTIME][PLATFORM]
+
+module_libs = config["modules"].reverse.map { |m| "-l#{m}" }
+
+puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} -lstdutil -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib -lglfw -framework OpenGL -lm"

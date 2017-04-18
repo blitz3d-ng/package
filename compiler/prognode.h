@@ -5,6 +5,8 @@
 #include "node.h"
 #include "codegen.h"
 
+extern vector<string> modules;
+
 struct UserFunc{
 	string ident,proc,lib;
 	UserFunc( const UserFunc &t ):ident(t.ident),proc(t.proc),lib(t.lib){}
@@ -36,7 +38,8 @@ struct ProgNode : public Node{
 	void translate( Codegen *g,const vector<UserFunc> &userfuncs );
 
 	json toJSON(){
-		json tree;tree["kind"]="ProgNode";
+		json tree;tree["@class"]="ProgNode";
+		tree["modules"]=modules;
 		tree["structs"]=structs->toJSON();
 		tree["stmts"]=stmts->toJSON();
 		return tree;

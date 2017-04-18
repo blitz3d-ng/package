@@ -11,7 +11,8 @@ module Blitz3D
       end
 
       def to_c
-        "#{lhs.to_c} #{op.chr} #{rhs.to_c}"
+        cop = { 'LT' => '<', 'EQ' => '==', 'GT' => '>', 'LE' => '<=', 'NE' => '!=', 'GE' => '>=' }
+        "#{lhs.to_c} #{cop[op]} #{rhs.to_c}"
       end
     end
   end
