@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class IntConstNode
+    class IntConstNode < Node
       attr_accessor :value
 
       def initialize(json)

@@ -24,4 +24,4 @@ config = configs[RUNTIME][PLATFORM]
 
 module_libs = config["modules"].reverse.map { |m| "-l#{m}" }
 
-puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} -lstdutil -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib -lglfw -framework OpenGL -lm"
+puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} -lstdutil -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib #{`pkg-config glfw3 --libs`} -framework OpenGL -lm"

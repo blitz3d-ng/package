@@ -38,10 +38,19 @@ struct ProgNode : public Node{
 	void translate( Codegen *g,const vector<UserFunc> &userfuncs );
 
 	json toJSON(){
+		Environ *e=sem_env;
+
 		json tree;tree["@class"]="ProgNode";
 		tree["modules"]=modules;
-		tree["structs"]=structs->toJSON();
-		tree["stmts"]=stmts->toJSON();
+		tree["funcs"]=funcs->toJSON( e );
+		tree["structs"]=structs->toJSON( e );
+		tree["locals"]=json::array();
+		for( int k=0;k<e->decls->size();++k ){
+			Decl *d=e->decls->decls[k];
+			if( d->kind!=DECL_LOCAL ) continue;
+			tree["locals"].push_back( d->toJSON() );
+		}
+		tree["stmts"]=stmts->toJSON( e );
 		return tree;
 	}
 };

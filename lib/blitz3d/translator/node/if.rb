@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class IfNode
+    class IfNode < Node
       attr_accessor :expr, :stmts, :else_opt
 
       def initialize(json)
@@ -10,7 +10,7 @@ module Blitz3D
       end
 
       def to_c
-        "if( #{expr.to_c} ){\n#{stmts.to_c}}\n"
+        "if( #{expr.to_c} ){\n  #{stmts.to_c.split("\n").join("\n  ")}\n}"
       end
     end
   end

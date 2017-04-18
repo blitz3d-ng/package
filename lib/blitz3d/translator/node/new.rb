@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class NewNode
+    class NewNode < Node
       attr_accessor :ident
 
       def initialize(json)

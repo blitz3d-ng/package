@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class VarExprNode
+    class VarExprNode < Node
       attr_accessor :var
 
       def initialize(json)

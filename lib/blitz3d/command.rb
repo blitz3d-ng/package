@@ -15,7 +15,7 @@ module Blitz3D
         if @default.present?
           @default =~ /^-?[0-9]+$/ && @default = @default.to_i
           @default =~ /^-?[0-9]\.[0-9]+$/ && @default = @default.to_f
-          @default =~ /^"(.*)"$/ && @default = $2
+          @default =~ /^"(.*)"$/ && @default = $1
         end
       end
 

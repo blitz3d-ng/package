@@ -1,17 +1,28 @@
 module Blitz3D
   module AST
-    class ProgNode
-      attr_accessor :modules, :stmts, :structs
+    class ProgNode < Node
+      attr_accessor :modules, :locals, :stmts, :funcs, :structs
 
       def initialize(json)
+        @locals = json['locals'].map { |local| Decl.new(local) }
         @modules = json['modules']
         @stmts   = Node.load(json['stmts'])
+        @funcs = json['funcs'].map { |func| Node.load(func) }
         @structs = json['structs'].map { |struct| Node.load(struct) }
       end
 
       def to_c
         includes = modules.map { |m| "#include <bb/#{m}/commands.h>" }.join("\n")
-        "#{includes}\n\nvoid bbMain(){\n  #{stmts.to_c.split("\n").join("\n  ")}\n}"
+
+        func_decls = funcs.map(&:to_h).join(";\n")
+
+        func_defs = funcs.map(&:to_c).join("\n\n")
+
+        locals = self.locals.map do |decl|
+          "#{decl.type.to_c} #{decl.name};"
+        end.join("\n")
+
+        "#{includes}\n\n#{func_decls};\n\n#{func_defs}\n\nvoid bbMain(){\n  #{locals.indent}\n#{stmts.to_c.indent}\n}"
       end
     end
   end

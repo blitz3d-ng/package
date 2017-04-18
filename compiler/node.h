@@ -10,7 +10,7 @@
 struct VarNode;
 struct ConstNode;
 
-#define DEFAULT_NODE_JSON( name ) virtual json toJSON(){ json tree;tree["@class"]=#name; return tree; }
+#define DEFAULT_NODE_JSON( name ) virtual json toJSON( Environ *e ){ json tree;tree["@class"]=#name; return tree; }
 
 struct Node{
 	virtual ~Node(){}

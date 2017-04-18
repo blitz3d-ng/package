@@ -6,7 +6,6 @@ dependencies:
   - runtime
 
 commands:
-  - RuntimeError( message$ ):"bbRuntimeError"
   - ExecFile( file$ ):"bbExecFile"
   - Delay( millisecs% ):"bbDelay"
   - MilliSecs%( ):"bbMilliSecs"

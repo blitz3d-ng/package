@@ -25,12 +25,12 @@ struct StmtSeqNode : public Node{
 
 	static void reset( const string &file,const string &lab );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="StmtSeqNode";
 		tree["file"]=file;
 		tree["stmts"]=json::array();
 		for( int k=0;k<stmts.size();++k ){
-			tree["stmts"].push_back( stmts[k]->toJSON() );
+			tree["stmts"].push_back( stmts[k]->toJSON( e ) );
 		}
 		return tree;
 	}
@@ -58,7 +58,11 @@ struct DeclStmtNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( DeclStmtNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="DeclStmtNode";
+		tree["decl"]=decl->toJSON( e );
+		return tree;
+	}
 };
 
 struct DimNode : public StmtNode{
@@ -82,10 +86,10 @@ struct AssNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="AssNode";
-		tree["var"]=var->toJSON();
-		tree["expr"]=expr->toJSON();
+		tree["var"]=var->toJSON( e );
+		tree["expr"]=expr->toJSON( e );
 		return tree;
 	}
 };
@@ -97,9 +101,9 @@ struct ExprStmtNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ExprStmtNode";
-		tree["expr"]=expr->toJSON();
+		tree["expr"]=expr->toJSON( e );
 		return tree;
 	}
 };
@@ -140,11 +144,11 @@ struct IfNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="IfNode";
-		tree["expr"]=expr->toJSON();
-		tree["stmts"]=stmts->toJSON();
-		if( elseOpt ) tree["elseOpt"]=elseOpt->toJSON();
+		tree["expr"]=expr->toJSON( e );
+		tree["stmts"]=stmts->toJSON( e );
+		if( elseOpt ) tree["elseOpt"]=elseOpt->toJSON( e );
 		return tree;
 	}
 };
@@ -167,11 +171,11 @@ struct WhileNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="WhileNode";
 		tree["wendPos"]=wendPos;
-		tree["expr"]=expr->toJSON();
-		tree["stmts"]=stmts->toJSON();
+		tree["expr"]=expr->toJSON( e );
+		tree["stmts"]=stmts->toJSON( e );
 		tree["sem_brk"]=sem_brk;
 		return tree;
 	}
@@ -188,7 +192,17 @@ struct ForNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( ForNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="ForNode";
+		tree["nextPos"]=nextPos;
+		tree["var"]=var->toJSON( e );
+		tree["fromExpr"]=fromExpr->toJSON( e );
+		tree["toExpr"]=toExpr->toJSON( e );
+		tree["stepExpr"]=stepExpr->toJSON( e );
+		tree["stmts"]=stmts->toJSON( e );
+		tree["sem_brk"]=sem_brk;
+		return tree;
+	}
 };
 
 struct ForEachNode : public StmtNode{
@@ -202,7 +216,15 @@ struct ForEachNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( ForEachNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="ForEachNode";
+		tree["nextPos"]=nextPos;
+		tree["var"]=var->toJSON( e );
+		tree["typeIdent"]=typeIdent;
+		tree["stmts"]=stmts->toJSON( e );
+		tree["sem_brk"]=sem_brk;
+		return tree;
+	}
 };
 
 struct ReturnNode : public StmtNode{
@@ -213,7 +235,12 @@ struct ReturnNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( ReturnNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="ReturnNode";
+		tree["expr"]=expr->toJSON( e );
+		tree["returnLabel"]=returnLabel;
+		return tree;
+	}
 };
 
 struct DeleteNode : public StmtNode{
@@ -232,7 +259,7 @@ struct DeleteEachNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="DeleteEachNode";
 		tree["typeIdent"]=typeIdent;
 		return tree;
@@ -256,7 +283,12 @@ struct CaseNode : public Node{
 	CaseNode( ExprSeqNode *e,StmtSeqNode *s ):exprs(e),stmts(s){}
 	~CaseNode(){ delete exprs;delete stmts; }
 
-	DEFAULT_NODE_JSON( CaseNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="CaseNode";
+		tree["exprs"]=exprs->toJSON( e );
+		tree["stmts"]=stmts->toJSON( e );
+		return tree;
+	}
 };
 
 struct SelectNode : public StmtNode{
@@ -270,7 +302,17 @@ struct SelectNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( SelectNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="SelectNode";
+		tree["expr"]=expr->toJSON( e );
+		tree["defStmts"]=defStmts->toJSON( e );
+		tree["cases"]=json::array();
+		for( int i=0;i<cases.size();i++ ){
+			tree["cases"].push_back( cases[i]->toJSON( e ) );
+		}
+		tree["sem_temp"]=sem_temp->toJSON( e );
+		return tree;
+	}
 };
 
 struct RepeatNode : public StmtNode{
@@ -283,7 +325,14 @@ struct RepeatNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( RepeatNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="RepeatNode";
+		tree["untilPos"]=untilPos;
+		tree["stmts"]=stmts->toJSON( e );
+		if( expr ) tree["expr"]=expr->toJSON( e );
+		tree["sem_brk"]=sem_brk;
+		return tree;
+	}
 };
 
 struct ReadNode : public StmtNode{

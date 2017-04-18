@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class StmtSeqNode
+    class StmtSeqNode < Node
       attr_accessor :file, :stmts
 
       def initialize(json)
@@ -12,9 +12,8 @@ module Blitz3D
         f = StringIO.new
 
         f.write "// #{file}\n"
-        @stmts.each do |stmt|
-          f.write "#{stmt.to_c};\n"
-        end
+        f.write @stmts.map(&:to_c).map { |s| s.last != '}' ? "#{s};" : s }.join("
+        \n")
 
         f.string
       end

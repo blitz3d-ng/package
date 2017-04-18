@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class StringConstNode
+    class StringConstNode < Node
       attr_accessor :value
 
       def initialize(json)
@@ -8,7 +8,7 @@ module Blitz3D
       end
 
       def to_c
-        value.inspect
+        "_bbStrConst(#{value.inspect})"
       end
     end
   end

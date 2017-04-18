@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class FloatConstNode
+    class FloatConstNode < Node
       attr_accessor :value
 
       def initialize(json)
@@ -8,7 +8,7 @@ module Blitz3D
       end
 
       def to_c
-        value
+        "#{value}f"
       end
     end
   end

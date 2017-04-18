@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class ExprStmtNode
+    class ExprStmtNode < Node
       attr_accessor :expr
 
       def initialize(json)

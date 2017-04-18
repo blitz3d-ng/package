@@ -39,10 +39,10 @@ static int next_handle;
 static map<int,BBObj*> handle_map;
 static map<BBObj*,int> object_map;
 
-static BBType _bbIntType( BBTYPE_INT );
-static BBType _bbFltType( BBTYPE_FLT );
-static BBType _bbStrType( BBTYPE_STR );
-static BBType _bbCStrType( BBTYPE_CSTR );
+BBType _bbIntType( BBTYPE_INT );
+BBType _bbFltType( BBTYPE_FLT );
+BBType _bbStrType( BBTYPE_STR );
+BBType _bbCStrType( BBTYPE_CSTR );
 
 static void *bbMalloc( int size ){
 	return malloc(size);
@@ -540,73 +540,4 @@ BBMODULE_DESTROY( blitz ){
 	handle_map.clear();
 	object_map.clear();
 	return true;
-}
-
-BBMODULE_LINK( blitz ){
-
-	rtSym( "_bbIntType",&_bbIntType );
-	rtSym( "_bbFltType",&_bbFltType );
-	rtSym( "_bbStrType",&_bbStrType );
-	rtSym( "_bbCStrType",&_bbCStrType );
-
-	rtSym( "_bbStrLoad",_bbStrLoad );
-	rtSym( "_bbStrRelease",_bbStrRelease );
-	rtSym( "_bbStrStore",_bbStrStore );
-	rtSym( "_bbStrCompare",_bbStrCompare );
-	rtSym( "_bbStrConcat",_bbStrConcat );
-	rtSym( "_bbStrToInt",_bbStrToInt );
-	rtSym( "_bbStrFromInt",_bbStrFromInt );
-	rtSym( "_bbStrToFloat",_bbStrToFloat );
-	rtSym( "_bbStrFromFloat",_bbStrFromFloat );
-	rtSym( "_bbStrConst",_bbStrConst );
-	rtSym( "_bbDimArray",_bbDimArray );
-	rtSym( "_bbUndimArray",_bbUndimArray );
-	rtSym( "_bbArrayBoundsEx",_bbArrayBoundsEx );
-	rtSym( "_bbVecAlloc",_bbVecAlloc );
-	rtSym( "_bbVecFree",_bbVecFree );
-	rtSym( "_bbVecBoundsEx",_bbVecBoundsEx );
-	rtSym( "_bbObjNew",_bbObjNew );
-	rtSym( "_bbObjDelete",_bbObjDelete );
-	rtSym( "_bbObjDeleteEach",_bbObjDeleteEach );
-	rtSym( "_bbObjRelease",_bbObjRelease );
-	rtSym( "_bbObjStore",_bbObjStore );
-	rtSym( "_bbObjCompare",_bbObjCompare );
-	rtSym( "_bbObjNext",_bbObjNext );
-	rtSym( "_bbObjPrev",_bbObjPrev );
-	rtSym( "_bbObjFirst",_bbObjFirst );
-	rtSym( "_bbObjLast",_bbObjLast );
-	rtSym( "_bbObjInsBefore",_bbObjInsBefore );
-	rtSym( "_bbObjInsAfter",_bbObjInsAfter );
-	rtSym( "_bbObjEachFirst",_bbObjEachFirst );
-	rtSym( "_bbObjEachNext",_bbObjEachNext );
-	rtSym( "_bbObjEachFirst2",_bbObjEachFirst2 );
-	rtSym( "_bbObjEachNext2",_bbObjEachNext2 );
-	rtSym( "_bbObjToStr",_bbObjToStr );
-	rtSym( "_bbObjToHandle",_bbObjToHandle );
-	rtSym( "_bbObjFromHandle",_bbObjFromHandle );
-	rtSym( "_bbNullObjEx",_bbNullObjEx );
-	rtSym( "_bbRestore",_bbRestore );
-	rtSym( "_bbReadInt",_bbReadInt );
-	rtSym( "_bbReadFloat",_bbReadFloat );
-	rtSym( "_bbReadStr",_bbReadStr );
-	rtSym( "_bbAbs",_bbAbs );
-	rtSym( "_bbSgn",_bbSgn );
-	rtSym( "_bbMod",_bbMod );
-	rtSym( "_bbFAbs",_bbFAbs );
-	rtSym( "_bbFSgn",_bbFSgn );
-	rtSym( "_bbFMod",_bbFMod );
-	rtSym( "_bbFPow",_bbFPow );
-	rtSym( "RuntimeStats",bbRuntimeStats );
-
-	// debug
-	rtSym( "_bbDebugStmt",_bbDebugStmt );
-	rtSym( "_bbDebugEnter",_bbDebugEnter );
-	rtSym( "_bbDebugLeave",_bbDebugLeave );
-
-	rtSym( "Stop",bbStop );
-	rtSym( "DebugLog$text",bbDebugLog );
-
-	rtSym( "End",bbEnd );
-	rtSym( "AppTitle$title$close_prompt=\"\"",bbAppTitle );
-	rtSym( "$CommandLine",bbCommandLine );
 }

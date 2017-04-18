@@ -17,8 +17,6 @@ public:
   virtual void dpiInfo( float &scale_x,float &scale_y )=0;
 };
 
-void BBCALL bbRuntimeError( BBStr *str );
-
 int BBCALL bbExecFile( BBStr *f );
 
 void BBCALL bbDelay( int ms );

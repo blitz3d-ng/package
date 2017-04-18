@@ -7,5 +7,6 @@
 #include "env.h"
 #include "debug.h"
 #include "app.h"
+#include "commands.h"
 
 #endif

@@ -1,15 +1,21 @@
 module Blitz3D
   module AST
     class Node
-      def self.load(json)
+      def self.load(attrs)
+        return attrs if attrs.is_a?(Node)
+        return InvalidNode.new('<nil>') if attrs.nil?
         begin
-          klass = "Blitz3D::AST::#{json['@class']}".constantize
+          klass = "Blitz3D::AST::#{attrs['@class']}".constantize
         rescue NameError
-          puts "Cannot find node type: #{json['@class']}".red
-          puts JSON.pretty_generate(json).red
-          return
+          puts "Cannot find node type: #{attrs['@class']}".red
+          puts JSON.pretty_generate(attrs).red
+          return InvalidNode.new(attrs['@class'])
         end
-        klass.new(json)
+        klass.new(attrs)
+      end
+
+      def to_c
+        inspect
       end
     end
   end

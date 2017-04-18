@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class WhileNode
+    class WhileNode < Node
       attr_accessor :wend_pos, :expr, :stmts, :sem_brk
 
       def initialize(json)
@@ -11,7 +11,7 @@ module Blitz3D
       end
 
       def to_c
-        "while( #{expr.to_c} ){\n  #{stmts.to_c.split("\n").join("\n  ")}\n}\n"
+        "while(#{expr.to_c}){\n  #{stmts.to_c.indent}\n}"
       end
     end
   end

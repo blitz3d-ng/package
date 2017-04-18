@@ -26,6 +26,12 @@ struct DeclVarNode : public VarNode{
 	TNode *translate( Codegen *g );
 	virtual TNode *store( Codegen *g,TNode *n );
 	bool isObjParam();
+
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="DeclVarNode";
+		tree["sem_decl"]=sem_decl->toJSON();
+		return tree;
+	}
 };
 
 struct IdentVarNode : public DeclVarNode{
@@ -33,7 +39,7 @@ struct IdentVarNode : public DeclVarNode{
 	IdentVarNode( const string &i,const string &t ):ident(i),tag(t){}
 	void semant( Environ *e );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="IdentVarNode";
 		tree["ident"]=ident;
 		tree["tag"]=tag;
@@ -62,7 +68,14 @@ struct FieldVarNode : public VarNode{
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( FieldVarNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="FieldVarNode";
+		tree["expr"]=expr->toJSON( e );
+		tree["ident"]=ident;
+		tree["tag"]=tag;
+		tree["sem_field"]=sem_field->toJSON();
+		return tree;
+	}
 };
 
 struct VectorVarNode : public VarNode{

@@ -27,10 +27,10 @@ struct DeclSeqNode : public Node{
 	void push_back( DeclNode *d ){ decls.push_back( d ); }
 	int  size(){ return decls.size(); }
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree=json::array();
 		for( int i=0;i<decls.size();i++ ){
-			tree.push_back( decls[i]->toJSON() );
+			tree.push_back( decls[i]->toJSON( e ) );
 		}
 		return tree;
 	}
@@ -52,14 +52,14 @@ struct VarDeclNode : public DeclNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON(){
-		json tree;tree["@class"]="StructDeclNode";
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="VarDeclNode";
 		tree["ident"]=ident;
 		tree["tag"]=tag;
-		tree["@class"]=kind;
+		tree["kind"]=kind;
 		tree["constant"]=constant;
-		if( expr ) tree["expr"]=expr->toJSON();
-		if( sem_var ) tree["sem_var"]=sem_var->toJSON();
+		if( expr ) tree["expr"]=expr->toJSON( e );
+		if( sem_var ) tree["sem_var"]=sem_var->toJSON( e );
 		return tree;
 	}
 };
@@ -76,7 +76,21 @@ struct FuncDeclNode : public DeclNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( FuncDeclNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="FuncDeclNode";
+		tree["ident"]=ident;
+		tree["tag"]=tag;
+		tree["locals"]=json::array();
+		for( int k=0;k<sem_env->decls->size();++k ){
+			Decl *d=sem_env->decls->decls[k];
+			if( d->kind!=DECL_LOCAL ) continue;
+			tree["locals"].push_back( d->toJSON() );
+		}
+		tree["params"]=params->toJSON( sem_env );
+		tree["stmts"]=stmts->toJSON( sem_env );
+		tree["sem_type"]=sem_type->toJSON( );
+		return tree;
+	}
 };
 
 struct StructDeclNode : public DeclNode{
@@ -89,10 +103,10 @@ struct StructDeclNode : public DeclNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="StructDeclNode";
 		tree["ident"]=ident;
-		tree["fields"]=fields->toJSON();
+		tree["fields"]=fields->toJSON( e );
 		tree["sem_type"]=sem_type->toJSON();
 		return tree;
 	}

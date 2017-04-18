@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class CastNode
+    class CastNode < Node
       attr_accessor :type, :expr
 
       def initialize(json)
@@ -9,7 +9,7 @@ module Blitz3D
       end
 
       def to_c
-        "(#{type.to_c})( #{@expr.to_c} )"
+        "(#{type.to_c})(#{@expr.to_c})"
       end
     end
   end

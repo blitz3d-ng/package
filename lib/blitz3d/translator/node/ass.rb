@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class AssNode
+    class AssNode < Node
       attr_accessor :var, :expr
 
       def initialize(json)
@@ -9,7 +9,7 @@ module Blitz3D
       end
 
       def to_c
-        "#{var.to_c} = #{expr.to_c};\n"
+        "#{var.to_c} = #{expr.to_c}"
       end
     end
   end

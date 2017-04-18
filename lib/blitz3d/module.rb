@@ -4,7 +4,7 @@ module Blitz3D
   class Module
     PLATFORMS = %w(win32 win64 mingw32 macos linux).freeze
 
-    attr_accessor :id, :name, :description, :platforms, :commands, :path, :premake5
+    attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path, :premake5
 
     def self.all
       @@store ||= {}
@@ -33,6 +33,11 @@ module Blitz3D
       @platforms = Module::PLATFORMS.dup if @platforms.empty?
 
       @dependencies = [config['dependencies']].flatten.compact
+      @symbols = (config['symbols'] || []).inject({}) do |syms, line|
+        ident, sym = line.split(':')
+        syms[ident] = sym
+        syms
+      end
       @commands = (config['commands'] || []).map { |text| Command.new(self, text) }.sort_by(&:name)
 
       @premake5 = config['premake5'] || {}

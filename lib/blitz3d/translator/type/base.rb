@@ -5,9 +5,9 @@ module Blitz3D
         begin
           klass = "Blitz3D::AST::#{json['@class']}".constantize
         rescue NameError
-          puts "Cannot find node type: #{json['@class']}".red
+          puts "Cannot find type: #{json['@class']}".red
           puts JSON.pretty_generate(json).red
-          return
+          return InvalidType.new(json['@class'])
         end
         klass.new(json)
       end

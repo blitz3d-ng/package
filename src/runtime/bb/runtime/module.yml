@@ -4,6 +4,7 @@ description: Provides runtime.
 commands:
   - ShowPointer():"bbShowPointer"
   - HidePointer():"bbHidePointer"
+  - RuntimeError( message$ ):"bbRuntimeError"
 
 premake5:
   files:

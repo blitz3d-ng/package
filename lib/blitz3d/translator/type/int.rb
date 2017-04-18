@@ -1,7 +1,7 @@
 module Blitz3D
   module AST
     class IntType
-      def initialize(json)
+      def initialize(json = {})
       end
 
       def to_c

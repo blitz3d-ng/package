@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class DeleteEachNode
+    class DeleteEachNode < Node
       attr_accessor :type_ident
 
       def initialize(json)

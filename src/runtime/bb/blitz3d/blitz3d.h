@@ -109,6 +109,8 @@ float BBCALL bbMeshDepth( MeshModel *m );
 int BBCALL bbMeshesIntersect( MeshModel *a,MeshModel *b );
 int BBCALL bbCountSurfaces( MeshModel *m );
 Surface * BBCALL bbGetSurface( MeshModel *m,int index );
+void BBCALL bbMeshCullBox( MeshModel *m,float x,float y,float z,float width,float height,float depth );
+
 
 //////////////////////
 // SURFACE COMMANDS //

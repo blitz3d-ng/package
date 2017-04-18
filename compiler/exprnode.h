@@ -31,10 +31,10 @@ struct ExprSeqNode : public Node{
 	void castTo( DeclSeq *ds,Environ *e,bool userlib );
 	void castTo( Type *t,Environ *e );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree=json::array();
 		for( int i=0;i<exprs.size();i++ ){
-			tree.push_back( exprs[i]->toJSON() );
+			tree.push_back( exprs[i]->toJSON( e ) );
 		}
 		return tree;
 	}
@@ -50,10 +50,10 @@ struct CastNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="CastNode";
 		tree["type"]=type->toJSON();
-		tree["expr"]=expr->toJSON();
+		tree["expr"]=expr->toJSON( e );
 		return tree;
 	}
 };
@@ -67,12 +67,12 @@ struct CallNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="CallNode";
 		tree["ident"]=ident;
 		tree["tag"]=tag;
 		tree["sem_decl"]=sem_decl->toJSON();
-		tree["exprs"]=exprs->toJSON();
+		tree["exprs"]=exprs->toJSON( e );
 		return tree;
 	}
 };
@@ -84,9 +84,9 @@ struct VarExprNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="VarExprNode";
-		tree["var"]=var->toJSON();
+		tree["var"]=var->toJSON( e );
 		return tree;
 	}
 };
@@ -109,7 +109,7 @@ struct IntConstNode : public ConstNode{
 	float floatValue();
 	string stringValue();
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="IntConstNode";
 		tree["value"]=value;
 		return tree;
@@ -124,7 +124,7 @@ struct FloatConstNode : public ConstNode{
 	float floatValue();
 	string stringValue();
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="FloatConstNode";
 		tree["value"]=value;
 		return tree;
@@ -139,7 +139,7 @@ struct StringConstNode : public ConstNode{
 	float floatValue();
 	string stringValue();
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="StringConstNode";
 		tree["value"]=value;
 		return tree;
@@ -176,7 +176,20 @@ struct ArithExprNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( ArithExprNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="ArithExprNode";
+		switch( op ){
+		case '+':tree["op"]="ADD";break;
+		case '-':tree["op"]="SUB";break;
+		case '*':tree["op"]="MUL";break;
+		case '/':tree["op"]="DIV";break;
+		case MOD:tree["op"]="MOD";break;
+		case '^':tree["op"]="SQR";break;
+		}
+		tree["lhs"]=lhs->toJSON( e );
+		tree["rhs"]=rhs->toJSON( e );
+		return tree;
+	}
 };
 
 //<,=,>,<=,<>,>=
@@ -188,7 +201,7 @@ struct RelExprNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="RelExprNode";
 		switch( op ){
 		case '<': tree["op"]="LT";break;
@@ -198,8 +211,8 @@ struct RelExprNode : public ExprNode{
 		case NE: tree["op"]="NE";break;
 		case GE: tree["op"]="GE";break;
 		}
-		tree["lhs"]=lhs->toJSON();
-		tree["rhs"]=rhs->toJSON();
+		tree["lhs"]=lhs->toJSON( e );
+		tree["rhs"]=rhs->toJSON( e );
 		tree["opType"]=opType->toJSON();
 		return tree;
 	}
@@ -211,7 +224,7 @@ struct NewNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	json toJSON(){
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="NewNode";
 		tree["ident"]=ident;
 		return tree;
