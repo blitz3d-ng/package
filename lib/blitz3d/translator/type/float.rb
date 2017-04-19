@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class FloatType
+    class FloatType < Type
       def initialize(json)
       end
 

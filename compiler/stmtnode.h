@@ -48,7 +48,14 @@ struct IncludeNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( IncludeNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="IncludeNode";
+		tree["pos"]=pos;
+		tree["file"]=file;
+		tree["label"]=label;
+		tree["stmts"]=stmts->toJSON( e );
+		return tree;
+	}
 };
 
 struct DeclStmtNode : public StmtNode{
@@ -60,6 +67,7 @@ struct DeclStmtNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="DeclStmtNode";
+		tree["pos"]=pos;
 		tree["decl"]=decl->toJSON( e );
 		return tree;
 	}
@@ -88,6 +96,7 @@ struct AssNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="AssNode";
+		tree["pos"]=pos;
 		tree["var"]=var->toJSON( e );
 		tree["expr"]=expr->toJSON( e );
 		return tree;
@@ -103,6 +112,7 @@ struct ExprStmtNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ExprStmtNode";
+		tree["pos"]=pos;
 		tree["expr"]=expr->toJSON( e );
 		return tree;
 	}
@@ -146,6 +156,7 @@ struct IfNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="IfNode";
+		tree["pos"]=pos;
 		tree["expr"]=expr->toJSON( e );
 		tree["stmts"]=stmts->toJSON( e );
 		if( elseOpt ) tree["elseOpt"]=elseOpt->toJSON( e );
@@ -173,6 +184,7 @@ struct WhileNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="WhileNode";
+		tree["pos"]=pos;
 		tree["wendPos"]=wendPos;
 		tree["expr"]=expr->toJSON( e );
 		tree["stmts"]=stmts->toJSON( e );
@@ -194,6 +206,7 @@ struct ForNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ForNode";
+		tree["pos"]=pos;
 		tree["nextPos"]=nextPos;
 		tree["var"]=var->toJSON( e );
 		tree["fromExpr"]=fromExpr->toJSON( e );
@@ -218,6 +231,7 @@ struct ForEachNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ForEachNode";
+		tree["pos"]=pos;
 		tree["nextPos"]=nextPos;
 		tree["var"]=var->toJSON( e );
 		tree["typeIdent"]=typeIdent;
@@ -237,6 +251,7 @@ struct ReturnNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ReturnNode";
+		tree["pos"]=pos;
 		tree["expr"]=expr->toJSON( e );
 		tree["returnLabel"]=returnLabel;
 		return tree;
@@ -261,6 +276,7 @@ struct DeleteEachNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="DeleteEachNode";
+		tree["pos"]=pos;
 		tree["typeIdent"]=typeIdent;
 		return tree;
 	}
@@ -304,6 +320,7 @@ struct SelectNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="SelectNode";
+		tree["pos"]=pos;
 		tree["expr"]=expr->toJSON( e );
 		tree["defStmts"]=defStmts->toJSON( e );
 		tree["cases"]=json::array();
@@ -327,6 +344,7 @@ struct RepeatNode : public StmtNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="RepeatNode";
+		tree["pos"]=pos;
 		tree["untilPos"]=untilPos;
 		tree["stmts"]=stmts->toJSON( e );
 		if( expr ) tree["expr"]=expr->toJSON( e );

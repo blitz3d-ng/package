@@ -1,11 +1,11 @@
 module Blitz3D
   module AST
-    class StringType < Type
-      def initialize(json)
+    class VoidType < Type
+      def initialize(attrs = {})
       end
 
       def to_c
-        'BBStr*'
+        'void'
       end
     end
   end

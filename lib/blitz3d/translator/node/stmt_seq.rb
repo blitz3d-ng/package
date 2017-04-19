@@ -11,9 +11,12 @@ module Blitz3D
       def to_c
         f = StringIO.new
 
-        f.write "// #{file}\n"
-        f.write @stmts.map(&:to_c).map { |s| s.last != '}' ? "#{s};" : s }.join("
-        \n")
+        f.write(@stmts.map do |stmt|
+          code = stmt.to_c
+          code = (code.last != '}' && code.last != ';') ? "#{code};" : code
+          # "\n_bbDebugStmt(#{stmt.pos},#{file.inspect});\n#{code}"
+          "#{code}\n"
+        end.join("\n"))
 
         f.string
       end

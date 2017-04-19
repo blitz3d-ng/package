@@ -84,3 +84,4 @@ premake5:
   - ex.cpp
   - ex.h
   - module.h
+  - commands.h

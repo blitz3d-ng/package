@@ -44,12 +44,21 @@ struct ProgNode : public Node{
 		tree["modules"]=modules;
 		tree["funcs"]=funcs->toJSON( e );
 		tree["structs"]=structs->toJSON( e );
+
+		tree["globals"]=json::array();
 		tree["locals"]=json::array();
 		for( int k=0;k<e->decls->size();++k ){
 			Decl *d=e->decls->decls[k];
-			if( d->kind!=DECL_LOCAL ) continue;
-			tree["locals"].push_back( d->toJSON() );
+			switch( d->kind ){
+			case DECL_LOCAL:
+				tree["locals"].push_back( d->toJSON() );
+				break;
+			case DECL_GLOBAL:
+				tree["globals"].push_back( d->toJSON() );
+				break;
+			}
 		}
+
 		tree["stmts"]=stmts->toJSON( e );
 		return tree;
 	}

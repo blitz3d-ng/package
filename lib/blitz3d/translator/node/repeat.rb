@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class RepeatNode < Node
+    class RepeatNode < StmtNode
       attr_accessor :wend_pos, :expr, :stmts, :sem_brk
 
       def initialize(json)
+        super
         @until_post = json['untilPos']
         @stmts = Node.load(json['stmts'])
         @expr = Node.load(json['expr']) if json['expr']
@@ -11,7 +12,7 @@ module Blitz3D
       end
 
       def to_c
-        "do{\n  #{stmts.to_c.indent}\nwhile( #{expr.try(:to_c) || true} )"
+        "do{\n  #{stmts.to_c.indent}\n}while( #{expr.try(:to_c) || 1} )"
       end
     end
   end

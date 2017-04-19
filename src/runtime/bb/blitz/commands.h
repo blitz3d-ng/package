@@ -78,6 +78,18 @@ void BBCALL bbEnd();
 void BBCALL bbAppTitle( BBStr *ti,BBStr *cp );
 BBStr * BBCALL bbCommandLine();
 
+// debug
+void BBCALL _bbDebugLog( const char *t );
+void BBCALL _bbDebugInfo( const char *e );
+void BBCALL _bbDebugError( const char *e );
+void BBCALL _bbDebugStmt( bb_int_t pos,const char *file );
+void BBCALL _bbDebugEnter( void *frame,void *env,const char *func );
+void BBCALL _bbDebugLeave();
+void BBCALL _bbDebugStop();
+void BBCALL _bbDebugRun();
+
+void BBCALL bbDebugLog( BBStr *t );
+
 #ifdef __cplusplus
 }
 #endif

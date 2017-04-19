@@ -54,6 +54,8 @@ struct VarDeclNode : public DeclNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="VarDeclNode";
+		tree["pos"]=pos;
+		tree["file"]=file;
 		tree["ident"]=ident;
 		tree["tag"]=tag;
 		tree["kind"]=kind;
@@ -78,6 +80,8 @@ struct FuncDeclNode : public DeclNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="FuncDeclNode";
+		tree["pos"]=pos;
+		tree["file"]=file;
 		tree["ident"]=ident;
 		tree["tag"]=tag;
 		tree["locals"]=json::array();
@@ -105,6 +109,8 @@ struct StructDeclNode : public DeclNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="StructDeclNode";
+		tree["pos"]=pos;
+		tree["file"]=file;
 		tree["ident"]=ident;
 		tree["fields"]=fields->toJSON( e );
 		tree["sem_type"]=sem_type->toJSON();

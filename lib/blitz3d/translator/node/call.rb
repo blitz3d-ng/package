@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class CallNode < Node
+    class CallNode < ExprNode
       attr_accessor :ident, :tag, :sem_decl, :exprs
 
       def initialize(json)
+        super
         @ident = json['ident']
         @tag = json['tag']
         @sem_decl = json['sem_decl']

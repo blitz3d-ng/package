@@ -35,7 +35,7 @@ struct DeclSeq{
 	int size(){ return decls.size(); }
 
 	json toJSON(){
-		json tree;
+		json tree=json::array();
 		for( int i=0;i<decls.size();i++ ){
 			tree[i]=decls[i]->toJSON();
 		}

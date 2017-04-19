@@ -325,8 +325,8 @@ premake5:
     - geom.h
     - light.h
     - listener.h
-    - loader( _3ds.h
-    - loader( _b3d.h
+    - loader_3ds.h
+    - loader_b3d.h
     - md2model.h
     - md2norms.h
     - md2rep.h

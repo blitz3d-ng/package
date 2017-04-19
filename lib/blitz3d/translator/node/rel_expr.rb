@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class RelExprNode < Node
+    class RelExprNode < ExprNode
       attr_accessor :op, :lhs, :rhs, :opType
 
       def initialize(json)
+        super
         @op = json['op']
         @lhs = Node.load(json['lhs'])
         @rhs = Node.load(json['rhs'])

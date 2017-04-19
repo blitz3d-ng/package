@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class ExprStmtNode < Node
+    class ExprStmtNode < StmtNode
       attr_accessor :expr
 
       def initialize(json)
+        super
         @expr = Node.load(json['expr'])
       end
 

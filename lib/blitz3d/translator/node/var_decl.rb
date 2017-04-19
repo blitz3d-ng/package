@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class VarDeclNode < Node
+    class VarDeclNode < DeclNode
       attr_accessor :ident, :tag, :kind, :constant, :expr, :sem_var
 
       def initialize(json)
+        super
         @ident = json['ident']
         @tag = json['tag']
         @kind = json['kind']

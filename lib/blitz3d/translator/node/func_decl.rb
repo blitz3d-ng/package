@@ -1,10 +1,11 @@
 module Blitz3D
   module AST
-    class FuncDeclNode < Node
+    class FuncDeclNode < DeclNode
       attr_accessor :ident, :tag, :locals, :params, :stmts, :sem_type
 
       def initialize(json)
-        STDERR.puts JSON.pretty_generate(json).yellow
+        super
+        # STDERR.puts JSON.pretty_generate(json).yellow
         @ident = json['ident']
         @tag = json['tag']
         @locals = json['locals'].map { |local| Decl.new(local) }
@@ -14,10 +15,8 @@ module Blitz3D
       end
 
       def to_h
-        throw locals
         params = self.params.map do |param|
           decl = locals.find { |d| d.name == param.ident }
-          puts [decl.ident]
           decl.to_h
         end
         "#{sem_type.to_c} #{ident}(#{params.join(', ')})"
@@ -28,7 +27,7 @@ module Blitz3D
           "#{decl.type.to_c} #{decl.name};"
         end.join("\n")
 
-        "#{to_h}{\n  #{locals}\n\n  #{stmts.to_c.indent}\n}"
+        "// #{file}\n#{to_h}{\n  #{locals.indent}\n\n  #{stmts.to_c.indent}\n}"
       end
     end
   end

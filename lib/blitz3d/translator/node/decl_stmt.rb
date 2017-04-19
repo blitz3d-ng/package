@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class DeclStmtNode < Node
+    class DeclStmtNode < StmtNode
       attr_accessor :decl
 
       def initialize(json)
+        super
         # STDERR.puts JSON.pretty_generate(json).green
         @decl = Node.load(json['decl'])
       end

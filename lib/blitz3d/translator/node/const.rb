@@ -1,11 +1,9 @@
 module Blitz3D
   module AST
-    class StringType < Type
+    class ConstNode < ExprNode
       def initialize(json)
-      end
-
-      def to_c
-        'BBStr*'
+        super
+        @value = json['value']
       end
     end
   end

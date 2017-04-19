@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class ReturnNode < Node
+    class ReturnNode < StmtNode
       attr_accessor :expr, :return_label
 
       def initialize(json)
+        super
         @expr = Node.load(json['expr'])
         @return_label = json['returnLabel']
       end

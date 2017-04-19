@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class WhileNode < Node
+    class WhileNode < StmtNode
       attr_accessor :wend_pos, :expr, :stmts, :sem_brk
 
       def initialize(json)
+        super
         @wend_pos = json['wendPos']
         @expr = Node.load(json['expr'])
         @stmts = Node.load(json['stmts'])

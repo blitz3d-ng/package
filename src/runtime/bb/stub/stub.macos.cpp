@@ -12,6 +12,28 @@ void sue( const char *t ){
   exit(1);
 }
 
+class StdioDebugger : public Debugger{
+public:
+	virtual void debugRun(){
+	}
+	virtual void debugStop(){
+	}
+	virtual void debugStmt( int srcpos,const char *file ){
+		cout<<file<<":"<<srcpos<<endl;
+	}
+	virtual void debugEnter( void *frame,void *env,const char *func ){
+	}
+	virtual void debugLeave(){
+	}
+	virtual void debugLog( const char *msg ){
+		cout<<msg<<endl;
+	}
+	virtual void debugMsg( const char *msg,bool serious ){
+	}
+	virtual void debugSys( void *msg ){
+	}
+};
+
 extern "C" void bbMain();
 
 int main( int argc,char *argv[] ){
@@ -25,7 +47,8 @@ int main( int argc,char *argv[] ){
   for( int i=1;i<argc;i++ ) params+=argv[i];
   bbStartup( params );
 
-  bbAttachDebugger( 0 );
+	StdioDebugger debugger;
+  bbAttachDebugger( &debugger );
 
   if( !(bbRuntime=bbCreateRuntime()) ){
     cerr<<"Failed to create runtime"<<endl;

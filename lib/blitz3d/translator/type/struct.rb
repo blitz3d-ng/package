@@ -1,6 +1,6 @@
 module Blitz3D
   module AST
-    class StructType
+    class StructType < Type
       attr_accessor :ident, :fields
 
       def initialize(json)

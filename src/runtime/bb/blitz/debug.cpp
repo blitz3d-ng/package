@@ -1,7 +1,7 @@
 
-#include <bb/blitz/ex.h>
 #include <bb/runtime/runtime.h>
 #include "debug.h"
+#include "ex.h"
 
 static Debugger *debugger;
 
@@ -31,7 +31,7 @@ void BBCALL _bbDebugError( const char *e ){
 	}
 }
 
-void BBCALL _bbDebugStmt( int pos,const char *file ){
+void BBCALL _bbDebugStmt( bb_int_t pos,const char *file ){
 	if( debugger ) debugger->debugStmt( pos,file );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
