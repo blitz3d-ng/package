@@ -6,6 +6,8 @@
 #include "debug.h"
 using namespace std;
 
+#include <unistd.h>
+
 static BBApp app;
 BBHook bbAppOnChange;
 
@@ -32,8 +34,9 @@ BBStr * BBCALL bbCommandLine(){
 	return d_new BBStr( app.cmd_line );
 }
 
-void BBCALL bbStartup( string cmd_line ){
-  app.cmd_line=cmd_line;
+void BBCALL bbStartup( const char *executable_path,const char *params ){
+	if( executable_path ) chdir( filenamepath(executable_path).c_str() );
+	app.cmd_line=params;
 }
 
 BBApp BBCALL bbApp(){

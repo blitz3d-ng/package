@@ -106,7 +106,7 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 	while( params.size() && params[0]==' ' ) params=params.substr( 1 );
 	while( params.size() && params[params.size()-1]==' ' ) params=params.substr( 0,params.size()-1 );
 
-	bbStartup( params );
+	bbStartup( 0,params.c_str() );
 
 	if( bbRuntime=gx_runtime=gxRuntime::openRuntime( hinst,dbg ) ){
 

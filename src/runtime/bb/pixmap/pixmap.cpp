@@ -2,6 +2,7 @@
 #include "../../stdutil/stdutil.h"
 #include <bb/blitz/module.h>
 #include <FreeImage.h>
+#include <cstring>
 #include "pixmap.h"
 
 using namespace std;

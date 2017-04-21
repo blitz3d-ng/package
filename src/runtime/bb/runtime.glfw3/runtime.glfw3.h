@@ -3,6 +3,7 @@
 
 #include <bb/runtime/runtime.h>
 #include <bb/graphics/graphics.h>
+#include <bb/blitz2d.gl/blitz2d.gl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 #include <GLFW/glfw3.h>
 
@@ -16,6 +17,7 @@ private:
   static void _onResize( GLFWwindow *wnd,int w,int h );
   static void _onClose( GLFWwindow *w );
   static void _onMouseMove( GLFWwindow *w,double x,double y );
+  static void _onKeyChange( GLFWwindow *w,int key,int scancode,int action,int mods );
 
   void resize( int width,int height );
 public:

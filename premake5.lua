@@ -84,7 +84,7 @@ workspace "blitz3d"
     defines { "_declspec=__declspec", "_set_se_translator=set_se_translator" }
     linkoptions { "-static" }
 
-  filter { "platforms:mingw32", "files:**.cpp" }
+  filter { "platforms:mingw32", "language:C++" }
     buildoptions { "-std=c++11" }
 
   filter { "platforms:mingw32", "kind:SharedLib" }
@@ -106,7 +106,7 @@ workspace "blitz3d"
   filter { "platforms:linux" }
     system "linux"
 
-  filter { "platforms:linux", "files:**.cpp" }
+  filter { "platforms:linux", "language:C++" }
     buildoptions "-std=c++11"
 
 require './src/runtime/premake/init'

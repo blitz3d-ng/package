@@ -11,7 +11,7 @@ struct BBApp{
 
 extern BBHook bbAppOnChange;
 
-void BBCALL bbStartup( std::string cmd_line );
+void BBCALL bbStartup( const char *executable_path,const char *params );
 BBApp BBCALL bbApp();
 
 #endif

@@ -16,3 +16,4 @@ premake5:
   files:
     - runtime.glfw3.cpp
     - runtime.glfw3.h
+    - scancodes.cpp

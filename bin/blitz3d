@@ -7,6 +7,7 @@ Bundler.require :default
 
 require 'yaml'
 require 'erb'
+require 'json'
 
 module Blitz3D
   define_singleton_method(:path) { __FILE__ }

@@ -5,6 +5,7 @@
 #include "debug.h"
 
 #include <math.h>
+#include <cstring>
 #include <map>
 using namespace std;
 

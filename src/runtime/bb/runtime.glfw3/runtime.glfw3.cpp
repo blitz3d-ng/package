@@ -1,7 +1,6 @@
 
 #include "../../stdutil/stdutil.h"
 #include "runtime.glfw3.h"
-#include <bb/blitz2d.gl/blitz2d.gl.h>
 #include <bb/pixmap/pixmap.h>
 #include <bb/event/event.h>
 
@@ -16,6 +15,7 @@ BBRuntime *bbCreateRuntime(){
   if( !glfwInit() ) return 0;
 
   glfwWindowHint( GLFW_FOCUSED,1 );
+  glfwWindowHint( GLFW_RESIZABLE,0 );
 
   GLFWwindow* window=glfwCreateWindow( 1,1,"",NULL,NULL );
   if( !window ){
@@ -33,6 +33,7 @@ GLFW3Runtime::GLFW3Runtime( GLFWwindow *wnd ):wnd(wnd),graphics(0){
   runtimes.insert( pair<GLFWwindow*,GLFW3Runtime*>( wnd,this ) );
 
   glfwSetCursorPosCallback( wnd,_onMouseMove );
+	glfwSetKeyCallback( wnd,_onKeyChange );
   glfwSetFramebufferSizeCallback( wnd,_onResize );
   glfwSetWindowCloseCallback( wnd,_onClose );
 }
@@ -219,9 +220,27 @@ void GLFW3Runtime::setPointerVisible( bool vis ){
 void GLFW3Runtime::_onMouseMove( GLFWwindow *w,double x,double y ){
   int sw,sh;
   glfwGetWindowSize( w,&sw,&sh );
-  cout<<(x/sw)*bbGraphicsWidth()<<", "<<y<<endl;
   BBEvent ev( BBEVENT_MOUSEMOVE,0,(x/sw)*bbGraphicsWidth(),(y/sh)*bbGraphicsHeight() );
   bbOnEvent.run( &ev );
+}
+
+extern unsigned short GLFW_SCANCODE_MAP[316];
+
+void GLFW3Runtime::_onKeyChange( GLFWwindow *w,int key,int scancode,int action,int mods ){
+	cout<<"key: "<<key<<endl;
+	key=GLFW_SCANCODE_MAP[key-32];
+	if( !key ) return;
+
+	BBEvent ev;
+	switch( action ){
+	case GLFW_PRESS:
+		ev=BBEvent( BBEVENT_KEYDOWN,key );
+		break;
+	case GLFW_RELEASE:
+		ev=BBEvent( BBEVENT_KEYUP,key );
+		break;
+	}
+	if( ev.id ) bbOnEvent.run( &ev );
 }
 
 void GLFW3Runtime::_onResize( GLFWwindow *w,int width,int height ){

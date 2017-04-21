@@ -3,6 +3,7 @@
 #define SURFACE_H
 
 #include "model.h"
+#include <cstring>
 
 #define MAX_SURFACE_BONES 4
 

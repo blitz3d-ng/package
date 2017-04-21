@@ -3,6 +3,7 @@
 #include <bb/blitz/blitz.h>
 #include <bb/runtime/runtime.h>
 #include "system.h"
+#include <cstring>
 using namespace std;
 
 map<string,string> bbSystemProperties;

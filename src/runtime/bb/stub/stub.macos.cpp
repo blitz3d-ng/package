@@ -43,9 +43,9 @@ int main( int argc,char *argv[] ){
   bb_env.debug=false;
 #endif
 
-  string params;
-  for( int i=1;i<argc;i++ ) params+=argv[i];
-  bbStartup( params );
+	string cmd_line;
+	for( int i=1;i<argc;i++ ) cmd_line+=argv[i];
+  bbStartup( argv[0],cmd_line.c_str() );
 
 	StdioDebugger debugger;
   bbAttachDebugger( &debugger );

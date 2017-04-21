@@ -4,7 +4,11 @@
 #include <bb/blitz2d/blitz2d.h>
 #include <bb/pixmap/pixmap.h>
 
-#ifdef __MACH__
+#ifdef __linux__
+#include <GL/glew.h>
+#endif
+
+#ifdef __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
@@ -14,6 +18,8 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 #endif
+
+#include <iostream>
 
 class GLB2DCanvas : public BBCanvas{
 protected:
