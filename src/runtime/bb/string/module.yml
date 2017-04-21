@@ -9,7 +9,7 @@ commands:
   - Left$( string$,count% ):"bbLeft"
   - Right$( string$,count% ):"bbRight"
   - Replace$( string$,from$,to$ ):"bbReplace"
-  - Instr%( string$,find$,find%=1 ):"bbInstr"
+  - Instr%( string$,find$,from%=1 ):"bbInstr"
   - Mid$( string$,start%,count%=-1 ):"bbMid"
   - Upper$( string$ ):"bbUpper"
   - Lower$( string$ ):"bbLower"
