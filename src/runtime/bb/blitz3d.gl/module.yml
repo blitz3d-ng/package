@@ -4,6 +4,10 @@ description: Provides OpenGL Blitz3D.
 dependencies:
   - blitz3d
 
+platforms:
+  - macos
+  - linux
+
 premake5:
   files:
     - blitz3d.gl.cpp
