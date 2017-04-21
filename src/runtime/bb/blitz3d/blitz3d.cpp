@@ -292,7 +292,7 @@ void BBCALL bbRenderWorld( float tween ){
 	world->render( tween );
 	tri_count=bbScene->getTrianglesDrawn()-tri_count;
 	return;
-#endif
+#else
 
 	int tris=bbScene->getTrianglesDrawn();
 	int render_ms=bbMilliSecs();
@@ -331,6 +331,7 @@ void BBCALL bbRenderWorld( float tween ){
 	string t="FPS:"+t_fps+" UPS:"+t_ups+" RPS:"+t_rps+" TRIS:"+t_tris;
 
 	bbText( 0,bbGraphicsHeight()-bbFontHeight(),d_new BBStr(t),0,0 );
+#endif
 }
 
 int BBCALL bbTrisRendered(){
@@ -1981,7 +1982,6 @@ void blitz3d_close(){
 	Texture::clearFilters();
 	loader_mat_map.clear();
 	delete world;
-	delete bbScene;
 	bbScene=0;
 }
 

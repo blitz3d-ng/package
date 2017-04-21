@@ -176,7 +176,7 @@ int main( int argc,char *argv[] ){
 	vector<string> rts;
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
-	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false,dumptree;
+	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false,dumptree=false;
 	bool versinfo=false,rtinfo=false;
 
 	for( int k=1;k<argc;++k ){

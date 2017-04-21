@@ -6,7 +6,12 @@
 #include "debug.h"
 using namespace std;
 
+#if defined(__APPLE__) || defined(__linux__)
 #include <unistd.h>
+#else
+#include <direct.h>
+#define chdir _chdir
+#endif
 
 static BBApp app;
 BBHook bbAppOnChange;
