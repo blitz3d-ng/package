@@ -25,7 +25,7 @@ protected:
 	IDirectDrawClipper *clipper;
 	IDirectDrawSurface7 *primSurf;
 
-	static void CALLBACK timerCallback( UINT id,UINT msg,DWORD_PTR driver,DWORD dw1,DWORD dw2 );
+	static void CALLBACK timerCallback( UINT id,UINT msg,DWORD_PTR driver,DWORD_PTR dw1,DWORD_PTR dw2 );
 	bool createInvalidationTimer();
 	void freeInvalidationTimer();
 	void invalidateRect();

@@ -20,7 +20,7 @@ struct D3D7ContextDriver::GfxDriver{
 #endif
 };
 
-typedef int (_stdcall *SetAppCompatDataFunc)( int x,int y );
+typedef int (__stdcall *SetAppCompatDataFunc)( int x,int y );
 
 D3D7ContextDriver::D3D7ContextDriver( HWND hwnd )
 :hwnd(hwnd),curr_driver(0),enum_all(false),
@@ -228,7 +228,7 @@ static BOOL WINAPI enumDriver( GUID FAR *guid,LPSTR desc,LPSTR name,LPVOID conte
 /////////////////////////////////////////////////////
 // TIMER CALLBACK FOR AUTOREFRESH OF WINDOWED MODE //
 /////////////////////////////////////////////////////
-void CALLBACK D3D7ContextDriver::timerCallback( UINT id,UINT msg,DWORD_PTR driver,DWORD dw1,DWORD dw2 ){
+void CALLBACK D3D7ContextDriver::timerCallback( UINT id,UINT msg,DWORD_PTR driver,DWORD_PTR dw1,DWORD_PTR dw2 ){
 	((D3D7ContextDriver*)driver)->invalidateRect();
 }
 

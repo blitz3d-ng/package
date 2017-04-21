@@ -20,8 +20,8 @@ class PixelFormat{
 	int depth,pitch;
 	unsigned amask,rmask,gmask,bmask,argbfill;
 	unsigned char ashr,ashl,rshr,rshl,gshr,gshl,bshr,bshl;
-	typedef void (_fastcall *Plot)(void *pix,unsigned argb);
-	typedef unsigned (_fastcall *Point)(void *pix);
+	typedef void (__fastcall *Plot)(void *pix,unsigned argb);
+	typedef unsigned (__fastcall *Point)(void *pix);
 	Plot plot;
 	Point point;
 
