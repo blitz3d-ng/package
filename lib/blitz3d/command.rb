@@ -24,7 +24,7 @@ module Blitz3D
       end
 
       def to_rtsym
-        [type, identifier, default && ['=', default]].flatten.join('')
+        [type, identifier, default && ['=', default.inspect]].flatten.join('')
       end
     end
 

@@ -25,7 +25,8 @@ module Blitz3D
 
         mod.commands.each do |command|
           params = command.params.map(&:to_rtsym)
-          f.write "\trtSym( \"#{command.return_type}#{command.name}#{params.join('')}\",#{command.symbol} );\n"
+          sym = "#{command.return_type}#{command.name}#{params.join('')}".inspect
+          f.write "\trtSym( #{sym},#{command.symbol} );\n"
         end
         f.write "}\n"
 
