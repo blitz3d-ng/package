@@ -9,10 +9,12 @@ module Blitz3D
     def self.all
       @@store ||= {}
       Dir.glob('src/runtime/bb/*/module.yml').map { |path| @@store[path] ||= new(path) }
+      @@store.values
     end
 
     def self.find(id)
-      all.find { |mod| mod.id == id }
+      @@store ||= {}
+      @@store.values.find { |mod| mod.id == id } || all.find { |mod| mod.id == id }
     end
 
     def initialize(config_file)
