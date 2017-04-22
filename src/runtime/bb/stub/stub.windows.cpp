@@ -2,6 +2,9 @@
 #include <bb/stub/stub.h>
 #include <bb/runtime/runtime.h>
 
+#include <string>
+using namespace std;
+
 #include <bb/runtime.windows/gxruntime.h>
 extern gxRuntime *gx_runtime;
 

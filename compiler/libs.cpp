@@ -324,7 +324,7 @@ const char *openLibs( string rt ){
 	linkerHMOD=LoadLibrary( (home+"/bin/linker.dll").c_str() );
 	if( !linkerHMOD ) return "Unable to open linker.dll";
 
-	typedef Linker *(_cdecl*GetLinker)();
+	typedef Linker *(__cdecl*GetLinker)();
 	GetLinker gl=(GetLinker)GetProcAddress( linkerHMOD,"linkerGetLinker" );
 	if( !gl ) return "Error in linker.dll";
 	linkerLib=gl();
@@ -332,7 +332,7 @@ const char *openLibs( string rt ){
 	runtimeHMOD=LoadLibrary( (home+"/bin/runtime."+rt+".dll").c_str() );
 	if( !runtimeHMOD ) return ("Unable to open runtime."+rt+".dll").c_str();
 
-	typedef Runtime *(_cdecl*GetRuntime)();
+	typedef Runtime *(__cdecl*GetRuntime)();
 	GetRuntime gr=(GetRuntime)GetProcAddress( runtimeHMOD,"runtimeGetRuntime" );
 	if( !gr ) return ("Error in runtime."+rt+".dll").c_str();
 	runtimeLib=gr();

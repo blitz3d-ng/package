@@ -65,6 +65,9 @@ static vector<GfxMode> gfx_modes;
 BBGraphics::BBGraphics():front_canvas(0),back_canvas(0){
 }
 
+BBGraphics::~BBGraphics(){
+}
+
 BBCanvas *BBGraphics::getFrontCanvas()const{
 	return front_canvas;
 }
@@ -259,6 +262,9 @@ static bool saveCanvas( BBCanvas *c,const string &f ){
 }
 
 BBContextDriver::BBContextDriver():graphics(0){
+}
+
+BBContextDriver::~BBContextDriver(){
 }
 
 bool BBContextDriver::graphicsOpened(){

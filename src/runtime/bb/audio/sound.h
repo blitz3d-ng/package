@@ -7,6 +7,8 @@
 class BBSound{
   /***** GX INTERFACE *****/
 public:
+  virtual ~BBSound();
+
   //actions
   virtual BBChannel *play()=0;
   virtual BBChannel *play3d( const float pos[3],const float vel[3] )=0;

@@ -17,4 +17,5 @@ void BBHook::run( void *data ){
 }
 
 
+BBMODULE_DECL( hook );
 BBMODULE_EMPTY( hook );

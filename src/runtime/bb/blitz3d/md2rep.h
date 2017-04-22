@@ -10,7 +10,7 @@ public:
 		Vector coords,normal;
 	};
 
-	MD2Rep( const string &f );
+	MD2Rep( const std::string &f );
 	virtual ~MD2Rep();
 
 	void render( Vert *verts,int frame );
@@ -23,8 +23,8 @@ public:
 	void render( Model *model,const Vert *verts_a,int frame_b,float time );
 
 	const Box &getBox()const{ return box; }
-	const int numFrames()const{ return n_frames; }
-	const int numVertices()const{ return n_verts; }
+	int numFrames()const{ return n_frames; }
+	int numVertices()const{ return n_verts; }
 
 private:
 	struct Vertex{
@@ -37,15 +37,15 @@ private:
 
 	struct Frame{
 		Vector scale,trans;
-		vector<Vertex> verts;
+		std::vector<Vertex> verts;
 	};
 
 	Box box;
 	BBMesh *mesh;
 	int n_frames;
 	int n_verts,n_tris;
-	vector<Frame> frames;
-	vector<VertexUV> uvs;
+	std::vector<Frame> frames;
+	std::vector<VertexUV> uvs;
 };
 
 #endif

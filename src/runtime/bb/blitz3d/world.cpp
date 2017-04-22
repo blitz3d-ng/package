@@ -134,7 +134,7 @@ Object *World::traceRay( const Line &line,float radius,ObjCollision *curr_coll )
 			coll_obj=obj;
 		}
 	}
-	if( curr_coll->with=coll_obj ){
+	if( (curr_coll->with=coll_obj) ){
 		curr_coll->coords=line*curr_coll->collision.time-curr_coll->collision.normal*radius;
 	}
 	return coll_obj;

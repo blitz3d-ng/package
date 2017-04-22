@@ -45,7 +45,7 @@ static int desktopDepth(){
 	return GetDeviceCaps( hdc,BITSPIXEL );
 }
 
-int _stdcall wWinMain( HINSTANCE inst,HINSTANCE prev,wchar_t *cmd,int show ){
+int __stdcall wWinMain( HINSTANCE inst,HINSTANCE prev,wchar_t *cmd,int show ){
 
 	if( desktopDepth()<16 ) fail( md_err );
 
@@ -80,7 +80,7 @@ int _stdcall wWinMain( HINSTANCE inst,HINSTANCE prev,wchar_t *cmd,int show ){
 }
 
 #ifdef __MINGW32__
-int _stdcall WinMain( HINSTANCE inst,HINSTANCE prev,char *cmd,int show ){
+int __stdcall WinMain( HINSTANCE inst,HINSTANCE prev,char *cmd,int show ){
 	wchar_t *w_cmd=GetCommandLineW();
 	return wWinMain( inst,prev,w_cmd,show );
 }

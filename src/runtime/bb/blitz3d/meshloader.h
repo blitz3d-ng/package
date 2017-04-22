@@ -7,12 +7,14 @@
 
 class MeshLoader{
 public:
+	virtual ~MeshLoader(){}
+
 	enum{
 		HINT_COLLAPSE=1,
 		HINT_ANIMONLY=2
 	};
 
-	virtual MeshModel *load( const string &f,const Transform &conv,int hint )=0;
+	virtual MeshModel *load( const std::string &f,const Transform &conv,int hint )=0;
 
 	//clear
 	static void beginMesh();

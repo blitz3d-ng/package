@@ -45,7 +45,7 @@ MainFrame *DebuggerApp::mainFrame(){
 	return debuggerApp.main_frame;
 }
 
-Debugger * _cdecl debuggerGetDebugger( void *mod,void *env ){
+Debugger * __cdecl debuggerGetDebugger( void *mod,void *env ){
 	debuggerApp.mainFrame()->setRuntime( mod,env );
 	return debuggerApp.mainFrame();
 }

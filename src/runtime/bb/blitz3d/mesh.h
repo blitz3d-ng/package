@@ -3,6 +3,7 @@
 
 class BBMesh{
 public:
+  virtual ~BBMesh();
   virtual bool dirty()const=0; // TODO: figure out if this should be public
 
   /***** GX INTERFACE *****/

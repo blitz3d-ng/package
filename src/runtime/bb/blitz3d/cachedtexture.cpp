@@ -111,7 +111,7 @@ CachedTexture::CachedTexture( const string &f_,int flags,int w,int h,int first,i
 	if( f.substr(0,2)==".\\" ) f=f.substr(2);
 	if( path.size() ){
 		string t=path+tolower( filenamefile( f ) );
-		if( rep=findRep( t,flags,w,h,first,cnt ) ) return;
+		if( (rep=findRep( t,flags,w,h,first,cnt )) ) return;
 		rep=d_new Rep( t,flags,w,h,first,cnt );
 		if( rep->frames.size() ){
 			rep_set.insert( rep );

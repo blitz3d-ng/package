@@ -2,6 +2,7 @@
 #include "loader_assimp.h"
 #include "meshmodel.h"
 #include "meshutil.h"
+using namespace std;
 
 MeshModel *Loader_Assimp::load( const string &f,const Transform &conv,int hint ){
   Brush b;

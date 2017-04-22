@@ -4,6 +4,6 @@
 
 #include <bb/blitz/debug.h>
 
-extern "C" BBDECL Debugger * _cdecl debuggerGetDebugger( void *mod,void *env );
+extern "C" BBDECL Debugger * __cdecl debuggerGetDebugger( void *mod,void *env );
 
 #endif

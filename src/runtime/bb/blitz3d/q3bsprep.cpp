@@ -726,7 +726,7 @@ void Q3BSPRep::setAmbient( const Vector &t ){
 void Q3BSPRep::setLighting( bool lmap ){
 	if( lmap==use_lmap ) return;
 	int fx=BBScene::FX_CONDLIGHT;
-	if( use_lmap=lmap ){
+	if( (use_lmap=lmap) ){
 		int k;
 		for( k=0;k<surfs.size();++k ){
 			Q3BSPSurf *s=surfs[k];

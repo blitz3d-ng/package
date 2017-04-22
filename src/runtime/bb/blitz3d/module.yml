@@ -294,6 +294,7 @@ premake5:
     - md2model.cpp
     - md2norms.cpp
     - md2rep.cpp
+    - mesh.cpp
     - meshcollider.cpp
     - meshloader.cpp
     - meshmodel.cpp

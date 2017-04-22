@@ -42,7 +42,7 @@ static void killer(){
 }
 #endif
 
-static void _cdecl seTranslator( unsigned int u,EXCEPTION_POINTERS* pExp ){
+static void __cdecl seTranslator( unsigned int u,EXCEPTION_POINTERS* pExp ){
 	switch( u ){
 	case EXCEPTION_INT_DIVIDE_BY_ZERO:
 		bbruntime_panic( "Integer divide by zero" );
@@ -143,7 +143,7 @@ void Runtime::checkmem( streambuf *buf ){
 	::checkmem( out );
 }
 
-Runtime *_cdecl runtimeGetRuntime(){
+Runtime *__cdecl runtimeGetRuntime(){
 	static Runtime runtime;
 	return &runtime;
 }
@@ -251,8 +251,8 @@ static void link(){
 	module_syms.clear();
 }
 
-extern "C" _declspec(dllexport) int _stdcall bbWinMain();
-extern "C" BOOL _stdcall _DllMainCRTStartup( HANDLE,DWORD,LPVOID );
+extern "C" _declspec(dllexport) int __stdcall bbWinMain();
+extern "C" BOOL __stdcall _DllMainCRTStartup( HANDLE,DWORD,LPVOID );
 
 bool WINAPI DllMain( HANDLE module,DWORD reason,void *reserved ){
 	return TRUE;

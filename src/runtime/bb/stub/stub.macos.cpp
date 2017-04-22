@@ -14,23 +14,23 @@ void sue( const char *t ){
 
 class StdioDebugger : public Debugger{
 public:
-	virtual void debugRun(){
+	void debugRun(){
 	}
-	virtual void debugStop(){
+	void debugStop(){
 	}
-	virtual void debugStmt( int srcpos,const char *file ){
+	void debugStmt( int srcpos,const char *file ){
 		cout<<file<<":"<<srcpos<<endl;
 	}
-	virtual void debugEnter( void *frame,void *env,const char *func ){
+	void debugEnter( void *frame,void *env,const char *func ){
 	}
-	virtual void debugLeave(){
+	void debugLeave(){
 	}
-	virtual void debugLog( const char *msg ){
+	void debugLog( const char *msg ){
 		cout<<msg<<endl;
 	}
-	virtual void debugMsg( const char *msg,bool serious ){
+	void debugMsg( const char *msg,bool serious ){
 	}
-	virtual void debugSys( void *msg ){
+	void debugSys( void *msg ){
 	}
 };
 

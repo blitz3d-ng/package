@@ -120,15 +120,15 @@ void Animator::beginTrans(){
 		Anim &anim=_anims[k];
 		const Animation &keys=_anims[k].keys[_seq];
 
-		if( anim.pos=!!keys.numPositionKeys() ){
+		if( (anim.pos=!!keys.numPositionKeys()) ){
 			anim.src_pos=obj->getLocalPosition();
 			anim.dest_pos=keys.getPosition( _time );
 		}
-		if( anim.scl=!!keys.numScaleKeys() ){
+		if( (anim.scl=!!keys.numScaleKeys()) ){
 			anim.src_scl=obj->getLocalScale();
 			anim.dest_scl=keys.getScale( _time );
 		}
-		if( anim.rot=!!keys.numRotationKeys() ){
+		if( (anim.rot=!!keys.numRotationKeys()) ){
 			anim.src_rot=obj->getLocalRotation();
 			anim.dest_rot=keys.getRotation( _time );
 		}

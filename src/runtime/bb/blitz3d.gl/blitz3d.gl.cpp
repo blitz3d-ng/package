@@ -80,7 +80,7 @@ class GLScene : public BBScene{
 private:
 	bool wireframe;
 public:
-	GLScene(){
+	GLScene():wireframe(false){
 	}
 
   int  hwTexUnits(){ return 8; }

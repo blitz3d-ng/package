@@ -4,7 +4,7 @@
 
 #include "meshloader.h"
 
-class Loader_X : public MeshLoader{
+class Loader_X final : public MeshLoader{
 public:
 	MeshModel *load( const string &f,const Transform &conv,int hint );
 };

@@ -50,9 +50,6 @@ int		 BBCALL bbScanLine();
 void	 BBCALL bbVWait( int n );
 void	 BBCALL bbFlip( int vwait );
 
-// misc
-void BBCALL bbMoveMouse( int x,int y );
-
 //graphics buffer functions
 void	 BBCALL bbSetBuffer( BBCanvas *buff );
 BBCanvas * BBCALL bbGraphicsBuffer();

@@ -10,6 +10,7 @@ extern "C" {
 
 void BBCALL bbRuntimeError( BBStr *str );
 
+void BBCALL bbMoveMouse( int x,int y );
 void BBCALL bbShowPointer();
 void BBCALL bbHidePointer();
 

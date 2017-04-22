@@ -25,6 +25,6 @@ public:
 	virtual void execute( void (*pc)(),const char *args,Debugger *dbg );
 };
 
-extern "C" _declspec(dllexport) Runtime * _cdecl runtimeGetRuntime();
+extern "C" _declspec(dllexport) Runtime * __cdecl runtimeGetRuntime();
 
 #endif

@@ -87,6 +87,7 @@ public:
 
 	BBCanvas(){}
 	BBCanvas( bb_int_t t ){}
+  virtual ~BBCanvas();
 };
 
 #endif

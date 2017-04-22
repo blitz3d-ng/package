@@ -24,11 +24,11 @@ void Entity::remove(){
 void Entity::insert(){
 	_succ=0;
 	if( _parent ){
-		if( _pred=_parent->_last_child ) _pred->_succ=this;
+		if( (_pred=_parent->_last_child) ) _pred->_succ=this;
 		else _parent->_children=this;
 		_parent->_last_child=this;
 	}else{
-		if( _pred=_last_orphan ) _pred->_succ=this;
+		if( (_pred=_last_orphan) ) _pred->_succ=this;
 		else _orphans=this;
 		_last_orphan=this;
 	}

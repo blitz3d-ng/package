@@ -7,7 +7,7 @@
 
 class MD2Model : public Model{
 public:
-	MD2Model( const string &filename );
+	MD2Model( const std::string &filename );
 	MD2Model( const MD2Model &t );
 	~MD2Model();
 

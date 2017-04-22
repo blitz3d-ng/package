@@ -18,6 +18,7 @@ module Blitz3D
         f.write "// RUN `bin/blitz3d config` TO UPDATE.\n\n"
         f.write "#include <bb/blitz/module.h>\n"
         f.write "#include <bb/#{mod.id}/#{mod.id}.h>\n\n"
+        f.write "#ifdef WIN32\n"
         f.write "BBMODULE_LINK( #{mod.id.gsub('.', '_')} ){\n"
         mod.symbols.each_pair do |ident, sym|
           f.write "\trtSym( \"#{ident}\",#{sym} );\n"
@@ -29,6 +30,7 @@ module Blitz3D
           f.write "\trtSym( #{sym},#{command.symbol} );\n"
         end
         f.write "}\n"
+        f.write "#endif\n"
 
         out_file = File.join(STUB_DIR, "#{mod.id}.cpp")
 
@@ -48,6 +50,13 @@ module Blitz3D
           f.write "project '#{mod.id}'\n"
           f.write "  kind 'StaticLib'\n"
           f.write "  language 'C++'\n\n"
+
+          f.write "  filter { 'platforms:macos or linux or mingw32' }\n"
+          f.write "    buildoptions { '-Wnon-virtual-dtor' }\n\n"
+          # f.write "  filter { 'platforms:macos' }\n"
+          # f.write "    buildoptions { '-Weverything', '-Wno-unused-parameter', '-Wno-sign-compare', '-Wno-sign-conversion', '-Wno-old-style-cast', '-Wno-unused-function', '-Wno-padded', '-Wno-double-promotion', '-Wshorten-64-to-32' }\n\n"
+
+          f.write "  filter {}\n\n"
 
           inactive_platforms = Module::PLATFORMS.reject { |p| mod.platforms.empty? || mod.platforms.include?(p) }.map(&:inspect)
           unless inactive_platforms.empty?

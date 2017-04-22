@@ -347,7 +347,7 @@ int main( int argc,char *argv[] ){
 		if( debug ){
 			dbgHandle=LoadLibrary( (home+"/bin/" DEBUGGER ".dll").c_str() );
 			if( dbgHandle ){
-				typedef Debugger *(_cdecl*GetDebugger)( Module*,Environ* );
+				typedef Debugger *(__cdecl*GetDebugger)( Module*,Environ* );
 				GetDebugger gd=(GetDebugger)GetProcAddress( dbgHandle,"debuggerGetDebugger" );
 				if( gd ) debugger=gd( module,env );
 			}

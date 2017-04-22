@@ -4,6 +4,7 @@
 #include <bb/runtime.windows/gxgraphics.h>
 
 #include <FreeImage.h>
+using namespace std;
 
 // For some reason, these aren't in the mingw headers...
 #if !defined(FOURCC_DXT1) && !defined(FOURCC_DXT1) && !defined(FOURCC_DXT1)

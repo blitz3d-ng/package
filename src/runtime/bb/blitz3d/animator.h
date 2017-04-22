@@ -18,7 +18,7 @@ public:
 
 	Animator( Object *tree,int frames );
 
-	Animator( const vector<Object*> &objs,int frames );
+	Animator( const std::vector<Object*> &objs,int frames );
 
 	void addSeq( int frames );
 
@@ -38,7 +38,7 @@ public:
 	bool animating()const{ return !!_mode; }
 
 	int numSeqs()const{ return _seqs.size(); }
-	const vector<Object*> &getObjects()const{ return _objs; }
+	const std::vector<Object*> &getObjects()const{ return _objs; }
 
 private:
 	struct Seq{
@@ -47,7 +47,7 @@ private:
 
 	struct Anim{
 		//anim keys
-		vector<Animation> keys;
+		std::vector<Animation> keys;
 		//for transitions...
 		bool pos,scl,rot;
 		Vector src_pos,dest_pos;
@@ -56,10 +56,10 @@ private:
 		Anim():pos(false),scl(false),rot(false){}
 	};
 
-	vector<Seq> _seqs;
+	std::vector<Seq> _seqs;
 
-	vector<Anim> _anims;
-	vector<Object*> _objs;
+	std::vector<Anim> _anims;
+	std::vector<Object*> _objs;
 
 	int _seq,_mode,_seq_len;
 	float _time,_speed,_trans_time,_trans_speed;

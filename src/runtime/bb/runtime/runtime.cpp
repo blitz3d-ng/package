@@ -7,6 +7,9 @@ BBRuntime *bbRuntime;
 BBHook *bbRuntimeOnSuspend;
 BBHook *bbRuntimeOnResume;
 
+BBRuntime::~BBRuntime(){
+}
+
 void *bbRuntimeWindow(){
 	return bbRuntime->window();
 }

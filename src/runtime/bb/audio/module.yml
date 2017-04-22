@@ -28,6 +28,7 @@ premake5:
   files:
     - channel.cpp
     - channel.h
+    - sound.cpp
     - sound.h
     - driver.cpp
     - driver.h

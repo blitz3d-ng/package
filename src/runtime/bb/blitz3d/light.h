@@ -10,6 +10,7 @@ protected:
 	bool dirty;
 
 	BBLightRep();
+	virtual ~BBLightRep();
 public:
 	void markDirty();
 	virtual void update( Light *light )=0;

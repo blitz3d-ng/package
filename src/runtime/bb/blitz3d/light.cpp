@@ -5,6 +5,8 @@
 
 BBLightRep::BBLightRep():dirty(true){
 }
+BBLightRep::~BBLightRep(){
+}
 
 void BBLightRep::markDirty(){
 	dirty=true;

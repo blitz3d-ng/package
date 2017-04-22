@@ -8,7 +8,7 @@
 #include <map>
 using namespace std;
 
-typedef int (_stdcall *LibFunc)( const void *in,int in_sz,void *out,int out_sz );
+typedef int (__stdcall *LibFunc)( const void *in,int in_sz,void *out,int out_sz );
 
 struct gxDll{
 	HINSTANCE hinst;

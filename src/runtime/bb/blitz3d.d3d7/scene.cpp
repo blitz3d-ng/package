@@ -3,6 +3,8 @@
 #include "scene.h"
 #include "mesh.h"
 
+using namespace std;
+
 static bool can_wb;
 static int  hw_tex_stages,tex_stages;
 static float BLACK[]={0,0,0};

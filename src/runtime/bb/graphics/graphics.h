@@ -14,6 +14,7 @@ protected:
   /***** GX INTERFACE *****/
 public:
   BBGraphics();
+  virtual ~BBGraphics();
 
   enum{
     GRAPHICS_WINDOWED=1,	//windowed mode
@@ -59,6 +60,7 @@ public:
 class BBContextDriver{
 public:
 	BBContextDriver();
+	virtual ~BBContextDriver();
 protected:
 	BBGraphics *graphics;
 

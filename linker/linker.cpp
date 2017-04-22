@@ -145,7 +145,7 @@ void Linker::deleteModule( Module *mod ){
 	delete mod;
 }
 
-Linker *_cdecl linkerGetLinker(){
+Linker *__cdecl linkerGetLinker(){
 	static Linker linker;return &linker;
 }
 

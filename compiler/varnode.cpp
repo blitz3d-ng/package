@@ -51,7 +51,7 @@ bool DeclVarNode::isObjParam(){
 void IdentVarNode::semant( Environ *e ){
 	if( sem_decl ) return;
 	Type *t=tagType( tag,e );if( !t ) t=Type::int_type;
-	if( sem_decl=e->findDecl( ident ) ){
+	if( (sem_decl=e->findDecl( ident )) ){
 		if( !(sem_decl->kind&(DECL_GLOBAL|DECL_LOCAL|DECL_PARAM)) ){
 			ex( "Identifier '"+sem_decl->name+"' may not be used like this" );
 		}

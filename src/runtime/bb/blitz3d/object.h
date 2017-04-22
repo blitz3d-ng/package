@@ -83,7 +83,7 @@ private:
 	bool obscurer;
 	float elapsed;
 	Vector velocity;
-	vector<BBChannel*> channels;
+	std::vector<BBChannel*> channels;
 	Vector capt_pos,capt_scl;
 	Quat capt_rot;
 	mutable Object *last_copy;

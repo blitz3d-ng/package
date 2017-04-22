@@ -6,7 +6,7 @@
 
 class Q3BSPModel : public Model{
 public:
-	Q3BSPModel( const string &f,float gamma_adj );
+	Q3BSPModel( const std::string &f,float gamma_adj );
 	Q3BSPModel( const Q3BSPModel &m );
 	~Q3BSPModel();
 

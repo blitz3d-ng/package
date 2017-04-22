@@ -4,9 +4,9 @@
 
 #include "meshloader.h"
 
-class Loader_Assimp : public MeshLoader{
+class Loader_Assimp final : public MeshLoader{
 public:
-	MeshModel *load( const string &f,const Transform &conv,int hint );
+	MeshModel *load( const std::string &f,const Transform &conv,int hint );
 };
 
 #endif

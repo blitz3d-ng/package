@@ -8,7 +8,7 @@
 
 class BBScene{
 public:
-  ~BBScene();
+  virtual ~BBScene();
 protected:
   std::set<BBMesh*> mesh_set;
 

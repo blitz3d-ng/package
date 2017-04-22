@@ -84,7 +84,7 @@ private:
 	bool auto_fade;
 	float auto_fade_nr,auto_fade_fr;
 
-	vector<MeshQueue*> queues[2];
+	std::vector<MeshQueue*> queues[2];
 
 	void enqueue( MeshQueue *q );
 };

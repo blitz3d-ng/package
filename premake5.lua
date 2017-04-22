@@ -60,9 +60,6 @@ workspace "blitz3d"
 
     disablewarnings { "4018","4244","4996" }
 
-  filter { "platforms:macos or mingw32" }
-    defines { "_cdecl=__cdecl", "_fastcall=__fastcall", "_stdcall=__stdcall" }
-
   filter { "platforms:linux" }
     defines { "_cdecl=__attribute__((__cdecl__))", "_fastcall=__fastcall", "_stdcall=__stdcall" }
     defines "BB_PLATFORM=\"linux\""
@@ -84,9 +81,6 @@ workspace "blitz3d"
     defines { "_declspec=__declspec", "_set_se_translator=set_se_translator" }
     linkoptions { "-static" }
 
-  filter { "platforms:mingw32", "language:C++" }
-    buildoptions { "-std=c++11" }
-
   filter { "platforms:mingw32", "kind:SharedLib" }
     targetprefix ""
     targetextension ".dll"
@@ -106,8 +100,8 @@ workspace "blitz3d"
   filter { "platforms:linux" }
     system "linux"
 
-  filter { "platforms:linux", "language:C++" }
-    buildoptions "-std=c++11"
+  filter { "platforms:macos or linux or mingw32", "language:C++" }
+    buildoptions { "-std=c++11", "-Wno-c++11-narrowing" }
 
 require './src/runtime/premake/init'
 
