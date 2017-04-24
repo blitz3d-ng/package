@@ -6,6 +6,8 @@
 
 class Debugger{
 public:
+	virtual ~Debugger(){};
+
 	virtual void debugRun()=0;
 	virtual void debugStop()=0;
 	virtual void debugStmt( int srcpos,const char *file )=0;

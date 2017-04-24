@@ -9,8 +9,10 @@ module Blitz3D
         @return_label = json['returnLabel']
       end
 
-      def to_c
-        "return #{@expr.to_c}"
+      def to_c(&cleanup)
+        cleanup = cleanup.yield
+        cleanup << "\n" unless cleanup.blank?
+        "#{cleanup}return #{@expr.to_c}"
       end
     end
   end

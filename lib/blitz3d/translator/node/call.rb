@@ -5,18 +5,18 @@ module Blitz3D
 
       def initialize(json)
         super
-        @ident = json['ident']
-        @tag = json['tag']
-        @sem_decl = json['sem_decl']
         # STDERR.puts JSON.pretty_generate(sem_decl).yellow
-        @exprs = json['exprs'].map { |expr| Node.load(expr) }
+        @ident    = json['ident']
+        @tag      = json['tag']
+        @sem_decl = Decl.new(json['sem_decl'])
+        @exprs    = json['exprs'].map { |expr| Node.load(expr) }
       end
 
       def to_c
-        args = exprs.map(&:to_c).join(',')
-        args = " #{args} " unless args.blank?
+        ident = sem_decl.type.symbol.present? ? sem_decl.type.symbol : "_f#{sem_decl.name}"
 
-        ident = sem_decl["type"]["symbol"].present? ? sem_decl["type"]["symbol"] : sem_decl["name"]
+        args = exprs.map(&:to_c)
+        args = " #{args.join(',')} ".strip
 
         "#{ident}(#{args})"
       end

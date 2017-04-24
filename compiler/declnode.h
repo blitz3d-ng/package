@@ -90,7 +90,6 @@ struct FuncDeclNode : public DeclNode{
 			if( d->kind!=DECL_LOCAL ) continue;
 			tree["locals"].push_back( d->toJSON() );
 		}
-		tree["params"]=params->toJSON( sem_env );
 		tree["stmts"]=stmts->toJSON( sem_env );
 		tree["sem_type"]=sem_type->toJSON( );
 		return tree;

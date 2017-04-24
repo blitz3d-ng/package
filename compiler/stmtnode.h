@@ -125,7 +125,13 @@ struct LabelNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( LabelNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="LabelNode";
+		tree["pos"]=pos;
+		tree["ident"]=ident;
+		tree["data_sz"]=data_sz;
+		return tree;
+	}
 };
 
 struct GotoNode : public StmtNode{
@@ -134,7 +140,12 @@ struct GotoNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( GotoNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="GotoNode";
+		tree["pos"]=pos;
+		tree["ident"]=ident;
+		return tree;
+	}
 };
 
 struct GosubNode : public StmtNode{
@@ -169,7 +180,12 @@ struct ExitNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( ExitNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="IfNode";
+		tree["pos"]=pos;
+		tree["sem_brk"]=sem_brk;
+		return tree;
+	}
 };
 
 struct WhileNode : public StmtNode{
@@ -265,7 +281,12 @@ struct DeleteNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( DeleteNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="DeleteNode";
+		tree["pos"]=pos;
+		tree["expr"]=expr->toJSON( e );
+		return tree;
+	}
 };
 
 struct DeleteEachNode : public StmtNode{

@@ -1,17 +1,12 @@
 module Blitz3D
   module AST
-    class IntType < Type
+    class NullType < Type
       def initialize(json = {})
       end
 
       def to_c
-        'bb_int_t'
+        'void*'
       end
-
-      def ptr
-        '&_bbIntType'
-      end
-
     end
   end
 end

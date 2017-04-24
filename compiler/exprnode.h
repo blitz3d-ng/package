@@ -160,7 +160,13 @@ struct UniExprNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( UniExprNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="StringConstNode";
+		tree["sem_type"]=sem_type->toJSON();
+		tree["op"]=op;
+		tree["expr"]=expr->toJSON( e );
+		return tree;
+	}
 };
 
 // and, or, eor, lsl, lsr, asr
@@ -296,7 +302,10 @@ struct NullNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( NullNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="NullNode";
+		return tree;
+	}
 };
 
 struct ObjectCastNode : public ExprNode{

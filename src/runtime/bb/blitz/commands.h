@@ -17,6 +17,7 @@ typedef void BBData;
 
 // basic
 BBStr *	 BBCALL _bbStrLoad( BBStr **var );
+BBStr * BBCALL _bbStrCopy( BBStr *var );
 void	 BBCALL _bbStrRelease( BBStr *str );
 void	 BBCALL _bbStrStore( BBStr **var,BBStr *str );
 int		 BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs );

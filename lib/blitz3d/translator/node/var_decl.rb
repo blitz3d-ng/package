@@ -20,7 +20,7 @@ module Blitz3D
 
       def to_c
         expr = self.expr || IntConstNode.new(value: 0)
-        "#{to_h}=#{expr.to_c}"
+        "#{ident}=#{expr.to_c}"
       end
     end
   end

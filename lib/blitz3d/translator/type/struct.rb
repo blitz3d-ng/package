@@ -8,8 +8,16 @@ module Blitz3D
         @fields = json['fields'].map { |field| Decl.new(field) }
       end
 
+      def to_type
+        "_t#{ident}"
+      end
+
       def to_c
-        "bb_#{ident}_t"
+        "BBObj*"
+      end
+
+      def ptr
+        "&#{to_type}"
       end
     end
   end

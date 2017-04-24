@@ -10,6 +10,10 @@ module Blitz3D
       def to_c
         "<#{klass}>".red
       end
+
+      def pos
+        -1
+      end
     end
   end
 end

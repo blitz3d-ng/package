@@ -132,6 +132,10 @@ BBStr * BBCALL _bbStrLoad( BBStr **var ){
 	return *var ? d_new BBStr( **var ) : d_new BBStr();
 }
 
+BBStr * BBCALL _bbStrCopy( BBStr *var ){
+	return var ? d_new BBStr( *var ) : d_new BBStr();
+}
+
 void BBCALL _bbStrRelease( BBStr *str ){
 	delete str;
 }

@@ -27,6 +27,8 @@ struct BBObj{
 	BBObj *next,*prev;
 	BBObjType *type;
 	int ref_cnt;
+	BBObj(){}
+	BBObj( BBField *f,BBObj *n,BBObj *p,BBObjType *t,int c ):fields(f),next(n),prev(p),type(t),ref_cnt(c){}
 };
 
 struct BBType{
@@ -38,6 +40,11 @@ struct BBObjType : public BBType{
 	BBObj used,free;
 	int fieldCnt;
 	BBType *fieldTypes[1];
+	BBObjType( int c,BBType *ft1 ):BBType(5),fieldCnt(c){
+		used=BBObj(0,&used,&used,0,-1);
+		free=BBObj(0,&free,&free,0,-1);
+		fieldTypes[0]=ft1;
+	}
 };
 
 struct BBVecType : public BBType{

@@ -1,14 +1,15 @@
 module Blitz3D
   module AST
-    class NewNode < Node
+    class NewNode < ExprNode
       attr_accessor :ident
 
       def initialize(json)
+        super
         @ident = json['ident']
       end
 
       def to_c
-        "new _bb_#{ident}()"
+        "_bbObjNew( &#{sem_type.to_type}.type )"
       end
     end
   end

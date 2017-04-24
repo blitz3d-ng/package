@@ -29,6 +29,7 @@ struct DeclVarNode : public VarNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="DeclVarNode";
+		tree["sem_type"]=sem_type->toJSON();
 		tree["sem_decl"]=sem_decl->toJSON();
 		return tree;
 	}
@@ -41,6 +42,7 @@ struct IdentVarNode : public DeclVarNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="IdentVarNode";
+		tree["sem_type"]=sem_type->toJSON();
 		tree["ident"]=ident;
 		tree["tag"]=tag;
 		return tree;
@@ -70,6 +72,7 @@ struct FieldVarNode : public VarNode{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="FieldVarNode";
+		tree["sem_type"]=sem_type->toJSON();
 		tree["expr"]=expr->toJSON( e );
 		tree["ident"]=ident;
 		tree["tag"]=tag;

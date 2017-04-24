@@ -7,7 +7,7 @@ module Blitz3D
         @kind = json['kind']
         @name = json['name']
         @offset = json['offset']
-        @type = Type.load(json['type'])
+        @type = Type.load(json['type']) if json['type']
       end
 
       def to_h

@@ -8,15 +8,15 @@ module Blitz3D
         @stmts = json['stmts'].map { |stmt| Node.load(stmt) }
       end
 
-      def to_c
+      def to_c(&cleanup)
         f = StringIO.new
 
         f.write(@stmts.map do |stmt|
-          code = stmt.to_c
+          code = stmt.to_c(&cleanup)
           code = (code.last != '}' && code.last != ';') ? "#{code};" : code
           # "\n_bbDebugStmt(#{stmt.pos},#{file.inspect});\n#{code}"
           "#{code}\n"
-        end.join("\n"))
+        end.join(""))
 
         f.string
       end

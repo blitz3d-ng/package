@@ -14,9 +14,11 @@ module Blitz3D
 
         if type.is_a?(expr.sem_type.class)
           expr.to_c
-        elsif @type.is_a?(StringType)
+        elsif type.is_a?(StringType)
           if expr.sem_type.class == FloatType
             "_bbStrFromFloat(#{expr.to_c})"
+          elsif expr.sem_type.class == IntType
+            "_bbStrFromInt(#{expr.to_c})"
           else
             raise "Need to handle StringType->#{expr.sem_type.class.name} casts"
           end

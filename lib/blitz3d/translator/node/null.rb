@@ -1,15 +1,12 @@
 module Blitz3D
   module AST
-    class FloatType < Type
+    class NullNode < ExprNode
       def initialize(json)
+        @sem_type = NullType.new
       end
 
       def to_c
-        'bb_float_t'
-      end
-
-      def ptr
-        '&_bbFloatType'
+        '0'
       end
     end
   end

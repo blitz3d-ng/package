@@ -22,6 +22,11 @@ RUNTIME = 'default'
 
 config = configs[RUNTIME][PLATFORM]
 
-module_libs = config["modules"].reverse.map { |m| "-l#{m}" }
+module_libs = config['modules'].reverse.map { |m| "-l#{m}" }
+module_libs << %w(-lstdutil -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib)
 
-puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} -lstdutil -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib #{`pkg-config glfw3 --libs`.strip} -framework OpenGL -lm"
+system_libs = %w(-lm)
+system_libs << %w(-framework OpenGL) if PLATFORM == 'macos'
+system_libs << %w(-lGL -lGLU) if PLATFORM == 'linux'
+
+puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} #{`pkg-config glfw3 --libs`.strip} #{system_libs.join(' ')}"

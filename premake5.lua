@@ -101,7 +101,10 @@ workspace "blitz3d"
     system "linux"
 
   filter { "platforms:macos or linux or mingw32", "language:C++" }
-    buildoptions { "-std=c++11", "-Wno-c++11-narrowing" }
+    buildoptions { "-std=c++11" }
+
+  filter { "platforms:macos or linux", "language:C++" }
+    buildoptions { "-Wno-c++11-narrowing" }
 
 require './src/runtime/premake/init'
 

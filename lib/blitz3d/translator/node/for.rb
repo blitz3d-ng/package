@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
-    class ForNode < Node
+    class ForNode < StmtNode
       attr_accessor :next_pos, :var, :from_expr, :to_expr, :step_expr, :stmts, :sem_brk
 
       def initialize(json)
+        super
         @next_pos = json['nextPos']
         @var = Node.load(json['var'])
         @from_expr = Node.load(json['fromExpr'])

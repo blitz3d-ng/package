@@ -10,7 +10,11 @@ module Blitz3D
       end
 
       def to_c
-        "#{var.to_c} = #{expr.to_c}"
+        if var.sem_type.is_a?(StringType)
+          "_bbStrStore( &#{var.to_c},#{expr.to_c} )"
+        else
+          "#{var.to_c} = #{expr.to_c}"
+        end
       end
     end
   end
