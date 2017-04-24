@@ -9,6 +9,9 @@ using namespace std;
 
 BBFileSystem *gx_filesys;
 
+BBDir::~BBDir(){
+}
+
 BBFileSystem::~BBFileSystem(){
 }
 

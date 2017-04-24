@@ -6,6 +6,8 @@
 class BBInputDriver{
   /***** GX INTERFACE *****/
 public:
+  virtual ~BBInputDriver(){}
+
   enum{
 		ASC_HOME=1,ASC_END=2,ASC_INSERT=3,ASC_DELETE=4,
 		ASC_PAGEUP=5,ASC_PAGEDOWN=6,

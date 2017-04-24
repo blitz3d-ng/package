@@ -7,6 +7,8 @@
 class BBDir{
   /***** GX INTERFACE *****/
 public:
+  virtual ~BBDir();
+
   virtual std::string getNextFile()=0;
 };
 

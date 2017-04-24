@@ -6,6 +6,9 @@
 extern BBGraphics *gx_graphics;
 #define b2d_graphics ((B2DGraphics*)gx_graphics)
 
+BBMovie::~BBMovie(){
+}
+
 BBMovie * BBCALL bbOpenMovie( BBStr *s ){
 	BBMovie *movie=b2d_graphics->openMovie( *s,0 );delete s;
 	return movie;

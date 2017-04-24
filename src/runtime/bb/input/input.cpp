@@ -82,7 +82,7 @@ int BBCALL bbWaitKey(){
 	for(;;){
 		if( !bbRuntimeIdle() ) RTEX( 0 );
 		if( int key=bbKeyboard.getKey( ) ){
-			if( key=gx_input->toAscii( key ) ) return key;
+			if( (key=gx_input->toAscii( key )) ) return key;
 		}
 		bbDelay( 20 );
 	}

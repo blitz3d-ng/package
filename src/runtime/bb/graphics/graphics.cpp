@@ -1115,7 +1115,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 				}
 				c->text( cx,curs_y,str.substr( curs,1 ) );
 			}
-			if( key=bbGetKey( false ) ){
+			if( (key=bbGetKey( false )) ){
 				if( int asc=gx_input->toAscii( key ) ){
 					rep_delay=280;
 					last_key=key;
@@ -1126,7 +1126,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 			}
 			if( last_key && bbKeyDown( last_key ) ){
 				if( t-last_time>rep_delay ){
-					if( key=gx_input->toAscii( last_key ) ){
+					if( (key=gx_input->toAscii( last_key )) ){
 						last_time+=rep_delay;
 						rep_delay=40;
 						break;

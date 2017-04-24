@@ -6,6 +6,8 @@
 
 class BBMovie{
 public:
+  virtual ~BBMovie();
+
   virtual bool draw( BBCanvas *dest,int x,int y,int w,int h )=0;
 
   virtual bool isPlaying()const=0;

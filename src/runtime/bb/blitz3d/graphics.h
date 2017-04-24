@@ -6,6 +6,8 @@
 
 class B3DGraphics{
 public:
+  virtual ~B3DGraphics(){}
+
   virtual BBScene *createScene( int flags )=0;
   virtual BBScene *verifyScene( BBScene *scene )=0;
   virtual void freeScene( BBScene *scene )=0;
