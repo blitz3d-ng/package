@@ -329,6 +329,7 @@ public:
 		m.k.x=i.x*q.k.x+j.x*q.k.y+k.x*q.k.z;m.k.y=i.y*q.k.x+j.y*q.k.y+k.y*q.k.z;m.k.z=i.z*q.k.x+j.z*q.k.y+k.z*q.k.z;
 		return m;
 	}
+	operator float*() const{ return (float*)&i; }
 	void orthogonalize(){
 		k.normalize();
 		i=j.cross( k ).normalized();
