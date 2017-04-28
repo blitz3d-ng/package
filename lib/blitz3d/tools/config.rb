@@ -90,6 +90,9 @@ module Blitz3D
               when 'includedirs'
                 dirs = [value].flatten.map { |path| File.join('..', '..', '..', mod.path, path) }.map(&:inspect)
                 f.write "  includedirs { #{dirs.join(', ')} }\n"
+              when 'defines'
+                dirs = [value].flatten.map(&:inspect)
+                f.write "  defines { #{dirs.join(', ')} }\n"
               else
                 throw "unhandled key: '#{key}' in #{mod.name.bold}"
               end
