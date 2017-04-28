@@ -352,6 +352,9 @@ premake5:
     - texture.h
     - world.h
 
+  - includedirs:
+    - ../../../assimp/include
+
   - filter: platforms:macos or linux
   - files:
     - loader_assimp.cpp
