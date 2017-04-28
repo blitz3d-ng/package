@@ -6,6 +6,7 @@ dependencies:
   - system
   - runtime
   - input
+  - blitz2d
 
 commands:
   # gfx driver info

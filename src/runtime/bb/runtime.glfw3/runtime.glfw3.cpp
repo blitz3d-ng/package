@@ -26,6 +26,10 @@ BBRuntime *bbCreateRuntime(){
   return d_new GLFW3Runtime( window );
 }
 
+void bbCloseRuntime( BBRuntime *rt ){
+  delete rt;
+}
+
 GLFW3Runtime::GLFW3Runtime( GLFWwindow *wnd ):wnd(wnd),graphics(0){
   bbContextDriver=this;
   bbSceneDriver=this;
@@ -43,25 +47,37 @@ GLFW3Runtime::~GLFW3Runtime(){
 }
 
 void GLFW3Runtime::_onClose( GLFWwindow *w ){
-  // RTEX( 0 );
-  exit(1); // FIXME: need to get exception handling working...
+  RTEX( 0 );
 }
 
 int GLFW3Runtime::numGraphicsDrivers(){
-  return 0;
+	int count;
+	glfwGetMonitors( &count );
+  return count;
 }
 
 void GLFW3Runtime::graphicsDriverInfo( int driver,std::string *name,int *c ){
 }
 
 int GLFW3Runtime::numGraphicsModes( int driver ){
-  return 0;
+	int count;
+	glfwGetVideoModes( glfwGetPrimaryMonitor(),&count );
+  return count;
 }
 
 void GLFW3Runtime::graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c ){
+	int mcount,vcount;
+	GLFWmonitor** monitors=glfwGetMonitors( &mcount );
+	const GLFWvidmode* modes=glfwGetVideoModes( monitors[driver],&vcount );
+
+	*w=modes[mode].width;
+	*h=modes[mode].height;
+	*d=modes[mode].redBits+modes[mode].greenBits+modes[mode].blueBits;
+	*c=GFXMODECAPS_3D;
 }
 
 void GLFW3Runtime::windowedModeInfo( int *c ){
+	*c=GFXMODECAPS_3D;
 }
 
 class GLFW3DefaultCanvas : public GLB2DDefaultCanvas{

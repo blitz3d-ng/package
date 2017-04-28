@@ -6,6 +6,9 @@
 #include "pivot.h"
 
 #include <d3d.h>
+
+#include <initguid.h>
+
 #include <dxfile.h>
 #include <rmxfguid.h>
 #include <rmxftmpl.h>

@@ -2,7 +2,7 @@ name: Blitz2D
 description: Provides drawing functions.
 
 dependencies:
-  - graphics
+  # - graphics
 
 commands:
   # movies

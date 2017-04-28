@@ -8,6 +8,10 @@
 #include <math.h>
 #include <vector>
 
+// ugly hack to avoid conflicts with GLFW
+#include <initguid.h>
+DEFINE_GUID(IID_IDirectInput8A,		0xBF798030,0x483A,0x4DA2,0xAA,0x99,0x5D,0x64,0xED,0x36,0x97,0x00);
+
 using namespace std;
 
 static const int QUE_SIZE=32;

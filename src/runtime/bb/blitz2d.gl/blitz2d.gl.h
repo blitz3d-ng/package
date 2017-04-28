@@ -4,7 +4,7 @@
 #include <bb/blitz2d/blitz2d.h>
 #include <bb/pixmap/pixmap.h>
 
-#ifdef __linux__
+#if defined(__linux__) || defined(_WIN32)
 #include <GL/glew.h>
 #endif
 
@@ -26,11 +26,12 @@ protected:
   void backup()const{}
 
   int width,height;
+	mutable unsigned char *pixels;
 
-  virtual void bind()=0;
+  virtual void bind()const=0;
 
 public:
-  GLB2DCanvas():width(0),height(0){
+  GLB2DCanvas():width(0),height(0),pixels(0){
   }
 
   void resize( int w,int h ){
@@ -111,14 +112,26 @@ public:
   bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{ return false; }
   bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const{ return false; }
 
-  bool lock()const{ return true; }
+  bool lock()const{
+		if( pixels ) return false;
+
+		pixels=new unsigned char[width*height*4];
+
+		bind();
+		glGetTexImage( GL_TEXTURE_2D,0,GL_RGBA,GL_UNSIGNED_BYTE,pixels );
+		return true;
+	}
   void setPixel( int x,int y,unsigned argb ){}
   void setPixelFast( int x,int y,unsigned argb ){}
   void copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y ){}
   void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y ){}
   unsigned getPixel( int x,int y )const{ return 0; }
-  unsigned getPixelFast( int x,int y )const{ return 0; }
-  void unlock()const{}
+  unsigned getPixelFast( int x,int y )const{
+    return pixels[(y*width+x)*4];
+  }
+  void unlock()const{
+		free(pixels);
+	}
 
   void setCubeMode( int mode ){}
   void setCubeFace( int face ){}
@@ -154,15 +167,16 @@ public:
 
   unsigned int getTextureId(){ return texture; }
 
-  void setPixmap( BBPixmap *pm ){
-    width=pm->width;
-    height=pm->height;
+	void setPixmap( BBPixmap *pm ){
+		width=pm->width;
+		height=pm->height;
 
-    glBindTexture( GL_TEXTURE_2D,texture );
-    glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
-  }
+		glBindTexture( GL_TEXTURE_2D,texture );
+		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
+		// gluBuild2DMipmaps( GL_TEXTURE_2D,GL_RGBA,pm->width,pm->height,GL_RGBA8,GL_UNSIGNED_BYTE,pm->bits );
+	}
 
-  void bind(){
+  void bind()const{
     glEnable( GL_TEXTURE_2D );
     glBindTexture( GL_TEXTURE_2D,texture );
   }
@@ -170,7 +184,7 @@ public:
 
 class GLB2DDefaultCanvas : public GLB2DCanvas{
 protected:
-  void bind(){}
+  void bind()const{}
 public:
 };
 

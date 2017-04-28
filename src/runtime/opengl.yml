@@ -16,14 +16,12 @@ modules:
   - filesystem.windows
   - timer.windows
   - bank
-  - graphics.d3d7
   - input
   - input.directinput8
   - audio
   - audio.fmod
-  - blitz3d.d3d7
+  - blitz3d.gl
   - userlibs
-  - runtime.windows
   - runtime.glfw3
 
 premake5:
@@ -41,14 +39,12 @@ premake5:
     - webp
     - zlib
 
-  - filter: platforms:win32 or win64 or mingw32
-  - links:
     - dinput8
     - fmodvc
-    - dxguid
+    - opengl32
+    - glu32
     - wsock32
     - winmm
-    - dxguid
     - d3dxof
     - ddraw
     - dsound
@@ -70,6 +66,3 @@ premake5:
 
   - filter: platforms:mingw32
   - links: strmiids
-
-  - filter: platforms:macos or linux
-  - links: assimp

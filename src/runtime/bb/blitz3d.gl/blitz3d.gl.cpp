@@ -201,6 +201,11 @@ public:
 		float mat_specular[]={ rs.shininess,rs.shininess,rs.shininess,rs.shininess };
 		float mat_shininess[]={ 100.0 };
 
+    if( rs.fx&FX_FULLBRIGHT ){
+      mat_ambient[0]=mat_ambient[1]=mat_ambient[2]=1.0f;
+      glLightModelfv( GL_LIGHT_MODEL_AMBIENT,mat_ambient );
+    }
+
 		glMaterialfv( GL_FRONT,GL_AMBIENT,mat_ambient );
 		glMaterialfv( GL_FRONT,GL_DIFFUSE,mat_diffuse );
 		glMaterialfv( GL_FRONT,GL_SPECULAR,mat_specular );
@@ -233,13 +238,25 @@ public:
 					glLoadIdentity();
 				}
 
-        if( false ){ // mipmap
+        if( ts->flags&BBCanvas::CANVAS_TEX_MIPMAP ){ // mipmap
           glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
           glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR );
         }else{
           glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
           glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
         }
+
+				if( ts->flags&BBCanvas::CANVAS_TEX_CLAMPU ){
+					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+				} else {
+					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
+				}
+
+				if( ts->flags&BBCanvas::CANVAS_TEX_CLAMPV ){
+					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+				} else {
+					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
+				}
 
 				glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
       }
@@ -291,7 +308,7 @@ public:
     GLMesh *mesh=(GLMesh*)m;
 
     glBegin(GL_TRIANGLES);
-      for( int i=0;i<mesh->max_tris;i++ ){
+      for( int i=0;i<tri_cnt;i++ ){
         for( int j=0;j<3;j++ ){
           int n=mesh->tris[i*3+j];
 

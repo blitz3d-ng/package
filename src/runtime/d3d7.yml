@@ -1,0 +1,67 @@
+name: Default
+
+modules:
+  - blitz
+  - runtime
+  - hook
+  - event
+  - math
+  - string
+  - stdio
+  - stream
+  - sockets
+  - system.windows
+  - system.macos
+  - filesystem
+  - filesystem.windows
+  - timer.windows
+  - bank
+  - graphics.d3d7
+  - input
+  - input.directinput8
+  - audio
+  - audio.fmod
+  - blitz3d.d3d7
+  - userlibs
+  - runtime.windows
+
+premake5:
+  - links:
+    - stdutil
+
+    - freeimage
+    - jpeg
+    - jxr
+    - openexr
+    - openjpeg
+    - png
+    - raw
+    - tiff4
+    - webp
+    - zlib
+
+    - dinput8
+    - fmodvc
+    - wsock32
+    - winmm
+    - d3dxof
+    - ddraw
+    - dsound
+    - kernel32
+    - user32
+    - gdi32
+    - winspool
+    - comdlg32
+    - advapi32
+    - shell32
+    - ole32
+    - oleaut32
+    - uuid
+    - odbc32
+    - odbccp32
+
+  - filter: platforms:win32 or win64
+  - links: amstrmid
+
+  - filter: platforms:mingw32
+  - links: strmiids
