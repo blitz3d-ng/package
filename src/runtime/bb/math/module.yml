@@ -16,7 +16,7 @@ commands:
   - Log#( float# ):"bbLog"
   - Log10#( float# ):"bbLog10"
   - Rnd#( from#,to#=0 ):"bbRnd"
-  - Rand#( from%,to%=1 ):"bbRand"
+  - Rand%( from%,to%=1 ):"bbRand"
   - SeedRnd( seed% ):"bbSeedRnd"
   - RndSeed( ):"bbRndSeed"
 
