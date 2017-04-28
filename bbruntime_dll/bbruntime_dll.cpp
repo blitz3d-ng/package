@@ -2,8 +2,8 @@
 #pragma warning( disable:4786 )
 
 #include "bbruntime_dll.h"
-#include "../debugger/debugger.h"
-#include <bb/blitz/app.h>
+#include <bb/blitz/blitz.h>
+#include <bb/runtime/runtime.h>
 
 using namespace std;
 
@@ -30,7 +30,6 @@ public:
 static HINSTANCE hinst;
 static map<const char*,void*> syms;
 map<const char*,void*>::iterator sym_it;
-static gxRuntime *gx_runtime;
 
 static void linkSym( const char *sym,void *pc ){
 	syms[sym]=pc;
@@ -101,6 +100,8 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 	_control87( _RC_NEAR|_PC_24|_EM_INVALID|_EM_ZERODIVIDE|_EM_OVERFLOW|_EM_UNDERFLOW|_EM_INEXACT|_EM_DENORMAL,0xfffff );
 #endif
 
+	bbAttachDebugger( dbg );
+
 	//strip spaces from ends of args...
 	string params=args;
 	while( params.size() && params[0]==' ' ) params=params.substr( 1 );
@@ -108,34 +109,17 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 
 	bbStartup( 0,params.c_str() );
 
-	if( bbRuntime=gx_runtime=gxRuntime::openRuntime( hinst,dbg ) ){
+	if( bbRuntime=bbCreateRuntime() ){
 
-#ifdef PRODEMO
-		shareProtCheck( killer );
-#endif
-		bbruntime_run( gx_runtime,pc,debug );
+		bbruntime_run( pc,debug );
 
-		gxRuntime *t=gx_runtime;
-		gx_runtime=0;
-		gxRuntime::closeRuntime( t );
+		bbCloseRuntime( bbRuntime );
 	}
 
 #ifndef __MINGW32__
 	_control87( _CW_DEFAULT,0xfffff );
 	_set_se_translator( old_trans );
 #endif
-}
-
-void Runtime::asyncStop(){
-	if( gx_runtime ) gx_runtime->asyncStop();
-}
-
-void Runtime::asyncRun(){
-	if( gx_runtime ) gx_runtime->asyncRun();
-}
-
-void Runtime::asyncEnd(){
-	if( gx_runtime ) gx_runtime->asyncEnd();
 }
 
 void Runtime::checkmem( streambuf *buf ){

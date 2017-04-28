@@ -32,7 +32,7 @@ module Blitz3D
         f.write "}\n"
         f.write "#endif\n"
 
-        out_file = File.join(STUB_DIR, "#{mod.id}.cpp")
+        out_file = File.join(STUB_DIR, "#{mod.id}.link.cpp")
 
         if file_has_changed?(out_file, f.string)
           FileUtils.mkdir_p STUB_DIR
@@ -69,7 +69,7 @@ module Blitz3D
             f.write " }\n\n"
           end
 
-          f.write "  files 'stubs/#{mod.id}.cpp'\n\n"
+          f.write "  files 'stubs/#{mod.id}.link.cpp'\n\n"
 
           options = [mod.premake5].flatten
           options.each do |option|

@@ -5,18 +5,14 @@
 #include <string>
 using namespace std;
 
-#include <bb/runtime.windows/gxruntime.h>
-extern gxRuntime *gx_runtime;
-
 //start up error
 void sue( const char *t ){
 	string p=string( "Startup Error: " )+t;
 	_bbDebugInfo( p.c_str() );
 }
 
-const char *bbruntime_run( gxRuntime *rt,void (*pc)(),bool dbg ){
+const char *bbruntime_run( void (*pc)(),bool dbg ){
 	bb_env.debug=dbg;
-	gx_runtime=rt;
 
 	if( !bbruntime_create() ) return "Unable to start program";
 	const char *t=0;

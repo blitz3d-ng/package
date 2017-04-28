@@ -31,11 +31,10 @@ enum{
 ////////////////////
 // STATIC STARTUP //
 ////////////////////
-gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst,Debugger *d ){
+gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst ){
 	if( runtime ) return 0;
 
-	//create debugger
-	bbAttachDebugger( (debugger=d) );
+	debugger=bbGetDebugger();
 
 	//create WNDCLASS
 	WNDCLASS wndclass;

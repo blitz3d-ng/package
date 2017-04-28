@@ -37,7 +37,7 @@ private:
 
 	/***** APP INTERFACE *****/
 public:
-	static gxRuntime *openRuntime( HINSTANCE hinst,Debugger *debugger );
+	static gxRuntime *openRuntime( HINSTANCE hinst );
 	static void closeRuntime( gxRuntime *runtime );
 
 	void asyncStop();

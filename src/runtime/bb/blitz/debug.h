@@ -19,6 +19,7 @@ public:
 };
 
 void BBCALL bbAttachDebugger( Debugger *d );
+Debugger * BBCALL bbGetDebugger();
 
 extern BBHook bbOnDebugStop;
 extern BBHook bbOnDebugError;

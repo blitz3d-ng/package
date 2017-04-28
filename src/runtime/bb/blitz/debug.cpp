@@ -13,6 +13,10 @@ void BBCALL bbAttachDebugger( Debugger *d ){
 	debugger=d;
 }
 
+Debugger * BBCALL bbGetDebugger(){
+	return debugger;
+}
+
 void BBCALL _bbDebugLog( const char *t ){
 	if( debugger ) debugger->debugLog( t );
 }

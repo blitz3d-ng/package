@@ -28,6 +28,7 @@ extern BBHook *bbRuntimeOnSuspend;
 extern BBHook *bbRuntimeOnResume;
 
 BBRuntime *bbCreateRuntime();
+void bbCloseRuntime( BBRuntime *rt );
 
 #include "commands.h"
 
