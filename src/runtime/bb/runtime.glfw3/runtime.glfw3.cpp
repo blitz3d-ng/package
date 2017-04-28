@@ -92,10 +92,18 @@ class GLFW3Graphics : public B2DGraphics{
 protected:
   GLFWwindow *wnd;
 
+	GLFWgammaramp gamma_ramp;
+	unsigned short gamma_red[256], gamma_green[256], gamma_blue[256];
 public:
   GLFW3Graphics( GLFWwindow *wnd ):wnd(wnd){
     front_canvas=d_new GLFW3DefaultCanvas( wnd );
     back_canvas=d_new GLFW3DefaultCanvas( wnd );
+
+		gamma_ramp.size=256;
+		gamma_ramp.red=gamma_red;
+		gamma_ramp.green=gamma_green;
+		gamma_ramp.blue=gamma_blue;
+		for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
 
 		int w,h;
 		glfwGetFramebufferSize( wnd,&w,&h );
@@ -124,9 +132,18 @@ public:
   void copy( BBCanvas *dest,int dx,int dy,int dw,int dh,BBCanvas *src,int sx,int sy,int sw,int sh ){}
 
   //NEW! Gamma control!
-  void setGamma( int r,int g,int b,float dr,float dg,float db ){}
-  void getGamma( int r,int g,int b,float *dr,float *dg,float *db ){}
-  void updateGamma( bool calibrate ){}
+  void setGamma( int r,int g,int b,float dr,float dg,float db ){
+		gamma_red[r&256]=dr*257.0f;
+		gamma_red[g&256]=dg*257.0f;
+		gamma_red[b&256]=db*257.0f;
+	}
+  void getGamma( int r,int g,int b,float *dr,float *dg,float *db ){
+		*dr=gamma_red[r&256];*dg=gamma_green[g&256];*db=gamma_blue[b&256];
+	}
+
+  void updateGamma( bool calibrate ){
+		glfwSetGammaRamp( glfwGetPrimaryMonitor(), &gamma_ramp);
+	}
 
   //ACCESSORS
   int getWidth()const{ return front_canvas->getWidth(); }
@@ -162,7 +179,10 @@ public:
   BBMovie *verifyMovie( BBMovie *movie ){ return 0; }
   void closeMovie( BBMovie *movie ){}
 
-  BBFont *loadFont( const std::string &font,int height,int flags ){ return 0; }
+  BBFont *loadFont( const std::string &font,int height,int flags ){
+    cout<<"font: "<<font<<endl;
+    return 0;
+  }
   BBFont *verifyFont( BBFont *font ){ return 0; }
   void freeFont( BBFont *font ){}
 };
@@ -171,6 +191,8 @@ BBGraphics *GLFW3Runtime::openGraphics( int w,int h,int d,int driver,int flags )
   if( graphics ) return 0;
 
   if( (graphics=d_new GLFW3Graphics( wnd )) ){
+		const GLFWvidmode* mode=glfwGetVideoMode( glfwGetPrimaryMonitor() );
+		glfwSetWindowPos( wnd,(mode->width-w)/2.0f,(mode->height-h)/2.0f );
     glfwSetWindowSize( wnd,w,h );
     glfwShowWindow( wnd );
     glfwMakeContextCurrent( wnd );
