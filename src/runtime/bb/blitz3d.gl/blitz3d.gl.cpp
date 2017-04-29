@@ -223,10 +223,10 @@ public:
 		glMaterialfv( GL_FRONT,GL_SHININESS,mat_shininess );
 
     for( int i=0;i<MAX_TEXTURES;i++ ){
-			const RenderState::TexState *ts=&rs.tex_states[i];
+			const RenderState::TexState &ts=rs.tex_states[i];
       glActiveTexture( GL_TEXTURE0+i );
 
-      GLB2DTextureCanvas *canvas=(GLB2DTextureCanvas*)ts->canvas;
+      GLB2DTextureCanvas *canvas=(GLB2DTextureCanvas*)ts.canvas;
 
       if( !canvas ){
         glDisable( GL_TEXTURE_2D );
@@ -236,7 +236,7 @@ public:
         glBindTexture( GL_TEXTURE_2D,canvas->getTextureId() );
 
         glMatrixMode( GL_TEXTURE );
-				const Matrix *m=ts->matrix;
+				const Matrix *m=ts.matrix;
 				if( m ){
 					float mat[16]={
 						m->elements[0][0], m->elements[0][1], m->elements[0][2], 0.0f,
@@ -249,7 +249,7 @@ public:
 					glLoadIdentity();
 				}
 
-        int flags=ts->canvas->getFlags();
+				int flags=ts.canvas->getFlags();
 
         if( flags&BBCanvas::CANVAS_TEX_MIPMAP ){
           glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
@@ -337,7 +337,9 @@ public:
 					int b = v_color & 255;
 
 					glNormal3fv( v_normal );
-					glTexCoord2fv( v_tex_coord );
+					for( int i=0;i<MAX_TEXTURES;i++ ){
+						glMultiTexCoord2fv( GL_TEXTURE0+i,v_tex_coord );
+					}
 					glColor4ub( r,g,b,a );
 					glVertex3fv( v_coords );
         }

@@ -61,6 +61,9 @@ premake5:
     - odbc32
     - odbccp32
 
+  - filter: platforms:win32 or win64 or mingw32
+  - links: glew
+
   - filter: platforms:win32 or win64
   - links: amstrmid
 

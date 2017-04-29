@@ -8,7 +8,6 @@ premake5:
   - files:
     - blitz2d.gl.cpp
     - blitz2d.gl.h
-    - ../../../glew/src/glew.c
 
   - includedirs:
     - ../../../glew/include

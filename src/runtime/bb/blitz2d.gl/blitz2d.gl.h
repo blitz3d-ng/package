@@ -155,10 +155,19 @@ class GLB2DTextureCanvas : public GLB2DCanvas{
 protected:
   unsigned int texture,framebuffer,depthbuffer;
 public:
-  GLB2DTextureCanvas( BBPixmap *pixmap,int flags ):GLB2DCanvas(flags),texture(0),framebuffer(0),depthbuffer(0){
-    glGenTextures( 1,&texture );
-    glGenFramebuffers( 1,&framebuffer );
-    glGenRenderbuffers( 1,&depthbuffer );
+	GLB2DTextureCanvas( int f ):GLB2DCanvas( f ){
+		glGenTextures( 1,&texture );
+		glGenFramebuffers( 1,&framebuffer );
+		glGenRenderbuffers( 1,&depthbuffer );
+	}
+
+	GLB2DTextureCanvas( int w,int h,int f ):GLB2DTextureCanvas(f){
+		width=w;
+		height=h;
+	}
+
+  GLB2DTextureCanvas( BBPixmap *pixmap,int f ):GLB2DCanvas(f),texture(0),framebuffer(0),depthbuffer(0){
+		flags=f;
 
     if( pixmap ) setPixmap( pixmap );
   }
@@ -170,9 +179,8 @@ public:
 		height=pm->height;
 
 		glBindTexture( GL_TEXTURE_2D,texture );
-    glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE) ;
+		glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
 		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
-		// gluBuild2DMipmaps( GL_TEXTURE_2D,GL_RGBA,pm->width,pm->height,GL_RGBA8,GL_UNSIGNED_BYTE,pm->bits );
 	}
 
   void bind()const{

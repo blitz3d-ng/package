@@ -2,9 +2,11 @@
 #include "canvas.h"
 
 D3D7Canvas::D3D7Canvas( IDirectDraw7 *dd,IDirectDrawSurface7 *s,int f ):
-dirDraw(dd),main_surf(s),surf(0),z_surf(0),t_surf(0),flags(f),
+dirDraw(dd),main_surf(s),surf(0),z_surf(0),t_surf(0),
 locked_cnt(0),mod_cnt(0),remip_cnt(0),
 cube_mode(CUBEMODE_REFLECTION|CUBESPACE_WORLD){
+	flags=f;
+
   if( flags & CANVAS_TEX_CUBE ){
     cube_surfs[2]=main_surf;
     for( int k=0;k<6;++k ){

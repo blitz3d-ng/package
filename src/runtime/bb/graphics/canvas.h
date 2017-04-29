@@ -11,6 +11,9 @@ class BBCanvas{
 public:
   virtual void backup()const=0; // TODO: figure out if we can make this private...
 
+protected:
+	int flags;
+
   /***** GX INTERFACE *****/
 public:
   // TODO: move these into 'blitz3d'
@@ -76,7 +79,7 @@ public:
   virtual int getWidth()const=0;
   virtual int getHeight()const=0;
   virtual int getDepth()const=0;
-  virtual int getFlags()const=0;
+  int getFlags()const{ return flags; }
   virtual int cubeMode()const=0;
   virtual void getOrigin( int *x,int *y )const=0;
   virtual void getHandle( int *x,int *y )const=0;
@@ -85,7 +88,7 @@ public:
   virtual unsigned getColor()const=0;
   virtual unsigned getClsColor()const=0;
 
-	BBCanvas(){}
+	BBCanvas():flags(0){}
 	BBCanvas( bb_int_t t ){}
   virtual ~BBCanvas();
 };

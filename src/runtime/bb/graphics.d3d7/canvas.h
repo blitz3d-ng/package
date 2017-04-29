@@ -26,7 +26,7 @@ public:
 
 	virtual void damage( const RECT &r )const;
 protected:
-	int flags,cube_mode;
+	int cube_mode;
 
 	IDirectDraw7 *dirDraw;
 	ddSurf *main_surf,*surf,*z_surf,*cube_surfs[6];
@@ -104,7 +104,6 @@ public:
 	int getWidth()const;
 	int getHeight()const;
 	int getDepth()const;
-	int getFlags()const{ return flags; }
 	int cubeMode()const{ return cube_mode; }
 	void getOrigin( int *x,int *y )const;
 	void getHandle( int *x,int *y )const;

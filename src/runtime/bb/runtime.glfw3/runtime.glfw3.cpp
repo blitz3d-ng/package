@@ -173,7 +173,7 @@ public:
 
   //OBJECTS
   BBCanvas *createCanvas( int width,int height,int flags ){
-    BBCanvas *canvas=d_new GLB2DTextureCanvas( 0,flags );
+    BBCanvas *canvas=d_new GLB2DTextureCanvas( width,height,flags );
     canvas_set.insert( canvas );
     return canvas;
   }

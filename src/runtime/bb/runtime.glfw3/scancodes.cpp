@@ -54,7 +54,7 @@ unsigned short GLFW_SCANCODE_MAP[317]={
 	0, // 84 GLFW_KEY_T
 	0, // 85 GLFW_KEY_U
 	0, // 86 GLFW_KEY_V
-	0, // 87 GLFW_KEY_W
+	17, // 87 GLFW_KEY_W
 	0, // 88 GLFW_KEY_X
 	0, // 89 GLFW_KEY_Y
 	44, // 90 GLFW_KEY_Z
