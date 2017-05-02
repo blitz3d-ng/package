@@ -9,6 +9,8 @@ project "compiler"
   targetdir "../_release/bin"
   targetname "blitzcc"
 
+  disablewarnings "4003"
+
   files {
     "main.cpp", "libs.cpp", "libs.h",
     "declnode.cpp", "declnode.h", "exprnode.cpp", "exprnode.h", "node.cpp", "node.h", "nodes.h", "prognode.cpp", "prognode.h", "stmtnode.cpp", "stmtnode.h", "varnode.cpp", "varnode.h", "decl.cpp", "decl.h", "environ.cpp", "environ.h", "label.h", "type.cpp", "type.h", "parser.cpp", "parser.h", "toker.cpp", "toker.h",
