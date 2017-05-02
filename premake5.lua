@@ -79,7 +79,7 @@ workspace "blitz3d"
 
     defines "BB_PLATFORM=\"windows\""
     defines { "WIN32", "_WIN32", "__MINGW64_TOOLCHAIN__", "TARGETSUFFIX=", "PTW32_STATIC_LIB" }
-    defines { "_declspec=__declspec", "_set_se_translator=set_se_translator" }
+    defines { "_set_se_translator=set_se_translator" }
     linkoptions { "-static" }
 
   filter { "platforms:mingw32", "kind:SharedLib" }
@@ -107,7 +107,7 @@ workspace "blitz3d"
   filter { "platforms:macos or linux", "language:C++" }
     buildoptions { "-Wno-c++11-narrowing" }
 
-require './src/runtime/premake/init'
+require './build/src/init'
 
 require './bblaunch/premake5'
 require './blitzide/premake5'

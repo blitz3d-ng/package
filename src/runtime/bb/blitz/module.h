@@ -2,7 +2,7 @@
 #define BBMODULE_H
 
 #ifdef WIN32
-#define BBDECL _declspec(dllexport)
+#define BBDECL __declspec(dllexport)
 #define BBCALL __stdcall
 #else
 #define BBDECL
