@@ -58,7 +58,7 @@ float BBCALL _odeContactGetMu();
 void  BBCALL _odeContactSetMu2( float mu );
 float BBCALL _odeContactGetMu2();
 void  BBCALL _odeContactSetFDir1( float fdir1x,float fdir1y,float fdir1z );
-float BBCALL _odeContactGetFDir1();
+void  BBCALL _odeContactGetFDir1();
 void  BBCALL _odeContactSetBounce( float bounce );
 float BBCALL _odeContactGetBounce();
 void  BBCALL _odeContactSetBounceVel( float vel );

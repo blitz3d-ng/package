@@ -82,7 +82,7 @@ void BBCALL _odeContactSetFDir1( float fdir1x,float fdir1y,float fdir1z ){
   _odeFDir[2]=fdir1z;
 }
 
-float BBCALL _odeContactGetFDir1(){
+void BBCALL _odeContactGetFDir1(){
   _odeVector[0]=_odeFDir[0];
   _odeVector[1]=_odeFDir[1];
   _odeVector[2]=_odeFDir[2];
