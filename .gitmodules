@@ -10,3 +10,6 @@
 [submodule "src/runtime/bb/runtime.glfw3/glfw"]
 	path = src/runtime/bb/runtime.glfw3/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "src/runtime/bb/blitz2d/freetype2"]
+	path = src/freetype2
+	url = git://git.sv.nongnu.org/freetype/freetype2.git
