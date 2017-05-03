@@ -235,7 +235,7 @@ static void link(){
 	module_syms.clear();
 }
 
-extern "C" _declspec(dllexport) int __stdcall bbWinMain();
+extern "C" __declspec(dllexport) int __stdcall bbWinMain();
 extern "C" BOOL __stdcall _DllMainCRTStartup( HANDLE,DWORD,LPVOID );
 
 bool WINAPI DllMain( HANDLE module,DWORD reason,void *reserved ){
