@@ -15,8 +15,11 @@ using namespace std;
   #define WRONG_DIV '/'
 #endif
 
+BBPixmap::BBPixmap():width(0),height(0),depth(0),pitch(0),bits(0){
+}
+
 BBPixmap::~BBPixmap(){
-  if( bits ) delete bits;
+  delete bits;
 }
 
 BBPixmap *bbLoadPixmap( const std::string &file ){
@@ -53,12 +56,12 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
   pm->pitch=FreeImage_GetPitch( dib );
 
   int size=pm->width*pm->height*bytes;
-  pm->bits=malloc( size );
+  pm->bits=new unsigned char[size];
   memcpy( pm->bits,FreeImage_GetBits( dib ),size );
 
   // NASTY: gotta be a better way to do this...
   for( int i=0;i<pm->width*pm->height;i++ ){
-    unsigned char *p=&((unsigned char*)pm->bits)[bytes*i],tmp;
+    unsigned char *p=&pm->bits[bytes*i],tmp;
     tmp=p[0]; // ARGB? BGRA
     p[0]=p[2];
     p[2]=tmp;

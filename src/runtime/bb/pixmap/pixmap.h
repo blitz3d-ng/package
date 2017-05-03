@@ -5,8 +5,9 @@
 
 struct BBPixmap{
   int width,height,depth,pitch;
-  void *bits;
+  unsigned char *bits;
 
+  BBPixmap();
   ~BBPixmap();
 };
 

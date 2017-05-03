@@ -350,7 +350,7 @@ qstreambuf::qstreambuf(){
 }
 
 qstreambuf::~qstreambuf(){
-	delete buf;
+	delete[] buf;
 }
 
 int qstreambuf::size(){
@@ -378,7 +378,7 @@ qstreambuf::int_type qstreambuf::overflow( qstreambuf::int_type c ){
 		int n_sz=sz*2;if( n_sz<MIN_SIZE ) n_sz=MIN_SIZE;
 		char *n_buf=d_new char[ n_sz ];
 		memcpy( n_buf,gptr(),sz );
-		delete buf;buf=n_buf;
+		delete[] buf;buf=n_buf;
 		setg( buf,buf,buf+sz );
 		setp( buf+sz,buf+n_sz );
 	}
