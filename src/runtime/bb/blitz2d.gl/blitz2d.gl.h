@@ -10,12 +10,10 @@
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
 #include <OpenGL/glext.h>
 #else
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
-#include <GL/glu.h>
 #include <GL/glext.h>
 #endif
 
@@ -25,13 +23,13 @@ class GLB2DCanvas : public BBCanvas{
 protected:
   void backup()const{}
 
-  int width,height;
+  int width,height,flags;
 	mutable unsigned char *pixels;
 
   virtual void bind()const=0;
 
 public:
-  GLB2DCanvas():width(0),height(0),pixels(0){
+  GLB2DCanvas( int f ):width(0),height(0),pixels(0),flags(f){
   }
 
   void resize( int w,int h ){
@@ -140,7 +138,7 @@ public:
   int getWidth()const{ return width; }
   int getHeight()const{ return height; }
   int getDepth()const{ return 0; }
-  int getFlags()const{ return 0; }
+  int getFlags()const{ return flags; }
   int cubeMode()const{ return 0; }
   void getOrigin( int *x,int *y )const{}
   void getHandle( int *x,int *y )const{}
@@ -157,7 +155,7 @@ class GLB2DTextureCanvas : public GLB2DCanvas{
 protected:
   unsigned int texture,framebuffer,depthbuffer;
 public:
-  GLB2DTextureCanvas( BBPixmap *pixmap ):texture(0),framebuffer(0),depthbuffer(0){
+  GLB2DTextureCanvas( BBPixmap *pixmap,int flags ):GLB2DCanvas(flags),texture(0),framebuffer(0),depthbuffer(0){
     glGenTextures( 1,&texture );
     glGenFramebuffers( 1,&framebuffer );
     glGenRenderbuffers( 1,&depthbuffer );
@@ -172,6 +170,7 @@ public:
 		height=pm->height;
 
 		glBindTexture( GL_TEXTURE_2D,texture );
+    glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE) ;
 		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
 		// gluBuild2DMipmaps( GL_TEXTURE_2D,GL_RGBA,pm->width,pm->height,GL_RGBA8,GL_UNSIGNED_BYTE,pm->bits );
 	}
@@ -186,6 +185,7 @@ class GLB2DDefaultCanvas : public GLB2DCanvas{
 protected:
   void bind()const{}
 public:
+  GLB2DDefaultCanvas( int f ):GLB2DCanvas(f){}
 };
 
 #endif

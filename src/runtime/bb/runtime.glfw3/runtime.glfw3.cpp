@@ -84,7 +84,7 @@ class GLFW3DefaultCanvas : public GLB2DDefaultCanvas{
 protected:
   GLFWwindow *wnd;
 public:
-  GLFW3DefaultCanvas( GLFWwindow *wnd ):wnd(wnd){
+  GLFW3DefaultCanvas( GLFWwindow *wnd,int flags ):GLB2DDefaultCanvas(flags),wnd(wnd){
   }
 
   // int getWidth()const{
@@ -112,8 +112,8 @@ protected:
 	unsigned short gamma_red[256], gamma_green[256], gamma_blue[256];
 public:
   GLFW3Graphics( GLFWwindow *wnd ):wnd(wnd){
-    front_canvas=d_new GLFW3DefaultCanvas( wnd );
-    back_canvas=d_new GLFW3DefaultCanvas( wnd );
+    front_canvas=d_new GLFW3DefaultCanvas( wnd,0 );
+    back_canvas=d_new GLFW3DefaultCanvas( wnd,0 );
 
 		gamma_ramp.size=256;
 		gamma_ramp.red=gamma_red;
@@ -173,7 +173,7 @@ public:
 
   //OBJECTS
   BBCanvas *createCanvas( int width,int height,int flags ){
-    BBCanvas *canvas=d_new GLB2DTextureCanvas( 0 );
+    BBCanvas *canvas=d_new GLB2DTextureCanvas( 0,flags );
     canvas_set.insert( canvas );
     return canvas;
   }
@@ -184,7 +184,7 @@ public:
     BBPixmap *pixmap=bbLoadPixmap( file );
     if( !pixmap ) return 0;
 
-    BBCanvas *canvas=d_new GLB2DTextureCanvas( pixmap );
+    BBCanvas *canvas=d_new GLB2DTextureCanvas( pixmap,flags );
     canvas_set.insert( canvas );
     delete pixmap;
     return canvas;
@@ -212,6 +212,7 @@ BBGraphics *GLFW3Runtime::openGraphics( int w,int h,int d,int driver,int flags )
     glfwSetWindowSize( wnd,w,h );
     glfwShowWindow( wnd );
     glfwMakeContextCurrent( wnd );
+    glfwFocusWindow( wnd );
     return graphics;
   }
   return 0;

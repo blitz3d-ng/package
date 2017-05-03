@@ -29,6 +29,14 @@ public:
     tris=new int[max_tris*3];
   }
 
+  ~GLMesh(){
+    delete[] v_coords;
+    delete[] v_normal;
+    delete[] v_tex_coord;
+    delete[] v_color;
+    delete[] tris;
+  }
+
   bool lock( bool all ){
 		return true;
   }
@@ -142,28 +150,31 @@ public:
   }
 
   void setWorldMatrix( const Matrix *matrix ){
-    const Matrix *m=matrix;
-
-    float mat[16]={
-      m->elements[0][0], m->elements[0][1], m->elements[0][2], 0.0f,
-      m->elements[1][0], m->elements[1][1], m->elements[1][2], 0.0f,
-      m->elements[2][0], m->elements[2][1], m->elements[2][2], 0.0f,
-      m->elements[3][0], m->elements[3][1], m->elements[3][2], 1.0f
-    };
-
 		glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glScalef( 1.0f,1.0f,-1.0f );
     glMultMatrixf( view_matrix );
-    glMultMatrixf( mat );
+
+    if( matrix ){
+      const Matrix *m=matrix;
+
+      float mat[16]={
+        m->elements[0][0], m->elements[0][1], m->elements[0][2], 0.0f,
+        m->elements[1][0], m->elements[1][1], m->elements[1][2], 0.0f,
+        m->elements[2][0], m->elements[2][1], m->elements[2][2], 0.0f,
+        m->elements[3][0], m->elements[3][1], m->elements[3][2], 1.0f
+      };
+
+      glMultMatrixf( mat );
+    }
   }
 	void setRenderState( const RenderState &rs ){
 
-		// if( rs.fx&FX_ALPHATEST && !rs.fx&FX_VERTEXALPHA ){
-		// 	glEnable( GL_ALPHA_TEST );
-		// } else {
-		// 	glDisable( GL_ALPHA_TEST );
-		// }
+		if( rs.fx&FX_ALPHATEST && !rs.fx&FX_VERTEXALPHA ){
+			glEnable( GL_ALPHA_TEST );
+		} else {
+			glDisable( GL_ALPHA_TEST );
+		}
 		// glEnable( GL_ALPHA_TEST );
 
 		// glDisable( GL_CULL_FACE );
@@ -238,7 +249,9 @@ public:
 					glLoadIdentity();
 				}
 
-        if( ts->flags&BBCanvas::CANVAS_TEX_MIPMAP ){ // mipmap
+        int flags=ts->canvas->getFlags();
+
+        if( flags&BBCanvas::CANVAS_TEX_MIPMAP ){
           glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
           glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR );
         }else{
@@ -246,13 +259,13 @@ public:
           glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
         }
 
-				if( ts->flags&BBCanvas::CANVAS_TEX_CLAMPU ){
+				if( flags&BBCanvas::CANVAS_TEX_CLAMPU ){
 					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
 				} else {
 					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
 				}
 
-				if( ts->flags&BBCanvas::CANVAS_TEX_CLAMPV ){
+				if( flags&BBCanvas::CANVAS_TEX_CLAMPV ){
 					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
 				} else {
 					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
@@ -308,9 +321,9 @@ public:
     GLMesh *mesh=(GLMesh*)m;
 
     glBegin(GL_TRIANGLES);
-      for( int i=0;i<tri_cnt;i++ ){
+      for( int i=first_tri;i<first_tri+tri_cnt;i++ ){
         for( int j=0;j<3;j++ ){
-          int n=mesh->tris[i*3+j];
+          int n=first_vert+mesh->tris[i*3+j];
 
           float *v_coords=&mesh->v_coords[n*3],
                 *v_normal=&mesh->v_normal[n*3],
