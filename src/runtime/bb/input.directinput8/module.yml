@@ -8,9 +8,6 @@ dependencies:
   - input
 
 premake5:
-  defines:
-    - DIRECTINPUT_VERSION=0x800
-
   files:
     - driver.cpp
     - driver.h

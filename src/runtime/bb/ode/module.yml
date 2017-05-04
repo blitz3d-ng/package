@@ -76,11 +76,6 @@ commands:
   - dGetVersion#():"_odeGetVersion"
 
 premake5:
-  defines:
-    - ODE_LIB
-    - dIDESINGLE
-    - CCD_IDESINGLE
-
   files:
     - commands.h
 
@@ -96,22 +91,6 @@ premake5:
 
     - jv-ode-compat.cpp
 
-    - src/ode/src/*.cpp
-    - src/ode/src/*.c
-    - src/ode/src/*.h
-
-    - src/ode/src/joints/*.cpp
-    - src/ode/src/joints/*.h
-
-    - src/OPCODE/**/*.cpp
-    - src/OPCODE/**/*.h
-
-    - src/ou/src/ou/*.cpp
-
   includedirs:
     - include
     - src/include
-    - src/ode/src
-    - src/OPCODE
-    - src/libccd/src
-    - src/ou/include

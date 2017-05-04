@@ -18,7 +18,6 @@
 #include <math.h>
 #include <windows.h>
 #include <ddraw.h>
-#include <dinput.h>
 #include <d3d.h>
 
 using namespace std;

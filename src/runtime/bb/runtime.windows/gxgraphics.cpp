@@ -469,7 +469,7 @@ static void debugPF( const DDPIXELFORMAT &pf ){
 static void pickTexFmts( gxGraphics *g,int hi ){
 	//texRGBFmt.
 	{
-		int pick=-1,max=0,bits;
+		int pick=-1,max=0,bits=0;
 		for( int d=g->primFmt.dwRGBBitCount;d<=32;d+=8 ){
 			for( int k=0;k<tex_fmts.size();++k ){
 				const TexFmt &t=tex_fmts[k];
@@ -484,7 +484,7 @@ static void pickTexFmts( gxGraphics *g,int hi ){
 	}
 	//texAlphaFmt
 	{
-		int pick=-1,max=0,bits;
+		int pick=-1,max=0,bits=0;
 		for( int d=g->primFmt.dwRGBBitCount;d<=32;d+=8 ){
 			for( int k=0;k<tex_fmts.size();++k ){
 				const TexFmt &t=tex_fmts[k];
@@ -499,7 +499,7 @@ static void pickTexFmts( gxGraphics *g,int hi ){
 	}
 	//texRGBAlphaFmt
 	{
-		int pick=-1,a8rgb8=-1,max=0,bits;
+		int pick=-1,a8rgb8=-1,max=0,bits=0;
 		for( int d=g->primFmt.dwRGBBitCount;d<=32;d+=8 ){
 			for( int k=0;k<tex_fmts.size();++k ){
 				const TexFmt &t=tex_fmts[k];
@@ -516,7 +516,7 @@ static void pickTexFmts( gxGraphics *g,int hi ){
 	}
 	//texRGBMaskFmt...
 	{
-		int pick=-1,max=0,bits;
+		int pick=-1,max=0,bits=0;
 		for( int d=g->primFmt.dwRGBBitCount;d<=32;d+=8 ){
 			for( int k=0;k<tex_fmts.size();++k ){
 				const TexFmt &t=tex_fmts[k];

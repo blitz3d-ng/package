@@ -370,7 +370,6 @@ bool gxRuntime::idle(){
 			DispatchMessage( &msg );
 		}
 	}
-	return run_flag;
 }
 
 ///////////////
@@ -394,7 +393,6 @@ void gxRuntime::_onDebugError( void *data,void *context ){
 
 void gxRuntime::onDebugError( const char *t ){
 	if( !debugger ) return;
-	Debugger *d=debugger;
 	asyncEnd();
 	if( !suspended ){
 		forceSuspend();
@@ -446,7 +444,7 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	curr_driver=drivers[driver];
 
 	if( windowed ){
-		if( graphics=openWindowedGraphics( w,h,d,d3d ) ){
+		if( (graphics=openWindowedGraphics( w,h,d,d3d )) ){
 			gfx_mode=(flags & BBGraphics::GRAPHICS_SCALED) ? 1 : 2;
 			auto_suspend=(flags & BBGraphics::GRAPHICS_AUTOSUSPEND) ? true : false;
 			resize( w,h );

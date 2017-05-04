@@ -51,6 +51,10 @@ module Blitz3D
           f.write "  kind 'StaticLib'\n"
           f.write "  language 'C++'\n\n"
 
+          f.write "  filter { 'platforms:win32 or win64' }\n"
+          f.write "    buildoptions { '/W4' }\n\n"
+          f.write "    disablewarnings { '4100', '4245', '4456', '4706' }\n\n"
+
           f.write "  filter { 'platforms:macos or linux or mingw32' }\n"
           f.write "    buildoptions { '-Wnon-virtual-dtor' }\n\n"
           # f.write "  filter { 'platforms:macos' }\n"

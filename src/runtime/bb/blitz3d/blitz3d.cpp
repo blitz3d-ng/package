@@ -272,11 +272,11 @@ void BBCALL bbUpdateWorld( float elapsed ){
 #ifndef BETA
 	world->update( elapsed );
 	return;
-#endif
-
+#else
 	update_ms=bbMilliSecs();
 	world->update( elapsed );
 	update_ms=bbMilliSecs()-update_ms;
+#endif
 }
 
 void BBCALL bbCaptureWorld(){
