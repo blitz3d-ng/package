@@ -553,18 +553,18 @@ BBScene *gxGraphics::createScene( int flags ){
 							pickTexFmts( this,1 );
 							tex_fmts.clear();
 #ifdef BETA
-							_bbDebugLog( "Texture RGB format:" );
-							debugPF( texRGBFmt );
-							_bbDebugLog( "Texture Alpha format:" );
-							debugPF( texAlphaFmt );
-							_bbDebugLog( "Texture RGB Alpha format:" );
-							debugPF( texRGBAlphaFmt );
-							_bbDebugLog( "Texture RGB Mask format:" );
-							debugPF( texRGBMaskFmt );
-							_bbDebugLog( "Texture Primary format:" );
-							debugPF( primFmt );
-							string ts="ZBuffer Bit Depth:"+itoa( zbuffFmt.dwZBufferBitDepth );
-							_bbDebugLog( ts.c_str() );
+							// _bbDebugLog( "Texture RGB format:" );
+							// debugPF( texRGBFmt );
+							// _bbDebugLog( "Texture Alpha format:" );
+							// debugPF( texAlphaFmt );
+							// _bbDebugLog( "Texture RGB Alpha format:" );
+							// debugPF( texRGBAlphaFmt );
+							// _bbDebugLog( "Texture RGB Mask format:" );
+							// debugPF( texRGBMaskFmt );
+							// _bbDebugLog( "Texture Primary format:" );
+							// debugPF( primFmt );
+							// string ts="ZBuffer Bit Depth:"+itoa( zbuffFmt.dwZBufferBitDepth );
+							// _bbDebugLog( ts.c_str() );
 #endif
 							gxScene *scene=d_new gxScene( dir3d,dir3dDev,(gxCanvas*)back_canvas );
 							scene_set.insert( scene );

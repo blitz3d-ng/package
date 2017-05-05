@@ -5,9 +5,10 @@
 #include "animation.h"
 
 #ifdef BETA
-// #define _log( X ) _bbDebugLog( (string(X)).c_str() );
+#include <bb/blitz/blitz.h>
+#define _bbDebugLog( X ) _bbDebugLog( (string(X)).c_str() );
 #else
-#define _log( X )
+#define _bbDebugLog( X )
 #endif
 
 static filebuf in;
@@ -112,7 +113,7 @@ static Vector parseColor(){
 static void parseVertList(){
 	unsigned short cnt;
 	in.sgetn( (char*)&cnt,2 );
-	_log( "VertList cnt="+itoa(cnt) );
+	_bbDebugLog( "VertList cnt="+itoa(cnt) );
 	while( cnt-- ){
 		Surface::Vertex v;
 		in.sgetn( (char*)&v.coords,12 );
@@ -123,7 +124,7 @@ static void parseVertList(){
 
 static void parseFaceMat(){
 	string name=parseString();
-	_log( "FaceMat: "+name );
+	_bbDebugLog( "FaceMat: "+name );
 	Brush mat=materials_map[name];
 	unsigned short cnt;
 	in.sgetn( (char*)&cnt,2 );
@@ -137,7 +138,7 @@ static void parseFaceMat(){
 static void parseFaceList(){
 	unsigned short cnt;
 	in.sgetn( (char*)&cnt,2 );
-	_log( "FaceList cnt="+itoa(cnt) );
+	_bbDebugLog( "FaceList cnt="+itoa(cnt) );
 	while( cnt-- ){
 		unsigned short v[4];
 		in.sgetn( (char*)v,8 );
@@ -160,7 +161,7 @@ static void parseFaceList(){
 }
 
 static void parseMapList(){
-	_log( "MapList" );
+	_bbDebugLog( "MapList" );
 	unsigned short cnt;
 	in.sgetn( (char*)&cnt,2 );
 	for( int k=0;k<cnt;++k ){
@@ -174,7 +175,7 @@ static void parseMapList(){
 }
 
 static void parseTriMesh( MeshModel *mesh ){
-	_log( "TriMesh" );
+	_bbDebugLog( "TriMesh" );
 	enterChunk();
 	Transform tform;
 
@@ -231,7 +232,7 @@ static void parseTriMesh( MeshModel *mesh ){
 static void parseObject( MeshModel *root ){
 	//skip name
 	string name=parseString();
-	_log( "Object:"+name );
+	_bbDebugLog( "Object:"+name );
 	MeshModel *mesh=0;
 
 	enterChunk();
@@ -250,7 +251,7 @@ static void parseObject( MeshModel *root ){
 }
 
 static void parseMaterial(){
-	_log( "Material" );
+	_bbDebugLog( "Material" );
 	Brush mat;
 	string name,tex_name;
 	enterChunk();
@@ -290,7 +291,7 @@ static void parseMaterial(){
 }
 
 static void parseScene( MeshModel *root ){
-	_log( "Scene" );
+	_bbDebugLog( "Scene" );
 	enterChunk();
 	while( int id=nextChunk() ){
 		switch( id ){
@@ -313,7 +314,7 @@ static void parseAnimKeys( Animation *anim,int type ){
 	in.pubseekoff( 8,ios_base::cur );
 	in.sgetn( (char*)&cnt,2 );
 	in.pubseekoff( 2,ios_base::cur );
-	_log( "ANIM_TRACK: frames="+itoa( cnt ) );
+	_bbDebugLog( "ANIM_TRACK: frames="+itoa( cnt ) );
 	Vector pos,axis,scale;
 	float angle;
 	Quat quat;
@@ -332,13 +333,13 @@ static void parseAnimKeys( Animation *anim,int type ){
 		case 0xb020:	//POS_TRACK_TAG
 			in.sgetn( (char*)&pos,12 );
 			if( conv ) pos=conv_tform*pos;
-//			_log( "POS_KEY: time="+itoa(time)+" pos="+ftoa( pos.x )+","+ftoa( pos.y )+","+ftoa( pos.z ) );
+//			_bbDebugLog( "POS_KEY: time="+itoa(time)+" pos="+ftoa( pos.x )+","+ftoa( pos.y )+","+ftoa( pos.z ) );
 			if( time<=anim_len ) anim->setPositionKey( time,pos );
 			break;
 		case 0xb021:	//ROT_TRACK_TAG
 			in.sgetn( (char*)&angle,4 );
 			in.sgetn( (char*)&axis,12 );
-//			_log( "ROT_KEY: time="+itoa(time)+" angle="+ftoa(angle)+" axis="+ftoa(axis.x)+","+ftoa(axis.y)+","+ftoa(axis.z) );
+//			_bbDebugLog( "ROT_KEY: time="+itoa(time)+" angle="+ftoa(angle)+" axis="+ftoa(axis.x)+","+ftoa(axis.y)+","+ftoa(axis.z) );
 			if( axis.length()>EPSILON ){
 				if( flip_tris ) angle=-angle;
 				if( conv ) axis=conv_tform.m*axis;
@@ -351,7 +352,7 @@ static void parseAnimKeys( Animation *anim,int type ){
 			in.sgetn( (char*)&scale,12 );
 			if( conv ) scale=conv_tform.m*scale;
 //			scale.x=fabs(scale.x);scale.y=fabs(scale.y);scale.z=fabs(scale.z);
-			_log( "SCL_KEY: time="+itoa(time)+" scale="+ftoa( scale.x )+","+ftoa( scale.y )+","+ftoa( scale.z ) );
+			_bbDebugLog( "SCL_KEY: time="+itoa(time)+" scale="+ftoa( scale.x )+","+ftoa( scale.y )+","+ftoa( scale.z ) );
 			if( time<=anim_len ) anim->setScaleKey( time,scale );
 			break;
 		}
@@ -359,7 +360,7 @@ static void parseAnimKeys( Animation *anim,int type ){
 }
 
 static void parseMeshInfo( MeshModel *root,float curr_time ){
-	_log( "OBJECT_NODE_TAG" );
+	_bbDebugLog( "OBJECT_NODE_TAG" );
 	enterChunk();
 	string name,inst;
 	Vector pivot;
@@ -371,30 +372,30 @@ static void parseMeshInfo( MeshModel *root,float curr_time ){
 		switch( chunk_id ){
 		case 0xb030:	//NODE_ID
 			in.sgetn( (char*)&id,2 );
-			_log( "NODE_ID: "+itoa(id) );
+			_bbDebugLog( "NODE_ID: "+itoa(id) );
 			break;
 		case 0xb010:	//NODE_HDR
 			name=parseString();
 			in.sgetn( (char*)&flags1,2 );
 			in.sgetn( (char*)&flags2,2 );
 			in.sgetn( (char*)&parent,2 );
-			_log( "NODE_HDR: name="+name+" parent="+itoa(parent) );
+			_bbDebugLog( "NODE_HDR: name="+name+" parent="+itoa(parent) );
 			break;
 		case 0xb011:	//INSTANCE NAME
 			inst=parseString();
-			_log( "INSTANCE_NAME: "+inst );
+			_bbDebugLog( "INSTANCE_NAME: "+inst );
 			break;
 		case 0xb013:	//PIVOT
 			in.sgetn( (char*)&pivot,12 );
 			if( conv ) pivot=conv_tform * pivot;
-			_log( "PIVOT: "+ftoa(pivot.x)+","+ftoa(pivot.y)+","+ftoa(pivot.z) );
+			_bbDebugLog( "PIVOT: "+ftoa(pivot.x)+","+ftoa(pivot.y)+","+ftoa(pivot.z) );
 			break;
 		case 0xb014:	//BOUNDBOX
 			in.sgetn( (char*)&box.a,12 );
 			in.sgetn( (char*)&box.b,12 );
 			box_centre=box.centre();
 			if( conv ) box_centre=conv_tform * box_centre;
-			_log( "BOUNDBOX: min="+ftoa(box.a.x)+","+ftoa(box.a.y)+","+ftoa(box.a.z)+" max="+ftoa(box.b.x)+","+ftoa(box.b.y)+","+ftoa(box.b.z) );
+			_bbDebugLog( "BOUNDBOX: min="+ftoa(box.a.x)+","+ftoa(box.a.y)+","+ftoa(box.a.z)+" max="+ftoa(box.b.x)+","+ftoa(box.b.y)+","+ftoa(box.b.z) );
 			break;
 		case 0xb020:	//POS_TRACK_TAG
 		case 0xb021:	//ROT_TRACK_TAG
@@ -436,7 +437,7 @@ static void parseMeshInfo( MeshModel *root,float curr_time ){
 }
 
 static void parseKeyFramer( MeshModel *root ){
-	_log( "KeyFramer" );
+	_bbDebugLog( "KeyFramer" );
 	enterChunk();
 	string file_3ds;
 	unsigned short rev,curr_time=0;
@@ -444,13 +445,13 @@ static void parseKeyFramer( MeshModel *root ){
 		switch( id ){
 		case 0xb009:	//CURR_TIME
 			in.sgetn( (char*)&curr_time,2 );
-			_log( "CURR_TIME: "+itoa(curr_time) );
+			_bbDebugLog( "CURR_TIME: "+itoa(curr_time) );
 			break;
 		case 0xb00a:	//KFHDR
 			in.sgetn( (char*)&rev,2 );
 			file_3ds=parseString();
 			in.sgetn( (char*)&anim_len,2 );
-			_log( "KFHDR: revision="+itoa(rev)+" 3dsfile="+file_3ds+" anim_len="+itoa(anim_len) );
+			_bbDebugLog( "KFHDR: revision="+itoa(rev)+" 3dsfile="+file_3ds+" anim_len="+itoa(anim_len) );
 			break;
 		case 0xb002:	//object keyframer data...
 			parseMeshInfo( root,curr_time );

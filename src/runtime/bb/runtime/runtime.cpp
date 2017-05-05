@@ -1,6 +1,7 @@
 
 #include "../../stdutil/stdutil.h"
 #include <bb/blitz/blitz.h>
+#include <bb/event/event.h>
 #include "runtime.h"
 
 BBRuntime *bbRuntime;
@@ -20,6 +21,8 @@ bool bbRuntimeIdle(){
 
 void BBCALL bbMoveMouse( int x,int y ){
   bbRuntime->moveMouse( x,y );
+	BBEvent ev=BBEvent( BBEVENT_MOUSEMOVE,1,x,y );
+	bbOnEvent.run( &ev );
 }
 
 void BBCALL bbShowPointer(){

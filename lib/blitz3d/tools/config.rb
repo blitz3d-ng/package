@@ -193,10 +193,12 @@ module Blitz3D
             f.write "project 'runtime.#{runtime.id}'\n"
             f.write "  language 'C++'\n\n"
 
+            f.write "  removeplatforms 'win64'\n\n"
+
             f.write "  filter 'platforms:macos or linux'\n"
             f.write "    kind 'StaticLib'\n\n"
 
-            f.write "  filter 'platforms:win32 or win64 or mingw32'\n"
+            f.write "  filter 'platforms:win32 or mingw32'\n"
             f.write "    kind 'SharedLib'\n"
             f.write "    targetdir '../../_release/bin'\n"
             f.write "    targetprefix ''\n\n"

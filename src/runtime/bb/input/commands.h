@@ -27,7 +27,6 @@ int  BBCALL bbMouseZ();
 int  BBCALL bbMouseXSpeed();
 int  BBCALL bbMouseYSpeed();
 int  BBCALL bbMouseZSpeed();
-void BBCALL bbMoveMouse( int x,int y );
 void BBCALL bbFlushMouse();
 
 //joysticks

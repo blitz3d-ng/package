@@ -280,7 +280,7 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 		if( !(wparam&MK_ALLBUTTONS) ) ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
-		ev=BBEvent( BBEVENT_MOUSEMOVE,3,LOWORD( lparam ),HIWORD( lparam ) );
+		ev=BBEvent( BBEVENT_MOUSEMOVE,0,LOWORD( lparam ),HIWORD( lparam ) );
 		// if( !graphics ) break;
 		// if( gfx_mode==3 && !use_di ){
 		// 	POINT p;GetCursorPos( &p );

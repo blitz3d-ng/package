@@ -39,6 +39,10 @@ void processEvent( void *data,void *context){
 	case BBEVENT_MOUSEDOWN: bbMouse.downEvent( ev->data );break;
 	case BBEVENT_MOUSEUP:   bbMouse.upEvent( ev->data );break;
 	case BBEVENT_MOUSEMOVE:
+		if( ev->data>0 ){
+			mouse_x=ev->x;
+			mouse_y=ev->y;
+		}
 		bbMouse.axis_states[0]=ev->x;
 		bbMouse.axis_states[1]=ev->y;
 		break;

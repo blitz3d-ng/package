@@ -235,6 +235,7 @@ bool GLFW3Runtime::graphicsLost(){
 }
 
 void GLFW3Runtime::flip( bool vwait ){
+	glfwSwapInterval( vwait ? 1 : 0 );
 	glfwSwapBuffers( wnd );
 }
 
