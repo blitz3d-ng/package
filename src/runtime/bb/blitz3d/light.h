@@ -29,11 +29,13 @@ public:
 
 	Light *getLight(){ return this; }
 
+	int getType()const{ return type; };
+
 	float getRange();
 	void setRange( float r );
 	const Vector &getColor();
 	void setColor( const Vector &v );
-	void getConeAngles( float *inner,float *outer );
+	void getConeAngles( float &inner,float &outer );
 	void setConeAngles( float inner,float outer );
 
 	bool beginRender( float tween );

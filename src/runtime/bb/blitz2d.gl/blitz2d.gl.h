@@ -1,6 +1,10 @@
 #ifndef BB_BLITZ2D_GL_H
 #define BB_BLITZ2D_GL_H
 
+#include <iostream>
+using namespace std;
+
+
 #include <bb/blitz2d/blitz2d.h>
 #include <bb/pixmap/pixmap.h>
 
@@ -23,13 +27,14 @@ class GLB2DCanvas : public BBCanvas{
 protected:
   void backup()const{}
 
-  int width,height,flags;
+  int width,height;
 	mutable unsigned char *pixels;
 
   virtual void bind()const=0;
 
 public:
-  GLB2DCanvas( int f ):width(0),height(0),pixels(0),flags(f){
+  GLB2DCanvas( int f ):width(0),height(0),pixels(0){
+		flags=f;
   }
 
   void resize( int w,int h ){
@@ -128,7 +133,7 @@ public:
     return pixels[(y*width+x)*4];
   }
   void unlock()const{
-		free(pixels);
+		delete[] pixels;
 	}
 
   void setCubeMode( int mode ){}
@@ -138,7 +143,6 @@ public:
   int getWidth()const{ return width; }
   int getHeight()const{ return height; }
   int getDepth()const{ return 0; }
-  int getFlags()const{ return flags; }
   int cubeMode()const{ return 0; }
   void getOrigin( int *x,int *y )const{}
   void getHandle( int *x,int *y )const{}
@@ -166,15 +170,15 @@ public:
 		height=h;
 	}
 
-  GLB2DTextureCanvas( BBPixmap *pixmap,int f ):GLB2DCanvas(f),texture(0),framebuffer(0),depthbuffer(0){
-		flags=f;
-
+  GLB2DTextureCanvas( BBPixmap *pixmap,int f ):GLB2DTextureCanvas(f){
     if( pixmap ) setPixmap( pixmap );
   }
 
   unsigned int getTextureId(){ return texture; }
 
 	void setPixmap( BBPixmap *pm ){
+		if( flags&CANVAS_TEX_MASK ) pm->mask( 0,0,0 );
+
 		width=pm->width;
 		height=pm->height;
 

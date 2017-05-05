@@ -34,7 +34,7 @@ void gxLight::update( Light *l ){
 	if( dirty ){
 		d3d_light.dvAttenuation1=1.0f/l->getRange();
 		memcpy( &d3d_light.dcvDiffuse,&l->getColor().x,12 );
-		l->getConeAngles( &d3d_light.dvTheta,&d3d_light.dvPhi );
+		l->getConeAngles( d3d_light.dvTheta,d3d_light.dvPhi );
 		dirty=false;
 	}
 }

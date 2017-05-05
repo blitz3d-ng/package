@@ -11,43 +11,43 @@ class GLFW3Graphics;
 
 class GLFW3Runtime : public GLB3DGraphics, public BBRuntime, public BBContextDriver{
 private:
-  GLFWwindow* wnd;
-  GLFW3Graphics *graphics;
+	GLFWwindow* wnd;
+	GLFW3Graphics *graphics;
 
-  static void _onResize( GLFWwindow *wnd,int w,int h );
-  static void _onClose( GLFWwindow *w );
-  static void _onMouseMove( GLFWwindow *w,double x,double y );
-  static void _onKeyChange( GLFWwindow *w,int key,int scancode,int action,int mods );
+	static void _onResize( GLFWwindow *wnd,int w,int h );
+	static void _onClose( GLFWwindow *w );
+	static void _onMouseMove( GLFWwindow *w,double x,double y );
+	static void _onKeyChange( GLFWwindow *w,int key,int scancode,int action,int mods );
 
-  void resize( int width,int height );
+	void resize( int width,int height );
 public:
-  GLFW3Runtime( GLFWwindow *wnd );
-  ~GLFW3Runtime();
+	GLFW3Runtime( GLFWwindow *wnd );
+	~GLFW3Runtime();
 
-  // context driver
-  int numGraphicsDrivers();
-  void graphicsDriverInfo( int driver,std::string *name,int *c );
-  int numGraphicsModes( int driver );
-  void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c );
-  void windowedModeInfo( int *c );
+	// context driver
+	int numGraphicsDrivers();
+	void graphicsDriverInfo( int driver,std::string *name,int *c );
+	int numGraphicsModes( int driver );
+	void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c );
+	void windowedModeInfo( int *c );
 
-  BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
-  void closeGraphics( BBGraphics *graphics );
-  bool graphicsLost();
+	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
+	void closeGraphics( BBGraphics *graphics );
+	bool graphicsLost();
 
-  void flip( bool vwait );
+	void flip( bool vwait );
 
-  // runtime
-  void asyncStop();
-  void asyncRun();
-  void asyncEnd();
+	// runtime
+	void asyncStop();
+	void asyncRun();
+	void asyncEnd();
 
-  bool idle();
+	bool idle();
 
-  void *window();
+	void *window();
 
-  void moveMouse( int x,int y );
-  void setPointerVisible( bool vis );
+	void moveMouse( int x,int y );
+	void setPointerVisible( bool vis );
 };
 
 #endif

@@ -6,8 +6,38 @@
 #include <iostream>
 using namespace std;
 
+//degrees to radians and back
+static const float dtor=0.0174532925199432957692369076848861f;
+static const float rtod=1/dtor;
+
+
 class GLLight : public BBLightRep{
+public:
+	int type;
+
+	float r,g,b;
+	float matrix[16];
+
+	float range;
+	float inner_angle,outer_angle;
+
   void update( Light *light ){
+		type=light->getType();
+
+		r=light->getColor().x;
+		g=light->getColor().y;
+		b=light->getColor().z;
+
+		range=light->getRange();
+		light->getConeAngles( inner_angle,outer_angle );
+		outer_angle*=rtod;
+
+		const BBScene::Matrix *m=(BBScene::Matrix*)&(light->getRenderTform());
+
+		matrix[ 0]=m->elements[0][0]; matrix[ 1]=m->elements[0][1]; matrix[ 2]=m->elements[0][2]; matrix[ 3]=0.0f;
+		matrix[ 4]=m->elements[1][0]; matrix[ 5]=m->elements[1][1]; matrix[ 6]=m->elements[1][2]; matrix[ 7]=0.0f;
+		matrix[ 8]=m->elements[2][0]; matrix[ 9]=m->elements[2][1]; matrix[10]=m->elements[2][2]; matrix[11]=0.0f;
+		matrix[12]=m->elements[3][0]; matrix[13]=m->elements[3][1]; matrix[14]=m->elements[3][2]; matrix[15]=1.0f;
   }
 };
 
@@ -87,8 +117,63 @@ public:
 class GLScene : public BBScene{
 private:
 	bool wireframe;
+
+	float ambient[4];
+	std::vector<GLLight*> lights;
+
+	float view_matrix[16];
+
+	void setLights(){
+		// FIXME: replace hardcoded '8' with proper hardward-backed value.
+		for( int i=0;i<8;i++ ){
+			if( i>=lights.size() ){
+				glDisable( GL_LIGHT0+i );
+				continue;
+			}
+
+			glEnable( GL_LIGHT0+i );
+			glPushMatrix();
+			glMultMatrixf( lights[i]->matrix );
+
+			float white_light[4]={ 1.0f,1.0f,1.0f,1.0f };
+			glLightfv( GL_LIGHT0+i,GL_SPECULAR,white_light );
+
+			float z=1.0f,w=0.0f;
+			if( lights[i]->type!=Light::LIGHT_DISTANT ){
+				z=0.0f;
+				w=1.0f;
+			}
+
+			float pos[]={ 0.0,0.0,z,w };
+			float rgba[]={ lights[i]->r,lights[i]->g,lights[i]->b,1.0f };
+			glLightfv( GL_LIGHT0+i,GL_POSITION,pos );
+			glLightfv( GL_LIGHT0+i,GL_DIFFUSE,rgba );
+
+			if( lights[i]->type!=Light::LIGHT_DISTANT ){
+				float light_range[]={ 0.0f };
+				float range[]={ lights[i]->range };
+				glLightfv( GL_LIGHT0+i,GL_CONSTANT_ATTENUATION,light_range );
+				glLightfv( GL_LIGHT0+i,GL_LINEAR_ATTENUATION,range );
+			}
+
+			if( lights[i]->type==Light::LIGHT_SPOT ){
+				float dir[]={ 0.0f,0.0f,-1.0f };
+				float outer[]={ lights[i]->outer_angle/2.0f };
+				float exponent[]={ 10.0f };
+				glLightfv( GL_LIGHT0+i,GL_SPOT_DIRECTION,dir );
+				glLightfv( GL_LIGHT0+i,GL_SPOT_CUTOFF,outer );
+				glLightfv( GL_LIGHT0+i,GL_SPOT_EXPONENT,exponent );
+			}
+
+			glPopMatrix();
+		}
+	}
+
 public:
 	GLScene():wireframe(false){
+		const float MIDLEVEL[]={ 0.5f,0.5f,0.5f,1.0f };
+		setAmbient( MIDLEVEL );
+		ambient[3]=1.0f;
 	}
 
   int  hwTexUnits(){ return 8; }
@@ -105,8 +190,8 @@ public:
 		glFrontFace( enable ? GL_CW : GL_CCW );
 	}
   void setAmbient( const float rgb[3] ){
-    float ambient[4]={ rgb[0],rgb[1],rgb[2],1.0f };
-    glLightModelfv( GL_LIGHT_MODEL_AMBIENT,ambient );
+		cout<<"r: "<<rgb[0]<<"g: "<<rgb[1]<<"b: "<<rgb[2]<<endl;
+		memcpy( ambient,rgb,sizeof(float)*3 );
   }
   void setAmbient2( const float rgb[3] ){
     setAmbient( rgb );
@@ -140,13 +225,20 @@ public:
 		glLoadIdentity();
     glFrustum( -w/2.0,w/2.0,-h/2.0,h/2.0,nr,fr );
   }
-	float view_matrix[16];
+
   void setViewMatrix( const Matrix *matrix ){
     const Matrix *m=matrix;
     view_matrix[ 0]=m->elements[0][0]; view_matrix[ 1]=m->elements[0][1]; view_matrix[ 2]=m->elements[0][2]; view_matrix[ 3]=0.0f;
     view_matrix[ 4]=m->elements[1][0]; view_matrix[ 5]=m->elements[1][1]; view_matrix[ 6]=m->elements[1][2]; view_matrix[ 7]=0.0f;
     view_matrix[ 8]=m->elements[2][0]; view_matrix[ 9]=m->elements[2][1]; view_matrix[10]=m->elements[2][2]; view_matrix[11]=0.0f;
     view_matrix[12]=m->elements[3][0]; view_matrix[13]=m->elements[3][1]; view_matrix[14]=m->elements[3][2]; view_matrix[15]=1.0f;
+
+		glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glScalef( 1.0f,1.0f,-1.0f );
+    glMultMatrixf( view_matrix );
+
+		setLights();
   }
 
   void setWorldMatrix( const Matrix *matrix ){
@@ -170,15 +262,11 @@ public:
   }
 	void setRenderState( const RenderState &rs ){
 
-		if( rs.fx&FX_ALPHATEST && !rs.fx&FX_VERTEXALPHA ){
+		if( rs.fx&FX_ALPHATEST && !(rs.fx&FX_VERTEXALPHA) ){
 			glEnable( GL_ALPHA_TEST );
 		} else {
 			glDisable( GL_ALPHA_TEST );
 		}
-		// glEnable( GL_ALPHA_TEST );
-
-		// glDisable( GL_CULL_FACE );
-		// glDisable( GL_LIGHTING );
 
 		if( rs.blend==BLEND_REPLACE ){
 			glDisable( GL_BLEND );
@@ -190,7 +278,7 @@ public:
 				break;
 			case BLEND_MULTIPLY:
 				glEnable( GL_BLEND );
-				glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
+				glBlendFunc( GL_DST_COLOR,GL_ZERO );
 				break;
 			case BLEND_ADD:
 				glEnable( GL_BLEND );
@@ -212,15 +300,17 @@ public:
 		float mat_specular[]={ rs.shininess,rs.shininess,rs.shininess,rs.shininess };
 		float mat_shininess[]={ 100.0 };
 
-    if( rs.fx&FX_FULLBRIGHT ){
-      mat_ambient[0]=mat_ambient[1]=mat_ambient[2]=1.0f;
-      glLightModelfv( GL_LIGHT_MODEL_AMBIENT,mat_ambient );
-    }
-
 		glMaterialfv( GL_FRONT,GL_AMBIENT,mat_ambient );
 		glMaterialfv( GL_FRONT,GL_DIFFUSE,mat_diffuse );
 		glMaterialfv( GL_FRONT,GL_SPECULAR,mat_specular );
 		glMaterialfv( GL_FRONT,GL_SHININESS,mat_shininess );
+
+		if( rs.fx&FX_FULLBRIGHT ){
+			const float WHITE[]={ 1.0f,1.0f,1.0f,1.0f };
+			glLightModelfv( GL_LIGHT_MODEL_AMBIENT,WHITE );
+		}else{
+			glLightModelfv( GL_LIGHT_MODEL_AMBIENT,ambient );
+		}
 
     for( int i=0;i<MAX_TEXTURES;i++ ){
 			const RenderState::TexState &ts=rs.tex_states[i];
@@ -232,10 +322,10 @@ public:
         glDisable( GL_TEXTURE_2D );
         glBindTexture( GL_TEXTURE_2D,0 );
       } else {
-        glEnable( GL_TEXTURE_2D );
-        glBindTexture( GL_TEXTURE_2D,canvas->getTextureId() );
+				glEnable( GL_TEXTURE_2D );
+				glBindTexture( GL_TEXTURE_2D,canvas->getTextureId() );
 
-        glMatrixMode( GL_TEXTURE );
+				glMatrixMode( GL_TEXTURE );
 				const Matrix *m=ts.matrix;
 				if( m ){
 					float mat[16]={
@@ -251,13 +341,13 @@ public:
 
 				int flags=ts.canvas->getFlags();
 
-        if( flags&BBCanvas::CANVAS_TEX_MIPMAP ){
-          glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-          glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR );
-        }else{
-          glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-          glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-        }
+				if( flags&BBCanvas::CANVAS_TEX_MIPMAP ){
+					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR );
+				}else{
+					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
+				}
 
 				if( flags&BBCanvas::CANVAS_TEX_CLAMPU ){
 					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
@@ -271,13 +361,51 @@ public:
 					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
 				}
 
-				glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
+				if( flags&BBCanvas::CANVAS_TEX_SPHERE ){
+					glEnable( GL_TEXTURE_GEN_S );
+					glEnable( GL_TEXTURE_GEN_T );
+					glTexGeni( GL_S,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP );
+					glTexGeni( GL_T,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP );
+				}else{
+					glDisable( GL_TEXTURE_GEN_S );
+					glDisable( GL_TEXTURE_GEN_T );
+				}
+
+				switch( ts.blend ){
+				case BLEND_REPLACE:
+					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+					break;
+				case BLEND_ALPHA:
+					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+					break;
+				case BLEND_MULTIPLY:
+					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+					break;
+				// case BLEND_MULTIPLY:
+				// 	glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_EXT,GL_MODULATE );
+				// 	break;
+				case BLEND_ADD:
+					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_ADD);
+					break;
+				case BLEND_DOT3:
+					glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE_EXT );
+					glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_EXT,GL_DOT3_RGB_EXT );
+					break;
+				case BLEND_MULTIPLY2:
+					glTexEnvi( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE );
+					glTexEnvi( GL_TEXTURE_ENV,GL_COMBINE_RGB,GL_MODULATE );
+					glTexEnvi( GL_TEXTURE_ENV,GL_RGB_SCALE,2.0f );
+					break;
+				default:
+					glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
+					break;
+				}
       }
     }
   }
 
   //rendering
-	bool begin( const std::vector<BBLightRep*> &lights ){
+	bool begin( const std::vector<BBLightRep*> &l ){
 		glEnable( GL_SCISSOR_TEST );
 		glEnable( GL_CULL_FACE );
 
@@ -292,22 +420,10 @@ public:
 		glClearDepth( 1.0f );
 		glDepthFunc( GL_LEQUAL );
 
-		// <temp>
     glEnable( GL_LIGHTING );
-    glEnable( GL_LIGHT0 );
 
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
-
-		float white_light[4]={ 1.0f,1.0f,1.0f,1.0f };
-		glLightfv( GL_LIGHT0,GL_SPECULAR,white_light );
-
-    float z=1.0f,w=0.0f;
-    float pos[]={ 0.0,0.0,-z,w };
-    float rgba[]={ 1.0f,1.0f,1.0f,1.0f };
-    glLightfv( GL_LIGHT0,GL_POSITION,pos );
-    glLightfv( GL_LIGHT0,GL_DIFFUSE,rgba );
-		// </temp>
+		lights.clear();
+		for( int i=0;i<l.size();i++ ) lights.push_back( dynamic_cast<GLLight*>(l[i]) );
 
 		return true;
 	}

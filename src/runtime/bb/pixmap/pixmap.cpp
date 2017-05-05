@@ -49,19 +49,18 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 
   BBPixmap *pm=d_new BBPixmap();
 
-  int bytes=FreeImage_GetBPP( dib )/8;
-
   pm->width=FreeImage_GetWidth( dib );
   pm->height=FreeImage_GetHeight( dib );
   pm->pitch=FreeImage_GetPitch( dib );
+  pm->bpp=FreeImage_GetBPP( dib )/8;
 
-  int size=pm->width*pm->height*bytes;
+  int size=pm->width*pm->height*pm->bpp;
   pm->bits=new unsigned char[size];
   memcpy( pm->bits,FreeImage_GetBits( dib ),size );
 
   // NASTY: gotta be a better way to do this...
   for( int i=0;i<pm->width*pm->height;i++ ){
-    unsigned char *p=&pm->bits[bytes*i],tmp;
+    unsigned char *p=&pm->bits[pm->bpp*i],tmp;
     tmp=p[0]; // ARGB? BGRA
     p[0]=p[2];
     p[2]=tmp;
@@ -70,6 +69,13 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
   FreeImage_Unload( dib );
 
   return pm;
+}
+
+void BBPixmap::mask( int r,int g,int b ){
+	for( int i=0;i<width*height;i++ ){
+		unsigned char *p=&bits[bpp*i];
+		if( p[0]==0 && p[1]==0 && p[2]==0 ) p[3]=0.0f;
+	}
 }
 
 BBMODULE_CREATE( pixmap ){

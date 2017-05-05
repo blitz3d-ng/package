@@ -40,9 +40,9 @@ void Light::setColor( const Vector &v ){
 	rep->markDirty();
 }
 
-void Light::getConeAngles( float *inner,float *outer ){
-	*inner=innerAngle;
-	*outer=outerAngle;
+void Light::getConeAngles( float &inner,float &outer ){
+	inner=innerAngle;
+	outer=outerAngle;
 }
 
 void Light::setConeAngles( float inner,float outer ){

@@ -6,9 +6,9 @@
 
 class GLB3DGraphics : public B3DGraphics{
 public:
-  BBScene *createScene( int flags );
-  BBScene *verifyScene( BBScene *scene );
-  void freeScene( BBScene *scene );
+	BBScene *createScene( int flags );
+	BBScene *verifyScene( BBScene *scene );
+	void freeScene( BBScene *scene );
 };
 
 #endif
