@@ -25,6 +25,7 @@
 *.tlog
 *.lastbuildstate
 UpgradeLog.htm
+*.tmp
 
 .DS_Store
 

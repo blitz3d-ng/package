@@ -4,7 +4,10 @@
 #include <bb/pixmap/pixmap.h>
 #include <bb/event/event.h>
 
-#include <FreeImage.h>
+#ifdef WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#endif
 
 #include <map>
 using namespace std;
@@ -250,7 +253,11 @@ bool GLFW3Runtime::idle(){
 }
 
 void *GLFW3Runtime::window(){
-	return wnd;
+#ifdef WIN32
+	return glfwGetWin32Window( wnd );
+#else
+	return 0;
+#endif
 }
 
 void GLFW3Runtime::moveMouse( int x,int y ){
