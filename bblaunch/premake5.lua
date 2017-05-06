@@ -10,7 +10,7 @@ project "bblaunch"
     files { "checkdx.cpp", "checkdx.h", "checkie.cpp", "checkie.h", "bblaunch.rc", "resource.h" }
     flags "WinMain"
 
-  targetdir "_release"
+  targetdir "../_release"
   targetname "Blitz3D"
   targetextension ".exe"
 
