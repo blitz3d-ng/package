@@ -20,7 +20,8 @@ install:
   - premake5.exe %TOOLSET%
 
 after_build:
-  - cd %APPVEYOR_BUILD_FOLDER%\_release && 7z a bin\*.exe bin\*.dll cfg Games help Media mediaview samples tutorials userlibs Blitz3D.exe versions.txt
+  - ruby bin/blitz3d help --build
+  - cd %APPVEYOR_BUILD_FOLDER%\_release && 7z a ..\release.zip bin\*.exe bin\*.dll cfg Games help Media mediaview samples tutorials userlibs Blitz3D.exe versions.txt
 
 configuration:
   - debug
@@ -42,6 +43,9 @@ artifacts:
 
   - path: _release\bin\ide.exe
     name: IDE
+
+  - path: _release\help
+    name: Help
 
 build:
   parallel: true
