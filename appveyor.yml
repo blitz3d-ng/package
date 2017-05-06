@@ -19,6 +19,9 @@ install:
   - 7z x premake.zip
   - premake5.exe %TOOLSET%
 
+after_build:
+  - 7z a release.zip %APPVEYOR_BUILD_FOLDER%\_release\bin\*.dll %APPVEYOR_BUILD_FOLDER%\_release\bin\*.exe %APPVEYOR_BUILD_FOLDER%\_release\*.exe
+
 configuration:
   - debug
   - release
@@ -26,6 +29,10 @@ configuration:
 platform:
   - win32
   - win64
+
+artifacts:
+  - path: release.zip
+    name: blitz3d-ng
 
 build:
   parallel: true
