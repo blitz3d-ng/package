@@ -21,7 +21,7 @@ install:
 
 after_build:
   - ruby bin/blitz3d help --build
-  - cd %APPVEYOR_BUILD_FOLDER%\_release && 7z a ..\release.zip bin\*.exe bin\*.dll cfg Games help Media mediaview samples tutorials userlibs Blitz3D.exe versions.txt
+  - cd %APPVEYOR_BUILD_FOLDER%\_release && 7z a ..\release.zip bin\*.exe bin\*.dll cfg Games help Media mediaview samples tutorials userlibs *.exe versions.txt
 
 configuration:
   - debug
