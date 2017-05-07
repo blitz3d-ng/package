@@ -38,17 +38,30 @@ module Blitz3D
 
         types = types.join(";\n")
 
+        struct_init = []
+
         structs = self.structs.map do |struct|
           fields = struct.sem_type.fields.map do |field|
             field.type.ptr
           end
 
-          fields_ident = "#{struct.sem_type.to_type}_fields"
+          type = "#{struct.sem_type.to_type}.type"
 
-          "struct #{struct.sem_type.to_type}_decl{\n  BBObjType type;\n  BBType *fieldsTypes[#{struct.sem_type.fields.size}];\n};\n#{struct.sem_type.to_type}_decl #{struct.sem_type.to_type}={\n  BBObjType( #{struct.sem_type.fields.size},#{fields.shift} ),\n  { #{fields.join(',')} }\n}"
+          struct_init << "#{type}.used.next=#{type}.used.prev=&#{type}.used;#{type}.free.next=#{type}.free.prev=&#{type}.free"
+
+          "struct #{struct.sem_type.to_type}_decl { BBObjType type; BBType *fields[#{struct.sem_type.fields.size-1}]; };\nstruct #{struct.sem_type.to_type}_decl #{struct.sem_type.to_type}={ { {5},{0,0,0,0,-1},{0,0,0,0,-1},#{struct.sem_type.fields.size},{#{fields.shift}} }, { #{fields.join(',')} } }"
+
+          # fields_ident = "#{struct.sem_type.to_type}_fields"
+
+          # "BBObjType #{struct.sem_type.to_type}="
+
+          # "BBObjType type;\n  BBType *fieldsTypes[#{struct.sem_type.fields.size}];\n};\n#{struct.sem_type.to_type}_decl #{struct.sem_type.to_type}={\n  {5}( #{struct.sem_type.fields.size},#{fields.shift} ),\n  { #{} }\n}"
         end
         structs << '' unless structs.empty?
         structs = structs.join(";\n")
+
+        struct_init << '' unless struct_init.empty?
+        struct_init = struct_init.join(";\n")
 
         func_decls = funcs.map(&:to_h).join(";\n")
         func_decls += ';' unless func_decls.blank?
@@ -70,7 +83,7 @@ module Blitz3D
           globals,
           func_decls,
           func_defs,
-          "void bbMain(){\n  #{locals.indent}\n  #{stmts.to_c {}.indent}\n}"
+          "void bbMain(){\n  #{struct_init.indent}\n  #{locals.indent}\n  #{stmts.to_c {}.indent}\n}"
         ].reject(&:blank?).join("\n\n")
       end
     end

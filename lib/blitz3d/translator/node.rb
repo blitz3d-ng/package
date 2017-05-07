@@ -39,6 +39,7 @@ require_relative './node/vector_var'
 
 require_relative './node/stmt'
 require_relative './node/ass'
+require_relative './node/delete'
 require_relative './node/include'
 require_relative './node/for'
 require_relative './node/for_each'

@@ -374,7 +374,6 @@ int BBCALL bbAvailVidMem(){
 
 void BBCALL bbSetBuffer( BBCanvas *buff ){
 	debugCanvas( buff );
-	cout<<"gx_canvas: "<<gx_canvas<<endl;
 	if( gx_canvas ) gx_canvas->unset();
 	gx_canvas=buff;
 	curs_x=curs_y=0;

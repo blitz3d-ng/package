@@ -7,8 +7,8 @@ module Blitz3D
         begin
           klass = "Blitz3D::AST::#{attrs['@class']}".constantize
         rescue NameError
-          puts "Cannot find node type: #{attrs['@class']}".red
-          puts JSON.pretty_generate(attrs).red
+          $stderr.puts "Cannot find node type: #{attrs['@class']}".red
+          $stderr.puts JSON.pretty_generate(attrs).red
           return InvalidNode.new(attrs['@class'])
         end
         klass.new(attrs)

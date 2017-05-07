@@ -9,7 +9,6 @@ module Blitz3D
       end
 
       def to_c(&cleanup)
-        throw "...what?" if cleanup.nil?
         f = StringIO.new
 
         f.write(@stmts.map do |stmt|

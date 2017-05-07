@@ -25,6 +25,7 @@ public:
 		file=string(f);
 		row=(srcpos>>16)&0xffff;
 		col=srcpos&0xffff;
+		// cout<<file<<":"<<"["<<row+1<<":"<<col<<"]"<<endl;
 	}
 	void debugEnter( void *frame,void *env,const char *func ){
 	}

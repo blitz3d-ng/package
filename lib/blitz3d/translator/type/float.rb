@@ -9,7 +9,7 @@ module Blitz3D
       end
 
       def ptr
-        '&_bbFloatType'
+        '&_bbFltType'
       end
 
       def default_value

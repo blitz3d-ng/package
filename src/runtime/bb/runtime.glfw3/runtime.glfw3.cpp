@@ -34,7 +34,6 @@ void bbCloseRuntime( BBRuntime *rt ){
 }
 
 void _onCharMods(GLFWwindow *wnd, unsigned int codepoint, int mods){
-	cout<<mods<<endl;
 }
 
 GLFW3Runtime::GLFW3Runtime( GLFWwindow *wnd ):wnd(wnd),graphics(0){
@@ -285,7 +284,7 @@ void GLFW3Runtime::_onMouseMove( GLFWwindow *w,double x,double y ){
 extern unsigned short GLFW_SCANCODE_MAP[316];
 
 void GLFW3Runtime::_onKeyChange( GLFWwindow *w,int key,int scancode,int action,int mods ){
-	cout<<"key: "<<key<<endl;
+	// cout<<"key: "<<key<<endl;
 	key=GLFW_SCANCODE_MAP[key-32];
 	if( !key ) return;
 

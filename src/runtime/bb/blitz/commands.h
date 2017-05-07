@@ -4,16 +4,136 @@
 #include "../../config/config.h"
 #include "module.h"
 
+enum{
+	BBTYPE_END=0,
+	BBTYPE_INT=1,BBTYPE_FLT=2,
+	BBTYPE_STR=3,BBTYPE_CSTR=4,
+	BBTYPE_OBJ=5,BBTYPE_VEC=6
+};
+
+#pragma pack( push,1 )
+
+struct BBObj;
+typedef struct BBObj BBObj;
+
+#ifdef __cplusplus
+struct BBStr;
+#else
+typedef void BBStr;
+#endif
+
+struct BBType;
+typedef struct BBType BBType;
+
+struct BBObjType;
+typedef struct BBObjType BBObjType;
+
+struct BBVecType;
+typedef struct BBVecType BBVecType;
+
+union  BBField;
+typedef union BBField BBField;
+
+struct BBArray;
+typedef struct BBArray BBArray;
+
+typedef struct BBObj{
+	BBField *fields;
+	BBObj *next,*prev;
+	BBObjType *type;
+	int ref_cnt;
+#ifdef __cplusplus
+	BBObj(){}
+	BBObj( BBField *f,BBObj *n,BBObj *p,BBObjType *t,int c ):fields(f),next(n),prev(p),type(t),ref_cnt(c){}
+#endif
+} BBObj;
+
+
+struct BBType{
+	int type;
+#ifdef __cplusplus
+	BBType( int n ):type(n){}
+#endif
+};
+
+#ifdef __cplusplus
+struct BBObjType : public BBType{
+#else
+struct BBObjType{
+	BBType base;
+#endif
+	BBObj used,free;
+	int fieldCnt;
+	BBType *fieldTypes[1];
+#ifdef __cplusplus
+	BBObjType( int c,BBType *ft1 ):BBType(5),fieldCnt(c){
+		used=BBObj(0,&used,&used,0,-1);
+		free=BBObj(0,&free,&free,0,-1);
+		fieldTypes[0]=ft1;
+	}
+#endif
+};
+
+#ifdef __cplusplus
+struct BBVecType : public BBType{
+#else
+struct BBVecType{
+	BBType base;
+#endif
+	int size;
+	BBType *elementType;
+};
+
+union BBField{
+	int INT;
+	float FLT;
+	BBStr *STR;
+	char *CSTR;
+	BBObj *OBJ;
+	void *VEC;
+};
+
+struct BBArray{
+	void *data;
+	int elementType,dims,scales[1];
+};
+
+#ifdef __cplusplus
+
+#include <string>
+
+struct BBStr : public std::string{
+	BBStr *next,*prev;
+
+	BBStr();
+	BBStr( const char *s );
+	BBStr( const char *s,int n );
+	BBStr( const BBStr &s );
+	BBStr( const std::string &s );
+	BBStr &operator=( const char *s );
+	BBStr &operator=( const BBStr &s );
+	BBStr &operator=( const std::string &s );
+	~BBStr();
+
+	void *operator new( size_t size );
+	void operator delete( void *q );
+
+	void *operator new( size_t size,const char *file,int line ){ return operator new( size ); }
+	void operator delete( void *q,const char *file,int line ){ operator delete( q ); }
+};
+
+#endif
+
+struct BBData{
+	int fieldType;
+	BBField field;
+};
+typedef struct BBData BBData;
+
+#pragma pack( pop )
+
 #ifdef __cplusplus
 extern "C" {
-#else
-typedef void BBType;
-typedef void BBVecType;
-typedef void BBObjType;
-typedef void BBObj;
-typedef void BBArray;
-typedef void BBStr;
-typedef void BBData;
 #endif
 
 // basic
