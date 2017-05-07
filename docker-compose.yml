@@ -1,6 +1,7 @@
 version: '2'
 services:
   env:
+    image: blitz3dng/blitz3d
     build: .
     volumes:
     - .:/usr/local/opt/blitz3d-ng
