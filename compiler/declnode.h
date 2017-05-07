@@ -140,7 +140,17 @@ struct VectorDeclNode : public DeclNode{
 	void proto( DeclSeq *d,Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( VectorDeclNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="VectorDeclNode";
+		tree["pos"]=pos;
+		tree["file"]=file;
+		tree["ident"]=ident;
+		tree["tag"]=tag;
+		tree["exprs"]=exprs->toJSON( e );
+		tree["kind"]=kind;
+		tree["sem_type"]=sem_type->toJSON();
+		return tree;
+	}
 };
 
 #endif

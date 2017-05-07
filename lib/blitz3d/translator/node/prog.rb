@@ -45,7 +45,7 @@ module Blitz3D
         func_defs = funcs.map(&:to_c).join("\n\n")
 
         globals = self.globals.map do |decl|
-          "static #{decl.type.to_c} #{decl.name};"
+          "static #{decl.type.to_c} #{decl.name}=#{decl.type.default_value};"
         end.join("\n")
 
         locals = self.locals.map do |decl|

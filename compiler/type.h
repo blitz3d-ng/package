@@ -85,6 +85,15 @@ struct ConstType : public Type{
 	ConstType( float n ):floatValue(n),valueType(Type::float_type){}
 	ConstType( const string &n ):stringValue(n),valueType(Type::string_type){}
 	ConstType *constType(){ return this; }
+
+	json toJSON(){
+		json tree;tree["@class"]="ConstType";
+		tree["valueType"]=valueType->toJSON();
+		tree["intValue"]=intValue;
+		tree["floatValue"]=floatValue;
+		tree["stringValue"]=stringValue;
+		return tree;
+	}
 };
 
 struct VectorType : public Type{
@@ -94,6 +103,17 @@ struct VectorType : public Type{
 	VectorType( const string &l,Type *t,const vector<int> &szs ):label(l),elementType(t),sizes(szs){}
 	VectorType *vectorType(){ return this; }
 	virtual bool canCastTo( Type *t );
+
+	json toJSON(){
+		json tree;tree["@class"]="VectorType";
+		tree["label"]=label;
+		tree["elementType"]=elementType->toJSON();
+		tree["sizes"]=json::array();
+		for( int i=0;i<sizes.size();i++ ){
+			tree["sizes"].push_back( sizes[i] );
+		}
+		return tree;
+	}
 };
 
 #endif

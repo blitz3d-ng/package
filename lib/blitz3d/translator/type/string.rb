@@ -15,6 +15,10 @@ module Blitz3D
       def ptr
         '&_bbStrType'
       end
+
+      def default_value
+        0
+      end
     end
   end
 end

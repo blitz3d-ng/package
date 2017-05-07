@@ -10,6 +10,10 @@ module Blitz3D
       def to_c
         "<#{klass}>".red
       end
+
+      def default_value
+        '???'.red
+      end
     end
   end
 end

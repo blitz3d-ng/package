@@ -90,7 +90,14 @@ struct VectorVarNode : public VarNode{
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( VectorVarNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="VectorVarNode";
+		tree["sem_type"]=sem_type->toJSON();
+		tree["expr"]=expr->toJSON( e );
+		tree["exprs"]=exprs->toJSON( e );
+		tree["vec_type"]=vec_type->toJSON();
+		return tree;
+	}
 };
 
 #endif
