@@ -112,7 +112,8 @@ static Joystick *createJoystick( DirectInput8Driver *input,LPCDIDEVICEINSTANCE d
 }
 
 static BOOL CALLBACK enumJoystick( LPCDIDEVICEINSTANCE devinst,LPVOID pvRef ){
-	// if( (devinst->dwDevType&0xff)!=DI8DEVCLASS_GAMECTRL ) return DIENUM_CONTINUE;
+	// apparently Wine reports invalid devices...
+	if( (devinst->dwDevType&0xff)!=DI8DEVCLASS_GAMECTRL ) return DIENUM_CONTINUE;
 
 	if( Joystick *joy=createJoystick( (DirectInput8Driver*)pvRef,devinst ) ){
 		joysticks.push_back( joy );
