@@ -4,7 +4,8 @@ project "ode"
 
   defines {
     "dIDESINGLE",
-    "CCD_IDESINGLE"
+    "CCD_IDESINGLE",
+    "MAC_OS_X_VERSION=1090"
   }
 
   includedirs {
@@ -15,6 +16,8 @@ project "ode"
     "src/libccd/src",
     "src/ou/include"
   }
+
+  removebuildoptions "-std=c++11"
 
   files {
     "src/ode/src/*.cpp",

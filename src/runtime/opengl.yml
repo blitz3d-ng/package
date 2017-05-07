@@ -39,6 +39,8 @@ premake5:
     - webp
     - zlib
 
+    - glfw
+
     - dinput8
     - fmodvc
     - opengl32

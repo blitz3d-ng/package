@@ -62,7 +62,7 @@ workspace "blitz3d"
     disablewarnings { "4018","4244","4996" }
 
   filter { "platforms:linux" }
-    defines { "_cdecl=__attribute__((__cdecl__))", "_fastcall=__fastcall", "_stdcall=__stdcall" }
+    defines { "__cdecl=__attribute__((__cdecl__))" }
     defines "BB_PLATFORM=\"linux\""
 
   filter { "platforms:win32 or win64", "kind:WindowedApp or ConsoleApp" }
@@ -95,11 +95,16 @@ workspace "blitz3d"
     system "macosx"
     defines "BB_PLATFORM=\"macos\""
 
+    buildoptions "-mmacosx-version-min=10.9"
+
   filter { "platforms:macos", "kind:StaticLib" }
     targetdir "_release/lib/%{cfg.platform}"
 
   filter { "platforms:linux" }
     system "linux"
+
+  filter { "platforms:macos or linux or mingw32" }
+    buildoptions { "-Wno-error" }
 
   filter { "platforms:macos or linux or mingw32", "language:C++" }
     buildoptions { "-std=c++11" }
@@ -120,6 +125,7 @@ require './src/glew/premake5'
 require './src/debugger.console/premake5'
 require './src/freeimage.premake5'
 require './src/runtime/bb/ode/ode.premake5'
+require './src/runtime/bb/runtime.glfw3/glfw3.premake5'
 -- require './src/premake5.assimp'
 
 project "stub"

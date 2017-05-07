@@ -132,7 +132,7 @@ void BBCALL bbCopyStream( bbStream *s,bbStream *d,int buff_size ){
 		d->write( buff,n );
 		if( n<buff_size ) break;
 	}
-	delete buff;
+	delete[] buff;
 }
 
 BBMODULE_CREATE( stream ){

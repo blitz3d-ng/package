@@ -120,7 +120,7 @@ CachedTexture::CachedTexture( const string &f_,int flags,int w,int h,int first,i
 		delete rep;
 	}
 	string t=tolower( fullfilename( f ) );
-	if( rep=findRep( t,flags,w,h,first,cnt ) ) return;
+	if( (rep=findRep( t,flags,w,h,first,cnt )) ) return;
 	rep=d_new Rep( t,flags,w,h,first,cnt );
 	rep_set.insert( rep );
 }

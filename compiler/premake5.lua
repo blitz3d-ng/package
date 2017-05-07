@@ -9,8 +9,6 @@ project "compiler"
   targetdir "../_release/bin"
   targetname "blitzcc"
 
-  disablewarnings "4003"
-
   files {
     "main.cpp", "libs.cpp", "libs.h",
     "declnode.cpp", "declnode.h", "exprnode.cpp", "exprnode.h", "node.cpp", "node.h", "nodes.h", "prognode.cpp", "prognode.h", "stmtnode.cpp", "stmtnode.h", "varnode.cpp", "varnode.h", "decl.cpp", "decl.h", "environ.cpp", "environ.h", "label.h", "type.cpp", "type.h", "parser.cpp", "parser.h", "toker.cpp", "toker.h",
@@ -22,11 +20,9 @@ project "compiler"
 
   links { "stdutil" }
 
-  filter "platforms:macos or linux"
-    buildoptions "-std=c++11"
-
   filter "platforms:mingw32" -- FIXME: move ScaleBitmap out of stdutil so this isn't needed.
     links "gdi32"
 
-  filter "platforms:win32"
+  filter "platforms:win32 or win64"
     files { "resource.h", "blitz.rc", "../bbruntime_dll/dpi.manifest" }
+    disablewarnings "4003"
