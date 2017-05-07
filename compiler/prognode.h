@@ -45,6 +45,11 @@ struct ProgNode : public Node{
 		tree["funcs"]=funcs->toJSON( e );
 		tree["structs"]=structs->toJSON( e );
 
+		tree["types"]=json::array();
+		for( int k=0;k<e->types.size();++k ){
+			tree["types"].push_back( e->types[k]->toJSON() );
+		}
+
 		tree["globals"]=json::array();
 		tree["locals"]=json::array();
 		for( int k=0;k<e->decls->size();++k ){

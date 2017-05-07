@@ -18,11 +18,11 @@ configs = Dir.glob(File.join(LIB_PATH, '*.*.config.json')).inject({}) do |cfgs, 
   cfgs
 end
 
-RUNTIME = 'default'
+RUNTIME = 'opengl'
 
 config = configs[RUNTIME][PLATFORM]
 
-module_libs = config['modules'].reverse.map { |m| "-l#{m}" }
+module_libs = config['modules'].reverse.map { |m| "-lbb.#{m}" }
 module_libs << %w(-lstdutil -lassimp -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib)
 
 system_libs = %w(-lm)

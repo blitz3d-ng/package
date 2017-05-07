@@ -7,6 +7,7 @@
 #ifdef __cplusplus
 extern "C" {
 #else
+typedef void BBType;
 typedef void BBVecType;
 typedef void BBObjType;
 typedef void BBObj;
@@ -90,6 +91,11 @@ void BBCALL _bbDebugStop();
 void BBCALL _bbDebugRun();
 
 void BBCALL bbDebugLog( BBStr *t );
+
+extern BBType _bbIntType;
+extern BBType _bbFltType;
+extern BBType _bbStrType;
+extern BBType _bbCStrType;
 
 #ifdef __cplusplus
 }

@@ -1,9 +1,10 @@
 module Blitz3D
   module AST
     class ProgNode < Node
-      attr_accessor :modules, :globals, :locals, :stmts, :funcs, :structs
+      attr_accessor :modules, :types, :globals, :locals, :stmts, :funcs, :structs
 
       def initialize(json)
+        @types   = json['types'].map { |t| Type.load(t) }
         @globals = json['globals'].map { |global| Decl.new(global) }
         @modules = json['modules']
         @locals  = json['locals'].map { |local| Decl.new(local) }
@@ -26,6 +27,16 @@ module Blitz3D
         #   { &_bbIntType,&_bbIntType }
         # };
 
+        types = self.types.map do |type|
+          if type.is_a?(VectorType)
+            "struct BBVecTypeDecl vector_type#{type.label}={ 6,#{type.size},#{type.element_type.ptr} }"
+          end
+        end.compact
+        types << '' unless types.empty?
+
+        types.unshift 'struct BBVecTypeDecl{ int type;int size;BBType *elementType; }'
+
+        types = types.join(";\n")
 
         structs = self.structs.map do |struct|
           fields = struct.sem_type.fields.map do |field|
@@ -54,6 +65,7 @@ module Blitz3D
 
         statements = [
           includes,
+          types,
           structs,
           globals,
           func_decls,

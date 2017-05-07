@@ -15,7 +15,7 @@ module Blitz3D
       end
       # for i = 0 to 3 step 3
       def to_c
-        "for( #{var.to_c}=#{from_expr.to_c};#{var.to_c}<#{to_expr.to_c};#{var.to_c}+=#{step_expr.to_c} ){  #{stmts.to_c.indent}\n}"
+        "for( #{var.to_c}=#{from_expr.to_c};#{var.to_c}#{step_expr.value > 0 ? '<=' : '>='}#{to_expr.to_c};#{var.to_c}+=#{step_expr.to_c} ){\n  #{stmts.to_c.indent}\n}"
       end
     end
   end

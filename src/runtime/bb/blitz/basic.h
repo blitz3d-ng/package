@@ -93,9 +93,4 @@ struct BBData{
 
 #pragma pack( pop )
 
-extern BBType _bbIntType;
-extern BBType _bbFltType;
-extern BBType _bbStrType;
-extern BBType _bbCStrType;
-
 #endif

@@ -218,7 +218,9 @@ BBGraphics *GLFW3Runtime::openGraphics( int w,int h,int d,int driver,int flags )
 		glfwSetWindowSize( wnd,w,h );
 		glfwShowWindow( wnd );
 		glfwMakeContextCurrent( wnd );
+#ifdef WIN32
 		glfwFocusWindow( wnd );
+#endif
 		return graphics;
 	}
 	return 0;

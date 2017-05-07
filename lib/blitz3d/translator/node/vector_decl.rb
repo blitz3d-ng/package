@@ -13,7 +13,7 @@ module Blitz3D
       end
 
       def to_c
-        "#{ident}=_bbVecAlloc( 0 )"
+        "#{ident}=_bbVecAlloc( (BBVecType*)&vector_type#{sem_type.label} )"
       end
     end
   end

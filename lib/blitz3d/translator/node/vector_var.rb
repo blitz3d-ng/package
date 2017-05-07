@@ -11,7 +11,7 @@ module Blitz3D
       end
 
       def to_c
-        indices = exprs.map { |e| "[#{e.to_c}]" }
+        indices = exprs.map { |e| "[#{e.to_c}-1]" }
         "((#{vec_type.element_type.to_c}*)#{expr.to_c})#{indices.join(', ')}"
       end
     end

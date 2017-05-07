@@ -13,6 +13,10 @@ module Blitz3D
         'void*'
       end
 
+      def size
+        sizes.inject(&:+)
+      end
+
       def default_value
         0
       end

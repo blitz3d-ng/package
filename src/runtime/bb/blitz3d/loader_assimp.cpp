@@ -4,6 +4,9 @@
 #include "meshutil.h"
 using namespace std;
 
+static bool conv,flip_tris;
+static Transform conv_tform;
+
 MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 	MeshLoader::beginMesh();
 
@@ -43,7 +46,7 @@ MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 
 				int vi=face->mIndices[i];
 
-				v.coords=Vector(&mesh->mVertices[vi].x);
+				v.coords=Vector(&mesh->mVertices[vi].x)*Vector(1,1,-1);
 				if( mesh->mColors[0] ) {
 					// v.color=Vector(&mesh->mColors[0][vi]);
 				}
@@ -54,7 +57,11 @@ MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 				MeshLoader::addVertex( v );
 				tcount++;
 			}
-			MeshLoader::addTriangle( tcount-3,tcount-2,tcount-1,b );
+			if( !flip_tris ){
+				MeshLoader::addTriangle( tcount-1,tcount-2,tcount-3,b );
+			}else{
+				MeshLoader::addTriangle( tcount-3,tcount-2,tcount-1,b );
+			}
 		}
 	}
 
@@ -78,11 +85,13 @@ MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 	return m;
 }
 
-MeshModel *Loader_Assimp::load( const string &f,const Transform &conv,int hint ){
-  // Brush b;
-  // b.setColor( Vector( 1,0,0 ) );
-  // MeshModel *root=MeshUtil::createSphere( b,16 );
-  // return root;
+MeshModel *Loader_Assimp::load( const string &f,const Transform &t,int hint ){
+	conv_tform=t;
+	conv=flip_tris=false;
+	if( conv_tform!=Transform() ){
+		conv=true;
+		if( conv_tform.m.i.cross(conv_tform.m.j).dot(conv_tform.m.k)<0 ) flip_tris=true;
+	}
 
 	Assimp::Importer importer;
 	scene=importer.ReadFile( f,aiProcessPreset_TargetRealtime_MaxQuality );

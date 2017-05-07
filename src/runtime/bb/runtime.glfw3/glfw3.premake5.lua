@@ -18,6 +18,20 @@ project "glfw"
   filter "platforms:macos"
     defines "_GLFW_COCOA"
 
+    files {
+      "glfw/src/cocoa_platform.h",
+      "glfw/src/cocoa_joystick.h",
+      "glfw/src/posix_tls.h",
+      "glfw/src/nsgl_context.h",
+      "glfw/src/cocoa_init.m",
+      "glfw/src/cocoa_joystick.m",
+      "glfw/src/cocoa_monitor.m",
+      "glfw/src/cocoa_window.m",
+      "glfw/src/cocoa_time.c",
+      "glfw/src/posix_tls.c",
+      "glfw/src/nsgl_context.m"
+    }
+
   filter "platforms:win32 or win64 or mingw32"
     defines {
       "_GLFW_WIN32"
