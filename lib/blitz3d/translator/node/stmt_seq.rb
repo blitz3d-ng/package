@@ -9,13 +9,14 @@ module Blitz3D
       end
 
       def to_c(&cleanup)
+        throw "...what?" if cleanup.nil?
         f = StringIO.new
 
         f.write(@stmts.map do |stmt|
           code = stmt.to_c(&cleanup)
           code = (code.last != '}' && code.last != ';') ? "#{code};" : code
-          "\n_bbDebugStmt(#{stmt.pos},#{file.inspect});\n#{code}"
-          # "#{code}\n"
+          # "\n_bbDebugStmt(#{stmt.pos},#{file.inspect});\n#{code}"
+          "#{code}\n"
         end.join(""))
 
         f.string

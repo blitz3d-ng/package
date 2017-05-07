@@ -12,6 +12,9 @@ module Blitz3D
         '&_bbIntType'
       end
 
+      def default_value
+        0
+      end
     end
   end
 end

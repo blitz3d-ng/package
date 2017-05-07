@@ -11,8 +11,8 @@ module Blitz3D
         @sem_brk = json['sem_brk']
       end
 
-      def to_c
-        "while(#{expr.to_c}){\n  #{stmts.to_c.indent}\n}"
+      def to_c(&cleanup)
+        "while(#{expr.to_c}){\n  #{stmts.to_c(&cleanup).indent}\n}"
       end
     end
   end

@@ -2,6 +2,8 @@ module Blitz3D
   module AST
     class Type
       def self.load(json)
+        return InvalidType.new('<null>') if json.nil?
+
         begin
           klass = "Blitz3D::AST::#{json['@class']}".constantize
         rescue NameError

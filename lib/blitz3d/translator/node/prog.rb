@@ -32,9 +32,9 @@ module Blitz3D
             "struct BBVecTypeDecl vector_type#{type.label}={ 6,#{type.size},#{type.element_type.ptr} }"
           end
         end.compact
-        types << '' unless types.empty?
 
         types.unshift 'struct BBVecTypeDecl{ int type;int size;BBType *elementType; }'
+        types << '' unless types.empty?
 
         types = types.join(";\n")
 
@@ -70,7 +70,7 @@ module Blitz3D
           globals,
           func_decls,
           func_defs,
-          "void bbMain(){\n  #{locals.indent}\n  #{stmts.to_c.indent}\n}"
+          "void bbMain(){\n  #{locals.indent}\n  #{stmts.to_c {}.indent}\n}"
         ].reject(&:blank?).join("\n\n")
       end
     end

@@ -9,8 +9,8 @@ module Blitz3D
         @stmts = Node.load(json['stmts'])
       end
 
-      def to_c
-        stmts.to_c
+      def to_c(&cleanup)
+        stmts.to_c(&cleanup)
       end
     end
   end

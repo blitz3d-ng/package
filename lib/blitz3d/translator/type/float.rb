@@ -11,6 +11,10 @@ module Blitz3D
       def ptr
         '&_bbFloatType'
       end
+
+      def default_value
+        '0.0f'
+      end
     end
   end
 end

@@ -13,9 +13,9 @@ module Blitz3D
         @stmts = Node.load(json['stmts'])
         @sem_brk = json['sem_brk']
       end
-      # for i = 0 to 3 step 3
-      def to_c
-        "for( #{var.to_c}=#{from_expr.to_c};#{var.to_c}#{step_expr.value > 0 ? '<=' : '>='}#{to_expr.to_c};#{var.to_c}+=#{step_expr.to_c} ){\n  #{stmts.to_c.indent}\n}"
+
+      def to_c(&cleanup)
+        "for( #{var.to_c}=#{from_expr.to_c};#{var.to_c}#{step_expr.value > 0 ? '<=' : '>='}#{to_expr.to_c};#{var.to_c}+=#{step_expr.to_c} ){\n  #{stmts.to_c(&cleanup).indent}\n}"
       end
     end
   end

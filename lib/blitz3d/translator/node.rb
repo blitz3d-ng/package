@@ -17,6 +17,7 @@ require_relative './node/cast'
 require_relative './node/new'
 require_relative './node/null'
 require_relative './node/rel_expr'
+require_relative './node/uni_expr'
 require_relative './node/var_expr'
 
 require_relative './node/const'

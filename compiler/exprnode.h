@@ -161,9 +161,14 @@ struct UniExprNode : public ExprNode{
 	TNode *translate( Codegen *g );
 
 	json toJSON( Environ *e ){
-		json tree;tree["@class"]="StringConstNode";
+		json tree;tree["@class"]="UniExprNode";
 		tree["sem_type"]=sem_type->toJSON();
-		tree["op"]=op;
+		switch( op ){
+		case '-':tree["op"]="SUB";break;
+		case '+':tree["op"]="ADD";break;
+		case ABS:tree["op"]="ABS";break;
+		case SGN:tree["op"]="SGN";break;
+		}
 		tree["expr"]=expr->toJSON( e );
 		return tree;
 	}
