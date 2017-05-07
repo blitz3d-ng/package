@@ -149,6 +149,10 @@ void gxScene::setTexState( int n,const TexState &state,bool tex_blend ){
 	//set canvas
 	dir3dDev->SetTexture( n,state.canvas->getTexSurface() );
 
+	//set filtering
+	setTSS( n,D3DTSS_MINFILTER,(flags & gxCanvas::CANVAS_TEX_NOFILTERING) ? D3DTFN_POINT : D3DTFN_LINEAR );
+	setTSS( n,D3DTSS_MAGFILTER,(flags & gxCanvas::CANVAS_TEX_NOFILTERING) ? D3DTFG_POINT : D3DTFG_LINEAR );
+
 	//set addressing modes
 	setTSS( n,D3DTSS_ADDRESSU,(flags & gxCanvas::CANVAS_TEX_CLAMPU) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP );
 	setTSS( n,D3DTSS_ADDRESSV,(flags & gxCanvas::CANVAS_TEX_CLAMPV) ? D3DTADDRESS_CLAMP : D3DTADDRESS_WRAP );

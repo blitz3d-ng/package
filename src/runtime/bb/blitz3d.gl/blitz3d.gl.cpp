@@ -341,13 +341,11 @@ public:
 
 				int flags=ts.canvas->getFlags();
 
-				if( flags&BBCanvas::CANVAS_TEX_MIPMAP ){
-					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR );
-				}else{
-					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-				}
+				bool no_filter=flags&BBCanvas::CANVAS_TEX_NOFILTERING;
+				bool mipmap=flags&BBCanvas::CANVAS_TEX_MIPMAP;
+
+				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR );
+				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) );
 
 				if( flags&BBCanvas::CANVAS_TEX_CLAMPU ){
 					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );

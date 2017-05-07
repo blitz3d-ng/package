@@ -28,6 +28,7 @@ public:
     CANVAS_TEX_CUBE=		0x0080,
     CANVAS_TEX_VIDMEM=		0x0100,
     CANVAS_TEX_HICOLOR=		0x0200,
+    CANVAS_TEX_NOFILTERING=		0x0400,
 
     CANVAS_TEXTURE=			0x10000,
     CANVAS_NONDISPLAY=		0x20000,
@@ -42,6 +43,9 @@ public:
     CUBESPACE_WORLD=0,
     CUBESPACE_CAMERA=4
   };
+
+	virtual void unset()=0;
+	virtual void set()=0;
 
   //MANIPULATORS
   virtual void setFont( BBFont *font )=0;

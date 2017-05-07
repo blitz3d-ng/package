@@ -374,6 +374,8 @@ int BBCALL bbAvailVidMem(){
 
 void BBCALL bbSetBuffer( BBCanvas *buff ){
 	debugCanvas( buff );
+	cout<<"gx_canvas: "<<gx_canvas<<endl;
+	if( gx_canvas ) gx_canvas->unset();
 	gx_canvas=buff;
 	curs_x=curs_y=0;
 	gx_canvas->setOrigin( 0,0 );
@@ -381,6 +383,7 @@ void BBCALL bbSetBuffer( BBCanvas *buff ){
 	gx_canvas->setColor( curr_color );
 	gx_canvas->setClsColor( curr_clsColor );
 	gx_canvas->setFont( curr_font );
+	gx_canvas->set();
 }
 
 BBCanvas * BBCALL bbGraphicsBuffer(){
@@ -419,6 +422,7 @@ void BBCALL bbBufferDirty( BBCanvas *c ){
 static void graphics( int w,int h,int d,int flags ){
 	freeGraphics();
 	bbContextDriver->closeGraphics( gx_graphics );
+	gx_canvas=0;
 	gx_graphics=bbContextDriver->openGraphics( w,h,d,gx_driver,flags );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( !gx_graphics ){

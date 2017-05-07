@@ -84,7 +84,7 @@ public:
     glEnd();
   }
   void rect( int x,int y,int w,int h,bool solid ){
-    glPointSize( 5.0f );
+		glPolygonMode( GL_FRONT_AND_BACK,solid?GL_FILL:GL_LINE );
     glBegin( GL_QUADS );
       glTexCoord2f( 0.0f,0.0f );
       glVertex2f( x,y+h );
@@ -98,19 +98,19 @@ public:
   }
   void oval( int x,int y,int w,int h,bool solid ){}
   void text( int x,int y,const std::string &t ){}
-  void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
-
-    ((GLB2DCanvas*)src)->bind();
-
-    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
-
-    rect( x,y,src_w,src_h,solid );
-
-    glDisable( GL_TEXTURE_2D );
-  }
+  // void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
+  //
+  //   ((GLB2DCanvas*)src)->bind();
+  //
+  //   glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
+  //   glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+  //   glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
+  //   glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
+  //
+  //   rect( x,y,src_w,src_h,solid );
+  //
+  //   glDisable( GL_TEXTURE_2D );
+  // }
 
   bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{ return false; }
   bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const{ return false; }
@@ -142,7 +142,6 @@ public:
   //ACCESSORS
   int getWidth()const{ return width; }
   int getHeight()const{ return height; }
-  int getDepth()const{ return 0; }
   int cubeMode()const{ return 0; }
   void getOrigin( int *x,int *y )const{}
   void getHandle( int *x,int *y )const{}
@@ -159,10 +158,7 @@ class GLB2DTextureCanvas : public GLB2DCanvas{
 protected:
   unsigned int texture,framebuffer,depthbuffer;
 public:
-	GLB2DTextureCanvas( int f ):GLB2DCanvas( f ){
-		glGenTextures( 1,&texture );
-		glGenFramebuffers( 1,&framebuffer );
-		glGenRenderbuffers( 1,&depthbuffer );
+	GLB2DTextureCanvas( int f ):GLB2DCanvas( f ),texture(0),framebuffer(0),depthbuffer(0){
 	}
 
 	GLB2DTextureCanvas( int w,int h,int f ):GLB2DTextureCanvas(f){
@@ -174,6 +170,40 @@ public:
     if( pixmap ) setPixmap( pixmap );
   }
 
+	int getDepth()const{ return 8; }
+
+	void unset(){
+		glBindTexture( GL_TEXTURE_2D,texture );
+		glGenerateMipmap( GL_TEXTURE_2D );
+	}
+
+	void set(){
+		if( !texture ){
+			glGenTextures( 1,&texture );
+			glBindTexture( GL_TEXTURE_2D,texture );
+			glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
+			glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA8,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
+		}
+
+		if( !depthbuffer ){
+			glGenRenderbuffers( 1,&depthbuffer );
+			glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer );
+			glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height );
+			glBindRenderbuffer( GL_RENDERBUFFER,0 );
+		}
+
+		if( !framebuffer ){
+			glGenFramebuffers( 1,&framebuffer );
+			glBindFramebuffer( GL_FRAMEBUFFER,framebuffer );
+			glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,texture,0 );
+			glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer );
+
+			glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+		}else{
+			glBindFramebuffer( GL_FRAMEBUFFER,framebuffer );
+		}
+	}
+
   unsigned int getTextureId(){ return texture; }
 
 	void setPixmap( BBPixmap *pm ){
@@ -182,9 +212,20 @@ public:
 		width=pm->width;
 		height=pm->height;
 
+		if( !texture ) glGenTextures( 1,&texture );
 		glBindTexture( GL_TEXTURE_2D,texture );
 		glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
 		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
+	}
+
+	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
+		set();
+
+		glBindFramebuffer( GL_READ_FRAMEBUFFER,0 );
+		glBindFramebuffer( GL_DRAW_FRAMEBUFFER,framebuffer );
+		glBlitFramebuffer( src_x,src_y,src_w,src_h,x,y,src_w,src_h,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST );
+
+		glBindFramebuffer( GL_FRAMEBUFFER,0 );
 	}
 
   void bind()const{
@@ -198,6 +239,16 @@ protected:
   void bind()const{}
 public:
   GLB2DDefaultCanvas( int f ):GLB2DCanvas(f){}
+
+	void unset(){}
+	void set(){
+		glBindFramebuffer( GL_FRAMEBUFFER,0 );
+	}
+
+	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
+	}
+
+	int getDepth()const{ return 8; }
 };
 
 #endif

@@ -218,6 +218,12 @@ BBGraphics *GLFW3Runtime::openGraphics( int w,int h,int d,int driver,int flags )
 		glfwSetWindowSize( wnd,w,h );
 		glfwShowWindow( wnd );
 		glfwMakeContextCurrent( wnd );
+
+#if defined(__linux__) || defined(_WIN32) // TODO: move this elsewhere...
+		int err=glewInit();
+		if( err!=GLEW_OK ) RTEX( (const char*)glewGetErrorString(err) );
+#endif
+
 #ifdef WIN32
 		glfwFocusWindow( wnd );
 #endif

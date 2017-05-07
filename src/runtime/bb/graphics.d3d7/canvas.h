@@ -25,6 +25,9 @@ public:
 	bool getZBufferFormat( DDPIXELFORMAT &fmt );
 
 	virtual void damage( const RECT &r )const;
+
+	void unset(){}
+	void set(){}
 protected:
 	int cube_mode;
 
