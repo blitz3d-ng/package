@@ -27,6 +27,8 @@ project "ode"
     "src/ode/src/joints/*.cpp",
     "src/ode/src/joints/*.h",
 
+    "src/OPCODE/*.cpp",
+    "src/OPCODE/*.h",
     "src/OPCODE/**/*.cpp",
     "src/OPCODE/**/*.h",
 

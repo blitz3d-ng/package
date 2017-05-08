@@ -1,7 +1,7 @@
 #ifndef BB_ODE_COMMANDS_H
 #define BB_ODE_COMMANDS_H
 
-#include <bb/blitz/commands.h>
+#include <bb/blitz3d/commands.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,6 +75,9 @@ void  BBCALL _odeContactSetSlip1( float slip );
 float BBCALL _odeContactGetSlip1();
 void  BBCALL _odeContactSetSlip2( float slip );
 float BBCALL _odeContactGetSlip2();
+
+// Blitz3D Helpers
+void BBCALL _odeGeomSyncEntity( bb_ptr_t g,Entity *e );
 
 // JV-ODE compatibility
 void     BBCALL _odeRegisterODE( int key1,int key2,int key3,int key4 );
