@@ -19,20 +19,7 @@ public:
   virtual void dpiInfo( float &scale_x,float &scale_y )=0;
 };
 
-int BBCALL bbExecFile( BBStr *f );
-
-void BBCALL bbDelay( int ms );
-int BBCALL bbMilliSecs();
-
-BBStr * BBCALL bbSystemProperty( BBStr *p );
-BBStr * BBCALL bbGetEnv( BBStr *env_var );
-void BBCALL bbSetEnv( BBStr *env_var,BBStr *val );
-
-int BBCALL bbScreenWidth( int i );
-int BBCALL bbScreenHeight( int i );
-
-float  BBCALL bbDPIScaleX();
-float  BBCALL bbDPIScaleY();
+#include "commands.h"
 
 extern BBSystemDriver *bbSystemDriver;
 extern std::map<std::string,std::string> bbSystemProperties;

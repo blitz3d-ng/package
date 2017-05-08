@@ -1,6 +1,8 @@
 
 #include "../../stdutil/stdutil.h"
 #include "system.macos.h"
+
+#include <CoreServices/CoreServices.h>
 #include <unistd.h>
 
 bool MacOSSystemDriver::delay( int ms ){
@@ -12,8 +14,14 @@ bool MacOSSystemDriver::execute( const std::string &cmd ){
   return false;
 }
 
+// lifted from BlitzMax (https://github.com/blitz-research/blitzmax/blob/a97b18fd62b211ecee464097180e0ebf2e7f12b7/mod/brl.mod/blitz.mod/blitz_app.c#L83-L90)
 int MacOSSystemDriver::getMilliSecs(){
-  return 0;
+	double t;
+	UnsignedWide uw;
+	Microseconds( &uw );
+	t=(uw.hi<<(32-9))|(uw.lo>>9);	//divide by 512...!
+
+	return (int) (long long) ( t/(1000.0/512.0) );
 }
 
 int MacOSSystemDriver::getScreenWidth( int i ){
