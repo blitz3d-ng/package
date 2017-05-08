@@ -13,3 +13,6 @@
 [submodule "src/runtime/bb/blitz2d/freetype2"]
 	path = src/freetype2
 	url = git://git.sv.nongnu.org/freetype/freetype2.git
+[submodule "src/portaudio"]
+	path = src/portaudio
+	url = https://git.assembla.com/portaudio.git

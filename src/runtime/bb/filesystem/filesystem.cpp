@@ -38,6 +38,12 @@ struct bbFile : public bbStream{
 
 static set<bbFile*> file_set;
 
+static inline void debugFileSys(){
+	if( bb_env.debug ){
+		if( !gx_filesys ) RTEX( "Filesystem does not exist" );
+	}
+}
+
 static inline void debugFile( bbFile *f ){
 	if( bb_env.debug ){
 		if( !file_set.count( f ) ) RTEX( "File does not exist" );
@@ -103,42 +109,50 @@ BBStr* BBCALL bbNextFile( BBDir *d ){
 }
 
 BBStr* BBCALL bbCurrentDir(){
+	debugFileSys();
 	return d_new BBStr( gx_filesys->getCurrentDir() );
 }
 
 void BBCALL bbChangeDir( BBStr *d ){
+	debugFileSys();
 	gx_filesys->setCurrentDir( *d );
 	delete d;
 }
 
 void BBCALL bbCreateDir( BBStr *d ){
+	debugFileSys();
 	gx_filesys->createDir( *d );
 	delete d;
 }
 
 void BBCALL bbDeleteDir( BBStr *d ){
+	debugFileSys();
 	gx_filesys->deleteDir( *d );
 	delete d;
 }
 
 int BBCALL bbFileType( BBStr *f ){
 	string t=*f;delete f;
+	debugFileSys();
 	int n=gx_filesys->getFileType( t );
 	return n==BBFileSystem::FILE_TYPE_FILE ? 1 : (n==BBFileSystem::FILE_TYPE_DIR ? 2 : 0);
 }
 
 int BBCALL bbFileSize( BBStr *f ){
 	string t=*f;delete f;
+	debugFileSys();
 	return gx_filesys->getFileSize( t );
 }
 
 void BBCALL bbCopyFile( BBStr *f,BBStr *to ){
 	string src=*f,dest=*to;
 	delete f;delete to;
+	debugFileSys();
 	gx_filesys->copyFile( src,dest );
 }
 
 void BBCALL bbDeleteFile( BBStr *f ){
+	debugFileSys();
 	gx_filesys->deleteFile( *f );
 	delete f;
 }

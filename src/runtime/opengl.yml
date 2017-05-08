@@ -12,8 +12,8 @@ modules:
   - sockets
   - system.windows
   - system.macos
-  - filesystem
   - filesystem.windows
+  - filesystem.posix
   - timer.windows
   - bank
   - input
