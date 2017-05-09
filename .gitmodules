@@ -1,24 +1,24 @@
 [submodule "freeimage317"]
-	path = freeimage317
+	path = src/deps/freeimage317/src
 	url = https://github.com/kfprimm/freeimage317
 [submodule "src/assimp"]
-	path = src/assimp
+	path = src/deps/assimp/src
 	url = https://github.com/assimp/assimp
 [submodule "src/runtime/bb/ode/src"]
-	path = src/runtime/bb/ode/src
+	path = src/deps/ode/src
 	url = https://github.com/blitz3d-ng/ode
 [submodule "src/runtime/bb/runtime.glfw3/glfw"]
-	path = src/runtime/bb/runtime.glfw3/glfw
+	path = src/deps/glfw3/src
 	url = https://github.com/glfw/glfw.git
 [submodule "src/runtime/bb/blitz2d/freetype2"]
-	path = src/freetype2
+	path = src/deps/freetype2/src
 	url = git://git.sv.nongnu.org/freetype/freetype2.git
 [submodule "src/portaudio"]
 	path = src/portaudio
 	url = https://git.assembla.com/portaudio.git
 [submodule "src/vorbis"]
-	path = src/vorbis
+	path = src/deps/vorbis/src
 	url = https://github.com/xiph/vorbis.git
 [submodule "src/libogg"]
-	path = src/ogg
+	path = src/deps/ogg/src
 	url = https://git.xiph.org/ogg.git

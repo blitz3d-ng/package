@@ -6,6 +6,8 @@ project "linker"
 
   targetdir "../_release/bin"
 
+  includedirs "../src/runtime"
+
   files { "main.cpp", "linker.h", "linker.cpp", "image_util.h", "image_util.cpp" }
   links { "stdutil" }
 

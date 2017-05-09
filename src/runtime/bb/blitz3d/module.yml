@@ -357,7 +357,7 @@ premake5:
     - assimp.convertutf
 
   - includedirs:
-    - ../../../assimp/include
+    - ../../../deps/assimp/src/include
 
   - filter: platforms:macos or linux
   - files:

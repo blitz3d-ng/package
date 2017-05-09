@@ -22,3 +22,7 @@ premake5:
 
   links:
     - ddraw
+
+  # FIXME: remove this once the current FI code is replaced with pixmaps
+  includedirs:
+    - ../../../deps/freeimage317/src/Source

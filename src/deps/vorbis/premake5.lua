@@ -5,16 +5,16 @@ project "vorbisfile"
   removeplatforms { "win32", "win64", "mingw32", "linux" }
 
   includedirs {
-    "ogg/include",
-    "vorbis/include"
+    "../ogg/src/include",
+    "src/include"
   }
 
   files {
-    "vorbis/lib/*.h",
-    "vorbis/lib/*.c"
+    "src/lib/*.h",
+    "src/lib/*.c"
   }
 
   removefiles {
-    "vorbis/lib/psytune.c",
-    "vorbis/lib/vorbisenc.c"
+    "src/lib/psytune.c",
+    "src/lib/vorbisenc.c"
   }

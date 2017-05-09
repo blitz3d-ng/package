@@ -42,8 +42,8 @@ premake5:
     - wav_stream.h
 
   includedirs:
-    - ../../../vorbis/include
-    - ../../../ogg/include
+    - ../../../deps/vorbis/src/include
+    - ../../../deps/ogg/src/include
 
   links:
     - vorbisfile

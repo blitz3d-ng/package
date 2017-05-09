@@ -49,4 +49,4 @@ end
 # system_libs << %w(-framework OpenAL -framework CoreAudio -framework IOKit -framework OpenGL -framework CoreVideo -framework Cocoa) if PLATFORM == 'macos'
 # system_libs << %w(-lGL -lGLU) if PLATFORM == 'linux'
 
-puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} #{system_libs.join(' ')}"
+puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lbb.stub #{module_libs.join(' ')} #{module_libs.join(' ')} #{system_libs.join(' ')}"

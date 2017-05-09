@@ -4,7 +4,10 @@ project "compiler"
 
   removeplatforms { "win64" }
 
-  includedirs "../common/include"
+  includedirs {
+    "../common/include",
+    "../src/runtime"
+  }
 
   targetdir "../_release/bin"
   targetname "blitzcc"

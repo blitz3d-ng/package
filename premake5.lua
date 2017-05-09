@@ -19,13 +19,14 @@ workspace "blitz3d"
     "GLEW_STATIC"
   }
 
-  includedirs {
-    "freeimage317/Source",
-    "src/runtime"
-  }
+  -- includedirs {
+  --   "freeimage317/Source",
+  --   "src/runtime"
+  -- }
 
   filter "kind:StaticLib"
     defines "_LIB"
+    targetdir "_release/lib/%{cfg.platform}"
 
   filter "configurations:debug"
     symbols "on"
@@ -87,6 +88,10 @@ workspace "blitz3d"
     targetextension ".dll"
     linkoptions "-shared"
 
+  filter { "platforms:mingw32", "kind:StaticLib" }
+    targetprefix "lib"
+    targetextension ".a"
+
   filter { "platforms:mingw32", "kind:WindowedApp or ConsoleApp" }
     targetextension ".exe"
 
@@ -96,9 +101,6 @@ workspace "blitz3d"
     defines "BB_PLATFORM=\"macos\""
 
     buildoptions "-mmacosx-version-min=10.9"
-
-  filter { "platforms:macos", "kind:StaticLib" }
-    targetdir "_release/lib/%{cfg.platform}"
 
   filter { "platforms:linux" }
     system "linux"
@@ -121,31 +123,16 @@ require './linker/premake5'
 
 if not os.getenv("CI") then require 'src/blitzide2/premake5' end
 require './compiler/premake5'
-require './src/glew/premake5'
 require './src/debugger.console/premake5'
-require './src/freeimage.premake5'
-require './src/runtime/bb/ode/ode.premake5'
-require './src/runtime/bb/runtime.glfw3/glfw3.premake5'
-require './src/ogg'
-require './src/vorbisfile'
-require './src/assimp'
 
-project "stub"
-  kind "StaticLib"
-  language "C++"
-
-  files {
-    "src/runtime/bb/stub/stub.h"
-  }
-
-  filter "platforms:win32 or win64 or mingw32"
-    files "src/runtime/bb/stub/stub.windows.cpp"
-
-  filter "platforms:macos"
-    files "src/runtime/bb/stub/stub.macos.cpp"
-
-  filter "platforms:linux"
-    files "src/runtime/bb/stub/stub.linux.cpp"
+require './src/deps/assimp/premake5'
+require './src/deps/freeimage317/premake5'
+require './src/deps/freetype2/premake5'
+require './src/deps/glew/premake5'
+require './src/deps/glfw3/premake5'
+require './src/deps/ode/premake5'
+require './src/deps/ogg/premake5'
+require './src/deps/vorbis/premake5'
 
 project "stdutil"
   kind "StaticLib"

@@ -14,8 +14,8 @@ premake5:
     - commands.h
 
   - includedirs:
-    - ../../../vorbis/include
-    - ../../../ogg/include
+    - ../../../deps/vorbis/src/include
+    - ../../../deps/ogg/src/include
 
   - filter: platforms:macos
   - links:

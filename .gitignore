@@ -46,3 +46,5 @@ src/runtime/premake
 
 /src/runtime/*.stub.cpp
 /src/runtime/*.modules.txt
+
+/tmp

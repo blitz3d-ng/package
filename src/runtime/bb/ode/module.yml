@@ -98,8 +98,8 @@ premake5:
     - jv-ode-compat.cpp
 
   includedirs:
-    - include
-    - src/include
+    - ../../../deps/ode/include
+    - ../../../deps/ode/src/include
 
   links:
     - ode

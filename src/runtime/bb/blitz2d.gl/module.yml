@@ -10,4 +10,4 @@ premake5:
     - blitz2d.gl.h
 
   - includedirs:
-    - ../../../glew/include
+    - ../../../deps/glew/include

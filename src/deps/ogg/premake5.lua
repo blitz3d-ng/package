@@ -5,10 +5,10 @@ project "ogg"
   removeplatforms { "win32", "win64", "mingw32", "linux" }
 
   includedirs {
-    "ogg/include"
+    "src/include"
   }
 
   files {
-    "ogg/src/*.h",
-    "ogg/src/*.c"
+    "src/src/*.h",
+    "src/src/*.c"
   }

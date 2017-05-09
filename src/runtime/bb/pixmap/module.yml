@@ -9,6 +9,9 @@ premake5:
     - pixmap.cpp
     - pixmap.h
 
+  - includedirs:
+    - ../../../deps/freeimage317/src/Source
+
   - links:
     - freeimage
     - jpeg

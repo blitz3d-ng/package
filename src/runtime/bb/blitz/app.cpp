@@ -40,7 +40,7 @@ BBStr * BBCALL bbCommandLine(){
 }
 
 void BBCALL bbStartup( const char *executable_path,const char *params ){
-	if( executable_path ) chdir( filenamepath(executable_path).c_str() );
+	// if( executable_path ) chdir( filenamepath(executable_path).c_str() );
 	app.cmd_line=params;
 }
 

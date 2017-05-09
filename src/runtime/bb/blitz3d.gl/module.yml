@@ -11,4 +11,4 @@ premake5:
     - blitz3d.gl.h
 
   includedirs:
-    - ../../../glew/include
+    - ../../../deps/glew/include

@@ -15,8 +15,8 @@ premake5:
     - scancodes.cpp
 
   - includedirs:
-    - ../../../glew/include
-    - glfw/include
+    - ../../../deps/glew/include
+    - ../../../deps/glfw3/src/include
 
   - links:
     - glfw

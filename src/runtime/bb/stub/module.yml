@@ -1,0 +1,18 @@
+name: Stub
+description: Provides program bootstrapping.
+
+premake5:
+  - files:
+    - stub.h
+
+  - filter: platforms:win32 or win64 or mingw32
+  - files:
+    - stub.windows.cpp
+
+  - filter: platforms:macos
+  - files:
+    - stub.macos.cpp
+
+  - filter: platforms:linux
+  - files:
+    - stub.linux.cpp

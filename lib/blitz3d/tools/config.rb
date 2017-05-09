@@ -51,6 +51,8 @@ module Blitz3D
           f.write "  kind 'StaticLib'\n"
           f.write "  language 'C++'\n\n"
 
+          f.write "  includedirs '../../src/runtime'\n\n"
+
           f.write "  filter { 'platforms:win32 or win64' }\n"
           f.write "    buildoptions { '/W4' }\n\n"
           f.write "    disablewarnings { '4100', '4245', '4456', '4706' }\n\n"
@@ -198,6 +200,8 @@ module Blitz3D
             f.write "project 'runtime.#{runtime.id}'\n"
             f.write "  language 'C++'\n\n"
 
+            f.write "  includedirs '../../src/runtime'\n\n"
+
             inactive_platforms = Module::PLATFORMS.reject { |p| runtime.platforms.empty? || runtime.platforms.include?(p) }.map(&:inspect)
             unless inactive_platforms.empty?
               f.write "  removeplatforms { #{inactive_platforms.join(', ')} }\n\n"
@@ -225,7 +229,7 @@ module Blitz3D
             end
 
             f.write "  filter {}\n\n"
-            f.write "  links 'stub'\n\n"
+            f.write "  links 'bb.stub'\n\n"
 
             runtime.dependencies(:list).reverse.each do |mod|
               f.write "  links 'bb.#{mod.id}'\n"
