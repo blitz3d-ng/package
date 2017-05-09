@@ -126,7 +126,9 @@ require './src/debugger.console/premake5'
 require './src/freeimage.premake5'
 require './src/runtime/bb/ode/ode.premake5'
 require './src/runtime/bb/runtime.glfw3/glfw3.premake5'
--- require './src/premake5.assimp'
+require './src/ogg'
+require './src/vorbisfile'
+require './src/assimp'
 
 project "stub"
   kind "StaticLib"

@@ -23,10 +23,10 @@ RUNTIME = 'opengl'
 config = configs[RUNTIME][PLATFORM]
 
 module_libs = config['modules'].reverse.map { |m| "-lbb.#{m}" }
-module_libs << %w(-lstdutil -lassimp -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib)
+module_libs << %w(-lstdutil -lvorbisfile -logg -lassimp -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib)
 
 system_libs = %w(-lm)
-system_libs << %w(-framework OpenGL) if PLATFORM == 'macos'
+system_libs << %w(-framework OpenAL -framework CoreAudio -framework IOKit -framework OpenGL -framework CoreVideo -framework Cocoa) if PLATFORM == 'macos'
 system_libs << %w(-lGL -lGLU) if PLATFORM == 'linux'
 
-puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -Lbuild/assimp/code -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} #{`pkg-config glfw3 --libs`.strip} #{system_libs.join(' ')}"
+puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} #{`pkg-config glfw3 --libs`.strip} #{system_libs.join(' ')}"

@@ -20,6 +20,7 @@ modules:
   - input.directinput8
   - audio
   - audio.fmod
+  - audio.openal
   - blitz3d.gl
   - userlibs
   - runtime.glfw3
@@ -27,6 +28,8 @@ modules:
 premake5:
   - links:
     - stdutil
+
+    - assimp
 
     - freeimage
     - jpeg

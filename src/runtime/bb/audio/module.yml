@@ -34,3 +34,13 @@ premake5:
     - driver.h
     - audio.cpp
     - audio.h
+    - stream.cpp
+    - stream.h
+    - ogg_stream.cpp
+    - ogg_stream.h
+    - wav_stream.cpp
+    - wav_stream.h
+
+  includedirs:
+    - ../../../vorbis/include
+    - ../../../ogg/include

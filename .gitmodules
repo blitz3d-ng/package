@@ -16,3 +16,9 @@
 [submodule "src/portaudio"]
 	path = src/portaudio
 	url = https://git.assembla.com/portaudio.git
+[submodule "src/vorbis"]
+	path = src/vorbis
+	url = https://github.com/xiph/vorbis.git
+[submodule "src/libogg"]
+	path = src/ogg
+	url = https://git.xiph.org/ogg.git
