@@ -85,8 +85,8 @@ struct BBVecType{
 };
 
 union BBField{
-	int INT;
-	float FLT;
+	bb_int_t INT;
+	bb_float_t FLT;
 	BBStr *STR;
 	char *CSTR;
 	BBObj *OBJ;
@@ -144,10 +144,10 @@ void	 BBCALL _bbStrStore( BBStr **var,BBStr *str );
 int		 BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs );
 
 BBStr *	 BBCALL _bbStrConcat( BBStr *s1,BBStr *s2 );
-int		 BBCALL _bbStrToInt( BBStr *s );
-BBStr *	 BBCALL _bbStrFromInt( int n );
-float	 BBCALL _bbStrToFloat( BBStr *s );
-BBStr *	 BBCALL _bbStrFromFloat( float n );
+bb_int_t		 BBCALL _bbStrToInt( BBStr *s );
+BBStr *	 BBCALL _bbStrFromInt( bb_int_t n );
+bb_float_t	 BBCALL _bbStrToFloat( BBStr *s );
+BBStr *	 BBCALL _bbStrFromFloat( bb_float_t n );
 BBStr *	 BBCALL _bbStrConst( const char *s );
 
 void	 BBCALL _bbDimArray( BBArray *array );

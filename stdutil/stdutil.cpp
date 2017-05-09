@@ -144,12 +144,21 @@ int atoi( const string &s ){
 	return atoi( s.c_str() );
 }
 
+long atol( const string &s ){
+	return atol( s.c_str() );
+}
+
 double atof( const string &s ){
 	return atof( s.c_str() );
 }
 
 string itoa( int n ){
 	char buff[32];snprintf( buff,sizeof(buff),"%i",n );
+	return string( buff );
+}
+
+string ltoa( long n ){
+	char buff[32];snprintf( buff,sizeof(buff),"%ld",n );
 	return string( buff );
 }
 

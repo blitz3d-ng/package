@@ -16,7 +16,7 @@ project "glfw"
   }
 
   filter "platforms:macos"
-    defines "_GLFW_COCOA"
+    defines { "_GLFW_COCOA", "_GLFW_USE_RETINA" }
 
     files {
       "glfw/src/cocoa_platform.h",

@@ -129,6 +129,7 @@ public:
   void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y ){}
   unsigned getPixel( int x,int y )const{ return 0; }
   unsigned getPixelFast( int x,int y )const{
+    y=height-y;
     return pixels[(y*width+x)*4];
   }
   void unlock()const{
@@ -206,7 +207,13 @@ public:
   unsigned int getTextureId(){ return texture; }
 
 	void setPixmap( BBPixmap *pm ){
-		if( flags&CANVAS_TEX_MASK ) pm->mask( 0,0,0 );
+		if( flags&CANVAS_TEX_ALPHA ){
+			if( flags&CANVAS_TEX_MASK ){
+				pm->mask( 0,0,0 );
+			}else{
+				pm->buildAlpha( false );
+			}
+		}
 
 		width=pm->width;
 		height=pm->height;

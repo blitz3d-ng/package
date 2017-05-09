@@ -181,7 +181,7 @@ struct ExitNode : public StmtNode{
 	void translate( Codegen *g );
 
 	json toJSON( Environ *e ){
-		json tree;tree["@class"]="IfNode";
+		json tree;tree["@class"]="ExitNode";
 		tree["pos"]=pos;
 		tree["sem_brk"]=sem_brk;
 		return tree;

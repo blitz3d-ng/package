@@ -136,7 +136,7 @@ static const char *linkRuntime(){
 	}
 #else
 	json index;
-	ifstream i(home+"/lib/default." BB_PLATFORM ".config.json");
+	ifstream i(home+"/lib/opengl." BB_PLATFORM ".config.json");
 	i >> index;
 
 	for( auto& module:index["modules"] ) {

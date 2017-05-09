@@ -1,6 +1,7 @@
 
 #include "../../stdutil/stdutil.h"
-#include <bb/blitz/module.h>
+#include <bb/blitz/blitz.h>
+
 #include <FreeImage.h>
 #include <cstring>
 #include "pixmap.h"
@@ -42,12 +43,18 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 
   bool trans=FreeImage_GetBPP( t_dib )==32 ||	FreeImage_IsTransparent( t_dib );
 
-  FIBITMAP *dib=FreeImage_ConvertTo32Bits( t_dib );
-
-  if( dib ) FreeImage_Unload( t_dib );
-  else dib=t_dib;
-
   BBPixmap *pm=d_new BBPixmap();
+
+	switch( int bpp=FreeImage_GetBPP( t_dib ) ){
+	case 32:pm->format=PF_RGBA;break;
+	case 24:pm->format=PF_RGB;break;
+	default:RTEX( ("Unhandled image format: "+string(itoa(bpp))+" bpps").c_str() );
+	}
+
+	FIBITMAP *dib=FreeImage_ConvertTo32Bits( t_dib );
+
+	if( dib ) FreeImage_Unload( t_dib );
+	else dib=t_dib;
 
   pm->width=FreeImage_GetWidth( dib );
   pm->height=FreeImage_GetHeight( dib );
@@ -75,6 +82,14 @@ void BBPixmap::mask( int r,int g,int b ){
 	for( int i=0;i<width*height;i++ ){
 		unsigned char *p=&bits[bpp*i];
 		if( p[0]==0 && p[1]==0 && p[2]==0 ) p[3]=0.0f;
+	}
+}
+
+void BBPixmap::buildAlpha( bool whiten ){
+	// NASTY: gotta be a better way to do this...
+	for( int i=0;i<width*height;i++ ){
+		unsigned char *p=&bits[bpp*i];
+		p[3]=(p[0]+p[1]+p[2])/3;
 	}
 }
 

@@ -154,21 +154,33 @@ int BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs ){
 	delete lhs;delete rhs;return n;
 }
 
-int BBCALL _bbStrToInt( BBStr *s ){
+bb_int_t BBCALL _bbStrToInt( BBStr *s ){
+#ifdef BB32
 	int n=atoi( *s );
+#else
+	long n=atol( *s );
+#endif
 	delete s;return n;
 }
 
-BBStr * BBCALL _bbStrFromInt( int n ){
+BBStr * BBCALL _bbStrFromInt( bb_int_t n ){
+#ifdef BB32
 	return d_new BBStr( itoa( n ) );
+#else
+	return d_new BBStr( ltoa( n ) );
+#endif
 }
 
-float BBCALL _bbStrToFloat( BBStr *s ){
+bb_float_t BBCALL _bbStrToFloat( BBStr *s ){
+#ifdef BB32
 	float n=(float)atof( *s );
+#else
+	double n=atof( *s );
+#endif
 	delete s;return n;
 }
 
-BBStr * BBCALL _bbStrFromFloat( float n ){
+BBStr * BBCALL _bbStrFromFloat( bb_float_t n ){
 	return d_new BBStr( ftoa( n ) );
 }
 
@@ -250,7 +262,7 @@ static void insertObj( BBObj *obj,BBObj *next ){
 
 BBObj * BBCALL _bbObjNew( BBObjType *type ){
 	if( type->free.next==&type->free ){
-		int obj_size=sizeof(BBObj)+type->fieldCnt*4;
+		int obj_size=sizeof(BBObj)+type->fieldCnt*sizeof(BBField);
 		BBObj *o=(BBObj*)bbMalloc( obj_size*OBJ_NEW_INC );
 		for( int k=0;k<OBJ_NEW_INC;++k ){
 			insertObj( o,&type->free );

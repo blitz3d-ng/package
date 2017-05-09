@@ -16,9 +16,9 @@ module Blitz3D
 
       def default_value
         if value_type.is_a?(IntType)
-          int_value
+          int_value || 0
         elsif value_type.is_a?(FloatType)
-          float_value
+          float_value || 0.0
         elsif value_type.is_a?(StringType)
           string_value.inspect
         end

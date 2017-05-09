@@ -39,8 +39,10 @@ void checkmem( std::ostream &out );
 
 //some stuff that should be in std libs
 int atoi( const std::string &s );
+long atol( const std::string &s );
 double atof( const std::string &s );
 std::string itoa( int n );
+std::string ltoa( long n );
 std::string ftoa( float n );
 std::string tolower( const std::string &s );
 std::string toupper( const std::string &s );

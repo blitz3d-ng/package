@@ -312,6 +312,12 @@ public:
 			glLightModelfv( GL_LIGHT_MODEL_AMBIENT,ambient );
 		}
 
+		if( rs.fx&FX_VERTEXCOLOR ){
+			glEnable( GL_COLOR_MATERIAL );
+		}else{
+			glDisable( GL_COLOR_MATERIAL );
+		}
+
     for( int i=0;i<MAX_TEXTURES;i++ ){
 			const RenderState::TexState &ts=rs.tex_states[i];
       glActiveTexture( GL_TEXTURE0+i );
@@ -345,7 +351,7 @@ public:
 				bool mipmap=flags&BBCanvas::CANVAS_TEX_MIPMAP;
 
 				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR );
-				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) );
+				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) );
 
 				if( flags&BBCanvas::CANVAS_TEX_CLAMPU ){
 					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );

@@ -9,8 +9,8 @@ module Blitz3D
         @tag = json['tag']
         @kind = json['kind']
         @constant = json['constant']
-        @expr = Node.load(json['expr'])
-        @sem_var = Node.load(json['sem_var'])
+        @expr = Node.load(json['expr']) if json['expr']
+        @sem_var = Node.load(json['sem_var']) if json['sem_var']
       end
 
       def to_h
@@ -19,7 +19,7 @@ module Blitz3D
       end
 
       def to_c
-        expr = self.expr || IntConstNode.new(value: 0)
+        expr = self.expr || IntConstNode.new('value' => 0)
         "#{ident}=#{expr.to_c}"
       end
     end

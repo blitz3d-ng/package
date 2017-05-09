@@ -28,7 +28,7 @@ MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 
 		aiColor4D diffuse;
 		if( aiGetMaterialColor( mtl,AI_MATKEY_COLOR_DIFFUSE,&diffuse )==AI_SUCCESS ){
-			b.setColor( Vector(&diffuse.r) );
+			b.setColor( Vector(diffuse.r,diffuse.g,diffuse.b) );
 			if( diffuse.a ) b.setAlpha( diffuse.a );
 		}
 
@@ -72,7 +72,7 @@ MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 	nd->mTransformation.Decompose( scl,rot,pos );
 
 	m->setLocalPosition( Vector( pos[0],pos[1],pos[2] ) );
-	m->setLocalScale( Vector( scl[0],scl[1],scl[2] ) );
+	m->setLocalScale( Vector( scl[0],scl[1],scl[2] )*Vector(1,1,-1) );
 	m->setLocalRotation( Quat( rot.w,Vector( rot.x,rot.y,rot.z ) ) );
 
 	MeshLoader::endMesh( m );

@@ -14,9 +14,13 @@ void sue( const char *t ){
 
 class StdioDebugger : public Debugger{
 private:
-  string file;
-  int row,col;
+	bool trace;
+	string file;
+	int row,col;
 public:
+	StdioDebugger( bool t ):trace(t){
+	}
+
 	void debugRun(){
 	}
 	void debugStop(){
@@ -25,7 +29,7 @@ public:
 		file=string(f);
 		row=(srcpos>>16)&0xffff;
 		col=srcpos&0xffff;
-		// cout<<file<<":"<<"["<<row+1<<":"<<col<<"]"<<endl;
+		if( trace ) cout<<file<<":"<<"["<<row+1<<":"<<col<<"]"<<endl;
 	}
 	void debugEnter( void *frame,void *env,const char *func ){
 	}
@@ -49,11 +53,17 @@ int main( int argc,char *argv[] ){
   bb_env.debug=false;
 #endif
 
+	bool trace=false;
 	string cmd_line;
-	for( int i=1;i<argc;i++ ) cmd_line+=argv[i];
+	for( int i=1;i<argc;i++ ){
+		if( strncmp( "--trace",argv[i],strlen("--trace")+1 )==0 ){
+			trace=true;
+		}
+		cmd_line+=argv[i];
+	}
   bbStartup( argv[0],cmd_line.c_str() );
 
-	StdioDebugger debugger;
+	StdioDebugger debugger( trace );
   bbAttachDebugger( &debugger );
 
   if( !(bbRuntime=bbCreateRuntime()) ){
@@ -66,7 +76,13 @@ int main( int argc,char *argv[] ){
     if( !bbruntime_create() ) return 1;
     bbMain();
   }catch( bbEx &ex ){
-    if( ex.err ) cerr<<ex.err<<endl;
+    if( ex.err ){
+			if( bb_env.debug ){
+				debugger.debugLog( ex.err );
+			}else{
+				cerr<<ex.err<<endl;
+			}
+		}
     retcode=1;
   }
   bbruntime_destroy();
