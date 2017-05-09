@@ -19,3 +19,6 @@ premake5:
     - ddutil.cpp
     - ddutil.h
     - asmcoder.h
+
+  links:
+    - ddraw

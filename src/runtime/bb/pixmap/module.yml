@@ -5,9 +5,21 @@ dependencies:
   - blitz
 
 premake5:
-  files:
+  - files:
     - pixmap.cpp
     - pixmap.h
 
-  links:
+  - links:
     - freeimage
+    - jpeg
+    - openexr
+    - openjpeg
+    - png
+    - raw
+    - tiff4
+    - webp
+    - zlib
+
+  - filter: platforms:win32 or win64 or mingw32
+  - links:
+    - jxr

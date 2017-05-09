@@ -1,3 +1,5 @@
+require 'assimp.convertutf'
+
 project "assimp"
   language "C++"
   kind "StaticLib"
@@ -86,10 +88,9 @@ project "assimp"
     "assimp.include"
   }
 
-  files {
-    -- "assimp/contrib/ConvertUTF/*.h",
-    -- "assimp/contrib/ConvertUTF/*.c",
+  links "assimp.convertutf"
 
+  files {
     "assimp/code/Assimp.cpp",
     "assimp/code/BaseImporter.h",
     "assimp/code/BaseImporter.cpp",

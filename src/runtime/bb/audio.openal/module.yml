@@ -8,11 +8,15 @@ dependencies:
   - audio
 
 premake5:
-  files:
+  - files:
     - audio.openal.h
     - audio.openal.cpp
     - commands.h
 
-  includedirs:
+  - includedirs:
     - ../../../vorbis/include
     - ../../../ogg/include
+
+  - filter: platforms:macos
+  - links:
+    - OpenAL.framework

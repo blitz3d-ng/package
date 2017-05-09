@@ -16,3 +16,6 @@ premake5:
     - driver.h
 
   includedirs: common/include
+
+  links:
+    - fmodvc

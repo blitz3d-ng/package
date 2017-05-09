@@ -35,3 +35,6 @@ premake5:
   files:
     - sockets.cpp
     - sockets.h
+
+  links:
+    - wsock32

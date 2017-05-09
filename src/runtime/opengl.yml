@@ -1,4 +1,10 @@
-name: Default
+name: OpenGL
+
+platforms:
+  - win32
+  - mingw32
+  - macos
+  - linux
 
 modules:
   - blitz
@@ -24,53 +30,3 @@ modules:
   - blitz3d.gl
   - userlibs
   - runtime.glfw3
-
-premake5:
-  - links:
-    - stdutil
-
-    - assimp
-
-    - freeimage
-    - jpeg
-    - jxr
-    - openexr
-    - openjpeg
-    - png
-    - raw
-    - tiff4
-    - webp
-    - zlib
-
-    - glfw
-
-    - dinput8
-    - fmodvc
-    - opengl32
-    - glu32
-    - wsock32
-    - winmm
-    - d3dxof
-    - ddraw
-    - dsound
-    - kernel32
-    - user32
-    - gdi32
-    - winspool
-    - comdlg32
-    - advapi32
-    - shell32
-    - ole32
-    - oleaut32
-    - uuid
-    - odbc32
-    - odbccp32
-
-  - filter: platforms:win32 or win64 or mingw32
-  - links: glew
-
-  - filter: platforms:win32 or win64
-  - links: amstrmid
-
-  - filter: platforms:mingw32
-  - links: strmiids

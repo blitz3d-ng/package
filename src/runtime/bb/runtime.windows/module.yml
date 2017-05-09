@@ -6,11 +6,12 @@ platforms:
   - mingw32
 
 dependencies:
+  - system.windows
   - blitz3d.d3d7
   - frame
 
 premake5:
-  files:
+  - files:
     - gxgraphics.cpp
     - gxgraphics.h
     - gxmovie.cpp
@@ -19,3 +20,9 @@ premake5:
     - gxruntime.h
     - module.cpp
     - std.h
+
+  - filter: platforms:win32 or win64
+  - links: amstrmid
+
+  - filter: platforms:mingw32
+  - links: strmiids

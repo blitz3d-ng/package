@@ -9,14 +9,25 @@ dependencies:
   - pixmap
 
 premake5:
-  files:
+  - files:
     - runtime.glfw3.cpp
     - runtime.glfw3.h
     - scancodes.cpp
 
-  includedirs:
+  - includedirs:
     - ../../../glew/include
     - glfw/include
 
-  links:
+  - links:
     - glfw
+
+  - filter: platforms:macos
+  - links:
+    - OpenGL.framework
+    - CoreVideo.framework
+    - IOKit.framework
+
+  - filter: platforms:win32 or win64 or mingw32
+  - links:
+    - opengl32
+    - glew

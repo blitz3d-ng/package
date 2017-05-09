@@ -84,6 +84,21 @@ module Blitz3D
       end
     end
 
+    def libraries(platform)
+      current_platforms = PLATFORMS
+      [premake5].flatten.map do |i|
+        i.map do |(key, value)|
+          if key == 'links' && current_platforms.include?(platform)
+            value
+          elsif key == 'filter'
+            _, platforms = value.match(/platforms:(.*)/).to_a
+            current_platforms = platforms.split(/\s+/).select { |p| PLATFORMS.include?(p) }
+            nil
+          end
+        end
+      end.flatten.compact
+    end
+
     def help_dir
       File.join(path, 'docs')
     end

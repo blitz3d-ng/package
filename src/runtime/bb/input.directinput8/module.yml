@@ -11,3 +11,6 @@ premake5:
   files:
     - driver.cpp
     - driver.h
+
+  links:
+    - dinput8

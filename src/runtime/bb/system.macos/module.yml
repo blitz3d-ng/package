@@ -11,3 +11,6 @@ premake5:
   files:
     - system.macos.cpp
     - system.macos.h
+
+  links:
+    - Cocoa.framework

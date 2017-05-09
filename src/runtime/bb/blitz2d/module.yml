@@ -3,6 +3,7 @@ description: Provides drawing functions.
 
 dependencies:
   # - graphics
+  - pixmap
 
 commands:
   # movies

@@ -136,11 +136,11 @@ static const char *linkRuntime(){
 	}
 #else
 	json index;
-	ifstream i(home+"/lib/opengl." BB_PLATFORM ".config.json");
+	ifstream i(home+"/lib/" BB_PLATFORM "/opengl.config.json");
 	i >> index;
 
 	for( auto& module:index["modules"] ) {
-		modules.push_back( module );
+		modules.push_back( module["id"] );
 	}
 
 	for( auto& command:index["commands"] ) {

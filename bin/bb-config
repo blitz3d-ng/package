@@ -11,22 +11,42 @@ LIB_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '_release', 
 
 IDENTIFIER_REGEX = /[A-Za-z0-9]+/
 
-configs = Dir.glob(File.join(LIB_PATH, '*.*.config.json')).inject({}) do |cfgs, path|
-  _, rt, platform = path.match(/(#{IDENTIFIER_REGEX})\.(#{IDENTIFIER_REGEX})\.config\.json$/).to_a
-  cfgs[rt] ||= {}
-  cfgs[rt][platform] = JSON.parse(File.open(path).read)
+configs = Dir.glob(File.join(LIB_PATH, '*/*.config.json')).inject({}) do |cfgs, path|
+  _, platform, rt = path.match(/(#{IDENTIFIER_REGEX})\/(#{IDENTIFIER_REGEX})\.config\.json$/).to_a
+  cfgs[platform] ||= {}
+  cfgs[platform][rt] = JSON.parse(File.open(path).read)
   cfgs
+end
+
+if configs[PLATFORM].nil?
+  $stderr.puts "No runtimes for #{PLATFORM}."
+  exit 1
 end
 
 RUNTIME = 'opengl'
 
-config = configs[RUNTIME][PLATFORM]
+config = configs[PLATFORM][RUNTIME] || configs[PLATFORM].first[0]
 
-module_libs = config['modules'].reverse.map { |m| "-lbb.#{m}" }
-module_libs << %w(-lstdutil -lvorbisfile -logg -lassimp -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib)
+# puts JSON.pretty_generate(config['modules'])
 
-system_libs = %w(-lm)
-system_libs << %w(-framework OpenAL -framework CoreAudio -framework IOKit -framework OpenGL -framework CoreVideo -framework Cocoa) if PLATFORM == 'macos'
-system_libs << %w(-lGL -lGLU) if PLATFORM == 'linux'
+module_libs = []
+system_libs = []
 
-puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} #{`pkg-config glfw3 --libs`.strip} #{system_libs.join(' ')}"
+libs = config['modules'].map do |mod|
+  module_libs << "-lbb.#{mod['id']}"
+
+  system_libs << mod['links'].map do |lib|
+    if lib =~ /(.*)\.framework$/
+      "-framework #{$1}"
+    else
+      "-l#{lib}"
+    end
+  end.flatten
+end
+# module_libs << %w(-lstdutil -lvorbisfile -logg -lassimp -lfreeimage -lfreeimage -ljpeg -lopenexr -lopenjpeg -lpng -lraw -ltiff4 -lwebp -lzlib)
+#
+# system_libs = %w(-lm)
+# system_libs << %w(-framework OpenAL -framework CoreAudio -framework IOKit -framework OpenGL -framework CoreVideo -framework Cocoa) if PLATFORM == 'macos'
+# system_libs << %w(-lGL -lGLU) if PLATFORM == 'linux'
+
+puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lruntime.#{RUNTIME} -lstub #{module_libs.join(' ')} #{module_libs.join(' ')} #{system_libs.join(' ')}"

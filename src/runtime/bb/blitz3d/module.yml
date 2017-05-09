@@ -352,6 +352,10 @@ premake5:
     - texture.h
     - world.h
 
+  - links:
+    - assimp
+    - assimp.convertutf
+
   - includedirs:
     - ../../../assimp/include
 
@@ -364,3 +368,6 @@ premake5:
   - files:
     - loader_x.cpp
     - loader_x.h
+
+  - links:
+    - d3dxof

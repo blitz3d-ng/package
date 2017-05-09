@@ -73,15 +73,18 @@ commands:
 
 premake5:
   files:
-  - app.cpp
-  - app.h
-  - basic.cpp
-  - basic.h
-  - debug.cpp
-  - debug.h
-  - env.cpp
-  - env.h
-  - ex.cpp
-  - ex.h
-  - module.h
-  - commands.h
+    - app.cpp
+    - app.h
+    - basic.cpp
+    - basic.h
+    - debug.cpp
+    - debug.h
+    - env.cpp
+    - env.h
+    - ex.cpp
+    - ex.h
+    - module.h
+    - commands.h
+
+  links:
+    - stdutil
