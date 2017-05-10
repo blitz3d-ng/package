@@ -54,7 +54,10 @@ project "glfw"
     }
 
   filter "platforms:linux"
-    defines "_GLFW_X11"
+    defines {
+      "_GLFW_X11",
+      "_GLFW_HAS_XF86VM"
+    }
 
     files {
       "src/src/egl_context.h",

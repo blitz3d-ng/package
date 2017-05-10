@@ -36,6 +36,7 @@ premake5:
     - Xrandr
     - Xinerama
     - Xcursor
+    - Xxf86vm
     - dl
     - pthread
 
