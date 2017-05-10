@@ -8,6 +8,22 @@ BBRuntime *bbRuntime;
 BBHook *bbRuntimeOnSuspend;
 BBHook *bbRuntimeOnResume;
 
+#include <iostream>
+using namespace std;
+
+//start up error
+#ifdef WIN32
+void sue( const char *t ){
+	string p=string( "Startup Error: " )+t;
+	_bbDebugInfo( p.c_str() );
+}
+#else
+void sue( const char *t ){
+  cerr<<t<<endl;
+  exit(1);
+}
+#endif
+
 BBRuntime::~BBRuntime(){
 }
 

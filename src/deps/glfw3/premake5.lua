@@ -55,3 +55,22 @@ project "glfw"
 
   filter "platforms:linux"
     defines "_GLFW_X11"
+
+    files {
+      "src/src/egl_context.h",
+      "src/src/egl_context.c",
+      "src/src/glx_context.h",
+      "src/src/glx_context.c",
+      "src/src/linux_joystick.h",
+      "src/src/linux_joystick.c",
+      "src/src/posix_time.h",
+      "src/src/posix_time.c",
+      "src/src/posix_tls.h",
+      "src/src/posix_tls.c",
+      "src/src/x11_init.c",
+      "src/src/x11_platform.h",
+      "src/src/x11_monitor.c",
+      "src/src/x11_window.c",
+      "src/src/xkb_unicode.h",
+      "src/src/xkb_unicode.c",
+    }

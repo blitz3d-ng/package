@@ -5,12 +5,6 @@
 #include <string>
 using namespace std;
 
-//start up error
-void sue( const char *t ){
-	string p=string( "Startup Error: " )+t;
-	_bbDebugInfo( p.c_str() );
-}
-
 const char *bbruntime_run( void (*pc)(),bool dbg ){
 	bb_env.debug=dbg;
 

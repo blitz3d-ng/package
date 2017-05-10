@@ -9,10 +9,6 @@ premake5:
   - files:
     - stub.windows.cpp
 
-  - filter: platforms:macos
+  - filter: platforms:macos or linux
   - files:
-    - stub.macos.cpp
-
-  - filter: platforms:linux
-  - files:
-    - stub.linux.cpp
+    - stub.posix.cpp

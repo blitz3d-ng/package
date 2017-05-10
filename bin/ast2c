@@ -3,6 +3,8 @@
 require 'bundler'
 Bundler.require :default
 
+require 'json'
+
 require_relative '../lib/blitz3d/translator/node'
 
 ast = JSON.parse(ARGF.read)

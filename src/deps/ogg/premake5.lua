@@ -2,7 +2,7 @@ project "ogg"
   language "C"
   kind "StaticLib"
 
-  removeplatforms { "win32", "win64", "mingw32", "linux" }
+  removeplatforms { "win32", "win64", "mingw32" }
 
   includedirs {
     "include",

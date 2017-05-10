@@ -355,6 +355,7 @@ premake5:
   - links:
     - assimp
     - assimp.convertutf
+    - zlib
 
   - includedirs:
     - ../../../deps/assimp/src/include

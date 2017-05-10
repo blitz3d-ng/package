@@ -27,6 +27,18 @@ premake5:
     - CoreVideo.framework
     - IOKit.framework
 
+  - filter: platforms:linux
+  - links:
+    - GLEW
+    - GL
+    - GLU
+    - X11
+    - Xrandr
+    - Xinerama
+    - Xcursor
+    - dl
+    - pthread
+
   - filter: platforms:win32 or win64 or mingw32
   - links:
     - opengl32

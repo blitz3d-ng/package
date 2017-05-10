@@ -5,12 +5,8 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 using namespace std;
-
-void sue( const char *t ){
-  cerr<<t<<endl;
-  exit(1);
-}
 
 class StdioDebugger : public Debugger{
 private:

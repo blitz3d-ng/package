@@ -2,10 +2,11 @@ project "vorbisfile"
   language "C"
   kind "StaticLib"
 
-  removeplatforms { "win32", "win64", "mingw32", "linux" }
+  removeplatforms { "win32", "win64", "mingw32" }
 
   includedirs {
     "../ogg/src/include",
+    "../ogg/include",
     "src/include"
   }
 
