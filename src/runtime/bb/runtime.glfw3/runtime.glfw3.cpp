@@ -309,7 +309,39 @@ void GLFW3Runtime::resize( int width,int height ){
 	if( graphics ) graphics->resize( width,height );
 }
 
+#include <bb/input/input.h>
+
+class GLFWJoystick : public BBDevice{
+private:
+	int idx;
+public:
+	GLFWJoystick( int i ):idx(i){
+		strcpy( id,glfwGetJoystickName( idx ) );
+		strcpy( name,glfwGetJoystickName( idx ) );
+	}
+
+	void update(){
+		int ax_count;
+		const float *ax_state=glfwGetJoystickAxes( idx,&ax_count );
+		if( ax_count>32 ) ax_count=32;
+		memcpy( axis_states,ax_state,ax_count*sizeof(float) );
+
+		int btn_count;
+		const unsigned char *btn_state=glfwGetJoystickButtons( idx,&btn_count );
+		for( int i=0;i<32;i++ ){
+			setDownState( i,btn_state[i] );
+		}
+	}
+};
+
 BBMODULE_CREATE( runtime_glfw3 ){
+	for( int i=0;i<GLFW_JOYSTICK_LAST;i++ ){
+		if( glfwJoystickPresent( GLFW_JOYSTICK_1+i ) ){
+			GLFWJoystick *js=d_new GLFWJoystick( GLFW_JOYSTICK_1+i );
+			bbJoysticks.push_back( js );
+		}
+	}
+
 	return true;
 }
 

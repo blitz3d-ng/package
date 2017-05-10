@@ -5,8 +5,7 @@ realpath() {
 }
 
 IN_FILE=$1
-OUT_FILE=`realpath tmp/bbrun-build`
-echo $OUT_FILE
+OUT_FILE=$(mktemp /tmp/blitzcc.XXXXXXXXX)
 
 _release/bin/blitzcc +q -d -j $IN_FILE | bin/ast2c | clang++ -o $OUT_FILE -x c - `bin/bb-config`
 (cd `dirname $IN_FILE`; $OUT_FILE)
