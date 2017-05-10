@@ -44,6 +44,7 @@ premake5:
   includedirs:
     - ../../../deps/vorbis/src/include
     - ../../../deps/ogg/src/include
+    - ../../../deps/ogg/include
 
   links:
     - vorbisfile

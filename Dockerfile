@@ -13,7 +13,10 @@ RUN cd ruby-2.3.0 && ./configure && make && make install
 RUN gem install bundler
 
 WORKDIR /usr/local/opt/blitz3d-ng
-ADD ./ ./
+ADD ./Gemfile ./Gemfile
+ADD ./Gemfile.lock ./Gemfile.lock
 RUN bundle install
+
+ADD ./ ./
 
 CMD /bin/bash -c 'bin/blitz3d config && premake5 gmake && make config=${ENV-debug}_linux'
