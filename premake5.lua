@@ -126,6 +126,8 @@ require './compiler/premake5'
 require './src/debugger.console/premake5'
 
 require './src/deps/assimp/premake5'
+require './src/deps/crossguid/premake5'
+require './src/deps/enet/premake5'
 require './src/deps/freeimage317/premake5'
 require './src/deps/freetype2/premake5'
 require './src/deps/glew/premake5'

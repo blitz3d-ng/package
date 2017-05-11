@@ -22,3 +22,6 @@
 [submodule "src/libogg"]
 	path = src/deps/ogg/src
 	url = https://git.xiph.org/ogg.git
+[submodule "src/deps/crossguid/src"]
+	path = src/deps/crossguid/src
+	url = https://github.com/graeme-hill/crossguid.git

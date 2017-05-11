@@ -16,6 +16,7 @@ modules:
   - stdio
   - stream
   - sockets
+  - enet
   - system.windows
   - system.macos
   - filesystem.windows
