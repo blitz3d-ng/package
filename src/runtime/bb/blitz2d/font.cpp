@@ -1,70 +1,103 @@
 
+#include "../../stdutil/stdutil.h"
 #include "font.h"
-#include <bb/graphics/canvas.h>
-#include <bb/graphics/graphics.h>
+using namespace std;
 
-BBFont::BBFont( BBGraphics *g,BBCanvas *c,int w,int h,int b,int e,int d,int *os,int *ws ):
-graphics(g),canvas(c),
-width(w),height(h),begin_char(b),end_char(e),def_char(d),
-offs(os),widths(ws){
-	canvas->setMask( 0xffffff );
-	t_canvas=graphics->createCanvas( graphics->getWidth(),height,0 );
-}
+FT_Library ft;
+
+extern "C" const char *lookupFontFile( const char *fontName );
 
 BBFont::~BBFont(){
-	delete[] offs;
-	delete[] widths;
-	graphics->freeCanvas( t_canvas );
-	graphics->freeCanvas( canvas );
 }
 
-int BBFont::charWidth( int c )const{
-	if( c<begin_char || c>=end_char ) c=def_char;
-	return widths[c-begin_char];
+BBImageFont::BBImageFont( FT_Face f,int height ):face(f),atlas(0){
+	FT_Set_Pixel_Sizes( face,0,height );
+	baseline=(face->ascender+face->descender)>>6;
 }
 
-void BBFont::render( BBCanvas *dest,unsigned color_argb,int x,int y,const std::string &t ){
-	int width=getWidth( t );
-	if( width>t_canvas->getWidth() ){
-		graphics->freeCanvas( t_canvas );
-		t_canvas=graphics->createCanvas( width,height,0 );
+BBImageFont *BBImageFont::load( const string &name,int height,int flags ){
+	const char *path=lookupFontFile( name.c_str() );
+	if( !path ) return 0;
+
+	FT_Face face;
+	if( FT_New_Face( ft,path,0,&face ) ){
+		return 0;
+	}
+	return d_new BBImageFont( face,height );
+}
+
+bool BBImageFont::loadChars( const string &t ){
+	bool dirty=false;
+
+	for( int i=0;i<t.length();i++ ){
+		if( !characters.count(t[i]) ){
+			Char chr;
+			chr.index=FT_Get_Char_Index( face,t[i] );
+			FT_Load_Glyph( face,chr.index,FT_LOAD_RENDER );
+
+			chr.width=face->glyph->bitmap.width;
+			chr.height=face->glyph->bitmap.rows;
+			chr.bearing_x=face->glyph->bitmap_left;
+			chr.bearing_y=face->glyph->bitmap_top;
+			chr.advance=face->glyph->advance.x>>6;
+
+			characters.insert( make_pair( t[i],chr ) );
+
+			dirty=true;
+		}
 	}
 
-	t_canvas->setColor( color_argb );
-	if( !(t_canvas->getColor()&0xffffff) ) t_canvas->setColor( 0x10 );
-	t_canvas->rect( 0,0,width,height,true );
+	if( !dirty ) return false;
 
-	int t_x=0;
-	for( int k=0;k<t.size();++k ){
-		int c=t[k]&0xff;
-		if( c<begin_char || c>=end_char ) c=def_char;
-		c-=begin_char;
-		int sx=(offs[c]>>16)&0xffff,sy=offs[c]&0xffff;
-		t_canvas->blit( t_x,0,canvas,sx,sy,widths[c],height,false );
-		t_x+=widths[c];
+	delete atlas;
+	atlas=d_new BBPixmap;
+	atlas->width=atlas->height=256;
+	atlas->bits=new unsigned char[atlas->width*atlas->height];
+	memset( atlas->bits,0,atlas->width*atlas->height );
+
+	int ox=0,oy=0;
+	for( map<char,Char>::iterator it=characters.begin();it!=characters.end();++it ){
+		Char &c=it->second;
+		c.x=ox;c.y=oy;
+
+		FT_Load_Glyph( face,c.index,FT_LOAD_RENDER );
+
+		int width=face->glyph->bitmap.width;
+
+		for( int y=0;y<face->glyph->bitmap.rows;y++ ){
+			memcpy( atlas->bits+(atlas->width*(oy+y))+ox,face->glyph->bitmap.buffer+y*width,width );
+		}
+
+		ox+=c.width;
 	}
 
-	dest->blit( x,y,t_canvas,0,0,width,height,false );
+	return true;
 }
 
-int BBFont::getWidth()const{
-	return width;
+BBImageFont::Char &BBImageFont::getChar( char c ){
+	return characters[c];
 }
 
-int BBFont::getHeight()const{
-	return height;
+int BBImageFont::getKerning( char l,char r ){
+	if( !FT_HAS_KERNING(face) ) return 0;
+	Char lc=getChar( l ),rc=getChar( r );
+
+	FT_Vector delta;
+	FT_Get_Kerning( face,lc.index,rc.index,FT_KERNING_DEFAULT,&delta );
+	return delta.x>>6;
 }
 
-int BBFont::getWidth( const std::string &t )const{
-	int w=0;
-	for( int k=0;k<t.size();++k ){
-		int c=t[k]&0xff;
-		if( c<begin_char || c>=end_char ) c=def_char;
-		w+=widths[c-begin_char];
-	}
-	return w;
+int BBImageFont::getWidth()const{
+	return 0;
 }
 
-bool BBFont::isPrintable( int chr )const{
-	return chr>=begin_char && chr<end_char;
+int BBImageFont::getHeight()const{
+	return baseline;
+}
+
+int BBImageFont::getWidth( const std::string &text )const{
+}
+
+bool BBImageFont::isPrintable( int chr )const{
+	return true;
 }

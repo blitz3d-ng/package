@@ -12,3 +12,4 @@ premake5:
 
   includedirs:
     - ../../../deps/glew/include
+    - ../../../deps/freetype2/src/include

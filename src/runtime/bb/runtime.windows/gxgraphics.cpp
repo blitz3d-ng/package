@@ -352,7 +352,7 @@ BBFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 			delete[] as;
 
 			c->backup();
-			BBFont *font=d_new BBFont( this,c,tm.tmMaxCharWidth,height,first,last+1,tm.tmDefaultChar,offs,widths );
+			D3D7Font *font=d_new D3D7Font( this,c,tm.tmMaxCharWidth,height,first,last+1,tm.tmDefaultChar,offs,widths );
 			font_set.insert( font );
 
 			//restore font smoothing

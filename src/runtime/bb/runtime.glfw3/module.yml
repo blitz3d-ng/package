@@ -17,6 +17,7 @@ premake5:
   - includedirs:
     - ../../../deps/glew/include
     - ../../../deps/glfw3/src/include
+    - ../../../deps/freetype2/src/include
 
   - links:
     - glfw

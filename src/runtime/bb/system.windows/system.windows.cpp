@@ -8,6 +8,10 @@
 #include <map>
 using namespace std;
 
+extern "C" const char *lookupFontFile( const char *fontName ){
+	return 0;
+}
+
 typedef int (__stdcall *LibFunc)( const void *in,int in_sz,void *out,int out_sz );
 
 struct gxDll{

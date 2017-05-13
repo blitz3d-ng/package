@@ -6,34 +6,38 @@ dependencies:
   - hook
 
 commands:
-  - StartNetGame%():"bbStartNetGame"
+  # - StartNetGame%():"bbStartNetGame"
   - HostNetGame%( game_name$ ):"bbHostNetGame"
   - JoinNetGame%( game_name$,ip_address$ ):"bbJoinNetGame"
-  - StopNetGame():"bbStopNetGame"
+  # - StopNetGame():"bbStopNetGame"
 
   - CreateNetPlayer%( name$ ):"bbCreateNetPlayer"
-  - DeleteNetPlayer( player% ):"bbDeleteNetPlayer"
-  - NetPlayerName$( player% ):"bbNetPlayerName"
-  - NetPlayerLocal%( player% ):"bbNetPlayerLocal"
+  # - DeleteNetPlayer( player% ):"bbDeleteNetPlayer"
+  # - NetPlayerName$( player% ):"bbNetPlayerName"
+  # - NetPlayerLocal%( player% ):"bbNetPlayerLocal"
 
   - SendNetMsg%( type%,msg$,from_player%,to_player%=0,reliable%=1 ):"bbSendNetMsg"
 
   - RecvNetMsg%():"bbRecvNetMsg"
-  - NetMsgType%():"bbNetMsgType"
-  - NetMsgFrom%():"bbNetMsgFrom"
-  - NetMsgTo%():"bbNetMsgTo"
-  - NetMsgData$():"bbNetMsgData"
+  # - NetMsgType%():"bbNetMsgType"
+  # - NetMsgFrom%():"bbNetMsgFrom"
+  # - NetMsgTo%():"bbNetMsgTo"
+  # - NetMsgData$():"bbNetMsgData"
 
 premake5:
-  files:
+  - files:
     - commands.h
     - enet.cpp
     - enet.h
 
-  includedirs:
+  - includedirs:
     - ../../../deps/enet/src/include
     - ../../../deps/crossguid/src
 
-  links:
+  - links:
     - enet
     - crossguid
+
+  - filter: platforms:win32 or win64 or mingw32
+  - links:
+    - Ws2_32

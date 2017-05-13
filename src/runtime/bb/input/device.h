@@ -20,7 +20,7 @@ public:
 	void upEvent( int key );
 	void setDownState( int key,bool down );
 
-private:
+protected:
 	enum{
 		QUE_SIZE=32,QUE_MASK=QUE_SIZE-1
 	};

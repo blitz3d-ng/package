@@ -4,6 +4,7 @@
 
 #include <bb/graphics/canvas.h>
 #include <bb/blitz2d/font.h>
+#include <bb/blitz2d.d3d7/font.h>
 #include "ddutil.h"
 
 typedef IDirectDrawSurface7 ddSurf;
@@ -59,7 +60,7 @@ private:
 
 	RECT clip_rect;
 
-	BBFont *font;
+	D3D7Font *font;
 	RECT viewport;
 	int origin_x,origin_y,handle_x,handle_y;
 	unsigned mask_surf,color_surf,color_argb,clsColor_surf;

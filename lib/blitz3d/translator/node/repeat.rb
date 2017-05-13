@@ -12,7 +12,7 @@ module Blitz3D
       end
 
       def to_c(&cleanup)
-        "do{\n  #{stmts.to_c(&cleanup).indent}\n}while( !(#{expr.try(:to_c) || 1}) )"
+        "do{\n  #{stmts.to_c(&cleanup).indent}\n}while( !(#{expr.try(:to_c) || 0}) )"
       end
     end
   end

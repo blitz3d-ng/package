@@ -23,3 +23,9 @@ premake5:
   - blitz2d.h
   - movie.h
   - movie.cpp
+
+  includedirs:
+    - ../../../deps/freetype2/src/include
+
+  links:
+    - freetype2

@@ -1,28 +1,17 @@
+#ifndef BB_BLITZ2D_FONT_H
+#define BB_BLITZ2D_FONT_H
 
-#ifndef GXFONT_H
-#define GXFONT_H
+#include <bb/pixmap/pixmap.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include <string>
-
-class BBCanvas;
-class BBGraphics;
+#include <map>
 
 class BBFont{
 public:
-	BBFont(
-		BBGraphics *graphics,BBCanvas *canvas,
-		int width,int height,int begin_char,int end_char,int def_char,
-		int *offs,int *widths );
-	~BBFont();
-
-	int charWidth( int c )const;
-	void render( BBCanvas *dest,unsigned color_argb,int x,int y,const std::string &t );
-
-private:
-	BBGraphics *graphics;
-	BBCanvas *canvas,*t_canvas;
-	int width,height,begin_char,end_char,def_char;
-	int *offs,*widths;
+	virtual ~BBFont();
 
 	/***** GX INTERFACE *****/
 public:
@@ -33,10 +22,42 @@ public:
 	};
 
 	//ACCESSORS
-	int getWidth()const;							//width of widest char
-	int getHeight()const;							//height of font
-	int getWidth( const std::string &text )const;	//width of string
-	bool isPrintable( int chr )const;				//printable char?
+	virtual int getWidth()const=0;							//width of widest char
+	virtual int getHeight()const=0;							//height of font
+	virtual int getWidth( const std::string &text )const=0;	//width of string
+	virtual bool isPrintable( int chr )const=0;				//printable char?
+};
+
+class BBImageFont : public BBFont{
+public:
+	struct Char{
+		unsigned long index;
+		int x,y,width,height;
+		int bearing_x,bearing_y;
+		int advance;
+	};
+
+	BBPixmap *atlas;
+	int baseline;
+
+private:
+	FT_Face face;
+	std::map<char,Char> characters;
+
+	BBImageFont( FT_Face f,int height );
+
+public:
+	static BBImageFont *load( const std::string &name,int height,int flags );
+
+	bool loadChars( const std::string &t );
+
+	Char &getChar( char c );
+	int getKerning( char l,char r );
+
+	int getWidth()const;
+	int getHeight()const;
+	int getWidth( const std::string &text )const;
+	bool isPrintable( int chr )const;
 };
 
 #endif

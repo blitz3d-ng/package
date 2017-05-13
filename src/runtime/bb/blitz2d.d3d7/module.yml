@@ -1,0 +1,15 @@
+name: Direct3D 7 Blitz2D
+description: Provides Direct3D 7 Blitz2D.
+
+dependencies:
+  - blitz2d
+
+premake5:
+  files:
+    - blitz2d.d3d7.h
+    - blitz2d.d3d7.cpp
+    - font.cpp
+    - font.h
+
+  includedirs:
+    - ../../../deps/freetype2/src/include

@@ -4,7 +4,6 @@
 #include <iostream>
 using namespace std;
 
-
 #include <bb/blitz2d/blitz2d.h>
 #include <bb/pixmap/pixmap.h>
 
@@ -29,6 +28,7 @@ protected:
 
   int width,height;
 	mutable unsigned char *pixels;
+  BBImageFont *font;
 
   virtual void bind()const=0;
 
@@ -42,7 +42,9 @@ public:
   }
 
   //MANIPULATORS
-  void setFont( BBFont *font ){}
+  void setFont( BBFont *f ){
+    font=reinterpret_cast<BBImageFont*>(f);
+  }
   void setMask( unsigned argb ){}
   void setColor( unsigned argb ){
     int r = (argb >> 16) & 255;
@@ -96,20 +98,21 @@ public:
     glEnd();
   }
   void oval( int x,int y,int w,int h,bool solid ){}
-  void text( int x,int y,const std::string &t ){}
-  // void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
-  //
-  //   ((GLB2DCanvas*)src)->bind();
-  //
-  //   glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-  //   glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-  //   glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
-  //   glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
-  //
-  //   rect( x,y,src_w,src_h,solid );
-  //
-  //   glDisable( GL_TEXTURE_2D );
-  // }
+  void text( int x,int y,const std::string &t );
+  void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
+
+    ((GLB2DCanvas*)src)->bind();
+
+    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
+
+    rect( x,y,src_w,src_h,solid );
+
+    glDisable( GL_TEXTURE_2D );
+  }
+	void image( BBCanvas *c,int x,int y );
 
   bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{ return false; }
   bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const{ return false; }

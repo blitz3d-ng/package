@@ -142,3 +142,6 @@ premake5:
     - graphics.cpp
     - canvas.h
     - canvas.cpp
+
+  includedirs:
+    - ../../../deps/freetype2/src/include

@@ -6,6 +6,7 @@
 #include "blitz3d.h"
 #include <bb/system/system.h>
 #include <bb/graphics/graphics.h>
+#include <bb/pixmap/pixmap.h>
 #include "blitz3d.h"
 #include "loader_x.h"
 #include "loader_3ds.h"
@@ -1287,25 +1288,22 @@ Entity * BBCALL bbCreateTerrain( int n,Entity *p ){
 
 Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
 	debugParent(p);
-	BBCanvas *c=gx_graphics->loadCanvas( *file,BBCanvas::CANVAS_HIGHCOLOR );
-	if( !c ) RTEX( "Unable to load heightmap image" );
-	int w=c->getWidth(),h=c->getHeight();
+	BBPixmap *m=bbLoadPixmap( *file );
+	int w=m->getWidth(),h=m->getHeight();
 	if( w!=h ) RTEX( "Terrain must be square" );
 	int shift=0;
 	while( (1<<shift)<w ) ++shift;
 	if( (1<<shift)!=w ) RTEX( "Illegal terrain size" );
 	Terrain *t=d_new Terrain( shift );
-	c->lock();
 	for( int y=0;y<h;++y ){
 		for( int x=0;x<w;++x ){
-			int rgb=c->getPixelFast( x,y );
+			int rgb=m->read( x,y );
 			int r=(rgb>>16)&0xff,g=(rgb>>8)&0xff,b=rgb&0xff;
 			float p=(r>g?(r>b?r:b):(g>b?g:b))/255.0f;
 			t->setHeight( x,h-1-y,p,false );
 		}
 	}
-	c->unlock();
-	gx_graphics->freeCanvas( c );
+	delete m;
 	return insertEntity( t,p );
 }
 

@@ -5,9 +5,10 @@ dependencies:
   - blitz2d
 
 premake5:
-  - files:
+  files:
     - blitz2d.gl.cpp
     - blitz2d.gl.h
 
-  - includedirs:
+  includedirs:
     - ../../../deps/glew/include
+    - ../../../deps/freetype2/src/include

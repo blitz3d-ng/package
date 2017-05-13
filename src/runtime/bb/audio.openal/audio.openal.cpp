@@ -181,7 +181,6 @@ public:
 		}
 		channel->set3d( pos,vel );
 		channel->play();
-		cout<<"..."<<endl;
 		return channel;
 	}
 

@@ -6,6 +6,7 @@ platforms:
 
 dependencies:
   - blitz3d
+  - blitz2d.d3d7
   - graphics.d3d7
 
 premake5:

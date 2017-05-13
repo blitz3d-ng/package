@@ -20,6 +20,10 @@ module Blitz3D
       def default_value
         0
       end
+
+      def ptr
+        "(BBType*)&vector_type#{label}"
+      end
     end
   end
 end

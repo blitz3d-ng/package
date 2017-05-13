@@ -87,6 +87,12 @@ module Blitz3D
                 f.write "  files { "
                 f.write files.map { |f| "'#{f}'" }.join(', ')
                 f.write " }\n"
+              when 'buildoptions'
+                deps = [value].flatten.map(&:inspect)
+                f.write "  buildoptions { #{deps.join(', ')} }\n"
+              when 'removebuildoptions'
+                deps = [value].flatten.map(&:inspect)
+                f.write "  removebuildoptions { #{deps.join(', ')} }\n"
               when 'links'
                 deps = [value].flatten.map(&:inspect)
                 f.write "  links { #{deps.join(', ')} }\n"

@@ -21,6 +21,8 @@ module Blitz3D
           'STR'
         elsif sem_field.type.is_a?(StructType)
           'OBJ'
+        elsif sem_field.type.is_a?(VectorType)
+          'VEC'
         end
         throw "no member for #{sem_field.type}" if member.nil?
         "#{expr.to_c}->fields[#{index}].#{member}"

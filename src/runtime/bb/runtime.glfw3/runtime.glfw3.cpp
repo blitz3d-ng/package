@@ -3,6 +3,7 @@
 #include "runtime.glfw3.h"
 #include <bb/pixmap/pixmap.h>
 #include <bb/event/event.h>
+#include <bb/system/system.h>
 
 #ifdef WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -117,10 +118,14 @@ protected:
 
 	GLFWgammaramp gamma_ramp;
 	unsigned short gamma_red[256], gamma_green[256], gamma_blue[256];
+
+	BBImageFont *def_font;
 public:
 	GLFW3Graphics( GLFWwindow *wnd ):wnd(wnd){
 		front_canvas=d_new GLFW3DefaultCanvas( wnd,0 );
 		back_canvas=d_new GLFW3DefaultCanvas( wnd,0 );
+
+		def_font=(BBImageFont*)loadFont( "courier",12*bbDPIScaleY(),0 );
 
 		gamma_ramp.size=256;
 		gamma_ramp.red=gamma_red;
@@ -176,7 +181,7 @@ public:
 	int getAvailVidmem()const{ return 0; }
 	int getTotalVidmem()const{ return 0; }
 
-	BBFont *getDefaultFont()const{ return 0; }
+	BBFont *getDefaultFont()const{ return def_font; }
 
 	//OBJECTS
 	BBCanvas *createCanvas( int width,int height,int flags ){
@@ -201,11 +206,14 @@ public:
 	void closeMovie( BBMovie *movie ){}
 
 	BBFont *loadFont( const std::string &font,int height,int flags ){
-		cout<<"font: "<<font<<endl;
-		return 0;
+		return BBImageFont::load( font,height,flags );
 	}
-	BBFont *verifyFont( BBFont *font ){ return 0; }
-	void freeFont( BBFont *font ){}
+	BBFont *verifyFont( BBFont *font ){
+		return font;
+	}
+	void freeFont( BBFont *font ){
+		delete font;
+	}
 };
 
 BBGraphics *GLFW3Runtime::openGraphics( int w,int h,int d,int driver,int flags ){
@@ -316,6 +324,9 @@ private:
 	int idx;
 public:
 	GLFWJoystick( int i ):idx(i){
+		memset( axis_states,0,sizeof(axis_states) );
+		memset( down_state,0,sizeof(down_state) );
+
 		strcpy( id,glfwGetJoystickName( idx ) );
 		strcpy( name,glfwGetJoystickName( idx ) );
 	}

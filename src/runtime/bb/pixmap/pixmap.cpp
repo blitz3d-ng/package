@@ -23,6 +23,18 @@ BBPixmap::~BBPixmap(){
   delete bits;
 }
 
+int BBPixmap::getWidth(){
+	return width;
+}
+
+int BBPixmap::getHeight(){
+	return height;
+}
+
+int BBPixmap::read( int x,int y ){
+	return bits[(y*width+x)*bpp];
+}
+
 BBPixmap *bbLoadPixmap( const std::string &file ){
   string f;
   for( int i=0;i<file.size();i++ ){

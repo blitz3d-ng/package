@@ -153,7 +153,7 @@ void gxCanvas::updateBitMask( const RECT &r )const{
 }
 
 void gxCanvas::setFont( BBFont *f ){
-	font=f;
+	font=(D3D7Font*)f;
 }
 
 void gxCanvas::setMask( unsigned argb ){

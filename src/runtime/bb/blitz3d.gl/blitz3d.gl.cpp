@@ -51,12 +51,16 @@ public:
   int *tris;
   int max_verts,max_tris,flags;
 
+	unsigned int vbo[12];
+
   GLMesh( int mv,int mt,int f ):max_verts(mv),max_tris(mt),flags(f){
     v_coords=new float[max_verts*3];
     v_normal=new float[max_verts*3];
     v_tex_coord=new float[max_verts*2*2];
     v_color=new unsigned int[max_verts];
     tris=new int[max_tris*3];
+
+		glGenBuffersARB( 5,vbo );
   }
 
   ~GLMesh(){
@@ -72,6 +76,21 @@ public:
   }
 
   void unlock(){
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB,vbo[0] );
+		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*3*4,v_coords,GL_STATIC_DRAW_ARB );
+
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB,vbo[1] );
+		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*3*4,v_normal,GL_STATIC_DRAW_ARB );
+
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB,vbo[2] );
+		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*4,v_color,GL_STATIC_DRAW_ARB );
+
+		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,vbo[3] );
+		glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB,max_tris*3*4,tris,GL_STATIC_DRAW_ARB );
+
+		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,vbo[4] );
+		glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB,max_verts*2*2*4,v_tex_coord,GL_STATIC_DRAW_ARB );
+
   }
 
   void setVertex( int n,const void *_v ){
@@ -181,7 +200,13 @@ public:
 
   void setWBuffer( bool enable ){}
   void setHWMultiTex( bool enable ){}
-  void setDither( bool enable ){}
+  void setDither( bool enable ){
+		if( enable ){
+			glEnable( GL_DITHER );
+		}else{
+			glDisable( GL_DITHER);
+		}
+	}
   void setAntialias( bool enable ){}
   void setWireframe( bool enable ){
 		wireframe=enable;
@@ -190,7 +215,6 @@ public:
 		glFrontFace( enable ? GL_CW : GL_CCW );
 	}
   void setAmbient( const float rgb[3] ){
-		cout<<"r: "<<rgb[0]<<"g: "<<rgb[1]<<"b: "<<rgb[2]<<endl;
 		memcpy( ambient,rgb,sizeof(float)*3 );
   }
   void setAmbient2( const float rgb[3] ){
@@ -413,6 +437,10 @@ public:
 		glEnable( GL_SCISSOR_TEST );
 		glEnable( GL_CULL_FACE );
 
+		glEnableClientState( GL_VERTEX_ARRAY );
+		glEnableClientState( GL_COLOR_ARRAY );
+		glEnableClientState( GL_NORMAL_ARRAY );
+
 		glHint( GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST );
 
 		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR );
@@ -437,37 +465,45 @@ public:
 		glClearDepth( z );
 		glClear( (clear_argb?GL_COLOR_BUFFER_BIT:0)|(clear_z?GL_DEPTH_BUFFER_BIT:0)  );
   }
-  void render( BBMesh *m,int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
-    GLMesh *mesh=(GLMesh*)m;
+	void render( BBMesh *m,int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
+		GLMesh *mesh=(GLMesh*)m;
 
-    glBegin(GL_TRIANGLES);
-      for( int i=first_tri;i<first_tri+tri_cnt;i++ ){
-        for( int j=0;j<3;j++ ){
-          int n=first_vert+mesh->tris[i*3+j];
+		for( int i=0;i<8;i++ ){
+			glClientActiveTextureARB( GL_TEXTURE0+i );
 
-          float *v_coords=&mesh->v_coords[n*3],
-                *v_normal=&mesh->v_normal[n*3],
-                *v_tex_coord=&mesh->v_tex_coord[n*2*2];
+			glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+			glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[4] );
+			glTexCoordPointer( 2,GL_FLOAT,4*4,0 );
+		}
 
-          unsigned int v_color=mesh->v_color[n];
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[0] );
+		glVertexPointer( 3,GL_FLOAT,0,0 );
 
-					int a = (v_color >> 24) & 255;
-					int r = (v_color >> 16) & 255;
-					int g = (v_color >> 8) & 255;
-					int b = v_color & 255;
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[1] );
+		glNormalPointer( GL_FLOAT,0,0 );
 
-					glNormal3fv( v_normal );
-					for( int i=0;i<MAX_TEXTURES;i++ ){
-						glMultiTexCoord2fv( GL_TEXTURE0+i,v_tex_coord );
-					}
-					glColor4ub( r,g,b,a );
-					glVertex3fv( v_coords );
-        }
-      }
-    glEnd();
-  }
+		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[2] );
+		glColorPointer( 4,GL_UNSIGNED_INT,0,0 );
+
+		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,mesh->vbo[3] );
+		glDrawElements( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,reinterpret_cast<void*>(first_tri*3) );
+	}
 
   void end(){
+		glActiveTexture( GL_TEXTURE0 );
+		glDisable( GL_LIGHTING );
+		glEnable( GL_COLOR_MATERIAL );
+		glDisable( GL_DEPTH_TEST );
+		glMatrixMode( GL_MODELVIEW );
+		glLoadIdentity();
+		glMatrixMode( GL_TEXTURE );
+		glLoadIdentity();
+
+		glEnable( GL_TEXTURE_2D );
+		glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
+
+		glEnable( GL_BLEND );
+		glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
   }
 
   //lighting

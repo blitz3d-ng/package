@@ -5,6 +5,7 @@
 
 enum{
 	PF_UNKNOWN=0,
+	PF_I8,
 	PF_RGB,
 	PF_RGBA,
 };
@@ -16,6 +17,11 @@ struct BBPixmap{
 
   BBPixmap();
   ~BBPixmap();
+
+	int getWidth();
+	int getHeight();
+
+	int read( int x,int y );
 
 	void mask( int r,int g,int b );
 	void buildAlpha( bool whiten );
