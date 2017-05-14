@@ -13,7 +13,7 @@ public:
 	BBPlayer();
 	BBPlayer( std::string name );
 
-	const std::string &getId();
+	const std::string getId();
 };
 
 #include "commands.h"

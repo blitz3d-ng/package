@@ -21,6 +21,9 @@ premake5:
     - module.cpp
     - std.h
 
+  - includedirs:
+    - ../../../deps/freetype2/src/include
+
   - filter: platforms:win32 or win64
   - links: amstrmid
 

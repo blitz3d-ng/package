@@ -92,7 +92,7 @@ class GLFW3DefaultCanvas : public GLB2DDefaultCanvas{
 protected:
 	GLFWwindow *wnd;
 public:
-	GLFW3DefaultCanvas( GLFWwindow *wnd,int flags ):GLB2DDefaultCanvas(flags),wnd(wnd){
+	GLFW3DefaultCanvas( GLFWwindow *wnd,int mode,int flags ):GLB2DDefaultCanvas(mode,flags),wnd(wnd){
 	}
 
 	// int getWidth()const{
@@ -122,8 +122,8 @@ protected:
 	BBImageFont *def_font;
 public:
 	GLFW3Graphics( GLFWwindow *wnd ):wnd(wnd){
-		front_canvas=d_new GLFW3DefaultCanvas( wnd,0 );
-		back_canvas=d_new GLFW3DefaultCanvas( wnd,0 );
+		front_canvas=d_new GLFW3DefaultCanvas( wnd,GL_FRONT,0 );
+		back_canvas=d_new GLFW3DefaultCanvas( wnd,GL_BACK,0 );
 
 		def_font=(BBImageFont*)loadFont( "courier",12*bbDPIScaleY(),0 );
 

@@ -19,3 +19,6 @@ premake5:
     - mesh.h
     - light.cpp
     - light.h
+
+  includedirs:
+    - ../../../deps/freetype2/src/include

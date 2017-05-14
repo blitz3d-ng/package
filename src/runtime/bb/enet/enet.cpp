@@ -1,5 +1,6 @@
 
 #include "enet.h"
+#include <bb/blitz/blitz.h>
 #include <enet/enet.h>
 
 #include <guid.h>
@@ -32,7 +33,7 @@ BBPlayer::BBPlayer(){
 	id=generator.newGuid();
 }
 
-const string &BBPlayer::getId(){
+const string BBPlayer::getId(){
 	auto myGuid = generator.newGuid();
 	std::stringstream stream;
 	stream << myGuid;
@@ -58,6 +59,8 @@ struct BBNetMsg{
 	unsigned char *data;
 };
 
+BBNetMsg bbLastNetMsg;
+
 static int sendNetMsg( unsigned char type,string from,string to,string data,bool reliable ){
 	static BBNetMsg *msg;
 	static int msg_size;
@@ -74,7 +77,7 @@ static int sendNetMsg( unsigned char type,string from,string to,string data,bool
 	if( from.length()>0 ) memcpy( msg->from.id,from.c_str(),16 );
 	if( to.length()>0 ) memcpy( msg->to.id,to.c_str(),16 );
 	msg->length=data.length();
-	memcpy( msg,data.c_str(),data.length() );
+	// memcpy( msg+1,data.c_str(),data.length() );
 
 	ENetPacket *pk=enet_packet_create( &msg,msg_size,reliable?ENET_PACKET_FLAG_RELIABLE:0 );
 
@@ -90,6 +93,8 @@ static int sendNetMsg( unsigned char type,string from,string to,string data,bool
 }
 
 bb_int_t	BBCALL bbSendNetMsg( bb_int_t type,BBStr *data,BBPlayer *from,BBPlayer *to,bb_int_t reliable ){
+	if( bb_env.debug && type<1||type>99 ) RTEX( "Message type must be between 1 and 99." );
+
 	string d=*data;delete data;
 	string from_id;//=string( from->id,16 );
 	string to_id;//=to?string( to->id,16 ):"";
@@ -97,27 +102,37 @@ bb_int_t	BBCALL bbSendNetMsg( bb_int_t type,BBStr *data,BBPlayer *from,BBPlayer 
 }
 
 int recvServerMsg( const ENetEvent &e ){
+	BBNetMsg msg;
 	switch( e.type ){
 	case ENET_EVENT_TYPE_CONNECT:
-    // printf( "A new client connected from %x:%u.\n",
-    //         event.peer->address.host,
-    //         event.peer->address.port);
-    // /* Store any relevant client information here. */
-    // event.peer->data=(void*)"Client information";
-    break;
-  case ENET_EVENT_TYPE_RECEIVE:
-      printf ("A packet of length %u containing %s was received from %s on channel %u.\n",
-              e.packet -> dataLength,
-              e.packet -> data,
-              e.peer -> data,
-              e.channelID);
-      enet_packet_destroy( e.packet );
-      break;
+		// printf( "A new client connected from %x:%u.\n",
+		//         event.peer->address.host,
+		//         event.peer->address.port);
+		// /* Store any relevant client information here. */
+		// event.peer->data=(void*)"Client information";
+		break;
+	case ENET_EVENT_TYPE_RECEIVE:
+		memcpy( &msg,e.packet->data,sizeof(BBNetMsg) );
+		cout<<"new message: type="<<msg.type<<endl;
 
-  case ENET_EVENT_TYPE_DISCONNECT:
-    printf( "%s disconnected.\n",e.peer->data );
-    e.peer->data=NULL;
-  }
+		switch( msg.type ){
+		case 100:
+			cout<<"new player!!!"<<endl;
+			break;
+		}
+
+		// printf ("A packet of length %u containing %s was received from %s on channel %u.\n",
+		//         e.packet -> dataLength,
+		//         e.packet -> data,
+		//         e.peer -> data,
+		//         e.channelID);
+		enet_packet_destroy( e.packet );
+		break;
+
+	case ENET_EVENT_TYPE_DISCONNECT:
+		printf( "%s disconnected.\n",e.peer->data );
+		e.peer->data=NULL;
+	}
 }
 
 int recvClientMsg( const ENetEvent &e ){
@@ -175,7 +190,24 @@ bb_int_t BBCALL bbRecvNetMsg(){
 	return peer?recvClientMsg(e):recvServerMsg(e);
 }
 
+bb_int_t	BBCALL bbNetMsgType(){
+	return bbLastNetMsg.type;
+}
+
+BBStr *	BBCALL bbNetMsgData(){
+	return new BBStr( (char*)bbLastNetMsg.data,bbLastNetMsg.length );
+}
+
+BBPlayer * BBCALL bbNetMsgFrom(){
+	return bbLastNetMsg.from.ptr;
+}
+
+BBPlayer * BBCALL bbNetMsgTo(){
+	return bbLastNetMsg.to.ptr;
+}
+
 BBMODULE_CREATE( enet ){
+	memset( &bbLastNetMsg,0,sizeof(BBNetMsg) );
 	return true;
 }
 

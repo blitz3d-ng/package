@@ -222,13 +222,16 @@ public:
 
 class GLB2DDefaultCanvas : public GLB2DCanvas{
 protected:
+	int mode;
+
   void bind()const{}
 public:
-  GLB2DDefaultCanvas( int f ):GLB2DCanvas(f){}
+  GLB2DDefaultCanvas( int m,int f ):GLB2DCanvas(f),mode(m){}
 
 	void unset(){}
 	void set(){
 		glBindFramebuffer( GL_FRAMEBUFFER,0 );
+		glDrawBuffer( mode );
 	}
 
 	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){

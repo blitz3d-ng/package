@@ -2,6 +2,7 @@
 #include "../../stdutil/stdutil.h"
 #include <bb/blitz2d/font.h>
 #include "blitz2d.gl.h"
+#include <cmath>
 
 map<BBImageFont*,unsigned int> font_textures;
 
@@ -13,6 +14,7 @@ void GLB2DCanvas::plot( int x,int y ){
 	glBegin( GL_POINTS );
 		glVertex2f( x,y );
 	glEnd();
+	glFlush();
 }
 
 void GLB2DCanvas::line( int x,int y,int x2,int y2 ){
@@ -20,6 +22,7 @@ void GLB2DCanvas::line( int x,int y,int x2,int y2 ){
 		glVertex2f( x,y );
 		glVertex2f( x2,y2 );
 	glEnd();
+	glFlush();
 }
 
 void GLB2DCanvas::rect( int x,int y,int w,int h,bool solid ){
@@ -34,9 +37,30 @@ void GLB2DCanvas::rect( int x,int y,int w,int h,bool solid ){
 		glTexCoord2f( 0.0f,0.0f );
 		glVertex2f( x,y );
 	glEnd();
+	glFlush();
 }
 
 void GLB2DCanvas::oval( int x,int y,int w,int h,bool solid ){
+	int rx=w/2.0f,ry=h/2.0f;
+	int segs=abs(rx)+abs(ry);
+
+	float theta = 2*3.1415926/float(segs);
+	float c=cosf(theta),s=sinf(theta),t;
+
+	x+=rx;y+=ry;
+
+	float vx=1.0f,vy=0.0f;
+
+	glBegin( solid?GL_TRIANGLE_FAN:GL_LINE_LOOP );
+	for( int i=0;i<segs;i++ ){
+		glVertex2f( vx*rx+x,vy*ry+y );
+
+		t=vx;
+		vx=c*vx-s*vy;
+		vy=s*t+c*vy;
+	}
+	glEnd();
+	glFlush();
 }
 
 void GLB2DCanvas::text( int x,int y,const std::string &t ){
@@ -106,6 +130,7 @@ void GLB2DCanvas::text( int x,int y,const std::string &t ){
 	}
 
 	glEnd();
+	glFlush();
 }
 
 void GLB2DCanvas::image( BBCanvas *c,int x,int y ){

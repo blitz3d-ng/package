@@ -16,9 +16,9 @@ module Blitz3D
         when 'ADD'
           "+#{expr.to_c}"
         when 'ABS'
-          "bbAbs(#{expr.to_c})"
+          "_bbAbs(#{expr.to_c})"
         when 'SGN'
-          "bbSgn(#{expr.to_c})"
+          "_bbSgn(#{expr.to_c})"
         else
           throw "invalid uni_expr op: #{op}"
         end

@@ -343,11 +343,11 @@ struct SelectNode : public StmtNode{
 		json tree;tree["@class"]="SelectNode";
 		tree["pos"]=pos;
 		tree["expr"]=expr->toJSON( e );
-		tree["defStmts"]=defStmts->toJSON( e );
 		tree["cases"]=json::array();
 		for( int i=0;i<cases.size();i++ ){
 			tree["cases"].push_back( cases[i]->toJSON( e ) );
 		}
+		if( defStmts ) tree["defStmts"]=defStmts->toJSON( e );
 		tree["sem_temp"]=sem_temp->toJSON( e );
 		return tree;
 	}

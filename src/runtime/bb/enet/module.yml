@@ -19,10 +19,10 @@ commands:
   - SendNetMsg%( type%,msg$,from_player%,to_player%=0,reliable%=1 ):"bbSendNetMsg"
 
   - RecvNetMsg%():"bbRecvNetMsg"
-  # - NetMsgType%():"bbNetMsgType"
-  # - NetMsgFrom%():"bbNetMsgFrom"
-  # - NetMsgTo%():"bbNetMsgTo"
-  # - NetMsgData$():"bbNetMsgData"
+  - NetMsgType%():"bbNetMsgType"
+  - NetMsgFrom%():"bbNetMsgFrom"
+  - NetMsgTo%():"bbNetMsgTo"
+  - NetMsgData$():"bbNetMsgData"
 
 premake5:
   - files:

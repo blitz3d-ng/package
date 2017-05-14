@@ -100,6 +100,7 @@ premake5:
   includedirs:
     - ../../../deps/ode/include
     - ../../../deps/ode/src/include
+    - ../../../deps/freetype2/src/include
 
   links:
     - ode

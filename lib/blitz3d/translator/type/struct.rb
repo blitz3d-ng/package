@@ -19,6 +19,10 @@ module Blitz3D
       def ptr
         "&#{to_type}"
       end
+
+      def default_value
+        0
+      end
     end
   end
 end

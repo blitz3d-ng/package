@@ -6,6 +6,8 @@ project "debugger"
 
   targetdir "../_release/bin"
 
+  includedirs "../src/runtime"
+
   buildoptions "/w"
 
   defines {
