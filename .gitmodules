@@ -1,27 +1,27 @@
 [submodule "freeimage317"]
 	path = src/deps/freeimage317/src
 	url = https://github.com/kfprimm/freeimage317
-[submodule "src/assimp"]
+[submodule "assimp"]
 	path = src/deps/assimp/src
 	url = https://github.com/assimp/assimp
-[submodule "src/runtime/bb/ode/src"]
+[submodule "enet"]
+	path = src/deps/enet/src
+	url = https://github.com/lsalzman/enet.git
+[submodule "ode"]
 	path = src/deps/ode/src
 	url = https://github.com/blitz3d-ng/ode
-[submodule "src/runtime/bb/runtime.glfw3/glfw"]
+[submodule "glfw3"]
 	path = src/deps/glfw3/src
 	url = https://github.com/glfw/glfw.git
-[submodule "src/runtime/bb/blitz2d/freetype2"]
+[submodule "freetype2"]
 	path = src/deps/freetype2/src
 	url = git://git.sv.nongnu.org/freetype/freetype2.git
-[submodule "src/portaudio"]
-	path = src/portaudio
-	url = https://git.assembla.com/portaudio.git
-[submodule "src/vorbis"]
+[submodule "vorbis"]
 	path = src/deps/vorbis/src
 	url = https://github.com/xiph/vorbis.git
-[submodule "src/libogg"]
+[submodule "ogg"]
 	path = src/deps/ogg/src
 	url = https://git.xiph.org/ogg.git
-[submodule "src/deps/crossguid/src"]
+[submodule "crossguid"]
 	path = src/deps/crossguid/src
 	url = https://github.com/graeme-hill/crossguid.git

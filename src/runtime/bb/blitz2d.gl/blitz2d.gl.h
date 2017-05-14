@@ -70,34 +70,11 @@ public:
     glViewport( 0,0,w,h );
   }
 
-  void cls(){
-    glClear(GL_COLOR_BUFFER_BIT);
-  }
-  void plot( int x,int y ){
-    glBegin( GL_POINTS );
-      glVertex2f( x,y );
-    glEnd();
-  }
-  void line( int x,int y,int x2,int y2 ){
-    glBegin( GL_LINES );
-      glVertex2f( x,y );
-      glVertex2f( x2,y2 );
-    glEnd();
-  }
-  void rect( int x,int y,int w,int h,bool solid ){
-		glPolygonMode( GL_FRONT_AND_BACK,solid?GL_FILL:GL_LINE );
-    glBegin( GL_QUADS );
-      glTexCoord2f( 0.0f,0.0f );
-      glVertex2f( x,y+h );
-      glTexCoord2f( 1.0f,0.0f );
-      glVertex2f( x+w,y+h );
-      glTexCoord2f( 1.0f,1.0f );
-      glVertex2f( x+w,y );
-      glTexCoord2f( 0.0f,1.0f );
-      glVertex2f( x,y );
-    glEnd();
-  }
-  void oval( int x,int y,int w,int h,bool solid ){}
+  void cls();
+  void plot( int x,int y );
+  void line( int x,int y,int x2,int y2 );
+  void rect( int x,int y,int w,int h,bool solid );
+  void oval( int x,int y,int w,int h,bool solid );
   void text( int x,int y,const std::string &t );
   void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
 

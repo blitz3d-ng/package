@@ -5,6 +5,40 @@
 
 map<BBImageFont*,unsigned int> font_textures;
 
+void GLB2DCanvas::cls(){
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void GLB2DCanvas::plot( int x,int y ){
+	glBegin( GL_POINTS );
+		glVertex2f( x,y );
+	glEnd();
+}
+
+void GLB2DCanvas::line( int x,int y,int x2,int y2 ){
+	glBegin( GL_LINES );
+		glVertex2f( x,y );
+		glVertex2f( x2,y2 );
+	glEnd();
+}
+
+void GLB2DCanvas::rect( int x,int y,int w,int h,bool solid ){
+	glPolygonMode( GL_FRONT_AND_BACK,solid?GL_FILL:GL_LINE );
+	glBegin( GL_QUADS );
+		glTexCoord2f( 0.0f,1.0f );
+		glVertex2f( x,y+h );
+		glTexCoord2f( 1.0f,1.0f );
+		glVertex2f( x+w,y+h );
+		glTexCoord2f( 1.0f,0.0f );
+		glVertex2f( x+w,y );
+		glTexCoord2f( 0.0f,0.0f );
+		glVertex2f( x,y );
+	glEnd();
+}
+
+void GLB2DCanvas::oval( int x,int y,int w,int h,bool solid ){
+}
+
 void GLB2DCanvas::text( int x,int y,const std::string &t ){
 	if( !font ) return;
 
@@ -21,6 +55,8 @@ void GLB2DCanvas::text( int x,int y,const std::string &t ){
 	}
 
 	if( font->loadChars( t ) ){
+		font->rebuildAtlas();
+
 		glPixelStorei( GL_UNPACK_ALIGNMENT,1 );
 
 		glBindTexture( GL_TEXTURE_2D,texture );
@@ -49,24 +85,21 @@ void GLB2DCanvas::text( int x,int y,const std::string &t ){
 			cx+=font->getKerning( t[i-1],t[i] );
 		}
 
-		float tl[2]={ c.x/(float)font->atlas->width,c.y/(float)font->atlas->height };
-		float tr[2]={ (c.x+c.width)/(float)font->atlas->width,c.y/(float)font->atlas->height };
-		float bl[2]={ c.x/(float)font->atlas->width,(c.y+c.height)/(float)font->atlas->height };
-		float br[2]={ (c.x+c.width)/(float)font->atlas->width,(c.y+c.height)/(float)font->atlas->height };
+		float l=c.x/(float)font->atlas->width;
+		float r=(c.x+c.width)/(float)font->atlas->width;
+		float t=c.y/(float)font->atlas->height;
+		float b=(c.y+c.height)/(float)font->atlas->height;
 
-		float white[3]={ 1.0f,1.0f,1.0f };
-		glColor3fv( white );
-
-		glTexCoord2fv( bl );
+		glTexCoord2f( l,b );
 		glVertex2f( cx,cy+c.height );
 
-		glTexCoord2fv( br );
+		glTexCoord2f( r,b );
 		glVertex2f( cx+c.width,cy+c.height );
 
-		glTexCoord2fv( tr );
+		glTexCoord2f( r,t );
 		glVertex2f( cx+c.width,cy );
 
-		glTexCoord2fv( tl );
+		glTexCoord2f( l,t );
 		glVertex2f( cx,cy );
 
 		x+=c.advance;

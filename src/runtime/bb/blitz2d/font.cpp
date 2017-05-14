@@ -26,9 +26,7 @@ BBImageFont *BBImageFont::load( const string &name,int height,int flags ){
 	return d_new BBImageFont( face,height );
 }
 
-bool BBImageFont::loadChars( const string &t ){
-	bool dirty=false;
-
+bool BBImageFont::loadChars( const string &t )const{
 	for( int i=0;i<t.length();i++ ){
 		if( !characters.count(t[i]) ){
 			Char chr;
@@ -47,7 +45,11 @@ bool BBImageFont::loadChars( const string &t ){
 		}
 	}
 
-	if( !dirty ) return false;
+	return dirty;
+}
+
+void BBImageFont::rebuildAtlas(){
+	if( !dirty ) return;
 
 	delete atlas;
 	atlas=d_new BBPixmap;
@@ -55,14 +57,22 @@ bool BBImageFont::loadChars( const string &t ){
 	atlas->bits=new unsigned char[atlas->width*atlas->height];
 	memset( atlas->bits,0,atlas->width*atlas->height );
 
-	int ox=0,oy=0;
+	int ox=0,oy=0,my=0;
 	for( map<char,Char>::iterator it=characters.begin();it!=characters.end();++it ){
 		Char &c=it->second;
-		c.x=ox;c.y=oy;
 
 		FT_Load_Glyph( face,c.index,FT_LOAD_RENDER );
 
+		if( ox+c.width>=atlas->width ){
+			oy+=my;
+			ox=my=0;
+		}
+
+		c.x=ox;c.y=oy;
+
 		int width=face->glyph->bitmap.width;
+
+		my=max( c.height,my );
 
 		for( int y=0;y<face->glyph->bitmap.rows;y++ ){
 			memcpy( atlas->bits+(atlas->width*(oy+y))+ox,face->glyph->bitmap.buffer+y*width,width );
@@ -71,10 +81,11 @@ bool BBImageFont::loadChars( const string &t ){
 		ox+=c.width;
 	}
 
-	return true;
+	dirty=false;
 }
 
 BBImageFont::Char &BBImageFont::getChar( char c ){
+	loadChars( string( 1,c ) );
 	return characters[c];
 }
 
@@ -96,6 +107,13 @@ int BBImageFont::getHeight()const{
 }
 
 int BBImageFont::getWidth( const std::string &text )const{
+	loadChars( text );
+
+	int width=0;
+	for( int i=0;i<text.length();i++ ){
+		width+=characters[text[i]].advance;
+	}
+	return width;
 }
 
 bool BBImageFont::isPrintable( int chr )const{

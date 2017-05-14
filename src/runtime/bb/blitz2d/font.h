@@ -38,18 +38,20 @@ public:
 	};
 
 	BBPixmap *atlas;
+	mutable bool dirty;
 	int baseline;
 
 private:
 	FT_Face face;
-	std::map<char,Char> characters;
+	mutable std::map<char,Char> characters;
 
 	BBImageFont( FT_Face f,int height );
 
 public:
 	static BBImageFont *load( const std::string &name,int height,int flags );
 
-	bool loadChars( const std::string &t );
+	bool loadChars( const std::string &t )const;
+	void rebuildAtlas();
 
 	Char &getChar( char c );
 	int getKerning( char l,char r );
