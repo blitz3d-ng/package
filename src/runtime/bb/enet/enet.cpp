@@ -98,7 +98,7 @@ bb_int_t	BBCALL bbSendNetMsg( bb_int_t type,BBStr *data,BBPlayer *from,BBPlayer 
 	string d=*data;delete data;
 	string from_id;//=string( from->id,16 );
 	string to_id;//=to?string( to->id,16 ):"";
-	sendNetMsg( type,from_id,to_id,d,reliable );
+	return sendNetMsg( type,from_id,to_id,d,reliable );
 }
 
 int recvServerMsg( const ENetEvent &e ){
@@ -133,10 +133,12 @@ int recvServerMsg( const ENetEvent &e ){
 		printf( "%s disconnected.\n",e.peer->data );
 		e.peer->data=NULL;
 	}
+
+	return 0;
 }
 
 int recvClientMsg( const ENetEvent &e ){
-
+	return 0;
 }
 
 bb_int_t BBCALL bbHostNetGame( BBStr *game_name ){
@@ -182,6 +184,8 @@ BBPlayer * BBCALL bbCreateNetPlayer( BBStr *name ){
 
 	bbPlayers[p.getId()]=p;
 	sendNetMsg( 100,"","","",true );
+
+	return &bbPlayers[p.getId()];
 }
 
 bb_int_t BBCALL bbRecvNetMsg(){
