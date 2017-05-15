@@ -3,7 +3,7 @@ FROM debian:jessie
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
-RUN apt-get install -y curl build-essential libwxgtk3.0-dev libwxgtk-webview3.0-dev libglew-dev libxcursor-dev libxrandr-dev libxinerama-dev cmake libxml2-dev zlib1g-dev libssl-dev libreadline-dev libgdbm-dev openssl
+RUN apt-get install -y curl build-essential libwxgtk3.0-dev libwxgtk-webview3.0-dev libglew-dev libxcursor-dev libxrandr-dev libxinerama-dev cmake libxml2-dev zlib1g-dev libssl-dev libreadline-dev libgdbm-dev openssl uuid-dev
 
 RUN curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz | tar xz && mv ./premake5 /usr/local/bin
 

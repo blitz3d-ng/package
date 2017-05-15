@@ -5,6 +5,7 @@
 
 #include <guid.h>
 
+#include <cstring>
 #include <iostream>
 #include <map>
 using namespace std;

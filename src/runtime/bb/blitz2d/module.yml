@@ -6,6 +6,31 @@ dependencies:
   - pixmap
 
 commands:
+  # rendering
+  - Origin( x%,y% ):"bbOrigin"
+  - Viewport( x%,y%,width%,height% ):"bbViewport"
+  - Color( red%,green%,blue% ):"bbColor"
+  - GetColor( x%,y% ):"bbGetColor"
+  - ColorRed%():"bbColorRed"
+  - ColorGreen%():"bbColorGreen"
+  - ColorBlue%():"bbColorBlue"
+  - ClsColor( red%,green%,blue% ):"bbClsColor"
+  - Cls():"bbCls"
+  - Plot( x%,y% ):"bbPlot"
+  - Rect( x%,y%,width%,height%,solid%=1 ):"bbRect"
+  - Oval( x%,y%,width%,height%,solid%=1 ):"bbOval"
+  - Line( x1%,y1%,x2%,y2% ):"bbLine"
+  - Text( x%,y%,text$,centre_x%=0,centre_y%=0 ):"bbText"
+
+  # fonts
+  - LoadFont%( fontname$,height%=12,bold%=0,italic%=0,underline%=0 ):"bbLoadFont"
+  - FreeFont( font% ):"bbFreeFont"
+  - SetFont( font% ):"bbSetFont"
+  - FontWidth%():"bbFontWidth"
+  - FontHeight%():"bbFontHeight"
+  - StringWidth%( string$ ):"bbStringWidth"
+  - StringHeight%( string$ ):"bbStringHeight"
+
   # movies
   - OpenMovie%( file$ ):"bbOpenMovie"
   - DrawMovie%( movie%,x%=0,y%=0,w%=-1h%=-1 ):"bbDrawMovie"

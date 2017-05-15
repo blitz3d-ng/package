@@ -27,3 +27,6 @@ project "enet"
     "src/unix.c",
     "src/win32.c"
   }
+
+  filter "platforms:linux"
+    defines "HAS_SOCKLEN_T"
