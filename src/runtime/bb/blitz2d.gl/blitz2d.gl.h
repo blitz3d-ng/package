@@ -42,33 +42,13 @@ public:
   }
 
   //MANIPULATORS
-  void setFont( BBFont *f ){
-    font=reinterpret_cast<BBImageFont*>(f);
-  }
-  void setMask( unsigned argb ){}
-  void setColor( unsigned argb ){
-    int r = (argb >> 16) & 255;
-    int g = (argb >> 8) & 255;
-    int b = argb & 255;
-
-    glColor3f( r/255.0f,g/255.0f,b/255.0f );
-  }
-  void setClsColor( unsigned argb ){
-    int r = (argb >> 16) & 255;
-    int g = (argb >> 8) & 255;
-    int b = argb & 255;
-
-    glClearColor( r/255.0f,g/255.0f,b/255.0f,1.0f );
-  }
-  void setOrigin( int x,int y ){}
-  void setHandle( int x,int y ){}
-  void setViewport( int x,int y,int w,int h ){
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho( 0.0f,w,h,0.0f,-1.0f,1.0f );
-
-    glViewport( 0,0,w,h );
-  }
+  void setFont( BBFont *f );
+  void setMask( unsigned argb );
+  void setColor( unsigned argb );
+  void setClsColor( unsigned argb );
+  void setOrigin( int x,int y );
+  void setHandle( int x,int y );
+  void setViewport( int x,int y,int w,int h );
 
   void cls();
   void plot( int x,int y );

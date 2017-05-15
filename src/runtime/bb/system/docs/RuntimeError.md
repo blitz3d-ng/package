@@ -1,6 +1,5 @@
 # RuntimeError message$
 
-
 ## Parameters
 
 - message$ - Any valid string

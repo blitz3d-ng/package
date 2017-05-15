@@ -14,8 +14,14 @@ module Blitz3D
         case op
         when 'SQR'
           "sqr(#{lhs.to_c}, #{rhs.to_c})"
+        when 'MOD'
+          if lhs.sem_type.is_a?(FloatType)
+            "_bbFMod(#{lhs.to_c}, #{rhs.to_c})"
+          else
+            "_bbMod(#{lhs.to_c}, #{rhs.to_c})"
+          end
         else
-          cop = { 'ADD' => '+', 'SUB' => '-', 'MUL' => '*', 'DIV' => '/', 'MOD' => '%' }
+          cop = { 'ADD' => '+', 'SUB' => '-', 'MUL' => '*', 'DIV' => '/' }
           "(#{lhs.to_c} #{cop[op]} #{rhs.to_c})"
         end
       end
