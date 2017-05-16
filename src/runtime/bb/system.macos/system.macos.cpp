@@ -5,6 +5,9 @@
 #include <CoreServices/CoreServices.h>
 #include <unistd.h>
 
+#include <fstream>
+using namespace std;
+
 bool MacOSSystemDriver::delay( int ms ){
   usleep( ms * 1000 );
   return true;
@@ -34,6 +37,23 @@ int MacOSSystemDriver::getScreenHeight( int i ){
 
 void MacOSSystemDriver::dpiInfo( float &scale_x,float &scale_y ){
   scale_x=scale_y=1.0f;
+}
+
+extern "C" const char *lookupFontFile( const char *fontName );
+
+bool MacOSSystemDriver::lookupFontData( const std::string &fontName,BBFontData &font ){
+	const char *fontPath=lookupFontFile( fontName.c_str() );
+	if( !fontPath ) return false;
+
+	ifstream file( fontPath,ios::binary|ios::ate );
+	font.size=file.tellg();
+	file.seekg( 0,ios::beg );
+
+	font.data=new unsigned char[font.size];
+	if( file.read( (char*)font.data,font.size ) ){
+		return true;
+	}
+	return false;
 }
 
 BBMODULE_CREATE( system_macos ){

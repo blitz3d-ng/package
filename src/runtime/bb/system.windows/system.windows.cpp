@@ -173,6 +173,39 @@ void WindowsSystemDriver::dpiInfo( float &scale_x,float &scale_y ){
 	scale_y=_scale_y;
 }
 
+bool WindowsSystemDriver::lookupFontData( const std::string &fontName,BBFontData &font ){
+
+	bool bold=false,italic=false,underline=false,strikeout=false;
+
+	int height=10;
+
+	HFONT hfont=CreateFont(
+		height,0,0,0,
+		bold,italic,underline,strikeout,
+		ANSI_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
+		DEFAULT_PITCH|FF_DONTCARE,fontName.c_str() );
+
+	bool success=false;
+	HDC hdc=CreateCompatibleDC(NULL);
+	if( hdc!=NULL ){
+		SelectObject( hdc,hfont );
+		font.size=GetFontData( hdc,0,0,NULL,0 );
+		if( font.size>0 ){
+			font.data=new unsigned char[font.size];
+			if( GetFontData( hdc,0,0,(void*)font.data,font.size )==font.size ){
+				success=true;
+			}else{
+				delete[] font.data;
+			}
+		}
+		DeleteDC( hdc );
+	}
+
+	DeleteObject( hfont );
+
+	return success;
+}
+
 // TODO: figure out if this is broken on x64.
 int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func,const void *in,int in_sz,void *out,int out_sz ){
 

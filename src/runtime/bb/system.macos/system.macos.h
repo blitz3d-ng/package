@@ -14,6 +14,8 @@ public:
   int getScreenHeight( int i );
 
   void dpiInfo( float &scale_x,float &scale_y );
+
+	bool lookupFontData( const std::string &fontName,BBFontData &font );
 };
 
 #endif

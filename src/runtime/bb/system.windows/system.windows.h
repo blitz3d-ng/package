@@ -28,6 +28,8 @@ public:
 
 	void dpiInfo( float &scale_x,float &scale_y );
 
+	bool lookupFontData( const std::string &fontName,BBFontData &font );
+
 	int callDll( const std::string &dll,const std::string &func,const void *in,int in_sz,void *out,int out_sz );
 };
 

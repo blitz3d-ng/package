@@ -1,26 +1,38 @@
 
 #include "../../stdutil/stdutil.h"
+#include <bb/system/system.h>
 #include "font.h"
 using namespace std;
 
 FT_Library ft;
-
-extern "C" const char *lookupFontFile( const char *fontName );
+map<string,BBFontData> bbFontCache;
 
 BBFont::~BBFont(){
 }
 
 BBImageFont::BBImageFont( FT_Face f,int height ):face(f),atlas(0){
-	FT_Set_Pixel_Sizes( face,0,height );
+	while( height ){
+		if( !FT_Set_Pixel_Sizes( face,0,height ) ) break;
+		height-=1;
+	}
 	baseline=(face->ascender+face->descender)>>6;
 }
 
 BBImageFont *BBImageFont::load( const string &name,int height,int flags ){
-	const char *path=lookupFontFile( name.c_str() );
-	if( !path ) return 0;
+	BBFontData font;
+
+	if( bbFontCache.count( name )==0 ){
+		if( bbSystemDriver->lookupFontData( name,font ) ){
+			bbFontCache.insert( make_pair( name,font ) );
+		}else{
+			return 0;
+		}
+	}else{
+		font=bbFontCache[name];
+	}
 
 	FT_Face face;
-	if( FT_New_Face( ft,path,0,&face ) ){
+	if( FT_New_Memory_Face( ft,font.data,font.size,0,&face ) ){
 		return 0;
 	}
 	return d_new BBImageFont( face,height );
