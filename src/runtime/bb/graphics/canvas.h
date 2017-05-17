@@ -47,22 +47,23 @@ public:
 	virtual void unset()=0;
 	virtual void set()=0;
 
-  //MANIPULATORS
-  virtual void setFont( BBFont *font )=0;
-  virtual void setMask( unsigned argb )=0;
-  virtual void setColor( unsigned argb )=0;
-  virtual void setClsColor( unsigned argb )=0;
-  virtual void setOrigin( int x,int y )=0;
-  virtual void setHandle( int x,int y )=0;
-  virtual void setViewport( int x,int y,int w,int h )=0;
+	//MANIPULATORS
+	virtual void setFont( BBFont *font )=0;
+	virtual void setMask( unsigned argb )=0;
+	virtual void setColor( unsigned argb )=0;
+	virtual void setClsColor( unsigned argb )=0;
+	virtual void setOrigin( int x,int y )=0;
+	virtual void setHandle( int x,int y )=0;
+	virtual void setViewport( int x,int y,int w,int h )=0;
 
-  virtual void cls()=0;
-  virtual void plot( int x,int y )=0;
-  virtual void line( int x,int y,int x2,int y2 )=0;
-  virtual void rect( int x,int y,int w,int h,bool solid )=0;
-  virtual void oval( int x,int y,int w,int h,bool solid )=0;
-  virtual void text( int x,int y,const std::string &t )=0;
-  virtual void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid )=0;
+	virtual void cls()=0;
+	virtual void plot( int x,int y )=0;
+	virtual void line( int x,int y,int x2,int y2 )=0;
+	virtual void rect( int x,int y,int w,int h,bool solid )=0;
+	virtual void oval( int x,int y,int w,int h,bool solid )=0;
+	virtual void text( int x,int y,const std::string &t )=0;
+	virtual void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid )=0;
+	virtual void image( BBCanvas *c,int x,int y,bool solid )=0;
 
   virtual bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const=0;
   virtual bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const=0;

@@ -463,6 +463,7 @@ void BBCALL bbGraphics3D( int w,int h,int d,int mode ){
 void BBCALL bbEndGraphics(){
 	freeGraphics();
 	bbContextDriver->closeGraphics( gx_graphics );
+	gx_canvas=0;
 	gx_graphics=bbContextDriver->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( gx_graphics ){
@@ -728,13 +729,13 @@ BBCanvas * BBCALL bbImageBuffer( bbImage *i,int n ){
 void BBCALL bbDrawImage( bbImage *i,int x,int y,int frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
-	gx_canvas->blit( x,y,c,0,0,c->getWidth(),c->getHeight(),false );
+	gx_canvas->image( c,x,y,false );
 }
 
 void BBCALL bbDrawBlock( bbImage *i,int x,int y,int frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
-	gx_canvas->blit( x,y,c,0,0,c->getWidth(),c->getHeight(),true );
+	gx_canvas->image( c,x,y,true );
 }
 
 static void tile( bbImage *i,int x,int y,int frame,bool solid ){
@@ -1117,6 +1118,7 @@ BBMODULE_DESTROY( graphics ){
 	gfx_modes.clear();
 	if( gx_graphics ){
 		bbContextDriver->closeGraphics( gx_graphics );
+		gx_canvas=0;
 		gx_graphics=0;
 	}
 	return true;

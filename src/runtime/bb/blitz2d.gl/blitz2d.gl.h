@@ -30,10 +30,13 @@ protected:
 	mutable unsigned char *pixels;
   BBImageFont *font;
 
+	int handle_x,handle_y;
+	float color[3];
+
   virtual void bind()const=0;
 
 public:
-  GLB2DCanvas( int f ):width(0),height(0),pixels(0){
+  GLB2DCanvas( int f ):width(0),height(0),pixels(0),handle_x(0),handle_y(0){
 		flags=f;
   }
 
@@ -56,20 +59,7 @@ public:
   void rect( int x,int y,int w,int h,bool solid );
   void oval( int x,int y,int w,int h,bool solid );
   void text( int x,int y,const std::string &t );
-  void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
-
-    ((GLB2DCanvas*)src)->bind();
-
-    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
-
-    rect( x,y,src_w,src_h,solid );
-
-    glDisable( GL_TEXTURE_2D );
-  }
-	void image( BBCanvas *c,int x,int y );
+	void image( BBCanvas *c,int x,int y,bool solid );
 
   bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{ return false; }
   bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const{ return false; }
@@ -133,6 +123,8 @@ public:
 	int getDepth()const{ return 8; }
 
 	void unset(){
+		glFlush();
+
 		glBindTexture( GL_TEXTURE_2D,texture );
 		glGenerateMipmap( GL_TEXTURE_2D );
 	}
@@ -208,7 +200,9 @@ protected:
 public:
   GLB2DDefaultCanvas( int m,int f ):GLB2DCanvas(f),mode(m){}
 
-	void unset(){}
+	void unset(){
+		glFlush();
+	}
 	void set(){
 		glBindFramebuffer( GL_FRAMEBUFFER,0 );
 		glDrawBuffer( mode );

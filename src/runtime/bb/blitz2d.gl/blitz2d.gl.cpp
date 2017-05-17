@@ -14,11 +14,11 @@ void GLB2DCanvas::setMask( unsigned argb ){
 }
 
 void GLB2DCanvas::setColor( unsigned argb ){
-	int r = (argb >> 16) & 255;
-	int g = (argb >> 8) & 255;
-	int b = argb & 255;
+	color[0]=((argb>>16)&255)/255.0f;
+	color[1]=((argb>>8)&255)/255.0f;;
+	color[2]=(argb&255)/255.0f;;
 
-	glColor3f( r/255.0f,g/255.0f,b/255.0f );
+	glColor3fv( color );
 }
 
 void GLB2DCanvas::setClsColor( unsigned argb ){
@@ -37,6 +37,8 @@ void GLB2DCanvas::setOrigin( int x,int y ){
 }
 
 void GLB2DCanvas::setHandle( int x,int y ){
+	handle_x=x;
+	handle_y=y;
 }
 
 void GLB2DCanvas::setViewport( int x,int y,int w,int h ){
@@ -69,13 +71,13 @@ void GLB2DCanvas::line( int x,int y,int x2,int y2 ){
 void GLB2DCanvas::rect( int x,int y,int w,int h,bool solid ){
 	glPolygonMode( GL_FRONT_AND_BACK,solid?GL_FILL:GL_LINE );
 	glBegin( GL_QUADS );
-		glTexCoord2f( 0.0f,1.0f );
-		glVertex2f( x,y+h );
-		glTexCoord2f( 1.0f,1.0f );
-		glVertex2f( x+w,y+h );
-		glTexCoord2f( 1.0f,0.0f );
-		glVertex2f( x+w,y );
 		glTexCoord2f( 0.0f,0.0f );
+		glVertex2f( x,y+h );
+		glTexCoord2f( 1.0f,0.0f );
+		glVertex2f( x+w,y+h );
+		glTexCoord2f( 1.0f,1.0f );
+		glVertex2f( x+w,y );
+		glTexCoord2f( 0.0f,1.0f );
 		glVertex2f( x,y );
 	glEnd();
 	glFlush();
@@ -172,10 +174,26 @@ void GLB2DCanvas::text( int x,int y,const std::string &t ){
 
 	glEnd();
 	glFlush();
+
+	glDisable( GL_TEXTURE_2D );
 }
 
-void GLB2DCanvas::image( BBCanvas *c,int x,int y ){
+void GLB2DCanvas::image( BBCanvas *c,int x,int y,bool solid ){
+	GLB2DCanvas *src=(GLB2DCanvas*)c;
 
+	src->bind();
+
+	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
+
+	const float white[3]={ 1.0f,1.0f,1.0f };
+	glColor3fv( white );
+	rect( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true );
+	glColor3fv( color );
+
+	glDisable( GL_TEXTURE_2D );
 }
 
 BBMODULE_CREATE( blitz2d_gl ){

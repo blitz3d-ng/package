@@ -40,7 +40,6 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
   for( int i=0;i<file.size();i++ ){
     f+=file[i] == WRONG_DIV ? RIGHT_DIV : file[i];
   }
-
   FreeImage_Initialise();
   FREE_IMAGE_FORMAT fmt=FreeImage_GetFileType( f.c_str(),f.size() );
   if( fmt==FIF_UNKNOWN ) return 0;
@@ -60,6 +59,7 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 	switch( int bpp=FreeImage_GetBPP( t_dib ) ){
 	case 32:pm->format=PF_RGBA;break;
 	case 24:pm->format=PF_RGB;break;
+	case 8:pm->format=PF_RGB;break;
 	default:RTEX( ("Unhandled image format: "+string(itoa(bpp))+" bpps").c_str() );
 	}
 

@@ -4,6 +4,7 @@
 struct bbEx{
 	const char *err;
 	bbEx( const char *e );
+	~bbEx();
 };
 
 #define RTEX( _X_ ) throw bbEx( _X_ );
