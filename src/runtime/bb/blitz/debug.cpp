@@ -51,6 +51,7 @@ void BBCALL _bbDebugLeave(){
 void BBCALL _bbDebugStop(){
 	if( debugger ) {
 		bbOnDebugStop.run( 0 );
+		debugger->debugStop();
 	}
 }
 

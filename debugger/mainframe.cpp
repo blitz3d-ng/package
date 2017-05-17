@@ -217,6 +217,7 @@ void MainFrame::debugLeave(){
 }
 
 void MainFrame::debugMsg( const char *msg,bool serious ){
+	debugStop();
 	if( serious ){
 		::MessageBox( 0,msg,"Runtime Error",MB_OK|MB_ICONWARNING|MB_TOPMOST|MB_SETFOREGROUND );
 	}else{
