@@ -83,7 +83,7 @@ public:
     return pixels[(y*width+x)*4];
   }
   void unlock()const{
-		delete[] pixels;
+		delete[] pixels;pixels=0;
 	}
 
   void setCubeMode( int mode ){}
@@ -198,7 +198,10 @@ protected:
 
   void bind()const{}
 public:
-  GLB2DDefaultCanvas( int m,int f ):GLB2DCanvas(f),mode(m){}
+  GLB2DDefaultCanvas( int m,int f ):GLB2DCanvas(f),mode(m){
+		set();
+		glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+	}
 
 	void unset(){
 		glFlush();

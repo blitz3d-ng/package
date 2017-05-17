@@ -327,8 +327,8 @@ public:
 		memset( axis_states,0,sizeof(axis_states) );
 		memset( down_state,0,sizeof(down_state) );
 
-		strcpy( id,glfwGetJoystickName( idx ) );
-		strcpy( name,glfwGetJoystickName( idx ) );
+		snprintf( id,sizeof(id),"%s",glfwGetJoystickName( idx ) );
+		snprintf( name,sizeof(name),"%s",glfwGetJoystickName( idx ) );
 	}
 
 	void update(){
