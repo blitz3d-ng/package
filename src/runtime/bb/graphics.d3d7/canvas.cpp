@@ -385,6 +385,10 @@ void gxCanvas::text( int x,int y,const string &t ){
 	if( e>b ) font->render( this,format.toARGB( color_surf ),x,y,t.substr( b,e-b ) );
 }
 
+void gxCanvas::image( BBCanvas *c,int x,int y,bool solid ){
+	blit( x,y,c,0,0,c->getWidth(),c->getHeight(),solid );
+}
+
 int gxCanvas::getWidth()const{
 	return clip_rect.right;
 }
