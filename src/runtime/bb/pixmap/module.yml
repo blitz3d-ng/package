@@ -12,6 +12,7 @@ premake5:
   - includedirs:
     - ../../../deps/freeimage317/src/Source
 
+  - filter: platforms:win32 or win64 or mingw32 or macos or linux
   - links:
     - freeimage
     - jpeg

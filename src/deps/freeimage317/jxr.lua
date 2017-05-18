@@ -1,5 +1,5 @@
 project "jxr"
-  removeplatforms { "macos" }
+  removeplatforms { "macos", "emscripten" }
   kind "StaticLib"
   language "C"
 

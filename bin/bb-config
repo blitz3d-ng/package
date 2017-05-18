@@ -6,6 +6,10 @@ require 'os'
 PLATFORM ||= (OS.mac? && 'macos')
 PLATFORM ||= (OS.linux? && 'linux')
 
+if ARGV.include?('--emscripten')
+  PLATFORM = 'emscripten'
+end
+
 INCLUDE_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'runtime'))
 LIB_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '_release', 'lib'))
 
@@ -25,6 +29,12 @@ end
 
 RUNTIME = 'opengl'
 
+OPTIONS = []
+
+if PLATFORM == 'emscripten'
+  OPTIONS << '-s LEGACY_GL_EMULATION=1'
+end
+
 config = configs[PLATFORM][RUNTIME] || configs[PLATFORM].first[0]
 
 module_libs = []
@@ -42,4 +52,5 @@ libs = config['modules'].map do |mod|
   end.flatten
 end
 
-puts "-Wno-int-conversion -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lbb.stub -lruntime.#{RUNTIME} #{module_libs.join(' ')} #{module_libs.join(' ')} #{system_libs.join(' ')}"
+
+puts "-Wno-int-conversion #{OPTIONS.join(' ')} -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lbb.stub -lruntime.#{RUNTIME} #{module_libs.join(' ')} #{module_libs.join(' ')} #{system_libs.join(' ')}"

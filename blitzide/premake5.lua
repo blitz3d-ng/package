@@ -2,7 +2,7 @@ project "blitzide"
   kind "WindowedApp"
   language "C++"
 
-  removeplatforms { "macos", "linux", "mingw32" }
+  removeplatforms { "macos", "linux", "mingw32", "emscripten" }
 
   targetdir "../_release/bin"
   targetname "ide"

@@ -71,6 +71,8 @@
   #define ODE_PLATFORM_WINDOWS
 #elif defined(__linux__)
   #define ODE_PLATFORM_LINUX
+#elif defined(__EMSCRIPTEN__)
+  #define ODE_PLATFORM_EMSCRIPTEN
 #elif defined(__APPLE__) && defined(__MACH__)
   #define ODE_PLATFORM_OSX
 #else

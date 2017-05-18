@@ -2,6 +2,8 @@ project "freeimage"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms "emscripten"
+
   defines "LIBRAW_NODLL"
 
   includedirs {

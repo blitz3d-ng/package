@@ -2,6 +2,8 @@ project "png"
   kind "StaticLib"
   language "C"
 
+  removeplatforms "emscripten"
+
   includedirs "src/Source/Zlib"
 
   files {

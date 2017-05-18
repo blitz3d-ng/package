@@ -8,7 +8,7 @@ using namespace std;
 
 #if defined(__APPLE__) || defined(__linux__)
 #include <unistd.h>
-#else
+#elif defined(WIN32)
 #include <direct.h>
 #define chdir _chdir
 #endif

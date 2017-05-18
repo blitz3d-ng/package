@@ -2,6 +2,8 @@ project "glfw"
   kind "StaticLib"
   language "C"
 
+  removeplatforms "emscripten"
+
   files {
     "src/src/context.c",
     "src/src/init.c",

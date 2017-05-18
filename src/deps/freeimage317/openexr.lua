@@ -2,6 +2,8 @@ project "openexr"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms "emscripten"
+
   includedirs {
     "src/Source/OpenEXR/Half",
     "src/Source/OpenEXR/Iex",

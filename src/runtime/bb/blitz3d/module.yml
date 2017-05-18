@@ -352,18 +352,20 @@ premake5:
     - texture.h
     - world.h
 
-  - links:
-    - assimp
-    - assimp.convertutf
-    - zlib
+  - filter: platforms:macos or linux or emscripten
+  - defines:
+    - USE_ASSIMP
 
   - includedirs:
     - ../../../deps/assimp/src/include
 
-  - filter: platforms:macos or linux
   - files:
     - loader_assimp.cpp
     - loader_assimp.h
+
+  - links:
+    - assimp
+    - assimp.convertutf
 
   - filter: platforms:win32 or win64 or mingw32
   - files:

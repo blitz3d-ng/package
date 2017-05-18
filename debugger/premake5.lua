@@ -2,7 +2,7 @@ project "debugger"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms { "win64", "mingw32", "macos", "linux" }
+  removeplatforms { "win64", "mingw32", "macos", "linux", "emscripten" }
 
   targetdir "../_release/bin"
 

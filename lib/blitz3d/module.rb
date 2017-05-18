@@ -2,7 +2,7 @@ require 'yaml'
 
 module Blitz3D
   class Module
-    PLATFORMS = %w(win32 win64 mingw32 macos linux).freeze
+    PLATFORMS = %w(win32 win64 mingw32 macos linux emscripten).freeze
 
     attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path, :premake5
 

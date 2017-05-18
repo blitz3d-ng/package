@@ -1,0 +1,19 @@
+name: HTML Runtime
+description: Provides runtime for Emscripten.
+
+platforms:
+  - emscripten
+
+dependencies:
+  - runtime
+  - graphics
+  - blitz2d
+  - blitz3d.gl
+  - pixmap
+
+premake5:
+  files:
+    - runtime.html.cpp
+
+  includedirs:
+    - ../../../deps/freetype2/src/include

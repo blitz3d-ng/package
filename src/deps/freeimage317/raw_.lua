@@ -2,6 +2,8 @@ project "raw"
   kind "StaticLib"
   language "C++"
 
+  removeplatforms "emscripten"
+
   includedirs "src/Source/LibRawLite"
 
   defines "LIBRAW_NODLL"

@@ -1,6 +1,13 @@
 name: GLFW3 Runtime
 description: Provides runtime via GLFW3.
 
+platforms:
+  - win32
+  - win64
+  - mingw32
+  - macos
+  - linux
+
 dependencies:
   - runtime
   - graphics

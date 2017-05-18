@@ -2,6 +2,7 @@ project "blitzide2"
   kind "WindowedApp"
   language "C++"
 
+  removeplatforms "emscripten"
   if not os.getenv("WXWIDGETS") then
     removeplatforms { "win32", "win64", "mingw32" }
   end

@@ -1,6 +1,11 @@
 name: Enet
 description: Provides event functions.
 
+platforms:
+  - windows
+  - macos
+  - linux
+
 dependencies:
   - blitz
   - hook

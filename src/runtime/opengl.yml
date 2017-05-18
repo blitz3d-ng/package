@@ -5,6 +5,7 @@ platforms:
   - mingw32
   - macos
   - linux
+  - emscripten
 
 modules:
   - blitz
@@ -31,3 +32,4 @@ modules:
   - blitz3d.gl
   - userlibs
   - runtime.glfw3
+  - runtime.html

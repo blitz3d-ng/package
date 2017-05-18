@@ -8,10 +8,13 @@
 #include <bb/graphics/graphics.h>
 #include <bb/pixmap/pixmap.h>
 #include "blitz3d.h"
+#ifndef USE_ASSIMP
 #include "loader_x.h"
+#else
+#include "loader_assimp.h"
+#endif
 #include "loader_3ds.h"
 #include "loader_b3d.h"
-#include "loader_assimp.h"
 #include "std.h"
 #include "graphics.h"
 

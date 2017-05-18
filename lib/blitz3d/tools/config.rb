@@ -213,6 +213,9 @@ module Blitz3D
               f.write "  removeplatforms { #{inactive_platforms.join(', ')} }\n\n"
             end
 
+            f.write "  filter 'platforms:emscripten'\n"
+            f.write "    kind 'StaticLib'\n\n"
+
             f.write "  filter 'platforms:macos or linux'\n"
             f.write "    kind 'StaticLib'\n\n"
 

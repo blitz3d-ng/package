@@ -2,6 +2,8 @@ project "tiff4"
   kind "StaticLib"
   language "C"
 
+  removeplatforms "emscripten"
+
   defines 'TIFF_SSIZE_FORMAT=""'
 
   files {

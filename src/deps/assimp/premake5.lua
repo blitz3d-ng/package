@@ -176,3 +176,6 @@ project "assimp"
     "src/code/XFileParser.cpp",
     "src/code/XFileParser.h",
   }
+
+  filter "platforms:emscripten"
+    buildoptions "-s USE_ZLIB=1"

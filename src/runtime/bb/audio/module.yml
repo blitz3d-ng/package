@@ -25,7 +25,7 @@ commands:
   - ChannelPlaying%( channel% ):"bbChannelPlaying"
 
 premake5:
-  files:
+  - files:
     - channel.cpp
     - channel.h
     - sound.cpp
@@ -36,16 +36,21 @@ premake5:
     - audio.h
     - stream.cpp
     - stream.h
+
+  # TODO: move these to their own modules.
+  - filter: platforms:win32 or win64 or mingw32 or macos or linux
+
+  - files:
     - ogg_stream.cpp
     - ogg_stream.h
     - wav_stream.cpp
     - wav_stream.h
 
-  includedirs:
+  - includedirs:
     - ../../../deps/vorbis/src/include
     - ../../../deps/ogg/src/include
     - ../../../deps/ogg/include
 
-  links:
+  - links:
     - vorbisfile
     - ogg

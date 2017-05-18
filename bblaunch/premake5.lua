@@ -2,7 +2,7 @@ project "bblaunch"
   kind "WindowedApp"
   language "C++"
 
-  removeplatforms { "macos", "linux" }
+  removeplatforms { "macos", "linux", "emscripten" }
 
   files { "bblaunch.cpp" }
 

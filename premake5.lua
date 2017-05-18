@@ -1,7 +1,9 @@
+require 'src/emcc'
+
 -- premake5.lua
 workspace "blitz3d"
   configurations { "debug", "release" }
-  platforms { "win32", "win64", "mingw32", "macos", "linux" }
+  platforms { "win32", "win64", "mingw32", "macos", "linux", "emscripten" }
 
   location "build"
 
@@ -108,11 +110,31 @@ workspace "blitz3d"
   filter { "platforms:macos or linux or mingw32" }
     buildoptions { "-Wno-error" }
 
-  filter { "platforms:macos or linux or mingw32", "language:C++" }
+  filter { "platforms:macos or linux or mingw32 or emscripten", "language:C++" }
     buildoptions { "-std=c++11" }
 
   filter { "platforms:macos or linux", "language:C++" }
     buildoptions { "-Wno-c++11-narrowing" }
+
+  filter { "platforms:emscripten" }
+    toolset "emcc"
+    gccprefix ""
+    defines "BB_PLATFORM=\"emscripten\""
+
+  filter { "platforms:emscripten", "configurations:debug" }
+    buildoptions "-s DEMANGLE_SUPPORT=1"
+
+  filter { "platforms:emscripten", "kind:StaticLib" }
+    targetprefix "lib"
+    targetextension ".a"
+
+  filter { "platforms:emscripten", "kind:ConsoleApp" }
+    targetprefix ""
+    targetextension ".js"
+
+  filter { "platforms:emscripten", "kind:WindowedApp" }
+    targetprefix ""
+    targetextension ".html"
 
 require './build/src/init'
 

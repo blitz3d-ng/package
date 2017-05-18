@@ -2,7 +2,7 @@ project "linker"
   kind "SharedLib"
   language "C++"
 
-  removeplatforms { "win64", "macos", "linux" }
+  removeplatforms { "win64", "macos", "linux", "emscripten" }
 
   targetdir "../_release/bin"
 

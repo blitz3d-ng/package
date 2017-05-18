@@ -9,6 +9,6 @@ premake5:
   - files:
     - stub.windows.cpp
 
-  - filter: platforms:macos or linux
+  - filter: platforms:macos or linux or emscripten
   - files:
     - stub.posix.cpp

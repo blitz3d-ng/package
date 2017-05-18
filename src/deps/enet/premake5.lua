@@ -2,6 +2,8 @@ project "enet"
   language "C"
   kind "StaticLib"
 
+  removeplatforms "emscripten"
+
   includedirs {
     "src/include"
   }
