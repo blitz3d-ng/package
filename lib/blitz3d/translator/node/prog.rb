@@ -11,7 +11,7 @@ module Blitz3D
         @stmts   = Node.load(json['stmts'])
         @funcs   = json['funcs'].map { |func| Node.load(func) }
         @structs = json['structs'].map { |struct| Node.load(struct) }
-        STDERR.puts JSON.pretty_generate(json['structs']).red
+        # STDERR.puts JSON.pretty_generate(json['structs']).red
       end
 
       def to_c
