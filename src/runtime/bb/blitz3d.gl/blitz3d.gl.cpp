@@ -445,8 +445,8 @@ public:
 
 // FIXME: find out why it's not available under emscripten
 #ifndef __EMSCRIPTEN__
-		glLightModeliv( GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR );
-		glLightModeliv( GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE );
+		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR );
+		glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE );
 #endif
 		glEnable( GL_NORMALIZE );
 
