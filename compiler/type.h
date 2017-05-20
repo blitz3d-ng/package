@@ -31,6 +31,7 @@ struct Type{
 	static Type *void_type,*int_type,*float_type,*string_type,*null_type;
 
 	virtual json toJSON(){ return json(); }
+	virtual json toFullJSON(){ return toJSON(); }
 };
 
 struct FuncType : public Type{
@@ -57,6 +58,13 @@ struct ArrayType : public Type{
 	Type *elementType;int dims;
 	ArrayType( Type *t,int n ):elementType(t),dims(n){}
 	ArrayType *arrayType(){ return this; }
+
+	json toJSON(){
+		json tree;tree["@class"]="ArrayType";
+		tree["elementType"]=elementType->toJSON();
+		tree["dims"]=dims;
+		return tree;
+	}
 };
 
 struct StructType : public Type{
@@ -69,6 +77,12 @@ struct StructType : public Type{
 	virtual bool canCastTo( Type *t );
 
 	json toJSON(){
+		json tree;tree["@class"]="StructType";
+		tree["ident"]=ident;
+		return tree;
+	}
+
+	json toFullJSON(){
 		json tree;tree["@class"]="StructType";
 		tree["ident"]=ident;
 		tree["fields"]=fields->toJSON();

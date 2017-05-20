@@ -1,13 +1,14 @@
 module Blitz3D
   module AST
     class ProgNode < Node
-      attr_accessor :modules, :types, :globals, :locals, :stmts, :funcs, :structs
+      attr_accessor :modules, :types, :globals, :locals, :arrays, :stmts, :funcs, :structs
 
       def initialize(json)
         @types   = json['types'].map { |t| Type.load(t) }
         @globals = json['globals'].map { |global| Decl.new(global) }
         @modules = json['modules']
         @locals  = json['locals'].map { |local| Decl.new(local) }
+        @arrays  = json['arrays'].map { |array| Decl.new(array) }
         @stmts   = Node.load(json['stmts'])
         @funcs   = json['funcs'].map { |func| Node.load(func) }
         @structs = json['structs'].map { |struct| Node.load(struct) }
@@ -17,24 +18,16 @@ module Blitz3D
       def to_c
         includes = modules.map { |m| "#include <bb/#{m}/commands.h>" }.join("\n")
 
-        # struct _tplayer_decl {
-        #   BBObjType type;
-        #   BBType *fieldsTypes[2];
-        # };
-        #
-        # _tplayer_decl _tplayer={
-        #   BBObjType( 3,&_bbStrType ),
-        #   { &_bbIntType,&_bbIntType }
-        # };
-
         types = self.types.map do |type|
           if type.is_a?(VectorType)
             "struct BBVecTypeDecl vector_type#{type.label}={ 6,#{type.size},#{type.element_type.ptr} }"
           end
         end.compact
 
-        types.unshift 'struct BBVecTypeDecl{ int type;int size;BBType *elementType; }'
-        types << '' unless types.empty?
+        unless types.empty?
+          types.unshift 'struct BBVecTypeDecl{ int type;int size;BBType *elementType; }'
+          types << ''
+        end
 
         types = types.join(";\n")
 
@@ -50,12 +43,6 @@ module Blitz3D
           struct_init << "#{type}.used.next=#{type}.used.prev=&#{type}.used;#{type}.free.next=#{type}.free.prev=&#{type}.free"
 
           "struct #{struct.sem_type.to_type}_decl { BBObjType type; BBType *fields[#{struct.sem_type.fields.size-1}]; };\nstruct #{struct.sem_type.to_type}_decl #{struct.sem_type.to_type}={ { {5},{0,0,0,0,-1},{0,0,0,0,-1},#{struct.sem_type.fields.size},{#{fields.shift}} }, { #{fields.join(',')} } }"
-
-          # fields_ident = "#{struct.sem_type.to_type}_fields"
-
-          # "BBObjType #{struct.sem_type.to_type}="
-
-          # "BBObjType type;\n  BBType *fieldsTypes[#{struct.sem_type.fields.size}];\n};\n#{struct.sem_type.to_type}_decl #{struct.sem_type.to_type}={\n  {5}( #{struct.sem_type.fields.size},#{fields.shift} ),\n  { #{} }\n}"
         end
         structs << '' unless structs.empty?
         structs = structs.join(";\n")
@@ -67,6 +54,15 @@ module Blitz3D
         func_decls += ';' unless func_decls.blank?
 
         func_defs = funcs.map(&:to_c).join("\n\n")
+
+        arrays = self.arrays.map do |decl|
+          scale = Array.new(decl.type.dims - 1).map { 0 }
+          "struct _a#{decl.name}_decl { BBArray base;int scales[#{decl.type.dims-1}]; };\nstruct _a#{decl.name}_decl _a#{decl.name}={ { 0,#{decl.type.element_type.kind},#{decl.type.dims},0 },{#{ scale.join(',') }} }"
+        end.compact
+
+        arrays << '' unless arrays.empty?
+
+        arrays = arrays.join(";\n")
 
         globals = self.globals.map do |decl|
           "static #{decl.type.to_c} #{decl.name}=#{decl.type.default_value};"
@@ -80,6 +76,7 @@ module Blitz3D
           includes,
           types,
           structs,
+          arrays,
           globals,
           func_decls,
           func_defs,

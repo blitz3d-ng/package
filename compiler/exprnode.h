@@ -271,7 +271,12 @@ struct FirstNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( FirstNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="FirstNode";
+		tree["sem_type"]=sem_type->toJSON();
+		tree["ident"]=ident;
+		return tree;
+	}
 };
 
 struct LastNode : public ExprNode{
@@ -280,7 +285,12 @@ struct LastNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( LastNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="LastNode";
+		tree["sem_type"]=sem_type->toJSON();
+		tree["ident"]=ident;
+		return tree;
+	}
 };
 
 struct AfterNode : public ExprNode{
@@ -290,7 +300,12 @@ struct AfterNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( AfterNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="AfterNode";
+		tree["sem_type"]=sem_type->toJSON();
+		tree["expr"]=expr->toJSON( e );
+		return tree;
+	}
 };
 
 struct BeforeNode : public ExprNode{
@@ -300,7 +315,12 @@ struct BeforeNode : public ExprNode{
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( BeforeNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="BeforeNode";
+		tree["sem_type"]=sem_type->toJSON();
+		tree["expr"]=expr->toJSON( e );
+		return tree;
+	}
 };
 
 struct NullNode : public ExprNode{

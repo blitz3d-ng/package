@@ -176,6 +176,23 @@ void GLB2DCanvas::text( int x,int y,const std::string &t ){
 	glFlush();
 
 	glDisable( GL_TEXTURE_2D );
+	glDisable( GL_ALPHA_TEST );
+	glDisable( GL_BLEND );
+}
+
+void GLB2DCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid ){
+	unsigned int cfb;
+	glGetIntegerv( GL_FRAMEBUFFER_BINDING,(GLint*)&cfb );
+
+	GLB2DCanvas *src=(GLB2DCanvas*)s;
+
+	unsigned int rfb=src->framebufferId(),dfb=framebufferId();
+
+	glBindFramebuffer( GL_READ_FRAMEBUFFER,rfb );
+	glBindFramebuffer( GL_DRAW_FRAMEBUFFER,dfb );
+	glBlitFramebuffer( src_x,src_y,src_w,src_h,x,y,src_w,src_h,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST );
+
+	glBindFramebuffer( GL_FRAMEBUFFER,cfb );
 }
 
 void GLB2DCanvas::image( BBCanvas *c,int x,int y,bool solid ){
@@ -194,6 +211,18 @@ void GLB2DCanvas::image( BBCanvas *c,int x,int y,bool solid ){
 	glColor3fv( color );
 
 	glDisable( GL_TEXTURE_2D );
+}
+
+void GLB2DCanvas::setPixel( int x,int y,unsigned argb ){
+	setPixelFast( x,y,argb );
+}
+
+void GLB2DCanvas::setPixelFast( int x,int y,unsigned argb ){
+	unsigned char rgba[4]={ (argb>>16)&255,(argb>>8)&255,argb&255,(argb>>24)&255 };
+
+	set();
+	glRasterPos2f( x,y+1 );
+	glDrawPixels( 1,1,GL_RGBA,GL_UNSIGNED_BYTE,rgba );
 }
 
 BBMODULE_CREATE( blitz2d_gl ){

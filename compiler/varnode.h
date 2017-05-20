@@ -58,7 +58,15 @@ struct ArrayVarNode : public VarNode{
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( ArrayVarNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="ArrayVarNode";
+		tree["sem_type"]=sem_type->toJSON();
+		tree["ident"]=ident;
+		tree["tag"]=tag;
+		tree["exprs"]=exprs->toJSON( e );
+		tree["sem_decl"]=sem_decl->toJSON();
+		return tree;
+	}
 };
 
 struct FieldVarNode : public VarNode{

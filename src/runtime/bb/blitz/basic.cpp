@@ -189,8 +189,8 @@ BBStr * BBCALL _bbStrConst( const char *s ){
 }
 
 void * BBCALL _bbVecAlloc( BBVecType *type ){
-	void *vec=bbMalloc( type->size*4 );
-	memset( vec,0,type->size*4 );
+	void *vec=bbMalloc( type->size*sizeof(BBField) );
+	memset( vec,0,type->size*sizeof(BBField) );
 	return vec;
 }
 
@@ -240,8 +240,8 @@ void BBCALL _bbDimArray( BBArray *array ){
 		array->scales[k]*=array->scales[k-1];
 	}
 	int size=array->scales[array->dims-1];
-	array->data=bbMalloc( size*4 );
-	memset( array->data,0,size*4 );
+	array->data=bbMalloc( size*sizeof(BBField) );
+	memset( array->data,0,size*sizeof(BBField) );
 }
 
 void BBCALL _bbArrayBoundsEx(){

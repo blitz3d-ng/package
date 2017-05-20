@@ -14,8 +14,7 @@ module Blitz3D
         f.write(@stmts.map do |stmt|
           code = stmt.to_c(&cleanup)
           code = (code.last != '}' && code.last != ';') ? "#{code};" : code
-          "\n_bbDebugStmt(#{stmt.pos},#{file.inspect});\n#{code}"
-          # "#{code}\n"
+          $debug ? "\n_bbDebugStmt(#{stmt.pos},#{file.inspect});\n#{code}" : "#{code}\n"
         end.join(""))
 
         f.string

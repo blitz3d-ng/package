@@ -36,29 +36,32 @@ protected:
   virtual void bind()const=0;
 
 public:
-  GLB2DCanvas( int f ):width(0),height(0),pixels(0),handle_x(0),handle_y(0){
+	GLB2DCanvas( int f ):width(0),height(0),pixels(0),handle_x(0),handle_y(0){
 		flags=f;
-  }
+	}
 
-  void resize( int w,int h ){
-    width=w;height=h;
-  }
+	void resize( int w,int h ){
+		width=w;height=h;
+	}
 
-  //MANIPULATORS
-  void setFont( BBFont *f );
-  void setMask( unsigned argb );
-  void setColor( unsigned argb );
-  void setClsColor( unsigned argb );
-  void setOrigin( int x,int y );
-  void setHandle( int x,int y );
-  void setViewport( int x,int y,int w,int h );
+	virtual unsigned int framebufferId()=0;
 
-  void cls();
-  void plot( int x,int y );
-  void line( int x,int y,int x2,int y2 );
-  void rect( int x,int y,int w,int h,bool solid );
-  void oval( int x,int y,int w,int h,bool solid );
-  void text( int x,int y,const std::string &t );
+	//MANIPULATORS
+	void setFont( BBFont *f );
+	void setMask( unsigned argb );
+	void setColor( unsigned argb );
+	void setClsColor( unsigned argb );
+	void setOrigin( int x,int y );
+	void setHandle( int x,int y );
+	void setViewport( int x,int y,int w,int h );
+
+	void cls();
+	void plot( int x,int y );
+	void line( int x,int y,int x2,int y2 );
+	void rect( int x,int y,int w,int h,bool solid );
+	void oval( int x,int y,int w,int h,bool solid );
+	void text( int x,int y,const std::string &t );
+	void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
 	void image( BBCanvas *c,int x,int y,bool solid );
 
   bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{ return false; }
@@ -73,8 +76,8 @@ public:
 		glGetTexImage( GL_TEXTURE_2D,0,GL_RGBA,GL_UNSIGNED_BYTE,pixels );
 		return true;
 	}
-  void setPixel( int x,int y,unsigned argb ){}
-  void setPixelFast( int x,int y,unsigned argb ){}
+	void setPixel( int x,int y,unsigned argb );
+	void setPixelFast( int x,int y,unsigned argb );
   void copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y ){}
   void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y ){}
   unsigned getPixel( int x,int y )const{ return 0; }
@@ -129,34 +132,38 @@ public:
 		glGenerateMipmap( GL_TEXTURE_2D );
 	}
 
-	void set(){
-		if( !texture ){
-			glGenTextures( 1,&texture );
-			glBindTexture( GL_TEXTURE_2D,texture );
-			glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
-			glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA8,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
-		}
+	unsigned int textureId(){
+		if( texture ) return texture;
 
-		if( !depthbuffer ){
-			glGenRenderbuffers( 1,&depthbuffer );
-			glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer );
-			glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height );
-			glBindRenderbuffer( GL_RENDERBUFFER,0 );
-		}
+		glGenTextures( 1,&texture );
+		glBindTexture( GL_TEXTURE_2D,texture );
+		glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
+		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA8,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
 
-		if( !framebuffer ){
-			glGenFramebuffers( 1,&framebuffer );
-			glBindFramebuffer( GL_FRAMEBUFFER,framebuffer );
-			glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,texture,0 );
-			glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer );
-
-			glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
-		}else{
-			glBindFramebuffer( GL_FRAMEBUFFER,framebuffer );
-		}
+		return texture;
 	}
 
-  unsigned int getTextureId(){ return texture; }
+	unsigned int framebufferId(){
+		if( framebuffer ) return framebuffer;
+
+		glGenRenderbuffers( 1,&depthbuffer );
+		glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer );
+		glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height );
+		glBindRenderbuffer( GL_RENDERBUFFER,0 );
+
+		glGenFramebuffers( 1,&framebuffer );
+		glBindFramebuffer( GL_FRAMEBUFFER,framebuffer );
+		glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textureId(),0 );
+		glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer );
+
+		glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+
+		return framebuffer;
+	}
+
+	void set(){
+		glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() );
+	}
 
 	void setPixmap( BBPixmap *pm ){
 		if( flags&CANVAS_TEX_ALPHA ){
@@ -174,16 +181,6 @@ public:
 		glBindTexture( GL_TEXTURE_2D,texture );
 		glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
 		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
-	}
-
-	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
-		set();
-
-		glBindFramebuffer( GL_READ_FRAMEBUFFER,0 );
-		glBindFramebuffer( GL_DRAW_FRAMEBUFFER,framebuffer );
-		glBlitFramebuffer( src_x,src_y,src_w,src_h,x,y,src_w,src_h,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST );
-
-		glBindFramebuffer( GL_FRAMEBUFFER,0 );
 	}
 
   void bind()const{
@@ -210,6 +207,8 @@ public:
 		glBindFramebuffer( GL_FRAMEBUFFER,0 );
 		glDrawBuffer( mode );
 	}
+
+	unsigned int framebufferId(){ return 0; }
 
 	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
 	}

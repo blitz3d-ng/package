@@ -83,7 +83,16 @@ struct DimNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( DimNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="DimNode";
+		tree["pos"]=pos;
+		tree["ident"]=ident;
+		tree["tag"]=tag;
+		tree["exprs"]=exprs->toJSON( e );
+		tree["sem_type"]=sem_type->toJSON();
+		tree["sem_decl"]=sem_decl->toJSON();
+		return tree;
+	}
 };
 
 struct AssNode : public StmtNode{
@@ -311,7 +320,14 @@ struct InsertNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( InsertNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="InsertNode";
+		tree["pos"]=pos;
+		tree["expr1"]=expr1->toJSON( e );
+		tree["expr2"]=expr2->toJSON( e );
+		tree["before"]=before;
+		return tree;
+	}
 };
 
 struct CaseNode : public Node{

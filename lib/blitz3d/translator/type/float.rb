@@ -15,6 +15,10 @@ module Blitz3D
       def default_value
         '0.0f'
       end
+
+      def kind
+        'BBTYPE_FLT'
+      end
     end
   end
 end

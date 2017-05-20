@@ -19,6 +19,10 @@ module Blitz3D
       def default_value
         0
       end
+
+      def kind
+        'BBTYPE_STR'
+      end
     end
   end
 end

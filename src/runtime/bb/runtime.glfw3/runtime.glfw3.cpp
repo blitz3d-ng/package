@@ -319,6 +319,21 @@ void GLFW3Runtime::resize( int width,int height ){
 
 #include <bb/input/input.h>
 
+class GLFWInputDriver : public BBInputDriver{
+public:
+	~GLFWInputDriver(){}
+
+	BBDevice *getJoystick( int port )const{ return 0; }
+	int getJoystickType( int port )const{ return 0; }
+	int numJoysticks()const{ return 0; }
+
+	int toAscii( int key )const{
+		cout<<key<<endl;
+		if( key==28 ) return '\n';
+		return 65;
+	}
+};
+
 class GLFWJoystick : public BBDevice{
 private:
 	int idx;
@@ -346,6 +361,8 @@ public:
 };
 
 BBMODULE_CREATE( runtime_glfw3 ){
+	gx_input=d_new GLFWInputDriver();
+
 	for( int i=0;i<GLFW_JOYSTICK_LAST;i++ ){
 		if( glfwJoystickPresent( GLFW_JOYSTICK_1+i ) ){
 			GLFWJoystick *js=d_new GLFWJoystick( GLFW_JOYSTICK_1+i );

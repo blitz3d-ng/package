@@ -47,9 +47,10 @@ struct ProgNode : public Node{
 
 		tree["types"]=json::array();
 		for( int k=0;k<e->types.size();++k ){
-			tree["types"].push_back( e->types[k]->toJSON() );
+			tree["types"].push_back( e->types[k]->toFullJSON() );
 		}
 
+		tree["arrays"]=json::array();
 		tree["globals"]=json::array();
 		tree["locals"]=json::array();
 		for( int k=0;k<e->decls->size();++k ){
@@ -60,6 +61,9 @@ struct ProgNode : public Node{
 				break;
 			case DECL_GLOBAL:
 				tree["globals"].push_back( d->toJSON() );
+				break;
+			case DECL_ARRAY:
+				tree["arrays"].push_back( d->toJSON() );
 				break;
 			}
 		}

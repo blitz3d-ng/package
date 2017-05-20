@@ -11,7 +11,11 @@ module Blitz3D
           puts JSON.pretty_generate(json).red
           return InvalidType.new(json['@class'])
         end
-        klass.new(json)
+        klass.fetch(json)
+      end
+
+      def self.fetch(json)
+        new(json)
       end
     end
   end

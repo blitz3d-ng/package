@@ -1064,7 +1064,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 		case BBInputDriver::ASC_RIGHT:
 			if( curs<str.size() ) ++curs;
 			break;
-		case '\r':
+		case '\r':case '\n':
 			go=false;
 			break;
 		default:

@@ -24,6 +24,10 @@ module Blitz3D
       def ptr
         "(BBType*)&vector_type#{label}"
       end
+
+      def kind
+        'BBTYPE_VEC'
+      end
     end
   end
 end

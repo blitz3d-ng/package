@@ -353,7 +353,7 @@ public:
         glBindTexture( GL_TEXTURE_2D,0 );
       } else {
 				glEnable( GL_TEXTURE_2D );
-				glBindTexture( GL_TEXTURE_2D,canvas->getTextureId() );
+				glBindTexture( GL_TEXTURE_2D,canvas->textureId() );
 
 				glMatrixMode( GL_TEXTURE );
 				const Matrix *m=ts.matrix;
@@ -373,6 +373,9 @@ public:
 
 				bool no_filter=flags&BBCanvas::CANVAS_TEX_NOFILTERING;
 				bool mipmap=flags&BBCanvas::CANVAS_TEX_MIPMAP;
+
+				no_filter=true;
+				mipmap=true;
 
 				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR );
 				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) );
@@ -432,6 +435,8 @@ public:
     }
   }
 
+	int viewport[4];
+
   //rendering
 	bool begin( const std::vector<BBLightRep*> &l ){
 		glEnable( GL_SCISSOR_TEST );
@@ -460,14 +465,18 @@ public:
 		lights.clear();
 		for( int i=0;i<l.size();i++ ) lights.push_back( dynamic_cast<GLLight*>(l[i]) );
 
+		glGetIntegerv( GL_VIEWPORT,viewport );
+
 		return true;
 	}
+
 	void clear( const float rgb[3],float alpha,float z,bool clear_argb,bool clear_z ){
 		if( !clear_argb && !clear_z ) return;
 		glClearColor( rgb[0],rgb[1],rgb[2],alpha );
 		glClearDepth( z );
 		glClear( (clear_argb?GL_COLOR_BUFFER_BIT:0)|(clear_z?GL_DEPTH_BUFFER_BIT:0)  );
-  }
+	}
+
 	void render( BBMesh *m,int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
 		GLMesh *mesh=(GLMesh*)m;
 
@@ -507,6 +516,12 @@ public:
 
 		glEnable( GL_BLEND );
 		glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho( 0.0f,viewport[2],viewport[3],0.0f,-1.0f,1.0f );
+
+		glViewport( 0,0,viewport[2],viewport[3] );
   }
 
   //lighting
