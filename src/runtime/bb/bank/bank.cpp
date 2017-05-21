@@ -35,13 +35,13 @@ void bbBank::resize( int n ){
 
 static set<bbBank*> bank_set;
 
-inline void debugBank( bbBank *b ){
+void debugBank( bbBank *b ){
 	if( bb_env.debug ){
 		if( !bank_set.count( b ) ) RTEX( "bbBank does not exist" );
 	}
 }
 
-inline void debugBank( bbBank *b,int offset ){
+void debugBank( bbBank *b,int offset ){
 	if( bb_env.debug ){
 		debugBank( b );
 		if( offset>=b->size ) RTEX( "Offset out of range" );

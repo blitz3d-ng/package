@@ -4,6 +4,7 @@
 #include <bb/pixmap/pixmap.h>
 #include <bb/event/event.h>
 #include <bb/system/system.h>
+#include <bb/input/input.h>
 
 #ifdef WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -44,6 +45,7 @@ GLFW3Runtime::GLFW3Runtime( GLFWwindow *wnd ):wnd(wnd),graphics(0){
 	runtimes.insert( make_pair( wnd,this ) );
 
 	glfwSetCursorPosCallback( wnd,_onMouseMove );
+	glfwSetMouseButtonCallback( wnd,_onMouseButton );
 	glfwSetKeyCallback( wnd,_onKeyChange );
 	glfwSetCharModsCallback( wnd,_onCharMods );
 	glfwSetFramebufferSizeCallback( wnd,_onResize );
@@ -214,6 +216,14 @@ public:
 	void freeFont( BBFont *font ){
 		delete font;
 	}
+
+	void moveMouse( int x,int y ){
+		glfwSetCursorPos( wnd,x,y );
+	}
+
+	void setPointerVisible( bool vis ){
+		glfwSetInputMode( wnd,GLFW_CURSOR,vis?GLFW_CURSOR_NORMAL:GLFW_CURSOR_HIDDEN );
+	}
 };
 
 BBGraphics *GLFW3Runtime::openGraphics( int w,int h,int d,int driver,int flags ){
@@ -277,15 +287,22 @@ void *GLFW3Runtime::window(){
 }
 
 void GLFW3Runtime::moveMouse( int x,int y ){
+	graphics->moveMouse( x,y );
 }
 
 void GLFW3Runtime::setPointerVisible( bool vis ){
+	graphics->setPointerVisible( vis );
 }
 
 void GLFW3Runtime::_onMouseMove( GLFWwindow *w,double x,double y ){
 	int sw,sh;
 	glfwGetWindowSize( w,&sw,&sh );
 	BBEvent ev( BBEVENT_MOUSEMOVE,0,(x/sw)*bbGraphicsWidth(),(y/sh)*bbGraphicsHeight() );
+	bbOnEvent.run( &ev );
+}
+
+void GLFW3Runtime::_onMouseButton( GLFWwindow *w,int button,int action,int mods ){
+	BBEvent ev( action==GLFW_PRESS?BBEVENT_MOUSEDOWN:BBEVENT_MOUSEUP,button+1 );
 	bbOnEvent.run( &ev );
 }
 

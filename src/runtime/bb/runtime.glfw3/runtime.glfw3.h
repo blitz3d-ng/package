@@ -17,6 +17,7 @@ private:
 	static void _onResize( GLFWwindow *wnd,int w,int h );
 	static void _onClose( GLFWwindow *w );
 	static void _onMouseMove( GLFWwindow *w,double x,double y );
+	static void _onMouseButton( GLFWwindow *w,int button,int action,int mods );
 	static void _onKeyChange( GLFWwindow *w,int key,int scancode,int action,int mods );
 
 	void resize( int width,int height );

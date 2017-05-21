@@ -6,6 +6,7 @@ platforms:
 
 dependencies:
   - system
+  - bank
 
 commands:
   - CallDLL( dll_name$,func_name$,in_bank%=0,out_bank%=0 ):"bbCallDLL"
