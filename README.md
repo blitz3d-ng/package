@@ -2,44 +2,60 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/ww8qjywqm6rb5rnu/branch/master?svg=true)](https://ci.appveyor.com/project/kfprimm/blitz3d-ng-gj3xh/branch/master)
 [![Build Status](https://travis-ci.org/blitz3d-ng/blitz3d-ng.svg?branch=master)](https://travis-ci.org/blitz3d-ng/blitz3d-ng)
 
-This project is an attempt to revive & modernize Blitz3D.
+This project is an attempt to revive & modernize Blitz3D by adding cross-platform & 64-bit support.
+
+So far, we've made huge strides in making this happen. Some of the basic samples (such as [castle](_release/samples/mak/castle), [driver](_release/samples/driver), and [tron](_release/samples/mak/tron)) can run on macOS (64 bit!) with little-to-no modifications.
+
+This is achieved by translating Blitz source into C code.
+
+(Note: The Windows build still uses the original Blitz code generation.)
+
+## Download
+
+You can get the latest Windows build directly from our [CI tool](https://ci.appveyor.com/api/projects/kfprimm/blitz3d-ng-gj3xh/artifacts/release.zip?branch=master&job=Environment:%20TOOLSET=vs2015;%20Configuration:%20release;%20Platform:%20win32). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
+
+If you're looking to customize your build further or interested in macOS or Linux, please see the next section.
 
 ## Building
 
-Right now, Windows is the only platform that is functional to any degree. However, as we restructure things we're starting to compile what code we can for other platforms to slowly gain portability.
+To keep the project simple to build, all 3rd-party dependencies are included in the repo or linked as submodules.
+
+### Prerequisites (All platforms)
+
+You'll need [premake (alpha 11)](https://premake.github.io/download.html) and a valid [ruby 2+](https://www.ruby-lang.org/en/) install.
+
+We use these tools to generate the appropriate build files per-platform.
 
 ### Windows
 
-You'll need a copy of [Visual Studio](https://www.visualstudio.com/vs/community/) and [premake](https://premake.github.io/download.html).
+Install [Visual Studio](https://www.visualstudio.com/vs/community/).
 
 Open up a command prompt via `Start -> Visual Studio 2015 -> Developer Command Prompt for VS2015`.
 
 ```
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 > cd blitz3d-ng
-> premake5 vs2015 && devenv build\blitz3d.sln /build release
+> ruby bin\blitz3d config && premake5 vs2015 && devenv build\blitz3d.sln /build "release|win32"
 ```
 
 ### macOS
 
-Install [Xcode](https://developer.apple.com/xcode/), [premake](https://premake.github.io/download.html), and  [brew](http://brew.sh/).
+Install [Xcode](https://developer.apple.com/xcode/) and [brew](http://brew.sh/).
 
 ```bash
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
 $ brew install wxmac glfw3
-$ premake5 gmake && make config=release_macos
+$ bin/blitz3d config && premake5 gmake && make config=release_macos
 ```
 
 ### Linux
 
-Install [premake](https://premake.github.io/download.html).
-
 ```bash
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
-$ apt-get install build-essential libwxgtk3.0-dev
-$ premake5 gmake && make config=release_linux
+$ apt-get install -y build-essential libwxgtk3.0-dev
+$ bin/blitz3d config && premake5 gmake && make config=release_linux
 ```
 
 Alternatively, you can build everything with [docker](https://docker.io).
@@ -53,10 +69,7 @@ $ docker-compose run env
 
 ## Documentation
 
-The original Blitz3D help is available in the [\_release/help](_release/help) directory
-in HTML form. We've started replacing it with a Markdown based system.
-
-If you have ruby 2+ installed, you can rebuild it.
+The original Blitz3D help is available in the [\_release/help](_release/help) directory in HTML form. We've started replacing it with a Markdown based system.
 
 ```bash
 $ bundle install
