@@ -11,6 +11,6 @@ $debug = !ARGV.delete('-d').nil?
 
 ast = JSON.parse(ARGF.read)
 
-STDERR.puts JSON.pretty_generate(ast).blue
+# STDERR.puts JSON.pretty_generate(ast).blue
 
 puts Blitz3D::AST::Node.load(ast).to_c

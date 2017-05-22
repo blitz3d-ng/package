@@ -374,9 +374,6 @@ public:
 				bool no_filter=flags&BBCanvas::CANVAS_TEX_NOFILTERING;
 				bool mipmap=flags&BBCanvas::CANVAS_TEX_MIPMAP;
 
-				no_filter=true;
-				mipmap=true;
-
 				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR );
 				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) );
 
@@ -480,25 +477,27 @@ public:
 	void render( BBMesh *m,int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
 		GLMesh *mesh=(GLMesh*)m;
 
+#define PTR(op) reinterpret_cast<void*>(op)
+
 		for( int i=0;i<8;i++ ){
 			glClientActiveTextureARB( GL_TEXTURE0+i );
 
 			glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 			glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[4] );
-			glTexCoordPointer( 2,GL_FLOAT,4*4,0 );
+			glTexCoordPointer( 2,GL_FLOAT,4*sizeof(float),PTR(first_vert*sizeof(float)*4) );
 		}
 
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[0] );
-		glVertexPointer( 3,GL_FLOAT,0,0 );
+		glVertexPointer( 3,GL_FLOAT,0,PTR(first_vert*sizeof(float)*3) );
 
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[1] );
-		glNormalPointer( GL_FLOAT,0,0 );
+		glNormalPointer( GL_FLOAT,0,PTR(first_vert*sizeof(float)*3) );
 
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[2] );
-		glColorPointer( 4,GL_UNSIGNED_INT,0,0 );
+		glColorPointer( 4,GL_UNSIGNED_INT,0,PTR(first_vert*sizeof(float)*4) );
 
 		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,mesh->vbo[3] );
-		glDrawElements( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,reinterpret_cast<void*>(first_tri*3) );
+		glDrawElements( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,PTR(first_tri*3*sizeof(unsigned int)) );
 	}
 
   void end(){
