@@ -2,6 +2,7 @@
 #define BB_BLITZ3D_COMMANDS_H
 
 #include <bb/audio/commands.h>
+#include <bb/graphics/commands.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -217,8 +217,10 @@ void GLB2DCanvas::setPixel( int x,int y,unsigned argb ){
 	setPixelFast( x,y,argb );
 }
 
+#define UC(c) static_cast<unsigned char>(c)
+
 void GLB2DCanvas::setPixelFast( int x,int y,unsigned argb ){
-	unsigned char rgba[4]={ (argb>>16)&255,(argb>>8)&255,argb&255,(argb>>24)&255 };
+	unsigned char rgba[4]={ UC((argb>>16)&255),UC((argb>>8)&255),UC(argb&255),UC((argb>>24)&255) };
 
 	set();
 	glRasterPos2f( x,y+1 );

@@ -4,10 +4,12 @@
 #include <bb/blitz/commands.h>
 
 #ifdef __cplusplus
+class BBFont;
 class BBCanvas;
 class bbImage;
 extern "C" {
 #else
+typedef void BBFont;
 typedef void BBCanvas;
 typedef void bbImage;
 #endif

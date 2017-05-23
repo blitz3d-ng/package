@@ -82,6 +82,7 @@ void BBCALL _odeGeomSyncEntity( bb_ptr_t g,Entity *e );
 // JV-ODE compatibility
 void     BBCALL _odeRegisterODE( int key1,int key2,int key3,int key4 );
 float    BBCALL _odeGetVersion();
+bb_int_t BBCALL _odeDemoTime();
 
 #ifdef __cplusplus
 }
