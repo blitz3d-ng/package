@@ -11,12 +11,8 @@ module Blitz3D
         @sem_decl = Decl.new(json['sem_decl'])
       end
 
-      def to_h
-        "<ArrayVarNode>".red
-      end
-
       def to_c
-        i = exprs.map { |e| "[#{e.to_c}-1]" }
+        i = exprs.map { |e| "[#{e.to_c}]" }
         "(((#{sem_decl.type.element_type.to_c}*)_a#{ident}.base.data)#{i.join('')})"
       end
     end

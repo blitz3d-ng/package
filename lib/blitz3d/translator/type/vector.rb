@@ -13,6 +13,10 @@ module Blitz3D
         'void*'
       end
 
+      def to_h
+        "struct BBVecTypeDecl vector_type#{label}={ 6,#{size},#{element_type.ptr} }"
+      end
+
       def size
         sizes.inject(&:+)
       end

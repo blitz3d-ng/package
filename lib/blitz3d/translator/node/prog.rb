@@ -18,17 +18,11 @@ module Blitz3D
       def to_c
         includes = modules.map { |m| "#include <bb/#{m}/commands.h>" }.join("\n")
 
-        types = self.types.map do |type|
-          if type.is_a?(VectorType)
-            "struct BBVecTypeDecl vector_type#{type.label}={ 6,#{type.size},#{type.element_type.ptr} }"
-          end
-        end.compact
+        compat_decls = ['struct BBVecTypeDecl{ int type;int size;BBType *elementType; }']
+        forward_decls = []
 
-        unless types.empty?
-          types.unshift 'struct BBVecTypeDecl{ int type;int size;BBType *elementType; }'
-          types << ''
-        end
-
+        types = self.types.map(&:to_h).compact
+        types << '' unless types.empty?
         types = types.join(";\n")
 
         struct_init = []
@@ -40,15 +34,28 @@ module Blitz3D
 
           type = "#{struct.sem_type.to_type}.type"
 
+          decl = "struct #{struct.sem_type.to_type}_decl #{struct.sem_type.to_type}"
+
+          compat_decls << "struct #{struct.sem_type.to_type}_decl { BBObjType type; BBType *fields[#{struct.sem_type.fields.size-1}]; }"
+
+          forward_decls << "extern #{decl}"
+
           struct_init << "#{type}.used.next=#{type}.used.prev=&#{type}.used;#{type}.free.next=#{type}.free.prev=&#{type}.free"
 
-          "struct #{struct.sem_type.to_type}_decl { BBObjType type; BBType *fields[#{struct.sem_type.fields.size-1}]; };\nstruct #{struct.sem_type.to_type}_decl #{struct.sem_type.to_type}={ { {5},{0,0,0,0,-1},{0,0,0,0,-1},#{struct.sem_type.fields.size},{#{fields.shift}} }, { #{fields.join(',')} } }"
+          "#{decl}={ { {5},{0,0,0,0,-1},{0,0,0,0,-1},#{struct.sem_type.fields.size},{#{fields.shift}} }, { #{fields.join(',')} } }"
         end
+
         structs << '' unless structs.empty?
         structs = structs.join(";\n")
 
         struct_init << '' unless struct_init.empty?
         struct_init = struct_init.join(";\n")
+
+        compat_decls << '' unless compat_decls.empty?
+        compat_decls = compat_decls.join(";\n")
+
+        forward_decls << '' unless forward_decls.empty?
+        forward_decls = forward_decls.join(";\n")
 
         func_decls = funcs.map(&:to_h).join(";\n")
         func_decls += ';' unless func_decls.blank?
@@ -74,6 +81,8 @@ module Blitz3D
 
         statements = [
           includes,
+          compat_decls,
+          forward_decls,
           types,
           structs,
           arrays,

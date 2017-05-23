@@ -177,8 +177,8 @@ int		 BBCALL _bbObjEachFirst2( BBObj **var,BBObjType *type );
 int		 BBCALL _bbObjEachNext2( BBObj **var );
 int		 BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 );
 BBStr *	 BBCALL _bbObjToStr( BBObj *obj );
-int		 BBCALL _bbObjToHandle( BBObj *obj );
-BBObj *	 BBCALL _bbObjFromHandle( int handle,BBObjType *type );
+bb_int_t		 BBCALL _bbObjToHandle( BBObj *obj );
+BBObj *	 BBCALL _bbObjFromHandle( bb_int_t handle,BBObjType *type );
 void	 BBCALL _bbNullObjEx();
 
 void	 BBCALL _bbRestore( BBData *data );

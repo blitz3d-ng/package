@@ -38,8 +38,8 @@ static BBStr usedStrs,freeStrs;
 static int next_handle;
 
 //object<->handle maps
-static map<int,BBObj*> handle_map;
-static map<BBObj*,int> object_map;
+static map<bb_int_t,BBObj*> handle_map;
+static map<BBObj*,bb_int_t> object_map;
 
 BBType _bbIntType( BBTYPE_INT );
 BBType _bbFltType( BBTYPE_FLT );
@@ -307,7 +307,7 @@ void BBCALL _bbObjDelete( BBObj *obj ){
 			break;
 		}
 	}
-	map<BBObj*,int>::iterator it=object_map.find( obj );
+	map<BBObj*,bb_int_t>::iterator it=object_map.find( obj );
 	if( it!=object_map.end() ){
 		handle_map.erase( it->second );
 		object_map.erase( it );
@@ -444,9 +444,9 @@ BBStr * BBCALL _bbObjToStr( BBObj *obj ){
 	return s;
 }
 
-int BBCALL _bbObjToHandle( BBObj *obj ){
+bb_int_t BBCALL _bbObjToHandle( BBObj *obj ){
 	if( !obj || !obj->fields ) return 0;
-	map<BBObj*,int>::const_iterator it=object_map.find( obj );
+	map<BBObj*,bb_int_t>::const_iterator it=object_map.find( obj );
 	if( it!=object_map.end() ) return it->second;
 	++next_handle;
 	object_map[obj]=next_handle;
@@ -454,8 +454,8 @@ int BBCALL _bbObjToHandle( BBObj *obj ){
 	return next_handle;
 }
 
-BBObj * BBCALL _bbObjFromHandle( int handle,BBObjType *type ){
-	map<int,BBObj*>::const_iterator it=handle_map.find( handle );
+BBObj * BBCALL _bbObjFromHandle( bb_int_t handle,BBObjType *type ){
+	map<bb_int_t,BBObj*>::const_iterator it=handle_map.find( handle );
 	if( it==handle_map.end() ) return 0;
 	BBObj *obj=it->second;
 	return obj->type==type ? obj : 0;

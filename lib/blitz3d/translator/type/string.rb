@@ -8,10 +8,6 @@ module Blitz3D
         'BBStr*'
       end
 
-      def to_h
-        to_c
-      end
-
       def ptr
         '&_bbStrType'
       end

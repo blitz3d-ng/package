@@ -17,6 +17,9 @@ module Blitz3D
       def self.fetch(json)
         new(json)
       end
+
+      def to_h
+      end
     end
   end
 end

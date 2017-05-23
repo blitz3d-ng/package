@@ -84,6 +84,10 @@ struct FuncDeclNode : public DeclNode{
 		tree["file"]=file;
 		tree["ident"]=ident;
 		tree["tag"]=tag;
+		tree["types"]=json::array();
+		for( int k=0;k<sem_env->types.size();++k ){
+			tree["types"].push_back( sem_env->types[k]->toFullJSON() );
+		}
 		tree["locals"]=json::array();
 		for( int k=0;k<sem_env->decls->size();++k ){
 			Decl *d=sem_env->decls->decls[k];
