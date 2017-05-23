@@ -4,6 +4,8 @@
 #include "../../config/config.h"
 #include "module.h"
 
+#include <math.h>
+
 enum{
 	BBTYPE_END=0,
 	BBTYPE_INT=1,BBTYPE_FLT=2,

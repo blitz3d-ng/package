@@ -12,8 +12,8 @@ module Blitz3D
         @sem_brk = json['sem_brk']
       end
 
-      def to_c
-        "for( _bbObjEachFirst2(&#{var.to_c},&_t#{type_ident}.type);#{var.to_c}!=0;_bbObjEachNext2(&#{var.to_c}) ){\n  #{stmts.to_c.indent}\n}"
+      def to_c(&cleanup)
+        "for( _bbObjEachFirst2(&#{var.to_c},&_t#{type_ident}.type);#{var.to_c}!=0;_bbObjEachNext2(&#{var.to_c}) ){\n  #{stmts.to_c(&cleanup).indent}\n}"
       end
     end
   end

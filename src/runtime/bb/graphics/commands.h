@@ -1,9 +1,11 @@
 #ifndef BB_GRAPHICS_COMMANDS_H
 #define BB_GRAPHICS_COMMANDS_H
 
-#include <bb/blitz2d/commands.h>
+#include <bb/blitz/commands.h>
 
 #ifdef __cplusplus
+class BBCanvas;
+class bbImage;
 extern "C" {
 #else
 typedef void BBCanvas;

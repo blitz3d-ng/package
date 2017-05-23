@@ -352,6 +352,9 @@ premake5:
     - texture.h
     - world.h
 
+  - includedirs:
+    - ../../../deps/freetype2/src/include
+
   - filter: platforms:macos or linux or emscripten
   - defines:
     - USE_ASSIMP

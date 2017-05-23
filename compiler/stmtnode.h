@@ -163,7 +163,12 @@ struct GosubNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( GosubNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="GosubNode";
+		tree["pos"]=pos;
+		tree["ident"]=ident;
+		return tree;
+	}
 };
 
 struct IfNode : public StmtNode{
@@ -277,7 +282,7 @@ struct ReturnNode : public StmtNode{
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ReturnNode";
 		tree["pos"]=pos;
-		tree["expr"]=expr->toJSON( e );
+		if( expr ) tree["expr"]=expr->toJSON( e );
 		tree["returnLabel"]=returnLabel;
 		return tree;
 	}
@@ -397,7 +402,12 @@ struct ReadNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( ReadNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="ReadNode";
+		tree["pos"]=pos;
+		tree["var"]=var->toJSON( e );
+		return tree;
+	}
 };
 
 struct RestoreNode : public StmtNode{
@@ -407,7 +417,13 @@ struct RestoreNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	DEFAULT_NODE_JSON( RestoreNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="RestoreNode";
+		tree["pos"]=pos;
+		tree["ident"]=ident;
+		tree["sem_label"]=sem_label->toJSON();
+		return tree;
+	}
 };
 
 #endif

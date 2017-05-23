@@ -1,0 +1,24 @@
+# This is a list of files that we DO NOT want to include in the automated
+# testing.
+
+_release/Games/TunnelRun/functions.bb
+_release/Games/TunnelRun/globs.bb
+_release/Games/wing_ring/menus.bb
+_release/Games/wing_ring/player2.bb
+
+_release/help/commands/2d_examples/CreateNetPlayer.bb
+_release/help/commands/2d_examples/DeleteNetPlayer.bb
+_release/help/commands/2d_examples/Include.bb
+_release/help/commands/2d_examples/NetMsgData.bb
+_release/help/commands/2d_examples/NetMsgFrom.bb
+_release/help/commands/2d_examples/NetMsgTo.bb
+_release/help/commands/2d_examples/NetMsgType.bb
+_release/help/commands/2d_examples/NetPlayerLocal.bb
+_release/help/commands/2d_examples/NetPlayerName.bb
+_release/help/commands/2d_examples/RecvNetMsg.bb
+_release/help/commands/2d_examples/SendNetMsg.bb
+_release/help/commands/2d_examples/StartNetGame.bb
+_release/help/commands/2d_examples/StopNetGame.bb
+_release/help/commands/3d_examples/media/makbot/MAK-sfx.bb
+
+_release/samples/mak/anim/makbot/MAK-sfx.bb

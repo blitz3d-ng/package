@@ -15,7 +15,7 @@ module Blitz3D
       end
 
       def to_c
-        inspect
+        inspect.red
       end
     end
   end

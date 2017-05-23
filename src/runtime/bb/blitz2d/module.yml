@@ -33,7 +33,7 @@ commands:
 
   # movies
   - OpenMovie%( file$ ):"bbOpenMovie"
-  - DrawMovie%( movie%,x%=0,y%=0,w%=-1h%=-1 ):"bbDrawMovie"
+  - DrawMovie%( movie%,x%=0,y%=0,w%=-1,h%=-1 ):"bbDrawMovie"
   - MovieWidth%( movie% ):"bbMovieWidth"
   - MovieHeight%( movie% ):"bbMovieHeight"
   - MoviePlaying%( movie% ):"bbMoviePlaying"

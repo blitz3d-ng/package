@@ -18,7 +18,7 @@ commands:
   - Rnd#( from#,to#=0 ):"bbRnd"
   - Rand%( from%,to%=1 ):"bbRand"
   - SeedRnd( seed% ):"bbSeedRnd"
-  - RndSeed( ):"bbRndSeed"
+  - RndSeed%( ):"bbRndSeed"
 
 premake5:
   files:

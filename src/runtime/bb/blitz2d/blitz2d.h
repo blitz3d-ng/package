@@ -4,5 +4,6 @@
 #include "font.h"
 #include "movie.h"
 #include "graphics.h"
+#include "commands.h"
 
 #endif

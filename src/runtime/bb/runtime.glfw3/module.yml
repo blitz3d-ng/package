@@ -15,6 +15,9 @@ dependencies:
   - blitz3d.gl
   - pixmap
 
+  - input
+  - timer
+
 premake5:
   - files:
     - runtime.glfw3.cpp

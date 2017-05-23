@@ -68,6 +68,8 @@ struct ProgNode : public Node{
 			}
 		}
 
+		tree["data"]=datas->toJSON( e );
+
 		tree["stmts"]=stmts->toJSON( e );
 		return tree;
 	}

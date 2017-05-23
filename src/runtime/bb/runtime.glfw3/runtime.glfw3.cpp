@@ -360,6 +360,27 @@ public:
 	}
 };
 
+#ifndef WIN32
+#include <bb/timer/timer.h>
+
+class GLFWTimer : public BBTimer{
+protected:
+	int hertz;
+public:
+	GLFWTimer( int h ):hertz(h){}
+	~GLFWTimer(){}
+
+	int wait(){
+		return 0; // FIXME: implement this properly.
+	}
+};
+
+BBTimer * BBCALL _bbCreateTimer( int hertz ){
+	return new GLFWTimer( hertz );
+}
+
+#endif
+
 BBMODULE_CREATE( runtime_glfw3 ){
 	gx_input=d_new GLFWInputDriver();
 

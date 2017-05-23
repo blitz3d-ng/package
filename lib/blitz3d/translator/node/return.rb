@@ -12,7 +12,7 @@ module Blitz3D
       def to_c(&cleanup)
         cleanup = cleanup.yield
         cleanup << "\n" unless cleanup.blank?
-        "#{cleanup}return #{@expr.to_c}"
+        "#{cleanup}return #{expr.try(:to_c) || 0}"
       end
     end
   end
