@@ -37,9 +37,8 @@ when 'run'
 
   in_file = ARGV[-1]
   out_file = Tempfile.new('blitzcc')
-
-  `_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | bin/ast2c | clang++ -o #{out_file.path} -x c - \`bin/bb-config --#{runtime}\``
-  `#{out_file.path}`
+  system "_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | bin/ast2c | clang++ -o #{out_file.path} -x c - \`bin/bb-config --#{runtime}\`"
+  system out_file.path
   out_file.unlink
 when 'help'
   if ARGV.include?('--lint')

@@ -1,10 +1,11 @@
-name: Test
+name: Unit Test
 description: Provides unit testing functions.
 
 dependencies:
   - blitz
 
 commands:
+  - Context( mesg$ ):"bbContext"
   - Expect( condition%,mesg$ ):"bbExpect"
 
 premake5:

@@ -1,6 +1,6 @@
 
-#ifndef BBBANK_H
-#define BBBANK_H
+#ifndef BB_UNIT_TEST_H
+#define BB_UNIT_TEST_H
 
 #include "commands.h"
 
