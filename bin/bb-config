@@ -3,11 +3,18 @@
 require 'json'
 require 'os'
 
-PLATFORM ||= (OS.mac? && 'macos')
-PLATFORM ||= (OS.linux? && 'linux')
+PLATFORM = if ARGV.include?('--emscripten')
+  'emscripten'
+elsif OS.mac?
+  'macos'
+elsif OS.linux?
+  'linux'
+end
 
-if ARGV.include?('--emscripten')
-  PLATFORM = 'emscripten'
+RUNTIME = if ARGV.include?('--test')
+  'test'
+else
+  'opengl'
 end
 
 INCLUDE_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'runtime'))
@@ -27,12 +34,10 @@ if configs[PLATFORM].nil?
   exit 1
 end
 
-RUNTIME = 'opengl'
-
-OPTIONS = []
-
-if PLATFORM == 'emscripten'
-  OPTIONS << '-s LEGACY_GL_EMULATION=1'
+OPTIONS = if PLATFORM == 'emscripten'
+  '-s LEGACY_GL_EMULATION=1'
+else
+  []
 end
 
 config = configs[PLATFORM][RUNTIME] || configs[PLATFORM].first[0]

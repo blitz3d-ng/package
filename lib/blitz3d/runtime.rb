@@ -36,7 +36,7 @@ module Blitz3D
 
       case view
       when :raw
-        modules.map { |id| Module.find(id) }.select { |mod| mod.supports?(platform) }
+        modules.map { |id| Module.find(id) || raise(StandardError, "Cannot find module '#{id}'.") }.select { |mod| mod.supports?(platform) }
       when :tree
         deps = dependencies(:raw, platform)
         valid_deps = deps.reject { |dep| deps.map { |td| td.has_dependency?(dep, platform) }.any? }

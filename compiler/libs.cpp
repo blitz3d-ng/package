@@ -68,7 +68,7 @@ static int next( istream &in ){
 	return curr=t;
 }
 
-static const char *linkRuntime(){
+static const char *linkRuntime(string rt){
 #ifdef WIN32
 	while( const char *sym=runtimeLib->nextSym() ){
 
@@ -136,7 +136,7 @@ static const char *linkRuntime(){
 	}
 #else
 	json index;
-	ifstream i(home+"/lib/" BB_PLATFORM "/opengl.config.json");
+	ifstream i(home+"/lib/" BB_PLATFORM "/"+rt+".config.json");
 	i >> index;
 
 	for( auto& module:index["modules"] ) {
@@ -363,9 +363,9 @@ const char *openLibs( string rt ){
 	return 0;
 }
 
-const char *linkLibs(){
+const char *linkLibs( string rt ){
 
-	if( const char *p=linkRuntime() ) return p;
+	if( const char *p=linkRuntime( rt ) ) return p;
 
 	if( const char *p=linkUserLibs() ) return p;
 

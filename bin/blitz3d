@@ -23,6 +23,24 @@ end
 command = ARGV[0]
 
 case command
+when 'run'
+  if ARGV.include?('-r')
+    runtime = ARGV[ARGV.find_index('-r') + 1] || []
+  else
+    runtime = 'opengl'
+  end
+
+  if runtime.nil?
+    puts "Missing runtime.".red
+    exit 1
+  end
+
+  in_file = ARGV[-1]
+  out_file = Tempfile.new('blitzcc')
+
+  `_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | bin/ast2c | clang++ -o #{out_file.path} -x c - \`bin/bb-config --#{runtime}\``
+  `#{out_file.path}`
+  out_file.unlink
 when 'help'
   if ARGV.include?('--lint')
     module_names = [ARGV[ARGV.find_index('--lint') + 1]] || []

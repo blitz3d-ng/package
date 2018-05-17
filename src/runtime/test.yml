@@ -1,0 +1,14 @@
+name: Test
+
+platforms:
+  - win32
+  - mingw32
+  - macos
+  - linux
+  - emscripten
+
+modules:
+  - blitz
+  - userlibs
+  - runtime.console
+  - test

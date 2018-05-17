@@ -16,9 +16,9 @@ module Blitz3D
         ident = sem_decl.type.symbol.present? ? sem_decl.type.symbol : "_f#{sem_decl.name}"
 
         args = exprs.map(&:to_c)
-        args = " #{args.join(',')} ".strip
+        args = "( #{args.join(', ')} )".gsub(/\(\s+\)/, '()')
 
-        "#{ident}(#{args})"
+        "#{ident}#{args.gsub(/\s+/, ' ')}"
       end
     end
   end

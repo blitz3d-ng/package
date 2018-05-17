@@ -247,7 +247,7 @@ int main( int argc,char *argv[] ){
 
 	if( const char *er=openLibs( rt ) ) err( er );
 
-	if( const char *er=linkLibs() ) err( er );
+	if( const char *er=linkLibs( rt ) ) err( er );
 
 	if( showhelp ) showHelp();
 	if( dumpkeys ) dumpKeys( true,true,dumphelp );

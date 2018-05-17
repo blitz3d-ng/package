@@ -1,0 +1,13 @@
+name: Test
+description: Provides unit testing functions.
+
+dependencies:
+  - blitz
+
+commands:
+  - Expect( condition%,mesg$ ):"bbExpect"
+
+premake5:
+  files:
+    - test.cpp
+    - test.h
