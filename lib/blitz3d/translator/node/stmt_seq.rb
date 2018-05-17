@@ -13,7 +13,7 @@ module Blitz3D
 
         f.write(@stmts.map do |stmt|
           code = stmt.to_c(&cleanup)
-          code = (code.last != '}' && code.last != ';') ? "#{code};" : code
+          code = (code.last != '}' && code.last != ';' && !stmt.respond_to?(:no_semi)) ? "#{code};" : code
           $debug ? "\n_bbDebugStmt(#{stmt.pos},#{file.inspect});\n#{code}" : "#{code}\n"
         end.join(""))
 
