@@ -12,10 +12,6 @@ module Blitz3D
       def to_c(&cleanup)
         "#{ident}:"
       end
-
-      def no_semi
-        true
-      end
     end
   end
 end

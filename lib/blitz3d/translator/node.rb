@@ -5,6 +5,7 @@ class String
 end
 
 require_relative './decl'
+require_relative './label'
 
 require_relative './node/base'
 require_relative './node/invalid'
@@ -32,6 +33,7 @@ require_relative './node/int_const'
 require_relative './node/string_const'
 
 require_relative './node/decl'
+require_relative './node/data_decl'
 require_relative './node/func_decl'
 require_relative './node/struct_decl'
 require_relative './node/var_decl'

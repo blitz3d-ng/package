@@ -18,7 +18,7 @@ public:
 	void setPointerVisible( bool vis ){}
 };
 
-BBRuntime *bbCreateRuntime(){
+BBRuntime *bbCreateConsoleRuntime(){
 	return d_new ConsoleRuntime();
 }
 

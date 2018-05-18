@@ -12,8 +12,14 @@ module Blitz3D
       end
 
       def to_c
-        i = exprs.map { |e| "[#{e.to_c}]" }
-        "(((#{sem_decl.type.element_type.to_c}*)_a#{ident}.base.data)#{i.join('')})"
+        i = exprs.map.with_index { |e, i| "(#{e.to_c} * #{var}.scales[#{i}])" }
+        "((#{sem_decl.type.element_type.to_c}*)#{var}.data)[#{i.join(' + ')}]"
+      end
+
+      protected
+
+      def var
+        "_a#{ident}.base"
       end
     end
   end

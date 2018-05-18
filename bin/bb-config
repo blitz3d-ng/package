@@ -35,9 +35,13 @@ if configs[PLATFORM].nil?
 end
 
 OPTIONS = if PLATFORM == 'emscripten'
-  '-s LEGACY_GL_EMULATION=1'
+  ['-s LEGACY_GL_EMULATION=1']
 else
   []
+end
+
+if ARGV.include?('--test')
+  OPTIONS << '-fprofile-arcs -ftest-coverage'
 end
 
 config = configs[PLATFORM][RUNTIME] || configs[PLATFORM].first[0]

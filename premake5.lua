@@ -2,7 +2,7 @@ require 'src/emcc'
 
 -- premake5.lua
 workspace "blitz3d"
-  configurations { "debug", "release" }
+  configurations { "debug", "release", "test" }
   platforms { "win32", "win64", "mingw32", "macos", "linux", "emscripten" }
 
   location "build"
@@ -30,7 +30,12 @@ workspace "blitz3d"
     defines "_LIB"
     targetdir "_release/lib/%{cfg.platform}"
 
-  filter "configurations:debug"
+  filter "configurations:test"
+    optimize "Off"
+    buildoptions "-fprofile-arcs -ftest-coverage -O0"
+    linkoptions "-fprofile-arcs -ftest-coverage"
+
+  filter "configurations:debug or test"
     symbols "on"
 
     defines { "DEBUG" }
@@ -121,7 +126,7 @@ workspace "blitz3d"
     gccprefix ""
     defines "BB_PLATFORM=\"emscripten\""
 
-  filter { "platforms:emscripten", "configurations:debug" }
+  filter { "platforms:emscripten", "configurations:debug", "configurations:test" }
     buildoptions "-s DEMANGLE_SUPPORT=1"
 
   filter { "platforms:emscripten", "kind:StaticLib" }

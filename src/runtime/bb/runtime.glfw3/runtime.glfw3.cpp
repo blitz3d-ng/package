@@ -16,7 +16,7 @@ using namespace std;
 
 map<GLFWwindow*,GLFW3Runtime*> runtimes;
 
-BBRuntime *bbCreateRuntime(){
+BBRuntime *bbCreateGLFW3Runtime(){
 	if( !glfwInit() ) return 0;
 
 	glfwWindowHint( GLFW_FOCUSED,1 );

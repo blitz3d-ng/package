@@ -13,7 +13,7 @@ module Blitz3D
       def number_to_number
         case op
         when 'SQR'
-          "(float)sqrt(#{lhs.to_c}, #{rhs.to_c})"
+          "(bb_float_t)pow(#{lhs.to_c}, #{rhs.to_c})"
         when 'MOD'
           if lhs.sem_type.is_a?(FloatType)
             "_bbFMod(#{lhs.to_c}, #{rhs.to_c})"

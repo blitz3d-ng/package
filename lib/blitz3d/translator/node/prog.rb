@@ -1,7 +1,7 @@
 module Blitz3D
   module AST
     class ProgNode < Node
-      attr_accessor :modules, :types, :globals, :locals, :arrays, :stmts, :funcs, :structs
+      attr_accessor :modules, :types, :globals, :locals, :arrays, :stmts, :funcs, :structs, :data
 
       def initialize(json)
         @types   = json['types'].map { |t| Type.load(t) }
@@ -12,6 +12,7 @@ module Blitz3D
         @stmts   = Node.load(json['stmts'])
         @funcs   = json['funcs'].map { |func| Node.load(func) }
         @structs = json['structs'].map { |struct| Node.load(struct) }
+        @data    = json['data'].map { |struct| Node.load(struct) }
         # STDERR.puts JSON.pretty_generate(json['structs']).red
       end
 
@@ -62,6 +63,11 @@ module Blitz3D
 
         func_defs = funcs.map(&:to_c).join("\n\n")
 
+        data_decls = data.map(&:to_c)
+        data_decls << "{ BBTYPE_END, 0 }"
+
+        data_decls = "BBData _DATA[] = {\n#{data_decls.join(",\n")}\n};"
+
         arrays = self.arrays.map do |decl|
           scale = Array.new(decl.type.dims - 1).map { 0 }
           "struct _a#{decl.name}_decl { BBArray base;int scales[#{decl.type.dims-1}]; };\nstruct _a#{decl.name}_decl _a#{decl.name}={ { 0,#{decl.type.element_type.kind},#{decl.type.dims},0 },{#{ scale.join(',') }} }"
@@ -85,6 +91,7 @@ module Blitz3D
           forward_decls,
           types,
           structs,
+          data_decls,
           arrays,
           globals,
           func_decls,

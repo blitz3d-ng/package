@@ -131,7 +131,14 @@ struct DataDeclNode : public DeclNode{
 	void translate( Codegen *g );
 	void transdata( Codegen *g );
 
-	DEFAULT_NODE_JSON( DataDeclNode );
+	json toJSON( Environ *e ){
+		json tree;tree["@class"]="DataDeclNode";
+		tree["pos"]=pos;
+		tree["file"]=file;
+		tree["expr"]=expr->toJSON( e );
+		tree["str_label"]=str_label;
+		return tree;
+	}
 };
 
 struct VectorDeclNode : public DeclNode{

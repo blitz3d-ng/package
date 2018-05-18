@@ -8,13 +8,13 @@ module Blitz3D
         @op = json['op']
         @lhs = Node.load(json['lhs'])
         @rhs = Node.load(json['rhs'])
-        @op_type = json['opType']
+        @op_type = Type.load(json['opType'])
       end
 
       def to_c
         cop = { 'LT' => '<', 'EQ' => '==', 'GT' => '>', 'LE' => '<=', 'NE' => '!=', 'GE' => '>=' }
         if op_type.is_a?(StringType) && op == 'EQ'
-          "_bbStrCompare( #{lhs.to_c},#{rhs.to_c} )"
+          "(_bbStrCompare( #{lhs.to_c},#{rhs.to_c} ) == 0)"
         else
           "#{lhs.to_c} #{cop[op]} #{rhs.to_c}"
         end

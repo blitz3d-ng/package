@@ -2,7 +2,7 @@ require 'yaml'
 
 module Blitz3D
   class Runtime
-    attr_accessor :id, :name, :platforms, :modules, :premake5
+    attr_accessor :id, :name, :platforms, :modules, :entry, :premake5
 
     def self.all
       Dir.glob('src/runtime/*.yml').map { |path| new(path) }
@@ -27,6 +27,9 @@ module Blitz3D
       @platforms = config['platforms'] || []
       @platforms += %w(win32 win64 mingw32) if @platforms.delete('windows')
       @platforms = Module::PLATFORMS.dup if @platforms.empty?
+
+      @entry = config['entry'] || {}
+      @entry['runtime'] ||= 'bbCreateUnspecifiedRuntime'
 
       @premake5 = config['premake5'] || {}
     end

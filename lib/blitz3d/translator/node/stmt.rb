@@ -6,6 +6,14 @@ module Blitz3D
       def initialize(json)
         @pos = json['pos']
       end
+
+      def row
+        (pos >> 16) & 0xffff
+      end
+
+      def col
+        pos & 0xffff
+      end
     end
   end
 end

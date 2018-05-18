@@ -33,3 +33,6 @@ modules:
   - userlibs
   - runtime.glfw3
   - runtime.html
+
+entry:
+  runtime: bbCreateGLFW3Runtime

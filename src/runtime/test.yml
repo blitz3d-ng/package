@@ -9,6 +9,30 @@ platforms:
 
 modules:
   - blitz
+  - hook
+  - event
+  - math
+  - string
+  - stdio
+  - stream
+  - sockets
+  - enet
+  - system.windows
+  - system.macos
+  - filesystem.windows
+  - filesystem.posix
+  - timer.windows
+  - bank
+  - input
+  - input.directinput8
+  - audio
+  - audio.fmod
+  - audio.openal
   - userlibs
+  - runtime
   - runtime.console
+  - runtime.html
   - test
+
+entry:
+  runtime: bbCreateConsoleRuntime
