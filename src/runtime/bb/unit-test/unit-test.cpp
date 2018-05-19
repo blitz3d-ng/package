@@ -1,7 +1,7 @@
 
 #include <bb/blitz/blitz.h>
 #include "../../stdutil/stdutil.h"
-#include "test.h"
+#include "unit-test.h"
 
 using namespace std;
 
@@ -33,13 +33,13 @@ void BBCALL bbExpect( int condition,BBStr *m ){
 }
 #endif
 
-BBMODULE_CREATE( test ){
+BBMODULE_CREATE( unit_test ){
 	_bbPasses = 0;
 	_bbFails = 0;
 	return true;
 }
 
-BBMODULE_DESTROY( test ){
+BBMODULE_DESTROY( unit_test ){
 	cout << endl << "==== Results ====" << endl;
 	cout << "Pass: " << "\033[1;32m" << _bbPasses << "\033[0m. Fail: " << "\033[1;31m" << _bbFails << "\033[0m." << endl;
 

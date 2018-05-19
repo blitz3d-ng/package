@@ -8,7 +8,7 @@ module Blitz3D
       end
 
       def row
-        (pos >> 16) & 0xffff
+        ((pos >> 16) & 0xffff) + 1
       end
 
       def col

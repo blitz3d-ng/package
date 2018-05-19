@@ -10,5 +10,5 @@ commands:
 
 premake5:
   files:
-    - test.cpp
-    - test.h
+    - unit-test.cpp
+    - unit-test.h

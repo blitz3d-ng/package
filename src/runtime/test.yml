@@ -32,7 +32,7 @@ modules:
   - runtime
   - runtime.console
   - runtime.html
-  - test
+  - unit-test
 
 entry:
   runtime: bbCreateConsoleRuntime
