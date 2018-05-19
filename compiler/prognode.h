@@ -37,9 +37,7 @@ struct ProgNode : public Node{
 	Environ *semant( Environ *e );
 	void translate( Codegen *g,const vector<UserFunc> &userfuncs );
 
-	json toJSON(){
-		Environ *e=sem_env;
-
+	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ProgNode";
 		tree["modules"]=modules;
 		tree["funcs"]=funcs->toJSON( e );
@@ -72,6 +70,10 @@ struct ProgNode : public Node{
 
 		tree["stmts"]=stmts->toJSON( e );
 		return tree;
+	}
+
+	json toJSON(){
+		return toJSON( sem_env );
 	}
 };
 

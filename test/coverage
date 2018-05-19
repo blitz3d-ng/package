@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # run the proper suite
-bin/blitz3d run -r test test/all.bb
+bin/blitz3d run -r test test/all.bb || (echo "Test suite failed. Fix it and then run the coverage generation again." && exit 1)
 
 # test a few of the compiler flags
 _release/bin/blitzcc -v
@@ -18,4 +18,4 @@ _release/bin/blitzcc -r test -j test/syntax-errors/arithmetic-on-type.bb
 _release/bin/blitzcc -r test -j test/syntax-errors/division-by-zero.bb
 
 # generate the report...
-cd build && gcovr --filter='.*compiler.*' -r .. --html --html-details -o ../coverage.html
+cd build && mkdir ../.coverage && gcovr --filter='.*(compiler|runtime).*' -r .. --html --html-details -o ../.coverage/coverage.html

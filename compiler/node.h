@@ -54,7 +54,7 @@ struct Node{
 	static TNode *call( const string &func,TNode *a0=0,TNode *a1=0,TNode *a2=0 );
 	static TNode *fcall( const string &func,TNode *a0=0,TNode *a1=0,TNode *a2=0 );
 
-	DEFAULT_NODE_JSON( Node );
+	virtual json toJSON( Environ *e )=0;
 };
 
 #endif

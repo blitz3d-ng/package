@@ -51,6 +51,13 @@ Next
 
 Expect count = 3, "There should be 3 players."
 
+p1handle = Handle(p1)
+p1object.Player = Object.Player(p1handle)
+
+Expect p1handle > 0, "There is a handle."
+Expect p1object <> Null, "The object has been recreated from the handle."
+Expect p1object\name = "Kevin" , "The recreated object has the right name."
+
 Delete p3
 Expect First Player = p1, "p1 is now first"
 Expect Last Player = p2, "p2 is now last"

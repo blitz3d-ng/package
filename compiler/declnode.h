@@ -12,8 +12,6 @@ struct DeclNode : public Node{
 	virtual void semant( Environ *e ){}
 	virtual void translate( Codegen *g ){}
 	virtual void transdata( Codegen *g ){}
-
-	DEFAULT_NODE_JSON( DeclNode );
 };
 
 struct DeclSeqNode : public Node{

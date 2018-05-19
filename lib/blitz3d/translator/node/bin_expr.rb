@@ -10,10 +10,14 @@ module Blitz3D
         @rhs = Node.load(json['rhs'])
       end
 
-      # FIXME: fix SAR instruction 
+      # FIXME: fix SAR instruction
       def to_c
         cop = { 'AND' => '&&', 'OR' => '||', 'XOR' => '^', 'SHL' => '<<', 'SHR' => '>>', 'SAR' => '>>' }
-        "(#{lhs.to_c} #{cop[op]} #{rhs.to_c})"
+        if op == 'SHR'
+          "((unsigned)(#{lhs.to_c}) #{cop[op]} #{rhs.to_c})"
+        else
+          "(#{lhs.to_c} #{cop[op]} #{rhs.to_c})"
+        end
       end
     end
   end

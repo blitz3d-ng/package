@@ -39,6 +39,8 @@ _release/help/reference/modules
 _release/help/reference/index.html
 _release/help/reference/commands.json
 
+.coverage/
+
 src/runtime/premake
 
 /build
