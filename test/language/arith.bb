@@ -19,3 +19,12 @@ Expect True, "True = True"
 
 cond = True
 Expect Not cond = False, "Not True = False"
+
+
+Expect +4 = 4, "a should equal 4"
+
+Expect Abs(-8) = 8, "absolute value of b should equal 8"
+
+Expect Sgn(-4) = -1, "sgn of -4 is -1"
+Expect Sgn(9) = 1, "sgn of 9 is 1"
+Expect Sgn(0) = 0, "sgn of 0 is 0"

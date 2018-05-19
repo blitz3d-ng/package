@@ -43,3 +43,17 @@ Insert p3 Before p1
 Insert p2 After p1
 Expect First Player = p3, "p3 is now first"
 Expect Last Player = p2, "p3 is now last"
+
+count = 0
+For p.Player = Each Player
+	count = count + 1
+Next
+
+Expect count = 3, "There should be 3 players."
+
+Delete p3
+Expect First Player = p1, "p1 is now first"
+Expect Last Player = p2, "p2 is now last"
+
+Delete Each Player
+Expect First Player = Null, "No more players..."

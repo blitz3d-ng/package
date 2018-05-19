@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# run the proper suite
+bin/blitz3d run -r test test/all.bb
+
+# test a few of the compiler flags
+_release/bin/blitzcc -v
+_release/bin/blitzcc +k
+_release/bin/blitzcc -k
+_release/bin/blitzcc -l
+
+_release/bin/blitzcc -r test -a test/all.bb
+_release/bin/blitzcc -r test -c test/all.bb
+_release/bin/blitzcc -r test -j test/all.bb
+
+# test for syntax errors
+_release/bin/blitzcc -r test -j test/syntax-errors/arithmetic-on-type.bb
+_release/bin/blitzcc -r test -j test/syntax-errors/division-by-zero.bb
+
+# generate the report...
+cd build && gcovr --filter='.*compiler.*' -r .. --html --html-details -o ../coverage.html

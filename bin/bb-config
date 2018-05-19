@@ -40,8 +40,8 @@ else
   []
 end
 
-if `_release/bin/blitzcc -e` == 'test'
-  OPTIONS << '-fprofile-arcs -ftest-coverage'
+if `_release/bin/blitzcc -e`.strip == 'test'
+  OPTIONS << '-fprofile-arcs -ftest-coverage -O0'
 end
 
 config = configs[PLATFORM][RUNTIME] || configs[PLATFORM].first[0]
