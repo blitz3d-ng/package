@@ -2,7 +2,7 @@
 #include <bb/blitz/module.h>
 #include "gxruntime.h"
 
-BBRuntime *bbCreateRuntime(){
+BBRuntime *bbCreateD3D7Runtime(){
 	return gxRuntime::openRuntime( GetModuleHandle(0) );
 }
 

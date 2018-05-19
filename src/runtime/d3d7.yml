@@ -28,3 +28,6 @@ modules:
   - blitz3d.d3d7
   - userlibs
   - runtime.windows
+
+entry:
+  runtime: bbCreateD3D7Runtime
