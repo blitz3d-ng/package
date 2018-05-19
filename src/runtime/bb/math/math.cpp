@@ -10,31 +10,31 @@ static const int RND_M=2147483647;
 static const int RND_Q=44488;
 static const int RND_R=3399;
 
-static const float dtor=0.0174532925199432957692369076848861f;
-static const float rtod=57.2957795130823208767981548141052f;
+static const bb_float_t dtor=0.0174532925199432957692369076848861f;
+static const bb_float_t rtod=57.2957795130823208767981548141052f;
 
-float BBCALL bbSin( float n ){ return (float)sin(n*dtor); }
-float BBCALL bbCos( float n ){ return (float)cos(n*dtor); }
-float BBCALL bbTan( float n ){ return (float)tan(n*dtor); }
-float BBCALL bbASin( float n ){ return (float)asin(n)*rtod; }
-float BBCALL bbACos( float n ){ return (float)acos(n)*rtod; }
-float BBCALL bbATan( float n ){ return (float)atan(n)*rtod; }
-float BBCALL bbATan2( float n,float t ){ return (float)atan2(n,t)*rtod; }
-float BBCALL bbSqr( float n ){ return (float)sqrt(n); }
-float BBCALL bbFloor( float n ){ return (float)floor(n); }
-float BBCALL bbCeil( float n ){ return (float)ceil(n); }
-float BBCALL bbExp( float n ){ return (float)exp(n); }
-float BBCALL bbLog( float n ){ return (float)log(n); }
-float BBCALL bbLog10( float n ){ return (float)log10(n); }
+bb_float_t BBCALL bbSin( bb_float_t n ){ return (bb_float_t)sin(n*dtor); }
+bb_float_t BBCALL bbCos( bb_float_t n ){ return (bb_float_t)cos(n*dtor); }
+bb_float_t BBCALL bbTan( bb_float_t n ){ return (bb_float_t)tan(n*dtor); }
+bb_float_t BBCALL bbASin( bb_float_t n ){ return (bb_float_t)asin(n)*rtod; }
+bb_float_t BBCALL bbACos( bb_float_t n ){ return (bb_float_t)acos(n)*rtod; }
+bb_float_t BBCALL bbATan( bb_float_t n ){ return (bb_float_t)atan(n)*rtod; }
+bb_float_t BBCALL bbATan2( bb_float_t n,bb_float_t t ){ return (bb_float_t)atan2(n,t)*rtod; }
+bb_float_t BBCALL bbSqr( bb_float_t n ){ return (bb_float_t)sqrt(n); }
+bb_float_t BBCALL bbFloor( bb_float_t n ){ return (bb_float_t)floor(n); }
+bb_float_t BBCALL bbCeil( bb_float_t n ){ return (bb_float_t)ceil(n); }
+bb_float_t BBCALL bbExp( bb_float_t n ){ return (bb_float_t)exp(n); }
+bb_float_t BBCALL bbLog( bb_float_t n ){ return (bb_float_t)log(n); }
+bb_float_t BBCALL bbLog10( bb_float_t n ){ return (bb_float_t)log10(n); }
 
 //return rand float from 0...1
-static inline float rnd(){
+static inline bb_float_t rnd(){
 	rnd_state=RND_A*(rnd_state%RND_Q)-RND_R*(rnd_state/RND_Q);
 	if( rnd_state<0 ) rnd_state+=RND_M;
-	return (rnd_state&65535)/65536.0f+(.5f/65536.0f);
+	return (bb_float_t)(rnd_state&65535)/65536.0+(.5/65536.0);
 }
 
-float BBCALL bbRnd( float from,float to ){
+bb_float_t BBCALL bbRnd( bb_float_t from,bb_float_t to ){
 	return rnd()*(to-from)+from;
 }
 

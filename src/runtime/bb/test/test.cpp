@@ -23,6 +23,16 @@ void BBCALL _bbExpect( int condition,BBStr *m, const char *file,int line ){
 	}
 }
 
+#ifdef WIN32
+void BBCALL bbContext( BBStr *m ){
+	_bbContext( m, "<unknown>", 0 );
+}
+
+void BBCALL bbExpect( int condition,BBStr *m ){
+	_bbExpect( condition,m,"<unknown>",0 );
+}
+#endif
+
 BBMODULE_CREATE( test ){
 	_bbPasses = 0;
 	_bbFails = 0;
