@@ -40,7 +40,7 @@ else
   []
 end
 
-if ARGV.include?('--test')
+if `_release/bin/blitzcc -e` == 'test'
   OPTIONS << '-fprofile-arcs -ftest-coverage'
 end
 

@@ -33,5 +33,8 @@ BBMODULE_DESTROY( test ){
 	cout << endl << "==== Results ====" << endl;
 	cout << "Pass: " << "\033[1;32m" << _bbPasses << "\033[0m. Fail: " << "\033[1;31m" << _bbFails << "\033[0m." << endl;
 
+	if (_bbFails > 0) {
+		exit(1);
+	}
 	return true;
 }

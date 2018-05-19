@@ -38,8 +38,9 @@ when 'run'
   in_file = ARGV[-1]
   out_file = Tempfile.new('blitzcc')
   system "_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | bin/ast2c | clang++ -o #{out_file.path} -x c - \`bin/bb-config --#{runtime}\`"
-  system out_file.path
+  result = system out_file.path
   out_file.unlink
+  exit 1 unless result
 when 'help'
   if ARGV.include?('--lint')
     module_names = [ARGV[ARGV.find_index('--lint') + 1]] || []

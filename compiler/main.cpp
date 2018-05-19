@@ -205,6 +205,9 @@ int main( int argc,char *argv[] ){
 			dumpkeys=dumphelp=true;
 		}else if( t=="-v" ){
 			versinfo=true;
+		}else if( t=="-e" ){
+			cout<<BB_ENV<<endl;
+			return 0;
 		}else if( t=="-l" ){
 			rtinfo=true;
 		}else if( t=="-r" ){
@@ -240,6 +243,10 @@ int main( int argc,char *argv[] ){
 
 	if( std::find( std::begin(rts),std::end(rts),rt )==std::end(rts) ){
 		err( ("Invalid runtime: "+rt).c_str() );
+	}
+#else
+	if( rt == "" ){
+		rt="opengl";
 	}
 #endif
 

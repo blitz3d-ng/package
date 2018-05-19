@@ -31,6 +31,15 @@ workspace "blitz3d"
     targetdir "_release/lib/%{cfg.platform}"
 
   filter "configurations:test"
+    defines "BB_ENV=\"test\""
+
+  filter "configurations:debug"
+    defines "BB_ENV=\"debug\""
+
+  filter "configurations:release"
+    defines "BB_ENV=\"release\""
+
+  filter { "configurations:test", "platforms:macos or linux" }
     optimize "Off"
     buildoptions "-fprofile-arcs -ftest-coverage -O0"
     linkoptions "-fprofile-arcs -ftest-coverage"
