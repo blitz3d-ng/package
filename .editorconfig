@@ -6,3 +6,6 @@ indent_size = 2
 
 [*.{c,cpp,h,bb}]
 indent_style = tab
+
+[Makefile]
+indent_style = tab

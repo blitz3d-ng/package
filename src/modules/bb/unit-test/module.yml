@@ -1,0 +1,19 @@
+name: Unit Test
+description: Provides unit testing functions.
+
+dependencies:
+  - blitz
+
+commands:
+  - Context( mesg$ ):"bbContext"
+  - Expect( condition%,mesg$ ):"bbExpect"
+
+make:
+  files:
+    - unit-test.cpp
+    - unit-test.h
+
+premake5:
+  files:
+    - unit-test.cpp
+    - unit-test.h

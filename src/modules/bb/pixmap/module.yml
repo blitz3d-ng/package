@@ -1,0 +1,48 @@
+name: Pixmap
+description: Provides image/texture data loading.
+
+dependencies:
+  - blitz
+
+make:
+  files:
+    - pixmap.cpp
+    - pixmap.h
+
+  include_directories:
+    - ../../../deps/freeimage317/src/Source
+
+  links:
+    - freeimage
+    - jpeg
+    - openexr
+    - openjpeg
+    - png
+    - raw
+    - tiff4
+    - webp
+    - zlib
+
+premake5:
+  - files:
+    - pixmap.cpp
+    - pixmap.h
+
+  - includedirs:
+    - ../../../deps/freeimage317/src/Source
+
+  - filter: platforms:win32 or win64 or mingw32 or macos or linux
+  - links:
+    - freeimage
+    - jpeg
+    - openexr
+    - openjpeg
+    - png
+    - raw
+    - tiff4
+    - webp
+    - zlib
+
+  - filter: platforms:win32 or win64 or mingw32
+  - links:
+    - jxr

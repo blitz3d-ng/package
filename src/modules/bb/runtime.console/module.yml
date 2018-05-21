@@ -1,0 +1,23 @@
+name: Console Runtime
+description: Provides runtime for terminal-only apps.
+
+platforms:
+  - win32
+  - win64
+  - mingw32
+  - macos
+  - linux
+
+dependencies:
+  - blitz
+  - event
+  - hook
+  - runtime
+
+make:
+  files:
+    - runtime.console.cpp
+
+premake5:
+  files:
+    - runtime.console.cpp

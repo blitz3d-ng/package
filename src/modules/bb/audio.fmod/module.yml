@@ -1,0 +1,29 @@
+name: FMOD Audio Driver
+description: Provides audio on Windows via FMOD.
+
+platforms:
+  - windows
+
+dependencies:
+  - audio
+
+make:
+  files:
+    - audio.fmod.h
+    - sound.cpp
+    - sound.h
+    - driver.cpp
+    - driver.h
+
+premake5:
+  files:
+    - audio.fmod.h
+    - sound.cpp
+    - sound.h
+    - driver.cpp
+    - driver.h
+
+  includedirs: common/include
+
+  links:
+    - fmodvc

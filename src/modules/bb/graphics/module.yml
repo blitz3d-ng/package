@@ -1,0 +1,133 @@
+name: Graphics
+description: Provides graphics.
+
+dependencies:
+  - blitz
+  - system
+  - runtime
+  - input
+  - blitz2d
+
+commands:
+  # gfx driver info
+  - CountGfxDrivers%():"bbCountGfxDrivers"
+  - GfxDriverName$( driver% ):"bbGfxDriverName"
+  - SetGfxDriver( driver% ):"bbSetGfxDriver"
+
+  # gfx mode info
+  - CountGfxModes%():"bbCountGfxModes"
+  - GfxModeExists%( width%,height%,depth% ):"bbGfxModeExists"
+
+  - GfxModeWidth%( mode% ):"bbGfxModeWidth"
+  - GfxModeHeight%( mode% ):"bbGfxModeHeight"
+  - GfxModeDepth%( mode% ):"bbGfxModeDepth"
+  - AvailVidMem%():"bbAvailVidMem"
+  - TotalVidMem%():"bbTotalVidMem"
+
+  - GfxDriver3D%( driver% ):"bbGfxDriver3D"
+  - CountGfxModes3D%():"bbCountGfxModes3D"
+  - GfxMode3DExists%( width%,height%,depth% ):"bbGfxMode3DExists"
+  - GfxMode3D%( mode% ):"bbGfxMode3D"
+  - Windowed3D%():"bbWindowed3D"
+
+  # display mode
+  - Graphics( width%,height%,depth%=0,mode%=0 ):"bbGraphics"
+  - Graphics3D( width%,height%,depth%=0,mode%=0 ):"bbGraphics3D"
+  - EndGraphics():"bbEndGraphics"
+  - GraphicsLost%():"bbGraphicsLost"
+  - GraphicsOpen%():"bbGraphicsOpen"
+
+  - SetGamma( src_red%,src_green%,src_blue%,dest_red#,dest_green#,dest_blue# ):"bbSetGamma"
+  - UpdateGamma( calibrate%=0 ):"bbUpdateGamma"
+  - GammaRed#( red% ):"bbGammaRed"
+  - GammaGreen#( green% ):"bbGammaGreen"
+  - GammaBlue#( blue% ):"bbGammaBlue"
+
+  - FrontBuffer%():"bbFrontBuffer"
+  - BackBuffer%():"bbBackBuffer"
+  - ScanLine%():"bbScanLine"
+  - VWait( frames%=1 ):"bbVWait"
+  - Flip( vwait%=1 ):"bbFlip"
+  - GraphicsWidth%():"bbGraphicsWidth"
+  - GraphicsHeight%():"bbGraphicsHeight"
+  - GraphicsDepth%():"bbGraphicsDepth"
+
+  # buffer management
+  - SetBuffer( buffer% ):"bbSetBuffer"
+  - GraphicsBuffer%():"bbGraphicsBuffer"
+  - LoadBuffer%( buffer%,bmpfile$ ):"bbLoadBuffer"
+  - SaveBuffer%( buffer%,bmpfile$ ):"bbSaveBuffer"
+  - BufferDirty( buffer% ):"bbBufferDirty"
+
+  # fast pixel reads/write
+  - LockBuffer( buffer%=0 ):"bbLockBuffer"
+  - UnlockBuffer( buffer%=0 ):"bbUnlockBuffer"
+  - ReadPixel%( x%,y%,buffer%=0 ):"bbReadPixel"
+  - WritePixel( x%,y%,argb%,buffer%=0 ):"bbWritePixel"
+  - ReadPixelFast%( x%,y%,buffer%=0 ):"bbReadPixelFast"
+  - WritePixelFast( x%,y%,argb%,buffer%=0 ):"bbWritePixelFast"
+  - CopyPixel( src_x%,src_y%,src_buffer%,dest_x%,dest_y%,dest_buffer%=0 ):"bbCopyPixel"
+  - CopyPixelFast( src_x%,src_y%,src_buffer%,dest_x%,dest_y%,dest_buffer%=0 ):"bbCopyPixelFast"
+
+  - CopyRect( source_x%,source_y%,width%,height%,dest_x%,dest_y%,src_buffer%=0,dest_buffer%=0 ):"bbCopyRect"
+
+  - LoadImage%( bmpfile$ ):"bbLoadImage"
+  - LoadAnimImage%( bmpfile$,cellwidth%,cellheight%,first%,count% ):"bbLoadAnimImage"
+  - CopyImage%( image% ):"bbCopyImage"
+  - CreateImage%( width%,height%,frames%=1 ):"bbCreateImage"
+  - FreeImage( image% ):"bbFreeImage"
+  - SaveImage%( image%,bmpfile$,frame%=0 ):"bbSaveImage"
+
+  - GrabImage( image%,x%,y%,frame%=0 ):"bbGrabImage"
+  - ImageBuffer%( image%,frame%=0 ):"bbImageBuffer"
+  - DrawImage( image%,x%,y%,frame%=0 ):"bbDrawImage"
+  - DrawBlock( image%,x%,y%,frame%=0 ):"bbDrawBlock"
+  - TileImage( image%,x%=0,y%=0,frame%=0 ):"bbTileImage"
+  - TileBlock( image%,x%=0,y%=0,frame%=0 ):"bbTileBlock"
+  - DrawImageRect( image%,x%,y%,rect_x%,rect_y%,rect_width%,rect_height%,frame%=0 ):"bbDrawImageRect"
+  - DrawBlockRect( image%,x%,y%,rect_x%,rect_y%,rect_width%,rect_height%,frame%=0 ):"bbDrawBlockRect"
+  - MaskImage( image%,red%,green%,blue% ):"bbMaskImage"
+  - HandleImage( image%,x%,y% ):"bbHandleImage"
+  - MidHandle( image% ):"bbMidHandle"
+  - AutoMidHandle( enable% ):"bbAutoMidHandle"
+  - ImageWidth%( image% ):"bbImageWidth"
+  - ImageHeight%( image% ):"bbImageHeight"
+  - ImageXHandle%( image% ):"bbImageXHandle"
+  - ImageYHandle%( image% ):"bbImageYHandle"
+
+  - ScaleImage( image%,xscale#,yscale# ):"bbScaleImage"
+  - ResizeImage( image%,width#,height# ):"bbResizeImage"
+  - RotateImage( image%,angle# ):"bbRotateImage"
+  - TFormImage( image%,a#,b#,c#,d# ):"bbTFormImage"
+  - TFormFilter( enable% ):"bbTFormFilter"
+
+  - ImagesOverlap%( image1%,x1%,y1%,image2%,x2%,y2% ):"bbImagesOverlap"
+  - ImagesCollide%( image1%,x1%,y1%,frame1%,image2%,x2%,y2%,frame2% ):"bbImagesCollide"
+  - RectsOverlap%( x1%,y1%,width1%,height1%,x2%,y2%,width2%,height2% ):"bbRectsOverlap"
+  - ImageRectOverlap%( image%,x%,y%,rect_x%,rect_y%,rect_width%,rect_height% ):"bbImageRectOverlap"
+  - ImageRectCollide%( image%,x%,y%,frame%,rect_x%,rect_y%,rect_width%,rect_height% ):"bbImageRectCollide"
+
+  - Write( string$ ):"bbWrite"
+  - Print( string$="" ):"bbPrint"
+  - Input$( prompt$="" ):"bbInput"
+  - Locate( x%,y% ):"bbLocate"
+
+make:
+  files:
+    - graphics.h
+    - graphics.cpp
+    - canvas.h
+    - canvas.cpp
+
+  include_directories:
+    - ../../../deps/freetype2/src/include
+
+premake5:
+  files:
+    - graphics.h
+    - graphics.cpp
+    - canvas.h
+    - canvas.cpp
+
+  includedirs:
+    - ../../../deps/freetype2/src/include

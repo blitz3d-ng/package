@@ -4,11 +4,11 @@ module Blitz3D
   class Module
     PLATFORMS = %w(win32 win64 mingw32 macos linux emscripten).freeze
 
-    attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path, :premake5
+    attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path, :make, :premake5
 
     def self.all
       @@store ||= {}
-      Dir.glob('src/runtime/bb/*/module.yml').map { |path| @@store[path] ||= new(path) }
+      Dir.glob('src/modules/bb/*/module.yml').map { |path| @@store[path] ||= new(path) }
       @@store.values
     end
 
@@ -41,6 +41,11 @@ module Blitz3D
         syms
       end
       @commands = (config['commands'] || []).map { |text| Command.new(self, text) }.sort_by(&:name)
+
+      @make = config['make'] || {}
+      @make['files'] ||= []
+      @make['include_directories'] ||= []
+      @make['definitions'] ||= []
 
       @premake5 = config['premake5'] || {}
     end

@@ -1,0 +1,16 @@
+name: macOS System
+description: Provides access to various macOS operating system functions.
+
+platforms:
+  - macos
+
+dependencies:
+  - system
+
+
+premake5:
+  removebuildoptions:
+    - -std=c++11
+
+  links:
+    - Cocoa.framework

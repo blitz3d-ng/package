@@ -23,9 +23,11 @@ struct ProgNode : public Node{
 
 	Environ *sem_env;
 
+	bool debug;
+
 	string file_lab;
 
-	ProgNode( DeclSeqNode *c,DeclSeqNode *s,DeclSeqNode *f,DeclSeqNode *d,StmtSeqNode *ss ):consts(c),structs(s),funcs(f),datas(d),stmts(ss){}
+	ProgNode( DeclSeqNode *c,DeclSeqNode *s,DeclSeqNode *f,DeclSeqNode *d,StmtSeqNode *ss ):consts(c),structs(s),funcs(f),datas(d),stmts(ss),debug(false){}
 	~ProgNode(){
 		delete consts;
 		delete structs;
@@ -39,6 +41,7 @@ struct ProgNode : public Node{
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ProgNode";
+		tree["debug"]=debug;
 		tree["modules"]=modules;
 		tree["funcs"]=funcs->toJSON( e );
 		tree["structs"]=structs->toJSON( e );
@@ -72,7 +75,8 @@ struct ProgNode : public Node{
 		return tree;
 	}
 
-	json toJSON(){
+	json toJSON( bool dbg ){
+		debug = dbg;
 		return toJSON( sem_env );
 	}
 };

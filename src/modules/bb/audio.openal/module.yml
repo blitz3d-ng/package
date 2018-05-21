@@ -1,0 +1,29 @@
+name: OpenAL Audio Driver
+description: Provides audio via OpenAL.
+
+platforms:
+  - macos
+
+dependencies:
+  - audio
+
+make:
+  files:
+    - audio.openal.h
+    - audio.openal.cpp
+    - commands.h
+
+premake5:
+  - files:
+    - audio.openal.h
+    - audio.openal.cpp
+    - commands.h
+
+  - includedirs:
+    - ../../../deps/vorbis/src/include
+    - ../../../deps/ogg/src/include
+    - ../../../deps/ogg/include
+
+  - filter: platforms:macos
+  - links:
+    - OpenAL.framework

@@ -1,0 +1,21 @@
+name: POSIX Filesystem
+description: Provides filesystem functions for macOS & Linux.
+
+platforms:
+  - macos
+  - linux
+
+dependencies:
+  - filesystem
+
+make:
+  files:
+    - filesystem.posix.cpp
+    - filesystem.posix.h
+    - commands.h
+
+premake5:
+  files:
+    - filesystem.posix.cpp
+    - filesystem.posix.h
+    - commands.h

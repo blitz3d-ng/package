@@ -5,7 +5,7 @@ module Blitz3D
     attr_accessor :id, :name, :platforms, :modules, :entry, :premake5
 
     def self.all
-      Dir.glob('src/runtime/*.yml').map { |path| new(path) }
+      Dir.glob('src/runtime/*/runtime.yml').map { |path| new(path) }
     end
 
     def self.find(id)
@@ -20,7 +20,7 @@ module Blitz3D
         exit 1
       end
 
-      @id = File.basename(config_file, '.yml')
+      @id = File.basename File.dirname(config_file)
       @name = config['name']
       @modules = config['modules'] || []
 

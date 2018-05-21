@@ -1,0 +1,28 @@
+name: System
+description: Provides access to various operating system functions.
+
+dependencies:
+  - blitz
+  - runtime
+
+commands:
+  - ExecFile( file$ ):"bbExecFile"
+  - Delay( millisecs% ):"bbDelay"
+  - MilliSecs%( ):"bbMilliSecs"
+  - SystemProperty$( property$ ):"bbSystemProperty"
+  - GetEnv$( env_var$ ):"bbGetEnv"
+  - SetEnv( env_var$,value$ ):"bbSetEnv"
+  - ScreenWidth%( i%=-1 ):"bbScreenWidth"
+  - ScreenHeight%( i%=-1 ):"bbScreenHeight"
+  - DPIScaleX#():"bbDPIScaleX"
+  - DPIScaleY#():"bbDPIScaleY"
+
+make:
+  files:
+    - system.cpp
+    - system.h
+
+premake5:
+  files:
+    - system.cpp
+    - system.h

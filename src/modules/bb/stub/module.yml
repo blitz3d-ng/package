@@ -1,0 +1,19 @@
+name: Stub
+description: Provides program bootstrapping.
+
+make:
+  files:
+    - stub.h
+    - stub.posix.cpp
+
+premake5:
+  - files:
+    - stub.h
+
+  - filter: platforms:win32 or win64 or mingw32
+  - files:
+    - stub.windows.cpp
+
+  - filter: platforms:macos or linux or emscripten
+  - files:
+    - stub.posix.cpp

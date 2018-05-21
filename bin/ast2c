@@ -7,8 +7,6 @@ require 'json'
 
 require_relative '../lib/blitz3d/translator/node'
 
-$debug = !ARGV.delete('-d').nil?
-
 ast = JSON.parse(ARGF.read)
 
 # STDERR.puts JSON.pretty_generate(ast).blue

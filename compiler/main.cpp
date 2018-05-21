@@ -311,7 +311,7 @@ int main( int argc,char *argv[] ){
 		prog->translate( &codegen,userFuncs );
 
 		if( dumptree ){
-			cout<<prog->toJSON().dump(2)<<endl;
+			cout<<prog->toJSON( debug ).dump(2)<<endl;
 		}
 
 		if( dumpasm ){

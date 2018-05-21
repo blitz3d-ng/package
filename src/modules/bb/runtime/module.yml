@@ -1,0 +1,18 @@
+name: Runtime
+description: Provides runtime.
+
+commands:
+  - ShowPointer():"bbShowPointer"
+  - HidePointer():"bbHidePointer"
+  - RuntimeError( message$ ):"bbRuntimeError"
+  - MoveMouse( x%,y% ):"bbMoveMouse"
+
+make:
+  files:
+    - runtime.cpp
+    - runtime.h
+
+premake5:
+  files:
+    - runtime.cpp
+    - runtime.h

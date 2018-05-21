@@ -17,13 +17,15 @@ else
   'opengl'
 end
 
-INCLUDE_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'runtime'))
-LIB_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '_release', 'lib'))
+BB_ENV = `_release/bin/blitzcc -e`.strip
+
+INCLUDE_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'modules'))
+TOOLCHAINS_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '_release', 'toolchains'))
 
 IDENTIFIER_REGEX = /[A-Za-z0-9]+/
 
-configs = Dir.glob(File.join(LIB_PATH, '*/*.config.json')).inject({}) do |cfgs, path|
-  _, platform, rt = path.match(/(#{IDENTIFIER_REGEX})\/(#{IDENTIFIER_REGEX})\.config\.json$/).to_a
+configs = Dir.glob(File.join(TOOLCHAINS_PATH, '*/*.runtime.json')).inject({}) do |cfgs, path|
+  _, platform, rt = path.match(/(#{IDENTIFIER_REGEX})\/(#{IDENTIFIER_REGEX})\.runtime\.json$/).to_a
   cfgs[platform] ||= {}
   cfgs[platform][rt] = JSON.parse(File.open(path).read)
   cfgs
@@ -40,7 +42,7 @@ else
   []
 end
 
-if `_release/bin/blitzcc -e`.strip == 'test'
+if BB_ENV == 'test'
   OPTIONS << '-fprofile-arcs -ftest-coverage -O0'
 end
 
@@ -62,4 +64,4 @@ libs = config['modules'].map do |mod|
 end
 
 
-puts "-Wno-int-conversion #{OPTIONS.join(' ')} -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(LIB_PATH, PLATFORM)} -lbb.stub -lruntime.#{RUNTIME} #{module_libs.join(' ')} #{module_libs.join(' ')} #{system_libs.join(' ')}"
+puts "-Wno-int-conversion #{OPTIONS.join(' ')} -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(TOOLCHAINS_PATH, PLATFORM, 'lib', BB_ENV)} -lbb.stub -lruntime.#{RUNTIME} #{module_libs.join(' ')} #{module_libs.reverse.join(' ')} #{system_libs.join(' ')}"

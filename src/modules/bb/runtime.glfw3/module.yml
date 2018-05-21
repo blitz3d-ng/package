@@ -1,0 +1,71 @@
+name: GLFW3 Runtime
+description: Provides runtime via GLFW3.
+
+platforms:
+  - win32
+  - win64
+  - mingw32
+  - macos
+  - linux
+
+dependencies:
+  - runtime
+  - graphics
+  - blitz2d
+  - blitz3d.gl
+  - pixmap
+
+  - input
+  - timer
+
+make:
+  files:
+    - runtime.glfw3.cpp
+    - runtime.glfw3.h
+    - scancodes.cpp
+
+  include_directories:
+    - ../../../deps/glew/include
+    - ../../../deps/glfw3/src/include
+    - ../../../deps/freetype2/src/include
+
+  links:
+    - glfw
+
+premake5:
+  - files:
+    - runtime.glfw3.cpp
+    - runtime.glfw3.h
+    - scancodes.cpp
+
+  - includedirs:
+    - ../../../deps/glew/include
+    - ../../../deps/glfw3/src/include
+    - ../../../deps/freetype2/src/include
+
+  - links:
+    - glfw
+
+  - filter: platforms:macos
+  - links:
+    - OpenGL.framework
+    - CoreVideo.framework
+    - IOKit.framework
+
+  - filter: platforms:linux
+  - links:
+    - GLEW
+    - GL
+    - GLU
+    - X11
+    - Xrandr
+    - Xinerama
+    - Xcursor
+    - Xxf86vm
+    - dl
+    - pthread
+
+  - filter: platforms:win32 or win64 or mingw32
+  - links:
+    - opengl32
+    - glew

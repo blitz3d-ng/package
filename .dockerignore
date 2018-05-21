@@ -1,4 +1,5 @@
-.git
-_release
-build
-tmp
+.coverage/
+.git/
+_release/
+build/
+tmp/

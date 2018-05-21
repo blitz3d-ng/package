@@ -4,6 +4,7 @@ module Blitz3D
       attr_accessor :modules, :types, :globals, :locals, :arrays, :stmts, :funcs, :structs, :data
 
       def initialize(json)
+        $debug = json['debug']
         @types   = json['types'].map { |t| Type.load(t) }
         @globals = json['globals'].map { |global| Decl.new(global) }
         @modules = json['modules']

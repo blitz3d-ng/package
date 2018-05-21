@@ -1,0 +1,58 @@
+cmake_minimum_required (VERSION 3.0)
+project (Blitz3D)
+
+IF(WIN32)
+  set (BB_WINDOWS true)
+  IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set (BB_PLATFORM win64)
+    set (BB_WIN64 true)
+  ELSEIF(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set (BB_PLATFORM win32)
+    set (BB_WIN32 true)
+  ENDIF()
+ELSEIF(APPLE)
+  set (BB_MACOS true)
+  set (BB_PLATFORM macos)
+ELSEIF(UNIX)
+  set (BB_LINUX true)
+  set (BB_PLATFORM linux)
+ENDIF()
+
+IF(NOT BB_ENV)
+  set (BB_ENV debug)
+ENDIF()
+
+IF(BB_ENV MATCHES debug OR BB_ENV MATCHES test)
+  set (CMAKE_BUILD_TYPE Debug)
+ELSE()
+  set (CMAKE_BUILD_TYPE Release)
+ENDIF()
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/bin)
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/lib/${BB_ENV})
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/lib/${BB_ENV})
+
+add_definitions(-DPRO -DFREEIMAGE_LIB -DOPJ_STATIC -D_CRT_SECURE_NO_WARNINGS -DGLEW_STATIC -DDIRECTSOUND_VERSION=0x700 -DODE_LIB)
+
+add_definitions(-DDEBUG)
+
+add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
+add_definitions(-DBB_ENV="${BB_ENV}")
+
+add_subdirectory(stdutil)
+add_subdirectory(compiler)
+
+add_subdirectory(src/deps/assimp)
+add_subdirectory(src/deps/crossguid)
+add_subdirectory(src/deps/enet/src)
+add_subdirectory(src/deps/freeimage317)
+add_subdirectory(src/deps/freetype2)
+add_subdirectory(src/deps/glew)
+add_subdirectory(src/deps/glfw3)
+add_subdirectory(src/deps/ode)
+add_subdirectory(src/deps/ogg)
+add_subdirectory(src/deps/vorbis)
+add_subdirectory(src/modules)
+add_subdirectory(src/runtime)

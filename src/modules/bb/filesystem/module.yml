@@ -1,0 +1,35 @@
+name: Filesystem
+description: Provides filesystem functions.
+
+dependencies:
+  - blitz
+  - stream
+
+commands:
+  - OpenFile%( filename$ ):"bbOpenFile"
+  - ReadFile%( filename$ ):"bbReadFile"
+  - WriteFile%( filename$ ):"bbWriteFile"
+  - CloseFile( file_stream% ):"bbCloseFile"
+  - FilePos%( file_stream% ):"bbFilePos"
+  - SeekFile%( file_stream%,pos% ):"bbSeekFile"
+  - ReadDir%( dirname$ ):"bbReadDir"
+  - CloseDir( dir% ):"bbCloseDir"
+  - NextFile$( dir% ):"bbNextFile"
+  - CurrentDir$():"bbCurrentDir"
+  - ChangeDir( dir$ ):"bbChangeDir"
+  - CreateDir( dir$ ):"bbCreateDir"
+  - DeleteDir( dir$ ):"bbDeleteDir"
+  - FileSize%( file$ ):"bbFileSize"
+  - FileType%( file$ ):"bbFileType"
+  - CopyFile( file$,to$ ):"bbCopyFile"
+  - DeleteFile( file$ ):"bbDeleteFile"
+
+make:
+  files:
+    - filesystem.cpp
+    - filesystem.h
+
+premake5:
+  files:
+    - filesystem.cpp
+    - filesystem.h

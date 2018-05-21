@@ -36,10 +36,20 @@ when 'run'
   end
 
   in_file = ARGV[-1]
-  out_file = Tempfile.new('blitzcc')
-  system "_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | bin/ast2c | clang++ -o #{out_file.path} -x c - \`bin/bb-config --#{runtime}\`"
-  result = system out_file.path
-  out_file.unlink
+
+  # grab a temp file path instead of using it. Executable won't run on linux for some reason.
+  tmp_file = Tempfile.new('blitzcc')
+  out_file = tmp_file.path
+  tmp_file.unlink
+
+  was_built = system "_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | bin/ast2c | clang++ -x c -o #{out_file} \`bin/bb-config --#{runtime}\` -"
+  if !was_built
+    File.unlink out_file if File.exist?(out_file)
+    $STDERR.puts 'Failed to build.'
+    exit 1
+  end
+  result = system out_file
+  File.unlink out_file if File.exist?(out_file)
   exit 1 unless result
 when 'help'
   if ARGV.include?('--lint')

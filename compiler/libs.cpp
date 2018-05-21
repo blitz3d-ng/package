@@ -136,7 +136,7 @@ static const char *linkRuntime(string rt){
 	}
 #else
 	json index;
-	ifstream i(home+"/lib/" BB_PLATFORM "/"+rt+".config.json");
+	ifstream i(home+"/toolchains/" BB_PLATFORM "/"+rt+".runtime.json");
 	i >> index;
 
 	for( auto& module:index["modules"] ) {

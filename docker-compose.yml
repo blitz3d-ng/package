@@ -1,6 +1,7 @@
 version: '2'
 services:
   env:
+    tty: true
     image: blitz3dng/blitz3d
     build: .
     volumes:
