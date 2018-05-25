@@ -38,6 +38,8 @@ ENDIF()
 IF(BB_WIN32 OR BB_WIN64)
   set (BB_WINDOWS true)
   add_definitions(-DBB_WINDOWS)
+
+  link_directories(common/x86)
 ENDIF()
 
 IF(BB_WINDOWS OR BB_MACOS OR BB_LINUX)
@@ -65,21 +67,38 @@ ELSE()
   set (BB_RELEASE true)
 ENDIF()
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/bin)
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/lib/${BB_ENV})
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/lib/${BB_ENV})
 
+# TODO: move these to their appropriate modules
 add_definitions(-DPRO -DFREEIMAGE_LIB -DOPJ_STATIC -D_CRT_SECURE_NO_WARNINGS -DDIRECTSOUND_VERSION=0x700 -DODE_LIB)
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")
 
+IF(BB_WINDOWS)
+  IF(BB_DEBUG)
+    add_definitions(/MTd)
+  ELSE()
+    add_definitions(/MT)
+  ENDIF()
+ENDIF()
+
 add_subdirectory(stdutil)
 
 IF(BB_DESKTOP)
   add_subdirectory(compiler)
+  add_subdirectory(blitzide)
+ENDIF()
+
+IF(NOT BB_IOS)
+  add_subdirectory(src/deps/zlib)
+  set(ZLIB zlib)
+ELSE()
+  set(ZLIB z)
 ENDIF()
 
 add_subdirectory(src/deps/assimp)
@@ -89,9 +108,7 @@ add_subdirectory(src/deps/freetype2)
 add_subdirectory(src/deps/glew)
 add_subdirectory(src/deps/ogg)
 add_subdirectory(src/deps/vorbis)
-IF(NOT BB_IOS)
-  add_subdirectory(src/deps/zlib)
-ENDIF()
+
 add_subdirectory(src/modules)
 add_subdirectory(src/runtime)
 

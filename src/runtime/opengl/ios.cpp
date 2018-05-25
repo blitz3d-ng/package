@@ -35,24 +35,18 @@ BBRuntime *bbCreateRuntime(){
 #ifdef WIN32
 void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	blitz_link( link );
-	hook_link( link );
-	event_link( link );
 	math_link( link );
 	string_link( link );
 	stdio_link( link );
 	runtime_link( link );
 	system_link( link );
-	system_ios_link( link );
 	stream_link( link );
 	bank_link( link );
 	audio_link( link );
-	pixmap_link( link );
 	blitz2d_link( link );
 	blitz3d_link( link );
-	blitz3d_gles2_link( link );
 	input_link( link );
 	graphics_link( link );
-	runtime_glfm_link( link );
 }
 #endif
 bool bbruntime_create(){

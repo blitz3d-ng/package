@@ -1,1 +1,1 @@
-add_library (bb.runtime STATIC runtime.cpp runtime.h)
+add_library (bb.runtime STATIC runtime.cpp runtime.h module.link.cpp)

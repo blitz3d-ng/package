@@ -2,8 +2,11 @@ add_library(ode STATIC src/ode/src/array.cpp src/ode/src/collision_trimesh_box.c
 
 target_include_directories(ode SYSTEM PUBLIC include src/include src/ode/src src/OPCODE src/libccd/src src/ou/include)
 
-target_compile_options(ode PRIVATE -DdIDESINGLE -DCCD_IDESINGLE)
+target_compile_definitions(ode PRIVATE -DdIDESINGLE -DCCD_IDESINGLE)
 
 IF(BB_MACOS)
-  target_compile_options(ode PRIVATE -DMAC_OS_X_VERSION=1090)
+  target_compile_definitions(ode PRIVATE -DMAC_OS_X_VERSION=1090)
+ELSEIF(BB_WIN32 OR BB_WIN64)
+  # suppress doube -> dReal warnings
+  target_compile_definitions(ode PRIVATE /w4244)
 ENDIF()

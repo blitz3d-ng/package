@@ -6,8 +6,3 @@ dependencies:
 
 platforms:
   - windows
-
-premake5:
-  files:
-    - userlibs.cpp
-    - userlibs.h

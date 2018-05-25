@@ -2,7 +2,6 @@
 #include "std.h"
 
 #ifdef PRO
-
 #include "blitz3d.h"
 #include <bb/system/system.h>
 #include <bb/graphics/graphics.h>

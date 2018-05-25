@@ -114,6 +114,10 @@ module Blitz3D
       end.flatten.compact
     end
 
+    def needs_to_link?
+      symbols.size > 0 || commands.size > 0
+    end
+
     def help_dir
       File.join(path, 'docs')
     end

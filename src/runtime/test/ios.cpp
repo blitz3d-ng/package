@@ -39,9 +39,6 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	system_link( link );
 	input_link( link );
 	audio_link( link );
-	hook_link( link );
-	event_link( link );
-	runtime_console_link( link );
 	unit_test_link( link );
 }
 #endif

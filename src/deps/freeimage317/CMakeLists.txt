@@ -12,7 +12,7 @@ target_compile_definitions(freeimage PRIVATE -DLIBRAW_NODLL)
 target_include_directories(freeimage SYSTEM PUBLIC src/Source)
 target_include_directories(freeimage PRIVATE src/Source/LibJXR/jxrgluelib src/Source/LibJXR/image/sys src/Source/OpenEXR/Half src/Source/OpenEXR/Iex src/Source/OpenEXR/lexMath src/Source/OpenEXR/IlmImf src/Source/OpenEXR/IlmThread src/Source/OpenEXR/Imath src/Source/OpenEXR)
 
-set(DEPS jpeg openexr openjpeg png raw tiff4 webp z)
+set(DEPS jpeg openexr openjpeg png raw_ tiff4 webp ${ZLIB})
 
 IF(NOT BB_MACOS)
   set(DEPS ${DEPS} jxr)
@@ -48,23 +48,24 @@ target_include_directories(openexr PRIVATE
   src/Source/OpenEXR
 )
 
-target_link_libraries(openexr z)
+target_link_libraries(openexr ${ZLIB})
 
 # openjpeg
 add_library(openjpeg STATIC src/Source/LibOpenJPEG/bio.c src/Source/LibOpenJPEG/cio.c src/Source/LibOpenJPEG/dwt.c src/Source/LibOpenJPEG/event.c src/Source/LibOpenJPEG/function_list.c src/Source/LibOpenJPEG/image.c src/Source/LibOpenJPEG/invert.c src/Source/LibOpenJPEG/j2k.c src/Source/LibOpenJPEG/jp2.c src/Source/LibOpenJPEG/mct.c src/Source/LibOpenJPEG/mqc.c src/Source/LibOpenJPEG/openjpeg.c src/Source/LibOpenJPEG/opj_clock.c src/Source/LibOpenJPEG/pi.c src/Source/LibOpenJPEG/raw.c src/Source/LibOpenJPEG/t1.c src/Source/LibOpenJPEG/t2.c src/Source/LibOpenJPEG/tcd.c src/Source/LibOpenJPEG/tgt.c src/Source/LibOpenJPEG/bio.h src/Source/LibOpenJPEG/cio.h src/Source/LibOpenJPEG/dwt.h src/Source/LibOpenJPEG/event.h src/Source/LibOpenJPEG/function_list.h src/Source/LibOpenJPEG/image.h src/Source/LibOpenJPEG/indexbox_manager.h src/Source/LibOpenJPEG/invert.h src/Source/LibOpenJPEG/j2k.h src/Source/LibOpenJPEG/jp2.h src/Source/LibOpenJPEG/mct.h src/Source/LibOpenJPEG/mqc.h src/Source/LibOpenJPEG/openjpeg.h src/Source/LibOpenJPEG/opj_clock.h src/Source/LibOpenJPEG/opj_config.h src/Source/LibOpenJPEG/opj_config_private.h src/Source/LibOpenJPEG/opj_includes.h src/Source/LibOpenJPEG/opj_intmath.h src/Source/LibOpenJPEG/opj_inttypes.h src/Source/LibOpenJPEG/opj_malloc.h src/Source/LibOpenJPEG/opj_stdint.h src/Source/LibOpenJPEG/pi.h src/Source/LibOpenJPEG/raw.h src/Source/LibOpenJPEG/t1.h src/Source/LibOpenJPEG/t1_luts.h src/Source/LibOpenJPEG/t2.h src/Source/LibOpenJPEG/tcd.h src/Source/LibOpenJPEG/tgt.h)
 
 # png
 add_library(png STATIC src/Source/LibPNG/png.c src/Source/LibPNG/pngerror.c src/Source/LibPNG/pngget.c src/Source/LibPNG/pngmem.c src/Source/LibPNG/pngpread.c src/Source/LibPNG/pngread.c src/Source/LibPNG/pngrio.c src/Source/LibPNG/pngrtran.c src/Source/LibPNG/pngrutil.c src/Source/LibPNG/pngset.c src/Source/LibPNG/pngtrans.c src/Source/LibPNG/pngwio.c src/Source/LibPNG/pngwrite.c src/Source/LibPNG/pngwtran.c src/Source/LibPNG/pngwutil.c)
-target_link_libraries(png z)
+target_link_libraries(png ${ZLIB})
 
 # raw
-add_library(raw STATIC src/Source/LibRawLite/internal/dcraw_common.cpp src/Source/LibRawLite/internal/dcraw_fileio.cpp src/Source/LibRawLite/internal/demosaic_packs.cpp src/Source/LibRawLite/src/libraw_c_api.cpp src/Source/LibRawLite/src/libraw_cxx.cpp src/Source/LibRawLite/src/libraw_datastream.cpp src/Source/LibRawLite/internal/defines.h src/Source/LibRawLite/internal/libraw_internal_funcs.h src/Source/LibRawLite/internal/var_defines.h src/Source/LibRawLite/libraw/libraw.h src/Source/LibRawLite/libraw/libraw_alloc.h src/Source/LibRawLite/libraw/libraw_const.h src/Source/LibRawLite/libraw/libraw_datastream.h src/Source/LibRawLite/libraw/libraw_internal.h src/Source/LibRawLite/libraw/libraw_types.h src/Source/LibRawLite/libraw/libraw_version.h)
+add_library(raw_ STATIC src/Source/LibRawLite/internal/dcraw_common.cpp src/Source/LibRawLite/internal/dcraw_fileio.cpp src/Source/LibRawLite/internal/demosaic_packs.cpp src/Source/LibRawLite/src/libraw_c_api.cpp src/Source/LibRawLite/src/libraw_cxx.cpp src/Source/LibRawLite/src/libraw_datastream.cpp src/Source/LibRawLite/internal/defines.h src/Source/LibRawLite/internal/libraw_internal_funcs.h src/Source/LibRawLite/internal/var_defines.h src/Source/LibRawLite/libraw/libraw.h src/Source/LibRawLite/libraw/libraw_alloc.h src/Source/LibRawLite/libraw/libraw_const.h src/Source/LibRawLite/libraw/libraw_datastream.h src/Source/LibRawLite/libraw/libraw_internal.h src/Source/LibRawLite/libraw/libraw_types.h src/Source/LibRawLite/libraw/libraw_version.h)
 
-target_include_directories(raw PRIVATE src/Source/LibRawLite)
+target_include_directories(raw_ PRIVATE src/Source/LibRawLite)
 
-target_compile_definitions(raw PRIVATE -DLIBRAW_NODLL)
-
-target_compile_options(raw PRIVATE -Wno-narrowing)
+target_compile_definitions(raw_ PRIVATE -DLIBRAW_NODLL)
+IF(NOT BB_WIN32 AND NOT BB_WIN64)
+  target_compile_options(raw_ PRIVATE -Wno-narrowing)
+ENDIF()
 
 # tiff4
 add_library(tiff4 STATIC src/Source/LibTIFF4/tif_aux.c src/Source/LibTIFF4/tif_close.c src/Source/LibTIFF4/tif_codec.c src/Source/LibTIFF4/tif_color.c src/Source/LibTIFF4/tif_compress.c src/Source/LibTIFF4/tif_dir.c src/Source/LibTIFF4/tif_dirinfo.c src/Source/LibTIFF4/tif_dirread.c src/Source/LibTIFF4/tif_dirwrite.c src/Source/LibTIFF4/tif_dumpmode.c src/Source/LibTIFF4/tif_error.c src/Source/LibTIFF4/tif_extension.c src/Source/LibTIFF4/tif_fax3.c src/Source/LibTIFF4/tif_fax3sm.c src/Source/LibTIFF4/tif_flush.c src/Source/LibTIFF4/tif_getimage.c src/Source/LibTIFF4/tif_jpeg.c src/Source/LibTIFF4/tif_luv.c src/Source/LibTIFF4/tif_lzma.c src/Source/LibTIFF4/tif_lzw.c src/Source/LibTIFF4/tif_next.c src/Source/LibTIFF4/tif_ojpeg.c src/Source/LibTIFF4/tif_open.c src/Source/LibTIFF4/tif_packbits.c src/Source/LibTIFF4/tif_pixarlog.c src/Source/LibTIFF4/tif_predict.c src/Source/LibTIFF4/tif_print.c src/Source/LibTIFF4/tif_read.c src/Source/LibTIFF4/tif_strip.c src/Source/LibTIFF4/tif_swab.c src/Source/LibTIFF4/tif_thunder.c src/Source/LibTIFF4/tif_tile.c src/Source/LibTIFF4/tif_version.c src/Source/LibTIFF4/tif_warning.c src/Source/LibTIFF4/tif_write.c src/Source/LibTIFF4/tif_zip.c src/Source/LibTIFF4/t4.h src/Source/LibTIFF4/tif_config.h src/Source/LibTIFF4/tif_dir.h src/Source/LibTIFF4/tif_fax3.h src/Source/LibTIFF4/tif_predict.h src/Source/LibTIFF4/tiff.h src/Source/LibTIFF4/tiffconf.h src/Source/LibTIFF4/tiffio.h src/Source/LibTIFF4/tiffiop.h src/Source/LibTIFF4/tiffvers.h src/Source/LibTIFF4/uvcode.h)

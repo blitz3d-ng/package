@@ -1,0 +1,5 @@
+IF(BB_WINDOWS)
+  add_library (bb.multiplay STATIC multiplay.cpp multiplay.h multiplay_setup.cpp multiplay_setup.h multiplay_setup.rc)
+  target_include_directories(bb.multiplay PRIVATE ../../../../common/include)
+  target_link_libraries (bb.multiplay bb.runtime)
+ENDIF()

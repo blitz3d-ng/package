@@ -38,20 +38,14 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	blitz_link( link );
 	string_link( link );
 	stdio_link( link );
-	hook_link( link );
 	enet_link( link );
 	runtime_link( link );
 	system_link( link );
-	system_macos_link( link );
 	stream_link( link );
 	filesystem_link( link );
-	filesystem_posix_link( link );
 	bank_link( link );
 	input_link( link );
 	audio_link( link );
-	audio_openal_link( link );
-	event_link( link );
-	runtime_console_link( link );
 	unit_test_link( link );
 }
 #endif

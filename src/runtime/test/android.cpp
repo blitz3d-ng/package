@@ -29,8 +29,6 @@ BBRuntime *bbCreateRuntime(){
 #ifdef WIN32
 void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	blitz_link( link );
-	hook_link( link );
-	event_link( link );
 	math_link( link );
 	string_link( link );
 	stdio_link( link );

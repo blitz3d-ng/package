@@ -44,22 +44,14 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	stdio_link( link );
 	stream_link( link );
 	sockets_link( link );
-	hook_link( link );
 	enet_link( link );
 	runtime_link( link );
 	system_link( link );
 	bank_link( link );
 	system_windows_link( link );
 	filesystem_link( link );
-	filesystem_windows_link( link );
-	timer_windows_link( link );
 	input_link( link );
-	input_directinput8_link( link );
 	audio_link( link );
-	audio_fmod_link( link );
-	userlibs_link( link );
-	event_link( link );
-	runtime_console_link( link );
 	unit_test_link( link );
 }
 #endif

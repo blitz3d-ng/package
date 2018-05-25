@@ -6,8 +6,3 @@ platforms:
 
 dependencies:
   - timer
-
-premake5:
-  files:
-    - timer.windows.cpp
-    - timer.windows.h
