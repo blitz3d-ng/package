@@ -28,6 +28,6 @@
 [submodule "src/deps/glfm/src"]
 	path = src/deps/glfm/src
 	url = https://github.com/brackeen/glfm.git
-[submodule "src/deps/zlib"]
+[submodule "src/deps/zlib/src"]
 	path = src/deps/zlib/src
 	url = https://github.com/madler/zlib.git
