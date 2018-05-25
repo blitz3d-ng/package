@@ -2,7 +2,14 @@ require 'yaml'
 
 module Blitz3D
   class Module
-    PLATFORMS = %w(win32 win64 mingw32 macos linux emscripten).freeze
+    PLATFORMS = %w(win32 win64 mingw32 macos linux ios android emscripten).freeze
+
+    METAPLATFORMS = {
+      desktop: %w(windows macos linux),
+      windows: %w(win32 win64 mingw32),
+      mobile: %w(ios android),
+      web: %w(emscripten),
+    }
 
     attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path, :make, :premake5
 
@@ -30,9 +37,12 @@ module Blitz3D
       @name = config['name']
       @description = config['description']
 
-      @platforms = config['platforms'] || []
-      @platforms += %w(win32 win64 mingw32) if @platforms.delete('windows')
-      @platforms = Module::PLATFORMS.dup if @platforms.empty?
+      platforms = config['platforms'] || []
+      if platforms.empty?
+        @platforms = Module::PLATFORMS.dup
+      else
+        @platforms = platforms.map { |plat| METAPLATFORMS[plat.to_sym] || plat }.flatten.uniq
+      end
 
       @dependencies = [config['dependencies']].flatten.compact
       @symbols = (config['symbols'] || []).inject({}) do |syms, line|

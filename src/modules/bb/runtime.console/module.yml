@@ -2,11 +2,10 @@ name: Console Runtime
 description: Provides runtime for terminal-only apps.
 
 platforms:
-  - win32
-  - win64
-  - mingw32
+  - windows
   - macos
   - linux
+  - ios
 
 dependencies:
   - blitz

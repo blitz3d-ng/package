@@ -5,13 +5,13 @@ include_directories (SYSTEM ../../modules)
 
 IF(BB_WIN32)
   add_library(runtime.test STATIC win32.cpp)
-  target_link_libraries(runtime.test bb.math bb.blitz bb.string bb.stdio bb.stream bb.sockets bb.hook bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.event bb.runtime.console bb.unit-test)
+  target_link_libraries(runtime.test bb.math bb.blitz bb.string bb.stdio bb.stream bb.sockets bb.hook bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.event bb.runtime.console bb.unit-test)
 
   add_library(runtime.test.bin SHARED win32.cpp)
   target_link_libraries(runtime.test.bin runtime.test)
 ELSEIF(BB_MINGW32)
   add_library(runtime.test STATIC mingw32.cpp)
-  target_link_libraries(runtime.test bb.math bb.blitz bb.string bb.stdio bb.stream bb.sockets bb.hook bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.event bb.runtime.console bb.unit-test)
+  target_link_libraries(runtime.test bb.math bb.blitz bb.string bb.stdio bb.stream bb.sockets bb.hook bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.event bb.runtime.console bb.unit-test)
 
   add_library(runtime.test.bin SHARED mingw32.cpp)
   target_link_libraries(runtime.test.bin runtime.test)
@@ -27,9 +27,21 @@ ELSEIF(BB_LINUX)
 
   add_library(runtime.test.bin SHARED linux.cpp)
   target_link_libraries(runtime.test.bin runtime.test)
+ELSEIF(BB_IOS)
+  add_library(runtime.test STATIC ios.cpp)
+  target_link_libraries(runtime.test bb.math bb.blitz bb.string bb.stdio bb.stream bb.bank bb.runtime bb.system bb.input bb.audio bb.hook bb.event bb.runtime.console bb.unit-test)
+
+  add_library(runtime.test.bin SHARED ios.cpp)
+  target_link_libraries(runtime.test.bin runtime.test)
+ELSEIF(BB_ANDROID)
+  add_library(runtime.test STATIC android.cpp)
+  target_link_libraries(runtime.test bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.bank bb.runtime bb.system bb.input bb.audio bb.unit-test)
+
+  add_library(runtime.test.bin SHARED android.cpp)
+  target_link_libraries(runtime.test.bin runtime.test)
 ELSEIF(BB_EMSCRIPTEN)
   add_library(runtime.test STATIC emscripten.cpp)
-  target_link_libraries(runtime.test bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.bank bb.runtime bb.audio bb.system bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.blitz2d.gl bb.blitz3d.gl bb.runtime.html bb.unit-test)
+  target_link_libraries(runtime.test bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.bank bb.runtime bb.audio bb.system bb.input bb.pixmap bb.blitz2d bb.graphics bb.runtime.html bb.unit-test)
 
   add_library(runtime.test.bin SHARED emscripten.cpp)
   target_link_libraries(runtime.test.bin runtime.test)

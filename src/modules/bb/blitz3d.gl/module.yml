@@ -1,6 +1,9 @@
 name: OpenGL Blitz3D
 description: Provides OpenGL Blitz3D.
 
+platforms:
+  - desktop
+
 dependencies:
   - blitz3d
   - blitz2d.gl

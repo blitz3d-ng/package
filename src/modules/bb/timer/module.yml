@@ -1,6 +1,9 @@
 name: Timer
 description: Provides access to reliable timing.
 
+platforms:
+  - desktop
+
 dependencies:
   - blitz
   - runtime

@@ -90,6 +90,7 @@ ENDIF()
 add_library (assimp STATIC ${SOURCE})
 
 target_include_directories(assimp SYSTEM PUBLIC src/include include)
+target_link_libraries(assimp z)
 
 target_compile_definitions(assimp PRIVATE
   -DASSIMP_BUILD_NO_OWN_ZLIB

@@ -43,7 +43,7 @@ public:
 extern "C" void bbMain();
 
 int main( int argc,char *argv[] ){
-#ifdef DEBUG
+#ifdef BB_DEBUG
   bb_env.debug=true;
 #else
   bb_env.debug=false;

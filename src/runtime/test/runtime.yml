@@ -5,6 +5,8 @@ platforms:
   - mingw32
   - macos
   - linux
+  - ios
+  - android
   - emscripten
 
 modules:

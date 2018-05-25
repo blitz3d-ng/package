@@ -39,34 +39,6 @@ commands:
   - MoviePlaying%( movie% ):"bbMoviePlaying"
   - CloseMovie( movie% ):"bbCloseMovie"
 
-make:
-  files:
-  - module.cpp
-  - font.h
-  - font.cpp
-  - graphics.h
-  - blitz2d.h
-  - movie.h
-  - movie.cpp
-
-  include_directories:
-    - ../../../deps/freetype2/src/include
-
-  links:
-    - freetype2
-
 premake5:
-  files:
-  - module.cpp
-  - font.h
-  - font.cpp
-  - graphics.h
-  - blitz2d.h
-  - movie.h
-  - movie.cpp
-
-  includedirs:
-    - ../../../deps/freetype2/src/include
-
   links:
     - freetype2

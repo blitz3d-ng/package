@@ -21,15 +21,12 @@ BBMODULE_DECL( input );
 BBMODULE_DECL( pixmap );
 BBMODULE_DECL( blitz2d );
 BBMODULE_DECL( graphics );
-BBMODULE_DECL( blitz3d );
-BBMODULE_DECL( blitz2d_gl );
-BBMODULE_DECL( blitz3d_gl );
 BBMODULE_DECL( runtime_html );
 
 class BBRuntime;
-BBRuntime *bbCreateGLFW3Runtime();
+BBRuntime *bbCreateOpenGLRuntime();
 BBRuntime *bbCreateRuntime(){
-	return bbCreateGLFW3Runtime();
+	return bbCreateOpenGLRuntime();
 }
 
 #ifdef WIN32
@@ -49,9 +46,6 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	pixmap_link( link );
 	blitz2d_link( link );
 	graphics_link( link );
-	blitz3d_link( link );
-	blitz2d_gl_link( link );
-	blitz3d_gl_link( link );
 	runtime_html_link( link );
 }
 #endif
@@ -71,18 +65,9 @@ bool bbruntime_create(){
 																										if( pixmap_create() ){
 																												if( blitz2d_create() ){
 																														if( graphics_create() ){
-																																if( blitz3d_create() ){
-																																		if( blitz2d_gl_create() ){
-																																				if( blitz3d_gl_create() ){
-																																						if( runtime_html_create() ){
-																																								return true;
-																			}else sue( "runtime_html_create failed" );
-																			blitz3d_gl_destroy();
-																		}else sue( "blitz3d_gl_create failed" );
-																		blitz2d_gl_destroy();
-																	}else sue( "blitz2d_gl_create failed" );
-																	blitz3d_destroy();
-																}else sue( "blitz3d_create failed" );
+																																if( runtime_html_create() ){
+																																		return true;
+																}else sue( "runtime_html_create failed" );
 																graphics_destroy();
 															}else sue( "graphics_create failed" );
 															blitz2d_destroy();
@@ -118,9 +103,6 @@ bool bbruntime_create(){
 
 bool bbruntime_destroy(){
 	runtime_html_destroy();
-	blitz3d_gl_destroy();
-	blitz2d_gl_destroy();
-	blitz3d_destroy();
 	graphics_destroy();
 	blitz2d_destroy();
 	pixmap_destroy();

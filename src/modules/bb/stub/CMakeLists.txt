@@ -1,1 +1,5 @@
-add_library (bb.stub STATIC stub.h stub.posix.cpp)
+IF(BB_WINDOWS)
+  add_library (bb.stub STATIC stub.h stub.windows.cpp)
+ELSE()
+  add_library (bb.stub STATIC stub.h stub.posix.cpp)
+ENDIF()

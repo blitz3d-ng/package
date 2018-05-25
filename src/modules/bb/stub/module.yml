@@ -1,6 +1,9 @@
 name: Stub
 description: Provides program bootstrapping.
 
+platforms:
+  - desktop
+
 make:
   files:
     - stub.h

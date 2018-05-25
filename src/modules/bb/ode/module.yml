@@ -1,6 +1,11 @@
 name: ODE
 description: Provides physics functions.
 
+platforms:
+  - windows
+  - mac
+  - linux
+
 dependencies:
   - blitz3d
 

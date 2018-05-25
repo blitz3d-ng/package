@@ -1,3 +1,5 @@
+ENV := release
+
 ifeq ($(shell uname), Darwin)
 NUMBER_OF_CORES=$(shell sysctl -n hw.ncpu)
 PLATFORM := macos
@@ -6,9 +8,13 @@ NUMBER_OF_CORES=$(shell grep -c ^processor /proc/cpuinfo)
 PLATFORM := linux
 endif
 
-ENV := release
+ifeq ($(PLATFORM), ios)
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/ios.toolchain.cmake -DIOS_PLATFORM=SIMULATOR64
+endif
+
+MAKE=make -j$(NUMBER_OF_CORES)
 
 build:
-	cmake -H. -Bbuild/$(PLATFORM)/$(ENV) -DBB_ENV=$(ENV) && (cd build/$(PLATFORM)/$(ENV) && make -j$(NUMBER_OF_CORES))
+	cmake -H. -Bbuild/$(PLATFORM)/$(ENV) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && $(MAKE))
 
 .PHONY: build

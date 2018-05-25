@@ -45,6 +45,6 @@ add_library(freetype2 STATIC
   src/src/type42/type42.c
   src/src/winfonts/winfnt.c)
 
-target_compile_definitions(freetype2 PRIVATE -DFT2_BUILD_LIBRARY)
-
 target_include_directories(freetype2 PUBLIC src/include)
+target_compile_definitions(freetype2 PRIVATE -DFT2_BUILD_LIBRARY)
+target_link_libraries(freetype2 z)

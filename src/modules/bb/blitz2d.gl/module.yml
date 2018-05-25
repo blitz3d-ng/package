@@ -1,5 +1,8 @@
-name: OpenGL Blitz2D
-description: Provides OpenGL Blitz2D.
+name: OpenGL 1.1 Blitz2D
+description: Provides OpenGL 1.1 Blitz2D.
+
+platforms:
+  - desktop
 
 dependencies:
   - blitz2d

@@ -5,13 +5,13 @@ include_directories (SYSTEM ../../modules)
 
 IF(BB_WIN32)
   add_library(runtime.opengl STATIC win32.cpp)
-  target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.blitz2d.gl bb.blitz3d.gl bb.runtime.glfw3)
+  target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.pixmap bb.blitz2d bb.graphics bb.runtime.glfw3)
 
   add_library(runtime.opengl.bin SHARED win32.cpp)
   target_link_libraries(runtime.opengl.bin runtime.opengl)
 ELSEIF(BB_MINGW32)
   add_library(runtime.opengl STATIC mingw32.cpp)
-  target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.blitz2d.gl bb.blitz3d.gl bb.runtime.glfw3)
+  target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.pixmap bb.blitz2d bb.graphics bb.runtime.glfw3)
 
   add_library(runtime.opengl.bin SHARED mingw32.cpp)
   target_link_libraries(runtime.opengl.bin runtime.opengl)
@@ -27,9 +27,15 @@ ELSEIF(BB_LINUX)
 
   add_library(runtime.opengl.bin SHARED linux.cpp)
   target_link_libraries(runtime.opengl.bin runtime.opengl)
+ELSEIF(BB_IOS)
+  add_library(runtime.opengl STATIC ios.cpp)
+  target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.runtime bb.system bb.system.ios bb.stream bb.bank bb.audio bb.pixmap bb.blitz2d bb.blitz3d bb.blitz3d.gles2 bb.input bb.graphics bb.runtime.glfm)
+
+  add_library(runtime.opengl.bin SHARED ios.cpp)
+  target_link_libraries(runtime.opengl.bin runtime.opengl)
 ELSEIF(BB_EMSCRIPTEN)
   add_library(runtime.opengl STATIC emscripten.cpp)
-  target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.bank bb.runtime bb.audio bb.system bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.blitz2d.gl bb.blitz3d.gl bb.runtime.html)
+  target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.bank bb.runtime bb.audio bb.system bb.input bb.pixmap bb.blitz2d bb.graphics bb.runtime.html)
 
   add_library(runtime.opengl.bin SHARED emscripten.cpp)
   target_link_libraries(runtime.opengl.bin runtime.opengl)

@@ -5,6 +5,7 @@ platforms:
   - mingw32
   - macos
   - linux
+  - ios
   - emscripten
 
 modules:
@@ -20,6 +21,7 @@ modules:
   - enet
   - system.windows
   - system.macos
+  - system.ios
   - filesystem.windows
   - filesystem.posix
   - timer.windows
@@ -30,9 +32,11 @@ modules:
   - audio.fmod
   - audio.openal
   - blitz3d.gl
+  - blitz3d.gles2
   - userlibs
+  - runtime.glfm
   - runtime.glfw3
   - runtime.html
 
 entry:
-  runtime: bbCreateGLFW3Runtime
+  runtime: bbCreateOpenGLRuntime

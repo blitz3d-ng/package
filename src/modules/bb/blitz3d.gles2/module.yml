@@ -1,0 +1,27 @@
+name: OpenGL ES 2.0 for Blitz3D
+description: Provides OpenGL ES 2.0 for Blitz3D.
+
+platforms:
+  - mobile
+
+dependencies:
+  - blitz3d
+  - blitz2d.gl
+
+make:
+  files:
+    - blitz3d.gl.cpp
+    - blitz3d.gl.h
+
+  include_directories:
+    - ../../../deps/glew/include
+    - ../../../deps/freetype2/src/include
+
+premake5:
+  files:
+    - blitz3d.gl.cpp
+    - blitz3d.gl.h
+
+  includedirs:
+    - ../../../deps/glew/include
+    - ../../../deps/freetype2/src/include

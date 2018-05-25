@@ -5,13 +5,13 @@ include_directories (SYSTEM ../../modules)
 
 IF(BB_WIN32)
   add_library(runtime.d3d7 STATIC win32.cpp)
-  target_link_libraries(runtime.d3d7 bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.filesystem bb.filesystem.windows bb.runtime bb.timer bb.timer.windows bb.system bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.bank bb.system.windows bb.pixmap bb.blitz2d bb.blitz3d bb.blitz2d.d3d7 bb.graphics bb.graphics.d3d7 bb.blitz3d.d3d7 bb.frame bb.runtime.windows)
+  target_link_libraries(runtime.d3d7 bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.filesystem bb.filesystem.windows bb.timer.windows bb.runtime bb.system bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.bank bb.system.windows bb.pixmap bb.blitz2d bb.blitz3d bb.blitz2d.d3d7 bb.graphics bb.graphics.d3d7 bb.blitz3d.d3d7 bb.frame bb.runtime.windows)
 
   add_library(runtime.d3d7.bin SHARED win32.cpp)
   target_link_libraries(runtime.d3d7.bin runtime.d3d7)
 ELSEIF(BB_MINGW32)
   add_library(runtime.d3d7 STATIC mingw32.cpp)
-  target_link_libraries(runtime.d3d7 bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.filesystem bb.filesystem.windows bb.runtime bb.timer bb.timer.windows bb.system bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.bank bb.system.windows bb.pixmap bb.blitz2d bb.blitz3d bb.blitz2d.d3d7 bb.graphics bb.graphics.d3d7 bb.blitz3d.d3d7 bb.frame bb.runtime.windows)
+  target_link_libraries(runtime.d3d7 bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.filesystem bb.filesystem.windows bb.timer.windows bb.runtime bb.system bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.bank bb.system.windows bb.pixmap bb.blitz2d bb.blitz3d bb.blitz2d.d3d7 bb.graphics bb.graphics.d3d7 bb.blitz3d.d3d7 bb.frame bb.runtime.windows)
 
   add_library(runtime.d3d7.bin SHARED mingw32.cpp)
   target_link_libraries(runtime.d3d7.bin runtime.d3d7)

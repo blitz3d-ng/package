@@ -33,9 +33,9 @@ BBMODULE_DECL( timer );
 BBMODULE_DECL( runtime_glfw3 );
 
 class BBRuntime;
-BBRuntime *bbCreateGLFW3Runtime();
+BBRuntime *bbCreateOpenGLRuntime();
 BBRuntime *bbCreateRuntime(){
-	return bbCreateGLFW3Runtime();
+	return bbCreateOpenGLRuntime();
 }
 
 #ifdef WIN32

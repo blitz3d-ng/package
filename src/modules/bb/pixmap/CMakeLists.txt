@@ -1,3 +1,12 @@
-add_library (bb.pixmap STATIC pixmap.cpp pixmap.h)
-target_include_directories (bb.pixmap PRIVATE SYSTEM ../../../deps/freeimage317/src/Source)
-target_link_libraries (bb.pixmap bb.blitz freeimage)
+set(SOURCE pixmap.cpp pixmap.h)
+
+IF(NOT BB_MOBILE)
+  set(SOURCE ${SOURCE} freeimage.loader.cpp)
+ENDIF()
+
+add_library (bb.pixmap STATIC ${SOURCE})
+target_link_libraries (bb.pixmap bb.blitz)
+
+IF(NOT BB_MOBILE)
+  target_link_libraries (bb.pixmap freeimage)
+ENDIF()
