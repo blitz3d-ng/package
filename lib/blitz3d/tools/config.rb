@@ -180,7 +180,7 @@ module Blitz3D
             f.write("  add_library(runtime.#{runtime.id} STATIC #{platform}.cpp)\n")
             f.write("  target_link_libraries(runtime.#{runtime.id} #{deps.join(' ')} ${SYSTEM_LIBS})\n") unless deps.empty?
 
-            f.write("\n  add_library(runtime.#{runtime.id}.bin SHARED)\n")
+            f.write("\n  add_library(runtime.#{runtime.id}.bin SHARED #{platform}.cpp)\n")
             f.write("  target_link_libraries(runtime.#{runtime.id}.bin runtime.#{runtime.id})\n") unless deps.empty?
             f.write("ENDIF()\n") if i == runtime.platforms.size - 1
           end

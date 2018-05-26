@@ -1,12 +1,10 @@
-set(SOURCE pixmap.cpp pixmap.h)
+bb_start_module(pixmap)
+set(DEPENDS_ON bb.blitz)
+set(SOURCES pixmap.cpp pixmap.h)
 
 IF(NOT BB_MOBILE)
-  set(SOURCE ${SOURCE} freeimage.loader.cpp)
+  set(SOURCES ${SOURCES} freeimage.loader.cpp)
+  set(LIBS freeimage)
 ENDIF()
 
-add_library (bb.pixmap STATIC ${SOURCE})
-target_link_libraries (bb.pixmap bb.blitz)
-
-IF(NOT BB_MOBILE)
-  target_link_libraries (bb.pixmap freeimage)
-ENDIF()
+bb_end_module()

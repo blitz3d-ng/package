@@ -1,7 +1,8 @@
 IF(BB_WINDOWS)
-  set(MODULES bb.input)
+  bb_start_module(ode)
+  set(DEPENDS_ON bb.input)
+  set(SOURCES driver.cpp driver.h input.directinput8.h)
   set(LIBS dinput8 dxguid)
 
-  add_library (bb.input.directinput8 STATIC driver.cpp driver.h input.directinput8.h)
-  target_link_libraries (bb.input.directinput8 ${MODULES} ${LIBS})
+  bb_end_module()
 ENDIF()

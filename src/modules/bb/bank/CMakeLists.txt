@@ -1,2 +1,6 @@
-add_library (bb.bank STATIC bank.cpp bank.h module.link.cpp)
-target_link_libraries (bb.bank bb.blitz bb.stream)
+bb_start_module(bank)
+set(DEPENDS_ON bb.blitz bb.stream)
+set(SOURCES bank.cpp bank.h module.link.cpp)
+set(LIBS )
+
+bb_end_module()

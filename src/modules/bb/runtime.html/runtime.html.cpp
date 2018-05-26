@@ -58,7 +58,7 @@ public:
 	void setPointerVisible( bool vis ){}
 };
 
-BBRuntime *bbCreateRuntime(){
+BBRuntime *bbCreateHTMLRuntime(){
 	return d_new HtmlRuntime();
 }
 

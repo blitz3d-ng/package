@@ -40,7 +40,7 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 		f+=file[i] == WRONG_DIV ? RIGHT_DIV : file[i];
 	}
 
-#ifndef BB_MOBILE
+#ifdef BB_MOBILE
 	return bbLoadPixmapWithFreeImage( f );
 #else
 	// TODO: fix this...

@@ -33,6 +33,9 @@ ELSEIF(BB_PLATFORM MATCHES ios)
 ELSEIF(BB_PLATFORM MATCHES android)
   set (BB_ANDROID true)
   add_definitions(-DBB_ANDROID)
+ELSEIF(BB_PLATFORM MATCHES emscripten)
+  set (BB_EMSCRIPTEN true)
+  add_definitions(-DBB_EMSCRIPTEN)
 ENDIF()
 
 IF(BB_WIN32 OR BB_WIN64)
@@ -79,6 +82,8 @@ add_definitions(-DPRO -DFREEIMAGE_LIB -DOPJ_STATIC -D_CRT_SECURE_NO_WARNINGS -DD
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")
 
+set (TOOLCHAIN_PATH ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM})
+
 IF(BB_WINDOWS)
   IF(BB_DEBUG)
     add_definitions(/MTd)
@@ -89,9 +94,12 @@ ENDIF()
 
 add_subdirectory(stdutil)
 
-IF(BB_DESKTOP)
-  add_subdirectory(compiler)
+IF(BB_WIN32 OR BB_WIN64)
   add_subdirectory(blitzide)
+ENDIF()
+
+IF(BB_DESKTOP OR BB_EMSCRIPTEN)
+  add_subdirectory(compiler)
 ENDIF()
 
 IF(NOT BB_IOS)
@@ -108,6 +116,21 @@ add_subdirectory(src/deps/freetype2)
 add_subdirectory(src/deps/glew)
 add_subdirectory(src/deps/ogg)
 add_subdirectory(src/deps/vorbis)
+
+macro(bb_start_module name)
+  set(MODULE_ID ${name})
+  set(DEPENDS_ON )
+  set(SOURCES )
+  set(LIBS )
+endmacro()
+
+macro(bb_end_module)
+  add_library (bb.${MODULE_ID} STATIC ${SOURCES})
+  target_link_libraries (bb.${MODULE_ID} ${DEPENDS_ON} ${LIBS})
+
+  file(WRITE  ${TOOLCHAIN_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "MODULES: ${DEPENDS_ON}\n")
+  file(APPEND ${TOOLCHAIN_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "LIBS: ${LIBS}\n")
+endmacro()
 
 add_subdirectory(src/modules)
 add_subdirectory(src/runtime)

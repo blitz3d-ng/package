@@ -1,2 +1,4 @@
-add_library (bb.runtime.console STATIC runtime.console.cpp)
-target_link_libraries (bb.runtime.console bb.blitz bb.hook bb.event bb.runtime)
+bb_start_module(runtime.console)
+set(DEPENDS_ON bb.event bb.runtime)
+set(SOURCES runtime.console.cpp runtime.console.h)
+bb_end_module()

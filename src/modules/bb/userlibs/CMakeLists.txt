@@ -1,4 +1,7 @@
 IF(BB_WINDOWS)
-  add_library (bb.userlibs STATIC userlibs.cpp userlibs.h)
-  target_link_libraries (bb.userlibs bb.blitz)
+  bb_start_module(userlibs)
+  set(DEPENDS_ON bb.blitz)
+  set(SOURCES userlibs.cpp userlibs.h)
+
+  bb_end_module()
 ENDIF()

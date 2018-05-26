@@ -7,13 +7,3 @@ dependencies:
 commands:
   - Context( mesg$ ):"bbContext"
   - Expect( condition%,mesg$ ):"bbExpect"
-
-make:
-  files:
-    - unit-test.cpp
-    - unit-test.h
-
-premake5:
-  files:
-    - unit-test.cpp
-    - unit-test.h

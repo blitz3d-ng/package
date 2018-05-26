@@ -1,4 +1,6 @@
 IF(BB_MOBILE)
-  add_library (bb.blitz2d.gles2 STATIC blitz2d.gles2.cpp blitz2d.gles2.h)
-  target_link_libraries (bb.blitz2d.gles2 bb.blitz2d)
+  bb_start_module(blitz2d.gles2)
+  set(DEPENDS_ON bb.blitz2d)
+  set(SOURCES blitz2d.gles2.cpp blitz2d.gles2.h)
+  bb_end_module()
 ENDIF()

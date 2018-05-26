@@ -12,6 +12,10 @@ ifeq ($(PLATFORM), ios)
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/ios.toolchain.cmake -DIOS_PLATFORM=SIMULATOR64
 endif
 
+ifeq ($(PLATFORM), emscripten)
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/usr/local/Cellar/emscripten/1.38.1/libexec/cmake/Modules/Platform/Emscripten.cmake
+endif
+
 MAKE=make -j$(NUMBER_OF_CORES)
 
 build:
