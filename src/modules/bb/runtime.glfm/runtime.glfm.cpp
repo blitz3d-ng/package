@@ -20,12 +20,9 @@ void bbCloseRuntime( BBRuntime *rt ){
 	delete rt;
 }
 
-// void _onCharMods(GLFWwindow *wnd, unsigned int codepoint, int mods){
-// }
-//
 GLFMRuntime::GLFMRuntime( GLFMDisplay *display ):display(display){
 	bbContextDriver=this;
-	// bbSceneDriver=this;
+	bbSceneDriver=this;
 
 	runtimes.insert( make_pair( display,this ) );
 
@@ -56,8 +53,7 @@ int GLFMRuntime::numGraphicsModes( int driver ){
 }
 
 void GLFMRuntime::graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c ){
-	*w=0;
-	*h=0;
+	glfmGetDisplaySize( display,w,h );
 	*d=0;
 	*c=GFXMODECAPS_3D;
 }
@@ -73,17 +69,17 @@ public:
 	GLFMDefaultCanvas( GLFMDisplay *display,int mode,int flags ):GLES2B2DDefaultCanvas(mode,flags),display(display){
 	}
 
-	// int getWidth()const{
-	//   // int width,height;
-	//   // glfwGetWindowSize( wnd,&width,&height );
-	//   // return width;
-	// }
-	//
-	// int getHeight()const{
-	//   // int width,height;
-	//   // glfwGetWindowSize( wnd,&width,&height );
-	//   // return height;
-	// }
+	int getWidth()const{
+	  int width,height;
+	  glfmGetDisplaySize( display,&width,&height );
+	  return width;
+	}
+
+	int getHeight()const{
+	  int width,height;
+	  glfmGetDisplaySize( display,&width,&height );
+	  return height;
+	}
 
 	void getViewport( int *x,int *y,int *w,int *h )const{
 		*x=0;*y=0;*w=getWidth();*h=getHeight();
@@ -111,9 +107,9 @@ public:
 		// gamma_ramp.blue=gamma_blue;
 		for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
 
-		// int w,h;
-		// glfwGetFramebufferSize( wnd,&w,&h );
-		// resize( w,h );
+		int w,h;
+		glfmGetDisplaySize( display,&w,&h );
+		resize( w,h );
 	}
 
 	~GLFMGraphics(){
@@ -217,6 +213,8 @@ BBGraphics *GLFMRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 }
 
 void GLFMRuntime::closeGraphics( BBGraphics *g ){
+	if( graphics!=g || !g ) return;
+	delete graphics;graphics=0;
 }
 
 bool GLFMRuntime::graphicsLost(){

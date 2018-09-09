@@ -13,6 +13,7 @@
 #endif
 
 #include <thread>
+#include <string.h>
 using namespace std;
 
 #define NUM_BUFFERS 6

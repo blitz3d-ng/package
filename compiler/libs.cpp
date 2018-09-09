@@ -137,8 +137,8 @@ static const char *linkRuntime(string rt){
 #else
 	json index;
 	ifstream i(home+"/toolchains/" BB_PLATFORM "/"+rt+".runtime.json");
-	if (!i.good()){
-		cout << "Missing '" << rt << "' toolchain file for " << BB_PLATFORM << "." << endl;
+	if( !i.good() ){
+		cout << "Missing '" << rt << "' toolchain file for " BB_PLATFORM "." << endl;
 		exit(1);
 	}
 	i >> index;

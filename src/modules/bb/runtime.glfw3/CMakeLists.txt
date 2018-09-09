@@ -1,5 +1,5 @@
 bb_start_module(runtime.glfw3)
-set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.blitz3d.gl4 bb.blitz3d.gl bb.timer)
+set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.blitz3d.gl bb.timer)
 set(SOURCES runtime.glfw3.cpp runtime.glfw3.h scancodes.cpp)
 set(LIBS glfw)
 IF(BB_MACOS)

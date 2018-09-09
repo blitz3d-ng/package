@@ -13,7 +13,11 @@ CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/ios.toolchain.cmake -DIOS_PLATFORM=SIMU
 endif
 
 ifeq ($(PLATFORM), emscripten)
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/usr/local/Cellar/emscripten/1.38.1/libexec/cmake/Modules/Platform/Emscripten.cmake
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/emsdk/emscripten/1.38.12/cmake/Modules/Platform/Emscripten.cmake
+endif
+
+ifeq ($(PLATFORM), mingw32)
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake
 endif
 
 MAKE=make -j$(NUMBER_OF_CORES)

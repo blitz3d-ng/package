@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'open3'
 require 'json'
 require 'os'
 
@@ -17,7 +18,13 @@ else
   'opengl'
 end
 
-BB_ENV = `_release/bin/blitzcc -e`.strip
+BB_ENV, status = Open3.capture2(File.join(File.dirname(__FILE__), '..', '_release/bin/blitzcc -e'))
+if status != 0
+  puts BB_ENV
+  exit 1
+end
+
+BB_ENV = BB_ENV.strip
 
 INCLUDE_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'modules'))
 TOOLCHAINS_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '_release', 'toolchains'))

@@ -1,5 +1,5 @@
 IF(BB_WINDOWS)
-  bb_start_module(ode)
+  bb_start_module(input.directinput8)
   set(DEPENDS_ON bb.input)
   set(SOURCES driver.cpp driver.h input.directinput8.h)
   set(LIBS dinput8 dxguid)

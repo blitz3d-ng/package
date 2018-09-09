@@ -13,7 +13,7 @@ fi
 TOOLCHAIN="$( cd "$(dirname "$0")" ; pwd -P )/../toolchains/$PLATFORM"
 
 if [ ! -f $TOOLCHAIN/bin/blitzcc ]; then
-  echo "The $PLATFORM toolchain not found. You probably need to build it."
+  echo "The $PLATFORM toolchain was not found. You probably need to build it."
   exit 1
 fi
 

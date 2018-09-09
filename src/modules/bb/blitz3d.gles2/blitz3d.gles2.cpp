@@ -3,6 +3,9 @@
 #include <bb/blitz2d.gles2/blitz2d.gles2.h>
 #include "blitz3d.gles2.h"
 
+#include "simple.vert.h"
+#include "simple.frag.h"
+
 #include <iostream>
 using namespace std;
 
@@ -60,9 +63,7 @@ public:
     v_color=new unsigned int[max_verts];
     tris=new int[max_tris*3];
 
-#ifndef BB_IOS
-		glGenBuffersARB( 5,vbo );
-#endif
+		glGenBuffers( 5,vbo );
   }
 
   ~GLMesh(){
@@ -78,22 +79,20 @@ public:
   }
 
   void unlock(){
-#ifndef BB_IOS
-		glBindBufferARB( GL_ARRAY_BUFFER_ARB,vbo[0] );
-		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*3*4,v_coords,GL_STATIC_DRAW_ARB );
+		glBindBuffer( GL_ARRAY_BUFFER,vbo[0] );
+		glBufferData( GL_ARRAY_BUFFER,max_verts*3*4,v_coords,GL_STATIC_DRAW );
 
-		glBindBufferARB( GL_ARRAY_BUFFER_ARB,vbo[1] );
-		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*3*4,v_normal,GL_STATIC_DRAW_ARB );
+		glBindBuffer( GL_ARRAY_BUFFER,vbo[1] );
+		glBufferData( GL_ARRAY_BUFFER,max_verts*3*4,v_normal,GL_STATIC_DRAW );
 
-		glBindBufferARB( GL_ARRAY_BUFFER_ARB,vbo[2] );
-		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*4,v_color,GL_STATIC_DRAW_ARB );
+		glBindBuffer( GL_ARRAY_BUFFER,vbo[2] );
+		glBufferData( GL_ARRAY_BUFFER,max_verts*4,v_color,GL_STATIC_DRAW );
 
-		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,vbo[3] );
-		glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB,max_tris*3*4,tris,GL_STATIC_DRAW_ARB );
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,vbo[3] );
+		glBufferData( GL_ELEMENT_ARRAY_BUFFER,max_tris*3*4,tris,GL_STATIC_DRAW );
 
-		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,vbo[4] );
-		glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB,max_verts*2*2*4,v_tex_coord,GL_STATIC_DRAW_ARB );
-#endif
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,vbo[4] );
+		glBufferData( GL_ELEMENT_ARRAY_BUFFER,max_verts*2*2*4,v_tex_coord,GL_STATIC_DRAW );
   }
 
   void setVertex( int n,const void *_v ){
@@ -149,23 +148,17 @@ private:
 		// FIXME: replace hardcoded '8' with proper hardward-backed value.
 		for( int i=0;i<8;i++ ){
 			if( i>=lights.size() ){
-#ifndef BB_IOS
-				glDisable( GL_LIGHT0+i );
-#endif
+				// glDisable( GL_LIGHT0+i );
 				continue;
 			}
 
-#ifndef BB_IOS
-			glEnable( GL_LIGHT0+i );
-			glPushMatrix();
-			glMultMatrixf( lights[i]->matrix );
-#endif
+			// glEnable( GL_LIGHT0+i );
+			// glPushMatrix();
+			// glMultMatrixf( lights[i]->matrix );
 
 			float white_light[4]={ 1.0f,1.0f,1.0f,1.0f };
 
-#ifndef BB_IOS
-			glLightfv( GL_LIGHT0+i,GL_SPECULAR,white_light );
-#endif
+			// glLightfv( GL_LIGHT0+i,GL_SPECULAR,white_light );
 
 			float z=1.0f,w=0.0f;
 			if( lights[i]->type!=Light::LIGHT_DISTANT ){
@@ -175,34 +168,26 @@ private:
 
 			float pos[]={ 0.0,0.0,z,w };
 			float rgba[]={ lights[i]->r,lights[i]->g,lights[i]->b,1.0f };
-#ifndef BB_IOS
-			glLightfv( GL_LIGHT0+i,GL_POSITION,pos );
-			glLightfv( GL_LIGHT0+i,GL_DIFFUSE,rgba );
-#endif
+			// glLightfv( GL_LIGHT0+i,GL_POSITION,pos );
+			// glLightfv( GL_LIGHT0+i,GL_DIFFUSE,rgba );
 
 			if( lights[i]->type!=Light::LIGHT_DISTANT ){
 				float light_range[]={ 0.0f };
 				float range[]={ lights[i]->range };
-#ifndef BB_IOS
-				glLightfv( GL_LIGHT0+i,GL_CONSTANT_ATTENUATION,light_range );
-				glLightfv( GL_LIGHT0+i,GL_LINEAR_ATTENUATION,range );
-#endif
+				// glLightfv( GL_LIGHT0+i,GL_CONSTANT_ATTENUATION,light_range );
+				// glLightfv( GL_LIGHT0+i,GL_LINEAR_ATTENUATION,range );
 			}
 
 			if( lights[i]->type==Light::LIGHT_SPOT ){
 				float dir[]={ 0.0f,0.0f,-1.0f };
 				float outer[]={ lights[i]->outer_angle/2.0f };
 				float exponent[]={ 10.0f };
-#ifndef BB_IOS
-				glLightfv( GL_LIGHT0+i,GL_SPOT_DIRECTION,dir );
-				glLightfv( GL_LIGHT0+i,GL_SPOT_CUTOFF,outer );
-				glLightfv( GL_LIGHT0+i,GL_SPOT_EXPONENT,exponent );
-#endif
+				// glLightfv( GL_LIGHT0+i,GL_SPOT_DIRECTION,dir );
+				// glLightfv( GL_LIGHT0+i,GL_SPOT_CUTOFF,outer );
+				// glLightfv( GL_LIGHT0+i,GL_SPOT_EXPONENT,exponent );
 			}
 
-#ifndef BB_IOS
-			glPopMatrix();
-#endif
+			// glPopMatrix();
 		}
 	}
 
@@ -220,9 +205,9 @@ public:
   void setHWMultiTex( bool enable ){}
   void setDither( bool enable ){
 		if( enable ){
-			glEnable( GL_DITHER );
+			// glEnable( GL_DITHER );
 		}else{
-			glDisable( GL_DITHER);
+			// glDisable( GL_DITHER);
 		}
 	}
   void setAntialias( bool enable ){}
@@ -230,7 +215,7 @@ public:
 		wireframe=enable;
 	}
   void setFlippedTris( bool enable ){
-		glFrontFace( enable ? GL_CW : GL_CCW );
+		// glFrontFace( enable ? GL_CW : GL_CCW );
 	}
   void setAmbient( const float rgb[3] ){
 		memcpy( ambient,rgb,sizeof(float)*3 );
@@ -244,16 +229,16 @@ public:
   void setZMode( int mode ){
 		switch( mode ){
 		case ZMODE_NORMAL:
-			glEnable( GL_DEPTH_TEST );
-			glDepthMask( GL_TRUE );
+			// glEnable( GL_DEPTH_TEST );
+			// glDepthMask( GL_TRUE );
 			break;
 		case ZMODE_DISABLE:
-			glDisable( GL_DEPTH_TEST );
-			glDepthMask( GL_TRUE );
+			// glDisable( GL_DEPTH_TEST );
+			// glDepthMask( GL_TRUE );
 			break;
 		case ZMODE_CMPONLY:
-			glEnable( GL_DEPTH_TEST );
-			glDepthMask( GL_FALSE );
+			// glEnable( GL_DEPTH_TEST );
+			// glDepthMask( GL_FALSE );
 			break;
 		}
 	}
@@ -262,12 +247,36 @@ public:
     glScissor( x,y,w,h );
   }
   void setOrthoProj( float nr,float fr,float w,float h ){}
+
+	// lifted from Mesa3D
+	void _math_matrix_frustum( float *mat,
+		      GLfloat left, GLfloat right,
+		      GLfloat bottom, GLfloat top,
+		      GLfloat nearval, GLfloat farval )
+	{
+	   GLfloat x, y, a, b, c, d;
+
+	   x = (2.0F*nearval) / (right-left);
+	   y = (2.0F*nearval) / (top-bottom);
+	   a = (right+left) / (right-left);
+	   b = (top+bottom) / (top-bottom);
+	   c = -(farval+nearval) / ( farval-nearval);
+	   d = -(2.0F*farval*nearval) / (farval-nearval);  /* error? */
+
+	#define M(row,col)  mat[col*4+row]
+	   M(0,0) = x;     M(0,1) = 0.0F;  M(0,2) = a;      M(0,3) = 0.0F;
+	   M(1,0) = 0.0F;  M(1,1) = y;     M(1,2) = b;      M(1,3) = 0.0F;
+	   M(2,0) = 0.0F;  M(2,1) = 0.0F;  M(2,2) = c;      M(2,3) = d;
+	   M(3,0) = 0.0F;  M(3,1) = 0.0F;  M(3,2) = -1.0F;  M(3,3) = 0.0F;
+	#undef M
+	}
+
   void setPerspProj( float nr,float fr,float w,float h ){
-#ifndef BB_IOS
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-    glFrustum( -w/2.0,w/2.0,-h/2.0,h/2.0,nr,fr );
-#endif
+		float projmatrix[16];
+		_math_matrix_frustum( projmatrix,-w/2.0,w/2.0,-h/2.0,h/2.0,nr,fr );
+
+		GLint projLocation=glGetUniformLocation( defaultProgram,"bbProjMatrix" );
+		glUniformMatrix4fv( projLocation,1,GL_FALSE,projmatrix );
   }
 
   void setViewMatrix( const Matrix *matrix ){
@@ -277,23 +286,22 @@ public:
     view_matrix[ 8]=m->elements[2][0]; view_matrix[ 9]=m->elements[2][1]; view_matrix[10]=m->elements[2][2]; view_matrix[11]=0.0f;
     view_matrix[12]=m->elements[3][0]; view_matrix[13]=m->elements[3][1]; view_matrix[14]=m->elements[3][2]; view_matrix[15]=1.0f;
 
-#ifndef BB_IOS
-		glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glScalef( 1.0f,1.0f,-1.0f );
-    glMultMatrixf( view_matrix );
-#endif
+		// glMatrixMode(GL_MODELVIEW);
+    // glLoadIdentity();
+    // glScalef( 1.0f,1.0f,-1.0f );
+    // glMultMatrixf( view_matrix );
+
+		GLint viewLocation=glGetUniformLocation( defaultProgram,"bbViewMatrix" );
+		glUniformMatrix4fv( viewLocation,1,GL_FALSE,view_matrix );
 
 		setLights();
   }
 
   void setWorldMatrix( const Matrix *matrix ){
-#ifndef BB_IOS
-		glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glScalef( 1.0f,1.0f,-1.0f );
-    glMultMatrixf( view_matrix );
-#endif
+		// glMatrixMode(GL_MODELVIEW);
+    // glLoadIdentity();
+    // glScalef( 1.0f,1.0f,-1.0f );
+    // glMultMatrixf( view_matrix );
 
     if( matrix ){
       const Matrix *m=matrix;
@@ -302,46 +310,45 @@ public:
         m->elements[0][0], m->elements[0][1], m->elements[0][2], 0.0f,
         m->elements[1][0], m->elements[1][1], m->elements[1][2], 0.0f,
         m->elements[2][0], m->elements[2][1], m->elements[2][2], 0.0f,
-        m->elements[3][0], m->elements[3][1], m->elements[3][2], 1.0f
+        m->elements[3][0], m->elements[3][1], -m->elements[3][2], 1.0f
       };
-#ifndef BB_IOS
-      glMultMatrixf( mat );
-#endif
-    }
+      // glMultMatrixf( mat );
+			GLint worldLocation=glGetUniformLocation( defaultProgram,"bbWorldMatrix" );
+			glUniformMatrix4fv( worldLocation,1,GL_FALSE,mat );
+		}
   }
 	void setRenderState( const RenderState &rs ){
-#ifndef BB_IOS
 		if( rs.fx&FX_ALPHATEST && !(rs.fx&FX_VERTEXALPHA) ){
-			glEnable( GL_ALPHA_TEST );
+			// glEnable( GL_ALPHA_TEST );
 		} else {
-			glDisable( GL_ALPHA_TEST );
+			// glDisable( GL_ALPHA_TEST );
 		}
 
 		if( rs.blend==BLEND_REPLACE ){
-			glDisable( GL_BLEND );
+			// glDisable( GL_BLEND );
 		} else {
 			switch( rs.blend ){
 			case BLEND_ALPHA:
-				glEnable( GL_BLEND );
-				glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
+				// glEnable( GL_BLEND );
+				// glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
 				break;
 			case BLEND_MULTIPLY:
-				glEnable( GL_BLEND );
-				glBlendFunc( GL_DST_COLOR,GL_ZERO );
+				// glEnable( GL_BLEND );
+				// glBlendFunc( GL_DST_COLOR,GL_ZERO );
 				break;
 			case BLEND_ADD:
-				glEnable( GL_BLEND );
-				glBlendFunc( GL_SRC_ALPHA,GL_ONE );
+				// glEnable( GL_BLEND );
+				// glBlendFunc( GL_SRC_ALPHA,GL_ONE );
 				break;
 			}
 		}
 
-		glShadeModel( rs.fx&FX_FLATSHADED ? GL_FLAT : GL_SMOOTH );
+		// glShadeModel( rs.fx&FX_FLATSHADED ? GL_FLAT : GL_SMOOTH );
 
 		if( rs.fx&FX_WIREFRAME || wireframe){
-			glPolygonMode( GL_FRONT_AND_BACK,GL_LINE );
+			// glPolygonMode( GL_FRONT_AND_BACK,GL_LINE );
 		}else{
-			glPolygonMode( GL_FRONT_AND_BACK,GL_FILL );
+			// glPolygonMode( GL_FRONT_AND_BACK,GL_FILL );
 		}
 
 		float mat_ambient[]={ rs.color[0],rs.color[1],rs.color[2],rs.alpha };
@@ -349,38 +356,38 @@ public:
 		float mat_specular[]={ rs.shininess,rs.shininess,rs.shininess,rs.shininess };
 		float mat_shininess[]={ 100.0 };
 
-		glMaterialfv( GL_FRONT,GL_AMBIENT,mat_ambient );
-		glMaterialfv( GL_FRONT,GL_DIFFUSE,mat_diffuse );
-		glMaterialfv( GL_FRONT,GL_SPECULAR,mat_specular );
-		glMaterialfv( GL_FRONT,GL_SHININESS,mat_shininess );
+		// glMaterialfv( GL_FRONT,GL_AMBIENT,mat_ambient );
+		// glMaterialfv( GL_FRONT,GL_DIFFUSE,mat_diffuse );
+		// glMaterialfv( GL_FRONT,GL_SPECULAR,mat_specular );
+		// glMaterialfv( GL_FRONT,GL_SHININESS,mat_shininess );
 
 		if( rs.fx&FX_FULLBRIGHT ){
 			const float WHITE[]={ 1.0f,1.0f,1.0f,1.0f };
-			glLightModelfv( GL_LIGHT_MODEL_AMBIENT,WHITE );
+			// glLightModelfv( GL_LIGHT_MODEL_AMBIENT,WHITE );
 		}else{
-			glLightModelfv( GL_LIGHT_MODEL_AMBIENT,ambient );
+			// glLightModelfv( GL_LIGHT_MODEL_AMBIENT,ambient );
 		}
 
 		if( rs.fx&FX_VERTEXCOLOR ){
-			glEnable( GL_COLOR_MATERIAL );
+			// glEnable( GL_COLOR_MATERIAL );
 		}else{
-			glDisable( GL_COLOR_MATERIAL );
+			// glDisable( GL_COLOR_MATERIAL );
 		}
 
     for( int i=0;i<MAX_TEXTURES;i++ ){
 			const RenderState::TexState &ts=rs.tex_states[i];
-      glActiveTexture( GL_TEXTURE0+i );
+      // glActiveTexture( GL_TEXTURE0+i );
 
-      GLB2DTextureCanvas *canvas=(GLB2DTextureCanvas*)ts.canvas;
+      GLES2B2DTextureCanvas *canvas=(GLES2B2DTextureCanvas*)ts.canvas;
 
       if( !canvas ){
-        glDisable( GL_TEXTURE_2D );
-        glBindTexture( GL_TEXTURE_2D,0 );
+        // glDisable( GL_TEXTURE_2D );
+        // glBindTexture( GL_TEXTURE_2D,0 );
       } else {
-				glEnable( GL_TEXTURE_2D );
-				glBindTexture( GL_TEXTURE_2D,canvas->textureId() );
+				// glEnable( GL_TEXTURE_2D );
+				// glBindTexture( GL_TEXTURE_2D,canvas->textureId() );
 
-				glMatrixMode( GL_TEXTURE );
+				// glMatrixMode( GL_TEXTURE );
 				const Matrix *m=ts.matrix;
 				if( m ){
 					float mat[16]={
@@ -389,9 +396,9 @@ public:
 						m->elements[2][0], m->elements[2][1], m->elements[2][2], 0.0f,
 						m->elements[3][0], m->elements[3][1], m->elements[3][2], 1.0f
 					};
-					glLoadMatrixf( mat );
+					// glLoadMatrixf( mat );
 				} else {
-					glLoadIdentity();
+					// glLoadIdentity();
 				}
 
 				int flags=ts.canvas->getFlags();
@@ -399,99 +406,155 @@ public:
 				bool no_filter=flags&BBCanvas::CANVAS_TEX_NOFILTERING;
 				bool mipmap=flags&BBCanvas::CANVAS_TEX_MIPMAP;
 
-				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR );
-				glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) );
+				// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR );
+				// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) );
 
 				if( flags&BBCanvas::CANVAS_TEX_CLAMPU ){
-					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+					// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
 				} else {
-					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
+					// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
 				}
 
 				if( flags&BBCanvas::CANVAS_TEX_CLAMPV ){
-					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+					// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
 				} else {
-					glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
+					// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
 				}
 
 				if( flags&BBCanvas::CANVAS_TEX_SPHERE ){
-					glEnable( GL_TEXTURE_GEN_S );
-					glEnable( GL_TEXTURE_GEN_T );
-					glTexGeni( GL_S,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP );
-					glTexGeni( GL_T,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP );
+					// glEnable( GL_TEXTURE_GEN_S );
+					// glEnable( GL_TEXTURE_GEN_T );
+					// glTexGeni( GL_S,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP );
+					// glTexGeni( GL_T,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP );
 				}else{
-					glDisable( GL_TEXTURE_GEN_S );
-					glDisable( GL_TEXTURE_GEN_T );
+					// glDisable( GL_TEXTURE_GEN_S );
+					// glDisable( GL_TEXTURE_GEN_T );
 				}
 
 				switch( ts.blend ){
 				case BLEND_REPLACE:
-					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
 					break;
 				case BLEND_ALPHA:
-					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
 					break;
 				case BLEND_MULTIPLY:
-					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
 					break;
 				// case BLEND_MULTIPLY:
 				// 	glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_ARB,GL_MODULATE );
 				// 	break;
 				case BLEND_ADD:
-					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_ADD);
+					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_ADD);
 					break;
 				case BLEND_DOT3:
-					glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE_ARB );
-					glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_ARB,GL_DOT3_RGB_ARB );
+					// glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE_ARB );
+					// glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_ARB,GL_DOT3_RGB_ARB );
 					break;
 				case BLEND_MULTIPLY2:
-					glTexEnvi( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE );
-					glTexEnvi( GL_TEXTURE_ENV,GL_COMBINE_RGB,GL_MODULATE );
-					glTexEnvi( GL_TEXTURE_ENV,GL_RGB_SCALE,2.0f );
+					// glTexEnvi( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE );
+					// glTexEnvi( GL_TEXTURE_ENV,GL_COMBINE_RGB,GL_MODULATE );
+					// glTexEnvi( GL_TEXTURE_ENV,GL_RGB_SCALE,2.0f );
 					break;
 				default:
-					glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
+					// glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
 					break;
 				}
       }
     }
-#endif
   }
+
+	static GLuint compileShader(GLenum type, const char *shaderName, const unsigned char *shaderData, size_t shaderLength) {
+		// FIXME: probably shouldn't hardcode a length here...
+		static char shaderString[2048];
+
+		memset( shaderString,0,sizeof(shaderString) );
+		memcpy( shaderString,shaderData,shaderLength );
+
+	    // Compile
+			const char *shaderSource[1] = { shaderString };
+	    GLuint shader = glCreateShader(type);
+	    glShaderSource(shader, 1, shaderSource, NULL);
+	    glCompileShader(shader);
+
+	    // Check compile status
+	    GLint status;
+	    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+	    if (status == 0) {
+	        printf( "Couldn't compile shader: %s\n",shaderName );
+	        GLint logLength;
+	        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+	        if (logLength > 0) {
+	            GLchar *log = (GLchar*)malloc(logLength);
+	            glGetShaderInfoLog(shader, logLength, &logLength, log);
+	            if (log[0] != 0) {
+	                printf("Shader log: %s\n", log);
+	            }
+	            free(log);
+	        }
+	        glDeleteShader(shader);
+	        shader = 0;
+	    }
+	    return shader;
+	}
+
+	GLuint defaultProgram;
+
 
 	int viewport[4];
 
   //rendering
 	bool begin( const std::vector<BBLightRep*> &l ){
+		if( defaultProgram == 0 ){
+			GLuint vertShader=compileShader( GL_VERTEX_SHADER,"simple.vert",SIMPLE2_VERT,SIMPLE2_VERT_SIZE );
+			GLuint fragShader=compileShader( GL_FRAGMENT_SHADER,"simple.frag",SIMPLE2_FRAG,SIMPLE2_FRAG_SIZE );
+			if (vertShader == 0 || fragShader == 0) {
+				cout<<"Failed to compile."<<endl;
+				exit(1);
+			}
+			defaultProgram = glCreateProgram();
+
+			glAttachShader( defaultProgram,vertShader );
+			glAttachShader( defaultProgram,fragShader );
+
+			glBindAttribLocation( defaultProgram,0,"a_position" );
+			glBindAttribLocation( defaultProgram,1,"a_normal" );
+			glBindAttribLocation( defaultProgram,2,"a_color" );
+
+			glLinkProgram( defaultProgram );
+
+			glDeleteShader( vertShader );
+			glDeleteShader( fragShader );
+		}
+		glUseProgram( defaultProgram );
 		glEnable( GL_SCISSOR_TEST );
 		glEnable( GL_CULL_FACE );
 
-#ifndef BB_IOS
-		glEnableClientState( GL_VERTEX_ARRAY );
-		glEnableClientState( GL_COLOR_ARRAY );
-		glEnableClientState( GL_NORMAL_ARRAY );
+		// glEnableClientState( GL_VERTEX_ARRAY );
+		// glEnableClientState( GL_COLOR_ARRAY );
+		// glEnableClientState( GL_NORMAL_ARRAY );
 
-		glHint( GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST );
-#endif
+		// glHint( GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST );
 
-// FIXME: find out why it's not available under emscripten
-#if !(BB_IOS || BB_EMSCRIPTEN)
-		glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR );
-		glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE );
+		// glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR );
+		// glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE );
 
-		glEnable( GL_NORMALIZE );
+		// glEnable( GL_NORMALIZE );
 
-    glAlphaFunc( GL_GEQUAL,0.5 );
+    // glAlphaFunc( GL_GEQUAL,0.5 );
 
-		glClearDepth( 1.0f );
+		glClearDepthf( 1.0f );
 		glDepthFunc( GL_LEQUAL );
 
-    glEnable( GL_LIGHTING );
-#endif
+    // glEnable( GL_LIGHTING );
+
+		GLint ambientLocation=glGetUniformLocation( defaultProgram,"bbAmbientLight" );
+		glUniform4fv( ambientLocation,1,ambient );
 
 		lights.clear();
 		for( int i=0;i<l.size();i++ ) lights.push_back( dynamic_cast<GLLight*>(l[i]) );
 
-		glGetIntegerv( GL_VIEWPORT,viewport );
+		// glGetIntegerv( GL_VIEWPORT,viewport );
 
 		return true;
 	}
@@ -499,9 +562,7 @@ public:
 	void clear( const float rgb[3],float alpha,float z,bool clear_argb,bool clear_z ){
 		if( !clear_argb && !clear_z ) return;
 		glClearColor( rgb[0],rgb[1],rgb[2],alpha );
-#ifndef BB_IOS
-		glClearDepth( z );
-#endif
+		glClearDepthf( z );
 		glClear( (clear_argb?GL_COLOR_BUFFER_BIT:0)|(clear_z?GL_DEPTH_BUFFER_BIT:0)  );
 	}
 
@@ -511,59 +572,54 @@ public:
 #define PTR(op) reinterpret_cast<void*>(op)
 
 		for( int i=0;i<8;i++ ){
-#ifndef BB_IOS
-			glClientActiveTextureARB( GL_TEXTURE0+i );
+			// glClientActiveTextureARB( GL_TEXTURE0+i );
 
-			glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-			glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[4] );
-			glTexCoordPointer( 2,GL_FLOAT,4*sizeof(float),PTR(first_vert*sizeof(float)*4) );
-#endif
+			// glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+			// glBindBufferARB( GL_ARRAY_BUFFER,mesh->vbo[4] );
+			// glTexCoordPointer( 2,GL_FLOAT,4*sizeof(float),PTR(first_vert*sizeof(float)*4) );
 		}
 
-#ifndef BB_IOS
-		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[0] );
-		glVertexPointer( 3,GL_FLOAT,0,PTR(first_vert*sizeof(float)*3) );
+		cout<<"render..."<<endl;
+		glViewport( 0,0,1242,2208 );
 
-		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[1] );
-		glNormalPointer( GL_FLOAT,0,PTR(first_vert*sizeof(float)*3) );
+		glBindBuffer( GL_ARRAY_BUFFER,mesh->vbo[0] );
+		glEnableVertexAttribArray( 0 );
+		glVertexAttribPointer( 0,3,GL_FLOAT,GL_FALSE,0,PTR(first_vert*sizeof(float)*3) );
 
-		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[2] );
-		glColorPointer( 4,GL_UNSIGNED_INT,0,PTR(first_vert*sizeof(float)*4) );
+		glBindBuffer( GL_ARRAY_BUFFER,mesh->vbo[1] );
+		glEnableVertexAttribArray( 1 );
+		glVertexAttribPointer( 1,3,GL_FLOAT,GL_FALSE,0,PTR(first_vert*sizeof(float)*3) );
 
-		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,mesh->vbo[3] );
+		glBindBuffer( GL_ARRAY_BUFFER,mesh->vbo[2] );
+		glEnableVertexAttribArray( 2 );
+		glVertexAttribPointer( 2,4,GL_UNSIGNED_INT,GL_FALSE,0,PTR(first_vert*sizeof(float)*4) );
+
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,mesh->vbo[3] );
 		glDrawElements( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,PTR(first_tri*3*sizeof(unsigned int)) );
-#endif
 	}
 
   void end(){
-		glActiveTexture( GL_TEXTURE0 );
-#ifndef BB_IOS
-		glDisable( GL_LIGHTING );
-		glEnable( GL_COLOR_MATERIAL );
-#endif
-		glDisable( GL_DEPTH_TEST );
-#ifndef BB_IOS
-		glMatrixMode( GL_MODELVIEW );
-		glLoadIdentity();
-		glMatrixMode( GL_TEXTURE );
-		glLoadIdentity();
-#endif
+		glUseProgram( 0 );
+		// glActiveTexture( GL_TEXTURE0 );
+		// glDisable( GL_LIGHTING );
+		// glEnable( GL_COLOR_MATERIAL );
+		// glDisable( GL_DEPTH_TEST );
+		// glMatrixMode( GL_MODELVIEW );
+		// glLoadIdentity();
+		// glMatrixMode( GL_TEXTURE );
+		// glLoadIdentity();
 
-		glEnable( GL_TEXTURE_2D );
-#ifndef BB_IOS
-		glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
-#endif
+		// glEnable( GL_TEXTURE_2D );
+		// glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
 
-		glEnable( GL_BLEND );
-		glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
+		// glEnable( GL_BLEND );
+		// glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
 
-#ifndef BB_IOS
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho( 0.0f,viewport[2],viewport[3],0.0f,-1.0f,1.0f );
-#endif
+		// glMatrixMode(GL_PROJECTION);
+		// glLoadIdentity();
+		// glOrtho( 0.0f,viewport[2],viewport[3],0.0f,-1.0f,1.0f );
 
-		glViewport( 0,0,viewport[2],viewport[3] );
+		// glViewport( 0,0,viewport[2],viewport[3] );
   }
 
   //lighting

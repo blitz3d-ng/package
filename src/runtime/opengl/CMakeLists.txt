@@ -3,21 +3,25 @@
 
 include_directories (SYSTEM ../../modules)
 
-IF (BB_WINDOWS)
-set (SYSTEM_LIBS libcmt)
-ENDIF()
+if(BB_MSVC)
+  set(SYSTEM_LIBS libcmt)
+endif()
 
 IF(BB_WIN32)
   add_library(runtime.opengl STATIC win32.cpp)
   target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.pixmap bb.blitz2d bb.graphics bb.runtime.glfw3 ${SYSTEM_LIBS})
 
   add_library(runtime.opengl.bin SHARED win32.cpp)
+  set_target_properties(runtime.opengl.bin PROPERTIES OUTPUT_NAME "runtime.opengl")
+  set_property(TARGET runtime.opengl.bin APPEND_STRING PROPERTY LINK_FLAGS " -static")
   target_link_libraries(runtime.opengl.bin runtime.opengl)
 ELSEIF(BB_MINGW32)
   add_library(runtime.opengl STATIC mingw32.cpp)
   target_link_libraries(runtime.opengl bb.blitz bb.hook bb.event bb.math bb.string bb.stdio bb.stream bb.sockets bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.pixmap bb.blitz2d bb.graphics bb.runtime.glfw3 ${SYSTEM_LIBS})
 
   add_library(runtime.opengl.bin SHARED mingw32.cpp)
+  set_target_properties(runtime.opengl.bin PROPERTIES OUTPUT_NAME "runtime.opengl")
+  set_property(TARGET runtime.opengl.bin APPEND_STRING PROPERTY LINK_FLAGS " -static")
   target_link_libraries(runtime.opengl.bin runtime.opengl)
 ELSEIF(BB_MACOS)
   add_library(runtime.opengl STATIC macos.cpp)

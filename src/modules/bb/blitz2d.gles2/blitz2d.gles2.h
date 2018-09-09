@@ -31,6 +31,7 @@ public:
 	}
 
 	void resize( int w,int h ){
+		cout<<"resize: "<<w<<","<<h<<endl;
 		width=w;height=h;
 	}
 
@@ -116,19 +117,19 @@ public:
 	int getDepth()const{ return 8; }
 
 	void unset(){
-		glFlush();
+		// glFlush();
 
-		glBindTexture( GL_TEXTURE_2D,texture );
-		glGenerateMipmap( GL_TEXTURE_2D );
+		// glBindTexture( GL_TEXTURE_2D,texture );
+		// glGenerateMipmap( GL_TEXTURE_2D );
 	}
 
 	unsigned int textureId(){
 		if( texture ) return texture;
 
-		glGenTextures( 1,&texture );
-		glBindTexture( GL_TEXTURE_2D,texture );
-		// glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
-		// glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA8,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
+		// glGenTextures( 1,&texture );
+		// glBindTexture( GL_TEXTURE_2D,texture );
+		// glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
+    // glGenerateMipmap( GL_TEXTURE_2D );
 
 		return texture;
 	}
@@ -136,23 +137,23 @@ public:
 	unsigned int framebufferId(){
 		if( framebuffer ) return framebuffer;
 
-		glGenRenderbuffers( 1,&depthbuffer );
-		glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer );
-		glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height );
-		glBindRenderbuffer( GL_RENDERBUFFER,0 );
+		// glGenRenderbuffers( 1,&depthbuffer );
+		// glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer );
+		// glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height );
+		// glBindRenderbuffer( GL_RENDERBUFFER,0 );
 
-		glGenFramebuffers( 1,&framebuffer );
-		glBindFramebuffer( GL_FRAMEBUFFER,framebuffer );
-		glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textureId(),0 );
-		glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer );
+		// glGenFramebuffers( 1,&framebuffer );
+		// glBindFramebuffer( GL_FRAMEBUFFER,framebuffer );
+		// glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textureId(),0 );
+		// glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer );
 
-		glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+		// glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
 		return framebuffer;
 	}
 
 	void set(){
-		glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() );
+		// glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() );
 	}
 
 	void setPixmap( BBPixmap *pm ){
@@ -167,15 +168,15 @@ public:
 		width=pm->width;
 		height=pm->height;
 
-		if( !texture ) glGenTextures( 1,&texture );
-		glBindTexture( GL_TEXTURE_2D,texture );
+		// if( !texture ) glGenTextures( 1,&texture );
+		// glBindTexture( GL_TEXTURE_2D,texture );
 		// glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
 		// glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
 	}
 
   void bind()const{
-    glEnable( GL_TEXTURE_2D );
-    glBindTexture( GL_TEXTURE_2D,texture );
+    // glEnable( GL_TEXTURE_2D );
+    // glBindTexture( GL_TEXTURE_2D,texture );
   }
 };
 
@@ -187,14 +188,14 @@ protected:
 public:
   GLES2B2DDefaultCanvas( int m,int f ):GLES2B2DCanvas(f),mode(m){
 		set();
-		glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+		// glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 	}
 
 	void unset(){
-		glFlush();
+		// glFlush();
 	}
 	void set(){
-		glBindFramebuffer( GL_FRAMEBUFFER,0 );
+		// glBindFramebuffer( GL_FRAMEBUFFER,0 );
 		// glDrawBuffer( mode );
 	}
 

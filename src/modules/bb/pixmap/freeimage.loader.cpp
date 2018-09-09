@@ -1,10 +1,11 @@
 
-#include "../../stdutil/stdutil.h"
 #include <bb/blitz/blitz.h>
-
+#include "../../stdutil/stdutil.h"
 #include "pixmap.h"
-#include <FreeImage.h>
 using namespace std;
+
+#include <FreeImage.h>
+#include <string.h>
 
 BBPixmap *bbLoadPixmapWithFreeImage( const std::string &file ){
 	string f=file;

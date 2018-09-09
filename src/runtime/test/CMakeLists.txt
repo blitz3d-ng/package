@@ -3,21 +3,25 @@
 
 include_directories (SYSTEM ../../modules)
 
-IF (BB_WINDOWS)
-set (SYSTEM_LIBS libcmt)
-ENDIF()
+if(BB_MSVC)
+  set(SYSTEM_LIBS libcmt)
+endif()
 
 IF(BB_WIN32)
   add_library(runtime.test STATIC win32.cpp)
   target_link_libraries(runtime.test bb.math bb.blitz bb.string bb.stdio bb.stream bb.sockets bb.hook bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.event bb.runtime.console bb.unit-test ${SYSTEM_LIBS})
 
   add_library(runtime.test.bin SHARED win32.cpp)
+  set_target_properties(runtime.test.bin PROPERTIES OUTPUT_NAME "runtime.test")
+  set_property(TARGET runtime.test.bin APPEND_STRING PROPERTY LINK_FLAGS " -static")
   target_link_libraries(runtime.test.bin runtime.test)
 ELSEIF(BB_MINGW32)
   add_library(runtime.test STATIC mingw32.cpp)
   target_link_libraries(runtime.test bb.math bb.blitz bb.string bb.stdio bb.stream bb.sockets bb.hook bb.enet bb.runtime bb.system bb.bank bb.system.windows bb.filesystem bb.filesystem.windows bb.timer.windows bb.input bb.input.directinput8 bb.audio bb.audio.fmod bb.userlibs bb.event bb.runtime.console bb.unit-test ${SYSTEM_LIBS})
 
   add_library(runtime.test.bin SHARED mingw32.cpp)
+  set_target_properties(runtime.test.bin PROPERTIES OUTPUT_NAME "runtime.test")
+  set_property(TARGET runtime.test.bin APPEND_STRING PROPERTY LINK_FLAGS " -static")
   target_link_libraries(runtime.test.bin runtime.test)
 ELSEIF(BB_MACOS)
   add_library(runtime.test STATIC macos.cpp)

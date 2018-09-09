@@ -39,11 +39,16 @@ public:
     cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<endl;
 	}
 	void debugMsg( const char *msg,bool serious ){
+		cout<<msg<<endl;
+		if( serious ){
+			exit(1);
+		}
 	}
 	void debugSys( void *msg ){
 	}
 };
 
+static StdioDebugger debugger( false );
 
 extern "C" int StartupIOS( GLFMDisplay *display ){
 #ifdef DEBUG
@@ -52,10 +57,8 @@ extern "C" int StartupIOS( GLFMDisplay *display ){
   bb_env.debug=false;
 #endif
 
-  bbStartup( "","" );
-
-	StdioDebugger debugger( false );
-  bbAttachDebugger( &debugger );
+	bbStartup( "","" );
+	bbAttachDebugger( &debugger );
 
   if( !(bbRuntime=d_new GLFMRuntime( display )) ){
     cerr<<"Failed to create runtime"<<endl;
