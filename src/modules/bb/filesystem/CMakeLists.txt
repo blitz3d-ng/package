@@ -1,2 +1,4 @@
-add_library (bb.filesystem STATIC filesystem.cpp filesystem.h module.link.cpp)
-target_link_libraries (bb.filesystem bb.blitz bb.stream)
+bb_start_module(filesystem)
+set(DEPENDS_ON bb.stream)
+set(SOURCES filesystem.cpp filesystem.h module.link.cpp)
+bb_end_module()

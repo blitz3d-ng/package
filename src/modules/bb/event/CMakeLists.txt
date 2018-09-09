@@ -1,2 +1,4 @@
-add_library (bb.event STATIC event.cpp event.h)
-target_link_libraries (bb.event bb.blitz bb.hook)
+bb_start_module(event)
+set(DEPENDS_ON bb.blitz bb.hook)
+set(SOURCES event.cpp event.h)
+bb_end_module()

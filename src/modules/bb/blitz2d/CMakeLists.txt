@@ -1,7 +1,5 @@
 bb_start_module(blitz2d)
-
 set(DEPENDS_ON bb.blitz bb.pixmap)
 set(SOURCES module.cpp font.h font.cpp graphics.h blitz2d.h movie.h movie.cpp module.link.cpp)
 set(LIBS freetype2)
-
 bb_end_module()

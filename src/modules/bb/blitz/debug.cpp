@@ -3,7 +3,7 @@
 #include "debug.h"
 #include "ex.h"
 
-static Debugger *debugger;
+static Debugger *debugger=0;
 
 BBHook bbOnDebugStop;
 BBHook bbOnDebugError;

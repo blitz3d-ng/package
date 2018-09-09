@@ -1,8 +1,6 @@
 #ifndef BB_PIXMAP_H
 #define BB_PIXMAP_H
 
-#include <string>
-
 enum{
 	PF_UNKNOWN=0,
 	PF_I8,
@@ -15,6 +13,7 @@ struct BBPixmap{
   int width,height,depth,pitch,bpp;
   unsigned char *bits;
 
+#ifdef __cplusplus
   BBPixmap();
   ~BBPixmap();
 
@@ -25,8 +24,12 @@ struct BBPixmap{
 
 	void mask( int r,int g,int b );
 	void buildAlpha( bool whiten );
+#endif
 };
 
+#ifdef __cplusplus
+#include <string>
 BBPixmap *bbLoadPixmap( const std::string &file );
+#endif
 
 #endif

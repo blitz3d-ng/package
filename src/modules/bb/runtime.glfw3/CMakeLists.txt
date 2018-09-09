@@ -1,6 +1,8 @@
-add_library (bb.runtime.glfw3 STATIC runtime.glfw3.cpp runtime.glfw3.h scancodes.cpp)
-target_link_libraries (bb.runtime.glfw3 bb.blitz bb.runtime bb.system bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.blitz2d.gl bb.blitz3d.gl bb.timer glfw)
-
+bb_start_module(runtime.glfw3)
+set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.blitz3d.gl4 bb.blitz3d.gl bb.timer)
+set(SOURCES runtime.glfw3.cpp runtime.glfw3.h scancodes.cpp)
+set(LIBS glfw)
 IF(BB_MACOS)
-  target_link_libraries (bb.runtime.glfw3 "-framework OpenGL")
+  set (LIBS ${LIBS} "-framework OpenGL")
 ENDIF()
+bb_end_module()

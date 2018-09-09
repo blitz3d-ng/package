@@ -1,4 +1,6 @@
 IF(BB_WINDOWS)
-  add_library (bb.filesystem.windows STATIC filesystem.windows.h dir.h dir.cpp driver.cpp driver.h module.cpp)
-  target_link_libraries (bb.filesystem.windows bb.filesystem)
+  bb_start_module(filesystem.windows)
+  set(DEPENDS_ON bb.filesystem)
+  set(SOURCES filesystem.windows.h dir.h dir.cpp driver.cpp driver.h module.cpp)
+  bb_end_module()
 ENDIF()

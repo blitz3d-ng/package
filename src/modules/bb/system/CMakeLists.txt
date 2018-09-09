@@ -1,2 +1,4 @@
-add_library (bb.system STATIC system.cpp system.h module.link.cpp)
-target_link_libraries (bb.system bb.blitz bb.runtime)
+bb_start_module(system)
+set(DEPENDS_ON bb.runtime)
+set(SOURCES system.cpp system.h module.link.cpp)
+bb_end_module()

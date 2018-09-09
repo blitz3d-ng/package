@@ -1,2 +1,4 @@
-add_library (bb.filesystem.posix STATIC filesystem.posix.cpp filesystem.posix.h commands.h)
-target_link_libraries (bb.filesystem.posix bb.blitz bb.stream bb.filesystem)
+bb_start_module(filesystem.posix)
+set(DEPENDS_ON bb.stream bb.filesystem)
+set(SOURCES filesystem.posix.cpp filesystem.posix.h commands.h)
+bb_end_module()

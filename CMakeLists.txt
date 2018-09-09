@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.0)
 project (Blitz3D)
 
+include(src/bin2h.cmake)
+
 IF(NOT BB_PLATFORM)
   IF(WIN32)
     IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -72,9 +74,10 @@ ENDIF()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/bin)
-set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/lib/${BB_ENV})
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM}/lib/${BB_ENV})
+set (BUILD_PATH ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM})
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_PATH}/bin)
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BUILD_PATH}/lib/${BB_ENV})
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BUILD_PATH}/lib/${BB_ENV})
 
 # TODO: move these to their appropriate modules
 add_definitions(-DPRO -DFREEIMAGE_LIB -DOPJ_STATIC -D_CRT_SECURE_NO_WARNINGS -DDIRECTSOUND_VERSION=0x700 -DODE_LIB)
@@ -82,7 +85,6 @@ add_definitions(-DPRO -DFREEIMAGE_LIB -DOPJ_STATIC -D_CRT_SECURE_NO_WARNINGS -DD
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")
 
-set (TOOLCHAIN_PATH ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM})
 
 IF(BB_WINDOWS)
   IF(BB_DEBUG)
@@ -128,8 +130,9 @@ macro(bb_end_module)
   add_library (bb.${MODULE_ID} STATIC ${SOURCES})
   target_link_libraries (bb.${MODULE_ID} ${DEPENDS_ON} ${LIBS})
 
-  file(WRITE  ${TOOLCHAIN_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "MODULES: ${DEPENDS_ON}\n")
-  file(APPEND ${TOOLCHAIN_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "LIBS: ${LIBS}\n")
+  file(WRITE  ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "ID: bb.${MODULE_ID}\n")
+  file(APPEND ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "MODULES: ${DEPENDS_ON}\n")
+  file(APPEND ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "LIBS: ${LIBS}\n")
 endmacro()
 
 add_subdirectory(src/modules)

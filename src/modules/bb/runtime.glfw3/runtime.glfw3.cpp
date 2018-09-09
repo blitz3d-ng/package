@@ -19,6 +19,13 @@ map<GLFWwindow*,GLFW3Runtime*> runtimes;
 BBRuntime *bbCreateOpenGLRuntime(){
 	if( !glfwInit() ) return 0;
 
+	// TODO: figure out a dynamic way to change GL version on boot.
+	// glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR,4 );
+	// glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR,1 );
+	// glfwWindowHint( GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE );
+	// glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT,GLFW_TRUE );
+	// glfwWindowHint( GLFW_OPENGL_DEBUG_CONTEXT,GLFW_TRUE );
+
 	glfwWindowHint( GLFW_FOCUSED,1 );
 	glfwWindowHint( GLFW_RESIZABLE,0 );
 

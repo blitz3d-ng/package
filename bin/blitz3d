@@ -15,7 +15,6 @@ end
 
 require_relative '../lib/blitz3d/cli'
 
-
 def run(mod, &block)
   Class.new { extend mod }.run(*block.try(:yield))
 end

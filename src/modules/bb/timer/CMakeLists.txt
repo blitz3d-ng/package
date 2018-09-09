@@ -1,2 +1,4 @@
-add_library (bb.timer STATIC timer.cpp timer.h module.link.cpp)
-target_link_libraries (bb.timer bb.blitz bb.runtime)
+bb_start_module(timer)
+set(DEPENDS_ON bb.runtime)
+set(SOURCES timer.cpp timer.h module.link.cpp)
+bb_end_module()

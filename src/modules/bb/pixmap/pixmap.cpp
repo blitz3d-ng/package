@@ -33,6 +33,7 @@ int BBPixmap::read( int x,int y ){
 
 // TODO: introduce a proper dynamic loader system like BlitzMax.
 BBPixmap *bbLoadPixmapWithFreeImage( const std::string &file );
+extern "C" BBPixmap *bbLoadPixmapWithUIKit( const char *file );
 
 BBPixmap *bbLoadPixmap( const std::string &file ){
 	string f;
@@ -40,8 +41,13 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 		f+=file[i] == WRONG_DIV ? RIGHT_DIV : file[i];
 	}
 
-#ifdef BB_MOBILE
-	return bbLoadPixmapWithFreeImage( f );
+#if BB_DESKTOP || BB_IOS
+	#ifdef BB_DESKTOP
+		return bbLoadPixmapWithFreeImage( f );
+	#else
+		return nullptr;
+		// return bbLoadPixmapWithUIKit( f.c_str() );
+	#endif
 #else
 	// TODO: fix this...
 	return nullptr;

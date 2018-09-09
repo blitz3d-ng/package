@@ -4,7 +4,7 @@
 #include "blitz2d.gl.h"
 #include <cmath>
 
-map<BBImageFont*,unsigned int> font_textures;
+static map<BBImageFont*,unsigned int> font_textures;
 
 void GLB2DCanvas::setFont( BBFont *f ){
 	font=reinterpret_cast<BBImageFont*>(f);

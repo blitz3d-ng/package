@@ -24,16 +24,17 @@ TOOLCHAINS_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '_rel
 
 IDENTIFIER_REGEX = /[A-Za-z0-9]+/
 
-configs = Dir.glob(File.join(TOOLCHAINS_PATH, '*/*.runtime.json')).inject({}) do |cfgs, path|
-  _, platform, rt = path.match(/(#{IDENTIFIER_REGEX})\/(#{IDENTIFIER_REGEX})\.runtime\.json$/).to_a
-  cfgs[platform] ||= {}
-  cfgs[platform][rt] = JSON.parse(File.open(path).read)
-  cfgs
-end
+config = Dir.glob(File.join(TOOLCHAINS_PATH, PLATFORM, 'cfg', "*.#{BB_ENV}.i")).inject({}) do |cfg, path|
+  interface = File.open(path).read
+  _, id      = interface.match(/^ID:(.*)$/).to_a.map(&:strip)
+  _, modules = interface.match(/^MODULES:(.*)$/).to_a.map(&:strip)
+  _, libs    = interface.match(/^LIBS:(.*)$/).to_a.map(&:strip)
 
-if configs[PLATFORM].nil?
-  $stderr.puts "No runtimes for #{PLATFORM}."
-  exit 1
+  cfg[id] = {
+    modules: modules.strip.split(';'),
+    libs: libs.strip.split(';')
+  }
+  cfg
 end
 
 OPTIONS = if PLATFORM == 'emscripten'
@@ -46,22 +47,35 @@ if BB_ENV == 'test'
   OPTIONS << '-fprofile-arcs -ftest-coverage -O0'
 end
 
-config = configs[PLATFORM][RUNTIME] || configs[PLATFORM].first[0]
+runtime = YAML.load(File.open(File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'runtime', RUNTIME, 'runtime.yml'))))
+
+imported_modules = []
+
+runtime['modules'].each do |mod|
+  imported_modules << "bb.#{mod}"
+  next if config["bb.#{mod}"].nil?
+
+  imported_modules += config["bb.#{mod}"][:modules]
+end
 
 module_libs = []
 system_libs = []
 
-libs = config['modules'].map do |mod|
-  module_libs << "-lbb.#{mod['id']}"
+config.each_pair do |id, mod|
+  next unless imported_modules.include?(id)
 
-  system_libs << mod['links'].map do |lib|
-    if lib =~ /(.*)\.framework$/
-      "-framework #{$1}"
+  module_libs << "-l#{id}"
+
+  system_libs << mod[:libs].map do |lib|
+    if lib =~ /^-framework/
+      lib
     else
       "-l#{lib}"
     end
-  end.flatten
+  end
 end
 
+module_libs.flatten!
+system_libs.flatten!
 
 puts "-Wno-int-conversion #{OPTIONS.join(' ')} -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(TOOLCHAINS_PATH, PLATFORM, 'lib', BB_ENV)} -lbb.stub -lruntime.#{RUNTIME} #{module_libs.join(' ')} #{module_libs.reverse.join(' ')} #{system_libs.join(' ')}"
