@@ -18,20 +18,20 @@ else
   'opengl'
 end
 
-BB_ENV, status = Open3.capture2(File.join(File.dirname(__FILE__), '..', '_release/bin/blitzcc -e'))
+env, status = Open3.capture2(File.join(File.dirname(__FILE__), '..', '_release/bin/blitzcc -e'))
 if status != 0
-  puts BB_ENV
+  puts env
   exit 1
 end
 
-BB_ENV = BB_ENV.strip
+env = env.strip
 
 INCLUDE_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'modules'))
 TOOLCHAINS_PATH = File.expand_path(File.join(File.dirname(__FILE__), '..', '_release', 'toolchains'))
 
 IDENTIFIER_REGEX = /[A-Za-z0-9]+/
 
-config = Dir.glob(File.join(TOOLCHAINS_PATH, PLATFORM, 'cfg', "*.#{BB_ENV}.i")).inject({}) do |cfg, path|
+config = Dir.glob(File.join(TOOLCHAINS_PATH, PLATFORM, 'cfg', "*.#{env}.i")).inject({}) do |cfg, path|
   interface = File.open(path).read
   _, id      = interface.match(/^ID:(.*)$/).to_a.map(&:strip)
   _, modules = interface.match(/^MODULES:(.*)$/).to_a.map(&:strip)
@@ -50,20 +50,24 @@ else
   []
 end
 
-if BB_ENV == 'test'
+if env == 'test'
   OPTIONS << '-fprofile-arcs -ftest-coverage -O0'
 end
 
-runtime = YAML.load(File.open(File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'runtime', RUNTIME, 'runtime.yml'))))
+runtime = YAML.safe_load(File.open(File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'runtime', RUNTIME, 'runtime.yml'))))
 
 imported_modules = []
 
-runtime['modules'].each do |mod|
+add = lambda do |mod|
   imported_modules << "bb.#{mod}"
-  next if config["bb.#{mod}"].nil?
+  break if config["bb.#{mod}"].nil?
 
-  imported_modules += config["bb.#{mod}"][:modules]
+  config["bb.#{mod}"][:modules].each do |mod|
+    add.call mod.gsub(/^bb\./, '')
+  end
 end
+
+runtime['modules'].each &add
 
 module_libs = []
 system_libs = []
@@ -85,4 +89,4 @@ end
 module_libs.flatten!
 system_libs.flatten!
 
-puts "-Wno-int-conversion #{OPTIONS.join(' ')} -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(TOOLCHAINS_PATH, PLATFORM, 'lib', BB_ENV)} -lbb.stub -lruntime.#{RUNTIME} #{module_libs.join(' ')} #{module_libs.reverse.join(' ')} #{system_libs.join(' ')}"
+puts "-Wno-int-conversion #{OPTIONS.join(' ')} -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(TOOLCHAINS_PATH, PLATFORM, 'lib', env)} -lbb.stub -lruntime.#{RUNTIME} #{module_libs.join(' ')} #{module_libs.reverse.join(' ')} #{system_libs.join(' ')}"

@@ -77,6 +77,10 @@ ELSE()
   set (BB_RELEASE true)
 ENDIF()
 
+if(BB_ENV MATCHES test)
+  set(BB_COVERAGE "-fprofile-arcs -ftest-coverage")
+endif()
+
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set (BUILD_PATH ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM})
@@ -127,22 +131,6 @@ add_subdirectory(src/deps/freetype2)
 add_subdirectory(src/deps/glew)
 add_subdirectory(src/deps/ogg)
 add_subdirectory(src/deps/vorbis)
-
-macro(bb_start_module name)
-  set(MODULE_ID ${name})
-  set(DEPENDS_ON )
-  set(SOURCES )
-  set(LIBS )
-endmacro()
-
-macro(bb_end_module)
-  add_library (bb.${MODULE_ID} STATIC ${SOURCES})
-  target_link_libraries (bb.${MODULE_ID} ${DEPENDS_ON} ${LIBS})
-
-  file(WRITE  ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "ID: bb.${MODULE_ID}\n")
-  file(APPEND ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "MODULES: ${DEPENDS_ON}\n")
-  file(APPEND ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "LIBS: ${LIBS}\n")
-endmacro()
 
 add_subdirectory(src/modules)
 add_subdirectory(src/runtime)

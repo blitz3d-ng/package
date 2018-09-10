@@ -1,11 +1,10 @@
-bb_start_module(blitz2d.gl)
-
-set(DEPENDS_ON bb.pixmap bb.blitz2d)
-set(SOURCES blitz2d.gl.cpp blitz2d.gl.h)
-set(LIBS glew)
-
-IF(BB_WINDOWS)
-  set(LIBS ${LIBS} opengl32)
-ENDIF()
-
-bb_end_module()
+if(BB_DESKTOP)
+  bb_start_module(blitz2d.gl)
+  set(DEPENDS_ON bb.pixmap bb.blitz2d)
+  set(SOURCES blitz2d.gl.cpp blitz2d.gl.h)
+  set(LIBS glew)
+  IF(BB_WINDOWS)
+    set(LIBS ${LIBS} opengl32)
+  ENDIF()
+  bb_end_module()
+endif()

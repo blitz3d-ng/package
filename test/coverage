@@ -1,21 +1,33 @@
 #!/bin/sh
 
 # run the proper suite
-bin/blitz3d run -r test test/all.bb || (echo "Test suite failed. Fix it and then run the coverage generation again." && exit 1)
+bin/blitz3d run -r test test/all.bb
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Test suite failed. Fix it and then run the coverage generation again."
+  exit 1
+fi
+
+BLITZCC=_release/bin/blitzcc
 
 # test a few of the compiler flags
-_release/bin/blitzcc -v
-_release/bin/blitzcc +k
-_release/bin/blitzcc -k
-_release/bin/blitzcc -l
+$BLITZCC -v
+$BLITZCC +k
+$BLITZCC -k
+$BLITZCC -l
+$BLITZCC -h
 
-_release/bin/blitzcc -r test -a test/all.bb
-_release/bin/blitzcc -r test -c test/all.bb
-_release/bin/blitzcc -r test -j test/all.bb
+$BLITZCC -r test -a test/all.bb
+$BLITZCC -r test -c test/all.bb
+$BLITZCC -r test -j test/all.bb
 
 # test for syntax errors
-_release/bin/blitzcc -r test -j test/syntax-errors/arithmetic-on-type.bb
-_release/bin/blitzcc -r test -j test/syntax-errors/division-by-zero.bb
+$BLITZCC -r test -j test/syntax-errors/arithmetic-on-type.bb
+$BLITZCC -r test -j test/syntax-errors/division-by-zero.bb
+
+# invalid runtime
+$BLITZCC -r d3d1 test/all.bb
 
 # generate the report...
-cd build && mkdir ../.coverage && gcovr --filter='.*(compiler|runtime).*' -r .. --html --html-details -o ../.coverage/coverage.html
+echo "Generating coverage report..."
+cd build && mkdir -p ../.coverage && gcovr -e '.*stdin.*' -r .. --html --html-details -o ../.coverage/coverage.html

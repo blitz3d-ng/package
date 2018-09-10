@@ -15,3 +15,8 @@ add_dependencies(blitzcc stdutil)
 
 target_include_directories(blitzcc PRIVATE ../common/include ../src/runtime)
 target_link_libraries(blitzcc stdutil)
+
+if(BB_COVERAGE)
+  set_target_properties(blitzcc PROPERTIES COMPILE_FLAGS ${BB_COVERAGE})
+  set_target_properties(blitzcc PROPERTIES LINK_FLAGS ${BB_COVERAGE})
+endif()

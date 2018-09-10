@@ -11,15 +11,16 @@ BBMODULE_DECL( hook );
 BBMODULE_DECL( event );
 BBMODULE_DECL( math );
 BBMODULE_DECL( string );
-BBMODULE_DECL( stdio );
 BBMODULE_DECL( stream );
 BBMODULE_DECL( bank );
+BBMODULE_DECL( stdio );
 BBMODULE_DECL( runtime );
 BBMODULE_DECL( audio );
-BBMODULE_DECL( system );
-BBMODULE_DECL( input );
 BBMODULE_DECL( pixmap );
 BBMODULE_DECL( blitz2d );
+BBMODULE_DECL( blitz3d );
+BBMODULE_DECL( system );
+BBMODULE_DECL( input );
 BBMODULE_DECL( graphics );
 BBMODULE_DECL( runtime_html );
 BBMODULE_DECL( unit_test );
@@ -35,14 +36,15 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	blitz_link( link );
 	math_link( link );
 	string_link( link );
-	stdio_link( link );
 	stream_link( link );
 	bank_link( link );
+	stdio_link( link );
 	runtime_link( link );
 	audio_link( link );
+	blitz2d_link( link );
+	blitz3d_link( link );
 	system_link( link );
 	input_link( link );
-	blitz2d_link( link );
 	graphics_link( link );
 	unit_test_link( link );
 }
@@ -53,42 +55,45 @@ bool bbruntime_create(){
 						if( event_create() ){
 								if( math_create() ){
 										if( string_create() ){
-												if( stdio_create() ){
-														if( stream_create() ){
-																if( bank_create() ){
+												if( stream_create() ){
+														if( bank_create() ){
+																if( stdio_create() ){
 																		if( runtime_create() ){
 																				if( audio_create() ){
-																						if( system_create() ){
-																								if( input_create() ){
-																										if( pixmap_create() ){
-																												if( blitz2d_create() ){
-																														if( graphics_create() ){
-																																if( runtime_html_create() ){
-																																		if( unit_test_create() ){
-																																				return true;
-																	}else sue( "unit_test_create failed" );
-																	runtime_html_destroy();
-																}else sue( "runtime_html_create failed" );
-																graphics_destroy();
-															}else sue( "graphics_create failed" );
-															blitz2d_destroy();
-														}else sue( "blitz2d_create failed" );
-														pixmap_destroy();
-													}else sue( "pixmap_create failed" );
-													input_destroy();
-												}else sue( "input_create failed" );
-												system_destroy();
-											}else sue( "system_create failed" );
+																						if( pixmap_create() ){
+																								if( blitz2d_create() ){
+																										if( blitz3d_create() ){
+																												if( system_create() ){
+																														if( input_create() ){
+																																if( graphics_create() ){
+																																		if( runtime_html_create() ){
+																																				if( unit_test_create() ){
+																																						return true;
+																		}else sue( "unit_test_create failed" );
+																		runtime_html_destroy();
+																	}else sue( "runtime_html_create failed" );
+																	graphics_destroy();
+																}else sue( "graphics_create failed" );
+																input_destroy();
+															}else sue( "input_create failed" );
+															system_destroy();
+														}else sue( "system_create failed" );
+														blitz3d_destroy();
+													}else sue( "blitz3d_create failed" );
+													blitz2d_destroy();
+												}else sue( "blitz2d_create failed" );
+												pixmap_destroy();
+											}else sue( "pixmap_create failed" );
 											audio_destroy();
 										}else sue( "audio_create failed" );
 										runtime_destroy();
 									}else sue( "runtime_create failed" );
-									bank_destroy();
-								}else sue( "bank_create failed" );
-								stream_destroy();
-							}else sue( "stream_create failed" );
-							stdio_destroy();
-						}else sue( "stdio_create failed" );
+									stdio_destroy();
+								}else sue( "stdio_create failed" );
+								bank_destroy();
+							}else sue( "bank_create failed" );
+							stream_destroy();
+						}else sue( "stream_create failed" );
 						string_destroy();
 					}else sue( "string_create failed" );
 					math_destroy();
@@ -106,15 +111,16 @@ bool bbruntime_destroy(){
 	unit_test_destroy();
 	runtime_html_destroy();
 	graphics_destroy();
-	blitz2d_destroy();
-	pixmap_destroy();
 	input_destroy();
 	system_destroy();
+	blitz3d_destroy();
+	blitz2d_destroy();
+	pixmap_destroy();
 	audio_destroy();
 	runtime_destroy();
+	stdio_destroy();
 	bank_destroy();
 	stream_destroy();
-	stdio_destroy();
 	string_destroy();
 	math_destroy();
 	event_destroy();

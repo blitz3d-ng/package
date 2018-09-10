@@ -6,6 +6,7 @@ platforms:
   - macos
   - linux
   - ios
+  - android
 
 dependencies:
   - blitz

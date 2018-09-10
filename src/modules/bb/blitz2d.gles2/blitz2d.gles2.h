@@ -7,8 +7,11 @@ using namespace std;
 #include <bb/blitz2d/blitz2d.h>
 #include <bb/pixmap/pixmap.h>
 
+#ifdef __APPLE__
 #include <OpenGLES/ES2/gl.h>
-
+#else
+#include <GLES2/gl2.h>
+#endif
 
 #include <iostream>
 

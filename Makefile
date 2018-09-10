@@ -20,6 +20,10 @@ ifeq ($(PLATFORM), mingw32)
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake
 endif
 
+ifeq ($(PLATFORM), android)
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/android-ndk/build/cmake/android.toolchain.cmake -DANDROID_ABI="armeabi-v7a"
+endif
+
 MAKE=make -j$(NUMBER_OF_CORES)
 
 build:

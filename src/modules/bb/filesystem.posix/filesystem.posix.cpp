@@ -1,6 +1,9 @@
 
 #include "../../stdutil/stdutil.h"
 #include "filesystem.posix.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 PosixFileSystem::PosixFileSystem(){
@@ -46,7 +49,16 @@ int PosixFileSystem::getFileSize( const std::string &name )const{
 }
 
 int PosixFileSystem::getFileType( const std::string &name )const{
-	RTEX( "PosixFileSystem::getFileType not implemented" );
+	struct stat fstat;
+	stat( name.c_str(),&fstat );
+
+	if( S_ISREG( fstat.st_mode ) ){
+		return 1;
+	}else if( S_ISDIR( fstat.st_mode ) ){
+		return 2;
+	}
+
+	return 0;
 }
 
 BBDir *PosixFileSystem::openDir( const std::string &name,int flags ){

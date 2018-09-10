@@ -196,6 +196,14 @@ static int _bb_isnan( double n ){		// definition: exponent 2047, nonzero fractio
 	return  ( fHi | fLo ) != 0;	// returns 0,1 not just 0,nonzero
 }
 
+// these functions are not available in the bionic stdlib
+#ifdef BB_ANDROID
+extern "C" {
+char *ecvt(double arg, int ndigits, int *decptp, int *signp);
+char *gcvt(double value, int ndigit, char *buf);
+}
+#endif
+
 /////////////
 //By FLOYD!//
 /////////////

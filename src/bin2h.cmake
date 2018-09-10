@@ -53,8 +53,8 @@ function(BIN2H)
     get_filename_component(SOURCE_FILE_PATH "${BIN2H_SOURCE_FILE}" ABSOLUTE)
     get_filename_component(HEADER_FILE_PATH "${BIN2H_HEADER_FILE}" ABSOLUTE)
 
-    if(${HEADER_FILE_PATH} IS_NEWER_THAN ${SOURCE_FILE_PATH})
-      message(STATUS "${BIN2H_HEADER_FILE} is newer than ${BIN2H_SOURCE_FILE}. Skipping." ...)
+    # if we've already generated the file, no need to invalidate the cache.
+    if(EXISTS ${HEADER_FILE_PATH} AND ${HEADER_FILE_PATH} IS_NEWER_THAN ${SOURCE_FILE_PATH})
       return()
     endif()
 

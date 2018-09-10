@@ -25,6 +25,10 @@ BBMODULE_DECL( input );
 BBMODULE_DECL( input_directinput8 );
 BBMODULE_DECL( audio );
 BBMODULE_DECL( audio_fmod );
+BBMODULE_DECL( pixmap );
+BBMODULE_DECL( blitz2d );
+BBMODULE_DECL( blitz3d );
+BBMODULE_DECL( graphics );
 BBMODULE_DECL( userlibs );
 BBMODULE_DECL( event );
 BBMODULE_DECL( runtime_console );
@@ -52,6 +56,9 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	filesystem_link( link );
 	input_link( link );
 	audio_link( link );
+	blitz2d_link( link );
+	blitz3d_link( link );
+	graphics_link( link );
 	unit_test_link( link );
 }
 #endif
@@ -75,18 +82,30 @@ bool bbruntime_create(){
 																																		if( input_directinput8_create() ){
 																																				if( audio_create() ){
 																																						if( audio_fmod_create() ){
-																																								if( userlibs_create() ){
-																																										if( event_create() ){
-																																												if( runtime_console_create() ){
-																																														if( unit_test_create() ){
-																																																return true;
-																							}else sue( "unit_test_create failed" );
-																							runtime_console_destroy();
-																						}else sue( "runtime_console_create failed" );
-																						event_destroy();
-																					}else sue( "event_create failed" );
-																					userlibs_destroy();
-																				}else sue( "userlibs_create failed" );
+																																								if( pixmap_create() ){
+																																										if( blitz2d_create() ){
+																																												if( blitz3d_create() ){
+																																														if( graphics_create() ){
+																																																if( userlibs_create() ){
+																																																		if( event_create() ){
+																																																				if( runtime_console_create() ){
+																																																						if( unit_test_create() ){
+																																																								return true;
+																											}else sue( "unit_test_create failed" );
+																											runtime_console_destroy();
+																										}else sue( "runtime_console_create failed" );
+																										event_destroy();
+																									}else sue( "event_create failed" );
+																									userlibs_destroy();
+																								}else sue( "userlibs_create failed" );
+																								graphics_destroy();
+																							}else sue( "graphics_create failed" );
+																							blitz3d_destroy();
+																						}else sue( "blitz3d_create failed" );
+																						blitz2d_destroy();
+																					}else sue( "blitz2d_create failed" );
+																					pixmap_destroy();
+																				}else sue( "pixmap_create failed" );
 																				audio_fmod_destroy();
 																			}else sue( "audio_fmod_create failed" );
 																			audio_destroy();
@@ -133,6 +152,10 @@ bool bbruntime_destroy(){
 	runtime_console_destroy();
 	event_destroy();
 	userlibs_destroy();
+	graphics_destroy();
+	blitz3d_destroy();
+	blitz2d_destroy();
+	pixmap_destroy();
 	audio_fmod_destroy();
 	audio_destroy();
 	input_directinput8_destroy();
