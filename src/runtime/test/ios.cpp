@@ -13,13 +13,9 @@ BBMODULE_DECL( stream );
 BBMODULE_DECL( bank );
 BBMODULE_DECL( stdio );
 BBMODULE_DECL( runtime );
-BBMODULE_DECL( audio );
-BBMODULE_DECL( pixmap );
-BBMODULE_DECL( blitz2d );
-BBMODULE_DECL( blitz3d );
 BBMODULE_DECL( system );
 BBMODULE_DECL( input );
-BBMODULE_DECL( graphics );
+BBMODULE_DECL( audio );
 BBMODULE_DECL( hook );
 BBMODULE_DECL( event );
 BBMODULE_DECL( runtime_console );
@@ -40,12 +36,9 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	bank_link( link );
 	stdio_link( link );
 	runtime_link( link );
-	audio_link( link );
-	blitz2d_link( link );
-	blitz3d_link( link );
 	system_link( link );
 	input_link( link );
-	graphics_link( link );
+	audio_link( link );
 	unit_test_link( link );
 }
 #endif
@@ -57,39 +50,27 @@ bool bbruntime_create(){
 										if( bank_create() ){
 												if( stdio_create() ){
 														if( runtime_create() ){
-																if( audio_create() ){
-																		if( pixmap_create() ){
-																				if( blitz2d_create() ){
-																						if( blitz3d_create() ){
-																								if( system_create() ){
-																										if( input_create() ){
-																												if( graphics_create() ){
-																														if( hook_create() ){
-																																if( event_create() ){
-																																		if( runtime_console_create() ){
-																																				if( unit_test_create() ){
-																																						return true;
-																		}else sue( "unit_test_create failed" );
-																		runtime_console_destroy();
-																	}else sue( "runtime_console_create failed" );
-																	event_destroy();
-																}else sue( "event_create failed" );
-																hook_destroy();
-															}else sue( "hook_create failed" );
-															graphics_destroy();
-														}else sue( "graphics_create failed" );
-														input_destroy();
-													}else sue( "input_create failed" );
-													system_destroy();
-												}else sue( "system_create failed" );
-												blitz3d_destroy();
-											}else sue( "blitz3d_create failed" );
-											blitz2d_destroy();
-										}else sue( "blitz2d_create failed" );
-										pixmap_destroy();
-									}else sue( "pixmap_create failed" );
-									audio_destroy();
-								}else sue( "audio_create failed" );
+																if( system_create() ){
+																		if( input_create() ){
+																				if( audio_create() ){
+																						if( hook_create() ){
+																								if( event_create() ){
+																										if( runtime_console_create() ){
+																												if( unit_test_create() ){
+																														return true;
+														}else sue( "unit_test_create failed" );
+														runtime_console_destroy();
+													}else sue( "runtime_console_create failed" );
+													event_destroy();
+												}else sue( "event_create failed" );
+												hook_destroy();
+											}else sue( "hook_create failed" );
+											audio_destroy();
+										}else sue( "audio_create failed" );
+										input_destroy();
+									}else sue( "input_create failed" );
+									system_destroy();
+								}else sue( "system_create failed" );
 								runtime_destroy();
 							}else sue( "runtime_create failed" );
 							stdio_destroy();
@@ -112,13 +93,9 @@ bool bbruntime_destroy(){
 	runtime_console_destroy();
 	event_destroy();
 	hook_destroy();
-	graphics_destroy();
+	audio_destroy();
 	input_destroy();
 	system_destroy();
-	blitz3d_destroy();
-	blitz2d_destroy();
-	pixmap_destroy();
-	audio_destroy();
 	runtime_destroy();
 	stdio_destroy();
 	bank_destroy();

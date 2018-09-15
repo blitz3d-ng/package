@@ -19,13 +19,9 @@ BBMODULE_DECL( system );
 BBMODULE_DECL( system_macos );
 BBMODULE_DECL( filesystem );
 BBMODULE_DECL( filesystem_posix );
+BBMODULE_DECL( input );
 BBMODULE_DECL( audio );
 BBMODULE_DECL( audio_openal );
-BBMODULE_DECL( pixmap );
-BBMODULE_DECL( blitz2d );
-BBMODULE_DECL( blitz3d );
-BBMODULE_DECL( input );
-BBMODULE_DECL( graphics );
 BBMODULE_DECL( event );
 BBMODULE_DECL( runtime_console );
 BBMODULE_DECL( unit_test );
@@ -48,11 +44,8 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	runtime_link( link );
 	system_link( link );
 	filesystem_link( link );
-	audio_link( link );
-	blitz2d_link( link );
-	blitz3d_link( link );
 	input_link( link );
-	graphics_link( link );
+	audio_link( link );
 	unit_test_link( link );
 }
 #endif
@@ -70,36 +63,24 @@ bool bbruntime_create(){
 																						if( system_macos_create() ){
 																								if( filesystem_create() ){
 																										if( filesystem_posix_create() ){
-																												if( audio_create() ){
-																														if( audio_openal_create() ){
-																																if( pixmap_create() ){
-																																		if( blitz2d_create() ){
-																																				if( blitz3d_create() ){
-																																						if( input_create() ){
-																																								if( graphics_create() ){
-																																										if( event_create() ){
-																																												if( runtime_console_create() ){
-																																														if( unit_test_create() ){
-																																																return true;
-																							}else sue( "unit_test_create failed" );
-																							runtime_console_destroy();
-																						}else sue( "runtime_console_create failed" );
-																						event_destroy();
-																					}else sue( "event_create failed" );
-																					graphics_destroy();
-																				}else sue( "graphics_create failed" );
-																				input_destroy();
-																			}else sue( "input_create failed" );
-																			blitz3d_destroy();
-																		}else sue( "blitz3d_create failed" );
-																		blitz2d_destroy();
-																	}else sue( "blitz2d_create failed" );
-																	pixmap_destroy();
-																}else sue( "pixmap_create failed" );
-																audio_openal_destroy();
-															}else sue( "audio_openal_create failed" );
-															audio_destroy();
-														}else sue( "audio_create failed" );
+																												if( input_create() ){
+																														if( audio_create() ){
+																																if( audio_openal_create() ){
+																																		if( event_create() ){
+																																				if( runtime_console_create() ){
+																																						if( unit_test_create() ){
+																																								return true;
+																			}else sue( "unit_test_create failed" );
+																			runtime_console_destroy();
+																		}else sue( "runtime_console_create failed" );
+																		event_destroy();
+																	}else sue( "event_create failed" );
+																	audio_openal_destroy();
+																}else sue( "audio_openal_create failed" );
+																audio_destroy();
+															}else sue( "audio_create failed" );
+															input_destroy();
+														}else sue( "input_create failed" );
 														filesystem_posix_destroy();
 													}else sue( "filesystem_posix_create failed" );
 													filesystem_destroy();
@@ -133,13 +114,9 @@ bool bbruntime_destroy(){
 	unit_test_destroy();
 	runtime_console_destroy();
 	event_destroy();
-	graphics_destroy();
-	input_destroy();
-	blitz3d_destroy();
-	blitz2d_destroy();
-	pixmap_destroy();
 	audio_openal_destroy();
 	audio_destroy();
+	input_destroy();
 	filesystem_posix_destroy();
 	filesystem_destroy();
 	system_macos_destroy();

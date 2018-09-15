@@ -1,5 +1,7 @@
 #!/bin/sh
 
+find . -name "*.gcda" -exec rm {} \;
+
 # run the proper suite
 bin/blitz3d run -r test test/all.bb
 RESULT=$?

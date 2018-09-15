@@ -69,6 +69,7 @@ ENDIF()
 IF(BB_ENV MATCHES debug OR BB_ENV MATCHES test)
   set (CMAKE_BUILD_TYPE Debug)
   set (BB_DEBUG true)
+  add_definitions(-DBB_DEBUG)
 
   # TODO: work to remove the need for this...
   add_definitions(-D_DEBUG)

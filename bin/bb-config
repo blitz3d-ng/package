@@ -6,6 +6,8 @@ require 'os'
 
 PLATFORM = if ARGV.include?('--emscripten')
   'emscripten'
+elsif ARGV.include?('--ios')
+  'ios'
 elsif OS.mac?
   'macos'
 elsif OS.linux?
@@ -46,12 +48,23 @@ end
 
 OPTIONS = if PLATFORM == 'emscripten'
   ['-s LEGACY_GL_EMULATION=1']
+elsif PLATFORM == 'ios'
+  XCODE_BASE     = "/Applications/Xcode.app/Contents"
+  SIMULATOR_BASE = "#{XCODE_BASE}/Developer/Platforms/iPhoneSimulator.platform"
+  FRAMEWORKS     = "#{SIMULATOR_BASE}/Developer/SDKs/iPhoneSimulator11.2.sdk/System/Library/Frameworks/"
+  INCLUDES       = "#{SIMULATOR_BASE}/Developer/SDKs/iPhoneSimulator11.2.sdk/usr/include"
+
+  [
+    '-arch x86_64',
+    '-mios-simulator-version-min=11',
+    "-isysroot #{SIMULATOR_BASE}/Developer/SDKs/iPhoneSimulator.sdk"
+  ]
 else
   []
 end
 
 if env == 'test'
-  OPTIONS << '-fprofile-arcs -ftest-coverage -O0'
+  OPTIONS << '-fprofile-arcs -ftest-coverage -O0 -rdynamic'
 end
 
 runtime = YAML.safe_load(File.open(File.expand_path(File.join(File.dirname(__FILE__), '..', 'src', 'runtime', RUNTIME, 'runtime.yml'))))

@@ -31,3 +31,10 @@
 [submodule "src/deps/zlib/src"]
 	path = src/deps/zlib/src
 	url = https://github.com/madler/zlib.git
+[submodule "src/deps/backward-cpp"]
+	path = src/deps/backward-cpp
+	url = https://github.com/bombela/backward-cpp
+[submodule "src/deps/libunwind"]
+	path = src/deps/libunwind
+	url = http://llvm.org/git/libunwind
+	branch = release_70

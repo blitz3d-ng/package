@@ -1,5 +1,6 @@
 
 #include <bb/blitz/blitz.h>
+#include <bb/math/math.h>
 #include "../../stdutil/stdutil.h"
 #include "unit-test.h"
 
@@ -7,23 +8,60 @@ using namespace std;
 
 static int _bbPasses, _bbFails;
 
+#define FAIL(mesg) cout << "\033[1;31m" << "FAIL: " << "\033[0m" << mesg << ". [" << file << ":" << line << "]" << endl;_bbFails++
+#define PASS(mesg) cout << "\033[1;32m" << "PASS: " << "\033[0m" << mesg << ". [" << file << ":" << line << "]" << endl;_bbPasses++
+
+void BBCALL __bbContext( const char *mesg, const char *file,int line ){
+	cout << mesg << " [" << file << ":" << line << "]" << endl;
+}
+
+void BBCALL __bbExpect( int condition, const char *mesg, const char *file,int line ){
+	if( !condition ){
+		FAIL(mesg);
+	} else {
+		PASS(mesg);
+	}
+}
+
+void BBCALL __bbExpectIntEq( int a,int b,const char *mesg, const char *file,int line ){
+	if( a!=b ){
+		FAIL(mesg << ". Expected: " << b << ", but got " << a);
+	} else {
+		PASS(mesg);
+	}
+}
+
+const float EPSILON=.000001f;		//small value
+
+void BBCALL __bbExpectFloatEq( float a,float b,const char *mesg, const char *file,int line ){
+	if( abs(a-b)>EPSILON ){
+		FAIL(mesg << ". Expected: " << b << ", but got " << a);
+	} else {
+		PASS(mesg);
+	}
+}
+
 void BBCALL _bbContext( BBStr *m, const char *file,int line ){
 	string mesg=*m;delete m;
-	cout << mesg << " [" << file << ":" << line << "]" << endl;
+	__bbContext( mesg.c_str(),file,line );
 }
 
 void BBCALL _bbExpect( int condition,BBStr *m, const char *file,int line ){
 	string mesg=*m;delete m;
-	if( !condition ){
-		cout << "\033[1;31m" << "FAIL: " << "\033[0m" << mesg << ". [" << file << ":" << line << "]" << endl;
-		_bbFails++;
-	} else {
-		cout << "\033[1;32m" << "PASS: " << "\033[0m" << mesg << ". [" << file << ":" << line << "]" << endl;
-		_bbPasses++;
-	}
+	__bbExpect( condition,mesg.c_str(),file,line );
 }
 
-#ifdef WIN32
+void BBCALL _bbExpectIntEq( int a,int b,BBStr *m, const char *file,int line ){
+	string mesg=*m;delete m;
+	__bbExpectFloatEq( a,b,mesg.c_str(),file,line );
+}
+
+void BBCALL _bbExpectFloatEq( float a,float b,BBStr *m, const char *file,int line ){
+	string mesg=*m;delete m;
+	__bbExpectFloatEq( a,b,mesg.c_str(),file,line );
+}
+
+#if defined(BB_WINDOWS) && !defined(USERLIB)
 void BBCALL bbContext( BBStr *m ){
 	_bbContext( m, "<unknown>", 0 );
 }
@@ -31,11 +69,62 @@ void BBCALL bbContext( BBStr *m ){
 void BBCALL bbExpect( int condition,BBStr *m ){
 	_bbExpect( condition,m,"<unknown>",0 );
 }
+
+void BBCALL bbExpectIntEq( int a,int b,BBStr *m ){
+	_bbExpectIntEq( a,b,m,"<unknown>",0 );
+}
+
+void BBCALL bbExpectFloatEq( float a,float b,BBStr *m ){
+	_bbExpectIntEq( a,b,m,"<unknown>",0 );
+}
+#endif
+
+
+#ifdef BB_WINDOWS
+#include <windows.h>
+#include <ios>
+#include <cstdio>
+#include <io.h>
+#include <fcntl.h>
+
 #endif
 
 BBMODULE_CREATE( unit_test ){
 	_bbPasses = 0;
 	_bbFails = 0;
+
+#ifdef USERLIB
+	if( AllocConsole() ){
+		SetConsoleTitle( "Debug Console" );
+
+		// https://smacdo.com/programming/redirecting-standard-output-to-console-in-windows/
+
+		// Redirect CRT standard input, output and error handles to the console window.
+		FILE * pNewStdout = nullptr;
+		FILE * pNewStderr = nullptr;
+		FILE * pNewStdin = nullptr;
+
+		::freopen_s(&pNewStdout, "CONOUT$", "w", stdout);
+		::freopen_s(&pNewStderr, "CONOUT$", "w", stderr);
+		::freopen_s(&pNewStdin, "CONIN$", "r", stdin);
+
+		// Clear the error state for all of the C++ standard streams. Attempting to accessing the streams before they refer
+		// to a valid target causes the stream to enter an error state. Clearing the error state will fix this problem,
+		// which seems to occur in newer version of Visual Studio even when the console has not been read from or written
+		// to yet.
+		std::cout.clear();
+		std::cerr.clear();
+		std::cin.clear();
+
+		std::wcout.clear();
+		std::wcerr.clear();
+		std::wcin.clear();
+	}
+
+	printf("%s\n", "Hello, world!");
+	cout << "Hello, world!" << endl;
+#endif
+
 	return true;
 }
 

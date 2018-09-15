@@ -8,6 +8,10 @@
 #include <cstring>
 using namespace std;
 
+#include <execinfo.h>
+#include <signal.h>
+#include <unistd.h>
+
 class StdioDebugger : public Debugger{
 private:
 	bool trace;
@@ -40,10 +44,25 @@ public:
 	}
 };
 
+#ifdef BB_DEBUG
+#define BACKTRACE_DEPTH 10
+void dump_backtrace(int sig) {
+	void *array[BACKTRACE_DEPTH];
+
+	size_t size=backtrace( array,BACKTRACE_DEPTH );
+
+	fprintf(stderr, "Error (%d):\n", sig);
+	backtrace_symbols_fd( array,size,STDERR_FILENO );
+
+	exit( 1 );
+}
+#endif
+
 extern "C" void bbMain();
 
 int main( int argc,char *argv[] ){
 #ifdef BB_DEBUG
+	signal(SIGSEGV, dump_backtrace);
   bb_env.debug=true;
 #else
   bb_env.debug=false;

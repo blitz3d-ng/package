@@ -5,4 +5,4 @@ services:
     image: blitz3dng/blitz3d
     build: .
     volumes:
-    - .:/blitz3d-ng
+      - .:/blitz3d-ng

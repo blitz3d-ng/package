@@ -31,8 +31,8 @@ modules:
   - audio
   - audio.fmod
   - audio.openal
-  - blitz3d
-  - graphics
+  # - blitz3d
+  # - graphics
   - userlibs
   - runtime
   - runtime.console

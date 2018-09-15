@@ -7,7 +7,14 @@ require 'json'
 
 require_relative '../lib/blitz3d/translator/node'
 
-ast = JSON.parse(ARGF.read)
+data = ARGF.read
+
+begin
+  ast = JSON.parse(data)
+rescue JSON::ParserError
+  puts data
+  exit 1
+end
 
 # STDERR.puts JSON.pretty_generate(ast).blue
 
