@@ -29,11 +29,17 @@ void BBCALL _bbExpectFloatEq( float a,float b,BBStr *mesg,const char *file,int l
 		void BBCALL bbExpectIntEq( int a,int b,BBStr *m );
 		void BBCALL bbExpectFloatEq( float a,float b,BBStr *m );
 	#else
-		void BBCALL bbContext( const char *m );
-		void BBCALL bbExpect( int condition,const char *m );
-		void BBCALL bbExpectIntEq( int a,int b,const char *m );
-		void BBCALL bbExpectFloatEq( float a,float b,const char *m );
+		#define BBEXPORT __declspec(dllexport)
+
+		BBEXPORT void BBCALL bbContext( const char *m );
+		BBEXPORT void BBCALL bbExpect( int condition,const char *m );
+		BBEXPORT void BBCALL bbExpectIntEq( int a,int b,const char *m );
+		BBEXPORT void BBCALL bbExpectFloatEq( float a,float b,const char *m );
 	#endif
+#endif
+
+#ifndef BBEXPORT
+#define BBEXPORT
 #endif
 
 #ifdef __cplusplus

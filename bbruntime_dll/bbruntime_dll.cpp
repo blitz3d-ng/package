@@ -13,6 +13,8 @@ using namespace std;
 
 #include <bb/stub/stub.h>
 
+#include "resource.h"
+
 class DummyDebugger : public Debugger{
 public:
 	virtual void debugRun(){}
@@ -194,7 +196,7 @@ static void link(){
 		runtime_syms["_f"+tolower(t)]=runtime->symValue(sc);
 	}
 
-	HRSRC hres=FindResource( 0,MAKEINTRESOURCE(1111),RT_RCDATA );if( !hres ) fail();
+	HRSRC hres=FindResource( 0,MAKEINTRESOURCE(IDR_BBMODULE),RT_RCDATA );if( !hres ) fail();
 	HGLOBAL hglo=LoadResource( 0,hres );if( !hglo ) fail();
 	void *p=LockResource( hglo );if( !p ) fail();
 

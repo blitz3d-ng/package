@@ -8,8 +8,19 @@ using namespace std;
 
 static int _bbPasses, _bbFails;
 
-#define FAIL(mesg) cout << "\033[1;31m" << "FAIL: " << "\033[0m" << mesg << ". [" << file << ":" << line << "]" << endl;_bbFails++
-#define PASS(mesg) cout << "\033[1;32m" << "PASS: " << "\033[0m" << mesg << ". [" << file << ":" << line << "]" << endl;_bbPasses++
+#ifndef BB_WINDOWS
+#define GREEN "\033[1;32m"
+#define RED "\033[1;31m"
+#define CLEAR "\033[0m"
+#else
+// no color support in Windows...
+#define GREEN ""
+#define RED ""
+#define CLEAR ""
+#endif
+
+#define FAIL(mesg) cout << RED << "FAIL: " << CLEAR << mesg << ". [" << file << ":" << line << "]" << endl;_bbFails++
+#define PASS(mesg) cout << GREEN << "PASS: " << CLEAR << mesg << ". [" << file << ":" << line << "]" << endl;_bbPasses++
 
 void BBCALL __bbContext( const char *mesg, const char *file,int line ){
 	cout << mesg << " [" << file << ":" << line << "]" << endl;
@@ -130,7 +141,7 @@ BBMODULE_CREATE( unit_test ){
 
 BBMODULE_DESTROY( unit_test ){
 	cout << endl << "==== Results ====" << endl;
-	cout << "Pass: " << "\033[1;32m" << _bbPasses << "\033[0m. Fail: " << "\033[1;31m" << _bbFails << "\033[0m." << endl;
+	cout << "Pass: " << GREEN << _bbPasses << CLEAR << ". Fail: " << RED << _bbFails << CLEAR << endl;
 
 	if (_bbFails > 0) {
 		exit(1);

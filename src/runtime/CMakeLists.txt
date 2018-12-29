@@ -9,25 +9,36 @@ endmacro()
 
 macro(bb_runtime name)
   # static
-  add_library(${name} STATIC ${SOURCES})
-  target_link_libraries(${name} ${DEPENDS_ON} ${SYSTEM_LIBS})
+  add_library(${name}.static STATIC ${SOURCES})
+  target_link_libraries(${name}.static ${DEPENDS_ON} ${SYSTEM_LIBS})
 
   if(BB_COVERAGE)
-    set_property(TARGET ${name} APPEND_STRING PROPERTY COMPILE_FLAGS " ${BB_COVERAGE}")
+    set_property(TARGET ${name}.static APPEND_STRING PROPERTY COMPILE_FLAGS " ${BB_COVERAGE}")
   endif()
 
   # shared
-  add_library(${name}.bin SHARED ${SOURCES})
-  target_link_libraries(${name}.bin ${name})
+  if(BB_WINDOWS)
+    set(SOURCES ${SOURCES} ../../../bbruntime_dll/bbruntime_dll.rc)
+  endif()
+
+  add_library(${name}.shared SHARED ${SOURCES})
+  target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
 
   if(BB_WINDOWS)
-    set_target_properties(${name}.bin PROPERTIES OUTPUT_NAME "${name}")
-    set_property(TARGET ${name}.bin APPEND_STRING PROPERTY LINK_FLAGS " -static")
+    target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
+    set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "${name}")
+    if(BB_MSVC)
+      target_link_options(${name}.shared PRIVATE /include:_runtimeGetRuntime /subsystem:windows)
+    else()
+      set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " -static")
+    endif()
+  else()
+    target_link_libraries(${name}.shared ${name}.static)
   endif()
 
   if(BB_COVERAGE)
-    set_property(TARGET ${name}.bin APPEND_STRING PROPERTY COMPILE_FLAGS " ${BB_COVERAGE}")
-    set_property(TARGET ${name}.bin APPEND_STRING PROPERTY LINK_FLAGS " ${BB_COVERAGE}")
+    set_property(TARGET ${name}.shared APPEND_STRING PROPERTY COMPILE_FLAGS " ${BB_COVERAGE}")
+    set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " ${BB_COVERAGE}")
   endif()
 endmacro()
 

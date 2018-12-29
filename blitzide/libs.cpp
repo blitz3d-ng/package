@@ -56,18 +56,18 @@ int version( string vers,string t ){
 
 void initLibs(){
 
-	string valid=execProc( prefs.homeDir+"/bin/blitzcc -q" );
+	string valid=execProc( prefs.homeDir+"/bin/blitzcc.exe -q" );
 	if( valid.size() ){
 		AfxMessageBox( ("Compiler environment error: "+valid).c_str() );
 		ExitProcess(0);
 	}
 
-	string vers=tolower( execProc( prefs.homeDir+"/bin/blitzcc -v" ) );
+	string vers=tolower( execProc( prefs.homeDir+"/bin/blitzcc.exe -v" ) );
 	linker_ver=version( vers,"linker" );
 	runtime_ver=version( vers,"runtime" );
 
 	//generate keywords!
-	string kws=execProc( prefs.homeDir+"/bin/blitzcc +k" );
+	string kws=execProc( prefs.homeDir+"/bin/blitzcc.exe +k" );
 
 	if( !kws.size() ){
 		AfxMessageBox( "Error generating keywords" );
@@ -94,13 +94,13 @@ void initLibs(){
 		pos=n+1;
 	}
 
-	string rts=execProc( prefs.homeDir+"/bin/blitzcc -q -l" );
+	string rts=execProc( prefs.homeDir+"/bin/blitzcc.exe -q -l" );
 	pos=0;
 	while( (n=rts.find( '\n',pos ))!=string::npos ){
 		string t=rts.substr( pos,n-pos-1 );
 		for( int q=0;(q=t.find('\r',q))!=string::npos; ) t=t.replace( q,1,"" );
 		Runtime rt;
-		rt.id=rt.name=t;		
+		rt.id=rt.name=t;
 		runtimes.push_back(rt);
 		pos=n+1;
 	}

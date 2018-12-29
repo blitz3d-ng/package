@@ -6,7 +6,7 @@ target_compile_definitions(ode PRIVATE -DdIDESINGLE -DCCD_IDESINGLE)
 
 IF(BB_MACOS)
   target_compile_definitions(ode PRIVATE -DMAC_OS_X_VERSION=1090)
-ELSEIF(BB_WIN32 OR BB_WIN64)
+ELSEIF(BB_MSVC)
   # suppress doube -> dReal warnings
-  target_compile_definitions(ode PRIVATE /w4244)
+  target_compile_options(ode PRIVATE /w4244)
 ENDIF()

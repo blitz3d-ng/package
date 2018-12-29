@@ -759,7 +759,7 @@ void MainFrame::build( bool exec,bool publish ){
 		prefs.prg_lastbuild=e->getName();
 	}
 
-	compile( prefs.homeDir+"/bin/blitzcc -r "+rt.id+" -q "+opts+" \""+src+"\" "+prefs.cmd_line );
+	compile( prefs.homeDir+"/bin/blitzcc.exe -r "+rt.id+" -q "+opts+" \""+src+"\" "+prefs.cmd_line );
 
 	if( !src_file.size() ) e->setName( "" );
 }

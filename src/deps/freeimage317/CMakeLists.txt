@@ -5,6 +5,8 @@ set(SOURCES src/Source/FreeImage/BitmapAccess.cpp src/Source/FreeImage/ColorLook
 
 if(BB_MACOS OR BB_MINGW32)
   set(SOURCES ${SOURCES} freeimage_jxr_stub.cpp)
+else()
+  set(SOURCES ${SOURCES} src/Source/FreeImage/PluginJXR.cpp)
 endif()
 
 add_library(freeimage STATIC ${SOURCES})

@@ -7,6 +7,10 @@
 
 using namespace std;
 
+#ifndef TARGETSUFFIX
+#define TARGETSUFFIX
+#endif
+
 static const wchar_t *dx_err=
 L"You must have DirectX version 7 installed to run Blitz Basic.\n\n"
 "DirectX 7 is provided on the Blitz Basic CD in the DirectX7 folder.\n\n"

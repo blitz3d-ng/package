@@ -312,7 +312,9 @@ static const char *linkUserLibs(){
 	return err;
 }
 
-const char *openLibs( string rt ){
+static char err[255];
+
+const char *openLibs( const string rt ){
 
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
@@ -333,12 +335,20 @@ const char *openLibs( string rt ){
 	if( !gl ) return "Error in linker.dll";
 	linkerLib=gl();
 
-	runtimeHMOD=LoadLibrary( (home+"/bin/runtime."+rt+".dll").c_str() );
-	if( !runtimeHMOD ) return ("Unable to open runtime."+rt+".dll").c_str();
+	runtimeHMOD=LoadLibrary( (home+"\\bin\\runtime."+rt+".dll").c_str() );
+	if( !runtimeHMOD ){
+		string msg("Unable to open runtime. "+home+"/bin/runtime."+rt+".dll");
+		strcpy( err,msg.c_str() );
+		return err;
+	}
 
 	typedef Runtime *(__cdecl*GetRuntime)();
 	GetRuntime gr=(GetRuntime)GetProcAddress( runtimeHMOD,"runtimeGetRuntime" );
-	if( !gr ) return ("Error in runtime."+rt+".dll").c_str();
+	if( !gr ){
+		string msg("Error in runtime."+rt+".dll");
+		strcpy( err,msg.c_str() );
+		return err;
+	}
 	runtimeLib=gr();
 #endif
 
@@ -367,7 +377,7 @@ const char *openLibs( string rt ){
 	return 0;
 }
 
-const char *linkLibs( string rt ){
+const char *linkLibs( const string rt ){
 
 	if( const char *p=linkRuntime( rt ) ) return p;
 

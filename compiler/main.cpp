@@ -339,7 +339,9 @@ int main( int argc,char *argv[] ){
 	if( out_file.size() ){
 		if( !veryquiet ) cout<<"Creating executable \""<<out_file<<"\"..."<<endl;
 #ifdef WIN32
-		if( !module->createExe( out_file.c_str(),(home+"/bin/runtime.dll").c_str() ) ){
+		char buff[MAX_PATH];
+		GetFullPathName( out_file.c_str(),MAX_PATH,buff,NULL );
+		if( !module->createExe( buff,(home+"/bin/runtime."+rt+".dll").c_str() ) ){
 			err( "Error creating executable" );
 		}
 #endif

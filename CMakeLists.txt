@@ -20,11 +20,11 @@ ENDIF()
 IF(BB_PLATFORM MATCHES win32)
   set (BB_WIN32 true)
   set (BB_MSVC true)
-  add_definitions(-DBB_WIN32)
+  add_definitions(-DBB_WIN32 -DBB_MSVC)
 ELSEIF(BB_PLATFORM MATCHES win64)
   set (BB_WIN64 true)
   set (BB_MSVC true)
-  add_definitions(-DBB_WIN64)
+  add_definitions(-DBB_WIN64 -DBB_MSVC)
 ELSEIF(BB_PLATFORM MATCHES mingw32)
   set (BB_MINGW32 true)
   add_definitions(-DBB_MINGW32)
@@ -85,9 +85,17 @@ endif()
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set (BUILD_PATH ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM})
+
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_PATH}/bin)
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BUILD_PATH}/lib/${BB_ENV})
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BUILD_PATH}/lib/${BB_ENV})
+
+foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+    string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/bin )
+    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/lib/${BB_ENV} )
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/lib/${BB_ENV}} )
+endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 # TODO: move these to their appropriate modules
 add_definitions(-DPRO -DFREEIMAGE_LIB -DOPJ_STATIC -D_CRT_SECURE_NO_WARNINGS -DDIRECTSOUND_VERSION=0x700 -DODE_LIB)
@@ -95,19 +103,17 @@ add_definitions(-DPRO -DFREEIMAGE_LIB -DOPJ_STATIC -D_CRT_SECURE_NO_WARNINGS -DD
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")
 
-
 IF(BB_MSVC)
-  IF(BB_DEBUG)
-    add_definitions(/MTd)
-  ELSE()
-    add_definitions(/MT)
-  ENDIF()
+  include("./src/msvc.cmake")
+  configure_msvc_runtime()
 ENDIF()
 
 add_subdirectory(stdutil)
 
-IF(BB_WIN32 OR BB_WIN64)
+IF(BB_MSVC)
   add_subdirectory(blitzide)
+  add_subdirectory(bblaunch)
+  add_subdirectory(debugger)
 ENDIF()
 
 IF(BB_DESKTOP OR BB_EMSCRIPTEN)
@@ -135,6 +141,11 @@ add_subdirectory(src/deps/vorbis)
 
 add_subdirectory(src/modules)
 add_subdirectory(src/runtime)
+
+# depends on bb.stub, so we add it in here.
+IF(BB_WINDOWS)
+  add_subdirectory(bbruntime_dll)
+ENDIF()
 
 IF(BB_DESKTOP)
   add_subdirectory(src/deps/freeimage317)

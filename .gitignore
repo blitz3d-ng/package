@@ -37,6 +37,8 @@ _release/help/reference/index.html
 _release/help/reference/commands.json
 _release/tmp
 _release/toolchains
+_release/userlibs/*.dll
+_release/userlibs/*.decls
 
 .coverage/
 
