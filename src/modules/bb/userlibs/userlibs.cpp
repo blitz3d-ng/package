@@ -86,9 +86,3 @@ BBMODULE_DESTROY( userlibs ){
 	for( ;_mods.size();_mods.pop_back() ) FreeLibrary( _mods.back() );
 	return true;
 }
-
-BBMODULE_LINK( userlibs ){
-	rtSym( "_bbLoadLibs",_bbLoadLibs );
-	rtSym( "_bbStrToCStr",_bbStrToCStr );
-	rtSym( "_bbCStrToStr",_bbCStrToStr );
-}

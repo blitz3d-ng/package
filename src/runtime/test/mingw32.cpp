@@ -52,6 +52,7 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	filesystem_link( link );
 	input_link( link );
 	audio_link( link );
+	userlibs_link( link );
 	unit_test_link( link );
 }
 #endif

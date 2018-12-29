@@ -57,6 +57,7 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	system_link( link );
 	input_link( link );
 	audio_link( link );
+	userlibs_link( link );
 	bank_link( link );
 	system_windows_link( link );
 	blitz2d_link( link );

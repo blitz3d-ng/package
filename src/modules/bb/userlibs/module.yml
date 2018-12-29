@@ -6,3 +6,8 @@ dependencies:
 
 platforms:
   - windows
+
+commands:
+  - _bbLoadLibs():"_bbLoadLibs"
+  - _bbStrToCStr():"_bbStrToCStr"
+  - _bbCStrToStr():"_bbCStrToStr"
