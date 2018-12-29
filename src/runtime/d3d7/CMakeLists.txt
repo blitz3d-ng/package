@@ -3,10 +3,6 @@
 
 include_directories (SYSTEM ../../modules)
 
-if(BB_MSVC)
-  set(SYSTEM_LIBS libcmt)
-endif()
-
 set(SOURCES false)
 
 IF(BB_WIN32)
