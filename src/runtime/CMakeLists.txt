@@ -22,7 +22,6 @@ macro(bb_runtime name)
   endif()
 
   add_library(${name}.shared SHARED ${SOURCES})
-  target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
 
   if(BB_WINDOWS)
     target_link_libraries(${name}.shared bbruntime_dll ${name}.static)

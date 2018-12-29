@@ -1,11 +1,11 @@
 shallow_clone: true
 
 os:
-  - Visual Studio 2015
+  - Visual Studio 2017
 
 environment:
   matrix:
-  - TOOLSET: vs2015
+  - TOOLSET: vs2017
 
 clone_script:
 - cmd: >-
@@ -14,10 +14,9 @@ clone_script:
 install:
   - set PATH=C:\Ruby23-x64\bin;%PATH%
   - bundle install
-  - ruby bin\blitz3d config
-  - ps: Start-FileDownload 'https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-windows.zip' 'premake.zip'
-  - 7z x premake.zip
-  - premake5.exe %TOOLSET%
+
+build_script:
+  - make.bat %CONFIGURATION% %PLATFORM%
 
 after_build:
   - ruby bin/blitz3d help --build
@@ -38,6 +37,9 @@ artifacts:
   - path: _release\bin\runtime.*.dll
     name: Runtimes
 
+  - path: _release\bin\linker.dll
+    name: Linker
+
   - path: _release\bin\blitzcc.exe
     name: Compiler
 
@@ -46,7 +48,3 @@ artifacts:
 
   - path: _release\help
     name: Help
-
-build:
-  parallel: true
-  project: build/blitz3d.sln
