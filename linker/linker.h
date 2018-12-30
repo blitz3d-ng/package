@@ -32,6 +32,6 @@ public:
 	virtual void deleteModule( Module *mod );
 };
 
-extern "C" BBDECL Linker * __cdecl linkerGetLinker();
+extern "C" BBDECL Linker * CDECL linkerGetLinker();
 
 #endif

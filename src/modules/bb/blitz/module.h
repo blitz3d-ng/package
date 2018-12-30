@@ -4,9 +4,11 @@
 #ifdef WIN32
 #define BBDECL __declspec(dllexport)
 #define BBCALL __stdcall
+#define CDECL __cdecl
 #else
 #define BBDECL
 #define BBCALL
+#define CDECL
 #endif
 
 #define BBMODULE_FUNC_NAME( name,action ) name##_##action
