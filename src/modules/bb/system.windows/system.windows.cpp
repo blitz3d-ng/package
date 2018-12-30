@@ -209,6 +209,10 @@ bool WindowsSystemDriver::lookupFontData( const std::string &fontName,BBFontData
 // TODO: figure out if this is broken on x64.
 int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func,const void *in,int in_sz,void *out,int out_sz ){
 
+#ifndef BB_WIN32
+	RTEX( "Only available in 32-bit builds." );
+	return 0;
+#else
 	map<string,gxDll*>::const_iterator lib_it=libs.find( dll );
 
 	if( lib_it==libs.end() ){
@@ -228,23 +232,20 @@ int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func
 		fun_it=t->funcs.insert( make_pair( func,f ) ).first;
 	}
 
-#if defined(_MSC_VER) && !defined(WIN64)
 	static void *save_esp;
 
 	_asm{
 		mov	[save_esp],esp
 	};
-#endif
 
 	int n=fun_it->second( in,in_sz,out,out_sz );
 
-#if defined(_MSC_VER) && !defined(WIN64)
 	_asm{
 		mov esp,[save_esp]
 	};
-#endif
 
 	return n;
+#endif
 }
 
 extern inline void debugBank( bbBank *b );

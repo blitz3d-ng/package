@@ -235,7 +235,8 @@ TNode *FloatConstNode::translate( Codegen *g ){
 }
 
 int FloatConstNode::intValue(){
-#if defined(WIN32) && !defined(__MINGW32__)
+// TODO: figure out a proper, cross platform implementation
+#ifdef BB_WIN32
 	float flt=value;
 	int temp;
 	_control87( _RC_NEAR|_PC_24|_EM_INVALID|_EM_ZERODIVIDE|_EM_OVERFLOW|_EM_UNDERFLOW|_EM_INEXACT|_EM_DENORMAL,0xfffff );

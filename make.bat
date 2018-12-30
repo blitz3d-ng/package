@@ -15,14 +15,23 @@ IF NOT "%PLATFORM%" == "win32" (
   )
 )
 
+IF "%PLATFORM%" == "win32" (
+  SET GENERATOR=Visual Studio 15 2017
+  SET ARCH=Win32
+)
+
+IF "%PLATFORM%" == "win64" (
+  SET GENERATOR=Visual Studio 15 2017 Win64
+  SET ARCH=x64
+)
+
 ECHO Building %PLATFORM% in %ENV% mode.
 
 set OUTPUT=_release\toolchains\%PLATFORM%
 set RELEASE=_release
 
-cmake -G "Visual Studio 15 2017" -H. -B%cd%\build\%PLATFORM%\%ENV% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b
-REM devenv build\%PLATFORM%\%ENV%\Blitz3D.sln /build "%ENV%|%PLATFORM%" || exit /b
-msbuild /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%ENV% /property:Platform=%PLATFORM% || exit /b
+cmake -G "%GENERATOR%" -H. -B%cd%\build\%PLATFORM%\%ENV% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b
+msbuild /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%ENV% /property:Platform=%ARCH% || exit /b
 
 COPY /Y %OUTPUT%\bin\Blitz3D.exe %RELEASE%
 COPY /Y %OUTPUT%\bin\ide.exe %RELEASE%\bin
