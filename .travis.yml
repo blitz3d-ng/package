@@ -21,13 +21,9 @@ compiler: clang
 git:
   depth: 1
 
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bundle install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker-compose build; fi
-
 script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make ENV=${ENV} PLATFORM=macos; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker-compose run env make ENV=${ENV} PLATFORM=linux; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run -t -i -v `pwd`:/blitz3d-ng blitz3dng/blitz3d:latest make ENV=${ENV} PLATFORM=linux; fi
 
 after_success:
   - if [[ "$ENV" == "test" ]]; then bash <(curl -s https://codecov.io/bash); fi
