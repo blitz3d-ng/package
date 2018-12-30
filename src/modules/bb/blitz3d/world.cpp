@@ -574,7 +574,7 @@ void World::render( float tween ){
 
 		Camera *cam=cam_que.top();
 
-		if( !cam->beginRenderFrame() ) continue;
+		if( !bbScene->setCamera(cam) ) continue;
 
 		vector<Mirror*>::const_iterator mir_it;
 		for( mir_it=_mirrors.begin();mir_it!=_mirrors.end();++mir_it ){

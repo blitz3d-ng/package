@@ -6,7 +6,7 @@
 
 class GLES2B3DGraphics : public B3DGraphics{
 public:
-	BBScene *createScene( int flags );
+	BBScene *createScene( int w,int h,int flags );
 	BBScene *verifyScene( BBScene *scene );
 	void freeScene( BBScene *scene );
 };

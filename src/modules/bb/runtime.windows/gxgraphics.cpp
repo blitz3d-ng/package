@@ -531,7 +531,7 @@ static void pickTexFmts( gxGraphics *g,int hi ){
 	}
 }
 
-BBScene *gxGraphics::createScene( int flags ){
+BBScene *gxGraphics::createScene( int w,int h,int flags ){
 	if( scene_set.size() ) return 0;
 
 	//get d3d

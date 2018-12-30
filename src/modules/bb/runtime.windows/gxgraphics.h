@@ -88,7 +88,7 @@ public:
 	BBFont *verifyFont( BBFont *font );
 	void freeFont( BBFont *font );
 
-	BBScene *createScene( int flags );
+	BBScene *createScene( int w,int h,int flags );
 	BBScene *verifyScene( BBScene *scene );
 	void freeScene( BBScene *scene );
 };

@@ -1,8 +1,7 @@
 
 #include "std.h"
 #include "camera.h"
-
-extern BBScene *bbScene;
+#include "scene.h"
 
 Camera::Camera(){
 	setZoom( 1 );
@@ -55,6 +54,38 @@ void Camera::setFogMode( int mode ){
 	fog_mode=mode;
 }
 
+void Camera::getViewport( int &x,int &y,int &w,int &h ){
+	x=vp_x;y=vp_y;w=vp_w;h=vp_h;
+}
+
+const Vector &Camera::getClsColor(){
+	return cls_color;
+}
+
+void Camera::getClsMode( bool &c,bool &z ){
+	c=cls_argb;z=cls_z;
+}
+
+int Camera::getProjMode(){
+	return proj_mode;
+}
+
+const Vector &Camera::getFogColor(){
+	return fog_color;
+}
+
+float Camera::getFogNear(){
+	return fog_nr;
+}
+
+float Camera::getFogFar(){
+	return fog_fr;
+}
+
+int Camera::getFogMode(){
+	return fog_mode;
+}
+
 const Frustum &Camera::getFrustum()const{
 	if( !local_valid ){
 		float ar=(float)vp_h/vp_w;
@@ -84,20 +115,4 @@ float Camera::getFrustumHeight()const{
 
 void Camera::getViewport( int *x,int *y,int *w,int *h )const{
 	*x=vp_x;*y=vp_y;*w=vp_w;*h=vp_h;
-}
-
-bool Camera::beginRenderFrame(){
-	if( !proj_mode ) return false;
-	getFrustum();
-	bbScene->setViewport( vp_x,vp_y,vp_w,vp_h );
-	bbScene->clear( &(cls_color.x),1,1,cls_argb,cls_z );
-	if( proj_mode==PROJ_ORTHO ){
-		bbScene->setOrthoProj( frustum_nr,frustum_fr,frustum_w,frustum_h );
-	}else{
-		bbScene->setPerspProj( frustum_nr,frustum_fr,frustum_w,frustum_h );
-	}
-	bbScene->setFogRange( fog_nr,fog_fr );
-	bbScene->setFogColor( (float*)&fog_color.x );
-	bbScene->setFogMode( fog_mode );
-	return true;
 }

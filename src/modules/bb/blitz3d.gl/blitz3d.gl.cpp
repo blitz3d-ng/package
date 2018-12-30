@@ -142,6 +142,8 @@ private:
 
 	float view_matrix[16];
 
+	int render_w,render_h;
+
 	void setLights(){
 		// FIXME: replace hardcoded '8' with proper hardward-backed value.
 		for( int i=0;i<8;i++ ){
@@ -189,10 +191,11 @@ private:
 	}
 
 public:
-	GLScene():wireframe(false){
+	GLScene( int w,int h ):wireframe(false){
 		const float MIDLEVEL[]={ 0.5f,0.5f,0.5f,1.0f };
 		setAmbient( MIDLEVEL );
 		ambient[3]=1.0f;
+		render_w=w;render_h=h;
 	}
 
   int  hwTexUnits(){ return 8; }
@@ -240,8 +243,8 @@ public:
 		}
 	}
   void setViewport( int x,int y,int w,int h ){
-    glViewport( x,y,w,h );
-    glScissor( x,y,w,h );
+    glViewport( x,render_h-h-y,w,h );
+    glScissor( x,render_h-h-y,w,h );
   }
   void setOrthoProj( float nr,float fr,float w,float h ){}
   void setPerspProj( float nr,float fr,float w,float h ){
@@ -518,9 +521,10 @@ public:
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho( 0.0f,viewport[2],viewport[3],0.0f,-1.0f,1.0f );
+		glOrtho( viewport[0],viewport[0]+viewport[2],viewport[1]+viewport[3],viewport[1],-1.0f,1.0f );
 
-		glViewport( 0,0,viewport[2],viewport[3] );
+		glViewport( viewport[0],viewport[1],viewport[2],viewport[3] );
+		glScissor( viewport[0],viewport[1],viewport[2],viewport[3] );
   }
 
   //lighting
@@ -540,8 +544,8 @@ public:
   int getTrianglesDrawn()const{ return 0; }
 };
 
-BBScene *GLB3DGraphics::createScene( int flags ){
-  return d_new GLScene();
+BBScene *GLB3DGraphics::createScene( int w,int h,int flags ){
+  return d_new GLScene( w,h );
 }
 
 BBScene *GLB3DGraphics::verifyScene( BBScene *scene ){

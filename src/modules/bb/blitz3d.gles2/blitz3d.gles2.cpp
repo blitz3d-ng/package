@@ -639,7 +639,7 @@ public:
   int getTrianglesDrawn()const{ return 0; }
 };
 
-BBScene *GLES2B3DGraphics::createScene( int flags ){
+BBScene *GLES2B3DGraphics::createScene( int w,int h,int flags ){
   return d_new GLES2Scene();
 }
 

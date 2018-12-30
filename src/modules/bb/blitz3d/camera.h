@@ -2,9 +2,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "model.h"
+#include "object.h"
 #include "frustum.h"
-#include "mirror.h"
 
 class Camera : public Object{
 public:
@@ -26,8 +25,14 @@ public:
 	void setFogRange( float nr,float fr );
 	void setFogMode( int mode );
 
-	//called by world
-	bool beginRenderFrame();
+	void  getViewport( int &x,int &y,int &w,int &h );
+	const Vector &getClsColor();
+	void  getClsMode( bool &c,bool &z );
+	int   getProjMode();
+	const Vector &getFogColor();
+	float getFogNear();
+	float getFogFar();
+	int   getFogMode();
 
 	//Camera frustum...
 	float getFrustumNear()const;
