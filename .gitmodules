@@ -3,7 +3,7 @@
 	url = https://github.com/kfprimm/freeimage317
 [submodule "assimp"]
 	path = src/deps/assimp/src
-	url = https://github.com/assimp/assimp
+	url = https://github.com/assimp/assimp.git
 [submodule "enet"]
 	path = src/deps/enet/src
 	url = https://github.com/lsalzman/enet.git
@@ -33,7 +33,7 @@
 	url = https://github.com/madler/zlib.git
 [submodule "src/deps/backward-cpp"]
 	path = src/deps/backward-cpp
-	url = https://github.com/bombela/backward-cpp
+	url = https://github.com/bombela/backward-cpp.git
 [submodule "src/deps/libunwind"]
 	path = src/deps/libunwind
 	url = http://llvm.org/git/libunwind
