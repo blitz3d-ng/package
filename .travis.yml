@@ -23,12 +23,11 @@ git:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bundle install; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -L https://github.com/premake/premake-core/releases/download/v5.0.0-alpha12/premake-5.0.0-alpha12-macosx.tar.gz | tar xvz; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker-compose build; fi
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./bin/blitz3d config && ./premake5 gmake && make config=${ENV}_macos; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker-compose run -e "ENV=${ENV}" env; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make ENV=${ENV} PLATFORM=macos; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker-compose run env make ENV=${ENV} PLATFORM=linux; fi
 
 after_success:
   - if [[ "$ENV" == "test" ]]; then bash <(curl -s https://codecov.io/bash); fi
