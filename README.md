@@ -12,7 +12,7 @@ This is achieved by translating Blitz source into C code.
 
 ## Download
 
-You can get the latest Windows build directly from our [CI tool](https://ci.appveyor.com/api/projects/kfprimm/blitz3d-ng-gj3xh/artifacts/release.zip?branch=master&job=Environment:%20TOOLSET=vs2015;%20Configuration:%20release;%20Platform:%20win32). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
+You can get the latest Windows build directly from our [CI tool](https://ci.appveyor.com/api/projects/kfprimm/blitz3d-ng-gj3xh/artifacts/release.zip?branch=master&job=Environment:%20TOOLSET=vs2017;%20Configuration:%20release;%20Platform:%20win32). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
 
 If you're looking to customize your build further or interested in macOS or Linux, please see the next section.
 
@@ -28,9 +28,9 @@ We use these tools to generate the appropriate build files per-platform as well 
 
 ### Windows
 
-Install [Visual Studio](https://www.visualstudio.com/vs/community/).
+Install [Visual Studio 2017](https://www.visualstudio.com/vs/community/).
 
-Open up a command prompt via `Start -> Visual Studio 2015 -> Developer Command Prompt for VS2015`.
+Open up a command prompt via `Start -> Visual Studio 2017 -> Developer Command Prompt for VS2017`.
 
 ```
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
