@@ -8,4 +8,4 @@ target_include_directories(debugger PRIVATE ../common/include ../src/runtime)
 target_link_libraries(debugger stdutil)
 
 target_compile_definitions(debugger PRIVATE _WIN32_WINNT=_WIN32_WINNT_WINXP _WINDLL _USRDLL)
-target_link_options(debugger PRIVATE /subsystem:windows)
+set_target_properties(debugger PROPERTIES LINK_FLAGS "/subsystem:windows")
