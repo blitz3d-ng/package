@@ -22,9 +22,9 @@ To keep the project simple to build, all 3rd-party dependencies are included in 
 
 ### Prerequisites (All platforms)
 
-You'll need [premake (alpha 11)](https://premake.github.io/download.html) and a valid [ruby 2+](https://www.ruby-lang.org/en/) install.
+You'll need [cmake (3.12+)](https://cmake.org/download/) and an (optional) [ruby 2+](https://www.ruby-lang.org/en/) install.
 
-We use these tools to generate the appropriate build files per-platform.
+We use these tools to generate the appropriate build files per-platform as well as documentation.
 
 ### Windows
 
@@ -35,7 +35,7 @@ Open up a command prompt via `Start -> Visual Studio 2015 -> Developer Command P
 ```
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 > cd blitz3d-ng
-> ruby bin\blitz3d config && premake5 vs2015 && devenv build\blitz3d.sln /build "release|win32"
+> make.bat release
 ```
 
 ### macOS
@@ -46,7 +46,7 @@ Install [Xcode](https://developer.apple.com/xcode/) and [brew](http://brew.sh/).
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
 $ brew install wxmac glfw3
-$ bin/blitz3d config && premake5 gmake && make config=release_macos
+$ make ENV=release
 ```
 
 ### Linux
@@ -55,7 +55,7 @@ $ bin/blitz3d config && premake5 gmake && make config=release_macos
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
 $ apt-get install -y build-essential libwxgtk3.0-dev
-$ bin/blitz3d config && premake5 gmake && make config=release_linux
+$ make ENV=release
 ```
 
 Alternatively, you can build everything with [docker](https://docker.io).
@@ -63,8 +63,8 @@ Alternatively, you can build everything with [docker](https://docker.io).
 ```bash
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
-$ docker-compose build
-$ docker-compose run env
+$ docker build -t blitz3d - < Dockerfile
+$ docker run -t -i -v `pwd`:/blitz3d-ng blitz3d make ENV=${ENV} PLATFORM=linux
 ```
 
 ## Documentation
@@ -73,7 +73,7 @@ The original Blitz3D help is available in the [\_release/help](_release/help) di
 
 ```bash
 $ bundle install
-$ bin/makedocs
+$ bin/blitz3d help --build
 ```
 
 ## Roadmap

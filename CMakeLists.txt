@@ -109,6 +109,7 @@ IF(BB_MSVC)
 ENDIF()
 
 add_subdirectory(stdutil)
+add_subdirectory(src/blitzide2)
 
 IF(BB_MSVC)
   add_subdirectory(blitzide)
