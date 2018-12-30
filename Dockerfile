@@ -44,11 +44,11 @@ RUN wget -q --output-document=android-ndk.zip https://dl.google.com/android/repo
 
 # build system
 WORKDIR /blitz3d-ng
-ADD ./Gemfile ./Gemfile
-ADD ./Gemfile.lock ./Gemfile.lock
-RUN bundle install
+# ADD ./Gemfile ./Gemfile
+# ADD ./Gemfile.lock ./Gemfile.lock
+# RUN bundle install
 
-ADD ./ ./
+# ADD ./ ./
 
 ENV blitzpath=/blitz3d-ng/_release
 
