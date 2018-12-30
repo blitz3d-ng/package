@@ -21,7 +21,7 @@
 	url = https://github.com/xiph/vorbis.git
 [submodule "ogg"]
 	path = src/deps/ogg/src
-	url = https://git.xiph.org/ogg.git
+	url = https://github.com/xiph/ogg.git
 [submodule "crossguid"]
 	path = src/deps/crossguid/src
 	url = https://github.com/graeme-hill/crossguid.git
