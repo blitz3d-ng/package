@@ -20,6 +20,7 @@ BBMODULE_DECL( bank );
 BBMODULE_DECL( system_windows );
 BBMODULE_DECL( filesystem );
 BBMODULE_DECL( filesystem_windows );
+BBMODULE_DECL( timer );
 BBMODULE_DECL( timer_windows );
 BBMODULE_DECL( input );
 BBMODULE_DECL( input_directinput8 );
@@ -50,6 +51,7 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	bank_link( link );
 	system_windows_link( link );
 	filesystem_link( link );
+	timer_link( link );
 	input_link( link );
 	audio_link( link );
 	userlibs_link( link );
@@ -71,33 +73,36 @@ bool bbruntime_create(){
 																								if( system_windows_create() ){
 																										if( filesystem_create() ){
 																												if( filesystem_windows_create() ){
-																														if( timer_windows_create() ){
-																																if( input_create() ){
-																																		if( input_directinput8_create() ){
-																																				if( audio_create() ){
-																																						if( audio_fmod_create() ){
-																																								if( userlibs_create() ){
-																																										if( event_create() ){
-																																												if( runtime_console_create() ){
-																																														if( unit_test_create() ){
-																																																return true;
-																							}else sue( "unit_test_create failed" );
-																							runtime_console_destroy();
-																						}else sue( "runtime_console_create failed" );
-																						event_destroy();
-																					}else sue( "event_create failed" );
-																					userlibs_destroy();
-																				}else sue( "userlibs_create failed" );
-																				audio_fmod_destroy();
-																			}else sue( "audio_fmod_create failed" );
-																			audio_destroy();
-																		}else sue( "audio_create failed" );
-																		input_directinput8_destroy();
-																	}else sue( "input_directinput8_create failed" );
-																	input_destroy();
-																}else sue( "input_create failed" );
-																timer_windows_destroy();
-															}else sue( "timer_windows_create failed" );
+																														if( timer_create() ){
+																																if( timer_windows_create() ){
+																																		if( input_create() ){
+																																				if( input_directinput8_create() ){
+																																						if( audio_create() ){
+																																								if( audio_fmod_create() ){
+																																										if( userlibs_create() ){
+																																												if( event_create() ){
+																																														if( runtime_console_create() ){
+																																																if( unit_test_create() ){
+																																																		return true;
+																								}else sue( "unit_test_create failed" );
+																								runtime_console_destroy();
+																							}else sue( "runtime_console_create failed" );
+																							event_destroy();
+																						}else sue( "event_create failed" );
+																						userlibs_destroy();
+																					}else sue( "userlibs_create failed" );
+																					audio_fmod_destroy();
+																				}else sue( "audio_fmod_create failed" );
+																				audio_destroy();
+																			}else sue( "audio_create failed" );
+																			input_directinput8_destroy();
+																		}else sue( "input_directinput8_create failed" );
+																		input_destroy();
+																	}else sue( "input_create failed" );
+																	timer_windows_destroy();
+																}else sue( "timer_windows_create failed" );
+																timer_destroy();
+															}else sue( "timer_create failed" );
 															filesystem_windows_destroy();
 														}else sue( "filesystem_windows_create failed" );
 														filesystem_destroy();
@@ -139,6 +144,7 @@ bool bbruntime_destroy(){
 	input_directinput8_destroy();
 	input_destroy();
 	timer_windows_destroy();
+	timer_destroy();
 	filesystem_windows_destroy();
 	filesystem_destroy();
 	system_windows_destroy();

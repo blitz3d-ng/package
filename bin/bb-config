@@ -102,4 +102,4 @@ end
 module_libs.flatten!
 system_libs.flatten!
 
-puts "-Wno-int-conversion #{OPTIONS.join(' ')} -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(TOOLCHAINS_PATH, PLATFORM, 'lib', env)} -lbb.stub -lruntime.#{RUNTIME} #{module_libs.join(' ')} #{module_libs.reverse.join(' ')} #{system_libs.join(' ')}"
+puts "-Wno-int-conversion #{OPTIONS.join(' ')} -I#{INCLUDE_PATH} -DBBMAIN -L#{File.join(TOOLCHAINS_PATH, PLATFORM, 'lib', env)} -lbb.stub -lruntime.#{RUNTIME}.static #{module_libs.join(' ')} #{module_libs.reverse.join(' ')} #{system_libs.join(' ')}"

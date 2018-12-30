@@ -47,7 +47,7 @@ when 'run'
     STDERR.puts 'Failed to build.'
     exit 1
   end
-  result = system out_file
+  result = system "cd #{File.dirname(in_file)} && #{out_file}"
   File.unlink out_file if File.exist?(out_file)
   exit 1 unless result
 when 'help'

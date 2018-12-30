@@ -5,7 +5,7 @@ module Blitz3D
     PLATFORMS = %w(win32 win64 mingw32 macos linux ios android emscripten).freeze
 
     METAPLATFORMS = {
-      desktop: %w(windows macos linux),
+      desktop: %w(win32 win64 macos linux),
       windows: %w(win32 win64 mingw32),
       mobile: %w(ios android),
       web: %w(emscripten),

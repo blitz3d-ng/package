@@ -1,6 +1,7 @@
 # Blitz3D "NG"
 [![Build status](https://ci.appveyor.com/api/projects/status/ww8qjywqm6rb5rnu/branch/master?svg=true)](https://ci.appveyor.com/project/kfprimm/blitz3d-ng-gj3xh/branch/master)
 [![Build Status](https://travis-ci.org/blitz3d-ng/blitz3d-ng.svg?branch=master)](https://travis-ci.org/blitz3d-ng/blitz3d-ng)
+[![Help](https://img.shields.io/badge/help-discord-7289DA.svg?logo=discord)](https://discord.gg/E6kTHXn)
 
 This project is an attempt to revive & modernize Blitz3D by adding cross-platform & 64-bit support.
 
@@ -15,6 +16,12 @@ This is achieved by translating Blitz source into C code.
 You can get the latest Windows build directly from our [CI tool](https://ci.appveyor.com/api/projects/kfprimm/blitz3d-ng-gj3xh/artifacts/release.zip?branch=master&job=Environment:%20TOOLSET=vs2017;%20Configuration:%20release;%20Platform:%20win32). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
 
 If you're looking to customize your build further or interested in macOS or Linux, please see the next section.
+
+## Support
+
+If you need help with anything, please ask on the [Discord server](https://discord.gg/E6kTHXn).
+
+For bug reports & feature requests, feel free to open an [issue](https://github.com/blitz3d-ng/blitz3d-ng/issues).
 
 ## Building
 
@@ -46,7 +53,7 @@ Install [Xcode](https://developer.apple.com/xcode/) and [brew](http://brew.sh/).
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
 $ brew install wxmac glfw3
-$ make ENV=release
+$ bin/blitz3d config && make ENV=release
 ```
 
 ### Linux
@@ -55,7 +62,7 @@ $ make ENV=release
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
 $ apt-get install -y build-essential libwxgtk3.0-dev
-$ make ENV=release
+$ bin/blitz3d config && make ENV=release
 ```
 
 Alternatively, you can build everything with [docker](https://docker.io).

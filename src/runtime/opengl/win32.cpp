@@ -21,6 +21,7 @@ BBMODULE_DECL( bank );
 BBMODULE_DECL( system_windows );
 BBMODULE_DECL( filesystem );
 BBMODULE_DECL( filesystem_windows );
+BBMODULE_DECL( timer );
 BBMODULE_DECL( timer_windows );
 BBMODULE_DECL( input );
 BBMODULE_DECL( input_directinput8 );
@@ -30,6 +31,9 @@ BBMODULE_DECL( userlibs );
 BBMODULE_DECL( pixmap );
 BBMODULE_DECL( blitz2d );
 BBMODULE_DECL( graphics );
+BBMODULE_DECL( blitz3d );
+BBMODULE_DECL( blitz2d_gl );
+BBMODULE_DECL( blitz3d_gl );
 BBMODULE_DECL( runtime_glfw3 );
 
 class BBRuntime;
@@ -52,11 +56,13 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	bank_link( link );
 	system_windows_link( link );
 	filesystem_link( link );
+	timer_link( link );
 	input_link( link );
 	audio_link( link );
 	userlibs_link( link );
 	blitz2d_link( link );
 	graphics_link( link );
+	blitz3d_link( link );
 }
 #endif
 bool bbruntime_create(){
@@ -75,36 +81,48 @@ bool bbruntime_create(){
 																										if( system_windows_create() ){
 																												if( filesystem_create() ){
 																														if( filesystem_windows_create() ){
-																																if( timer_windows_create() ){
-																																		if( input_create() ){
-																																				if( input_directinput8_create() ){
-																																						if( audio_create() ){
-																																								if( audio_fmod_create() ){
-																																										if( userlibs_create() ){
-																																												if( pixmap_create() ){
-																																														if( blitz2d_create() ){
-																																																if( graphics_create() ){
-																																																		if( runtime_glfw3_create() ){
-																																																				return true;
-																									}else sue( "runtime_glfw3_create failed" );
-																									graphics_destroy();
-																								}else sue( "graphics_create failed" );
-																								blitz2d_destroy();
-																							}else sue( "blitz2d_create failed" );
-																							pixmap_destroy();
-																						}else sue( "pixmap_create failed" );
-																						userlibs_destroy();
-																					}else sue( "userlibs_create failed" );
-																					audio_fmod_destroy();
-																				}else sue( "audio_fmod_create failed" );
-																				audio_destroy();
-																			}else sue( "audio_create failed" );
-																			input_directinput8_destroy();
-																		}else sue( "input_directinput8_create failed" );
-																		input_destroy();
-																	}else sue( "input_create failed" );
-																	timer_windows_destroy();
-																}else sue( "timer_windows_create failed" );
+																																if( timer_create() ){
+																																		if( timer_windows_create() ){
+																																				if( input_create() ){
+																																						if( input_directinput8_create() ){
+																																								if( audio_create() ){
+																																										if( audio_fmod_create() ){
+																																												if( userlibs_create() ){
+																																														if( pixmap_create() ){
+																																																if( blitz2d_create() ){
+																																																		if( graphics_create() ){
+																																																				if( blitz3d_create() ){
+																																																						if( blitz2d_gl_create() ){
+																																																								if( blitz3d_gl_create() ){
+																																																										if( runtime_glfw3_create() ){
+																																																												return true;
+																													}else sue( "runtime_glfw3_create failed" );
+																													blitz3d_gl_destroy();
+																												}else sue( "blitz3d_gl_create failed" );
+																												blitz2d_gl_destroy();
+																											}else sue( "blitz2d_gl_create failed" );
+																											blitz3d_destroy();
+																										}else sue( "blitz3d_create failed" );
+																										graphics_destroy();
+																									}else sue( "graphics_create failed" );
+																									blitz2d_destroy();
+																								}else sue( "blitz2d_create failed" );
+																								pixmap_destroy();
+																							}else sue( "pixmap_create failed" );
+																							userlibs_destroy();
+																						}else sue( "userlibs_create failed" );
+																						audio_fmod_destroy();
+																					}else sue( "audio_fmod_create failed" );
+																					audio_destroy();
+																				}else sue( "audio_create failed" );
+																				input_directinput8_destroy();
+																			}else sue( "input_directinput8_create failed" );
+																			input_destroy();
+																		}else sue( "input_create failed" );
+																		timer_windows_destroy();
+																	}else sue( "timer_windows_create failed" );
+																	timer_destroy();
+																}else sue( "timer_create failed" );
 																filesystem_windows_destroy();
 															}else sue( "filesystem_windows_create failed" );
 															filesystem_destroy();
@@ -140,6 +158,9 @@ bool bbruntime_create(){
 
 bool bbruntime_destroy(){
 	runtime_glfw3_destroy();
+	blitz3d_gl_destroy();
+	blitz2d_gl_destroy();
+	blitz3d_destroy();
 	graphics_destroy();
 	blitz2d_destroy();
 	pixmap_destroy();
@@ -149,6 +170,7 @@ bool bbruntime_destroy(){
 	input_directinput8_destroy();
 	input_destroy();
 	timer_windows_destroy();
+	timer_destroy();
 	filesystem_windows_destroy();
 	filesystem_destroy();
 	system_windows_destroy();
