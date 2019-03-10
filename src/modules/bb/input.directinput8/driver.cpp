@@ -3,6 +3,7 @@
 
 #include <bb/runtime/runtime.h>
 #include <bb/system/system.h>
+#include <bb/input/input.h>
 #include "driver.h"
 
 #include <math.h>
@@ -167,15 +168,16 @@ int DirectInput8Driver::toAscii( int scan )const{
  	int virt=MapVirtualKey( scan,1 );
 	if( !virt ) return 0;
 
+	// TODO: figure out a better way than calling bbKeyDown
 	static unsigned char mat[256];
-	// mat[VK_LSHIFT]=keyboard->keyDown( DIK_LSHIFT ) ? 0x80 : 0;
-	// mat[VK_RSHIFT]=keyboard->keyDown( DIK_RSHIFT ) ? 0x80 : 0;
+	mat[VK_LSHIFT]=bbKeyDown( DIK_LSHIFT ) ? 0x80 : 0;
+	mat[VK_RSHIFT]=bbKeyDown( DIK_RSHIFT ) ? 0x80 : 0;
 	mat[VK_SHIFT]=mat[VK_LSHIFT]|mat[VK_RSHIFT];
-	// mat[VK_LCONTROL]=keyboard->keyDown( DIK_LCONTROL ) ? 0x80 : 0;
-	// mat[VK_RCONTROL]=keyboard->keyDown( DIK_RCONTROL ) ? 0x80 : 0;
+	mat[VK_LCONTROL]=bbKeyDown( DIK_LCONTROL ) ? 0x80 : 0;
+	mat[VK_RCONTROL]=bbKeyDown( DIK_RCONTROL ) ? 0x80 : 0;
 	mat[VK_CONTROL]=mat[VK_LCONTROL]|mat[VK_RCONTROL];
-	// mat[VK_LMENU]=keyboard->keyDown( DIK_LMENU ) ? 0x80 : 0;
-	// mat[VK_RMENU]=keyboard->keyDown( DIK_RMENU ) ? 0x80 : 0;
+	mat[VK_LMENU]=bbKeyDown( DIK_LMENU ) ? 0x80 : 0;
+	mat[VK_RMENU]=bbKeyDown( DIK_RMENU ) ? 0x80 : 0;
 	mat[VK_MENU]=mat[VK_LMENU]|mat[VK_RMENU];
 
 	WORD ch;
