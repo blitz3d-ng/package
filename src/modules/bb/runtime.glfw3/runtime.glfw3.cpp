@@ -135,6 +135,16 @@ public:
 		back_canvas=d_new GLFW3DefaultCanvas( wnd,GL_BACK,0 );
 
 		def_font=(BBImageFont*)loadFont( "courier",12*bbDPIScaleY(),0 );
+		if (def_font == nullptr)
+		{
+/*#if _WIN32
+			MessageBox(glfwGetWin32Window(wnd), "Failed to load default font: Courier 12", "Error", MB_OK | MB_ICONERROR);
+#else
+			// TODO: Other platforms
+#endif*/
+
+			def_font = (BBImageFont*)loadFont("courier new", 12 * bbDPIScaleY(), 0);
+		}
 
 		gamma_ramp.size=256;
 		gamma_ramp.red=gamma_red;
