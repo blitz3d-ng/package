@@ -11,10 +11,9 @@ add_executable(blitzcc
   codegen_x86/codegen_x86.cpp codegen_x86/codegen_x86.h codegen_x86/tile.cpp codegen_x86/tile.h codegen.h
   assem_x86/asm_insts.cpp assem_x86/assem_x86.cpp assem_x86/assem_x86.h assem_x86/insts.h assem_x86/operand.cpp assem_x86/operand.h assem.h ex.h std.cpp std.h
 )
-add_dependencies(blitzcc stdutil)
 
-target_include_directories(blitzcc PRIVATE ../common/include ../src/runtime)
-target_link_libraries(blitzcc stdutil)
+target_include_directories(blitzcc PRIVATE ../src/runtime)
+target_link_libraries(blitzcc stdutil nlohmann_json)
 
 if(BB_COVERAGE)
   set_target_properties(blitzcc PROPERTIES COMPILE_FLAGS ${BB_COVERAGE})
