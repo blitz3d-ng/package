@@ -26,7 +26,7 @@ RUN apt-get update && apt-get upgrade -y && \
 ENV EMSCRIPTEN_VERSION=sdk-1.39.0-64bit
 
 RUN git clone https://github.com/juj/emsdk.git /emsdk
-RUN cd /emsdk && ./emsdk install $EMSCRIPTEN_VERSION && ./emsdk activate $EMSCRIPTEN_VERSION
+RUN cd /emsdk && ./emsdk install $EMSCRIPTEN_VERSION && ./emsdk activate $EMSCRIPTEN_VERSION && source ./emsdk_env.sh
 
 # android
 ENV ANDROID_HOME /opt/android-sdk

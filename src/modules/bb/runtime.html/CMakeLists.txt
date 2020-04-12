@@ -1,6 +1,6 @@
 if(BB_EMSCRIPTEN)
   bb_start_module(runtime.html)
-  set(DEPENDS_ON bb.runtime bb.system bb.input bb.graphics bb.blitz3d bb.blitz2d.gl bb.blitz3d.gl)
+  set(DEPENDS_ON bb.runtime bb.system bb.input bb.graphics bb.blitz3d)
   set(SOURCES runtime.html.cpp)
   bb_end_module()
 endif()

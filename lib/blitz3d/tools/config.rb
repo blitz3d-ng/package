@@ -3,7 +3,6 @@ require 'pathname'
 module Blitz3D
   module Tools
     module Config
-      PREMAKE_DIR = 'build/src'
       TOOLCHAINS_DIR = File.join(File.dirname(Blitz3D.path), '..', '_release', 'toolchains')
 
       def file_has_changed?(file, string)

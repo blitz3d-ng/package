@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.0)
 project (Blitz3D)
 
+# set(CMAKE_VERBOSE_MAKEFILE true)
+
 include(src/bin2h.cmake)
 
 IF(NOT BB_PLATFORM)
@@ -62,6 +64,11 @@ IF(BB_IOS OR BB_ANDROID)
   add_definitions(-DBB_MOBILE)
 ENDIF()
 
+IF(BB_EMSCRIPTEN)
+  set (BB_WEB true)
+  add_definitions(-DBB_WEB)
+ENDIF()
+
 IF(NOT BB_ENV)
   set (BB_ENV debug)
 ENDIF()
@@ -82,7 +89,9 @@ if(BB_ENV MATCHES test)
   set(BB_COVERAGE "-fprofile-arcs -ftest-coverage")
 endif()
 
-set (CMAKE_POSITION_INDEPENDENT_CODE ON)
+IF(NOT BB_EMSCRIPTEN)
+  set (CMAKE_POSITION_INDEPENDENT_CODE ON)
+ENDIF()
 
 set (BUILD_PATH ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM})
 
@@ -132,9 +141,12 @@ ELSE()
   set(ZLIB z)
 ENDIF()
 
+IF(NOT BB_EMSCRIPTEN)
+  add_subdirectory(src/deps/enet/src)
+ENDIF()
+
 add_subdirectory(src/deps/assimp)
 add_subdirectory(src/deps/crossguid)
-add_subdirectory(src/deps/enet/src)
 add_subdirectory(src/deps/freetype2)
 add_subdirectory(src/deps/glew)
 add_subdirectory(src/deps/json-hpp)
@@ -152,7 +164,10 @@ ENDIF()
 IF(BB_DESKTOP)
   add_subdirectory(src/deps/freeimage)
   add_subdirectory(src/deps/glfw3)
-  add_subdirectory(src/deps/ode)
 ELSEIF(BB_IOS OR BB_ANDROID)
   add_subdirectory(src/deps/glfm)
+ENDIF()
+
+IF(BB_DESKTOP OR BB_EMSCRIPTEN)
+  add_subdirectory(src/deps/ode)
 ENDIF()

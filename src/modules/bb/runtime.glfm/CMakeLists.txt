@@ -1,7 +1,11 @@
-if(NOT BB_DESKTOP)
+if(BB_MOBILE)
   bb_start_module(runtime.glfm)
   set(DEPENDS_ON bb.runtime bb.system bb.input bb.graphics bb.blitz3d.gles2)
   set(SOURCES runtime.glfm.cpp runtime.glfm.h main.cpp sample.c file_compat.h)
-  set(LIBS glfm "-framework OpenGLES" "-framework UIKit" "-framework CoreGraphics" "-framework QuartzCore")
+  set(LIBS glfm)
+  IF(BB_IOS)
+    set(LIBS ${LIBS} "-framework OpenGLES" "-framework UIKit" "-framework CoreGraphics" "-framework QuartzCore")
+  ENDIF()
+
   bb_end_module()
 endif()

@@ -15,7 +15,7 @@ CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/ios.toolchain.cmake -DIOS_PLATFORM=SIMU
 endif
 
 ifeq ($(PLATFORM), emscripten)
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/emsdk/emscripten/1.38.12/cmake/Modules/Platform/Emscripten.cmake
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
 endif
 
 ifeq ($(PLATFORM), mingw32)
