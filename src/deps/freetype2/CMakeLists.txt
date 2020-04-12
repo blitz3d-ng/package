@@ -1,6 +1,5 @@
 add_library(freetype2 STATIC
   src/src/base/ftbase.c
-  src/src/base/ftapi.c
   src/src/base/ftbbox.c
   src/src/base/ftbdf.c
   src/src/base/ftbitmap.c
