@@ -11,6 +11,4 @@ IF(NOT BB_EMSCRIPTEN)
   ENDIF()
 
   bb_end_module()
-
-  target_include_directories (bb.enet PRIVATE SYSTEM ../../../deps/enet/src/include)
 ENDIF()

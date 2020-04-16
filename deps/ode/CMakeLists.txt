@@ -3,6 +3,7 @@ add_library(ode STATIC src/ode/src/array.cpp src/ode/src/collision_trimesh_box.c
 target_include_directories(ode SYSTEM PUBLIC include src/include src/ode/src src/OPCODE src/libccd/src src/ou/include)
 
 target_compile_definitions(ode PRIVATE -DdIDESINGLE -DCCD_IDESINGLE)
+target_compile_definitions(ode PUBLIC -DODE_LIB)
 
 IF(BB_MACOS)
   target_compile_definitions(ode PRIVATE -DMAC_OS_X_VERSION=1090)

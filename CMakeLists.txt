@@ -106,16 +106,50 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/lib/${BB_ENV}} )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
-# TODO: move these to their appropriate modules
-add_definitions(-DPRO -DFREEIMAGE_LIB -DOPJ_STATIC -D_CRT_SECURE_NO_WARNINGS -DDIRECTSOUND_VERSION=0x700 -DODE_LIB)
+IF(BB_MSVC)
+  include("./src/msvc.cmake")
+  configure_msvc_runtime()
+
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+ENDIF()
+
+IF(NOT BB_IOS)
+  set(ZLIB zlibstatic)
+ELSE()
+  set(ZLIB z)
+ENDIF()
+
+add_subdirectory(deps)
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")
 
-IF(BB_MSVC)
-  include("./src/msvc.cmake")
-  configure_msvc_runtime()
+add_definitions(-DBB_SOURCE_ROOT="${CMAKE_SOURCE_DIR}")
+
+# Get the current working branch
+execute_process(
+  COMMAND git rev-parse --abbrev-ref HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_BRANCH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the latest abbreviated commit hash of the working branch
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# legacy flags. TODO: remove them
+add_definitions(-DPRO) # Blitz3D vs. Blitz2D
+IF(BB_WINDOWS)
+  add_definitions(-DDIRECTSOUND_VERSION=0x700) # this one may not be needed
 ENDIF()
+
+add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")
+add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
 
 add_subdirectory(stdutil)
 add_subdirectory(src/blitzide2)
@@ -134,40 +168,10 @@ IF(BB_WINDOWS)
   add_subdirectory(linker)
 ENDIF()
 
-IF(NOT BB_IOS)
-  add_subdirectory(src/deps/zlib)
-  set(ZLIB zlibstatic)
-ELSE()
-  set(ZLIB z)
-ENDIF()
-
-IF(NOT BB_EMSCRIPTEN)
-  add_subdirectory(src/deps/enet/src)
-ENDIF()
-
-add_subdirectory(src/deps/assimp)
-add_subdirectory(src/deps/crossguid)
-add_subdirectory(src/deps/freetype2)
-add_subdirectory(src/deps/glew)
-add_subdirectory(src/deps/json-hpp)
-add_subdirectory(src/deps/ogg)
-add_subdirectory(src/deps/vorbis)
-
 add_subdirectory(src/modules)
 add_subdirectory(src/runtime)
 
 # depends on bb.stub, so we add it in here.
 IF(BB_WINDOWS)
   add_subdirectory(bbruntime_dll)
-ENDIF()
-
-IF(BB_DESKTOP)
-  add_subdirectory(src/deps/freeimage)
-  add_subdirectory(src/deps/glfw3)
-ELSEIF(BB_IOS OR BB_ANDROID)
-  add_subdirectory(src/deps/glfm)
-ENDIF()
-
-IF(BB_DESKTOP OR BB_EMSCRIPTEN)
-  add_subdirectory(src/deps/ode)
 ENDIF()

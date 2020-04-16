@@ -1,0 +1,26 @@
+IF(NOT BB_IOS)
+  add_subdirectory(zlib)
+ENDIF()
+
+IF(NOT BB_EMSCRIPTEN)
+  add_subdirectory(enet)
+ENDIF()
+
+add_subdirectory(assimp)
+add_subdirectory(crossguid)
+add_subdirectory(freetype2)
+add_subdirectory(glew)
+add_subdirectory(json-hpp)
+add_subdirectory(ogg)
+add_subdirectory(vorbis)
+
+IF(BB_DESKTOP)
+  add_subdirectory(freeimage)
+  add_subdirectory(glfw3)
+ELSEIF(BB_IOS OR BB_ANDROID)
+  add_subdirectory(glfm)
+ENDIF()
+
+IF(BB_DESKTOP OR BB_EMSCRIPTEN)
+  add_subdirectory(ode)
+ENDIF()
