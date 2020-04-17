@@ -8,9 +8,9 @@
 #ifndef ENVIRON_H
 #define ENVIRON_H
 
-#include "type.h"
-#include "decl.h"
-#include "label.h"
+#include "tree/type.h"
+#include "tree/decl.h"
+#include "tree/label.h"
 
 class Environ{
 public:

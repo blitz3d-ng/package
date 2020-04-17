@@ -1,5 +1,5 @@
 
-#include "std.h"
+#include "../std.h"
 #include "type.h"
 
 static struct v_type : public Type{

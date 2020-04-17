@@ -9,8 +9,8 @@
 
 using namespace std;
 
-#include "../compiler/environ.h"
-#include "../compiler/parser.h"
+#include "environ.h"
+#include "tree/parser.h"
 #ifdef WIN32
 #include "../linker/linker.h"
 #include "../bbruntime_dll/bbruntime_dll.h"

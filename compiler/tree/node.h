@@ -2,10 +2,10 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "ex.h"
+#include "../ex.h"
 #include "toker.h"
-#include "environ.h"
-#include "codegen.h"
+#include "../environ.h"
+#include "../codegen.h"
 
 struct VarNode;
 struct ConstNode;

@@ -304,6 +304,7 @@ int main( int argc,char *argv[] ){
 
 		//translate
 		if( !veryquiet ) cout<<"Translating..."<<endl;
+
 		qstreambuf qbuf;
 		iostream asmcode( &qbuf );
 		Codegen_x86 codegen( asmcode,debug );

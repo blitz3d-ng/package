@@ -1,5 +1,5 @@
 
-#include "std.h"
+#include "../std.h"
 #include "nodes.h"
 
 static string fileLabel;

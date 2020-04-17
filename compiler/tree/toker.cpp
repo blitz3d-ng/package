@@ -1,8 +1,8 @@
 
-#include "std.h"
+#include "../std.h"
 #include <cctype>
 #include "toker.h"
-#include "ex.h"
+#include "../ex.h"
 
 int Toker::chars_toked;
 

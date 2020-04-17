@@ -3,7 +3,7 @@
 #define PROGNODE_H
 
 #include "node.h"
-#include "codegen.h"
+#include "../codegen.h"
 
 extern vector<string> modules;
 

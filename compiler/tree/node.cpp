@@ -1,5 +1,5 @@
 
-#include "std.h"
+#include "../std.h"
 #include "nodes.h"
 
 set<string> Node::usedfuncs;
@@ -281,4 +281,3 @@ TNode *Node::jumpf( TNode *expr,const string &s ){
 TNode *Node::jumpge( TNode *l,TNode *r,const string &s ){
 	return d_new TNode( IR_JUMPGE,l,r,s );
 }
-
