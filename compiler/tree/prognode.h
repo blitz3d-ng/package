@@ -2,8 +2,11 @@
 #ifndef PROGNODE_H
 #define PROGNODE_H
 
-#include "node.h"
+#include "decl/decl_seq.h"
+#include "stmt/stmt_seq.h"
 #include "../codegen.h"
+
+#include <vector>
 
 extern vector<string> modules;
 
@@ -39,46 +42,8 @@ struct ProgNode : public Node{
 	Environ *semant( Environ *e );
 	void translate( Codegen *g,const vector<UserFunc> &userfuncs );
 
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="ProgNode";
-		tree["debug"]=debug;
-		tree["modules"]=modules;
-		tree["funcs"]=funcs->toJSON( e );
-		tree["structs"]=structs->toJSON( e );
-
-		tree["types"]=json::array();
-		for( int k=0;k<e->types.size();++k ){
-			tree["types"].push_back( e->types[k]->toFullJSON() );
-		}
-
-		tree["arrays"]=json::array();
-		tree["globals"]=json::array();
-		tree["locals"]=json::array();
-		for( int k=0;k<e->decls->size();++k ){
-			Decl *d=e->decls->decls[k];
-			switch( d->kind ){
-			case DECL_LOCAL:
-				tree["locals"].push_back( d->toJSON() );
-				break;
-			case DECL_GLOBAL:
-				tree["globals"].push_back( d->toJSON() );
-				break;
-			case DECL_ARRAY:
-				tree["arrays"].push_back( d->toJSON() );
-				break;
-			}
-		}
-
-		tree["data"]=datas->toJSON( e );
-
-		tree["stmts"]=stmts->toJSON( e );
-		return tree;
-	}
-
-	json toJSON( bool dbg ){
-		debug = dbg;
-		return toJSON( sem_env );
-	}
+	json toJSON( Environ *e );
+	json toJSON( bool dbg );
 };
 
 #endif

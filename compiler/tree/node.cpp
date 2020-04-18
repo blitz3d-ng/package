@@ -1,6 +1,10 @@
 
 #include "../std.h"
-#include "nodes.h"
+#include "node.h"
+#include "expr/int_const.h"
+#include "expr/float_const.h"
+#include "expr/string_const.h"
+#include "var/decl_var.h"
 
 set<string> Node::usedfuncs;
 

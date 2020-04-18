@@ -9,7 +9,13 @@
 #define PARSER_H
 
 #include "toker.h"
-#include "nodes.h"
+#include "decl/decl_seq.h"
+#include "expr/call.h"
+#include "expr/expr_seq.h"
+#include "stmt/dim.h"
+#include "stmt/if.h"
+#include "stmt/stmt_seq.h"
+#include "prognode.h"
 
 class Parser{
 public:

@@ -3,6 +3,57 @@
 #include <cstdlib>
 #include "parser.h"
 
+#include "decl/data_decl.h"
+#include "decl/func_decl.h"
+#include "decl/struct_decl.h"
+#include "decl/var_decl.h"
+#include "decl/vector_decl.h"
+
+#include "expr/after.h"
+#include "expr/arith_expr.h"
+#include "expr/before.h"
+#include "expr/bin_expr.h"
+#include "expr/call.h"
+#include "expr/cast.h"
+#include "expr/first.h"
+#include "expr/float_const.h"
+#include "expr/int_const.h"
+#include "expr/last.h"
+#include "expr/new.h"
+#include "expr/null.h"
+#include "expr/object_cast.h"
+#include "expr/object_handle.h"
+#include "expr/rel_expr.h"
+#include "expr/string_const.h"
+#include "expr/uni_expr.h"
+#include "expr/var_expr.h"
+
+#include "stmt/ass.h"
+#include "stmt/decl_stmt.h"
+#include "stmt/delete.h"
+#include "stmt/delete_each.h"
+#include "stmt/expr_stmt.h"
+#include "stmt/exit.h"
+#include "stmt/for.h"
+#include "stmt/for_each.h"
+#include "stmt/goto.h"
+#include "stmt/gosub.h"
+#include "stmt/insert.h"
+#include "stmt/include.h"
+#include "stmt/label.h"
+#include "stmt/read.h"
+#include "stmt/repeat.h"
+#include "stmt/restore.h"
+#include "stmt/return.h"
+#include "stmt/select.h"
+#include "stmt/while.h"
+
+#include "var/array_var.h"
+#include "var/ident_var.h"
+#include "var/field_var.h"
+#include "var/vector_var.h"
+
+
 #ifdef DEMO
 static const int TEXTLIMIT=16384;
 #else

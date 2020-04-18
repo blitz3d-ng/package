@@ -8,6 +8,11 @@
 #ifndef TOKER_H
 #define TOKER_H
 
+#include <istream>
+#include <map>
+#include <vector>
+using namespace std;
+
 enum{
 	DIM=0x8000,GOTO,GOSUB,EXIT,RETURN,
 	IF,THEN,ELSE,ENDIF,ELSEIF,

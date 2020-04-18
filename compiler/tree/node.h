@@ -2,6 +2,9 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <string>
+using namespace std;
+
 #include "../ex.h"
 #include "toker.h"
 #include "../environ.h"

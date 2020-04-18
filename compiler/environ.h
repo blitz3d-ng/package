@@ -8,6 +8,11 @@
 #ifndef ENVIRON_H
 #define ENVIRON_H
 
+#include <string>
+#include <vector>
+#include <list>
+using namespace std;
+
 #include "tree/type.h"
 #include "tree/decl.h"
 #include "tree/label.h"
