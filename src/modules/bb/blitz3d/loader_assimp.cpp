@@ -48,9 +48,14 @@ MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 				// v.color=Vector(&mesh->mColors[0][i]);
 			}
 			if( mesh->mNormals ) v.normal=Vector(&mesh->mNormals[i].x);
-			if( mesh->HasTextureCoords(0) ) memcpy( v.tex_coords,&mesh->mTextureCoords[0][i].x,2*sizeof(float) );
-			if( mesh->HasTextureCoords(1) ) memcpy( (&v.tex_coords)+2,&mesh->mTextureCoords[1][i].x,2*sizeof(float) );
-
+			if( mesh->HasTextureCoords(0) ){
+				v.tex_coords[0][0]=mesh->mTextureCoords[0][i].x;
+				v.tex_coords[0][1]=mesh->mTextureCoords[0][i].y;
+			}
+			if( mesh->HasTextureCoords(1) ){
+				v.tex_coords[1][0]=mesh->mTextureCoords[1][i].x;
+				v.tex_coords[1][1]=mesh->mTextureCoords[1][i].y;
+			}
 			MeshLoader::addVertex( v );
 		}
 

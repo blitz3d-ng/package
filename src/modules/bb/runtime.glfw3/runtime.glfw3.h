@@ -14,6 +14,9 @@ private:
 	GLFWwindow* wnd;
 	GLFW3Graphics *graphics;
 
+	static void _refreshTitle( void *data,void *context );
+	void setTitle( const char *title );
+
 	static void _onResize( GLFWwindow *wnd,int w,int h );
 	static void _onClose( GLFWwindow *w );
 	static void _onMouseMove( GLFWwindow *w,double x,double y );

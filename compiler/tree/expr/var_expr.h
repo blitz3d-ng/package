@@ -10,13 +10,10 @@ struct VarExprNode : public ExprNode{
 	~VarExprNode(){ delete var; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="VarExprNode";
-		tree["sem_type"]=sem_type->toJSON();
-		tree["var"]=var->toJSON( e );
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

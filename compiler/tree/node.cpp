@@ -98,6 +98,21 @@ TNode *Node::createVars( Environ *e ){
 	return t;
 }
 
+#ifdef USE_LLVM
+void Node::createVars2( Environ *e, Codegen_LLVM *g ){
+	int k;
+	//initialize locals
+	for( k=0;k<e->decls->size();++k ){
+		Decl *d=e->decls->decls[k];
+		if( d->kind!=DECL_LOCAL ) continue;
+		if( d->type->vectorType() ) continue;
+
+		d->ptr=g->builder->CreateAlloca( d->type->llvmType( &g->context ),nullptr,d->name );
+		g->builder->CreateStore( d->type->llvmZero( &g->context ),d->ptr );
+	}
+}
+#endif
+
 ////////////////////////
 // release local vars //
 ////////////////////////
@@ -161,6 +176,47 @@ TNode *Node::compare( int op,TNode *l,TNode *r,Type *ty ){
 	}
 	return d_new TNode( n,l,r );
 }
+
+#ifdef USE_LLVM
+llvm::Value *Node::compare2( int op,llvm::Value *l,llvm::Value *r,Type *ty,Codegen_LLVM *g ){
+	auto it=Type::int_type->llvmType( &g->context );
+
+	if( ty==Type::string_type ){
+		l=g->CallIntrinsic( "_bbStrCompare",it,2,l,r );
+		r=llvm::ConstantInt::get( it,0,true );
+	}else if( ty->structType() ){
+		l=g->CallIntrinsic( "_bbObjCompare",it,2,l,r );
+		r=llvm::ConstantInt::get( it,0,true );
+	}
+
+	llvm::CmpInst::Predicate n;
+	if( ty==Type::float_type ){
+		n=llvm::CmpInst::FCMP_FALSE;
+
+		switch( op ){
+		case '=':n=llvm::CmpInst::FCMP_OEQ;break;case NE :n=llvm::CmpInst::FCMP_ONE;break;
+		case '<':n=llvm::CmpInst::FCMP_OLT;break;case '>':n=llvm::CmpInst::FCMP_OGT;break;
+		case LE :n=llvm::CmpInst::FCMP_OLE;break;case GE :n=llvm::CmpInst::FCMP_OGE;break;
+		}
+
+		if( r==0 ) r=llvm::ConstantFP::get( Type::float_type->llvmType( &g->context ),llvm::APFloat(0.0) );
+
+		return g->builder->CreateFCmp( n,l,r );
+	}else{
+		n=llvm::CmpInst::ICMP_EQ;
+
+		switch( op ){
+		case '=':n=llvm::CmpInst::ICMP_EQ; break;case NE :n=llvm::CmpInst::ICMP_NE;break;
+		case '<':n=llvm::CmpInst::ICMP_SLT;break;case '>':n=llvm::CmpInst::ICMP_SGT;break;
+		case LE :n=llvm::CmpInst::ICMP_SLE;break;case GE :n=llvm::CmpInst::ICMP_SGE;break;
+		}
+
+		if( r==0 ) r=llvm::ConstantInt::get( it,0,true );
+
+		return g->builder->CreateICmp( n,l,r );
+	}
+}
+#endif
 
 /////////////////////////////////
 // calculate the type of a tag //

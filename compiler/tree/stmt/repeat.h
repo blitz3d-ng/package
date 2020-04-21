@@ -14,16 +14,10 @@ struct RepeatNode : public StmtNode{
 	~RepeatNode(){ delete stmts;delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="RepeatNode";
-		tree["pos"]=pos;
-		tree["untilPos"]=untilPos;
-		tree["stmts"]=stmts->toJSON( e );
-		if( expr ) tree["expr"]=expr->toJSON( e );
-		tree["sem_brk"]=sem_brk;
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

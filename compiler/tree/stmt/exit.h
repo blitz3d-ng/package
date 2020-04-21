@@ -7,13 +7,11 @@ struct ExitNode : public StmtNode{
 	string sem_brk;
 	void semant( Environ *e );
 	void translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="ExitNode";
-		tree["pos"]=pos;
-		tree["sem_brk"]=sem_brk;
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	llvm::BasicBlock *sem_brk_blk;
+	virtual void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

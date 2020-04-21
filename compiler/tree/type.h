@@ -4,6 +4,11 @@
 
 #include "decl.h"
 
+#ifdef USE_LLVM
+#include <llvm/IR/Type.h>
+#include <llvm/IR/LLVMContext.h>
+#endif
+
 struct FuncType;
 struct ArrayType;
 struct StructType;
@@ -32,6 +37,11 @@ struct Type{
 
 	virtual json toJSON(){ return json(); }
 	virtual json toFullJSON(){ return toJSON(); }
+
+#ifdef USE_LLVM
+	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
+	virtual llvm::Constant *llvmZero( llvm::LLVMContext *c );
+#endif
 };
 
 struct FuncType : public Type{
@@ -117,17 +127,11 @@ struct VectorType : public Type{
 	VectorType( const string &l,Type *t,const vector<int> &szs ):label(l),elementType(t),sizes(szs){}
 	VectorType *vectorType(){ return this; }
 	virtual bool canCastTo( Type *t );
+	json toJSON();
 
-	json toJSON(){
-		json tree;tree["@class"]="VectorType";
-		tree["label"]=label;
-		tree["elementType"]=elementType->toJSON();
-		tree["sizes"]=json::array();
-		for( int i=0;i<sizes.size();i++ ){
-			tree["sizes"].push_back( sizes[i] );
-		}
-		return tree;
-	}
+#ifdef USE_LLVM
+	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
+#endif
 };
 
 #endif

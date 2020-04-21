@@ -13,6 +13,10 @@
 #include <list>
 using namespace std;
 
+#ifdef USE_LLVM
+#include <llvm/IR/Value.h>
+#endif
+
 #include "tree/type.h"
 #include "tree/decl.h"
 #include "tree/label.h"
@@ -42,6 +46,11 @@ public:
 	Label *insertLabel( const string &s,int def,int src,int sz );
 
 	string setBreak( const string &s );
+
+#ifdef USE_LLVM
+	map<std::string,llvm::Value*> allocas;
+	llvm::BasicBlock *setBreak( llvm::BasicBlock *b );
+#endif
 };
 
 #endif

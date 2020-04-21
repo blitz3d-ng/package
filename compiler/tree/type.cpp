@@ -2,11 +2,29 @@
 #include "../std.h"
 #include "type.h"
 
+#ifdef USE_LLVM
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DerivedTypes.h>
+
+llvm::Type *Type::llvmType( llvm::LLVMContext *c ){
+	return llvm::Type::getVoidTy(*c);
+}
+
+llvm::Constant *Type::llvmZero( llvm::LLVMContext *c ){
+	auto pty=llvm::PointerType::get( llvm::Type::getVoidTy( *c ),0 );
+	return llvm::ConstantPointerNull::get( pty );
+}
+#endif
+
 static struct v_type : public Type{
 	bool canCastTo( Type *t ){
 		return t==Type::void_type;
 	}
-
+#ifdef USE_LLVM
+	llvm::Type *llvmType( llvm::LLVMContext *c ){
+		return llvm::Type::getVoidTy(*c);
+	}
+#endif
 	json toJSON(){
 		json tree;tree["@class"]="VoidType";
 		return tree;
@@ -20,7 +38,18 @@ static struct i_type : public Type{
 	bool canCastTo( Type *t ){
 		return t==Type::int_type || t==Type::float_type || t==Type::string_type;
 	}
-
+#ifdef USE_LLVM
+	llvm::Type *llvmType( llvm::LLVMContext *c ){
+#ifdef BB64
+		return llvm::Type::getInt64Ty( *c );
+#else
+		return llvm::Type::getInt32Ty( *c );
+#endif
+	}
+	llvm::Constant *llvmZero( llvm::LLVMContext *c ){
+		return llvm::ConstantInt::getSigned( llvmType( c ),0 );
+	}
+#endif
 	json toJSON(){
 		json tree;tree["@class"]="IntType";
 		return tree;
@@ -35,6 +64,15 @@ static struct f_type : public Type{
 		return t==Type::int_type || t==Type::float_type || t==Type::string_type;
 	}
 
+#ifdef USE_LLVM
+	llvm::Type *llvmType( llvm::LLVMContext *c ){
+		return llvm::Type::getDoubleTy( *c );
+	}
+	llvm::Constant *llvmZero( llvm::LLVMContext *c ){
+		return llvm::ConstantFP::get( *c,llvm::APFloat(0.0f) );
+	}
+#endif
+
 	json toJSON(){
 		json tree;tree["@class"]="FloatType";
 		return tree;
@@ -48,6 +86,17 @@ static struct s_type : public Type{
 	bool canCastTo( Type *t ){
 		return t==Type::int_type || t==Type::float_type || t==Type::string_type;
 	}
+
+#ifdef USE_LLVM
+	llvm::Type *llvmType( llvm::LLVMContext *c ){
+		static auto ty=llvm::StructType::create( *c,"BBStr" );
+		return llvm::PointerType::get( ty,0 );
+	}
+
+	llvm::Constant *llvmZero( llvm::LLVMContext *c ){
+		return llvm::ConstantPointerNull::get( (llvm::PointerType*)llvmType( c ) );
+	}
+#endif
 
 	json toJSON(){
 		json tree;tree["@class"]="StringType";
@@ -71,6 +120,26 @@ bool VectorType::canCastTo( Type *t ){
 	}
 	return false;
 }
+
+#ifdef USE_LLVM
+llvm::Type *VectorType::llvmType( llvm::LLVMContext *c ){
+	int sz=1;
+	for( int k=0;k<sizes.size();++k ) sz*=sizes[k];
+	return llvm::VectorType::get( elementType->llvmType( c ),sz );
+}
+#endif
+
+json VectorType::toJSON(){
+	json tree;tree["@class"]="VectorType";
+	tree["label"]=label;
+	tree["elementType"]=elementType->toJSON();
+	tree["sizes"]=json::array();
+	for( int i=0;i<sizes.size();i++ ){
+		tree["sizes"].push_back( sizes[i] );
+	}
+	return tree;
+}
+
 
 static StructType n( "Null" );
 

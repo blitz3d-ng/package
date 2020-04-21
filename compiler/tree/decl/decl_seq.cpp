@@ -36,6 +36,19 @@ void DeclSeqNode::translate( Codegen *g ){
 	}
 }
 
+#ifdef USE_LLVM
+void DeclSeqNode::translate2( Codegen_LLVM *g ){
+	for( int k=0;k<decls.size();++k ){
+		try{ decls[k]->translate2( g ); }
+		catch( Ex &x ){
+			if( x.pos<0 ) x.pos=decls[k]->pos;
+			if(!x.file.size() ) x.file=decls[k]->file;
+			throw;
+		}
+	}
+}
+#endif
+
 void DeclSeqNode::transdata( Codegen *g ){
 	for( int k=0;k<decls.size();++k ){
 		try{ decls[k]->transdata( g ); }

@@ -7,4 +7,8 @@ if(BB_DESKTOP)
     set(LIBS ${LIBS} opengl32)
   ENDIF()
   bb_end_module()
+
+  if(BB_MACOS)
+    target_compile_definitions(bb.blitz2d.gl PRIVATE -DGL_SILENCE_DEPRECATION)
+  endif()
 endif()

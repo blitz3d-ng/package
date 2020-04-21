@@ -11,3 +11,16 @@ void ExitNode::semant( Environ *e ){
 void ExitNode::translate( Codegen *g ){
 	g->code( d_new TNode( IR_JUMP,0,0,sem_brk ) );
 }
+
+#ifdef USE_LLVM
+void ExitNode::translate2( Codegen_LLVM *g ){
+	g->builder->CreateBr( g->breakBlock );
+}
+#endif
+
+json ExitNode::toJSON( Environ *e ){
+	json tree;tree["@class"]="ExitNode";
+	tree["pos"]=pos;
+	tree["sem_brk"]=sem_brk;
+	return tree;
+}

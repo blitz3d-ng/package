@@ -83,6 +83,37 @@ TNode *ArithExprNode::translate( Codegen *g ){
 	return d_new TNode( n,l,r );
 }
 
+#ifdef USE_LLVM
+llvm::Value *ArithExprNode::translate2( Codegen_LLVM *g ){
+	llvm::Value *l=lhs->translate2( g );
+	llvm::Value *r=rhs->translate2( g );
+
+	llvm::Type *t=sem_type->llvmType( &g->context );
+
+	if( sem_type==Type::string_type ){
+		return g->CallIntrinsic( "_bbStrConcat",t,2,l,r );
+	}
+
+	using namespace llvm;
+	Instruction::BinaryOps n;
+	if( sem_type==::Type::int_type ){
+		switch( op ){
+		case '+':n=Instruction::BinaryOps::Add;break;case '-':n=Instruction::BinaryOps::Sub;break;
+		case '*':n=Instruction::BinaryOps::Mul;break;case '/':n=Instruction::BinaryOps::SDiv;break;
+		case MOD:return g->CallIntrinsic( "_bbMod",t,2,l,r );
+		}
+	}else{
+		switch( op ){
+		case '+':n=Instruction::BinaryOps::FAdd;break;case '-':n=Instruction::BinaryOps::FSub;break;
+		case '*':n=Instruction::BinaryOps::FMul;break;case '/':n=Instruction::BinaryOps::FDiv;break;
+		case MOD:return g->CallIntrinsic( "_bbFMod",t,2,l,r );
+		case '^':return g->CallIntrinsic( "_bbFPow",t,2,l,r );
+		}
+	}
+	return g->builder->CreateBinOp( n,l,r );
+}
+#endif
+
 json ArithExprNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="ArithExprNode";
 	tree["sem_type"]=sem_type->toJSON();

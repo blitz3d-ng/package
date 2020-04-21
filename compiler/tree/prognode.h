@@ -6,6 +6,10 @@
 #include "stmt/stmt_seq.h"
 #include "../codegen.h"
 
+#ifdef USE_LLVM
+#include "../codegen_llvm/codegen_llvm.h"
+#endif
+
 #include <vector>
 
 extern vector<string> modules;
@@ -44,6 +48,10 @@ struct ProgNode : public Node{
 
 	json toJSON( Environ *e );
 	json toJSON( bool dbg );
+
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs );
+#endif
 };
 
 #endif

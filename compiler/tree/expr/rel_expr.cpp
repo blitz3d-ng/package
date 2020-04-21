@@ -64,3 +64,28 @@ TNode *RelExprNode::translate( Codegen *g ){
 	TNode *r=rhs->translate( g );
 	return compare( op,l,r,opType );
 }
+
+#ifdef USE_LLVM
+llvm::Value *RelExprNode::translate2( Codegen_LLVM *g ){
+	auto *l=lhs->translate2( g );
+	auto *r=rhs->translate2( g );
+	return compare2( op,l,r,opType,g );
+}
+#endif
+
+json RelExprNode::toJSON( Environ *e ){
+	json tree;tree["@class"]="RelExprNode";
+	tree["sem_type"]=sem_type->toJSON();
+	switch( op ){
+	case '<': tree["op"]="LT";break;
+	case '=': tree["op"]="EQ";break;
+	case '>': tree["op"]="GT";break;
+	case LE: tree["op"]="LE";break;
+	case NE: tree["op"]="NE";break;
+	case GE: tree["op"]="GE";break;
+	}
+	tree["lhs"]=lhs->toJSON( e );
+	tree["rhs"]=rhs->toJSON( e );
+	tree["opType"]=opType->toJSON();
+	return tree;
+}

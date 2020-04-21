@@ -15,15 +15,11 @@ struct WhileNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="WhileNode";
-		tree["pos"]=pos;
-		tree["wendPos"]=wendPos;
-		tree["expr"]=expr->toJSON( e );
-		tree["stmts"]=stmts->toJSON( e );
-		tree["sem_brk"]=sem_brk;
-		return tree;
-	}
+	json toJSON( Environ *e );
+
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

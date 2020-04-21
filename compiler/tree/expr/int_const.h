@@ -10,13 +10,10 @@ struct IntConstNode : public ConstNode{
 	int intValue();
 	float floatValue();
 	string stringValue();
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="IntConstNode";
-		tree["sem_type"]=sem_type->toJSON();
-		tree["value"]=value;
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

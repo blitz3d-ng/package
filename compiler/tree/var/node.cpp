@@ -9,6 +9,13 @@ TNode *VarNode::load( Codegen *g ){
 	return mem( t );
 }
 
+#ifdef USE_LLVM
+llvm::Value *VarNode::load2( Codegen_LLVM *g ){
+	cerr<<"load2 missing implementation for "<<typeid(*this).name()<<endl;
+	abort();
+}
+#endif
+
 TNode *VarNode::store( Codegen *g,TNode *n ){
 	TNode *t=translate( g );
 	if( sem_type->structType() ) return call( "__bbObjStore",t,n );
@@ -16,6 +23,19 @@ TNode *VarNode::store( Codegen *g,TNode *n ){
 	return move( n,mem( t ) );
 }
 
+#ifdef USE_LLVM
+void VarNode::store2( Codegen_LLVM *g,llvm::Value *v ){
+	g->builder->CreateStore( v,translate2( g ) );
+}
+#endif
+
 bool VarNode::isObjParam(){
 	return false;
 }
+
+#ifdef USE_LLVM
+llvm::Value *VarNode::translate2( Codegen_LLVM *g ){
+	cerr<<"translate2 missing implementation for "<<typeid(*this).name()<<endl;
+	abort();
+}
+#endif

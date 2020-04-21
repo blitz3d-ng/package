@@ -10,13 +10,10 @@ struct ExprStmtNode : public StmtNode{
 	~ExprStmtNode(){ delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="ExprStmtNode";
-		tree["pos"]=pos;
-		tree["expr"]=expr->toJSON( e );
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

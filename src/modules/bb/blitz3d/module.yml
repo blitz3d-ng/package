@@ -56,7 +56,7 @@ commands:
   - BrushTexture( brush%,texture%,frame%=0,index%=0 ):"bbBrushTexture"
   - GetBrushTexture%( brush%,index%=0 ):"bbGetBrushTexture"
   - BrushBlend( brush%,blend% ):"bbBrushBlend"
-  - GetBrushFX%( brush% ):"bbGetBrushBlend"
+  - GetBrushBlend%( brush% ):"bbGetBrushBlend"
   - BrushFX( brush%,fx% ):"bbBrushFX"
   - GetBrushFX%( brush% ):"bbGetBrushFX"
 

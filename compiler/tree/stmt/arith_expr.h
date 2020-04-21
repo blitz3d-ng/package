@@ -10,10 +10,9 @@ struct ArithExprNode : public ExprNode{
 	~ArithExprNode(){ delete lhs;delete rhs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
-	json toJSON( Environ *e );
-#ifdef USE_LLVM
 	llvm::Value *translate2( Codegen_LLVM *g );
-#endif
+
+	json toJSON( Environ *e );
 };
 
 #endif

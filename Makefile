@@ -29,7 +29,7 @@ endif
 MAKE=make -j$(NUMBER_OF_CORES)
 
 build:
-	cmake -H. -Bbuild/$(PLATFORM)/$(ENV) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && $(MAKE))
+	cmake -H. -Bbuild/$(PLATFORM)/$(ENV) -DCMAKE_TOOLCHAIN_FILE=src/llvm.cmake -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && $(MAKE))
 
 install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/

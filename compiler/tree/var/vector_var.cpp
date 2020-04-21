@@ -42,6 +42,20 @@ TNode *VectorVarNode::translate( Codegen *g ){
 	return add( t,expr->translate( g ) );
 }
 
+#ifdef USE_LLVM
+llvm::Value *VectorVarNode::load2( Codegen_LLVM *g ){
+	// llvm::Value *t=translate2( g );
+	// if( sem_type==Type::string_type ) return g->CallIntrinsic( "_bbStrLoad",sem_type->llvmType( &g->context ),1,t );
+	// return g->builder->CreateLoad( sem_decl->type->llvmType( &g->context ),sem_decl->ptr );
+	return 0;
+}
+
+llvm::Value *VectorVarNode::translate2( Codegen_LLVM *g ){
+	// return sem_decl->ptr;
+	return 0;
+}
+#endif
+
 json VectorVarNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="VectorVarNode";
 	tree["sem_type"]=sem_type->toJSON();

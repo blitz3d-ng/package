@@ -14,3 +14,17 @@ void AssNode::semant( Environ *e ){
 void AssNode::translate( Codegen *g ){
 	g->code( var->store( g,expr->translate( g ) ) );
 }
+
+#ifdef USE_LLVM
+void AssNode::translate2( Codegen_LLVM *g ){
+	var->store2( g,expr->translate2( g ) );
+}
+#endif
+
+json AssNode::toJSON( Environ *e ){
+	json tree;tree["@class"]="AssNode";
+	tree["pos"]=pos;
+	tree["var"]=var->toJSON( e );
+	tree["expr"]=expr->toJSON( e );
+	return tree;
+}

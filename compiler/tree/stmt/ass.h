@@ -12,14 +12,10 @@ struct AssNode : public StmtNode{
 	~AssNode(){ delete var;delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="AssNode";
-		tree["pos"]=pos;
-		tree["var"]=var->toJSON( e );
-		tree["expr"]=expr->toJSON( e );
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	virtual void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

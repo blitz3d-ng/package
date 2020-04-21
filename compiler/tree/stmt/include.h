@@ -2,6 +2,7 @@
 #define INCLUDE_NODE_H
 
 #include "node.h"
+#include "../stmt/stmt_seq.h"
 
 struct IncludeNode : public StmtNode{
 	string file,label;
@@ -12,14 +13,10 @@ struct IncludeNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="IncludeNode";
-		tree["pos"]=pos;
-		tree["file"]=file;
-		tree["label"]=label;
-		tree["stmts"]=stmts->toJSON( e );
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

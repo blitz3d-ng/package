@@ -10,13 +10,10 @@ struct DeclStmtNode : public StmtNode{
 	~DeclStmtNode(){ delete decl; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="DeclStmtNode";
-		tree["pos"]=pos;
-		tree["decl"]=decl->toJSON( e );
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	virtual void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

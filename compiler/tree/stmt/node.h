@@ -11,6 +11,9 @@ struct StmtNode : public Node{
 
 	virtual void semant( Environ *e ){}
 	virtual void translate( Codegen *g ){}
+#ifdef USE_LLVM
+	virtual void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

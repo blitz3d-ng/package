@@ -171,6 +171,55 @@ json ProgNode::toJSON( Environ *e ){
 	return tree;
 }
 
+#ifdef USE_LLVM
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Verifier.h>
+
+void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
+	g->module->setModuleIdentifier(stmts->file);
+
+	int k;
+	for( k=0;k<sem_env->decls->size();++k ){
+		Decl *d=sem_env->decls->decls[k];
+		if( d->kind!=DECL_GLOBAL ) continue;
+		if( d->type->vectorType() ) continue;
+
+		auto ty=d->type->llvmType( &g->context );
+		auto glob=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( d->name,ty );
+
+		llvm::Constant *init=0;
+		if( d->type->intType() ){
+			init=llvm::ConstantInt::get( g->module->getContext(),llvm::APInt(32,0) );
+		}if( d->type->floatType() ){
+			init=llvm::ConstantFP::get( g->module->getContext(),llvm::APFloat(0.0f) );
+		}if( d->type->stringType() ){
+			init=llvm::ConstantPointerNull::get( (llvm::PointerType*)ty );
+		}
+
+		glob->setInitializer( init );
+		glob->setLinkage( llvm::GlobalValue::LinkageTypes::PrivateLinkage );
+		d->ptr=glob;
+	}
+
+	funcs->translate2( g );
+
+	vector<llvm::Type*> none( 0,llvm::Type::getVoidTy( g->context ) );
+	auto ft=llvm::FunctionType::get( llvm::Type::getVoidTy(g->context),none,false );
+	auto bbMain=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"bbMain",g->module );
+
+	auto block = llvm::BasicBlock::Create( g->context,"entry",bbMain );
+	g->builder->SetInsertPoint( block );
+
+	createVars2( sem_env,g );
+	stmts->translate2( g );
+
+	g->builder->CreateRetVoid();
+
+	g->verify();
+	// g->optimizer->run( *bbMain );
+}
+#endif
+
 json ProgNode::toJSON( bool dbg ){
 	debug = dbg;
 	return toJSON( sem_env );

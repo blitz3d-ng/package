@@ -43,3 +43,21 @@ void ReturnNode::translate( Codegen *g ){
 		g->code( d_new TNode( IR_RETURN,t,0,returnLabel ) );
 	}
 }
+
+#ifdef USE_LLVM
+void ReturnNode::translate2( Codegen_LLVM *g ){
+	llvm::Value *v=expr
+		?expr->translate2( g )
+		:llvm::ConstantInt::get( Type::int_type->llvmType( &g->context ),0,true );
+
+	g->builder->CreateRet( v );
+}
+#endif
+
+json ReturnNode::toJSON( Environ *e ){
+	json tree;tree["@class"]="ReturnNode";
+	tree["pos"]=pos;
+	if( expr ) tree["expr"]=expr->toJSON( e );
+	tree["returnLabel"]=returnLabel;
+	return tree;
+}

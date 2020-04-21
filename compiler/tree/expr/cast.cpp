@@ -56,3 +56,46 @@ TNode *CastNode::translate( Codegen *g ){
 	}
 	return t;
 }
+
+#ifdef USE_LLVM
+llvm::Value *CastNode::translate2( Codegen_LLVM *g ){
+	llvm::Value *t=expr->translate2( g );
+	if( expr->sem_type==Type::float_type && sem_type==Type::int_type ){
+		//float->int
+		return g->builder->CreateIntCast( t,Type::int_type->llvmType( &g->context ),true );
+	}
+	if( expr->sem_type==Type::int_type && sem_type==Type::float_type ){
+		//int->float
+		return g->builder->CreateFPCast( t,Type::float_type->llvmType( &g->context ) );
+	}
+	if( expr->sem_type==Type::string_type && sem_type==Type::int_type ){
+		//str->int
+		return g->CallIntrinsic( "_bbStrToInt",Type::int_type->llvmType( &g->context ),1,t );
+	}
+	if( expr->sem_type==Type::int_type && sem_type==Type::string_type ){
+		//int->str
+		return g->CallIntrinsic( "_bbStrFromInt",Type::string_type->llvmType( &g->context ),1,t );
+	}
+	if( expr->sem_type==Type::string_type && sem_type==Type::float_type ){
+		//str->float
+		return g->CallIntrinsic( "_bbStrToFloat",Type::float_type->llvmType( &g->context ),1,t );
+	}
+	if( expr->sem_type==Type::float_type && sem_type==Type::string_type ){
+		//float->str
+		return g->CallIntrinsic( "_bbStrFromFloat",Type::string_type->llvmType( &g->context ),1,t );
+	}
+	if( expr->sem_type->structType() && sem_type==Type::string_type ){
+		//obj->str
+		return g->CallIntrinsic( "_bbObjToStr",Type::string_type->llvmType( &g->context ),1,t );
+	}
+	return t;
+}
+#endif
+
+json CastNode::toJSON( Environ *e ){
+	json tree;tree["@class"]="CastNode";
+	tree["sem_type"]=sem_type->toJSON();
+	tree["type"]=type->toJSON();
+	tree["expr"]=expr->toJSON( e );
+	return tree;
+}

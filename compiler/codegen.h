@@ -4,6 +4,12 @@
 
 #include "std.h"
 
+#ifdef USE_LLVM
+// TODO: eventually Codegen will be adapted to work with LLVM or other
+// backends.
+#include "codegen_llvm/codegen_llvm.h"
+#endif
+
 enum{
 	IR_JUMP,IR_JUMPT,IR_JUMPF,IR_JUMPGE,
 

@@ -5,6 +5,7 @@
 #include <bb/event/event.h>
 #include <bb/system/system.h>
 #include <bb/input/input.h>
+#include <bb/hook/hook.h>
 
 #ifdef WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -57,9 +58,12 @@ GLFW3Runtime::GLFW3Runtime( GLFWwindow *wnd ):wnd(wnd),graphics(0){
 	glfwSetCharModsCallback( wnd,_onCharMods );
 	glfwSetFramebufferSizeCallback( wnd,_onResize );
 	glfwSetWindowCloseCallback( wnd,_onClose );
+
+	bbAppOnChange.add( _refreshTitle,this );
 }
 
 GLFW3Runtime::~GLFW3Runtime(){
+	// bbAppOnChange.del( _refreshTitle,this );
 	glfwTerminate();
 }
 
@@ -345,6 +349,14 @@ void GLFW3Runtime::_onKeyChange( GLFWwindow *w,int key,int scancode,int action,i
 void GLFW3Runtime::_onResize( GLFWwindow *w,int width,int height ){
 	GLFW3Runtime *rt=runtimes.at( w );
 	rt->resize( width,height );
+}
+
+void GLFW3Runtime::_refreshTitle( void *data,void *context ){
+	((GLFW3Runtime*)context)->setTitle( (const char*)data );
+}
+
+void GLFW3Runtime::setTitle( const char *title ){
+	glfwSetWindowTitle( wnd,title );
 }
 
 void GLFW3Runtime::resize( int width,int height ){

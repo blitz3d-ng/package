@@ -12,16 +12,10 @@ struct CallNode : public ExprNode{
 	~CallNode(){ delete exprs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="CallNode";
-		tree["sem_type"]=sem_type->toJSON();
-		tree["ident"]=ident;
-		tree["tag"]=tag;
-		tree["sem_decl"]=sem_decl->toJSON();
-		tree["exprs"]=exprs->toJSON( e );
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

@@ -11,3 +11,10 @@ ExprNode *ExprNode::castTo( Type *ty,Environ *e ){
 	ExprNode *cast=d_new CastNode( this,ty );
 	return cast->semant( e );
 }
+
+#ifdef USE_LLVM
+llvm::Value *ExprNode::translate2( Codegen_LLVM *g ){
+	cerr<<"translate2 missing implementation for "<<typeid(*this).name()<<endl;
+	abort();
+}
+#endif

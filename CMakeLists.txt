@@ -119,6 +119,11 @@ ELSE()
   set(ZLIB z)
 ENDIF()
 
+IF(BB_DEBUG AND USE_LLVM)
+  add_compile_options(-fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls)
+  add_link_options(-fsanitize=address)
+ENDIF()
+
 add_subdirectory(deps)
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")

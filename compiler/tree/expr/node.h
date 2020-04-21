@@ -18,6 +18,10 @@ struct ExprNode : public Node{
 	virtual ConstNode *constNode(){ return 0; }
 
 	DEFAULT_NODE_JSON( ExprNode );
+
+#ifdef USE_LLVM
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

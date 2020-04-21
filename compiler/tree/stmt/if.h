@@ -13,6 +13,9 @@ struct IfNode : public StmtNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

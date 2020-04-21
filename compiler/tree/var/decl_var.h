@@ -12,6 +12,11 @@ struct DeclVarNode : public VarNode{
 	bool isObjParam();
 
 	json toJSON( Environ *e );
+
+#ifdef USE_LLVM
+	llvm::Value *load2( Codegen_LLVM *g );
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

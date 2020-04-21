@@ -11,14 +11,10 @@ struct ReturnNode : public StmtNode{
 	~ReturnNode(){ delete expr; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="ReturnNode";
-		tree["pos"]=pos;
-		if( expr ) tree["expr"]=expr->toJSON( e );
-		tree["returnLabel"]=returnLabel;
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

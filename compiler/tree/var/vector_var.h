@@ -13,8 +13,11 @@ struct VectorVarNode : public VarNode{
 	~VectorVarNode(){ delete expr;delete exprs; }
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );
-
 	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	llvm::Value *load2( Codegen_LLVM *g );
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

@@ -15,6 +15,10 @@ struct DeclSeqNode : public Node{
 	int  size(){ return decls.size(); }
 
 	json toJSON( Environ *e );
+
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

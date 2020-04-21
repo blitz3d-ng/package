@@ -35,3 +35,16 @@ float FloatConstNode::floatValue(){
 string FloatConstNode::stringValue(){
 	return ftoa( value );
 }
+
+#ifdef USE_LLVM
+llvm::Value *FloatConstNode::translate2( Codegen_LLVM *g ){
+	return llvm::ConstantFP::get( g->context,llvm::APFloat( value ) );
+}
+#endif
+
+json FloatConstNode::toJSON( Environ *e ){
+	json tree;tree["@class"]="FloatConstNode";
+	tree["sem_type"]=sem_type->toJSON();
+	tree["value"]=value;
+	return tree;
+}

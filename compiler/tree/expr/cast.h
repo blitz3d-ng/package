@@ -10,14 +10,10 @@ struct CastNode : public ExprNode{
 	~CastNode(){ delete expr; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="CastNode";
-		tree["sem_type"]=sem_type->toJSON();
-		tree["type"]=type->toJSON();
-		tree["expr"]=expr->toJSON( e );
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

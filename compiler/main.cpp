@@ -26,8 +26,13 @@
 
 using namespace std;
 
-#include "../compiler/assem_x86/assem_x86.h"
-#include "../compiler/codegen_x86/codegen_x86.h"
+#include "assem_x86/assem_x86.h"
+#include "codegen_x86/codegen_x86.h"
+
+#ifdef USE_LLVM
+#include "codegen_llvm/codegen_llvm.h"
+#include "linker_lld/linker_lld.h"
+#endif
 
 #if defined(WIN32) && !defined(__MINGW32__)
 #define DEBUGGER "debugger"
@@ -55,6 +60,7 @@ static void showHelp(){
 	cout<<"-j         : dump json ast"<<endl;
 	cout<<"-k         : dump keywords"<<endl;
 	cout<<"+k         : dump keywords and syntax"<<endl;
+	cout<<"-llvm      : use llvm"<<endl;
 	cout<<"-r         : list available runtimes"<<endl;
 	cout<<"-v         : version info"<<endl;
 	cout<<"-o exefile : generate executable"<<endl;
@@ -177,6 +183,7 @@ int main( int argc,char *argv[] ){
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
 	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false,dumptree=false;
+	bool usellvm=false;
 	bool versinfo=false,rtinfo=false;
 
 	for( int k=1;k<argc;++k ){
@@ -203,6 +210,8 @@ int main( int argc,char *argv[] ){
 			dumpkeys=true;
 		}else if( t=="+k" ){
 			dumpkeys=dumphelp=true;
+		}else if( t=="-llvm" ){
+			usellvm=true;
 		}else if( t=="-v" ){
 			versinfo=true;
 		}else if( t=="-e" ){
@@ -308,25 +317,50 @@ int main( int argc,char *argv[] ){
 		qstreambuf qbuf;
 		iostream asmcode( &qbuf );
 		Codegen_x86 codegen( asmcode,debug );
+#ifdef USE_LLVM
+		Codegen_LLVM codegen2( debug );
+#endif
 
-		prog->translate( &codegen,userFuncs );
+		if ( usellvm ) {
+#ifdef USE_LLVM
+			prog->translate2( &codegen2,userFuncs );
+
+			if( dumpasm ){
+				codegen2.dumpToStderr();
+			}
+#else
+			cerr<<"not compiled with llvm support"<<endl;
+			abort();
+#endif
+		} else {
+			prog->translate( &codegen,userFuncs );
+
+			if( dumpasm ){
+				cout<<endl<<string( qbuf.data(),qbuf.size() )<<endl;
+			}
+		}
 
 		if( dumptree ){
 			cout<<prog->toJSON( debug ).dump(2)<<endl;
 		}
 
-		if( dumpasm ){
-			cout<<endl<<string( qbuf.data(),qbuf.size() )<<endl;
-		}
-
 		//assemble
 		if( !veryquiet ) cout<<"Assembling..."<<endl;
-#ifdef WIN32
-		module=linkerLib->createModule();
-		Assem_x86 assem( asmcode,module );
-		assem.assemble();
-#endif
 
+		if ( usellvm ) {
+#ifdef USE_LLVM
+			codegen2.dumpToObj( home+"/output.o" );
+#else
+			cerr<<"not compiled with llvm support"<<endl;
+			abort();
+#endif
+		} else {
+#ifdef WIN32
+			module=linkerLib->createModule();
+			Assem_x86 assem( asmcode,module );
+			assem.assemble();
+#endif
+		}
 	}catch( Ex &x ){
 
 		string file='\"'+x.file+'\"';
@@ -339,13 +373,26 @@ int main( int argc,char *argv[] ){
 
 	if( out_file.size() ){
 		if( !veryquiet ) cout<<"Creating executable \""<<out_file<<"\"..."<<endl;
-#ifdef WIN32
-		char buff[MAX_PATH];
-		GetFullPathName( out_file.c_str(),MAX_PATH,buff,NULL );
-		if( !module->createExe( buff,(home+"/bin/runtime."+rt+".dll").c_str() ) ){
-			err( "Error creating executable" );
-		}
+		if( usellvm ) {
+#ifdef USE_LLVM
+			Linker_LLD linker( home );
+			linker.createExe( out_file );
+#else
+			cerr<<"llvm support was not compiled in"<<endl;
+			abort();
 #endif
+		}else{
+#ifdef WIN32
+			char buff[MAX_PATH];
+			GetFullPathName( out_file.c_str(),MAX_PATH,buff,NULL );
+			if( !module->createExe( buff,(home+"/bin/runtime."+rt+".dll").c_str() ) ){
+				err( "Error creating executable" );
+			}
+#else
+			cerr<<"you must use llvm on non-Windows platforms"<<endl;
+			abort();
+#endif
+		}
 	}else if( !compileonly ){
 #ifdef WIN32
 		void *entry=module->link( runtimeModule );

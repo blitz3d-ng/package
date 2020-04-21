@@ -45,6 +45,12 @@ void VectorDeclNode::translate( Codegen *g ){
 	if( kind==DECL_GLOBAL ) g->i_data( 0,"_v"+ident );
 }
 
+#ifdef USE_LLVM
+void VectorDeclNode::translate2( Codegen_LLVM *g ){
+	// if( expr ) sem_var->store2( g,expr->translate2( g ) );
+}
+#endif
+
 json VectorDeclNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="VectorDeclNode";
 	tree["pos"]=pos;

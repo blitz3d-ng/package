@@ -17,8 +17,10 @@ struct VarDeclNode : public DeclNode{
 	void proto( DeclSeq *d,Environ *e );
 	void semant( Environ *e );
 	void translate( Codegen *g );
-
 	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	void translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

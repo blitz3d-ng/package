@@ -11,23 +11,10 @@ struct RelExprNode : public ExprNode{
 	~RelExprNode(){ delete lhs;delete rhs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="RelExprNode";
-		tree["sem_type"]=sem_type->toJSON();
-		switch( op ){
-		case '<': tree["op"]="LT";break;
-		case '=': tree["op"]="EQ";break;
-		case '>': tree["op"]="GT";break;
-		case LE: tree["op"]="LE";break;
-		case NE: tree["op"]="NE";break;
-		case GE: tree["op"]="GE";break;
-		}
-		tree["lhs"]=lhs->toJSON( e );
-		tree["rhs"]=rhs->toJSON( e );
-		tree["opType"]=opType->toJSON();
-		return tree;
-	}
+	json toJSON( Environ *e );
+#ifdef USE_LLVM
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 };
 
 #endif

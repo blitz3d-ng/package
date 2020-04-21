@@ -11,7 +11,7 @@ add_executable(blitzcc
   environ.cpp environ.h
   ex.h
 
-  tree/decl/node.h
+  tree/decl/node.cpp tree/decl/node.h
   tree/decl/data_decl.cpp tree/decl/data_decl.h
   tree/decl/decl_seq.cpp tree/decl/decl_seq.h
   tree/decl/func_decl.cpp tree/decl/func_decl.h
@@ -19,7 +19,7 @@ add_executable(blitzcc
   tree/decl/var_decl.cpp tree/decl/var_decl.h
   tree/decl/vector_decl.cpp tree/decl/vector_decl.h
 
-  tree/stmt/node.h
+  tree/stmt/node.cpp tree/stmt/node.h
   tree/stmt/ass.cpp tree/stmt/ass.h
   tree/stmt/decl_stmt.cpp tree/stmt/decl_stmt.h
   tree/stmt/delete.cpp tree/stmt/delete.h
@@ -32,7 +32,7 @@ add_executable(blitzcc
   tree/stmt/gosub.cpp tree/stmt/gosub.h
   tree/stmt/goto.cpp tree/stmt/goto.h
   tree/stmt/if.cpp tree/stmt/if.h
-  tree/stmt/include.h
+  tree/stmt/include.cpp tree/stmt/include.h
   tree/stmt/insert.cpp tree/stmt/insert.h
   tree/stmt/label.cpp tree/stmt/label.h
   tree/stmt/read.cpp tree/stmt/read.h
@@ -94,7 +94,15 @@ target_include_directories(blitzcc PRIVATE ../src/runtime)
 target_link_libraries(blitzcc stdutil nlohmann_json)
 
 if(LLVM_ROOT)
-  target_sources(blitzcc PUBLIC codegen_llvm.cpp)
+  target_compile_definitions(blitzcc PRIVATE USE_LLVM)
+
+  target_sources(blitzcc PUBLIC
+    codegen_llvm/codegen_llvm.h
+    codegen_llvm/codegen_llvm.cpp
+
+    linker_lld/linker_lld.h
+    linker_lld/linker_lld.cpp
+  )
 
   execute_process(
     COMMAND ${LLVM_ROOT}/bin/llvm-config --cxxflags
@@ -104,13 +112,17 @@ if(LLVM_ROOT)
 
   execute_process(
     COMMAND ${LLVM_ROOT}/bin/llvm-config --ldflags --libs
-    OUTPUT_VARIABLE SHELL:LLVM_LD_FLAGS
+    OUTPUT_VARIABLE LLVM_LD_FLAGS
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
-  target_include_directories(blitzcc PRIVATE ~/llvm-project/llvm/include)
-  target_compile_options(blitzcc PRIVATE "SHELL:${LLVM_CXX_FLAGS}" -DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING -fexceptions)
+  target_compile_options(blitzcc PRIVATE "SHELL:${LLVM_CXX_FLAGS}" -fexceptions -frtti)
   target_link_options(blitzcc PRIVATE "SHELL:${LLVM_LD_FLAGS}")
+
+  target_link_libraries(blitzcc lldCore lldCommon lldDriver lldReaderWriter lldYAML lldMachO lldCOFF lldELF lldMinGW lldWasm)
+
+  # TODO: figure out if this is optional...
+  target_link_libraries(blitzcc zlibstatic ncurses)
 endif()
 
 if(BB_COVERAGE)

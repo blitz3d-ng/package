@@ -14,6 +14,12 @@ struct VarNode : public Node{
 	//addr of var
 	virtual void semant( Environ *e )=0;
 	virtual TNode *translate( Codegen *g )=0;
+
+#ifdef USE_LLVM
+	virtual llvm::Value *load2( Codegen_LLVM *g );
+	virtual void store2( Codegen_LLVM *g,llvm::Value *v );
+	virtual llvm::Value *translate2( Codegen_LLVM *g ); // TODO: make abstract once everything is implemented
+#endif
 };
 
 #endif

@@ -58,6 +58,11 @@ struct Node{
 	static TNode *fcall( const string &func,TNode *a0=0,TNode *a1=0,TNode *a2=0 );
 
 	virtual json toJSON( Environ *e )=0;
+
+#ifdef USE_LLVM
+	static llvm::Value *compare2( int op,llvm::Value *l,llvm::Value *r,Type *ty,Codegen_LLVM *g );
+	static void createVars2( Environ *e, Codegen_LLVM *g );
+#endif
 };
 
 #endif

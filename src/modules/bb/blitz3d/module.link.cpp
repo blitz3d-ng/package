@@ -117,8 +117,8 @@ BBMODULE_LINK( blitz3d ){
 	rtSym( "FreeEntity%entity",bbFreeEntity );
 	rtSym( "FreeTexture%texture",bbFreeTexture );
 	rtSym( "#GetBrushAlpha%brush",bbGetBrushAlpha );
+	rtSym( "%GetBrushBlend%brush",bbGetBrushBlend );
 	rtSym( "%GetBrushBlue%brush",bbGetBrushBlue );
-	rtSym( "%GetBrushFX%brush",bbGetBrushBlend );
 	rtSym( "%GetBrushFX%brush",bbGetBrushFX );
 	rtSym( "%GetBrushGreen%brush",bbGetBrushGreen );
 	rtSym( "%GetBrushRed%brush",bbGetBrushRed );

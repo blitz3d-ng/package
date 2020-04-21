@@ -43,6 +43,12 @@ void VarDeclNode::translate( Codegen *g ){
 	if( expr ) g->code( sem_var->store( g,expr->translate( g ) ) );
 }
 
+#ifdef USE_LLVM
+void VarDeclNode::translate2( Codegen_LLVM *g ){
+	if( expr ) sem_var->store2( g,expr->translate2( g ) );
+}
+#endif
+
 json VarDeclNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="VarDeclNode";
 	tree["pos"]=pos;

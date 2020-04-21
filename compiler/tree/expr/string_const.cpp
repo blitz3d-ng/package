@@ -13,6 +13,13 @@ TNode *StringConstNode::translate( Codegen *g ){
 	return call( "__bbStrConst",global( lab ) );
 }
 
+#ifdef USE_LLVM
+llvm::Value *StringConstNode::translate2( Codegen_LLVM *g ){
+	auto arg=g->builder->CreateGlobalStringPtr(value);
+	return g->CallIntrinsic( "_bbStrConst",sem_type->llvmType( &g->context ),1,arg );
+}
+#endif
+
 int StringConstNode::intValue(){
 	return atoi( value );
 }
@@ -23,4 +30,11 @@ float StringConstNode::floatValue(){
 
 string StringConstNode::stringValue(){
 	return value;
+}
+
+json StringConstNode::toJSON( Environ *e ){
+	json tree;tree["@class"]="StringConstNode";
+	tree["sem_type"]=sem_type->toJSON();
+	tree["value"]=value;
+	return tree;
 }

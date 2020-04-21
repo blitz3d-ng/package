@@ -3,6 +3,15 @@
 //////////////////
 // Declared var //
 //////////////////
+
+#ifdef USE_LLVM
+llvm::Value *DeclVarNode::load2( Codegen_LLVM *g ){
+	llvm::Value *t=translate2( g );
+	if( sem_type==Type::string_type ) return g->CallIntrinsic( "_bbStrLoad",sem_type->llvmType( &g->context ),1,t );
+	return g->builder->CreateLoad( sem_decl->type->llvmType( &g->context ),sem_decl->ptr );
+}
+#endif
+
 void DeclVarNode::semant( Environ *e ){
 }
 
@@ -10,6 +19,12 @@ TNode *DeclVarNode::translate( Codegen *g ){
 	if( sem_decl->kind==DECL_GLOBAL ) return global( "_v"+sem_decl->name );
 	return local( sem_decl->offset );
 }
+
+#ifdef USE_LLVM
+llvm::Value *DeclVarNode::translate2( Codegen_LLVM *g ){
+	return sem_decl->ptr;
+}
+#endif
 
 TNode *DeclVarNode::store( Codegen *g,TNode *n ){
 	if( isObjParam() ){

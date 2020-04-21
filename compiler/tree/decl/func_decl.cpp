@@ -59,6 +59,29 @@ void FuncDeclNode::translate( Codegen *g ){
 	g->leave( t,sem_type->params->size()*4 );
 }
 
+#ifdef USE_LLVM
+#include <llvm/IR/Verifier.h>
+
+void FuncDeclNode::translate2( Codegen_LLVM *g ){
+	auto ret_type=sem_type->returnType->llvmType( &g->context );
+	vector<llvm::Type*> args;
+	for( int k=0;k<sem_type->params->size();k++ ){
+		args.push_back( sem_type->params->decls[k]->type->llvmType( &g->context ) );
+	}
+
+	auto ft=llvm::FunctionType::get( ret_type,args,false );
+	auto func=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"f"+ident,g->module );
+
+	auto block = llvm::BasicBlock::Create( g->context,"entry",func );
+	g->builder->SetInsertPoint( block );
+
+	createVars2( sem_env,g );
+
+	stmts->translate2( g );
+	llvm::verifyFunction( *func );
+}
+#endif
+
 json FuncDeclNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="FuncDeclNode";
 	tree["pos"]=pos;
