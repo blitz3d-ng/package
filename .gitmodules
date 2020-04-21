@@ -11,7 +11,7 @@
 	path = deps/ode/src
 	url = https://github.com/blitz3d-ng/ode
 [submodule "glfw3"]
-	path = deps/glfw3/src
+	path = deps/glfw3/tree
 	url = https://github.com/glfw/glfw.git
 [submodule "freetype2"]
 	path = deps/freetype2/src
