@@ -170,7 +170,7 @@ IF(BB_DESKTOP OR BB_EMSCRIPTEN)
 ENDIF()
 
 IF(BB_WINDOWS)
-  add_subdirectory(linker)
+  add_subdirectory(src/legacy/linker)
 ENDIF()
 
 add_subdirectory(src/modules)

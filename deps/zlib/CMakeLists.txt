@@ -4,9 +4,9 @@ endif()
 
 set(BUILD_SHARED_LIBS off)
 
-add_subdirectory(src)
-target_include_directories(zlib PUBLIC src ${CMAKE_BINARY_DIR}/src/deps/zlib/src)
-target_include_directories(zlibstatic PUBLIC src ${CMAKE_BINARY_DIR}/src/deps/zlib/src)
+add_subdirectory(tree)
+target_include_directories(zlib PUBLIC tree ${CMAKE_BINARY_DIR}/deps/zlib/tree)
+target_include_directories(zlibstatic PUBLIC tree ${CMAKE_BINARY_DIR}/deps/zlib/tree)
 
 set_target_properties(zlibstatic PROPERTIES OUTPUT_NAME zlibstatic)
 

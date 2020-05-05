@@ -12,8 +12,8 @@ using namespace std;
 #include "environ.h"
 #include "tree/parser.h"
 #ifdef WIN32
-#include "../linker/linker.h"
-#include "../bbruntime_dll/bbruntime_dll.h"
+#include "../../legacy/linker/linker.h"
+#include "../../legacy/bbruntime_dll/bbruntime_dll.h"
 #endif
 
 extern int bcc_ver;

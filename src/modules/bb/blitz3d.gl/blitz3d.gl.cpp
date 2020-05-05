@@ -43,37 +43,37 @@ public:
 
 class GLMesh : public BBMesh{
 protected:
-  bool dirty()const{ return false; }
+	bool dirty()const{ return false; }
 
 public:
-  float *v_coords,*v_normal,*v_tex_coord;
-  unsigned int *v_color;
-  int *tris;
-  int max_verts,max_tris,flags;
+	float *v_coords,*v_normal,*v_tex_coord;
+	unsigned char *v_color;
+	int *tris;
+	int max_verts,max_tris,flags;
 
 	unsigned int vbo[12];
 
-  GLMesh( int mv,int mt,int f ):max_verts(mv),max_tris(mt),flags(f){
-    v_coords=new float[max_verts*3];
-    v_normal=new float[max_verts*3];
-    v_tex_coord=new float[max_verts*2*2];
-    v_color=new unsigned int[max_verts];
-    tris=new int[max_tris*3];
+	GLMesh( int mv,int mt,int f ):max_verts(mv),max_tris(mt),flags(f){
+		v_coords=new float[max_verts*3];
+		v_normal=new float[max_verts*3];
+		v_tex_coord=new float[max_verts*2*2];
+		v_color=new unsigned char[max_verts*4];
+		tris=new int[max_tris*3];
 
 		glGenBuffersARB( 5,vbo );
-  }
+	}
 
-  ~GLMesh(){
-    delete[] v_coords;
-    delete[] v_normal;
-    delete[] v_tex_coord;
-    delete[] v_color;
-    delete[] tris;
-  }
+	~GLMesh(){
+		delete[] v_coords;
+		delete[] v_normal;
+		delete[] v_tex_coord;
+		delete[] v_color;
+		delete[] tris;
+	}
 
-  bool lock( bool all ){
+	bool lock( bool all ){
 		return true;
-  }
+	}
 
   void unlock(){
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB,vbo[0] );
@@ -83,7 +83,7 @@ public:
 		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*3*4,v_normal,GL_STATIC_DRAW_ARB );
 
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB,vbo[2] );
-		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*4,v_color,GL_STATIC_DRAW_ARB );
+		glBufferDataARB( GL_ARRAY_BUFFER_ARB,max_verts*1*4,v_color,GL_STATIC_DRAW_ARB );
 
 		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,vbo[3] );
 		glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB,max_tris*3*4,tris,GL_STATIC_DRAW_ARB );
@@ -93,12 +93,19 @@ public:
 
   }
 
+	void setColor( int n,unsigned argb ){
+		v_color[n*4+0]=(argb >> 16) & 0xFF; // red
+		v_color[n*4+1]=(argb >> 8) & 0xFF;  // green
+		v_color[n*4+2]=(argb & 0xFF);       // blue
+		v_color[n*4+3]=(argb >> 24) & 0xFF; // alpha
+	}
+
   void setVertex( int n,const void *_v ){
     const Surface::Vertex *v=(const Surface::Vertex*)_v;
     v_coords[n*3+0]=v->coords.x;v_coords[n*3+1]=v->coords.y;v_coords[n*3+2]=v->coords.z;
     v_normal[n*3+0]=-v->normal.x;v_normal[n*3+1]=-v->normal.y;v_normal[n*3+2]=-v->normal.z;
     // memcpy( &v_tex_coord[n*2*2],v->tex_coords,2*2*sizeof(float) );
-		v_color[n]=0xffffff;
+		setColor( n,v->color );
     v_tex_coord[n*2*2+0]=v->tex_coords[0][0];
     v_tex_coord[n*2*2+1]=1.0f-v->tex_coords[0][1];
     v_tex_coord[n*2*2+2]=v->tex_coords[1][0];
@@ -108,7 +115,7 @@ public:
   void setVertex( int n,const float coords[3],const float normal[3],const float tex_coords[2][2] ){
     v_coords[n*3+0]=coords[0];v_coords[n*3+1]=coords[1];v_coords[n*3+2]=coords[2];
     v_normal[n*3+0]=-normal[0];v_normal[n*3+1]=-normal[1];v_normal[n*3+2]=-normal[2];
-		v_color[n]=0xffffff;
+		setColor( n,0xffffffff );
     v_tex_coord[n*2*2+0]=tex_coords[0][0];
     v_tex_coord[n*2*2+1]=1.0f-tex_coords[0][1];
     v_tex_coord[n*2*2+2]=tex_coords[1][0];
@@ -118,18 +125,18 @@ public:
   void setVertex( int n,const float coords[3],const float normal[3],unsigned argb,const float tex_coords[2][2] ){
     v_coords[n*3+0]=coords[0];v_coords[n*3+1]=coords[1];v_coords[n*3+2]=coords[2];
     v_normal[n*3+0]=-normal[0];v_normal[n*3+1]=-normal[1];v_normal[n*3+2]=-normal[2];
-		v_color[n]=argb;
+		setColor( n,argb );
 		v_tex_coord[n*2*2+0]=tex_coords[0][0];
     v_tex_coord[n*2*2+1]=1.0f-tex_coords[0][1];
     v_tex_coord[n*2*2+2]=tex_coords[1][0];
     v_tex_coord[n*2*2+3]=1.0f-tex_coords[1][1];
   }
 
-  void setTriangle( int n,int v0,int v1,int v2 ){
-    tris[n*3+0]=v2;
-    tris[n*3+1]=v1;
-    tris[n*3+2]=v0;
-  }
+	void setTriangle( int n,int v0,int v1,int v2 ){
+		tris[n*3+0]=v2;
+		tris[n*3+1]=v1;
+		tris[n*3+2]=v0;
+	}
 
 };
 
@@ -175,12 +182,24 @@ private:
 				float range[]={ lights[i]->range };
 				glLightfv( GL_LIGHT0+i,GL_CONSTANT_ATTENUATION,light_range );
 				glLightfv( GL_LIGHT0+i,GL_LINEAR_ATTENUATION,range );
+			}else{
+				float light_range[]={ 1.0f };
+				float range[]={ 0 };
+				glLightfv( GL_LIGHT0+i,GL_CONSTANT_ATTENUATION,light_range );
+				glLightfv( GL_LIGHT0+i,GL_LINEAR_ATTENUATION,range );
 			}
 
 			if( lights[i]->type==Light::LIGHT_SPOT ){
 				float dir[]={ 0.0f,0.0f,-1.0f };
 				float outer[]={ lights[i]->outer_angle/2.0f };
 				float exponent[]={ 10.0f };
+				glLightfv( GL_LIGHT0+i,GL_SPOT_DIRECTION,dir );
+				glLightfv( GL_LIGHT0+i,GL_SPOT_CUTOFF,outer );
+				glLightfv( GL_LIGHT0+i,GL_SPOT_EXPONENT,exponent );
+			}else{
+				float dir[]={ 0.0f,0.0f,-1.0f };
+				float outer[]={ 180.0f };
+				float exponent[]={ 0.0f };
 				glLightfv( GL_LIGHT0+i,GL_SPOT_DIRECTION,dir );
 				glLightfv( GL_LIGHT0+i,GL_SPOT_CUTOFF,outer );
 				glLightfv( GL_LIGHT0+i,GL_SPOT_EXPONENT,exponent );
@@ -345,16 +364,17 @@ public:
 			glDisable( GL_COLOR_MATERIAL );
 		}
 
-    for( int i=0;i<MAX_TEXTURES;i++ ){
+		for( int i=0;i<MAX_TEXTURES;i++ ){
 			const RenderState::TexState &ts=rs.tex_states[i];
-      glActiveTexture( GL_TEXTURE0+i );
+			glActiveTexture( GL_TEXTURE0+i );
+			glClientActiveTexture( GL_TEXTURE0+i );
 
-      GLB2DTextureCanvas *canvas=(GLB2DTextureCanvas*)ts.canvas;
+			GLB2DTextureCanvas *canvas=(GLB2DTextureCanvas*)ts.canvas;
 
-      if( !canvas ){
-        glDisable( GL_TEXTURE_2D );
-        glBindTexture( GL_TEXTURE_2D,0 );
-      } else {
+			if( !canvas || ts.blend==0 ){
+				glDisable( GL_TEXTURE_2D );
+				glBindTexture( GL_TEXTURE_2D,0 );
+			} else {
 				glEnable( GL_TEXTURE_2D );
 				glBindTexture( GL_TEXTURE_2D,canvas->textureId() );
 
@@ -404,17 +424,14 @@ public:
 
 				switch( ts.blend ){
 				case BLEND_REPLACE:
-					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+					glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE );
 					break;
 				case BLEND_ALPHA:
-					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+					glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE );
 					break;
 				case BLEND_MULTIPLY:
-					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+					glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
 					break;
-				// case BLEND_MULTIPLY:
-				// 	glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_ARB,GL_MODULATE );
-				// 	break;
 				case BLEND_ADD:
 					glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_ADD);
 					break;
@@ -497,7 +514,7 @@ public:
 		glNormalPointer( GL_FLOAT,0,PTR(first_vert*sizeof(float)*3) );
 
 		glBindBufferARB( GL_ARRAY_BUFFER_ARB,mesh->vbo[2] );
-		glColorPointer( 4,GL_UNSIGNED_INT,0,PTR(first_vert*sizeof(float)*4) );
+		glColorPointer( 4,GL_UNSIGNED_BYTE,0,PTR(first_vert*sizeof(unsigned char)*4) );
 
 		glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB,mesh->vbo[3] );
 		glDrawElements( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,PTR(first_tri*3*sizeof(unsigned int)) );

@@ -9,7 +9,7 @@ fil$=Lower$( CommandLine$() )
 index=Instr( fil$,"." )
 If index>0 ext$=Mid$( fil$,index+1 )
 Select ext$
-Case "x","3ds"
+Case "x","3ds","b3d"
 	ShowModel( fil$,False )
 Case "md2"
 	ShowModel( fil$,True )
@@ -35,7 +35,7 @@ Function ShowModel( fil$,md2 )
 		model=LoadMD2( fil$ )
 		If model ScaleEntity model,.025,.025,.025
 	Else
-		model=LoadMesh( fil$ )
+		model=LoadAnimMesh( fil$ )
 		If model FitMesh model,-1,-1,-1,2,2,2,True
 	EndIf
 	If model=0 RuntimeError "Unable to load 3D mesh:"+fil$

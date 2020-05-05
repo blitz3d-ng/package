@@ -4,6 +4,9 @@
 #include "blitz2d.gl.h"
 #include <cmath>
 
+// TODO: derive this value from hardware info
+#define MAX_TEXTURES 8
+
 static map<BBImageFont*,unsigned int> font_textures;
 
 void GLB2DCanvas::setFont( BBFont *f ){
@@ -121,23 +124,37 @@ void GLB2DCanvas::text( int x,int y,const std::string &t ){
 		texture=font_textures[font];
 	}
 
+	for( int i=1;i<MAX_TEXTURES;i++ ){
+		glActiveTexture( GL_TEXTURE0+i );
+		glClientActiveTexture( GL_TEXTURE0+i );
+		glDisable( GL_TEXTURE_2D );
+		glBindTexture( GL_TEXTURE_2D,0 );
+	}
+
+	glActiveTexture( GL_TEXTURE0 );
+	glClientActiveTexture( GL_TEXTURE0 );
+	glEnable( GL_TEXTURE_2D );
+	glBindTexture( GL_TEXTURE_2D,texture );
+
 	if( font->loadChars( t ) ){
 		font->rebuildAtlas();
 
 		glPixelStorei( GL_UNPACK_ALIGNMENT,1 );
-
-		glBindTexture( GL_TEXTURE_2D,texture );
 		glTexImage2D( GL_TEXTURE_2D,0,GL_ALPHA,font->atlas->width,font->atlas->height,0,GL_ALPHA,GL_UNSIGNED_BYTE,font->atlas->bits );
-		glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
-		glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
-		glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-		glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
 	}
 
 	glPolygonMode( GL_FRONT_AND_BACK,GL_FILL );
 
-	glEnable( GL_TEXTURE_2D );
-	glBindTexture( GL_TEXTURE_2D,texture );
+	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+
+	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+
+	glDisable( GL_TEXTURE_GEN_S );
+	glDisable( GL_TEXTURE_GEN_T );
+
+	glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
 
 	glBegin( GL_QUADS );
 

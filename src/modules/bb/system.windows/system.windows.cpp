@@ -8,9 +8,83 @@
 #include <map>
 using namespace std;
 
-extern "C" const char *lookupFontFile( const char *fontName ){
-	return 0;
-}
+// // https://stackoverflow.com/questions/11387564/get-a-font-filepath-from-name-and-style-in-c-windows
+// #include <sstream>
+// std::string GetSystemFontFile(const std::string &faceName) {
+//
+//   static const LPWSTR fontRegistryPath = L"Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts";
+//   HKEY hKey;
+//   LONG result;
+//   std::wstring wsFaceName(faceName.begin(), faceName.end());
+//
+//   // Open Windows font registry key
+//   result = RegOpenKeyExW(HKEY_LOCAL_MACHINE, fontRegistryPath, 0, KEY_READ, &hKey);
+//   if (result != ERROR_SUCCESS) {
+//     return "";
+//   }
+//
+//   DWORD maxValueNameSize, maxValueDataSize;
+//   result = RegQueryInfoKeyW(hKey, 0, 0, 0, 0, 0, 0, 0, &maxValueNameSize, &maxValueDataSize, 0, 0);
+//   if (result != ERROR_SUCCESS) {
+//     return "";
+//   }
+//
+//   DWORD valueIndex = 0;
+//   LPWSTR valueName = new WCHAR[maxValueNameSize];
+//   LPBYTE valueData = new BYTE[maxValueDataSize];
+//   DWORD valueNameSize, valueDataSize, valueType;
+//   std::wstring wsFontFile;
+//
+//   // Look for a matching font name
+//   do {
+//
+//     wsFontFile.clear();
+//     valueDataSize = maxValueDataSize;
+//     valueNameSize = maxValueNameSize;
+//
+//     result = RegEnumValueW(hKey, valueIndex, valueName, &valueNameSize, 0, &valueType, valueData, &valueDataSize);
+//
+//     valueIndex++;
+//
+//     if (result != ERROR_SUCCESS || valueType != REG_SZ) {
+//       continue;
+//     }
+//
+//     std::wstring wsValueName(valueName, valueNameSize);
+//
+//     // Found a match
+//     if (_wcsnicmp(wsFaceName.c_str(), wsValueName.c_str(), wsFaceName.length()) == 0) {
+//
+//       wsFontFile.assign((LPWSTR)valueData, valueDataSize);
+//       break;
+//     }
+//   }
+//   while (result != ERROR_NO_MORE_ITEMS);
+//
+//   delete[] valueName;
+//   delete[] valueData;
+//
+//   RegCloseKey(hKey);
+//
+//   if (wsFontFile.empty()) {
+//     return "";
+//   }
+//
+//   // Build full font file path
+//   WCHAR winDir[MAX_PATH];
+//   GetWindowsDirectoryW(winDir, MAX_PATH);
+//
+//   std::wstringstream ss;
+//   ss << winDir << "\\Fonts\\" << wsFontFile;
+//   wsFontFile = ss.str();
+//
+//   return std::string(wsFontFile.begin(), wsFontFile.end());
+// }
+//
+// extern "C" const char *lookupFontFile( const char *fontName ){
+// 	cout<<"path: "<<GetSystemFontFile("courier")<<endl;
+// 	return 0;
+// }
 
 typedef int (__stdcall *LibFunc)( const void *in,int in_sz,void *out,int out_sz );
 
@@ -185,17 +259,20 @@ bool WindowsSystemDriver::lookupFontData( const std::string &fontName,BBFontData
 		ANSI_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
 		DEFAULT_PITCH|FF_DONTCARE,fontName.c_str() );
 
+	if( !hfont ) return false;
+
 	bool success=false;
-	HDC hdc=CreateCompatibleDC(NULL);
-	if( hdc!=NULL ){
-		SelectObject( hdc,hfont );
-		font.size=GetFontData( hdc,0,0,NULL,0 );
-		if( font.size>0 ){
-			font.data=new unsigned char[font.size];
-			if( GetFontData( hdc,0,0,(void*)font.data,font.size )==font.size ){
-				success=true;
-			}else{
-				delete[] font.data;
+	HDC hdc=CreateCompatibleDC( NULL );
+	if( hdc ){
+		if( SelectObject( hdc,hfont ) ) {
+			font.size=GetFontData( hdc,0,0,NULL,0 );
+			if( font.size>0 ) {
+				font.data=new unsigned char[font.size];
+				if( GetFontData( hdc,0,0,(void*)font.data,font.size )==font.size ){
+					success=true;
+				}else{
+					delete[] font.data;
+				}
 			}
 		}
 		DeleteDC( hdc );

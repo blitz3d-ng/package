@@ -947,6 +947,7 @@ static void endPrinting( BBCanvas *c ){
 }
 
 void BBCALL bbWrite( BBStr *str ){
+	if( !curr_font ) return;
 	BBCanvas *c=startPrinting();
 	c->text( curs_x,curs_y,*str );
 	curs_x+=curr_font->getWidth( *str );
@@ -955,6 +956,7 @@ void BBCALL bbWrite( BBStr *str ){
 }
 
 void BBCALL bbPrint( BBStr *str ){
+	if( !curr_font ) return;
 	BBCanvas *c=startPrinting();
 	c->text( curs_x,curs_y,*str );
 	curs_x=0;
@@ -964,6 +966,7 @@ void BBCALL bbPrint( BBStr *str ){
 }
 
 BBStr * BBCALL bbInput( BBStr *prompt ){
+	if( !curr_font ) return d_new BBStr( "" );
 	BBCanvas *c=startPrinting();
 	string t=*prompt;delete prompt;
 

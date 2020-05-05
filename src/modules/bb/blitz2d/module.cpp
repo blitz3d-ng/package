@@ -72,6 +72,7 @@ void BBCALL bbOval( int x,int y,int w,int h,int solid ){
 }
 
 void BBCALL bbText( int x,int y,BBStr *str,int centre_x,int centre_y ){
+	debugFont( curr_font );
 	if( centre_x ) x-=curr_font->getWidth( *str )/2;
 	if( centre_y ) y-=curr_font->getHeight()/2;
 	gx_canvas->text( x,y,*str );
@@ -100,19 +101,23 @@ void BBCALL bbSetFont( BBFont *f ){
 }
 
 int BBCALL bbFontWidth(){
+	debugFont( curr_font );
 	return curr_font->getWidth();
 }
 
 int BBCALL bbFontHeight(){
+	debugFont( curr_font );
 	return curr_font->getHeight();
 }
 
 int BBCALL bbStringWidth( BBStr *str ){
+	debugFont( curr_font );
 	string t=*str;delete str;
 	return curr_font->getWidth( t );
 }
 
 int BBCALL bbStringHeight( BBStr *str ){
+	debugFont( curr_font );
 	delete str;
 	return curr_font->getHeight();
 }

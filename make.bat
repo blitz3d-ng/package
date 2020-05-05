@@ -9,6 +9,13 @@ IF NOT "%ENV%" == "debug" (
   )
 )
 
+IF "%ENV%" == "debug" (
+  SET CONFIG=Debug
+)
+IF "%ENV%" == "release" (
+  SET CONFIG=MinSizeRel
+)
+
 IF NOT "%PLATFORM%" == "win32" (
   IF NOT "%PLATFORM%" == "win64" (
     SET PLATFORM=win32
@@ -31,7 +38,7 @@ set OUTPUT=_release\toolchains\%PLATFORM%
 set RELEASE=_release
 
 cmake -G "%GENERATOR%" -H. -B%cd%\build\%PLATFORM%\%ENV% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b
-msbuild /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%ENV% /property:Platform=%ARCH% || exit /b
+msbuild /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%CONFIG% /property:Platform=%ARCH% || exit /b
 
 COPY /Y %OUTPUT%\bin\Blitz3D.exe %RELEASE%
 COPY /Y %OUTPUT%\bin\ide.exe %RELEASE%\bin

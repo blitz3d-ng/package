@@ -8,7 +8,7 @@
 #include <afxrich.h>		// CRich edit
 #include <afxhtml.h>		// CHtmlView
 
-#include "../stdutil/stdutil.h"
+#include "../../../stdutil/stdutil.h"
 
 #include <map>
 #include <set>

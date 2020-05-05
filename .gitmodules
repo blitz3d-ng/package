@@ -8,13 +8,13 @@
 	path = deps/enet/src
 	url = https://github.com/lsalzman/enet.git
 [submodule "ode"]
-	path = deps/ode/src
+	path = deps/ode/tree
 	url = https://github.com/blitz3d-ng/ode
 [submodule "glfw3"]
 	path = deps/glfw3/tree
 	url = https://github.com/glfw/glfw.git
 [submodule "freetype2"]
-	path = deps/freetype2/src
+	path = deps/freetype2/tree
 	url = https://github.com/blitz3d-ng/freetype2.git
 [submodule "vorbis"]
 	path = deps/vorbis/src
@@ -29,7 +29,7 @@
 	path = deps/glfm/src
 	url = https://github.com/brackeen/glfm.git
 [submodule "src/deps/zlib/src"]
-	path = deps/zlib/src
+	path = deps/zlib/tree
 	url = https://github.com/madler/zlib.git
 [submodule "src/deps/backward-cpp"]
 	path = deps/backward-cpp
@@ -39,5 +39,5 @@
 	url = http://llvm.org/git/libunwind
 	branch = release_70
 [submodule "src/deps/json-hpp/src"]
-	path = deps/json-hpp/src
+	path = deps/json-hpp/tree
 	url = https://github.com/nlohmann/json.git
