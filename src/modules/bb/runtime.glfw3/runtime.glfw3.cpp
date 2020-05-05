@@ -352,7 +352,7 @@ void GLFW3Runtime::_onResize( GLFWwindow *w,int width,int height ){
 }
 
 void GLFW3Runtime::_refreshTitle( void *data,void *context ){
-	((GLFW3Runtime*)context)->setTitle( (const char*)data );
+	((GLFW3Runtime*)context)->setTitle( ((BBApp*)data)->title.c_str() );
 }
 
 void GLFW3Runtime::setTitle( const char *title ){
