@@ -160,13 +160,13 @@ add_subdirectory(stdutil)
 add_subdirectory(src/blitzide2)
 
 IF(BB_MSVC)
-  add_subdirectory(blitzide)
-  add_subdirectory(bblaunch)
-  add_subdirectory(debugger)
+  add_subdirectory(src/legacy/blitzide)
+  add_subdirectory(src/legacy/bblaunch)
+  add_subdirectory(src/legacy/debugger)
 ENDIF()
 
 IF(BB_DESKTOP OR BB_EMSCRIPTEN)
-  add_subdirectory(compiler)
+  add_subdirectory(src/toolchain/compiler)
 ENDIF()
 
 IF(BB_WINDOWS)
@@ -178,5 +178,5 @@ add_subdirectory(src/runtime)
 
 # depends on bb.stub, so we add it in here.
 IF(BB_WINDOWS)
-  add_subdirectory(bbruntime_dll)
+  add_subdirectory(src/legacy/bbruntime_dll)
 ENDIF()

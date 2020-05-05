@@ -5,8 +5,8 @@
 
 #include <iostream>
 
-#include "../config/config.h"
-#include "../stdutil/stdutil.h"
+#include "../../../config/config.h"
+#include "../../../stdutil/stdutil.h"
 
 #include <set>
 #include <map>

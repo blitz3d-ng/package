@@ -9,6 +9,6 @@ if(BB_DESKTOP)
   bb_end_module()
 
   if(BB_MACOS)
-    target_compile_definitions(bb.blitz2d.gl PRIVATE -DGL_SILENCE_DEPRECATION)
+    target_compile_definitions(bb.blitz2d.gl PUBLIC -DGL_SILENCE_DEPRECATION)
   endif()
 endif()

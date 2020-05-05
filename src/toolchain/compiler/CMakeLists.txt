@@ -3,7 +3,7 @@ set (CMAKE_CXX_STANDARD_REQUIRED true)
 
 set (CMAKE_EXECUTABLE_SUFFIX_ )
 
-include_directories (SYSTEM ../src/modules)
+include_directories (SYSTEM ../../modules)
 
 add_executable(blitzcc
   main.cpp
