@@ -41,7 +41,7 @@ when 'run'
   out_file = tmp_file.path
   tmp_file.unlink
 
-  was_built = system "_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | bin/ast2c | clang++ -x c -o #{out_file} \`bin/bb-config --#{runtime}\` -"
+  was_built = system "#{__dir__}/../_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | #{__dir__}/ast2c | clang++ -x c -o #{out_file} \`#{__dir__}/bb-config --#{runtime}\` -"
   if !was_built
     File.unlink out_file if File.exist?(out_file)
     STDERR.puts 'Failed to build.'

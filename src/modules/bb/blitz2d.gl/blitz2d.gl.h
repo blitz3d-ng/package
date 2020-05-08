@@ -204,7 +204,7 @@ public:
 		glFlush();
 	}
 	void set(){
-		//glBindFramebuffer( GL_FRAMEBUFFER,0 );
+		glBindFramebuffer( GL_FRAMEBUFFER,0 );
 		glDrawBuffer( mode );
 	}
 
