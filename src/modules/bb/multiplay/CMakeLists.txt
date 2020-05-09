@@ -6,4 +6,5 @@ IF(BB_WINDOWS)
   bb_end_module()
 
   target_include_directories(bb.multiplay PRIVATE ../../../../common/include)
+  target_link_libraries(bb.multiplay dxsdk)
 ENDIF()

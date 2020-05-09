@@ -165,7 +165,7 @@ module Blitz3D
 
           f.write "\n"
 
-          f.write "bb_runtime(runtime.#{runtime.id})\n"
+          f.write "bb_runtime(#{runtime.id})\n"
 
           out_file = "src/runtime/#{runtime.id}/CMakeLists.txt"
           if file_has_changed?(out_file, f.string)

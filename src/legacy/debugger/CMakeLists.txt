@@ -6,4 +6,12 @@ target_include_directories(debugger PRIVATE ../../modules)
 target_link_libraries(debugger stdutil nlohmann_json)
 
 target_compile_definitions(debugger PRIVATE _WIN32_WINNT=_WIN32_WINNT_WINXP _WINDLL _USRDLL)
+if(BB_SHARED)
+  target_compile_definitions(debugger PRIVATE _AFXDLL)
+endif()
+
 set_target_properties(debugger PROPERTIES LINK_FLAGS "/subsystem:windows")
+
+if(BB_WIN64)
+  set_target_properties(debugger PROPERTIES OUTPUT_NAME "debugger64")
+endif()

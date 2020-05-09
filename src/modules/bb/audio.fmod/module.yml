@@ -6,9 +6,3 @@ platforms:
 
 dependencies:
   - audio
-
-premake5:
-  includedirs: common/include
-
-  links:
-    - fmodvc

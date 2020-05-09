@@ -29,20 +29,21 @@ To keep the project simple to build, all 3rd-party dependencies are included in 
 
 ### Prerequisites (All platforms)
 
-You'll need [cmake (3.12+)](https://cmake.org/download/) and an (optional) [ruby 2+](https://www.ruby-lang.org/en/) install.
+You'll need [cmake (3.16+)](https://cmake.org/download/) and a [ruby 2+](https://www.ruby-lang.org/en/) install.
 
 We use these tools to generate the appropriate build files per-platform as well as documentation.
 
 ### Windows
 
-Install [Visual Studio 2017](https://www.visualstudio.com/vs/community/).
+Install [Visual Studio 2019](https://www.visualstudio.com/vs/community/).
 
-Open up a command prompt via `Start -> Visual Studio 2017 -> Developer Command Prompt for VS2017`.
+Open up a command prompt via `Start -> Visual Studio 2019 -> Developer Command Prompt for VS2019`.
 
 ```
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 > cd blitz3d-ng
-> make.bat release
+> make release
+> make release win64
 ```
 
 ### macOS
@@ -52,7 +53,7 @@ Install [Xcode](https://developer.apple.com/xcode/) and [brew](http://brew.sh/).
 ```bash
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
-$ brew install wxmac glfw3
+$ brew install wxmac # optional, if you want to build the new IDE
 $ bin/blitz3d config && make ENV=release
 ```
 

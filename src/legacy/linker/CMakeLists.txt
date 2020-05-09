@@ -9,3 +9,7 @@ if(BB_MINGW32)
 endif()
 target_link_libraries(linker stdutil)
 set_target_properties(linker PROPERTIES LINK_FLAGS "/subsystem:windows")
+
+if(BB_WIN64)
+  set_target_properties(linker PROPERTIES OUTPUT_NAME "linker64")
+endif()

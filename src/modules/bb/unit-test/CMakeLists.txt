@@ -5,7 +5,7 @@ IF(NOT BB_EMSCRIPTEN)
   bb_end_module()
 
   # generate a unit_test userlib for legacy Blitz3D.
-  if(BB_WINDOWS)
+  if(BB_WIN32)
     add_library(unit_test SHARED unit-test.cpp unit-test.h userlib.cpp)
     target_link_libraries(unit_test bb.blitz bb.hook)
     target_compile_definitions(unit_test PRIVATE USERLIB)

@@ -90,6 +90,13 @@ add_executable(blitzcc
   std.cpp std.h
 )
 
+if(BB_WIN64)
+  set_target_properties(blitzcc PROPERTIES OUTPUT_NAME "blitzcc64")
+  target_compile_definitions(blitzcc PRIVATE LINKERNAME="linker64" RUNTIMENAME="runtime64")
+else()
+  target_compile_definitions(blitzcc PRIVATE LINKERNAME="linker" RUNTIMENAME="runtime")
+endif()
+
 target_include_directories(blitzcc PRIVATE ../src/runtime)
 target_link_libraries(blitzcc stdutil nlohmann_json)
 

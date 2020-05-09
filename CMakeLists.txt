@@ -5,6 +5,10 @@ project (Blitz3D)
 
 include(src/bin2h.cmake)
 
+# TODO: make this toggleable
+set(BB_STATIC false)
+set(BB_SHARED true)
+
 IF(NOT BB_PLATFORM)
   IF(WIN32)
     IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -50,8 +54,6 @@ ENDIF()
 IF(BB_WIN32 OR BB_WIN64 OR BB_MINGW32)
   set (BB_WINDOWS true)
   add_definitions(-DBB_WINDOWS)
-
-  link_directories(common/x86)
 ENDIF()
 
 IF(BB_WINDOWS OR BB_MACOS OR BB_LINUX)
@@ -70,7 +72,7 @@ IF(BB_EMSCRIPTEN)
 ENDIF()
 
 IF(NOT BB_ENV)
-  set (BB_ENV debug)
+  set(BB_ENV debug)
 ENDIF()
 
 IF(BB_ENV MATCHES debug OR BB_ENV MATCHES test)
@@ -107,8 +109,15 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 IF(BB_MSVC)
-  include("./src/msvc.cmake")
-  configure_msvc_runtime()
+  IF(BB_STATIC)
+    include("./src/msvc.cmake")
+    configure_msvc_runtime()
+  ENDIF()
+
+  IF(NOT BB_DEBUG)
+    add_link_options(/GL) # TODO: only apply to executables/dlls
+    add_compile_options(/LTCG)
+  ENDIF()
 
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 ENDIF()

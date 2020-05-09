@@ -21,6 +21,11 @@ ELSEIF(BB_IOS OR BB_ANDROID)
   add_subdirectory(glfm)
 ENDIF()
 
+IF(BB_WINDOWS)
+  add_subdirectory(dxsdk)
+  add_subdirectory(fmod)
+ENDIF()
+
 IF(BB_DESKTOP OR BB_EMSCRIPTEN)
   add_subdirectory(ode)
 ENDIF()

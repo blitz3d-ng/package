@@ -49,4 +49,4 @@ bb_addmodule(bb.blitz3d.d3d7)
 bb_addmodule(bb.frame)
 bb_addmodule(bb.runtime.windows)
 
-bb_runtime(runtime.d3d7)
+bb_runtime(d3d7)

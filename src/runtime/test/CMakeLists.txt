@@ -62,4 +62,4 @@ bb_addmodule(bb.blitz3d.gl)
 bb_addmodule(bb.runtime.html)
 bb_addmodule(bb.unit-test)
 
-bb_runtime(runtime.test)
+bb_runtime(test)

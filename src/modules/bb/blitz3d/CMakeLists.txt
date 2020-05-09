@@ -12,8 +12,10 @@ ENDIF()
 
 bb_end_module()
 
+IF(BB_WINDOWS)
+  target_link_libraries(bb.blitz3d dxsdk)
+ENDIF()
+
 IF(NOT BB_WINDOWS AND NOT BB_MINGW32)
   target_compile_definitions (bb.blitz3d PRIVATE USE_ASSIMP)
-ELSE()
-  target_include_directories(bb.blitz3d PRIVATE ../../../../common/include)
 ENDIF()

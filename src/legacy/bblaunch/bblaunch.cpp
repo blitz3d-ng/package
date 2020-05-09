@@ -7,7 +7,9 @@
 
 using namespace std;
 
-#ifndef TARGETSUFFIX
+#ifdef BB_WIN64
+#define TARGETSUFFIX "64"
+#else
 #define TARGETSUFFIX
 #endif
 

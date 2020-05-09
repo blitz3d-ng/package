@@ -327,17 +327,17 @@ const char *openLibs( const string rt ){
 #endif
 
 #ifdef WIN32
-	linkerHMOD=LoadLibrary( (home+"/bin/linker.dll").c_str() );
-	if( !linkerHMOD ) return "Unable to open linker.dll";
+	linkerHMOD=LoadLibrary( (home+"/bin/" LINKERNAME ".dll").c_str() );
+	if( !linkerHMOD ) return "Unable to open " LINKERNAME ".dll";
 
 	typedef Linker *(__cdecl*GetLinker)();
 	GetLinker gl=(GetLinker)GetProcAddress( linkerHMOD,"linkerGetLinker" );
-	if( !gl ) return "Error in linker.dll";
+	if( !gl ) return "Error in " LINKERNAME ".dll";
 	linkerLib=gl();
 
-	runtimeHMOD=LoadLibrary( (home+"\\bin\\runtime."+rt+".dll").c_str() );
+	runtimeHMOD=LoadLibrary( (home+"\\bin\\" RUNTIMENAME "."+rt+".dll").c_str() );
 	if( !runtimeHMOD ){
-		string msg("Unable to open runtime. "+home+"/bin/runtime."+rt+".dll");
+		string msg("Unable to open " RUNTIMENAME "."+rt+".");
 		strcpy( err,msg.c_str() );
 		return err;
 	}
@@ -345,7 +345,7 @@ const char *openLibs( const string rt ){
 	typedef Runtime *(__cdecl*GetRuntime)();
 	GetRuntime gr=(GetRuntime)GetProcAddress( runtimeHMOD,"runtimeGetRuntime" );
 	if( !gr ){
-		string msg("Error in runtime."+rt+".dll");
+		string msg("Error in " RUNTIMENAME "."+rt+".dll");
 		strcpy( err,msg.c_str() );
 		return err;
 	}

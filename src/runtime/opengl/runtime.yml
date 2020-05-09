@@ -1,7 +1,7 @@
 name: OpenGL
 
 platforms:
-  - win32
+  - windows
   - mingw32
   - macos
   - linux

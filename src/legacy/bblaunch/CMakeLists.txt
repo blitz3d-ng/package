@@ -6,3 +6,7 @@ set_target_properties(bblaunch PROPERTIES
 )
 target_compile_definitions(bblaunch PRIVATE UNICODE _UNICODE _WIN32_WINNT=_WIN32_WINNT_WINXP)
 target_link_libraries(bblaunch dxguid kernel32 user32 gdi32 winspool comdlg32 advapi32 shell32 ole32 oleaut32 uuid odbc32 odbccp32)
+
+if(BB_WIN64)
+  set_target_properties(bblaunch PROPERTIES OUTPUT_NAME "Blitz3D64")
+endif()
