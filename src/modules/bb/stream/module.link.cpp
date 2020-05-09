@@ -15,11 +15,11 @@ BBMODULE_LINK( stream ){
 	rtSym( "$ReadLine%stream",bbReadLine );
 	rtSym( "%ReadShort%stream",bbReadShort );
 	rtSym( "$ReadString%stream",bbReadString );
-	rtSym( "%WriteByte%stream%byte",bbWriteByte );
-	rtSym( "%WriteFloat%stream#float",bbWriteFloat );
-	rtSym( "%WriteInt%stream%int",bbWriteInt );
-	rtSym( "%WriteLine%stream$string",bbWriteLine );
-	rtSym( "%WriteShort%stream%short",bbWriteShort );
-	rtSym( "%WriteString%stream$string",bbWriteString );
+	rtSym( "WriteByte%stream%byte",bbWriteByte );
+	rtSym( "WriteFloat%stream#float",bbWriteFloat );
+	rtSym( "WriteInt%stream%int",bbWriteInt );
+	rtSym( "WriteLine%stream$string",bbWriteLine );
+	rtSym( "WriteShort%stream%short",bbWriteShort );
+	rtSym( "WriteString%stream$string",bbWriteString );
 }
 #endif

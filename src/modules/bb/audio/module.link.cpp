@@ -17,7 +17,7 @@ BBMODULE_LINK( audio ){
 	rtSym( "PauseChannel%channel",bbPauseChannel );
 	rtSym( "%PlayCDTrack%track%mode=1",bbPlayCDTrack );
 	rtSym( "%PlayMusic$filename",bbPlayMusic );
-	rtSym( "%PlaySound%sound%sound",bbPlaySound );
+	rtSym( "%PlaySound%sound",bbPlaySound );
 	rtSym( "ResumeChannel%channel",bbResumeChannel );
 	rtSym( "SoundPan%sound#pan",bbSoundPan );
 	rtSym( "SoundPitch%sound%pitch",bbSoundPitch );

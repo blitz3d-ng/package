@@ -12,6 +12,7 @@ BBMODULE_DECL( string );
 BBMODULE_DECL( stream );
 BBMODULE_DECL( bank );
 BBMODULE_DECL( stdio );
+BBMODULE_DECL( timer_noop );
 BBMODULE_DECL( runtime );
 BBMODULE_DECL( system );
 BBMODULE_DECL( input );
@@ -49,30 +50,33 @@ bool bbruntime_create(){
 								if( stream_create() ){
 										if( bank_create() ){
 												if( stdio_create() ){
-														if( runtime_create() ){
-																if( system_create() ){
-																		if( input_create() ){
-																				if( audio_create() ){
-																						if( hook_create() ){
-																								if( event_create() ){
-																										if( runtime_console_create() ){
-																												if( unit_test_create() ){
-																														return true;
-														}else sue( "unit_test_create failed" );
-														runtime_console_destroy();
-													}else sue( "runtime_console_create failed" );
-													event_destroy();
-												}else sue( "event_create failed" );
-												hook_destroy();
-											}else sue( "hook_create failed" );
-											audio_destroy();
-										}else sue( "audio_create failed" );
-										input_destroy();
-									}else sue( "input_create failed" );
-									system_destroy();
-								}else sue( "system_create failed" );
-								runtime_destroy();
-							}else sue( "runtime_create failed" );
+														if( timer_noop_create() ){
+																if( runtime_create() ){
+																		if( system_create() ){
+																				if( input_create() ){
+																						if( audio_create() ){
+																								if( hook_create() ){
+																										if( event_create() ){
+																												if( runtime_console_create() ){
+																														if( unit_test_create() ){
+																																return true;
+															}else sue( "unit_test_create failed" );
+															runtime_console_destroy();
+														}else sue( "runtime_console_create failed" );
+														event_destroy();
+													}else sue( "event_create failed" );
+													hook_destroy();
+												}else sue( "hook_create failed" );
+												audio_destroy();
+											}else sue( "audio_create failed" );
+											input_destroy();
+										}else sue( "input_create failed" );
+										system_destroy();
+									}else sue( "system_create failed" );
+									runtime_destroy();
+								}else sue( "runtime_create failed" );
+								timer_noop_destroy();
+							}else sue( "timer_noop_create failed" );
 							stdio_destroy();
 						}else sue( "stdio_create failed" );
 						bank_destroy();
@@ -97,6 +101,7 @@ bool bbruntime_destroy(){
 	input_destroy();
 	system_destroy();
 	runtime_destroy();
+	timer_noop_destroy();
 	stdio_destroy();
 	bank_destroy();
 	stream_destroy();

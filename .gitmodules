@@ -34,3 +34,6 @@
 [submodule "src/deps/json-hpp/src"]
 	path = deps/json-hpp/tree
 	url = https://github.com/nlohmann/json.git
+[submodule "deps/luajit/tree"]
+	path = deps/luajit/tree
+	url = https://luajit.org/git/luajit-2.0.git

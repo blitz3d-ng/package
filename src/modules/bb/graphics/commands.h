@@ -4,12 +4,10 @@
 #include <bb/blitz/commands.h>
 
 #ifdef __cplusplus
-class BBFont;
 class BBCanvas;
 class bbImage;
 extern "C" {
 #else
-typedef void BBFont;
 typedef void BBCanvas;
 typedef void bbImage;
 #endif
@@ -70,32 +68,6 @@ void	 BBCALL bbWritePixel( int x,int y,int argb,BBCanvas *buff );
 int		 BBCALL bbReadPixelFast( int x,int y,BBCanvas *buff );
 void	 BBCALL bbWritePixelFast( int x,int y,int argb,BBCanvas *buff );
 
-
-//2d rendering functions
-void	 BBCALL bbOrigin( int x,int y );
-void	 BBCALL bbViewport( int x,int y,int w,int h );
-void	 BBCALL bbColor( int r,int g,int b );
-void	 BBCALL bbClsColor( int r,int g,int b );
-void	 BBCALL bbCls();
-void	 BBCALL bbPlot( int x,int y );
-void	 BBCALL bbLine( int x1,int y1,int x2,int y2 );
-void	 BBCALL bbRect( int x,int y,int w,int h,int solid );
-void	 BBCALL bbOval( int x,int y,int w,int h,int solid );
-void	 BBCALL bbText( int x,int y,BBStr *str,int centre_x,int centre_y );
-void	 BBCALL bbCopyRect( int sx,int sy,int w,int h,int dx,int dy,BBCanvas *src,BBCanvas *dest );
-void	 BBCALL bbGetColor( int x,int y );
-int		 BBCALL bbColorRed();
-int		 BBCALL bbColorGreen();
-int		 BBCALL bbColorBlue();
-
-//font functions
-BBFont * BBCALL bbLoadFont( BBStr *name,int height,int bold,int italic,int underline );
-void	 BBCALL bbFreeFont( BBFont *f );
-void	 BBCALL bbSetFont( BBFont *f );
-int		 BBCALL bbFontWidth();
-int		 BBCALL bbFontHeight();
-int		 BBCALL bbStringWidth( BBStr *str );
-int		 BBCALL bbStringHeight( BBStr *str );
 
 //image functions
 bbImage* BBCALL bbLoadImage( BBStr *s );

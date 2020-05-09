@@ -19,6 +19,8 @@ BBMODULE_DECL( system );
 BBMODULE_DECL( system_macos );
 BBMODULE_DECL( filesystem );
 BBMODULE_DECL( filesystem_posix );
+BBMODULE_DECL( timer );
+BBMODULE_DECL( timer_noop );
 BBMODULE_DECL( input );
 BBMODULE_DECL( audio );
 BBMODULE_DECL( audio_openal );
@@ -44,6 +46,7 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	runtime_link( link );
 	system_link( link );
 	filesystem_link( link );
+	timer_link( link );
 	input_link( link );
 	audio_link( link );
 	unit_test_link( link );
@@ -63,24 +66,30 @@ bool bbruntime_create(){
 																						if( system_macos_create() ){
 																								if( filesystem_create() ){
 																										if( filesystem_posix_create() ){
-																												if( input_create() ){
-																														if( audio_create() ){
-																																if( audio_openal_create() ){
-																																		if( event_create() ){
-																																				if( runtime_console_create() ){
-																																						if( unit_test_create() ){
-																																								return true;
-																			}else sue( "unit_test_create failed" );
-																			runtime_console_destroy();
-																		}else sue( "runtime_console_create failed" );
-																		event_destroy();
-																	}else sue( "event_create failed" );
-																	audio_openal_destroy();
-																}else sue( "audio_openal_create failed" );
-																audio_destroy();
-															}else sue( "audio_create failed" );
-															input_destroy();
-														}else sue( "input_create failed" );
+																												if( timer_create() ){
+																														if( timer_noop_create() ){
+																																if( input_create() ){
+																																		if( audio_create() ){
+																																				if( audio_openal_create() ){
+																																						if( event_create() ){
+																																								if( runtime_console_create() ){
+																																										if( unit_test_create() ){
+																																												return true;
+																					}else sue( "unit_test_create failed" );
+																					runtime_console_destroy();
+																				}else sue( "runtime_console_create failed" );
+																				event_destroy();
+																			}else sue( "event_create failed" );
+																			audio_openal_destroy();
+																		}else sue( "audio_openal_create failed" );
+																		audio_destroy();
+																	}else sue( "audio_create failed" );
+																	input_destroy();
+																}else sue( "input_create failed" );
+																timer_noop_destroy();
+															}else sue( "timer_noop_create failed" );
+															timer_destroy();
+														}else sue( "timer_create failed" );
 														filesystem_posix_destroy();
 													}else sue( "filesystem_posix_create failed" );
 													filesystem_destroy();
@@ -117,6 +126,8 @@ bool bbruntime_destroy(){
 	audio_openal_destroy();
 	audio_destroy();
 	input_destroy();
+	timer_noop_destroy();
+	timer_destroy();
 	filesystem_posix_destroy();
 	filesystem_destroy();
 	system_macos_destroy();

@@ -25,6 +25,7 @@ modules:
   - filesystem.windows
   - filesystem.posix
   - timer.windows
+  - timer.noop
   - bank
   - input
   - input.directinput8

@@ -15,6 +15,7 @@ BBMODULE_DECL( stdio );
 BBMODULE_DECL( runtime );
 BBMODULE_DECL( system );
 BBMODULE_DECL( system_ios );
+BBMODULE_DECL( timer_noop );
 BBMODULE_DECL( stream );
 BBMODULE_DECL( bank );
 BBMODULE_DECL( audio );
@@ -59,36 +60,39 @@ bool bbruntime_create(){
 														if( runtime_create() ){
 																if( system_create() ){
 																		if( system_ios_create() ){
-																				if( stream_create() ){
-																						if( bank_create() ){
-																								if( audio_create() ){
-																										if( pixmap_create() ){
-																												if( blitz2d_create() ){
-																														if( blitz3d_create() ){
-																																if( blitz3d_gles2_create() ){
-																																		if( input_create() ){
-																																				if( graphics_create() ){
-																																						if( runtime_glfm_create() ){
-																																								return true;
-																			}else sue( "runtime_glfm_create failed" );
-																			graphics_destroy();
-																		}else sue( "graphics_create failed" );
-																		input_destroy();
-																	}else sue( "input_create failed" );
-																	blitz3d_gles2_destroy();
-																}else sue( "blitz3d_gles2_create failed" );
-																blitz3d_destroy();
-															}else sue( "blitz3d_create failed" );
-															blitz2d_destroy();
-														}else sue( "blitz2d_create failed" );
-														pixmap_destroy();
-													}else sue( "pixmap_create failed" );
-													audio_destroy();
-												}else sue( "audio_create failed" );
-												bank_destroy();
-											}else sue( "bank_create failed" );
-											stream_destroy();
-										}else sue( "stream_create failed" );
+																				if( timer_noop_create() ){
+																						if( stream_create() ){
+																								if( bank_create() ){
+																										if( audio_create() ){
+																												if( pixmap_create() ){
+																														if( blitz2d_create() ){
+																																if( blitz3d_create() ){
+																																		if( blitz3d_gles2_create() ){
+																																				if( input_create() ){
+																																						if( graphics_create() ){
+																																								if( runtime_glfm_create() ){
+																																										return true;
+																				}else sue( "runtime_glfm_create failed" );
+																				graphics_destroy();
+																			}else sue( "graphics_create failed" );
+																			input_destroy();
+																		}else sue( "input_create failed" );
+																		blitz3d_gles2_destroy();
+																	}else sue( "blitz3d_gles2_create failed" );
+																	blitz3d_destroy();
+																}else sue( "blitz3d_create failed" );
+																blitz2d_destroy();
+															}else sue( "blitz2d_create failed" );
+															pixmap_destroy();
+														}else sue( "pixmap_create failed" );
+														audio_destroy();
+													}else sue( "audio_create failed" );
+													bank_destroy();
+												}else sue( "bank_create failed" );
+												stream_destroy();
+											}else sue( "stream_create failed" );
+											timer_noop_destroy();
+										}else sue( "timer_noop_create failed" );
 										system_ios_destroy();
 									}else sue( "system_ios_create failed" );
 									system_destroy();
@@ -121,6 +125,7 @@ bool bbruntime_destroy(){
 	audio_destroy();
 	bank_destroy();
 	stream_destroy();
+	timer_noop_destroy();
 	system_ios_destroy();
 	system_destroy();
 	runtime_destroy();

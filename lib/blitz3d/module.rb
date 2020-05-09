@@ -118,6 +118,10 @@ module Blitz3D
       symbols.size > 0 || commands.size > 0
     end
 
+    def public_symbols?
+      needs_to_link? && commands.any? { |command| command.name !~ /^_/ }
+    end
+
     def help_dir
       File.join(path, 'docs')
     end

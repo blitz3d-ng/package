@@ -33,7 +33,7 @@ public:
 	int callDll( const std::string &dll,const std::string &func,const void *in,int in_sz,void *out,int out_sz );
 };
 
-int BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out );
+#include "commands.h"
 
 #define bbWindowsSystemDriver ((WindowsSystemDriver*)bbSystemDriver)
 

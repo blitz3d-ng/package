@@ -184,6 +184,7 @@ ENDIF()
 
 add_subdirectory(src/modules)
 add_subdirectory(src/runtime)
+add_subdirectory(src/bindings)
 
 # depends on bb.stub, so we add it in here.
 IF(BB_WINDOWS)

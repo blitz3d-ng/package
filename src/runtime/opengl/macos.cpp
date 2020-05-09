@@ -19,6 +19,8 @@ BBMODULE_DECL( system_macos );
 BBMODULE_DECL( stream );
 BBMODULE_DECL( filesystem );
 BBMODULE_DECL( filesystem_posix );
+BBMODULE_DECL( timer );
+BBMODULE_DECL( timer_noop );
 BBMODULE_DECL( bank );
 BBMODULE_DECL( audio );
 BBMODULE_DECL( audio_openal );
@@ -29,7 +31,6 @@ BBMODULE_DECL( graphics );
 BBMODULE_DECL( blitz3d );
 BBMODULE_DECL( blitz2d_gl );
 BBMODULE_DECL( blitz3d_gl );
-BBMODULE_DECL( timer );
 BBMODULE_DECL( runtime_glfw3 );
 
 class BBRuntime;
@@ -49,13 +50,13 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	system_link( link );
 	stream_link( link );
 	filesystem_link( link );
+	timer_link( link );
 	bank_link( link );
 	audio_link( link );
 	input_link( link );
 	blitz2d_link( link );
 	graphics_link( link );
 	blitz3d_link( link );
-	timer_link( link );
 }
 #endif
 bool bbruntime_create(){
@@ -72,42 +73,45 @@ bool bbruntime_create(){
 																						if( stream_create() ){
 																								if( filesystem_create() ){
 																										if( filesystem_posix_create() ){
-																												if( bank_create() ){
-																														if( audio_create() ){
-																																if( audio_openal_create() ){
-																																		if( input_create() ){
-																																				if( pixmap_create() ){
-																																						if( blitz2d_create() ){
-																																								if( graphics_create() ){
-																																										if( blitz3d_create() ){
-																																												if( blitz2d_gl_create() ){
-																																														if( blitz3d_gl_create() ){
-																																																if( timer_create() ){
-																																																		if( runtime_glfw3_create() ){
-																																																				return true;
-																									}else sue( "runtime_glfw3_create failed" );
-																									timer_destroy();
-																								}else sue( "timer_create failed" );
-																								blitz3d_gl_destroy();
-																							}else sue( "blitz3d_gl_create failed" );
-																							blitz2d_gl_destroy();
-																						}else sue( "blitz2d_gl_create failed" );
-																						blitz3d_destroy();
-																					}else sue( "blitz3d_create failed" );
-																					graphics_destroy();
-																				}else sue( "graphics_create failed" );
-																				blitz2d_destroy();
-																			}else sue( "blitz2d_create failed" );
-																			pixmap_destroy();
-																		}else sue( "pixmap_create failed" );
-																		input_destroy();
-																	}else sue( "input_create failed" );
-																	audio_openal_destroy();
-																}else sue( "audio_openal_create failed" );
-																audio_destroy();
-															}else sue( "audio_create failed" );
-															bank_destroy();
-														}else sue( "bank_create failed" );
+																												if( timer_create() ){
+																														if( timer_noop_create() ){
+																																if( bank_create() ){
+																																		if( audio_create() ){
+																																				if( audio_openal_create() ){
+																																						if( input_create() ){
+																																								if( pixmap_create() ){
+																																										if( blitz2d_create() ){
+																																												if( graphics_create() ){
+																																														if( blitz3d_create() ){
+																																																if( blitz2d_gl_create() ){
+																																																		if( blitz3d_gl_create() ){
+																																																				if( runtime_glfw3_create() ){
+																																																						return true;
+																										}else sue( "runtime_glfw3_create failed" );
+																										blitz3d_gl_destroy();
+																									}else sue( "blitz3d_gl_create failed" );
+																									blitz2d_gl_destroy();
+																								}else sue( "blitz2d_gl_create failed" );
+																								blitz3d_destroy();
+																							}else sue( "blitz3d_create failed" );
+																							graphics_destroy();
+																						}else sue( "graphics_create failed" );
+																						blitz2d_destroy();
+																					}else sue( "blitz2d_create failed" );
+																					pixmap_destroy();
+																				}else sue( "pixmap_create failed" );
+																				input_destroy();
+																			}else sue( "input_create failed" );
+																			audio_openal_destroy();
+																		}else sue( "audio_openal_create failed" );
+																		audio_destroy();
+																	}else sue( "audio_create failed" );
+																	bank_destroy();
+																}else sue( "bank_create failed" );
+																timer_noop_destroy();
+															}else sue( "timer_noop_create failed" );
+															timer_destroy();
+														}else sue( "timer_create failed" );
 														filesystem_posix_destroy();
 													}else sue( "filesystem_posix_create failed" );
 													filesystem_destroy();
@@ -139,7 +143,6 @@ bool bbruntime_create(){
 
 bool bbruntime_destroy(){
 	runtime_glfw3_destroy();
-	timer_destroy();
 	blitz3d_gl_destroy();
 	blitz2d_gl_destroy();
 	blitz3d_destroy();
@@ -150,6 +153,8 @@ bool bbruntime_destroy(){
 	audio_openal_destroy();
 	audio_destroy();
 	bank_destroy();
+	timer_noop_destroy();
+	timer_destroy();
 	filesystem_posix_destroy();
 	filesystem_destroy();
 	stream_destroy();
