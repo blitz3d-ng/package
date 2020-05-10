@@ -13,19 +13,21 @@ BBMODULE_DECL( math );
 BBMODULE_DECL( string );
 BBMODULE_DECL( stdio );
 BBMODULE_DECL( enet );
+BBMODULE_DECL( runtime );
+BBMODULE_DECL( system );
+BBMODULE_DECL( system_linux );
 BBMODULE_DECL( stream );
 BBMODULE_DECL( filesystem );
 BBMODULE_DECL( filesystem_posix );
-BBMODULE_DECL( runtime );
 BBMODULE_DECL( timer );
 BBMODULE_DECL( timer_noop );
 BBMODULE_DECL( bank );
 BBMODULE_DECL( audio );
-BBMODULE_DECL( system );
 BBMODULE_DECL( input );
 BBMODULE_DECL( pixmap );
 BBMODULE_DECL( blitz2d );
 BBMODULE_DECL( graphics );
+BBMODULE_DECL( graphics_gl );
 BBMODULE_DECL( blitz3d );
 BBMODULE_DECL( blitz2d_gl );
 BBMODULE_DECL( blitz3d_gl );
@@ -44,13 +46,13 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	string_link( link );
 	stdio_link( link );
 	enet_link( link );
+	runtime_link( link );
+	system_link( link );
 	stream_link( link );
 	filesystem_link( link );
-	runtime_link( link );
 	timer_link( link );
 	bank_link( link );
 	audio_link( link );
-	system_link( link );
 	input_link( link );
 	blitz2d_link( link );
 	graphics_link( link );
@@ -65,57 +67,63 @@ bool bbruntime_create(){
 										if( string_create() ){
 												if( stdio_create() ){
 														if( enet_create() ){
-																if( stream_create() ){
-																		if( filesystem_create() ){
-																				if( filesystem_posix_create() ){
-																						if( runtime_create() ){
-																								if( timer_create() ){
-																										if( timer_noop_create() ){
-																												if( bank_create() ){
-																														if( audio_create() ){
-																																if( system_create() ){
-																																		if( input_create() ){
-																																				if( pixmap_create() ){
-																																						if( blitz2d_create() ){
-																																								if( graphics_create() ){
-																																										if( blitz3d_create() ){
-																																												if( blitz2d_gl_create() ){
-																																														if( blitz3d_gl_create() ){
-																																																if( runtime_glfw3_create() ){
-																																																		return true;
-																								}else sue( "runtime_glfw3_create failed" );
-																								blitz3d_gl_destroy();
-																							}else sue( "blitz3d_gl_create failed" );
-																							blitz2d_gl_destroy();
-																						}else sue( "blitz2d_gl_create failed" );
-																						blitz3d_destroy();
-																					}else sue( "blitz3d_create failed" );
-																					graphics_destroy();
-																				}else sue( "graphics_create failed" );
-																				blitz2d_destroy();
-																			}else sue( "blitz2d_create failed" );
-																			pixmap_destroy();
-																		}else sue( "pixmap_create failed" );
-																		input_destroy();
-																	}else sue( "input_create failed" );
-																	system_destroy();
-																}else sue( "system_create failed" );
-																audio_destroy();
-															}else sue( "audio_create failed" );
-															bank_destroy();
-														}else sue( "bank_create failed" );
-														timer_noop_destroy();
-													}else sue( "timer_noop_create failed" );
-													timer_destroy();
-												}else sue( "timer_create failed" );
-												runtime_destroy();
-											}else sue( "runtime_create failed" );
-											filesystem_posix_destroy();
-										}else sue( "filesystem_posix_create failed" );
-										filesystem_destroy();
-									}else sue( "filesystem_create failed" );
-									stream_destroy();
-								}else sue( "stream_create failed" );
+																if( runtime_create() ){
+																		if( system_create() ){
+																				if( system_linux_create() ){
+																						if( stream_create() ){
+																								if( filesystem_create() ){
+																										if( filesystem_posix_create() ){
+																												if( timer_create() ){
+																														if( timer_noop_create() ){
+																																if( bank_create() ){
+																																		if( audio_create() ){
+																																				if( input_create() ){
+																																						if( pixmap_create() ){
+																																								if( blitz2d_create() ){
+																																										if( graphics_create() ){
+																																												if( graphics_gl_create() ){
+																																														if( blitz3d_create() ){
+																																																if( blitz2d_gl_create() ){
+																																																		if( blitz3d_gl_create() ){
+																																																				if( runtime_glfw3_create() ){
+																																																						return true;
+																										}else sue( "runtime_glfw3_create failed" );
+																										blitz3d_gl_destroy();
+																									}else sue( "blitz3d_gl_create failed" );
+																									blitz2d_gl_destroy();
+																								}else sue( "blitz2d_gl_create failed" );
+																								blitz3d_destroy();
+																							}else sue( "blitz3d_create failed" );
+																							graphics_gl_destroy();
+																						}else sue( "graphics_gl_create failed" );
+																						graphics_destroy();
+																					}else sue( "graphics_create failed" );
+																					blitz2d_destroy();
+																				}else sue( "blitz2d_create failed" );
+																				pixmap_destroy();
+																			}else sue( "pixmap_create failed" );
+																			input_destroy();
+																		}else sue( "input_create failed" );
+																		audio_destroy();
+																	}else sue( "audio_create failed" );
+																	bank_destroy();
+																}else sue( "bank_create failed" );
+																timer_noop_destroy();
+															}else sue( "timer_noop_create failed" );
+															timer_destroy();
+														}else sue( "timer_create failed" );
+														filesystem_posix_destroy();
+													}else sue( "filesystem_posix_create failed" );
+													filesystem_destroy();
+												}else sue( "filesystem_create failed" );
+												stream_destroy();
+											}else sue( "stream_create failed" );
+											system_linux_destroy();
+										}else sue( "system_linux_create failed" );
+										system_destroy();
+									}else sue( "system_create failed" );
+									runtime_destroy();
+								}else sue( "runtime_create failed" );
 								enet_destroy();
 							}else sue( "enet_create failed" );
 							stdio_destroy();
@@ -138,19 +146,21 @@ bool bbruntime_destroy(){
 	blitz3d_gl_destroy();
 	blitz2d_gl_destroy();
 	blitz3d_destroy();
+	graphics_gl_destroy();
 	graphics_destroy();
 	blitz2d_destroy();
 	pixmap_destroy();
 	input_destroy();
-	system_destroy();
 	audio_destroy();
 	bank_destroy();
 	timer_noop_destroy();
 	timer_destroy();
-	runtime_destroy();
 	filesystem_posix_destroy();
 	filesystem_destroy();
 	stream_destroy();
+	system_linux_destroy();
+	system_destroy();
+	runtime_destroy();
 	enet_destroy();
 	stdio_destroy();
 	string_destroy();

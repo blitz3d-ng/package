@@ -22,6 +22,7 @@ modules:
   - enet
   - system.windows
   - system.macos
+  - system.linux
   - filesystem.windows
   - filesystem.posix
   - timer.windows

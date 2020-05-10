@@ -10,7 +10,7 @@ Const BODY=1,WHEEL=2,SCENE=3
 Collisions BODY,SCENE,2,3
 Collisions WHEEL,SCENE,2,3
 
-terr=LoadTerrain( "heightmap_256.bmp" )
+terr=LoadTerrain( "heightmap_256.BMP" )
 ScaleEntity terr,1000/TerrainSize(terr),70,1000/TerrainSize(terr)
 TerrainDetail terr,1000,True
 TerrainShading terr,True
@@ -67,7 +67,7 @@ While Not KeyHit(1)
 	zz#=(EntityZ( wheels[2],True )+EntityZ( wheels[4],True ))/2
 	zz=zz-(EntityZ( wheels[1],True )+EntityZ( wheels[3],True ))/2
 	AlignToVector car,zx,zy,zz,1
-	
+
 	zx#=(EntityX( wheels[1],True )+EntityX( wheels[2],True ))/2
 	zx=zx-(EntityX( wheels[3],True )+EntityX( wheels[4],True ))/2
 	zy#=(EntityY( wheels[1],True )+EntityY( wheels[2],True ))/2
@@ -75,12 +75,12 @@ While Not KeyHit(1)
 	zz#=(EntityZ( wheels[1],True )+EntityZ( wheels[2],True ))/2
 	zz=zz-(EntityZ( wheels[3],True )+EntityZ( wheels[4],True ))/2
 	AlignToVector car,zx,zy,zz,3
-	
-	;calculate car velocities	
+
+	;calculate car velocities
 	cx#=EntityX( car ):x_vel=cx-prev_x:prev_x=cx
 	cy#=EntityY( car ):y_vel=cy-prev_y:prev_y=cy
 	cz#=EntityZ( car ):z_vel=cz-prev_z:prev_z=cz
-	
+
 	;resposition wheels
 	cnt=1
 	For z=1.5 To -1.5 Step -3
@@ -112,14 +112,14 @@ While Not KeyHit(1)
 	EndIf
 
 	;update camera
-	If speed>=0	
+	If speed>=0
 		dx#=EntityX( target,True )-EntityX( camera )
 		dy#=EntityY( target,True )-EntityY( camera )
 		dz#=EntityZ( target,True )-EntityZ( camera )
 		TranslateEntity camera,dx*.1,dy*.1,dz*.1
 	EndIf
 	PointEntity camera,car
-	
+
 	UpdateWorld
 	RenderWorld
 	Flip

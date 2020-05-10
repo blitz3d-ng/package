@@ -76,30 +76,31 @@ int main( int argc,char *argv[] ){
 		}
 		cmd_line+=argv[i];
 	}
-  bbStartup( argv[0],cmd_line.c_str() );
+	bbStartup( argv[0],cmd_line.c_str() );
 
 	StdioDebugger debugger( trace );
-  bbAttachDebugger( &debugger );
+	bbAttachDebugger( &debugger );
 
-  if( !(bbRuntime=bbCreateRuntime()) ){
-    cerr<<"Failed to create runtime"<<endl;
-    return 1;
-  }
+	if( !(bbRuntime=bbCreateRuntime()) ){
+		cerr<<"Failed to create runtime"<<endl;
+		return 1;
+	}
 
-  int retcode=0;
-  try{
-    if( !bbruntime_create() ) return 1;
-    bbMain();
-  }catch( bbEx &ex ){
-    if( ex.err ){
+	int retcode=0;
+	try{
+		if( !bbruntime_create() ) return 1;
+		bbMain();
+	}catch( bbEx &ex ){
+		if( ex.err ){
 			if( bb_env.debug ){
 				debugger.debugLog( ex.err );
 			}else{
 				cerr<<ex.err<<endl;
 			}
 		}
-    retcode=1;
-  }
-  bbruntime_destroy();
-  return retcode;
+		retcode=1;
+	}
+	bbruntime_destroy();
+
+	return retcode;
 }

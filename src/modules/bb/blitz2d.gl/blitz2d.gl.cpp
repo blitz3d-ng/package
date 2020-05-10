@@ -244,14 +244,4 @@ void GLB2DCanvas::setPixelFast( int x,int y,unsigned argb ){
 	glDrawPixels( 1,1,GL_RGBA,GL_UNSIGNED_BYTE,rgba );
 }
 
-BBMODULE_CREATE( blitz2d_gl ){
-#if defined(__linux__) || defined(_WIN32)
-	return glewInit()==GLEW_OK;
-#else
-	return true;
-#endif
-}
-
-BBMODULE_DESTROY( blitz2d_gl ){
-	return true;
-}
+BBMODULE_EMPTY( blitz2d_gl )

@@ -11,3 +11,5 @@ ENDIF()
 add_subdirectory(tree)
 
 target_compile_definitions(glfw PRIVATE GLEW_STATIC)
+
+add_library(glfw3 ALIAS glfw)

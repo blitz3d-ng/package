@@ -11,11 +11,15 @@ module Blitz3D
 
       def initialize(code)
         _, @identifier, @type, @default = code.match(REGEX).to_a
-        throw "invalid param for #{code.red}" unless @identifier.present? && @type.present?
+        raise "invalid param for #{code.red}" unless @identifier.present? && @type.present?
         if @default.present?
-          @default =~ /^-?[0-9]+$/ && @default = @default.to_i
-          @default =~ /^-?[0-9]\.[0-9]+$/ && @default = @default.to_f
-          @default =~ /^"(.*)"$/ && @default = $1
+          @default = if @default =~ /^-?[0-9]+$/
+            @default.to_i
+          elsif @default =~ /^-?[0-9]\.[0-9]+$/
+            @default.to_f
+          elsif @default =~ /^"(.*)"$/
+            $1
+          end
         end
       end
 

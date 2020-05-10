@@ -1,0 +1,7 @@
+if(BB_LINUX)
+  bb_start_module(system.linux)
+  set(DEPENDS_ON bb.runtime bb.system)
+  set(SOURCES system.linux.cpp system.linux.h)
+  set(LIBS fontconfig)
+  bb_end_module()
+endif()

@@ -6,11 +6,3 @@ platforms:
 
 dependencies:
   - system
-
-
-premake5:
-  removebuildoptions:
-    - -std=c++11
-
-  links:
-    - Cocoa.framework

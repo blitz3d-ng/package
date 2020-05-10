@@ -42,7 +42,7 @@ Open up a command prompt via `Start -> Visual Studio 2019 -> Developer Command P
 ```
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 > cd blitz3d-ng
-> make release
+> make release win32
 > make release win64
 ```
 
@@ -51,18 +51,22 @@ Open up a command prompt via `Start -> Visual Studio 2019 -> Developer Command P
 Install [Xcode](https://developer.apple.com/xcode/) and [brew](http://brew.sh/).
 
 ```bash
+$ brew install cmake wxmac
+$ bundle
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
-$ brew install wxmac # optional, if you want to build the new IDE
 $ bin/blitz3d config && make ENV=release
 ```
 
 ### Linux
 
+Setup will vary across distributions, but here is an example for Ubuntu.
+
 ```bash
+$ sudo apt-get install -y libxml2-dev zlib1g-dev build-essential autoconf libtool gettext autopoint gperf cmake clang libwxgtk3.0-gtk3-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev
+$ bundle
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
 $ cd blitz3d-ng
-$ apt-get install -y build-essential libwxgtk3.0-dev
 $ bin/blitz3d config && make ENV=release
 ```
 

@@ -27,10 +27,6 @@ BBMODULE_DECL( input_directinput8 );
 BBMODULE_DECL( audio );
 BBMODULE_DECL( audio_fmod );
 BBMODULE_DECL( userlibs );
-BBMODULE_DECL( pixmap );
-BBMODULE_DECL( blitz2d );
-BBMODULE_DECL( graphics );
-BBMODULE_DECL( runtime_glfw3 );
 
 class BBRuntime;
 BBRuntime *bbCreateOpenGLRuntime();
@@ -55,8 +51,6 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	input_link( link );
 	audio_link( link );
 	userlibs_link( link );
-	blitz2d_link( link );
-	graphics_link( link );
 }
 #endif
 bool bbruntime_create(){
@@ -81,19 +75,7 @@ bool bbruntime_create(){
 																																						if( audio_create() ){
 																																								if( audio_fmod_create() ){
 																																										if( userlibs_create() ){
-																																												if( pixmap_create() ){
-																																														if( blitz2d_create() ){
-																																																if( graphics_create() ){
-																																																		if( runtime_glfw3_create() ){
-																																																				return true;
-																									}else sue( "runtime_glfw3_create failed" );
-																									graphics_destroy();
-																								}else sue( "graphics_create failed" );
-																								blitz2d_destroy();
-																							}else sue( "blitz2d_create failed" );
-																							pixmap_destroy();
-																						}else sue( "pixmap_create failed" );
-																						userlibs_destroy();
+																																												return true;
 																					}else sue( "userlibs_create failed" );
 																					audio_fmod_destroy();
 																				}else sue( "audio_fmod_create failed" );
@@ -139,10 +121,6 @@ bool bbruntime_create(){
 }
 
 bool bbruntime_destroy(){
-	runtime_glfw3_destroy();
-	graphics_destroy();
-	blitz2d_destroy();
-	pixmap_destroy();
 	userlibs_destroy();
 	audio_fmod_destroy();
 	audio_destroy();

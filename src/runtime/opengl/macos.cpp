@@ -28,6 +28,7 @@ BBMODULE_DECL( input );
 BBMODULE_DECL( pixmap );
 BBMODULE_DECL( blitz2d );
 BBMODULE_DECL( graphics );
+BBMODULE_DECL( graphics_gl );
 BBMODULE_DECL( blitz3d );
 BBMODULE_DECL( blitz2d_gl );
 BBMODULE_DECL( blitz3d_gl );
@@ -82,18 +83,21 @@ bool bbruntime_create(){
 																																								if( pixmap_create() ){
 																																										if( blitz2d_create() ){
 																																												if( graphics_create() ){
-																																														if( blitz3d_create() ){
-																																																if( blitz2d_gl_create() ){
-																																																		if( blitz3d_gl_create() ){
-																																																				if( runtime_glfw3_create() ){
-																																																						return true;
-																										}else sue( "runtime_glfw3_create failed" );
-																										blitz3d_gl_destroy();
-																									}else sue( "blitz3d_gl_create failed" );
-																									blitz2d_gl_destroy();
-																								}else sue( "blitz2d_gl_create failed" );
-																								blitz3d_destroy();
-																							}else sue( "blitz3d_create failed" );
+																																														if( graphics_gl_create() ){
+																																																if( blitz3d_create() ){
+																																																		if( blitz2d_gl_create() ){
+																																																				if( blitz3d_gl_create() ){
+																																																						if( runtime_glfw3_create() ){
+																																																								return true;
+																											}else sue( "runtime_glfw3_create failed" );
+																											blitz3d_gl_destroy();
+																										}else sue( "blitz3d_gl_create failed" );
+																										blitz2d_gl_destroy();
+																									}else sue( "blitz2d_gl_create failed" );
+																									blitz3d_destroy();
+																								}else sue( "blitz3d_create failed" );
+																								graphics_gl_destroy();
+																							}else sue( "graphics_gl_create failed" );
 																							graphics_destroy();
 																						}else sue( "graphics_create failed" );
 																						blitz2d_destroy();
@@ -146,6 +150,7 @@ bool bbruntime_destroy(){
 	blitz3d_gl_destroy();
 	blitz2d_gl_destroy();
 	blitz3d_destroy();
+	graphics_gl_destroy();
 	graphics_destroy();
 	blitz2d_destroy();
 	pixmap_destroy();

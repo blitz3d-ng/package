@@ -250,17 +250,18 @@ public:
 BBGraphics *GLFW3Runtime::openGraphics( int w,int h,int d,int driver,int flags ){
 	if( graphics ) return 0;
 
-	if( (graphics=d_new GLFW3Graphics( wnd )) ){
-		const GLFWvidmode* mode=glfwGetVideoMode( glfwGetPrimaryMonitor() );
-		glfwSetWindowPos( wnd,(mode->width-w)/2.0f,(mode->height-h)/2.0f );
-		glfwSetWindowSize( wnd,w,h );
-		glfwShowWindow( wnd );
-		glfwMakeContextCurrent( wnd );
+	const GLFWvidmode* mode=glfwGetVideoMode( glfwGetPrimaryMonitor() );
+	glfwSetWindowPos( wnd,(mode->width-w)/2.0f,(mode->height-h)/2.0f );
+	glfwSetWindowSize( wnd,w,h );
+	glfwShowWindow( wnd );
+	glfwMakeContextCurrent( wnd );
 
-#if defined(__linux__) || defined(_WIN32) // TODO: move this elsewhere...
-		int err=glewInit();
-		if( err!=GLEW_OK ) RTEX( (const char*)glewGetErrorString(err) );
+#if defined(BB_MACOS) || defined(BB_LINUX)
+	int err=glewInit();
+	if( err!=GLEW_OK ) RTEX( (const char*)glewGetErrorString(err) );
 #endif
+
+	if( (graphics=d_new GLFW3Graphics( wnd )) ){
 
 #ifdef WIN32
 		glfwFocusWindow( wnd );

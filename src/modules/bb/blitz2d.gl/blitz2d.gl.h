@@ -4,21 +4,9 @@
 #include <iostream>
 using namespace std;
 
+#include <bb/graphics.gl/graphics.gl.h>
 #include <bb/blitz2d/blitz2d.h>
 #include <bb/pixmap/pixmap.h>
-
-#if defined(__linux__) || defined(_WIN32)
-#include <GL/glew.h>
-#endif
-
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
-#else
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-// #include <GL/glext.h>
-#endif
 
 #include <iostream>
 
@@ -193,9 +181,9 @@ class GLB2DDefaultCanvas : public GLB2DCanvas{
 protected:
 	int mode;
 
-  void bind()const{}
+	void bind()const{}
 public:
-  GLB2DDefaultCanvas( int m,int f ):GLB2DCanvas(f),mode(m){
+	GLB2DDefaultCanvas( int m,int f ):GLB2DCanvas(f),mode(m){
 		set();
 		glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 	}
