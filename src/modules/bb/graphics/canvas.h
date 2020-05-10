@@ -1,7 +1,7 @@
 #ifndef BBCANVAS_H
 #define BBCANVAS_H
 
-#include "../../config/config.h"
+#include "../config.h"
 #include <bb/blitz/module.h>
 #include <string>
 

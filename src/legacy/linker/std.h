@@ -2,7 +2,7 @@
 #ifndef STD_LINKER_H
 #define STD_LINKER_H
 
-#include "../../../config/config.h"
+#include "../../config.h"
 #include "../../../stdutil/stdutil.h"
 
 #include <map>

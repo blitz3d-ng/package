@@ -1,7 +1,7 @@
 #ifndef BB_BLITZ_COMMANDS_H
 #define BB_BLITZ_COMMANDS_H
 
-#include "../../config/config.h"
+#include "../config.h"
 #include "module.h"
 
 #include <math.h>
