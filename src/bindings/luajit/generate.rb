@@ -140,7 +140,9 @@ File.open(File.expand_path('CMakeLists.txt', runtime_dir), 'w') do |f|
   f.write "# RUN `ruby src/bindings/luajit/generate.rb` TO UPDATE.\n\n"
 
   f.write "include_directories(../../../modules)\n"
-  f.write "add_compile_options(-Wno-int-conversion)\n\n"
+  f.write "if(NOT BB_MSVC)\n"
+  f.write "  add_compile_options(-Wno-int-conversion)\n"
+  f.write "endif()\n\n"
 
   Blitz3D::Runtime.all.each do |rt|
     f.write "if(TARGET runtime.#{rt.id}.static)\n"

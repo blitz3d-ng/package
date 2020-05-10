@@ -8,10 +8,6 @@
 #include <cstring>
 using namespace std;
 
-#include <execinfo.h>
-#include <signal.h>
-#include <unistd.h>
-
 extern "C" {
 	#include <luajit.h>
 	#include <lauxlib.h>
@@ -50,6 +46,11 @@ public:
 	}
 };
 
+#ifndef BB_WINDOWS
+#include <execinfo.h>
+#include <signal.h>
+#include <unistd.h>
+
 #ifdef BB_DEBUG
 #define BACKTRACE_DEPTH 10
 void dump_backtrace(int sig) {
@@ -63,15 +64,18 @@ void dump_backtrace(int sig) {
 	exit( 1 );
 }
 #endif
+#endif
 
 extern "C" void bbMain();
 
 int main( int argc,char *argv[] ){
+#ifndef BB_WINDOWS
 #ifdef BB_DEBUG
 	signal(SIGSEGV, dump_backtrace);
 	bb_env.debug=true;
 #else
 	bb_env.debug=false;
+#endif
 #endif
 
 	bool trace=false;

@@ -115,8 +115,8 @@ IF(BB_MSVC)
   ENDIF()
 
   IF(NOT BB_DEBUG)
-    add_link_options(/GL) # TODO: only apply to executables/dlls
-    add_compile_options(/LTCG)
+    # add_link_options(/GL) # TODO: only apply to executables/dlls
+    # add_compile_options(/LTCG)
   ENDIF()
 
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
