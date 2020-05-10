@@ -3,8 +3,3 @@ description: Provides window handling.
 
 platforms:
   - windows
-
-premake5:
-  files:
-    - frame.cpp
-    - frame.h

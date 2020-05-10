@@ -38,7 +38,3 @@ commands:
   - MovieHeight%( movie% ):"bbMovieHeight"
   - MoviePlaying%( movie% ):"bbMoviePlaying"
   - CloseMovie( movie% ):"bbCloseMovie"
-
-premake5:
-  links:
-    - freetype2

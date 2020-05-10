@@ -10,23 +10,3 @@ dependencies:
 
 commands:
   - CallDLL( dll_name$,func_name$,in_bank%=0,out_bank%=0 ):"bbCallDLL"
-
-premake5:
-  files:
-    - system.windows.cpp
-    - system.windows.h
-
-  links:
-    - winmm
-    - kernel32
-    - user32
-    - gdi32
-    - winspool
-    - comdlg32
-    - advapi32
-    - shell32
-    - ole32
-    - oleaut32
-    - uuid
-    - odbc32
-    - odbccp32

@@ -6,7 +6,3 @@ platforms:
 
 dependencies:
   - system
-
-premake5:
-  links:
-    - Cocoa.framework

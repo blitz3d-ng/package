@@ -69,7 +69,3 @@ commands:
   - End():"bbEnd"
   - AppTitle( title$,close_prompt$="" ):"bbAppTitle"
   - CommandLine$():"bbCommandLine"
-
-premake5:
-  links:
-    - stdutil

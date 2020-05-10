@@ -7,13 +7,3 @@ dependencies:
 commands:
   - WriteStdout( str$ ):"bbWriteStdout"
   - WriteStderr( str$ ):"bbWriteStderr"
-
-make:
-  files:
-    - stdio.cpp
-    - commands.h
-
-premake5:
-  files:
-    - stdio.cpp
-    - commands.h

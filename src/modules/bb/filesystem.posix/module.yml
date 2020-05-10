@@ -7,15 +7,3 @@ platforms:
 
 dependencies:
   - filesystem
-
-make:
-  files:
-    - filesystem.posix.cpp
-    - filesystem.posix.h
-    - commands.h
-
-premake5:
-  files:
-    - filesystem.posix.cpp
-    - filesystem.posix.h
-    - commands.h

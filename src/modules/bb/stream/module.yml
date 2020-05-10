@@ -23,13 +23,3 @@ commands:
   - WriteLine( stream%,string$ ):"bbWriteLine"
 
   - CopyStream( src_stream%,dest_stream%,buffer_size%=16384 ):"bbCopyStream"
-
-make:
-  files:
-    - stream.cpp
-    - stream.h
-
-premake5:
-  files:
-    - stream.cpp
-    - stream.h

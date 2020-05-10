@@ -4,13 +4,3 @@ description: Provides event functions.
 dependencies:
   - blitz
   - hook
-
-make:
-  files:
-    - event.cpp
-    - event.h
-
-premake5:
-  files:
-    - event.cpp
-    - event.h
