@@ -21,7 +21,6 @@ void	 BBCALL bbLine( int x1,int y1,int x2,int y2 );
 void	 BBCALL bbRect( int x,int y,int w,int h,int solid );
 void	 BBCALL bbOval( int x,int y,int w,int h,int solid );
 void	 BBCALL bbText( int x,int y,BBStr *str,int centre_x,int centre_y );
-void	 BBCALL bbCopyRect( int sx,int sy,int w,int h,int dx,int dy,BBCanvas *src,BBCanvas *dest );
 void	 BBCALL bbGetColor( int x,int y );
 int		 BBCALL bbColorRed();
 int		 BBCALL bbColorGreen();

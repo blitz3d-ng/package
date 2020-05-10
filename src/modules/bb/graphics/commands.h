@@ -67,7 +67,7 @@ int		 BBCALL bbReadPixel( int x,int y,BBCanvas *buff );
 void	 BBCALL bbWritePixel( int x,int y,int argb,BBCanvas *buff );
 int		 BBCALL bbReadPixelFast( int x,int y,BBCanvas *buff );
 void	 BBCALL bbWritePixelFast( int x,int y,int argb,BBCanvas *buff );
-
+void	 BBCALL bbCopyRect( int sx,int sy,int w,int h,int dx,int dy,BBCanvas *src,BBCanvas *dest );
 
 //image functions
 bbImage* BBCALL bbLoadImage( BBStr *s );
