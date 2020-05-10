@@ -256,7 +256,7 @@ BBGraphics *GLFW3Runtime::openGraphics( int w,int h,int d,int driver,int flags )
 	glfwShowWindow( wnd );
 	glfwMakeContextCurrent( wnd );
 
-#if defined(BB_MACOS) || defined(BB_LINUX)
+#if defined(BB_WINDOWS) || defined(BB_LINUX)
 	int err=glewInit();
 	if( err!=GLEW_OK ) RTEX( (const char*)glewGetErrorString(err) );
 #endif
