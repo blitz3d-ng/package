@@ -14,6 +14,7 @@ add_subdirectory(glew)
 add_subdirectory(json-hpp)
 add_subdirectory(ogg)
 add_subdirectory(vorbis)
+add_subdirectory(steamworks)
 
 IF(BB_DESKTOP)
   add_subdirectory(freeimage)
