@@ -1,6 +1,6 @@
 if(TARGET steamworks)
   bb_start_module(steamworks)
-  set(SOURCES bindings.cpp)
+  set(SOURCES steamworks.cpp bindings.cpp)
   set(LIBS steamworks)
   bb_end_module()
 endif()
