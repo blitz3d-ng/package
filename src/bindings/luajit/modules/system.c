@@ -3,7 +3,7 @@
 
 #include <bb/system/commands.h>
 
-#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32) || defined(BB_MACOS) || defined(BB_LINUX) || defined(BB_IOS) || defined(BB_ANDROID) || defined(BB_EMSCRIPTEN)
+#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32) || defined(BB_MACOS) || defined(BB_LINUX) || defined(BB_IOS) || defined(BB_ANDROID) || defined(BB_EMSCRIPTEN) || defined(BB_NX)
 #define BB_SYSTEM_ENABLED
 
 static int l_system_DPIScaleX( lua_State *L ){

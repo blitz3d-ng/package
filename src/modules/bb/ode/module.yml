@@ -5,6 +5,7 @@ platforms:
   - windows
   - mac
   - linux
+  - nx
 
 dependencies:
   - blitz3d

@@ -2,6 +2,9 @@
 
 /* Copyright (C) 1998 DJ Delorie, see COPYING.DJ for details */
 
+#include <string.h>
+#include <stdio.h>
+
 /*
 * @implemented
 */

@@ -2,7 +2,7 @@ IF(NOT BB_IOS)
   add_subdirectory(zlib)
 ENDIF()
 
-IF(NOT BB_EMSCRIPTEN)
+IF(NOT BB_EMSCRIPTEN AND NOT BB_NX)
   add_subdirectory(enet)
 ENDIF()
 
@@ -28,6 +28,6 @@ IF(BB_WINDOWS)
   add_subdirectory(fmod)
 ENDIF()
 
-IF(BB_DESKTOP OR BB_EMSCRIPTEN)
+IF(BB_DESKTOP OR BB_EMSCRIPTEN OR BB_NX)
   add_subdirectory(ode)
 ENDIF()

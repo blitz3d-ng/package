@@ -19,6 +19,8 @@ ELSEIF(BB_ANDROID)
   set(SOURCES android.cpp)
 ELSEIF(BB_EMSCRIPTEN)
   set(SOURCES emscripten.cpp)
+ELSEIF(BB_NX)
+  set(SOURCES nx.cpp)
 ENDIF()
 
 if(NOT SOURCES)

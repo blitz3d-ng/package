@@ -3,7 +3,7 @@
 
 #include <bb/ode/commands.h>
 
-#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32) || defined(BB_MAC) || defined(BB_LINUX)
+#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32) || defined(BB_MAC) || defined(BB_LINUX) || defined(BB_NX)
 #define BB_ODE_ENABLED
 
 static int l_ode_dBodyCreate( lua_State *L ){

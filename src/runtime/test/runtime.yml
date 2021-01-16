@@ -8,6 +8,7 @@ platforms:
   - ios
   - android
   - emscripten
+  - nx
 
 modules:
   - blitz

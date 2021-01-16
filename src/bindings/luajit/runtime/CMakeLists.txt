@@ -6,12 +6,12 @@ if(NOT BB_MSVC)
   add_compile_options(-Wno-int-conversion)
 endif()
 
-if(TARGET runtime.d3d7.static)
-  blitzlua(d3d7)
-endif()
-
 if(TARGET runtime.opengl.static)
   blitzlua(opengl)
+endif()
+
+if(TARGET runtime.d3d7.static)
+  blitzlua(d3d7)
 endif()
 
 if(TARGET runtime.test.static)

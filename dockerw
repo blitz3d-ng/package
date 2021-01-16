@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+##
+# Simple script to build, run, and mount docker image.
+
+IMAGE=blitz3d
+WORKING_DIR=/blitz3d
+
+docker build --target=build -t $IMAGE .
+docker run --rm -it -v "`pwd`:$WORKING_DIR" -w $WORKING_DIR $IMAGE bash

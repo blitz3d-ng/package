@@ -3,7 +3,7 @@
 
 #include <bb/enet/commands.h>
 
-#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32) || defined(BB_MACOS) || defined(BB_LINUX)
+#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32) || defined(BB_MACOS) || defined(BB_LINUX) || defined(BB_NX)
 #define BB_ENET_ENABLED
 
 static int l_enet_CreateNetPlayer( lua_State *L ){

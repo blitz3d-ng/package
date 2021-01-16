@@ -49,6 +49,9 @@ ELSEIF(BB_PLATFORM MATCHES android)
 ELSEIF(BB_PLATFORM MATCHES emscripten)
   set (BB_EMSCRIPTEN true)
   add_definitions(-DBB_EMSCRIPTEN)
+ELSEIF(BB_PLATFORM MATCHES nx)
+  set (BB_NX true)
+  add_definitions(-DBB_NX)
 ENDIF()
 
 IF(BB_WIN32 OR BB_WIN64 OR BB_MINGW32)
@@ -132,6 +135,12 @@ IF(BB_DEBUG AND USE_LLVM)
   add_compile_options(-fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls)
   add_link_options(-fsanitize=address)
 ENDIF()
+
+IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+   add_compile_options (-fdiagnostics-color=always)
+ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  add_compile_options (-fcolor-diagnostics)
+ENDIF ()
 
 add_subdirectory(deps)
 

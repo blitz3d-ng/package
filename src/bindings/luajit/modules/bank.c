@@ -3,7 +3,7 @@
 
 #include <bb/bank/commands.h>
 
-#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32) || defined(BB_MACOS) || defined(BB_LINUX) || defined(BB_IOS) || defined(BB_ANDROID) || defined(BB_EMSCRIPTEN)
+#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32) || defined(BB_MACOS) || defined(BB_LINUX) || defined(BB_IOS) || defined(BB_ANDROID) || defined(BB_EMSCRIPTEN) || defined(BB_NX)
 #define BB_BANK_ENABLED
 
 static int l_bank_BankSize( lua_State *L ){

@@ -10,4 +10,6 @@ IF(BB_MACOS)
 ELSEIF(BB_MSVC)
   # suppress doube -> dReal warnings
   target_compile_options(ode PRIVATE /w4244)
+ELSEIF(BB_NX)
+  target_compile_definitions(ode PRIVATE __linux__ __unix__)
 ENDIF()

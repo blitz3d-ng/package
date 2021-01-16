@@ -8,9 +8,11 @@
 #include <cstring>
 using namespace std;
 
-#include <execinfo.h>
 #include <signal.h>
 #include <unistd.h>
+#ifndef BB_ANDROID
+#include <execinfo.h>
+#endif
 
 class StdioDebugger : public Debugger{
 private:
