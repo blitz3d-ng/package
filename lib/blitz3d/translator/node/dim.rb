@@ -9,7 +9,7 @@ module Blitz3D
         @tag = json['tag']
         @exprs = json['exprs'].map { |e| Node.load(e) }
         @sem_type = Type.load(json['sem_type'])
-        @sem_decl = Decl.new(json['sem_decl'])
+        @sem_decl = Decl.new(json['sem_decl']) if json['sem_decl']
       end
 
       def to_c(&cleanup)

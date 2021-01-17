@@ -40,6 +40,41 @@ using namespace std;
 #define DEBUGGER "debugger.console"
 #endif
 
+#ifdef BB_MACOS
+#include <unistd.h>
+#include <execinfo.h>
+#include <signal.h>
+
+static void print_trace() {
+	void *array[10];
+	char **strings;
+	int size, i;
+
+	size = backtrace (array, 100);
+	strings = backtrace_symbols (array, size);
+	if (strings != NULL) {
+		fprintf(stderr, "Obtained %d stack frames.\n", size);
+		for (i = 0; i < size; i++) {
+			fprintf(stderr, "%s\n", strings[i]);
+		}
+	}
+
+	free(strings);
+}
+
+static void handle_abort(int sig) {
+	fprintf(stderr, "signal: abort\n");
+	print_trace();
+	exit(1);
+}
+
+static void handle_segfault(int sig) {
+	fprintf(stderr, "signal: segfault\n");
+	print_trace();
+	exit(1);
+}
+#endif
+
 static void showInfo(){
 	const int major=(VERSION&0xffff)/100,minor=(VERSION&0xffff)%100;
 	cout<<"Blitz3D-NG V"<<major<<"."<<setfill('0')<<setw(2)<<minor<<endl;
@@ -177,6 +212,10 @@ static const char *enumRuntimes( vector<string> &rts ){
 #endif
 
 int main( int argc,char *argv[] ){
+#ifdef BB_MACOS
+	signal(SIGABRT, handle_abort);
+	signal(SIGSEGV, handle_segfault);
+#endif
 
 	string in_file,out_file,rt,args;
 	vector<string> rts;

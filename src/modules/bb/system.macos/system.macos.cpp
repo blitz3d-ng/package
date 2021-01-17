@@ -4,6 +4,7 @@
 
 #include <CoreServices/CoreServices.h>
 #include <unistd.h>
+#include <mach-o/dyld.h>
 
 #include <fstream>
 using namespace std;

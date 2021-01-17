@@ -79,11 +79,11 @@ module Blitz3D
         arrays = arrays.join(";\n")
 
         globals = self.globals.map do |decl|
-          "static #{decl.type.to_c} #{decl.name}=#{decl.type.default_value};"
+          "static #{decl.type.to_c} _v#{decl.name}=#{decl.type.default_value};"
         end.join("\n")
 
         locals = self.locals.map do |decl|
-          "#{decl.type.to_c} #{decl.name}=0;"
+          "#{decl.type.to_c} _v#{decl.name}=0;"
         end.join("\n")
 
         statements = [

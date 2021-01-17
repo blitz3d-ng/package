@@ -47,3 +47,14 @@ void DimNode::translate( Codegen *g ){
 	g->i_data( exprs->size() );
 	for( int k=0;k<exprs->size();++k ) g->i_data( 0 );
 }
+
+json DimNode::toJSON( Environ *e ){
+	json tree;tree["@class"]="DimNode";
+	tree["pos"]=pos;
+	tree["ident"]=ident;
+	tree["tag"]=tag;
+	tree["exprs"]=exprs->toJSON( e );
+	tree["sem_type"]=sem_type->toJSON();
+	if( sem_decl ) tree["sem_decl"]=sem_decl->toJSON();
+	return tree;
+}

@@ -16,7 +16,7 @@ if(BB_DESKTOP AND NOT BB_MINGW32)
       GIT_TAG v2.1.0-beta3
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
-      INSTALL_COMMAND /bin/sh -c "file ${LUAJIT_LIB} | grep archive > /dev/null || (cp -r ../LUAJIT_EXTERNAL/* . && sed -i'' \"s|/usr/local|${LUAJIT_ROOT}|g\" Makefile && make ${MAKE_FLAGS} install)"
+      INSTALL_COMMAND /bin/sh -c "file ${LUAJIT_LIB} | grep archive > /dev/null || (cp -r ../LUAJIT_EXTERNAL/* . && sed -i '' \"s|/usr/local|${LUAJIT_ROOT}|g\" Makefile && make ${MAKE_FLAGS} install)"
     )
   elseif(BB_WINDOWS)
     ExternalProject_Add(LUAJIT_EXTERNAL

@@ -12,7 +12,7 @@ module Blitz3D
       end
 
       def to_c
-        i = exprs.map.with_index { |e, i| "(#{e.to_c} * #{var}.scales[#{i}])" }
+        i = exprs.map.with_index { |e, i| "((bb_int_t)(#{e.to_c}) * #{var}.scales[#{i}])" }
         "((#{sem_decl.type.element_type.to_c}*)#{var}.data)[#{i.join(' + ')}]"
       end
 

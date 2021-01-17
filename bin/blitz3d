@@ -46,7 +46,7 @@ when 'run'
 
   was_built = system command
   if !was_built
-    File.unlink out_file if File.exist?(out_file)
+    File.unlink out_file if File.exist?(out_file) && tmp_file
     STDERR.puts 'Failed to build.'
     exit 1
   end

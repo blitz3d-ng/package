@@ -3,7 +3,7 @@
 
 #include <bb/sockets/commands.h>
 
-#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MINGW32)
+#if defined(BB_WIN32) || defined(BB_WIN64) || defined(BB_MACOS) || defined(BB_LINUX)
 #define BB_SOCKETS_ENABLED
 
 static int l_sockets_AcceptTCPStream( lua_State *L ){

@@ -10,11 +10,11 @@ module Blitz3D
       end
 
       def to_h
-        "#{sem_type.to_c} #{ident}"
+        "#{sem_type.to_c} _v#{ident}"
       end
 
       def to_c
-        ident
+        "_v#{ident}"
       end
     end
   end

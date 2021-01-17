@@ -12,6 +12,7 @@ BBMODULE_DECL( string );
 BBMODULE_DECL( stream );
 BBMODULE_DECL( bank );
 BBMODULE_DECL( stdio );
+BBMODULE_DECL( sockets );
 BBMODULE_DECL( hook );
 BBMODULE_DECL( enet );
 BBMODULE_DECL( runtime );
@@ -41,6 +42,7 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	stream_link( link );
 	bank_link( link );
 	stdio_link( link );
+	sockets_link( link );
 	enet_link( link );
 	runtime_link( link );
 	system_link( link );
@@ -58,48 +60,51 @@ bool bbruntime_create(){
 								if( stream_create() ){
 										if( bank_create() ){
 												if( stdio_create() ){
-														if( hook_create() ){
-																if( enet_create() ){
-																		if( runtime_create() ){
-																				if( system_create() ){
-																						if( system_linux_create() ){
-																								if( filesystem_create() ){
-																										if( filesystem_posix_create() ){
-																												if( timer_create() ){
-																														if( timer_noop_create() ){
-																																if( input_create() ){
-																																		if( audio_create() ){
-																																				if( event_create() ){
-																																						if( runtime_console_create() ){
-																																								if( unit_test_create() ){
-																																										return true;
-																				}else sue( "unit_test_create failed" );
-																				runtime_console_destroy();
-																			}else sue( "runtime_console_create failed" );
-																			event_destroy();
-																		}else sue( "event_create failed" );
-																		audio_destroy();
-																	}else sue( "audio_create failed" );
-																	input_destroy();
-																}else sue( "input_create failed" );
-																timer_noop_destroy();
-															}else sue( "timer_noop_create failed" );
-															timer_destroy();
-														}else sue( "timer_create failed" );
-														filesystem_posix_destroy();
-													}else sue( "filesystem_posix_create failed" );
-													filesystem_destroy();
-												}else sue( "filesystem_create failed" );
-												system_linux_destroy();
-											}else sue( "system_linux_create failed" );
-											system_destroy();
-										}else sue( "system_create failed" );
-										runtime_destroy();
-									}else sue( "runtime_create failed" );
-									enet_destroy();
-								}else sue( "enet_create failed" );
-								hook_destroy();
-							}else sue( "hook_create failed" );
+														if( sockets_create() ){
+																if( hook_create() ){
+																		if( enet_create() ){
+																				if( runtime_create() ){
+																						if( system_create() ){
+																								if( system_linux_create() ){
+																										if( filesystem_create() ){
+																												if( filesystem_posix_create() ){
+																														if( timer_create() ){
+																																if( timer_noop_create() ){
+																																		if( input_create() ){
+																																				if( audio_create() ){
+																																						if( event_create() ){
+																																								if( runtime_console_create() ){
+																																										if( unit_test_create() ){
+																																												return true;
+																					}else sue( "unit_test_create failed" );
+																					runtime_console_destroy();
+																				}else sue( "runtime_console_create failed" );
+																				event_destroy();
+																			}else sue( "event_create failed" );
+																			audio_destroy();
+																		}else sue( "audio_create failed" );
+																		input_destroy();
+																	}else sue( "input_create failed" );
+																	timer_noop_destroy();
+																}else sue( "timer_noop_create failed" );
+																timer_destroy();
+															}else sue( "timer_create failed" );
+															filesystem_posix_destroy();
+														}else sue( "filesystem_posix_create failed" );
+														filesystem_destroy();
+													}else sue( "filesystem_create failed" );
+													system_linux_destroy();
+												}else sue( "system_linux_create failed" );
+												system_destroy();
+											}else sue( "system_create failed" );
+											runtime_destroy();
+										}else sue( "runtime_create failed" );
+										enet_destroy();
+									}else sue( "enet_create failed" );
+									hook_destroy();
+								}else sue( "hook_create failed" );
+								sockets_destroy();
+							}else sue( "sockets_create failed" );
 							stdio_destroy();
 						}else sue( "stdio_create failed" );
 						bank_destroy();
@@ -130,6 +135,7 @@ bool bbruntime_destroy(){
 	runtime_destroy();
 	enet_destroy();
 	hook_destroy();
+	sockets_destroy();
 	stdio_destroy();
 	bank_destroy();
 	stream_destroy();

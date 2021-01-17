@@ -13,17 +13,7 @@ struct DimNode : public StmtNode{
 	~DimNode(){ delete exprs; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
-
-	json toJSON( Environ *e ){
-		json tree;tree["@class"]="DimNode";
-		tree["pos"]=pos;
-		tree["ident"]=ident;
-		tree["tag"]=tag;
-		tree["exprs"]=exprs->toJSON( e );
-		tree["sem_type"]=sem_type->toJSON();
-		tree["sem_decl"]=sem_decl->toJSON();
-		return tree;
-	}
+	json toJSON( Environ *e );
 };
 
 #endif

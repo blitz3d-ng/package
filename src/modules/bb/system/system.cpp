@@ -77,6 +77,7 @@ float BBCALL bbDPIScaleY(){
 
 BBMODULE_CREATE( system ){
 	bbSystemDriver=0;
+	bbSystemProperties["appdir"]=bbApp().executable_path;
 	return true;
 }
 

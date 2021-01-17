@@ -15,7 +15,7 @@ module Blitz3D
       end
 
       def to_h
-        params = sem_type.params.map(&:to_h)
+        params = sem_type.params.map { |p| p.to_h('_v') }
         "#{sem_type.to_c} _f#{ident}(#{params.join(', ')})"
       end
 
@@ -25,7 +25,7 @@ module Blitz3D
         type_decls = type_decls.join(";\n")
 
         locals = self.locals.map do |decl|
-          "#{decl.type.to_c} #{decl.name}=0;"
+          "#{decl.type.to_c} _v#{decl.name}=0;"
         end.join("\n")
 
         body = [
@@ -41,7 +41,7 @@ module Blitz3D
       def string_load
         sem_type.params.map do |param|
           if param.type.is_a?(StringType)
-            "#{param.name}=_bbStrLoad( &#{param.name} );"
+            "_v#{param.name}=_bbStrLoad( &_v#{param.name} );"
           end
         end.reject(&:blank?).join("\n")
       end
@@ -49,7 +49,7 @@ module Blitz3D
       def string_release
         sem_type.params.map do |param|
           if param.type.is_a?(StringType)
-            "_bbStrRelease( #{param.name} );"
+            "_bbStrRelease( _v#{param.name} );"
           end
         end.reject(&:blank?).join("\n")
       end

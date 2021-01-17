@@ -6,7 +6,7 @@
 
 struct BBApp{
   std::string title,close;
-  std::string cmd_line;
+  std::string executable_path, cmd_line;
 };
 
 extern BBHook bbAppOnChange;

@@ -2,7 +2,7 @@ name: Sockets
 description: Provides low-level access to networking sockets.
 
 platforms:
-  - windows
+  - desktop
 
 dependencies:
   - stream

@@ -15,12 +15,12 @@ module Blitz3D
 
       def to_h
         type = sem_var.try(:sem_decl).try(:type) || IntType.new
-        "#{type.to_c} #{ident}"
+        "#{type.to_c} _v#{ident}"
       end
 
       def to_c
         expr = self.expr || IntConstNode.new('value' => 0)
-        "#{ident}=#{expr.to_c}"
+        "_v#{ident}=#{expr.to_c}"
       end
     end
   end

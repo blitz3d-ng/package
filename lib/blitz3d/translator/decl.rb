@@ -10,8 +10,8 @@ module Blitz3D
         @type = Type.load(json['type']) if json['type']
       end
 
-      def to_h
-        "#{type.to_c} #{name}"
+      def to_h(prefix = '')
+        "#{type.to_c} #{prefix}#{name}"
       end
     end
   end
