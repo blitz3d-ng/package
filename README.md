@@ -79,6 +79,10 @@ $ docker build -t blitz3d - < Dockerfile
 $ docker run -t -i -v `pwd`:/blitz3d-ng blitz3d make ENV=${ENV} PLATFORM=linux
 ```
 
+## Running
+
+To learn how to properly run samples read [\_release/help/running-an-sample.md](_release/help/running-an-sample.md)
+
 ## Documentation
 
 The original Blitz3D help is available in the [\_release/help](_release/help) directory in HTML form. We've started replacing it with a Markdown based system.
