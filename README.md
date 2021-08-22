@@ -29,7 +29,11 @@ To keep the project simple to build, all 3rd-party dependencies are included in 
 
 ### Prerequisites (All platforms)
 
-You'll need [cmake (3.16+)](https://cmake.org/download/) and a [ruby 2+](https://www.ruby-lang.org/en/) install.
+You'll need to install:
+- [cmake (3.16+)](https://cmake.org/download/) 
+- [ruby 2+](https://www.ruby-lang.org/en/)
+- [ninja](https://ninja-build.org/)
+- [bundler](https://bundler.io/)
 
 We use these tools to generate the appropriate build files per-platform as well as documentation.
 
@@ -61,12 +65,26 @@ $ bin/blitz3d config && make ENV=release
 ### Linux
 
 Setup will vary across distributions, but here is an example for Ubuntu.
+Also works for Debian.
 
+1. Install the necessary system packages
 ```bash
 $ sudo apt-get install -y libxml2-dev zlib1g-dev build-essential autoconf libtool gettext autopoint gperf cmake clang libwxgtk3.0-gtk3-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev
-$ bundle
+```
+2. Clone this repository recursively
+```bash
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
+```
+3. Change the working directory to "blitz3d-ng"
+```bash
 $ cd blitz3d-ng
+```
+4. Install the necessary ruby packages
+```bash
+$ bundle
+```
+5. Start the build process
+```bash
 $ bin/blitz3d config && make ENV=release
 ```
 
