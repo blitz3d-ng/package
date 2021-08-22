@@ -15,6 +15,7 @@ using namespace std;
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/ioctl.h>
+#include <cstring>
 
 typedef int SOCKET;
 typedef hostent HOSTENT;
