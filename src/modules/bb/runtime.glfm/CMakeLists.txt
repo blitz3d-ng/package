@@ -4,7 +4,7 @@ if(BB_MOBILE)
   set(SOURCES runtime.glfm.cpp runtime.glfm.h main.cpp sample.c file_compat.h)
   set(LIBS glfm)
   IF(BB_IOS)
-    set(LIBS ${LIBS} "-framework OpenGLES" "-framework UIKit" "-framework CoreGraphics" "-framework QuartzCore")
+    set(LIBS ${LIBS} "-framework OpenGLES" "-framework UIKit" "-framework CoreGraphics" "-framework QuartzCore" "-framework Foundation")
   ENDIF()
 
   bb_end_module()

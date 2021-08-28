@@ -2,23 +2,6 @@ name: CI
 on: [push]
 
 jobs:
-  macos:
-    name: macOS
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-10.15, macos-11]
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - run: brew install ninja
-      - run: make ENV=release PLATFORM=macos
-      - run: bin/blitz3d help --build
-
   windows:
     name: Windows
     runs-on: windows-2019
@@ -44,6 +27,23 @@ jobs:
           name: blitz3d-ng-win32-v${{ github.run_id }}
           path: _release/
 
+  macos:
+    name: macOS
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-10.15, macos-11]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: brew install ninja
+      - run: make ENV=release PLATFORM=macos
+      - run: bin/blitz3d help --build
+
   linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -59,3 +59,17 @@ jobs:
       - run: docker build -t b3d:${{ matrix.dist }} - < test/Dockerfile.${{ matrix.dist }}
       - run: docker run --rm -w /b3d -v $(pwd):/b3d b3d:${{ matrix.dist }} make ENV=release PLATFORM=linux
       - run: docker run --rm -w /b3d -v $(pwd):/b3d b3d:${{ matrix.dist }} bin/blitz3d help --build
+
+
+  ios:
+    name: iOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: make ENV=release PLATFORM=ios
+      - run: bin/blitz3d help --build

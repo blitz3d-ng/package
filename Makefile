@@ -1,4 +1,6 @@
 ENV := release
+GENERATOR := Ninja
+GENERATOR_OPTIONS := -k 0
 
 ifeq ($(shell uname), Darwin)
 NUMBER_OF_CORES=$(shell sysctl -n hw.ncpu)
@@ -20,6 +22,8 @@ endif
 
 ifeq ($(PLATFORM), ios)
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/ios.toolchain.cmake -DIOS_PLATFORM=SIMULATOR64 -DIOS_DEPLOYMENT_TARGET=$(IOS_VERSION)
+GENERATOR=Xcode
+GENERATOR_OPTIONS=
 endif
 
 ifeq ($(PLATFORM), emscripten)
@@ -40,7 +44,7 @@ CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/devkita64.toolchain.cmake
 endif
 
 build:
-	cmake -G Ninja -H. -Bbuild/$(PLATFORM)/$(ENV) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && cmake --build . -j $(NUMBER_OF_CORES) -- -k 0)
+	cmake -G $(GENERATOR) -H. -Bbuild/$(PLATFORM)/$(ENV) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
 
 install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
