@@ -27,8 +27,9 @@ if(BB_DESKTOP AND NOT BB_MINGW32)
       BUILD_COMMAND cd src && msvcbuild.bat static
     )
 
-    set(LUAJIT_INCLUDE ${CMAKE_CURRENT_BINARY_DIR}/deps-luajit-prefix/src/deps-luajit/src)
-    set(LUAJIT_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/deps-luajit-prefix/src/deps-luajit/src)
+    ExternalProject_Get_property(LUAJIT_EXTERNAL SOURCE_DIR)
+    set(LUAJIT_INCLUDE ${SOURCE_DIR}/src)
+    set(LUAJIT_LIB_DIR ${SOURCE_DIR}/src)
     set(LUAJIT_LIB ${LUAJIT_LIB_DIR}/lua51.lib)
   endif()
 
