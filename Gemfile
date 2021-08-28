@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby File.read(File.expand_path('./.ruby-version', __dir__)).strip
+
 gem 'github-markup', require: 'github/markup'
 gem 'commonmarker', platforms: [:ruby, :x64_mingw] # doesn't build under MinGW for some reason...
 gem 'htmlbeautifier'
