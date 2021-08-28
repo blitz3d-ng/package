@@ -37,8 +37,8 @@ ECHO Building %PLATFORM% in %ENV% mode.
 set OUTPUT=_release\toolchains\%PLATFORM%
 set RELEASE=_release
 
-cmake -G "%GENERATOR%" -H. -B"%cd%\build\%PLATFORM%\%ENV%" -A%ARCH% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b
-msbuild /nologo /verbosity:normal /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%CONFIG% /property:Platform=%ARCH% || exit /b
+cmake -G "%GENERATOR%" -H. -B"%cd%\build\%PLATFORM%\%ENV%" -A%ARCH% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b 1
+msbuild /nologo /verbosity:normal /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%CONFIG% /property:Platform=%ARCH% || exit /b 1
 
 COPY /Y %OUTPUT%\bin\Blitz3D*.exe %RELEASE%
 COPY /Y %OUTPUT%\bin\ide*.exe %RELEASE%\bin
