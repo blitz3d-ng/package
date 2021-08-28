@@ -36,3 +36,19 @@ jobs:
         with:
           bundler-cache: true
       - run: .\make.bat release ${{ matrix.arch }}
+      - run: ruby bin\blitz3d help --build
+
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dist:
+          - debian10
+          - debian11
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: docker build -t b3d:${{ matrix.dist }} - < test/Dockerfile.${{ matrix.dist }}
+      - run: docker run --rm -it -w /b3d -v $(pwd):/b3d b3d:${{ matrix.dist }} make ENV=release PLATFORM=linux
