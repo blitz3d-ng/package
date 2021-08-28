@@ -38,6 +38,11 @@ jobs:
           bundler-cache: true
       - run: .\make.bat release ${{ matrix.arch }}
       - run: ruby bin\blitz3d help --build
+      - name: Archive build
+        uses: actions/upload-artifact@v2
+        with:
+          name: blitz3d-ng-win32-v${{ github.run_id }}
+          path: _release/
 
   linux:
     name: Linux

@@ -6,6 +6,7 @@
 
 #include <set>
 #include <vector>
+#include <cstring>
 using namespace std;
 
 #ifndef BB_WINDOWS
