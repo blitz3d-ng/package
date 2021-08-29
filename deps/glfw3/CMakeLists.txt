@@ -12,4 +12,13 @@ add_subdirectory(tree)
 
 target_compile_definitions(glfw PRIVATE GLEW_STATIC)
 
+# solve a strange linker issue with mingw...
+IF(BB_MINGW32)
+  add_subdirectory(mingw-guid)
+
+  cmake_policy(SET CMP0079 NEW)
+  target_include_directories(glfw PRIVATE mingw-guid)
+  target_link_libraries(glfw glfw.guid)
+ENDIF()
+
 add_library(glfw3 ALIAS glfw)

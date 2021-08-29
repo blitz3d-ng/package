@@ -23,6 +23,15 @@ jobs:
           name: blitz3d-ng-win32-v${{ github.run_id }}
           path: _release/
 
+  mingw:
+    name: MinGW
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: ./env.sh mingw make ENV=release PLATFORM=mingw32
+
   macos:
     name: macOS
     runs-on: ${{ matrix.os }}
@@ -67,6 +76,17 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh android make ENV=release PLATFORM=android
+
+  emscripten:
+    name: Emscripten (Web)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      # TODO: find out why the first time always fails...
+      - run: ./env.sh emscripten make ENV=release PLATFORM=android; true
+      - run: ./env.sh emscripten make ENV=release PLATFORM=android
 
   nx:
     name: Switch
