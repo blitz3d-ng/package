@@ -56,9 +56,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
       - run: ./env.sh ${{ matrix.dist }} bundle install
       - run: ./env.sh ${{ matrix.dist }} bin/blitz3d help --build

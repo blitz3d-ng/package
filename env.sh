@@ -10,7 +10,7 @@ shift
 IMAGE=ghcr.io/blitz3d-ng/env:$PLATFORM
 OPTIONS="--rm -w /b3d -v $(pwd):/b3d"
 
-if [[ -t 1 ]]
+if [ -t 1 ]
 then
   OPTIONS="-it $OPTIONS"
 fi
