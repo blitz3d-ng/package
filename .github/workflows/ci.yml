@@ -85,8 +85,8 @@ jobs:
         with:
           submodules: recursive
       # TODO: find out why the first time always fails...
-      - run: ./env.sh emscripten make ENV=release PLATFORM=android; true
-      - run: ./env.sh emscripten make ENV=release PLATFORM=android
+      - run: ./env.sh emscripten make ENV=release PLATFORM=emscripten; true
+      - run: ./env.sh emscripten make ENV=release PLATFORM=emscripten
 
   nx:
     name: Switch
