@@ -60,6 +60,7 @@ jobs:
         with:
           bundler-cache: true
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
+      - run: ./env.sh ${{ matrix.dist }} bundle install
       - run: ./env.sh ${{ matrix.dist }} bin/blitz3d help --build
 
   ios:
@@ -83,6 +84,7 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh android make ENV=release PLATFORM=android
+      - run: ./env.sh android bundle install
       - run: ./env.sh android bin/blitz3d help --build
 
   nx:
@@ -93,4 +95,5 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh nx make ENV=release PLATFORM=nx
+      - run: ./env.sh nx bundle install
       - run: ./env.sh nx bin/blitz3d help --build
