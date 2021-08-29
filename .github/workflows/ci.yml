@@ -59,9 +59,8 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: docker build -t b3d:${{ matrix.dist }} - < test/Dockerfile.${{ matrix.dist }}
-      - run: docker run --rm -w /b3d -v $(pwd):/b3d b3d:${{ matrix.dist }} make ENV=release PLATFORM=linux
-      - run: bin/blitz3d help --build
+      - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
+      - run: ./env.sh ${{ matrix.dist }} bin/blitz3d help --build
 
   ios:
     name: iOS
@@ -75,3 +74,23 @@ jobs:
           bundler-cache: true
       - run: make ENV=release PLATFORM=ios
       - run: bin/blitz3d help --build
+
+  android:
+    name: Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: ./env.sh android make ENV=release PLATFORM=android
+      - run: ./env.sh android bin/blitz3d help --build
+
+  nx:
+    name: Switch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: ./env.sh nx make ENV=release PLATFORM=nx
+      - run: ./env.sh nx bin/blitz3d help --build
