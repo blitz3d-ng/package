@@ -37,7 +37,8 @@ int MacOSSystemDriver::getScreenHeight( int i ){
 }
 
 void MacOSSystemDriver::dpiInfo( float &scale_x,float &scale_y ){
-  scale_x=scale_y=1.0f;
+	// TODO: determine this automatically...
+  scale_x=scale_y=2.0f;
 }
 
 extern "C" const char *lookupFontFile( const char *fontName );

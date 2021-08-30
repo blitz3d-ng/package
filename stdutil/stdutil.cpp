@@ -359,6 +359,17 @@ string filenamefile( const string &t ){
 }
 #endif
 
+std::string canonicalpath( const std::string &t ){
+	string s=t;
+#ifdef WINDOWS
+	replace( s.begin(),s.end(),'/','\\' );
+	return lower(s);
+#else
+	replace( s.begin(),s.end(),'\\','/' );
+	return s;
+#endif
+}
+
 const int MIN_SIZE=256;
 
 qstreambuf::qstreambuf(){
