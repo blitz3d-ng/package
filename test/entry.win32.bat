@@ -5,3 +5,5 @@ COPY deps\fmod\bin\fmod.dll test\
 
 _release\bin\blitzcc.exe -r test -o blank.exe test\blank.bb
 test\blank.exe
+
+_release\bin\blitzcc.exe -r test -o blank.exe test\all.bb

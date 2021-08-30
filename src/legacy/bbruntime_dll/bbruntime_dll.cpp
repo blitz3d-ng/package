@@ -238,13 +238,15 @@ static void link(){
 }
 
 #ifdef BB_MINGW32
-#define BBWINMAIN _bbWinMain
+#define BBWINMAIN         _bbWinMain
+#define DLLMAINCRTSTARTUP DllMainCRTStartup
 #else
-#define BBWINMAIN bbWinMain
+#define BBWINMAIN         bbWinMain
+#define DLLMAINCRTSTARTUP _DllMainCRTStartup
 #endif
 
 extern "C" __declspec(dllexport) int __stdcall BBWINMAIN();
-extern "C" BOOL __stdcall _DllMainCRTStartup( HANDLE,DWORD,LPVOID );
+extern "C" BOOL __stdcall DLLMAINCRTSTARTUP( HANDLE,DWORD,LPVOID );
 
 bool WINAPI DllMain( HANDLE module,DWORD reason,void *reserved ){
 	return TRUE;
@@ -254,9 +256,7 @@ int __stdcall BBWINMAIN(){
 
 	HINSTANCE inst=GetModuleHandle( 0 );
 
-#ifndef __MINGW32__
-	_DllMainCRTStartup( inst,DLL_PROCESS_ATTACH,0 );
-#endif
+	DLLMAINCRTSTARTUP( inst,DLL_PROCESS_ATTACH,0 );
 
 #ifdef BETA
 	int ver=VERSION & 0x7fff;
@@ -293,9 +293,7 @@ int __stdcall BBWINMAIN(){
 	runtime->execute( (void(*)())module_pc,params.c_str(),0 );
 	runtime->shutdown();
 
-#ifndef __MINGW32__
-	_DllMainCRTStartup( inst,DLL_PROCESS_DETACH,0 );
-#endif
+	DLLMAINCRTSTARTUP( inst,DLL_PROCESS_DETACH,0 );
 
 	ExitProcess(0);
 	return 0;

@@ -7,4 +7,7 @@ cp deps/fmod/bin/fmod.dll _release/toolchains/mingw32/bin
 
 # compile an executable...
 wine _release/toolchains/mingw32/bin/blitzcc.exe -r test -o blank.exe test/blank.bb
-wine test.exe
+wine test/blank.exe
+
+# run the specs...
+wine _release/toolchains/mingw32/bin/blitzcc.exe -r test test/all.bb
