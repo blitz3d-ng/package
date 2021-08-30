@@ -17,6 +17,7 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
       - run: .\make.bat release ${{ matrix.arch }}
+      - run: .\test\entry.win32.bat
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
@@ -31,6 +32,7 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh mingw make ENV=release PLATFORM=mingw32
+      - run: ./env.sh mingw sh ./test/entry.mingw32.sh
 
   macos:
     name: macOS

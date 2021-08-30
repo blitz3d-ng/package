@@ -237,14 +237,20 @@ static void link(){
 	module_syms.clear();
 }
 
-extern "C" __declspec(dllexport) int __stdcall _bbWinMain();
+#ifdef BB_MINGW32
+#define BBWINMAIN _bbWinMain
+#else
+#define BBWINMAIN bbWinMain
+#endif
+
+extern "C" __declspec(dllexport) int __stdcall BBWINMAIN();
 extern "C" BOOL __stdcall _DllMainCRTStartup( HANDLE,DWORD,LPVOID );
 
 bool WINAPI DllMain( HANDLE module,DWORD reason,void *reserved ){
 	return TRUE;
 }
 
-int __stdcall _bbWinMain(){
+int __stdcall BBWINMAIN(){
 
 	HINSTANCE inst=GetModuleHandle( 0 );
 
