@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
 
 #ifndef WIN32
 #include <libgen.h>
