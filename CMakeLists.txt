@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.0)
 project (Blitz3D)
 
 # set(CMAKE_VERBOSE_MAKEFILE true)
+# set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 include(src/bin2h.cmake)
 

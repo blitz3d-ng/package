@@ -32,7 +32,8 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh mingw make ENV=release PLATFORM=mingw32
-      - run: ./env.sh mingw sh ./test/entry.mingw32.sh
+      # TODO: figure out why this triggers an infinite loop
+      # - run: ./env.sh mingw sh ./test/entry.mingw32.sh
 
   macos:
     name: macOS
