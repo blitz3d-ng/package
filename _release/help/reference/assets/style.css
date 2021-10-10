@@ -116,3 +116,7 @@ code {
   padding: 5px;
   box-sizing: border-box;
 }
+
+.hidden {
+  display: none;
+}

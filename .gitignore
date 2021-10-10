@@ -34,7 +34,7 @@ UpgradeLog.htm
 _release/cfg/blitzide.prefs
 _release/help/reference/modules
 _release/help/reference/index.html
-_release/help/reference/commands.json
+_release/help/reference/commands.js
 _release/tmp
 _release/toolchains
 _release/userlibs/*.dll
