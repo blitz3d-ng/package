@@ -4,9 +4,12 @@ on: [push]
 jobs:
   windows:
     name: Windows
-    runs-on: windows-2019
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: 
+          - windows-2019
+          - windows-2022
         arch:
           - win32
     steps:
