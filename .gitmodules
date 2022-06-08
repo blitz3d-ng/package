@@ -34,3 +34,6 @@
 [submodule "src/deps/json-hpp/src"]
 	path = deps/json-hpp/tree
 	url = https://github.com/nlohmann/json.git
+[submodule "deps/wxwidgets/tree"]
+	path = deps/wxwidgets/tree
+	url = https://github.com/wxWidgets/wxWidgets

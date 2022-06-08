@@ -2,12 +2,6 @@ module Blitz3D
   module Help
     module Reference
       class Index < Template
-        attr_reader :modules
-
-        def initialize(modules)
-          @modules = modules
-        end
-
         def input_path
           'src/docs/commands/_index.html.erb'
         end

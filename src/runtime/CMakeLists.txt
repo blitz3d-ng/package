@@ -28,7 +28,7 @@ macro(bb_runtime id)
   if(BB_WINDOWS)
     target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
 
-    if(BB_WIN32)
+    if(BB32)
       set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "runtime.${id}")
     else()
       set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "runtime64.${id}")

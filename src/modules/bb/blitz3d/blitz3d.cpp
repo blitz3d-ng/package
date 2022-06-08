@@ -144,7 +144,7 @@ static inline void debugVertex( Surface *s,int n,int t ){
 }
 
 static Entity *loadEntity( string t,int hint ){
-	t=tolower(t);
+	t=canonicalpath(t);
 	int n=t.rfind( "." );if( n==string::npos ) return 0;
 	string ext=t.substr( n+1 );
 	MeshLoader *l;

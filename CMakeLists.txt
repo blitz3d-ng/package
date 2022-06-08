@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.0)
 project (Blitz3D)
 
 # set(CMAKE_VERBOSE_MAKEFILE true)
+# set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 include(src/bin2h.cmake)
 
@@ -52,6 +53,8 @@ ELSEIF(BB_PLATFORM MATCHES emscripten)
 ELSEIF(BB_PLATFORM MATCHES nx)
   set (BB_NX true)
   add_definitions(-DBB_NX)
+ELSE()
+  message(FATAL_ERROR "Unrecognized platform: ${BB_PLATFORM}")
 ENDIF()
 
 IF(BB_WIN32 OR BB_WIN64 OR BB_MINGW32)
@@ -72,6 +75,12 @@ ENDIF()
 IF(BB_EMSCRIPTEN)
   set (BB_WEB true)
   add_definitions(-DBB_WEB)
+ENDIF()
+
+IF(BB_WIN32 OR BB_MINGW32)
+  set(BB32 true)
+ELSE()
+  set(BB64 true)
 ENDIF()
 
 IF(NOT BB_ENV)
@@ -129,6 +138,11 @@ IF(NOT BB_IOS)
   set(ZLIB zlibstatic)
 ELSE()
   set(ZLIB z)
+ENDIF()
+
+IF(BB_EMSCRIPTEN)
+  add_link_options(-sUSE_PTHREADS)
+  add_compile_options(-pthread)
 ENDIF()
 
 IF(BB_DEBUG AND USE_LLVM)

@@ -48,6 +48,7 @@ std::string toupper( const std::string &s );
 std::string fullfilename( const std::string &t );
 std::string filenamepath( const std::string &t );
 std::string filenamefile( const std::string &t );
+std::string canonicalpath( const std::string &t );
 
 //lazy version of auto_ptr
 template<class T>

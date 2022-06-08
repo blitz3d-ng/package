@@ -1,6 +1,5 @@
 # Blitz3D "NG"
-[![Build status](https://ci.appveyor.com/api/projects/status/ww8qjywqm6rb5rnu/branch/master?svg=true)](https://ci.appveyor.com/project/kfprimm/blitz3d-ng-gj3xh/branch/master)
-[![Build Status](https://travis-ci.org/blitz3d-ng/blitz3d-ng.svg?branch=master)](https://travis-ci.org/blitz3d-ng/blitz3d-ng)
+[![Build status](https://github.com/blitz3d-ng/blitz3d-ng/actions/workflows/ci.yml/badge.svg?branch=master)
 [![Help](https://img.shields.io/badge/help-discord-7289DA.svg?logo=discord)](https://discord.gg/E6kTHXn)
 
 This project is an attempt to revive & modernize Blitz3D by adding cross-platform & 64-bit support.
@@ -29,13 +28,13 @@ To keep the project simple to build, all 3rd-party dependencies are included in 
 
 ### Prerequisites (All platforms)
 
-You'll need [cmake (3.16+)](https://cmake.org/download/) and a [ruby 2+](https://www.ruby-lang.org/en/) install.
+You'll need [cmake (3.16+)](https://cmake.org/download/) and a [ruby 3.0.2](https://www.ruby-lang.org/en/) install.
 
 We use these tools to generate the appropriate build files per-platform as well as documentation.
 
 ### Windows
 
-Install [Visual Studio 2019](https://www.visualstudio.com/vs/community/).
+Install [Visual Studio 2019](https://www.visualstudio.com/vs/community/). Be sure to install the MFC components.
 
 Open up a command prompt via `Start -> Visual Studio 2019 -> Developer Command Prompt for VS2019`.
 

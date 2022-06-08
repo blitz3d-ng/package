@@ -6,31 +6,31 @@ module Blitz3D
 
         modules = Blitz3D::Module.all
 
-        modules.each do |mod|
-          puts "Found #{mod.name.bold}. #{mod.commands.size} commands."
-          mod.commands.each do |command|
-            Blitz3D::Help::Reference::Command.new(modules, command).generate command.help
-          end
-
-          Blitz3D::Help::Reference::Module.new(modules, mod).generate
-        end
-
         Blitz3D::Help::Index.new.generate('_release/help/index.html')
-        Blitz3D::Help::Reference::Index.new(modules).generate
+        Blitz3D::Help::Reference::Index.new.generate
 
         puts "Writing command index to #{'index.json'.bold}..."
-        index = modules.map do |mod|
-          {
+        index = { modules: [], commands: [] }
+
+        modules.each do |mod|
+          puts "Found #{mod.name.bold}. #{mod.commands.size} commands."
+
+          index[:modules] << {
             name: mod.name,
-            commands: mod.commands.map do |command|
-              {
-                name: command.name
-              }
-            end
+            description: mod.description,
+            commands: mod.commands.map(&:name)
           }
+
+          mod.commands.each do |command|
+            index[:commands] << {
+              name: command.name,
+              module: mod.name,
+              content: command.help
+            }
+          end
         end
 
-        File.open('_release/help/reference/commands.json', 'w') { |f| f.write JSON.pretty_generate(index) }
+        File.open('_release/help/reference/commands.js', 'w') { |f| f.write "window.commandReference = #{JSON.pretty_generate(index)}" }
       end
     end
   end

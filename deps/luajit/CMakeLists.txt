@@ -9,6 +9,7 @@ if(BB_DESKTOP AND NOT BB_MINGW32)
 
     if(BB_MACOS)
       set(MAKE_FLAGS MACOSX_DEPLOYMENT_TARGET=10.14)
+      set(MACOS_FIX '') # sed on macos works a bit differently than the GNU one
     endif()
 
     ExternalProject_Add(LUAJIT_EXTERNAL
@@ -16,7 +17,7 @@ if(BB_DESKTOP AND NOT BB_MINGW32)
       GIT_TAG v2.1.0-beta3
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
-      INSTALL_COMMAND /bin/sh -c "file ${LUAJIT_LIB} | grep archive > /dev/null || (cp -r ../LUAJIT_EXTERNAL/* . && sed -i '' \"s|/usr/local|${LUAJIT_ROOT}|g\" Makefile && make ${MAKE_FLAGS} install)"
+      INSTALL_COMMAND /bin/sh -c "file ${LUAJIT_LIB} | grep archive > /dev/null || (cp -r ../LUAJIT_EXTERNAL/* . && sed -i ${MACOS_FIX} \"s|/usr/local|${LUAJIT_ROOT}|g\" Makefile && make ${MAKE_FLAGS} install)"
     )
   elseif(BB_WINDOWS)
     ExternalProject_Add(LUAJIT_EXTERNAL
@@ -27,8 +28,9 @@ if(BB_DESKTOP AND NOT BB_MINGW32)
       BUILD_COMMAND cd src && msvcbuild.bat static
     )
 
-    set(LUAJIT_INCLUDE ${CMAKE_CURRENT_BINARY_DIR}/deps-luajit-prefix/src/deps-luajit/src)
-    set(LUAJIT_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/deps-luajit-prefix/src/deps-luajit/src)
+    ExternalProject_Get_property(LUAJIT_EXTERNAL SOURCE_DIR)
+    set(LUAJIT_INCLUDE ${SOURCE_DIR}/src)
+    set(LUAJIT_LIB_DIR ${SOURCE_DIR}/src)
     set(LUAJIT_LIB ${LUAJIT_LIB_DIR}/lua51.lib)
   endif()
 

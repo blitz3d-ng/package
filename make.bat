@@ -16,6 +16,14 @@ IF "%ENV%" == "release" (
   SET CONFIG=MinSizeRel
 )
 
+IF "%VisualStudioVersion%" == "16.0" (
+  SET GENERATOR=Visual Studio 16 2019
+)
+
+IF "%VisualStudioVersion%" == "17.0" (
+  SET GENERATOR=Visual Studio 17 2022
+)
+
 IF NOT "%PLATFORM%" == "win32" (
   IF NOT "%PLATFORM%" == "win64" (
     SET PLATFORM=win32
@@ -23,22 +31,20 @@ IF NOT "%PLATFORM%" == "win32" (
 )
 
 IF "%PLATFORM%" == "win32" (
-  SET GENERATOR=Visual Studio 16 2019
   SET ARCH=Win32
 )
 
 IF "%PLATFORM%" == "win64" (
-  SET GENERATOR=Visual Studio 16 2019
   SET ARCH=x64
 )
 
-ECHO Building %PLATFORM% in %ENV% mode.
+ECHO Building %PLATFORM% in %ENV% mode using VS %VisualStudioVersion%.
 
 set OUTPUT=_release\toolchains\%PLATFORM%
 set RELEASE=_release
 
-cmake -G "%GENERATOR%" -H. -B"%cd%\build\%PLATFORM%\%ENV%" -A%ARCH% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b
-msbuild /nologo /verbosity:normal /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%CONFIG% /property:Platform=%ARCH% || exit /b
+cmake -G "%GENERATOR%" -H. -B"%cd%\build\%PLATFORM%\%ENV%" -A%ARCH% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b 1
+msbuild /nologo /verbosity:normal /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%CONFIG% /property:Platform=%ARCH% || exit /b 1
 
 COPY /Y %OUTPUT%\bin\Blitz3D*.exe %RELEASE%
 COPY /Y %OUTPUT%\bin\ide*.exe %RELEASE%\bin

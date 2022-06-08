@@ -1,6 +1,7 @@
 
 #include "../../stdutil/stdutil.h"
 #include <bb/blitz2d.gl/blitz2d.gl.h>
+#include <bb/system/system.h>
 #include "blitz3d.gl.h"
 
 #include <iostream>
@@ -215,6 +216,13 @@ public:
 		setAmbient( MIDLEVEL );
 		ambient[3]=1.0f;
 		render_w=w;render_h=h;
+
+		// TODO: not the most elegant solution...
+		float sx,sy;
+		bbSystemDriver->dpiInfo( sx,sy );
+		cout<<sx<<","<<sy<<endl;
+		render_w*=sx;
+		render_h*=sy;
 	}
 
   int  hwTexUnits(){ return 8; }

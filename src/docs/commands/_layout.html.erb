@@ -4,8 +4,6 @@
   <title>Blitz3D Docs</title>
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" />
   <link rel="stylesheet" href="<%= relative_to_root %>/assets/style.css" type="text/css" />
-  <script src="<%= relative_to_root %>/assets/jquery-3.2.1.min.js"></script>
-  <script src="<%= relative_to_root %>/assets/help.js"></script>
 </head>
 <body>
   <div class="list-container">
@@ -39,18 +37,6 @@
 
       <div class="command-list">
         <ul>
-        <% modules.each do |mod| %>
-          <li class="module">
-            <a href="<%= relative_to module_path(mod) %>/<%= relative_to module_path(mod) %>/index.html"><%= mod.name %></a>
-            <ul>
-            <% mod.commands.each do |comm| %>
-              <li class="command">
-                <a class="<%= 'active' if defined?(command) && command == comm %>" href="<%= relative_to(File.dirname(command_path(comm))) %>/<%= File.basename(command_path(comm)) %>"><%= comm.name %></a>
-              </li>
-            <% end %>
-            </ul>
-          </li>
-        <% end %>
         </ul>
       </div>
     </div>
@@ -58,5 +44,8 @@
   <div class="main">
     <%= yield %>
   </div>
+
+  <script src="<%= relative_to_root %>/commands.js"></script>
+  <script src="<%= relative_to_root %>/assets/help.js"></script>
 </body>
 </html>

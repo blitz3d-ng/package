@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
 
 #ifndef WIN32
 #include <libgen.h>
@@ -358,6 +359,17 @@ string filenamefile( const string &t ){
 	return string( basename( buff ) );
 }
 #endif
+
+std::string canonicalpath( const std::string &t ){
+	string s=t;
+#ifdef WINDOWS
+	replace( s.begin(),s.end(),'/','\\' );
+	return lower(s);
+#else
+	replace( s.begin(),s.end(),'\\','/' );
+	return s;
+#endif
+}
 
 const int MIN_SIZE=256;
 
