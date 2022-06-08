@@ -16,6 +16,14 @@ IF "%ENV%" == "release" (
   SET CONFIG=MinSizeRel
 )
 
+IF "%VisualStudioVersion%" == "16.0" (
+  SET GENERATOR=Visual Studio 16 2019
+)
+
+IF "%VisualStudioVersion%" == "17.0" (
+  SET GENERATOR=Visual Studio 17 2022
+)
+
 IF NOT "%PLATFORM%" == "win32" (
   IF NOT "%PLATFORM%" == "win64" (
     SET PLATFORM=win32
@@ -23,16 +31,14 @@ IF NOT "%PLATFORM%" == "win32" (
 )
 
 IF "%PLATFORM%" == "win32" (
-  SET GENERATOR=Visual Studio 16 2019
   SET ARCH=Win32
 )
 
 IF "%PLATFORM%" == "win64" (
-  SET GENERATOR=Visual Studio 16 2019
   SET ARCH=x64
 )
 
-ECHO Building %PLATFORM% in %ENV% mode.
+ECHO Building %PLATFORM% in %ENV% mode using VS %VisualStudioVersion%.
 
 set OUTPUT=_release\toolchains\%PLATFORM%
 set RELEASE=_release
