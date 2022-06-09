@@ -126,7 +126,7 @@ if(LLVM_ROOT)
   target_compile_options(blitzcc PRIVATE "SHELL:${LLVM_CXX_FLAGS}" -fexceptions -frtti)
   target_link_options(blitzcc PRIVATE "SHELL:${LLVM_LD_FLAGS}")
 
-  target_link_libraries(blitzcc lldCore lldCommon lldDriver lldReaderWriter lldYAML lldMachO lldCOFF lldELF lldMinGW lldWasm)
+  target_link_libraries(blitzcc lldCommon lldMachO lldCOFF lldELF lldMinGW lldWasm)
 
   # TODO: figure out if this is optional...
   target_link_libraries(blitzcc zlibstatic ncurses)

@@ -20,7 +20,7 @@ struct ExprNode : public Node{
 	DEFAULT_NODE_JSON( ExprNode );
 
 #ifdef USE_LLVM
-	llvm::Value *translate2( Codegen_LLVM *g );
+	virtual llvm::Value *translate2( Codegen_LLVM *g );
 #endif
 };
 

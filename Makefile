@@ -2,6 +2,8 @@ ENV := release
 GENERATOR := Ninja
 GENERATOR_OPTIONS := -k 0
 
+LLVM_VERSION=14.0.4
+
 ifeq ($(shell uname), Darwin)
 NUMBER_OF_CORES=$(shell sysctl -n hw.ncpu)
 PLATFORM := macos
@@ -45,6 +47,12 @@ endif
 
 build:
 	cmake -G $(GENERATOR) -H. -Bbuild/$(PLATFORM)/$(ENV) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
+
+llvm:
+	test -d deps/llvm/tree || git clone -b llvmorg-$(LLVM_VERSION) --recursive https://github.com/llvm/llvm-project.git deps/llvm/tree
+	cmake -S deps/llvm -B build/llvm -G $(GENERATOR)
+	(cd build/llvm && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
+	(cd build/llvm && cmake --install .)
 
 install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/

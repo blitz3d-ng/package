@@ -28,6 +28,7 @@ using namespace std;
 
 #include "assem_x86/assem_x86.h"
 #include "codegen_x86/codegen_x86.h"
+#include "../../legacy/debugger/debugger.h"
 
 #ifdef USE_LLVM
 #include "codegen_llvm/codegen_llvm.h"
@@ -339,6 +340,10 @@ int main( int argc,char *argv[] ){
 	Module *module=0;
 #endif
 
+#ifdef USE_LLVM
+	string obj_file( string(tmpnam(0))+".o" );
+#endif
+
 	try{
 		//parse
 		if( !veryquiet ) cout<<"Parsing..."<<endl;
@@ -388,7 +393,7 @@ int main( int argc,char *argv[] ){
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
-			codegen2.dumpToObj( home+"/output.o" );
+			codegen2.dumpToObj( obj_file );
 #else
 			cerr<<"not compiled with llvm support"<<endl;
 			abort();
@@ -414,8 +419,8 @@ int main( int argc,char *argv[] ){
 		if( !veryquiet ) cout<<"Creating executable \""<<out_file<<"\"..."<<endl;
 		if( usellvm ) {
 #ifdef USE_LLVM
-			Linker_LLD linker( home );
-			linker.createExe( out_file );
+			Linker_LLD linker( home, rt );
+			linker.createExe( obj_file, out_file );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();
@@ -433,12 +438,26 @@ int main( int argc,char *argv[] ){
 #endif
 		}
 	}else if( !compileonly ){
+		void *entry=0;
+		Debugger *debugger=0;
+
+		if ( usellvm ) {
+#ifdef USE_LLVM
+
+#else
+			cerr<<"llvm support was not compiled in"<<endl;
+			abort();
+#endif
+		} else {
 #ifdef WIN32
-		void *entry=module->link( runtimeModule );
+			entry=module->link( runtimeModule );
+#endif
+		}
+
 		if( !entry ) return 0;
 
+#ifdef WIN32
 		HMODULE dbgHandle=0;
-		Debugger *debugger=0;
 
 		if( debug ){
 			dbgHandle=LoadLibrary( (home+"/bin/" DEBUGGER ".dll").c_str() );
@@ -449,12 +468,16 @@ int main( int argc,char *argv[] ){
 			}
 			if( !debugger ) err( "Error launching debugger" );
 		}
+#endif
 
 		if( !veryquiet ) cout<<"Executing..."<<endl;
 
+#ifdef WIN32
 		runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
 
 		if( dbgHandle ) FreeLibrary( dbgHandle );
+#else
+		((void(*)())entry)();
 #endif
 	}
 

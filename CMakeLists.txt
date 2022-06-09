@@ -1,8 +1,7 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.16)
 project (Blitz3D)
 
-# set(CMAKE_VERBOSE_MAKEFILE true)
-# set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+set(CMAKE_CXX_STANDARD 11)
 
 include(src/bin2h.cmake)
 
@@ -96,6 +95,7 @@ IF(BB_ENV MATCHES debug OR BB_ENV MATCHES test)
   add_definitions(-D_DEBUG)
 ELSE()
   set (CMAKE_BUILD_TYPE Release)
+  set (CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
   set (BB_RELEASE true)
 ENDIF()
 
@@ -152,8 +152,8 @@ ENDIF()
 
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    add_compile_options (-fdiagnostics-color=always)
-ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  add_compile_options (-fcolor-diagnostics)
+ELSEIF ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  add_compile_options (-fcolor-diagnostics -emit-llvm)
 ENDIF ()
 
 add_subdirectory(deps)

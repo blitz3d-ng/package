@@ -125,7 +125,7 @@ bool VectorType::canCastTo( Type *t ){
 llvm::Type *VectorType::llvmType( llvm::LLVMContext *c ){
 	int sz=1;
 	for( int k=0;k<sizes.size();++k ) sz*=sizes[k];
-	return llvm::VectorType::get( elementType->llvmType( c ),sz );
+	return llvm::VectorType::get( elementType->llvmType( c ),sz,false );
 }
 #endif
 

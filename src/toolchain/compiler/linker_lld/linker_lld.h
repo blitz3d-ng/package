@@ -6,10 +6,11 @@
 class Linker_LLD {
 public:
 	std::string home;
+	std::string rt;
 
-	Linker_LLD( const std::string &home );
+	Linker_LLD( const std::string &home, const std::string &rt );
 
-	void createExe( const std::string &exeFile );
+	void createExe( const std::string &mainObj, const std::string &exeFile );
 };
 
 #endif

@@ -1,18 +1,20 @@
 # Blitz3D "NG"
-[![Build status](https://github.com/blitz3d-ng/blitz3d-ng/actions/workflows/ci.yml/badge.svg?branch=master)
+
+[![Build status](https://github.com/blitz3d-ng/blitz3d-ng/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/blitz3d-ng/blitz3d-ng/actions?query=branch%3Amaster)
 [![Help](https://img.shields.io/badge/help-discord-7289DA.svg?logo=discord)](https://discord.gg/E6kTHXn)
 
 This project is an attempt to revive & modernize Blitz3D by adding cross-platform & 64-bit support.
 
 So far, we've made huge strides in making this happen. Some of the basic samples (such as [castle](_release/samples/mak/castle), [driver](_release/samples/driver), and [tron](_release/samples/mak/tron)) can run on macOS (64 bit!) with little-to-no modifications.
 
-This is achieved by translating Blitz source into C code.
+This is achieved by translating Blitz source into C code & then piping that output to a C compiler. Long term, this will
+be replaced by [LLVM](#LLVM).
 
 (Note: The Windows build still uses the original Blitz code generation.)
 
 ## Download
 
-You can get the latest Windows build directly from our [CI tool](https://ci.appveyor.com/api/projects/kfprimm/blitz3d-ng-gj3xh/artifacts/release.zip?branch=master&job=Environment:%20TOOLSET=vs2019;%20Configuration:%20release;%20Platform:%20win32). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
+You can get the latest Windows build directly from the artifacts of the latest [CI build](https://github.com/blitz3d-ng/blitz3d-ng/actions?query=branch%3Amaster). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
 
 If you're looking to customize your build further or interested in macOS or Linux, please see the next section.
 
@@ -28,15 +30,15 @@ To keep the project simple to build, all 3rd-party dependencies are included in 
 
 ### Prerequisites (All platforms)
 
-You'll need [cmake (3.16+)](https://cmake.org/download/) and a [ruby 3.0.2](https://www.ruby-lang.org/en/) install.
+You'll need [cmake (3.16+)](https://cmake.org/download/) and a [ruby 3.1.2](https://www.ruby-lang.org/en/) install.
 
 We use these tools to generate the appropriate build files per-platform as well as documentation.
 
 ### Windows
 
-Install [Visual Studio 2019](https://www.visualstudio.com/vs/community/). Be sure to install the MFC components.
+Install [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/). Be sure to install the MFC components.
 
-Open up a command prompt via `Start -> Visual Studio 2019 -> Developer Command Prompt for VS2019`.
+Open up a command prompt via `Start -> Visual Studio 2022 -> Developer Command Prompt for VS2022`.
 
 ```
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
@@ -44,6 +46,9 @@ Open up a command prompt via `Start -> Visual Studio 2019 -> Developer Command P
 > make release win32
 > make release win64
 ```
+
+Once the build is complete, you can open the `_release/` directory and run `Blitz3D.exe`
+as expected.
 
 ### macOS
 
@@ -69,13 +74,19 @@ $ cd blitz3d-ng
 $ bin/blitz3d config && make ENV=release
 ```
 
-Alternatively, you can build everything with [docker](https://docker.io).
+Alternatively, you can build everything with [docker](https://docker.io). See
+[env.sh](env.sh) and the [env](https://github.com/blitz3d-ng/env) repo for some
+example Dockerfiles.
+
+### LLVM
+
+In order to properly support cross-platform compilation, a new LLVM-based codegen
+system is in the works. It is implemented along side the original x86 codegen
+and will eventually replace it.
 
 ```bash
-$ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
-$ cd blitz3d-ng
-$ docker build -t blitz3d - < Dockerfile
-$ docker run -t -i -v `pwd`:/blitz3d-ng blitz3d make ENV=${ENV} PLATFORM=linux
+$ make llvm
+$ make ENV=release
 ```
 
 ## Documentation
