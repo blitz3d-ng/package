@@ -62,6 +62,8 @@ jobs:
         dist:
           - debian-10
           - debian-11
+          - ubuntu-21.04
+          - ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
         with:
