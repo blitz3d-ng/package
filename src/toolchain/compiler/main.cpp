@@ -419,7 +419,7 @@ int main( int argc,char *argv[] ){
 		if( !veryquiet ) cout<<"Creating executable \""<<out_file<<"\"..."<<endl;
 		if( usellvm ) {
 #ifdef USE_LLVM
-			Linker_LLD linker( home, rt );
+			Linker_LLD linker( home, runtimeEnviron );
 			linker.createExe( obj_file, out_file );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;

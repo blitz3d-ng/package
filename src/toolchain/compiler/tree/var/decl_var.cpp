@@ -6,9 +6,13 @@
 
 #ifdef USE_LLVM
 llvm::Value *DeclVarNode::load2( Codegen_LLVM *g ){
-	llvm::Value *t=translate2( g );
-	if( sem_type==Type::string_type ) return g->CallIntrinsic( "_bbStrLoad",sem_type->llvmType( &g->context ),1,t );
-	return g->builder->CreateLoad( sem_decl->type->llvmType( &g->context ),sem_decl->ptr );
+	if( sem_decl->ptr ) {
+		llvm::Value *t=translate2( g );
+		if( sem_type==Type::string_type ) return g->CallIntrinsic( "_bbStrLoad",sem_type->llvmType( &g->context ),1,t );
+		return g->builder->CreateLoad( sem_decl->type->llvmType( &g->context ),sem_decl->ptr );
+	} else {
+		return g->builder->GetInsertBlock()->getParent()->getArg( sem_decl->arg_index );
+	}
 }
 #endif
 

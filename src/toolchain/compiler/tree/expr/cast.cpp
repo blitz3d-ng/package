@@ -66,7 +66,7 @@ llvm::Value *CastNode::translate2( Codegen_LLVM *g ){
 	}
 	if( expr->sem_type==Type::int_type && sem_type==Type::float_type ){
 		//int->float
-		return g->builder->CreateFPCast( t,Type::float_type->llvmType( &g->context ) );
+		return g->builder->CreateCast( llvm::Instruction::SIToFP,t,Type::float_type->llvmType( &g->context ) );
 	}
 	if( expr->sem_type==Type::string_type && sem_type==Type::int_type ){
 		//str->int

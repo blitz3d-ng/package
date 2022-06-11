@@ -59,8 +59,7 @@ module Blitz3D
             config = {}
             config[:modules] = modules.map do |mod|
               {
-                id: mod.id,
-                links: mod.libraries(platform)
+                id: mod.id
               }
             end
 

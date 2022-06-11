@@ -1,9 +1,10 @@
 #include "linker_lld.h"
 #include <lld/Common/Driver.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 
-Linker_LLD::Linker_LLD( const std::string &home, const std::string &rt ):home(home),rt(rt){
+Linker_LLD::Linker_LLD( const std::string &home, const Environ *env ):home(home),env(env){
 }
 
 void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFile ){
@@ -28,104 +29,53 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 
 	args.push_back( mainObj.c_str() );
 
-	// TODO: should load data from the runtime JSON or *.i files
 	args.push_back( "-L" );
 	args.push_back( lib_dir.c_str() );
 
-	args.push_back("-lbb.stub");
-	args.push_back("-lruntime.opengl.static");
-	args.push_back("-lbb.stdio");
-	args.push_back("-lbb.hook");
-	args.push_back("-lbb.enet");
-	args.push_back("-lbb.filesystem.posix");
-	args.push_back("-lbb.graphics");
-	args.push_back("-lbb.audio");
-	args.push_back("-lbb.stream");
-	args.push_back("-lbb.math");
-	args.push_back("-lbb.runtime");
-	args.push_back("-lbb.blitz2d");
-	args.push_back("-lbb.blitz3d");
-	args.push_back("-lbb.filesystem");
-	args.push_back("-lbb.blitz2d.gl");
-	args.push_back("-lbb.system");
-	args.push_back("-lbb.pixmap");
-	args.push_back("-lbb.runtime.glfw3");
-	args.push_back("-lbb.blitz");
-	args.push_back("-lbb.system.macos");
-	args.push_back("-lbb.bank");
-	args.push_back("-lbb.blitz3d.gl");
-	args.push_back("-lbb.input");
-	args.push_back("-lbb.string");
-	args.push_back("-lbb.timer");
-	args.push_back("-lbb.timer.noop");
-	args.push_back("-lbb.sockets");
-	args.push_back("-lbb.event");
-	args.push_back("-lbb.audio.openal");
-	args.push_back("-lbb.audio.openal");
-	args.push_back("-lbb.event");
-	args.push_back("-lbb.string");
-	args.push_back("-lbb.input");
-	args.push_back("-lbb.blitz3d.gl");
-	args.push_back("-lbb.bank");
-	args.push_back("-lbb.system.macos");
-	args.push_back("-lbb.blitz");
-	args.push_back("-lbb.runtime.glfw3");
-	args.push_back("-lbb.pixmap");
-	args.push_back("-lbb.system");
-	args.push_back("-lbb.blitz2d.gl");
-	args.push_back("-lbb.filesystem");
-	args.push_back("-lbb.blitz3d");
-	args.push_back("-lbb.blitz2d");
-	args.push_back("-lbb.runtime");
-	args.push_back("-lbb.math");
-	args.push_back("-lbb.stream");
-	args.push_back("-lbb.audio");
-	args.push_back("-lbb.graphics.gl");
-	args.push_back("-lbb.filesystem.posix");
-	args.push_back("-lbb.enet");
-	args.push_back("-lbb.hook");
-	args.push_back("-lbb.stdio");
-	args.push_back("-lenet");
-	args.push_back("-lcrossguid");
-	args.push_back("-lvorbis");
-	args.push_back("-logg");
-	args.push_back("-lm");
-	args.push_back("-lfreetype2");
-	args.push_back("-lassimp");
-	args.push_back("-lglew");
-	args.push_back("-lfreeimage");
-	args.push_back("-ljpeg");
-	args.push_back("-lopenexr");
-	args.push_back("-lopenjpeg");
-	args.push_back("-lpng");
-	args.push_back("-lraw_");
-	args.push_back("-ltiff4");
-	args.push_back("-lwebp");
-	args.push_back("-lzlibstatic");
-	args.push_back("-lglfw3");
-	args.push_back("-lstdutil");
+	args.push_back( "-lbb.stub" );
+	args.push_back( strdup( ("-lruntime."+env->rt+".static").c_str() ) );
+	for (std::string mod : env->modules) {
+		string arg( "-lbb." + mod );
+		args.push_back( strdup(arg.c_str()) );
 
-	args.push_back("-framework");
-	args.push_back("OpenGL");
-	args.push_back("-framework");
-	args.push_back("Cocoa");
-	args.push_back("-framework");
-	args.push_back("OpenAL");
-	args.push_back("-framework");
-	args.push_back("IOKit");
-	args.push_back("-framework");
-	args.push_back("CoreFoundation");
-	args.push_back("-framework");
-	args.push_back("CoreVideo");
+		string line;
+		ifstream iface( toolchain+"/cfg/"+mod+"." BB_ENV ".i" );
+		if (!iface.is_open()) {
+			cerr<<"Cannot find interface file for "<<mod<<endl;
+			abort();
+		}
 
-	args.push_back("-lobjc");
+		while( getline( iface,line ) ) {
+			if( line.find("LIBS:")==0 ) {
+				size_t s=5, e=line.find(";");
+				while( 1 ) {
+					string frag=line.substr( s,e-s );
+					while( frag[0] == ' ' ) frag=frag.substr( 1 );
 
-#ifdef BB_DEBUG
-	// std::string clang_dir="-L"+toolchain+"/llvm/lib/clang/10.0.0/lib/darwin";
-	// args.push_back( clang_dir.c_str() );
-	// args.push_back("-lclang_rt.asan_osx_dynamic");
-#endif
+					if( frag.length() == 0 ) break;
 
+					string arg;
+					if( frag.find("-framework")==0 ) {
+						args.push_back("-framework");
+						arg = frag.substr( 11 );
+					} else {
+						arg = "-l" + frag;
+					}
+					args.push_back( strdup( arg.c_str() ) );
+
+					if( e==string::npos ) {
+						break;
+					}
+
+					s=e+1;
+					e=line.find(";",s);
+				}
+			}
+		}
+		iface.close();
+	}
+
+	// args.push_back("-lobjc");
 	args.push_back("-lc");
 	args.push_back("-lc++");
 	// args.push_back("-static");
@@ -135,5 +85,7 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 	args.push_back("-arch");args.push_back("arm64");
 	args.push_back("-platform_version");args.push_back("macos");args.push_back("12.1");args.push_back("12.3");
 
-	lld::macho::link(args, llvm::outs(), llvm::errs(), true, false);
+	if( !lld::macho::link(args, llvm::outs(), llvm::errs(), true, false) ) {
+		exit( 1 );
+	};
 }

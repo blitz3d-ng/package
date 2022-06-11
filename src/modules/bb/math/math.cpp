@@ -38,17 +38,17 @@ bb_float_t BBCALL bbRnd( bb_float_t from,bb_float_t to ){
 	return rnd()*(to-from)+from;
 }
 
-int BBCALL bbRand( int from,int to ){
+bb_int_t BBCALL bbRand( bb_int_t from,bb_int_t to ){
 	if( to<from ) std::swap( from,to );
 	return int(rnd()*(to-from+1))+from;
 }
 
-void BBCALL bbSeedRnd( int seed ){
+void BBCALL bbSeedRnd( bb_int_t seed ){
 	seed&=0x7fffffff;
 	rnd_state=seed ? seed : 1;
 }
 
-int  BBCALL bbRndSeed(){
+bb_int_t  BBCALL bbRndSeed(){
 	return rnd_state;
 }
 

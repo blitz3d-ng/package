@@ -8,10 +8,10 @@ module Blitz3D
       desktop: %w(win32 win64 mingw32 macos linux),
       windows: %w(win32 win64 mingw32),
       mobile: %w(ios android),
-      web: %w(emscripten),
+      web: %w(emscripten)
     }
 
-    attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path, :make, :premake5
+    attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path, :make
 
     def self.all
       @@store ||= {}
@@ -56,8 +56,6 @@ module Blitz3D
       @make['files'] ||= []
       @make['include_directories'] ||= []
       @make['definitions'] ||= []
-
-      @premake5 = config['premake5'] || {}
     end
 
     def ==(other)
@@ -97,21 +95,6 @@ module Blitz3D
           [dep.dependencies(:list, platform), dep]
         end.flatten.uniq
       end
-    end
-
-    def libraries(platform)
-      current_platforms = PLATFORMS
-      [premake5].flatten.map do |i|
-        i.map do |(key, value)|
-          if key == 'links' && current_platforms.include?(platform)
-            value
-          elsif key == 'filter'
-            _, platforms = value.match(/platforms:(.*)/).to_a
-            current_platforms = platforms.split(/\s+/).select { |p| PLATFORMS.include?(p) }
-            nil
-          end
-        end
-      end.flatten.compact
     end
 
     def needs_to_link?

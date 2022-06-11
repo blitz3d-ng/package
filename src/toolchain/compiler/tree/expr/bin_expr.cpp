@@ -40,6 +40,25 @@ TNode *BinExprNode::translate( Codegen *g ){
 	return d_new TNode( n,l,r );
 }
 
+#ifdef USE_LLVM
+llvm::Value *BinExprNode::translate2( Codegen_LLVM *g ){
+	std::vector<llvm::Value*> ops;
+	ops.push_back( lhs->translate2( g ) );
+	ops.push_back( rhs->translate2( g ) );
+	unsigned n=0;
+	switch( op ){
+	case AND:n=llvm::Instruction::And;break;
+	case OR:n=llvm::Instruction::Or;break;
+	case XOR:n=llvm::Instruction::Xor;break;
+	case SHL:n=llvm::Instruction::Shl;break;
+	case SHR:n=llvm::Instruction::AShr;break;
+	case SAR:n=llvm::Instruction::LShr;break;
+	}
+	llvm::Value *t=g->builder->CreateNAryOp( n,ops );
+	return g->builder->CreateIntCast( t,Type::int_type->llvmType( &g->context ),true );
+}
+#endif
+
 json BinExprNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="BinExprNode";
 	tree["sem_type"]=sem_type->toJSON();

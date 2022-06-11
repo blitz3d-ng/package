@@ -214,6 +214,7 @@ llvm::Value *Node::compare2( int op,llvm::Value *l,llvm::Value *r,Type *ty,Codeg
 		if( r==0 ) r=llvm::ConstantInt::get( it,0,true );
 
 		return g->builder->CreateICmp( n,l,r );
+
 	}
 }
 #endif

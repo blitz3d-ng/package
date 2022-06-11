@@ -48,6 +48,9 @@ public:
 	string setBreak( const string &s );
 
 #ifdef USE_LLVM
+	std::string rt;
+	vector<std::string> modules;
+
 	map<std::string,llvm::Value*> allocas;
 	llvm::BasicBlock *setBreak( llvm::BasicBlock *b );
 #endif

@@ -46,6 +46,12 @@ void ReturnNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void ReturnNode::translate2( Codegen_LLVM *g ){
+	// multiple `ret` calls in one block results in an error...there is probably
+	// a better way to do this.
+	if( g->builder->GetInsertBlock()->getTerminator() ) {
+		return;
+	}
+
 	llvm::Value *v=expr
 		?expr->translate2( g )
 		:llvm::ConstantInt::get( Type::int_type->llvmType( &g->context ),0,true );

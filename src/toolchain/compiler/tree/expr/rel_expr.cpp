@@ -69,7 +69,9 @@ TNode *RelExprNode::translate( Codegen *g ){
 llvm::Value *RelExprNode::translate2( Codegen_LLVM *g ){
 	auto *l=lhs->translate2( g );
 	auto *r=rhs->translate2( g );
-	return compare2( op,l,r,opType,g );
+
+	auto *t=compare2( op,l,r,opType,g );
+	return g->builder->CreateIntCast( t,Type::int_type->llvmType( &g->context ),true );
 }
 #endif
 

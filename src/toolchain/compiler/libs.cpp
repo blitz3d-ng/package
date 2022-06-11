@@ -143,8 +143,12 @@ static const char *linkRuntime(string rt){
 	}
 	i >> index;
 
+	runtimeEnviron->rt = rt;
+
 	for( auto& module:index["modules"] ) {
 		modules.push_back( module["id"] );
+
+		runtimeEnviron->modules.push_back( module["id"] );
 	}
 
 	for( auto& command:index["commands"] ) {

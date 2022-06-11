@@ -30,6 +30,7 @@ struct Decl{
 	virtual json toJSON();
 
 #ifdef USE_LLVM
+	int arg_index;
 	llvm::Value *ptr;
 #endif
 };

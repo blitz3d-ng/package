@@ -52,6 +52,8 @@ void Codegen_LLVM::optimize(){
 	optimizer->add( createReassociatePass() );
 	optimizer->add( createNewGVNPass() );
 	optimizer->add( createCFGSimplificationPass() );
+	optimizer->add( createSCCPPass() );
+	optimizer->add( createDeadCodeEliminationPass() );
 	optimizer->doInitialization();
 
 	for( auto &F:*module ){
@@ -61,8 +63,9 @@ void Codegen_LLVM::optimize(){
 
 bool Codegen_LLVM::verify(){
 	if( llvm::verifyModule( *module,&llvm::errs() ) ){
+		llvm::errs()<<'\n';
 		dumpToStderr();
-		abort();
+		exit( 1 );
 	}
 
 	return false;

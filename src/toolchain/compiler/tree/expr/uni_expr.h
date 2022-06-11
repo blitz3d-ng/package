@@ -10,6 +10,9 @@ struct UniExprNode : public ExprNode{
 	ExprNode *constize();
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+#ifdef USE_LLVM
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="UniExprNode";

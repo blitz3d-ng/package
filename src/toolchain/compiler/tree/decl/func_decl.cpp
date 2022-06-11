@@ -61,6 +61,7 @@ void FuncDeclNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 #include <llvm/IR/Verifier.h>
+#include <llvm/IR/ValueSymbolTable.h>
 
 void FuncDeclNode::translate2( Codegen_LLVM *g ){
 	auto ret_type=sem_type->returnType->llvmType( &g->context );
@@ -74,6 +75,11 @@ void FuncDeclNode::translate2( Codegen_LLVM *g ){
 
 	auto block = llvm::BasicBlock::Create( g->context,"entry",func );
 	g->builder->SetInsertPoint( block );
+
+	for( int k=0;k<sem_type->params->size();k++ ){
+		Decl *d=sem_env->decls->decls[k];
+		d->arg_index=k;
+	}
 
 	createVars2( sem_env,g );
 

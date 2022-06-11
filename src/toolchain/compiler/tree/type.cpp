@@ -69,7 +69,7 @@ static struct f_type : public Type{
 		return llvm::Type::getDoubleTy( *c );
 	}
 	llvm::Constant *llvmZero( llvm::LLVMContext *c ){
-		return llvm::ConstantFP::get( *c,llvm::APFloat(0.0f) );
+		return llvm::ConstantFP::get( *c,llvm::APFloat(0.0) );
 	}
 #endif
 

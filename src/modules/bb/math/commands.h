@@ -25,9 +25,9 @@ bb_float_t BBCALL bbExp( bb_float_t n );
 bb_float_t BBCALL bbLog( bb_float_t n );
 bb_float_t BBCALL bbLog10( bb_float_t n );
 bb_float_t BBCALL bbRnd( bb_float_t from,bb_float_t to );
-int BBCALL bbRand( int from,int to );
-void BBCALL bbSeedRnd( int seed );
-int BBCALL bbRndSeed();
+bb_int_t BBCALL bbRand( bb_int_t from,bb_int_t to );
+void BBCALL bbSeedRnd( bb_int_t seed );
+bb_int_t BBCALL bbRndSeed();
 
 #ifdef __cplusplus
 }

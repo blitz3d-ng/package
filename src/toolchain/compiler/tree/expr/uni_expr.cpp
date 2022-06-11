@@ -53,3 +53,26 @@ TNode *UniExprNode::translate( Codegen *g ){
 	}
 	return d_new TNode( n,l,0 );
 }
+
+#ifdef USE_LLVM
+llvm::Value *UniExprNode::translate2( Codegen_LLVM *g ){
+	auto *l=expr->translate2( g );
+	if( sem_type==Type::int_type ){
+		switch( op ){
+		case '+':return l;
+		case '-':return g->builder->CreateNeg( l );
+		case ABS:return g->CallIntrinsic( "_bbAbs",sem_type->llvmType( &g->context ),1,l );
+		case SGN:return g->CallIntrinsic( "_bbSgn",sem_type->llvmType( &g->context ),1,l );
+		}
+	}else{
+		switch( op ){
+		case '+':return l;
+		case '-':return g->builder->CreateFNeg( l );
+		case ABS:return g->CallIntrinsic( "_bbFAbs",sem_type->llvmType( &g->context ),1,l );
+		case SGN:return g->CallIntrinsic( "_bbFSgn",sem_type->llvmType( &g->context ),1,l );
+		}
+	}
+
+	return nullptr;
+}
+#endif

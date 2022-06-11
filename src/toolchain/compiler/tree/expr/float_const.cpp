@@ -38,7 +38,7 @@ string FloatConstNode::stringValue(){
 
 #ifdef USE_LLVM
 llvm::Value *FloatConstNode::translate2( Codegen_LLVM *g ){
-	return llvm::ConstantFP::get( g->context,llvm::APFloat( value ) );
+	return llvm::ConstantFP::get( g->context,llvm::APFloat( (double)value ) );
 }
 #endif
 

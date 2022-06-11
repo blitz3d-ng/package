@@ -191,13 +191,13 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 		if( d->type->intType() ){
 			init=llvm::ConstantInt::get( g->module->getContext(),llvm::APInt(32,0) );
 		}if( d->type->floatType() ){
-			init=llvm::ConstantFP::get( g->module->getContext(),llvm::APFloat(0.0f) );
+			init=llvm::ConstantFP::get( g->module->getContext(),llvm::APFloat(0.0) );
 		}if( d->type->stringType() ){
 			init=llvm::ConstantPointerNull::get( (llvm::PointerType*)ty );
 		}
 
 		glob->setInitializer( init );
-		glob->setLinkage( llvm::GlobalValue::LinkageTypes::PrivateLinkage );
+		glob->setLinkage( llvm::GlobalValue::LinkageTypes::ExternalLinkage );
 		d->ptr=glob;
 	}
 

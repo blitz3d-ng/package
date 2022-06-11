@@ -10,6 +10,9 @@ struct BinExprNode : public ExprNode{
 	~BinExprNode(){ delete lhs;delete rhs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+#ifdef USE_LLVM
+	llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 
 	json toJSON( Environ *e );
 };

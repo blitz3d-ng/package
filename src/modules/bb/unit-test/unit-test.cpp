@@ -72,7 +72,6 @@ void BBCALL _bbExpectFloatEq( float a,float b,BBStr *m, const char *file,int lin
 	__bbExpectFloatEq( a,b,mesg.c_str(),file,line );
 }
 
-#if defined(BB_WINDOWS) && !defined(USERLIB)
 void BBCALL bbContext( BBStr *m ){
 	_bbContext( m, "<unknown>", 0 );
 }
@@ -88,8 +87,6 @@ void BBCALL bbExpectIntEq( int a,int b,BBStr *m ){
 void BBCALL bbExpectFloatEq( float a,float b,BBStr *m ){
 	_bbExpectIntEq( a,b,m,"<unknown>",0 );
 }
-#endif
-
 
 #ifdef BB_WINDOWS
 #include <windows.h>

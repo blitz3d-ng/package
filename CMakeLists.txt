@@ -185,6 +185,10 @@ IF(BB_WINDOWS)
   add_definitions(-DDIRECTSOUND_VERSION=0x700) # this one may not be needed
 ENDIF()
 
+IF (LLVM_ROOT)
+  add_compile_definitions(BB_LLVM)
+ENDIF()
+
 add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")
 add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
 

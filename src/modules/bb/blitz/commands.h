@@ -183,16 +183,16 @@ void	 BBCALL _bbNullObjEx();
 
 void	 BBCALL _bbRestore( BBData *data );
 int		 BBCALL _bbReadInt();
-float	 BBCALL _bbReadFloat();
+bb_float_t	 BBCALL _bbReadFloat();
 BBStr *	 BBCALL _bbReadStr();
 
-int		 BBCALL _bbAbs( int n );
-int		 BBCALL _bbSgn( int n );
-int		 BBCALL _bbMod( int x,int y );
-float	 BBCALL _bbFAbs( float n );
-float	 BBCALL _bbFSgn( float n );
-float	 BBCALL _bbFMod( float x,float y );
-float	 BBCALL _bbFPow( float x,float y );
+bb_int_t		 BBCALL _bbAbs( bb_int_t n );
+bb_int_t		 BBCALL _bbSgn( bb_int_t n );
+bb_int_t		 BBCALL _bbMod( bb_int_t x,bb_int_t y );
+bb_float_t	 BBCALL _bbFAbs( bb_float_t n );
+bb_float_t	 BBCALL _bbFSgn( bb_float_t n );
+bb_float_t	 BBCALL _bbFMod( bb_float_t x,bb_float_t y );
+bb_float_t	 BBCALL _bbFPow( bb_float_t x,bb_float_t y );
 
 void	 BBCALL bbRuntimeStats();
 
