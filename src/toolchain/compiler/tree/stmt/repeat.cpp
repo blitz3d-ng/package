@@ -37,17 +37,20 @@ void RepeatNode::translate2( Codegen_LLVM *g ){
 	auto func=g->builder->GetInsertBlock()->getParent();
 
 	auto loop=llvm::BasicBlock::Create( g->context,"repeat",func );
-	auto eob=llvm::BasicBlock::Create( g->context,expr?"until":"forever" );
+	auto iter=llvm::BasicBlock::Create( g->context,"repeat_iter" );
+	auto cont=llvm::BasicBlock::Create( g->context,"repeat_cont" );
 
 	g->builder->CreateBr( loop );
 	g->builder->SetInsertPoint( loop );
 
 	auto oldBreakBlock=g->breakBlock;
-	g->breakBlock=eob;
+	g->breakBlock=cont;
 	stmts->translate2( g );
+	g->builder->CreateBr( iter );
 	g->breakBlock=oldBreakBlock;
 
-
+	func->getBasicBlockList().push_back( iter );
+	g->builder->SetInsertPoint( iter );
 	if( expr ) {
 		auto cond=expr->translate2( g );
 		auto cmp=cond;
@@ -56,13 +59,13 @@ void RepeatNode::translate2( Codegen_LLVM *g ){
 			cmp=compare2( '=',cond,0,expr->sem_type,g );
 		}
 
-		g->builder->CreateCondBr( cmp,loop,eob );
+		g->builder->CreateCondBr( cmp,loop,cont );
 	}else{
 		g->builder->CreateBr( loop );
 	}
 
-	func->getBasicBlockList().push_back( eob );
-	g->builder->SetInsertPoint( eob );
+	func->getBasicBlockList().push_back( cont );
+	g->builder->SetInsertPoint( cont );
 }
 #endif
 

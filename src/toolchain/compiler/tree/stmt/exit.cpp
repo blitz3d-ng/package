@@ -14,7 +14,15 @@ void ExitNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void ExitNode::translate2( Codegen_LLVM *g ){
+	auto func=g->builder->GetInsertBlock()->getParent();
+
+	auto exit=llvm::BasicBlock::Create( g->context,"exit",func );
+	g->builder->CreateBr( exit );
+	g->builder->SetInsertPoint( exit );
 	g->builder->CreateBr( g->breakBlock );
+
+	auto cont=llvm::BasicBlock::Create( g->context,"exit",func );
+	g->builder->SetInsertPoint( cont );
 }
 #endif
 

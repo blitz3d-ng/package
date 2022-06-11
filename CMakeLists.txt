@@ -9,6 +9,11 @@ include(src/bin2h.cmake)
 set(BB_STATIC false)
 set(BB_SHARED true)
 
+# TODO: this will be extended a bit...
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES x86_64)
+  set(BB_ARCH "x86")
+endif()
+
 IF(NOT BB_PLATFORM)
   IF(WIN32)
     IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -160,6 +165,7 @@ add_subdirectory(deps)
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")
+add_definitions(-DBB_ARCH="${BB_ARCH}")
 
 add_definitions(-DBB_SOURCE_ROOT="${CMAKE_SOURCE_DIR}")
 

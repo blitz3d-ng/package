@@ -59,6 +59,73 @@ void SelectNode::translate( Codegen *g ){
 	g->label( brk );
 }
 
+#ifdef USE_LLVM
+void SelectNode::translate2( Codegen_LLVM *g ){
+	Type *ty=expr->sem_type;
+
+	auto *func = g->builder->GetInsertBlock()->getParent();
+
+	vector<llvm::BasicBlock*> blocks;
+	vector<int> block_idx;
+	llvm::BasicBlock *cont=0,*def=0;
+	cont=llvm::BasicBlock::Create( g->context,"case_cont" );
+
+	for( int k=0;k<cases.size();++k ){
+		CaseNode *c=cases[k];
+		auto b=llvm::BasicBlock::Create( g->context,"case_cond" );
+		blocks.push_back( b );
+	}
+
+	if( defStmts ) {
+		def=llvm::BasicBlock::Create( g->context,"case_default" );
+		blocks.push_back( def );
+	} else {
+		blocks.push_back( cont );
+	}
+
+	sem_temp->store2( g,expr->translate2( g ) );
+	g->builder->CreateBr( blocks[0] );
+
+	for( int k=0;k<cases.size();++k ){
+		CaseNode *c=cases[k];
+
+		vector<llvm::BasicBlock*> conds;
+		conds.push_back( blocks[k] );
+		for( int j=1;j<c->exprs->size();++j ){
+			auto b=llvm::BasicBlock::Create( g->context,"case_cond" );
+			conds.push_back( b );
+		}
+		conds.push_back( blocks[k+1] );
+
+		auto body=llvm::BasicBlock::Create( g->context,"case_body" );
+
+		for( int j=0;j<c->exprs->size();++j ){
+			ExprNode *e=c->exprs->exprs[j];
+
+			func->getBasicBlockList().push_back( conds[j] );
+			g->builder->SetInsertPoint( conds[j] );
+			auto *t=compare2( '=',sem_temp->load2( g ),e->translate2( g ),ty,g );
+			g->builder->CreateCondBr( t,body,conds[j+1] );
+		}
+
+		func->getBasicBlockList().push_back( body );
+		g->builder->SetInsertPoint( body );
+		c->stmts->translate2( g );
+		g->builder->CreateBr( cont );
+	}
+
+	if( def ) {
+		func->getBasicBlockList().push_back( def );
+		g->builder->SetInsertPoint( def );
+		defStmts->translate2( g );
+		g->builder->CreateBr( cont );
+	}
+
+	func->getBasicBlockList().push_back( cont );
+	g->builder->SetInsertPoint( cont );
+}
+#endif
+
 
 json SelectNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="SelectNode";

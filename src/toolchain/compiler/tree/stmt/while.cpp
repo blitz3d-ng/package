@@ -49,6 +49,8 @@ void WhileNode::translate2( Codegen_LLVM *g ){
 		auto body=llvm::BasicBlock::Create( g->context,"body" );
 
 		auto v=expr->translate2( g );
+		v=g->builder->CreateIntCast( v,llvm::Type::getInt1Ty( g->context ),true ); // TODO: this is a hack and hopefully optimized out...
+
 		g->builder->CreateCondBr( v,body,next );
 
 		func->getBasicBlockList().push_back( body );

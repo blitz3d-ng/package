@@ -82,7 +82,12 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 
 	// macos
 	args.push_back("-lSystem");
-	args.push_back("-arch");args.push_back("arm64");
+	args.push_back("-arch");
+	if (BB_ARCH == "x86") {
+		args.push_back("x86_64");
+	} else {
+		args.push_back("arm64");
+	}
 	args.push_back("-platform_version");args.push_back("macos");args.push_back("12.1");args.push_back("12.3");
 
 	if( !lld::macho::link(args, llvm::outs(), llvm::errs(), true, false) ) {
