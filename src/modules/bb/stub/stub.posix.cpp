@@ -48,6 +48,7 @@ public:
 
 #ifdef BB_DEBUG
 #define BACKTRACE_DEPTH 10
+static
 void dump_backtrace(int sig) {
 	void *array[BACKTRACE_DEPTH];
 

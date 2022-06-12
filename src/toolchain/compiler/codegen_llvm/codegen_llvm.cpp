@@ -15,6 +15,8 @@
 #include <llvm/Transforms/Scalar.h>
 using namespace llvm;
 
+#include <cstdarg>
+
 Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	context=std::make_unique<llvm::LLVMContext>();
 	module=std::make_unique<llvm::Module>( "",*context );

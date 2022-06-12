@@ -7,8 +7,9 @@
 export PLATFORM=$1
 shift
 
+VOLUME=blitz3d-ng-gems-$PLATFORM
 IMAGE=ghcr.io/blitz3d-ng/env:$PLATFORM
-OPTIONS="--rm -w /b3d -v $(pwd):/b3d"
+OPTIONS="--rm -w /b3d -v $(pwd):/b3d -v $VOLUME:/bundle -e LLVM_ROOT=/opt/llvm -e blitzpath=/b3d/_release -e BUNDLE_PATH=/bundle"
 
 if [ -t 1 ]
 then

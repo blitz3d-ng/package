@@ -1,5 +1,3 @@
-set (CMAKE_CXX_STANDARD 11)
-
 set (CMAKE_EXECUTABLE_SUFFIX_ )
 
 add_library(linker SHARED main.cpp linker.h linker.cpp image_util.h image_util.cpp)

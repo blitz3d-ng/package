@@ -1,5 +1,3 @@
-set (CMAKE_CXX_STANDARD 11)
-
 set (SOURCE src/code/Assimp.cpp
   src/code/BaseImporter.h
   src/code/BaseImporter.cpp

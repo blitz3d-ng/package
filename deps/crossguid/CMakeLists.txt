@@ -1,5 +1,3 @@
-set (CMAKE_CXX_STANDARD 11)
-
 add_library(crossguid STATIC src/guid.h src/guid.cpp)
 target_include_directories(crossguid SYSTEM PUBLIC src)
 

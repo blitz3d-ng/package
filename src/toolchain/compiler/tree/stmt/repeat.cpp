@@ -55,7 +55,7 @@ void RepeatNode::translate2( Codegen_LLVM *g ){
 		auto cond=expr->translate2( g );
 		auto cmp=cond;
 
-		if( !dyn_cast<llvm::CmpInst>(cmp) ) {
+		if( !llvm::dyn_cast<llvm::CmpInst>(cmp) ) {
 			cmp=compare2( '=',cond,0,expr->sem_type,g );
 		}
 

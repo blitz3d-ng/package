@@ -46,7 +46,7 @@ void IfNode::translate2( Codegen_LLVM *g ){
 	auto cond=expr->translate2( g );
 	auto cmp=cond;
 
-	if( !dyn_cast<llvm::CmpInst>(cmp) ) {
+	if( !llvm::dyn_cast<llvm::CmpInst>(cmp) ) {
 		cmp=compare2( NE,cond,0,expr->sem_type,g );
 	}
 
@@ -56,7 +56,7 @@ void IfNode::translate2( Codegen_LLVM *g ){
 	stmts->translate2( g );
 
 	auto current_block = g->builder->GetInsertBlock();
-	if( !dyn_cast<llvm::BranchInst>(&current_block->back()) ) {
+	if( !llvm::dyn_cast<llvm::BranchInst>(&current_block->back()) ) {
 		g->builder->CreateBr( cont );
 	}
 
@@ -67,7 +67,7 @@ void IfNode::translate2( Codegen_LLVM *g ){
 		elseOpt->translate2( g );
 
 		auto current_block = g->builder->GetInsertBlock();
-		if( !dyn_cast<llvm::BranchInst>(&current_block->back()) ) {
+		if( !llvm::dyn_cast<llvm::BranchInst>(&current_block->back()) ) {
 			g->builder->CreateBr( cont );
 		}
 	}

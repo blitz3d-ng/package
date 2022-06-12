@@ -1,5 +1,3 @@
-set (CMAKE_CXX_STANDARD 11)
-
 # some useful macros...
 macro(bb_addmodule name)
   if(TARGET ${name})
@@ -12,7 +10,7 @@ macro(bb_runtime id)
 
   # static
   add_library(${name}.static STATIC ${SOURCES})
-  target_link_libraries(${name}.static ${DEPENDS_ON} ${SYSTEM_LIBS})
+  target_link_libraries(${name}.static ${DEPENDS_ON} ${SYSTEM_LIBS} bb.stub)
 
   if(BB_COVERAGE)
     set_property(TARGET ${name}.static APPEND_STRING PROPERTY COMPILE_FLAGS " ${BB_COVERAGE}")
@@ -46,7 +44,7 @@ macro(bb_runtime id)
       set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " -static")
     endif()
   else()
-    target_link_libraries(${name}.shared ${name}.static bb.stub)
+    target_link_libraries(${name}.shared ${name}.static)
   endif()
 
   if(BB_COVERAGE)

@@ -1,6 +1,3 @@
-set (CMAKE_CXX_STANDARD 14)
-set (CMAKE_CXX_STANDARD_REQUIRED true)
-
 set (CMAKE_EXECUTABLE_SUFFIX_ )
 
 include_directories (SYSTEM ../../modules)
@@ -118,15 +115,20 @@ if(LLVM_ROOT)
   )
 
   execute_process(
-    COMMAND ${LLVM_ROOT}/bin/llvm-config --ldflags --libs
+    COMMAND ${LLVM_ROOT}/bin/llvm-config --ldflags --system-libs
     OUTPUT_VARIABLE LLVM_LD_FLAGS
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  execute_process(
+    COMMAND ${LLVM_ROOT}/bin/llvm-config --libs
+    OUTPUT_VARIABLE LLVM_LIBS
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
   target_compile_options(blitzcc PRIVATE "SHELL:${LLVM_CXX_FLAGS}" -fexceptions -frtti)
   target_link_options(blitzcc PRIVATE "SHELL:${LLVM_LD_FLAGS}")
 
-  target_link_libraries(blitzcc lldCommon lldMachO lldCOFF lldELF lldMinGW lldWasm)
+  target_link_libraries(blitzcc lldCommon lldMachO lldCOFF lldELF lldMinGW lldWasm ${LLVM_LIBS})
 
   # TODO: figure out if this is optional...
   target_link_libraries(blitzcc zlibstatic ncurses)

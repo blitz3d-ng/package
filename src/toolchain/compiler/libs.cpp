@@ -143,12 +143,16 @@ static const char *linkRuntime(string rt){
 	}
 	i >> index;
 
+#ifdef USE_LLVM
 	runtimeEnviron->rt = rt;
+#endif
 
 	for( auto& module:index["modules"] ) {
 		modules.push_back( module["id"] );
 
+#ifdef USE_LLVM
 		runtimeEnviron->modules.push_back( module["id"] );
+#endif
 	}
 
 	for( auto& command:index["commands"] ) {

@@ -1,4 +1,3 @@
-set (CMAKE_CXX_STANDARD 11)
 include_directories (SYSTEM .)
 
 # some useful macros...
