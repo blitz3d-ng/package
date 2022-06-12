@@ -36,9 +36,9 @@ void RepeatNode::translate2( Codegen_LLVM *g ){
 	auto current_block = g->builder->GetInsertBlock();
 	auto func=g->builder->GetInsertBlock()->getParent();
 
-	auto loop=llvm::BasicBlock::Create( g->context,"repeat",func );
-	auto iter=llvm::BasicBlock::Create( g->context,"repeat_iter" );
-	auto cont=llvm::BasicBlock::Create( g->context,"repeat_cont" );
+	auto loop=llvm::BasicBlock::Create( *g->context,"repeat",func );
+	auto iter=llvm::BasicBlock::Create( *g->context,"repeat_iter" );
+	auto cont=llvm::BasicBlock::Create( *g->context,"repeat_cont" );
 
 	g->builder->CreateBr( loop );
 	g->builder->SetInsertPoint( loop );

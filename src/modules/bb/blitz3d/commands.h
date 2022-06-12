@@ -339,7 +339,7 @@ float BBCALL BBCALL bbEntityDistance( Entity *src,Entity *dest );
 void BBCALL bbMoveEntity( Entity *e,float x,float y,float z );
 void BBCALL bbTurnEntity( Entity *e,float p,float y,float r,int global );
 void BBCALL bbTranslateEntity( Entity *e,float x,float y,float z,int global );
-void BBCALL bbPositionEntity( Entity *e,float x,float y,float z,int global );
+void BBCALL bbPositionEntity( Entity *e,bb_float_t x,bb_float_t y,bb_float_t z,bb_int_t global );
 void BBCALL bbScaleEntity( Entity *e,float x,float y,float z,int global );
 void BBCALL bbRotateEntity( Entity *e,float p,float y,float r,int global );
 void BBCALL bbPointEntity( Entity *e,Entity *t,float roll );

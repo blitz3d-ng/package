@@ -60,9 +60,8 @@ void dump_backtrace(int sig) {
 }
 #endif
 
-extern "C" void bbMain();
-
-int main( int argc,char *argv[] ){
+extern "C"
+int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 #ifdef BB_DEBUG
 	signal(SIGSEGV, dump_backtrace);
   bb_env.debug=true;

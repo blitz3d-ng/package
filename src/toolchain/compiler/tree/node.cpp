@@ -107,8 +107,8 @@ void Node::createVars2( Environ *e, Codegen_LLVM *g ){
 		if( d->kind!=DECL_LOCAL ) continue;
 		if( d->type->vectorType() ) continue;
 
-		d->ptr=g->builder->CreateAlloca( d->type->llvmType( &g->context ),nullptr,d->name );
-		g->builder->CreateStore( d->type->llvmZero( &g->context ),d->ptr );
+		d->ptr=g->builder->CreateAlloca( d->type->llvmType( g->context.get() ),nullptr,d->name );
+		g->builder->CreateStore( d->type->llvmZero( g->context.get() ),d->ptr );
 	}
 }
 #endif
@@ -179,7 +179,7 @@ TNode *Node::compare( int op,TNode *l,TNode *r,Type *ty ){
 
 #ifdef USE_LLVM
 llvm::Value *Node::compare2( int op,llvm::Value *l,llvm::Value *r,Type *ty,Codegen_LLVM *g ){
-	auto it=Type::int_type->llvmType( &g->context );
+	auto it=Type::int_type->llvmType( g->context.get() );
 
 	if( ty==Type::string_type ){
 		l=g->CallIntrinsic( "_bbStrCompare",it,2,l,r );
@@ -199,7 +199,7 @@ llvm::Value *Node::compare2( int op,llvm::Value *l,llvm::Value *r,Type *ty,Codeg
 		case LE :n=llvm::CmpInst::FCMP_OLE;break;case GE :n=llvm::CmpInst::FCMP_OGE;break;
 		}
 
-		if( r==0 ) r=llvm::ConstantFP::get( Type::float_type->llvmType( &g->context ),llvm::APFloat(0.0) );
+		if( r==0 ) r=llvm::ConstantFP::get( Type::float_type->llvmType( g->context.get() ),llvm::APFloat(0.0) );
 
 		return g->builder->CreateFCmp( n,l,r );
 	}else{

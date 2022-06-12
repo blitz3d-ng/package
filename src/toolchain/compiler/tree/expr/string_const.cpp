@@ -16,7 +16,7 @@ TNode *StringConstNode::translate( Codegen *g ){
 #ifdef USE_LLVM
 llvm::Value *StringConstNode::translate2( Codegen_LLVM *g ){
 	auto arg=g->builder->CreateGlobalStringPtr(value);
-	return g->CallIntrinsic( "_bbStrConst",sem_type->llvmType( &g->context ),1,arg );
+	return g->CallIntrinsic( "_bbStrConst",sem_type->llvmType( g->context.get() ),1,arg );
 }
 #endif
 

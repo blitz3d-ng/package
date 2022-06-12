@@ -68,16 +68,16 @@ void SelectNode::translate2( Codegen_LLVM *g ){
 	vector<llvm::BasicBlock*> blocks;
 	vector<int> block_idx;
 	llvm::BasicBlock *cont=0,*def=0;
-	cont=llvm::BasicBlock::Create( g->context,"case_cont" );
+	cont=llvm::BasicBlock::Create( *g->context,"case_cont" );
 
 	for( int k=0;k<cases.size();++k ){
 		CaseNode *c=cases[k];
-		auto b=llvm::BasicBlock::Create( g->context,"case_cond" );
+		auto b=llvm::BasicBlock::Create( *g->context,"case_cond" );
 		blocks.push_back( b );
 	}
 
 	if( defStmts ) {
-		def=llvm::BasicBlock::Create( g->context,"case_default" );
+		def=llvm::BasicBlock::Create( *g->context,"case_default" );
 		blocks.push_back( def );
 	} else {
 		blocks.push_back( cont );
@@ -92,12 +92,12 @@ void SelectNode::translate2( Codegen_LLVM *g ){
 		vector<llvm::BasicBlock*> conds;
 		conds.push_back( blocks[k] );
 		for( int j=1;j<c->exprs->size();++j ){
-			auto b=llvm::BasicBlock::Create( g->context,"case_cond" );
+			auto b=llvm::BasicBlock::Create( *g->context,"case_cond" );
 			conds.push_back( b );
 		}
 		conds.push_back( blocks[k+1] );
 
-		auto body=llvm::BasicBlock::Create( g->context,"case_body" );
+		auto body=llvm::BasicBlock::Create( *g->context,"case_body" );
 
 		for( int j=0;j<c->exprs->size();++j ){
 			ExprNode *e=c->exprs->exprs[j];

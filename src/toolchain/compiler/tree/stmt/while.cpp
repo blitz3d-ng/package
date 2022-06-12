@@ -39,17 +39,17 @@ void WhileNode::translate2( Codegen_LLVM *g ){
 	auto current_block = g->builder->GetInsertBlock();
 	auto func=g->builder->GetInsertBlock()->getParent();
 
-	auto loop=llvm::BasicBlock::Create( g->context,"while",func );
-	auto next=llvm::BasicBlock::Create( g->context,"wend" );
+	auto loop=llvm::BasicBlock::Create( *g->context,"while",func );
+	auto next=llvm::BasicBlock::Create( *g->context,"wend" );
 
 	g->builder->CreateBr( loop );
 	g->builder->SetInsertPoint( loop );
 
 	if( !c ) {
-		auto body=llvm::BasicBlock::Create( g->context,"body" );
+		auto body=llvm::BasicBlock::Create( *g->context,"body" );
 
 		auto v=expr->translate2( g );
-		v=g->builder->CreateIntCast( v,llvm::Type::getInt1Ty( g->context ),true ); // TODO: this is a hack and hopefully optimized out...
+		v=g->builder->CreateIntCast( v,llvm::Type::getInt1Ty( *g->context ),true ); // TODO: this is a hack and hopefully optimized out...
 
 		g->builder->CreateCondBr( v,body,next );
 

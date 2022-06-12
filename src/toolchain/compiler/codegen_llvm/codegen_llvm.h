@@ -10,9 +10,11 @@
 class Codegen_LLVM {
 public:
 	bool debug;
-	llvm::LLVMContext context;
+
+	std::unique_ptr<llvm::LLVMContext> context;
+	std::unique_ptr<llvm::Module> module;
+
 	llvm::IRBuilder<> *builder;
-	llvm::Module *module;
 	llvm::legacy::FunctionPassManager *optimizer;
 
 	Codegen_LLVM( bool debug );

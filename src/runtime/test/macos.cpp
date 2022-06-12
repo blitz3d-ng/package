@@ -6,6 +6,9 @@
 
 #include "../../stdutil/stdutil.h"
 
+
+// TODO: get rid of the dirty bbStart hack that's needed to keep clang from stripping...
+
 BBMODULE_DECL( math );
 BBMODULE_DECL( blitz );
 BBMODULE_DECL( string );
@@ -78,49 +81,49 @@ bool bbruntime_create(){
 																																										if( runtime_console_create() ){
 																																												if( unit_test_create() ){
 																																														return true;
-																						}else sue( "unit_test_create failed" );
+																						}else sue( "unit_test_create failed" );bbStart( 0,0,0 );
 																						runtime_console_destroy();
-																					}else sue( "runtime_console_create failed" );
+																					}else sue( "runtime_console_create failed" );bbStart( 0,0,0 );
 																					event_destroy();
-																				}else sue( "event_create failed" );
+																				}else sue( "event_create failed" );bbStart( 0,0,0 );
 																				audio_openal_destroy();
-																			}else sue( "audio_openal_create failed" );
+																			}else sue( "audio_openal_create failed" );bbStart( 0,0,0 );
 																			audio_destroy();
-																		}else sue( "audio_create failed" );
+																		}else sue( "audio_create failed" );bbStart( 0,0,0 );
 																		input_destroy();
-																	}else sue( "input_create failed" );
+																	}else sue( "input_create failed" );bbStart( 0,0,0 );
 																	timer_noop_destroy();
-																}else sue( "timer_noop_create failed" );
+																}else sue( "timer_noop_create failed" );bbStart( 0,0,0 );
 																timer_destroy();
-															}else sue( "timer_create failed" );
+															}else sue( "timer_create failed" );bbStart( 0,0,0 );
 															filesystem_posix_destroy();
-														}else sue( "filesystem_posix_create failed" );
+														}else sue( "filesystem_posix_create failed" );bbStart( 0,0,0 );
 														filesystem_destroy();
-													}else sue( "filesystem_create failed" );
+													}else sue( "filesystem_create failed" );bbStart( 0,0,0 );
 													system_macos_destroy();
-												}else sue( "system_macos_create failed" );
+												}else sue( "system_macos_create failed" );bbStart( 0,0,0 );
 												system_destroy();
-											}else sue( "system_create failed" );
+											}else sue( "system_create failed" );bbStart( 0,0,0 );
 											runtime_destroy();
-										}else sue( "runtime_create failed" );
+										}else sue( "runtime_create failed" );bbStart( 0,0,0 );
 										enet_destroy();
-									}else sue( "enet_create failed" );
+									}else sue( "enet_create failed" );bbStart( 0,0,0 );
 									hook_destroy();
-								}else sue( "hook_create failed" );
+								}else sue( "hook_create failed" );bbStart( 0,0,0 );
 								sockets_destroy();
-							}else sue( "sockets_create failed" );
+							}else sue( "sockets_create failed" );bbStart( 0,0,0 );
 							stdio_destroy();
-						}else sue( "stdio_create failed" );
+						}else sue( "stdio_create failed" );bbStart( 0,0,0 );
 						bank_destroy();
-					}else sue( "bank_create failed" );
+					}else sue( "bank_create failed" );bbStart( 0,0,0 );
 					stream_destroy();
-				}else sue( "stream_create failed" );
+				}else sue( "stream_create failed" );bbStart( 0,0,0 );
 				string_destroy();
-			}else sue( "string_create failed" );
+			}else sue( "string_create failed" );bbStart( 0,0,0 );
 			blitz_destroy();
-		}else sue( "blitz_create failed" );
+		}else sue( "blitz_create failed" );bbStart( 0,0,0 );
 		math_destroy();
-	}else sue( "math_create failed" );
+	}else sue( "math_create failed" );bbStart( 0,0,0 );
 	return false;
 }
 

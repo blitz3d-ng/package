@@ -64,16 +64,16 @@ void FuncDeclNode::translate( Codegen *g ){
 #include <llvm/IR/ValueSymbolTable.h>
 
 void FuncDeclNode::translate2( Codegen_LLVM *g ){
-	auto ret_type=sem_type->returnType->llvmType( &g->context );
+	auto ret_type=sem_type->returnType->llvmType( g->context.get() );
 	vector<llvm::Type*> args;
 	for( int k=0;k<sem_type->params->size();k++ ){
-		args.push_back( sem_type->params->decls[k]->type->llvmType( &g->context ) );
+		args.push_back( sem_type->params->decls[k]->type->llvmType( g->context.get() ) );
 	}
 
 	auto ft=llvm::FunctionType::get( ret_type,args,false );
-	auto func=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"f"+ident,g->module );
+	auto func=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"f"+ident,g->module.get() );
 
-	auto block = llvm::BasicBlock::Create( g->context,"entry",func );
+	auto block = llvm::BasicBlock::Create( *g->context,"entry",func );
 	g->builder->SetInsertPoint( block );
 
 	for( int k=0;k<sem_type->params->size();k++ ){

@@ -61,15 +61,15 @@ llvm::Value *UniExprNode::translate2( Codegen_LLVM *g ){
 		switch( op ){
 		case '+':return l;
 		case '-':return g->builder->CreateNeg( l );
-		case ABS:return g->CallIntrinsic( "_bbAbs",sem_type->llvmType( &g->context ),1,l );
-		case SGN:return g->CallIntrinsic( "_bbSgn",sem_type->llvmType( &g->context ),1,l );
+		case ABS:return g->CallIntrinsic( "_bbAbs",sem_type->llvmType( g->context.get() ),1,l );
+		case SGN:return g->CallIntrinsic( "_bbSgn",sem_type->llvmType( g->context.get() ),1,l );
 		}
 	}else{
 		switch( op ){
 		case '+':return l;
 		case '-':return g->builder->CreateFNeg( l );
-		case ABS:return g->CallIntrinsic( "_bbFAbs",sem_type->llvmType( &g->context ),1,l );
-		case SGN:return g->CallIntrinsic( "_bbFSgn",sem_type->llvmType( &g->context ),1,l );
+		case ABS:return g->CallIntrinsic( "_bbFAbs",sem_type->llvmType( g->context.get() ),1,l );
+		case SGN:return g->CallIntrinsic( "_bbFSgn",sem_type->llvmType( g->context.get() ),1,l );
 		}
 	}
 

@@ -72,9 +72,9 @@ void ForNode::translate2( Codegen_LLVM *g ){
 
 	llvm::Value *t;Type *ty=var->sem_type;
 
-	auto cond=llvm::BasicBlock::Create( g->context,"for_cond",func );
-	auto loop=llvm::BasicBlock::Create( g->context,"for_loop",func );
-	auto cont=llvm::BasicBlock::Create( g->context,"for_cont",func );
+	auto cond=llvm::BasicBlock::Create( *g->context,"for_cond",func );
+	auto loop=llvm::BasicBlock::Create( *g->context,"for_loop",func );
+	auto cont=llvm::BasicBlock::Create( *g->context,"for_cont",func );
 
 	//initial assignment
 	var->store2( g,fromExpr->translate2( g ) );

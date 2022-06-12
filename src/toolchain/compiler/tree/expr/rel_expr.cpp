@@ -71,7 +71,7 @@ llvm::Value *RelExprNode::translate2( Codegen_LLVM *g ){
 	auto *r=rhs->translate2( g );
 
 	auto *t=compare2( op,l,r,opType,g );
-	return g->builder->CreateIntCast( t,Type::int_type->llvmType( &g->context ),true );
+	return g->builder->CreateIntCast( t,Type::int_type->llvmType( g->context.get() ),true );
 }
 #endif
 

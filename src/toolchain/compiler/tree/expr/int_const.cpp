@@ -13,7 +13,7 @@ TNode *IntConstNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 llvm::Value *IntConstNode::translate2( Codegen_LLVM *g ){
-	return llvm::ConstantInt::get( sem_type->llvmType( &g->context ),value,true );
+	return llvm::ConstantInt::get( sem_type->llvmType( g->context.get() ),value,true );
 }
 #endif
 

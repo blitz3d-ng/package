@@ -51,11 +51,11 @@ llvm::Value *BinExprNode::translate2( Codegen_LLVM *g ){
 	case OR:n=llvm::Instruction::Or;break;
 	case XOR:n=llvm::Instruction::Xor;break;
 	case SHL:n=llvm::Instruction::Shl;break;
-	case SHR:n=llvm::Instruction::AShr;break;
-	case SAR:n=llvm::Instruction::LShr;break;
+	case SHR:n=llvm::Instruction::LShr;break;
+	case SAR:n=llvm::Instruction::AShr;break;
 	}
 	llvm::Value *t=g->builder->CreateNAryOp( n,ops );
-	return g->builder->CreateIntCast( t,Type::int_type->llvmType( &g->context ),true );
+	return g->builder->CreateIntCast( t,Type::int_type->llvmType( g->context.get() ),true );
 }
 #endif
 

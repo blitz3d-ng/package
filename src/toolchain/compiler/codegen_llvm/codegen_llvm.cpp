@@ -16,8 +16,10 @@
 using namespace llvm;
 
 Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
-	builder=new IRBuilder<>( context );
-	module=new Module( "",context);
+	context=std::make_unique<llvm::LLVMContext>();
+	module=std::make_unique<llvm::Module>( "",*context );
+
+	builder=new IRBuilder<>( *context );
 }
 
 Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,int n,... ){
@@ -39,7 +41,7 @@ Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,in
 		}
 
 		auto ft = FunctionType::get( typ,decls,false );
-		func=Function::Create( ft,GlobalValue::ExternalLinkage,symbol,module );
+		func=Function::Create( ft,GlobalValue::ExternalLinkage,symbol,module.get() );
 		func->setCallingConv( CallingConv::C );
 	}
 
@@ -47,7 +49,7 @@ Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,in
 }
 
 void Codegen_LLVM::optimize(){
-	auto optimizer=std::make_unique<legacy::FunctionPassManager>( module );
+	auto optimizer=std::make_unique<legacy::FunctionPassManager>( module.get() );
 	optimizer->add( createInstructionCombiningPass() );
 	optimizer->add( createReassociatePass() );
 	optimizer->add( createNewGVNPass() );

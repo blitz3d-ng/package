@@ -158,7 +158,7 @@ ENDIF()
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
    add_compile_options (-fdiagnostics-color=always)
 ELSEIF ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  add_compile_options (-fcolor-diagnostics -emit-llvm)
+  add_compile_options (-fcolor-diagnostics)
 ENDIF ()
 
 add_subdirectory(deps)

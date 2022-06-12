@@ -97,7 +97,8 @@ module Blitz3D
           globals,
           func_decls,
           func_defs,
-          "void bbMain(){\n  #{struct_init.indent}\n  #{locals.indent}\n  #{stmts.to_c {}.indent}\n}"
+          "void bbMain(){\n  #{struct_init.indent}\n  #{locals.indent}\n  #{stmts.to_c {}.indent}\n}",
+          %(int bbStart( int argc,char **argv,void* ); int main( int argc,char **argv ) { return bbStart( argc,argv,bbMain ); })
         ].reject(&:blank?).join("\n\n")
       end
     end

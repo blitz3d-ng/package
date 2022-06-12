@@ -1858,7 +1858,7 @@ void BBCALL bbTranslateEntity( Entity *e,float x,float y,float z,int global ){
 	e->setLocalPosition( e->getLocalPosition()+Vector( x,y,z ) );
 }
 
-void BBCALL bbPositionEntity( Entity *e,float x,float y,float z,int global ){
+void BBCALL bbPositionEntity( Entity *e,bb_float_t x,bb_float_t y,bb_float_t z,bb_int_t global ){
 	debugEntity(e);
 	global?
 	e->setWorldPosition(Vector(x,y,z)):

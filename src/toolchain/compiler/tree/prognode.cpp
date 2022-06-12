@@ -184,7 +184,7 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 		if( d->kind!=DECL_GLOBAL ) continue;
 		if( d->type->vectorType() ) continue;
 
-		auto ty=d->type->llvmType( &g->context );
+		auto ty=d->type->llvmType( g->context.get() );
 		auto glob=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( d->name,ty );
 
 		llvm::Constant *init=0;
@@ -203,11 +203,13 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 
 	funcs->translate2( g );
 
-	vector<llvm::Type*> none( 0,llvm::Type::getVoidTy( g->context ) );
-	auto ft=llvm::FunctionType::get( llvm::Type::getVoidTy(g->context),none,false );
-	auto bbMain=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"bbMain",g->module );
+	llvm::Type *void_type=llvm::Type::getVoidTy( *g->context );
 
-	auto block = llvm::BasicBlock::Create( g->context,"entry",bbMain );
+	vector<llvm::Type*> none( 0,void_type );
+	auto ft=llvm::FunctionType::get( void_type,none,false );
+	auto bbMain=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"bbMain",g->module.get() );
+
+	auto block = llvm::BasicBlock::Create( *g->context,"entry",bbMain );
 	g->builder->SetInsertPoint( block );
 
 	createVars2( sem_env,g );

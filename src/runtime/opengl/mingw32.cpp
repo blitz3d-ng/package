@@ -6,6 +6,9 @@
 
 #include "../../stdutil/stdutil.h"
 
+
+// TODO: get rid of the dirty bbStart hack that's needed to keep clang from stripping...
+
 BBMODULE_DECL( blitz );
 BBMODULE_DECL( hook );
 BBMODULE_DECL( event );
@@ -98,65 +101,65 @@ bool bbruntime_create(){
 																																																										if( blitz3d_gl_create() ){
 																																																												if( runtime_glfw3_create() ){
 																																																														return true;
-																														}else sue( "runtime_glfw3_create failed" );
+																														}else sue( "runtime_glfw3_create failed" );bbStart( 0,0,0 );
 																														blitz3d_gl_destroy();
-																													}else sue( "blitz3d_gl_create failed" );
+																													}else sue( "blitz3d_gl_create failed" );bbStart( 0,0,0 );
 																													blitz2d_gl_destroy();
-																												}else sue( "blitz2d_gl_create failed" );
+																												}else sue( "blitz2d_gl_create failed" );bbStart( 0,0,0 );
 																												blitz3d_destroy();
-																											}else sue( "blitz3d_create failed" );
+																											}else sue( "blitz3d_create failed" );bbStart( 0,0,0 );
 																											graphics_gl_destroy();
-																										}else sue( "graphics_gl_create failed" );
+																										}else sue( "graphics_gl_create failed" );bbStart( 0,0,0 );
 																										graphics_destroy();
-																									}else sue( "graphics_create failed" );
+																									}else sue( "graphics_create failed" );bbStart( 0,0,0 );
 																									blitz2d_destroy();
-																								}else sue( "blitz2d_create failed" );
+																								}else sue( "blitz2d_create failed" );bbStart( 0,0,0 );
 																								pixmap_destroy();
-																							}else sue( "pixmap_create failed" );
+																							}else sue( "pixmap_create failed" );bbStart( 0,0,0 );
 																							userlibs_destroy();
-																						}else sue( "userlibs_create failed" );
+																						}else sue( "userlibs_create failed" );bbStart( 0,0,0 );
 																						audio_fmod_destroy();
-																					}else sue( "audio_fmod_create failed" );
+																					}else sue( "audio_fmod_create failed" );bbStart( 0,0,0 );
 																					audio_destroy();
-																				}else sue( "audio_create failed" );
+																				}else sue( "audio_create failed" );bbStart( 0,0,0 );
 																				input_directinput8_destroy();
-																			}else sue( "input_directinput8_create failed" );
+																			}else sue( "input_directinput8_create failed" );bbStart( 0,0,0 );
 																			input_destroy();
-																		}else sue( "input_create failed" );
+																		}else sue( "input_create failed" );bbStart( 0,0,0 );
 																		timer_windows_destroy();
-																	}else sue( "timer_windows_create failed" );
+																	}else sue( "timer_windows_create failed" );bbStart( 0,0,0 );
 																	timer_destroy();
-																}else sue( "timer_create failed" );
+																}else sue( "timer_create failed" );bbStart( 0,0,0 );
 																filesystem_windows_destroy();
-															}else sue( "filesystem_windows_create failed" );
+															}else sue( "filesystem_windows_create failed" );bbStart( 0,0,0 );
 															filesystem_destroy();
-														}else sue( "filesystem_create failed" );
+														}else sue( "filesystem_create failed" );bbStart( 0,0,0 );
 														system_windows_destroy();
-													}else sue( "system_windows_create failed" );
+													}else sue( "system_windows_create failed" );bbStart( 0,0,0 );
 													bank_destroy();
-												}else sue( "bank_create failed" );
+												}else sue( "bank_create failed" );bbStart( 0,0,0 );
 												system_destroy();
-											}else sue( "system_create failed" );
+											}else sue( "system_create failed" );bbStart( 0,0,0 );
 											runtime_destroy();
-										}else sue( "runtime_create failed" );
+										}else sue( "runtime_create failed" );bbStart( 0,0,0 );
 										enet_destroy();
-									}else sue( "enet_create failed" );
+									}else sue( "enet_create failed" );bbStart( 0,0,0 );
 									sockets_destroy();
-								}else sue( "sockets_create failed" );
+								}else sue( "sockets_create failed" );bbStart( 0,0,0 );
 								stream_destroy();
-							}else sue( "stream_create failed" );
+							}else sue( "stream_create failed" );bbStart( 0,0,0 );
 							stdio_destroy();
-						}else sue( "stdio_create failed" );
+						}else sue( "stdio_create failed" );bbStart( 0,0,0 );
 						string_destroy();
-					}else sue( "string_create failed" );
+					}else sue( "string_create failed" );bbStart( 0,0,0 );
 					math_destroy();
-				}else sue( "math_create failed" );
+				}else sue( "math_create failed" );bbStart( 0,0,0 );
 				event_destroy();
-			}else sue( "event_create failed" );
+			}else sue( "event_create failed" );bbStart( 0,0,0 );
 			hook_destroy();
-		}else sue( "hook_create failed" );
+		}else sue( "hook_create failed" );bbStart( 0,0,0 );
 		blitz_destroy();
-	}else sue( "blitz_create failed" );
+	}else sue( "blitz_create failed" );bbStart( 0,0,0 );
 	return false;
 }
 

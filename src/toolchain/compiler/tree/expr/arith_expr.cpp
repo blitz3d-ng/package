@@ -88,7 +88,7 @@ llvm::Value *ArithExprNode::translate2( Codegen_LLVM *g ){
 	llvm::Value *l=lhs->translate2( g );
 	llvm::Value *r=rhs->translate2( g );
 
-	llvm::Type *t=sem_type->llvmType( &g->context );
+	llvm::Type *t=sem_type->llvmType( g->context.get() );
 
 	if( sem_type==Type::string_type ){
 		return g->CallIntrinsic( "_bbStrConcat",t,2,l,r );

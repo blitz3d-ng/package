@@ -16,4 +16,8 @@ void bbruntime_panic( const char *err );
 //start up error
 void sue( const char *t );
 
+typedef void (*BBMAIN)();
+typedef  int (*BBSTART)( int,char**,BBMAIN );
+extern "C" int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain );
+
 #endif

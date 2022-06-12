@@ -11,7 +11,6 @@ ELSE()
 ENDIF()
 bb_end_module()
 
-
 IF(BB_NX)
   target_include_directories(bb.stub PUBLIC /opt/devkitpro/libnx/include)
 ENDIF()

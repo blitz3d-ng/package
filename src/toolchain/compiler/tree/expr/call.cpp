@@ -58,14 +58,14 @@ llvm::Value *CallNode::translate2( Codegen_LLVM *g ){
 
 		vector<llvm::Type*> decls;
 		for( int k=0;k<f->params->size();k++ ){
-			decls.push_back( f->params->decls[k]->type->llvmType( &g->context ) );
+			decls.push_back( f->params->decls[k]->type->llvmType( g->context.get() ) );
 		}
 
-		auto ret_type=f->returnType->llvmType( &g->context );
+		auto ret_type=f->returnType->llvmType( g->context.get() );
 
 		llvm::FunctionType *ft=llvm::FunctionType::get( ret_type,decls,false );
 
-		func=llvm::Function::Create( ft,llvm::GlobalValue::ExternalLinkage,symbol,g->module );
+		func=llvm::Function::Create( ft,llvm::GlobalValue::ExternalLinkage,symbol,g->module.get() );
 		func->setCallingConv( llvm::CallingConv::C );
 	}
 

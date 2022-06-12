@@ -34,13 +34,13 @@ void IfNode::translate( Codegen *g ){
 void IfNode::translate2( Codegen_LLVM *g ){
 	auto *func = g->builder->GetInsertBlock()->getParent();
 
-	auto then=llvm::BasicBlock::Create( g->context,"if",func );
-	auto cont=llvm::BasicBlock::Create( g->context,"endif" );
+	auto then=llvm::BasicBlock::Create( *g->context,"if",func );
+	auto cont=llvm::BasicBlock::Create( *g->context,"endif" );
 
 	llvm::BasicBlock *els=0;
 
 	if( elseOpt ){
-		els = llvm::BasicBlock::Create( g->context,"else" );
+		els = llvm::BasicBlock::Create( *g->context,"else" );
 	}
 
 	auto cond=expr->translate2( g );

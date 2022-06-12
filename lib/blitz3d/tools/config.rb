@@ -86,6 +86,8 @@ module Blitz3D
             f.write("\n#include <bb/stub/stub.h>\n\n")
             f.write("\n#include \"../../stdutil/stdutil.h\"\n\n")
 
+            f.write("\n// TODO: get rid of the dirty bbStart hack that's needed to keep clang from stripping...\n\n")
+
             modules.each do |mod|
               f.write("BBMODULE_DECL( #{mod.id.parameterize.underscore} );\n")
             end
@@ -119,7 +121,7 @@ module Blitz3D
                 f.write("\treturn true;\n")
               end
               (i + 1).times { f.write "\t" }
-              f.write("}else sue( \"#{id}_create failed\" );\n")
+              f.write("}else sue( \"#{id}_create failed\" );bbStart( 0,0,0 );\n")
             end
             write_create_calls.call 0, write_create_calls
             f.write("\treturn false;\n")

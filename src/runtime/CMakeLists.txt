@@ -46,7 +46,7 @@ macro(bb_runtime id)
       set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " -static")
     endif()
   else()
-    target_link_libraries(${name}.shared ${name}.static)
+    target_link_libraries(${name}.shared ${name}.static bb.stub)
   endif()
 
   if(BB_COVERAGE)

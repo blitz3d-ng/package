@@ -33,6 +33,7 @@ using namespace std;
 #ifdef USE_LLVM
 #include "codegen_llvm/codegen_llvm.h"
 #include "linker_lld/linker_lld.h"
+#include "jit.h"
 #endif
 
 #if defined(WIN32) && !defined(__MINGW32__)
@@ -223,7 +224,11 @@ int main( int argc,char *argv[] ){
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
 	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false,dumptree=false;
+#if defined(USE_LLVM) && !defined(BB_WIN32)
+	bool usellvm=true;
+#else
 	bool usellvm=false;
+#endif
 	bool versinfo=false,rtinfo=false;
 
 	for( int k=1;k<argc;++k ){
@@ -311,6 +316,13 @@ int main( int argc,char *argv[] ){
 
 	if( !in_file.size() ) return 0;
 
+#ifndef USE_LLVM
+	if( usellvm ) {
+		cerr<<"not compiled with llvm support"<<endl;
+		return 0;
+	}
+#endif
+
 #ifdef DEMO
 	if( !getenv( "blitzide" ) ) demoError();
 #endif
@@ -342,6 +354,13 @@ int main( int argc,char *argv[] ){
 
 #ifdef USE_LLVM
 	string obj_file( string(tmpnam(0))+".o" );
+	Codegen_LLVM codegen2( debug );
+
+	llvm::InitializeNativeTarget();
+	llvm::InitializeNativeTargetAsmPrinter();
+	llvm::InitializeNativeTargetAsmParser();
+
+	auto jit = cantFail(BlitzJIT::Create());
 #endif
 
 	try{
@@ -355,15 +374,17 @@ int main( int argc,char *argv[] ){
 		if( !veryquiet ) cout<<"Generating..."<<endl;
 		env=prog->semant( runtimeEnviron );
 
+		if( dumptree ){
+			cout<<prog->toJSON( debug ).dump(2)<<endl;
+			return 0;
+		}
+
 		//translate
 		if( !veryquiet ) cout<<"Translating..."<<endl;
 
 		qstreambuf qbuf;
 		iostream asmcode( &qbuf );
 		Codegen_x86 codegen( asmcode,debug );
-#ifdef USE_LLVM
-		Codegen_LLVM codegen2( debug );
-#endif
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
@@ -372,9 +393,6 @@ int main( int argc,char *argv[] ){
 			if( dumpasm ){
 				codegen2.dumpToStderr();
 			}
-#else
-			cerr<<"not compiled with llvm support"<<endl;
-			abort();
 #endif
 		} else {
 			prog->translate( &codegen,userFuncs );
@@ -384,19 +402,12 @@ int main( int argc,char *argv[] ){
 			}
 		}
 
-		if( dumptree ){
-			cout<<prog->toJSON( debug ).dump(2)<<endl;
-		}
-
 		//assemble
 		if( !veryquiet ) cout<<"Assembling..."<<endl;
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
 			codegen2.dumpToObj( obj_file );
-#else
-			cerr<<"not compiled with llvm support"<<endl;
-			abort();
 #endif
 		} else {
 #ifdef WIN32
@@ -406,7 +417,6 @@ int main( int argc,char *argv[] ){
 #endif
 		}
 	}catch( Ex &x ){
-
 		string file='\"'+x.file+'\"';
 		int row=((x.pos>>16)&65535)+1,col=(x.pos&65535)+1;
 		cout<<file<<":"<<row<<":"<<col<<":"<<row<<":"<<col<<":"<<x.ex<<endl;
@@ -443,7 +453,8 @@ int main( int argc,char *argv[] ){
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
-
+		codegen2.module.get()->setDataLayout( jit->getDataLayout() );
+		jit->run( &codegen2, home, rt );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();

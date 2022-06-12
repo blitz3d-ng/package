@@ -1,16 +1,16 @@
 #!/bin/sh
 
+BLITZCC=_release/bin/blitzcc
+
 find . -name "*.gcda" -exec rm {} \;
 
 # run the proper suite
-bin/blitz3d run -r test test/all.bb
+$BLITZCC -r test test/all.bb
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
   echo "Test suite failed. Fix it and then run the coverage generation again."
   exit 1
 fi
-
-BLITZCC=_release/bin/blitzcc
 
 # test a few of the compiler flags
 $BLITZCC -v

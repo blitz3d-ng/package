@@ -54,7 +54,7 @@ void ReturnNode::translate2( Codegen_LLVM *g ){
 
 	llvm::Value *v=expr
 		?expr->translate2( g )
-		:llvm::ConstantInt::get( Type::int_type->llvmType( &g->context ),0,true );
+		:llvm::ConstantInt::get( Type::int_type->llvmType( g->context.get() ),0,true );
 
 	g->builder->CreateRet( v );
 }
