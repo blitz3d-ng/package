@@ -48,6 +48,55 @@ void DimNode::translate( Codegen *g ){
 	for( int k=0;k<exprs->size();++k ) g->i_data( 0 );
 }
 
+#ifdef USE_LLVM
+void DimNode::translate2( Codegen_LLVM *g ){
+	int et;
+	Type *ty=sem_type->arrayType()->elementType;
+	if( ty==Type::int_type ) et=1;
+	else if( ty==Type::float_type ) et=2;
+	else if( ty==Type::string_type ) et=3;
+	else et=5;
+
+	auto data_ty=llvm::StructType::create( *g->context,"_a"+ident+"data" );
+	std::vector<llvm::Type*> els;
+	els.push_back( g->bbArray );  // base
+	for( int k=0;k<exprs->size();++k ) {
+		els.push_back( llvm::Type::getInt64Ty( *g->context ) ); // scales
+	}
+	data_ty->setBody( els );
+
+	auto glob=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( "_a"+ident,data_ty );
+
+	vector<llvm::Constant*> fields;
+	fields.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( llvm::Type::getVoidTy( *g->context ),0 ) ) );
+	fields.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,et ) ) );
+	fields.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,exprs->size() ) ) );
+	auto ary=llvm::ConstantStruct::get( g->bbArray,fields );
+
+	vector<llvm::Constant*> afields;
+	afields.push_back( ary );
+	for( int k=0;k<exprs->size();++k ) {
+		afields.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,0 ) ) );
+	}
+	auto defdata=llvm::ConstantStruct::get( data_ty,afields );
+
+	glob->setInitializer( defdata );
+
+	auto void_ty=llvm::Type::getVoidTy( *g->context );
+	auto int_ty=Type::int_type->llvmType( g->context.get() );
+
+	g->CallIntrinsic( "_bbUndimArray",void_ty,1,g->CastToArrayPtr( glob ) );
+	for( int k=0;k<exprs->size();++k ){
+		vector<llvm::Value*> idx;
+		idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
+		idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 1+k) ) );
+		auto t=g->builder->CreateGEP( data_ty,glob,idx );
+		g->builder->CreateStore( exprs->exprs[k]->translate2(g),t );
+	}
+	g->CallIntrinsic( "_bbDimArray",void_ty,1,g->CastToArrayPtr( glob ) );
+}
+#endif
+
 json DimNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="DimNode";
 	tree["pos"]=pos;

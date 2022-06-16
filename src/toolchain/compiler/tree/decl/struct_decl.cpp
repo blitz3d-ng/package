@@ -54,6 +54,91 @@ void StructDeclNode::translate( Codegen *g ){
 
 }
 
+#ifdef USE_LLVM
+void StructDeclNode::translate2( Codegen_LLVM *g ){
+	llvm::Constant *template_type0=0;
+	auto template_typesary=llvm::ArrayType::get( llvm::PointerType::get( g->bbType,0 ),sem_type->fields->size()-1 );
+
+	vector<llvm::Constant*> template_types;
+	vector<llvm::Constant*> template_defs;
+	vector<llvm::Type*> fields;
+	fields.push_back( g->bbObj ); // base
+	for( int k=0;k<sem_type->fields->size();++k ){
+		Decl *field=sem_type->fields->decls[k];
+		Type *type=field->type;
+		fields.push_back( type->llvmType( g->context.get() ) );
+
+		string t;
+		if( type==Type::int_type ) t="_bbIntType";
+		else if( type==Type::float_type ) t="_bbFltType";
+		else if( type==Type::string_type ) t="_bbStrType";
+		else if( StructType *s=type->structType() ) t="_t"+s->ident;
+		else if( VectorType *v=type->vectorType() ) t=v->label;
+		auto gt=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( t,g->bbType );
+
+		if( k>0 ) {
+			template_types.push_back( gt );
+		} else {
+			template_type0=gt;
+		}
+	}
+
+	auto ty=llvm::StructType::create( *g->context,fields,"_t"+ident );
+
+	vector<llvm::Type*> templatefields;
+	templatefields.push_back( g->bbObjType ); // base
+	templatefields.push_back( template_typesary );
+	auto ty2=llvm::StructType::create( *g->context,templatefields,"_t"+ident+"data" );
+
+	auto temp=new llvm::GlobalVariable( *g->module,ty2,false,llvm::GlobalValue::ExternalLinkage,nullptr,"_t"+ident+"type" );
+	temp->setAlignment(llvm::MaybeAlign(8));
+
+	vector<llvm::Constant*> objdata;
+	objdata.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( g->bbField,0 ) ) );   // fields
+	objdata.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( g->bbObj,0 ) ) );     // next
+	objdata.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( g->bbObj,0 ) ) );     // prev
+	objdata.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( g->bbObjType,0 ) ) ); // type
+	objdata.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(64, -1) ) );                  // ref_cnt
+	auto emptyobj=llvm::ConstantStruct::get( g->bbObj,objdata );
+
+	vector<llvm::Constant*> objtypedata;
+	objtypedata.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,5 ) ) ); // type
+
+	for( int k=0;k<2;++k ){ // used/free
+		vector<llvm::Value*> indices;
+		indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
+		indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
+		indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, k+1) ) );
+		auto objptr=llvm::ConstantExpr::getGetElementPtr( ty2,temp,indices );
+
+		vector<llvm::Constant*> objdata;
+		objdata.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( g->bbField,0 ) ) );   // fields
+		objdata.push_back( objptr );     // next
+		objdata.push_back( objptr );     // prev
+		objdata.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( g->bbObjType,0 ) ) ); // type
+		objdata.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(64, -1) ) );                  // ref_cnt
+		auto defaultobj=llvm::ConstantStruct::get( g->bbObj,objdata );
+
+		objtypedata.push_back( defaultobj );
+	}
+
+	objtypedata.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,sem_type->fields->size() ) ) ); // fieldCnt
+	objtypedata.push_back( template_type0 );     // fieldTypes
+	auto def=llvm::ConstantStruct::get( g->bbObjType,objtypedata );
+
+	auto fieldtypesa=llvm::ConstantArray::get( template_typesary,template_types );
+
+	vector<llvm::Constant*> structfields;
+	structfields.push_back( def );
+	structfields.push_back( fieldtypesa );
+	auto init=llvm::ConstantStruct::get( ty2,structfields );
+	temp->setInitializer( init );
+
+	sem_type->structtype=ty;
+	sem_type->objty=temp;
+}
+#endif
+
 json StructDeclNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="StructDeclNode";
 	tree["pos"]=pos;

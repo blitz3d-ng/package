@@ -22,6 +22,35 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	module=std::make_unique<llvm::Module>( "",*context );
 
 	builder=new IRBuilder<>( *context );
+
+	// initialize stdlib constructs...
+	bbType=llvm::StructType::create( *context,"BBType" );
+	bbField=llvm::StructType::create( *context,"BBField" );
+	bbObj=llvm::StructType::create( *context,"BBObj" );
+	bbObjType=llvm::StructType::create( *context,"BBObjType" );
+	bbArray=llvm::StructType::create( *context,"BBArray" );
+
+	std::vector<llvm::Type*> objels;
+	objels.push_back( llvm::PointerType::get( bbField,0 ) );   // fields
+	objels.push_back( llvm::PointerType::get( bbObj,0 ) );     // next
+	objels.push_back( llvm::PointerType::get( bbObj,0 ) );     // prev
+	objels.push_back( llvm::PointerType::get( bbObjType,0 ) ); // type
+	objels.push_back( llvm::Type::getInt64Ty( *context ) );    // ref_cnt
+	bbObj->setBody( objels );
+
+	std::vector<llvm::Type*> objtypeels;
+	objtypeels.push_back( llvm::Type::getInt64Ty( *context ) ); // type
+	objtypeels.push_back( bbObj );                              // used
+	objtypeels.push_back( bbObj );                              // free
+	objtypeels.push_back( llvm::Type::getInt64Ty( *context ) ); // fieldCnt
+	objtypeels.push_back( llvm::PointerType::get( bbType,0 ) ); // fieldTypes
+	bbObjType->setBody( objtypeels );
+
+	std::vector<llvm::Type*> arrayels;
+	arrayels.push_back( llvm::PointerType::get( llvm::Type::getVoidTy( *context ),0 ) );  // data
+	arrayels.push_back( llvm::PointerType::get( llvm::Type::getInt64Ty( *context ),0 ) ); // elementType
+	arrayels.push_back( llvm::PointerType::get( llvm::Type::getInt64Ty( *context ),0 ) ); // dims
+	bbArray->setBody( arrayels );
 }
 
 Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,int n,... ){
@@ -50,6 +79,24 @@ Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,in
 	return builder->CreateCall(func, args);
 }
 
+Value *Codegen_LLVM::CastToObjPtr( llvm::Value *v ){
+	auto objty=llvm::PointerType::get( bbObj,0 );
+	return builder->CreateBitOrPointerCast( v,objty );
+}
+
+Value *Codegen_LLVM::CastToArrayPtr( llvm::Value *v ){
+	auto aryty=llvm::PointerType::get( bbArray,0 );
+	return builder->CreateBitOrPointerCast( v,aryty );
+}
+
+llvm::BasicBlock *Codegen_LLVM::getLabel( std::string ident ){
+	if( !labels[ident] ){
+		labels[ident] = llvm::BasicBlock::Create( *context, "_l"+ident );
+	}
+
+	return labels[ident];
+}
+
 void Codegen_LLVM::optimize(){
 	auto optimizer=std::make_unique<legacy::FunctionPassManager>( module.get() );
 	optimizer->add( createInstructionCombiningPass() );
@@ -63,11 +110,16 @@ void Codegen_LLVM::optimize(){
 	for( auto &F:*module ){
 		optimizer->run( F );
 	}
+
+	// module->print(errs(), nullptr);
 }
 
 bool Codegen_LLVM::verify(){
-	if( llvm::verifyModule( *module,&llvm::errs() ) ){
-		llvm::errs()<<'\n';
+	errs()<<"\033[21;33m";
+	bool fail=llvm::verifyModule( *module,&llvm::errs() );
+	errs()<<"\033[0m\n";
+
+	if( fail ){
 		dumpToStderr();
 		exit( 1 );
 	}
@@ -75,7 +127,27 @@ bool Codegen_LLVM::verify(){
 	return false;
 }
 
-int Codegen_LLVM::dumpToObj( const std::string &path ) {
+int Codegen_LLVM::dumpToObj( bool compileonly,const std::string &path ) {
+	if( compileonly ) {
+		llvm::Type *int_ty=llvm::Type::getInt32Ty( *context );
+		llvm::Type *charpp_ty=llvm::PointerType::get( llvm::PointerType::get( llvm::Type::getInt8Ty( *context ),0 ),0 );
+		llvm::Type *void_type=llvm::Type::getVoidTy( *context );
+
+		std::vector<llvm::Type*> args;
+		args.push_back( int_ty );
+		args.push_back( charpp_ty );
+		auto ft=llvm::FunctionType::get( int_ty,args,false );
+		auto main=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"main",module.get() );
+
+		auto argc=main->getArg( 0 );
+		auto argv=main->getArg( 1 );
+		auto bbMain=builder->GetInsertBlock()->getParent();
+
+		auto block = llvm::BasicBlock::Create( *context,"entry",main );
+		builder->SetInsertPoint( block );
+		builder->CreateRet( CallIntrinsic( "bbStart",int_ty,3,argc,argv,bbMain ) );
+	}
+
 	optimize();
 
 	InitializeAllTargetInfos();
@@ -127,5 +199,7 @@ int Codegen_LLVM::dumpToObj( const std::string &path ) {
 }
 
 void Codegen_LLVM::dumpToStderr() {
+	errs()<<"\033[21;90m";
 	module->print(errs(), nullptr);
+	errs()<<"\033[0m\n";
 }

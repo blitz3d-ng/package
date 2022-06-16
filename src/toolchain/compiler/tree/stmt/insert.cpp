@@ -20,3 +20,12 @@ void InsertNode::translate( Codegen *g ){
 	string s=before ? "__bbObjInsBefore" : "__bbObjInsAfter";
 	g->code( call( s,t1,t2 ) );
 }
+
+#ifdef USE_LLVM
+void InsertNode::translate2( Codegen_LLVM *g ){
+	auto t1=g->CastToObjPtr( expr1->translate2( g ) );
+	auto t2=g->CastToObjPtr( expr2->translate2( g ) );
+	string s=before ? "_bbObjInsBefore" : "_bbObjInsAfter";
+	g->CallIntrinsic( s,Type::void_type->llvmType( g->context.get() ),2,t1,t2 );
+}
+#endif

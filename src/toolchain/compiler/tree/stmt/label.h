@@ -9,6 +9,9 @@ struct LabelNode : public StmtNode{
 	LabelNode( const string &s,int sz ):ident(s),data_sz(sz){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
+#ifdef USE_LLVM
+	virtual void translate2( Codegen_LLVM *g );
+#endif
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="LabelNode";

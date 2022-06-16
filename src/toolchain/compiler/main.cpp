@@ -407,7 +407,7 @@ int main( int argc,char *argv[] ){
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
-			codegen2.dumpToObj( obj_file );
+			codegen2.dumpToObj( compileonly,obj_file );
 #endif
 		} else {
 #ifdef WIN32

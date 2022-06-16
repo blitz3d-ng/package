@@ -51,8 +51,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - run: brew install ninja
+      - run: brew install ninja gcovr
       - run: make ENV=release PLATFORM=macos
+      - run: ./test/suite.sh
 
   linux:
     name: Linux
@@ -69,6 +70,7 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
+      - run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
 
   ios:
     name: iOS

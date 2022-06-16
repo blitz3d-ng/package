@@ -84,7 +84,6 @@ void FuncDeclNode::translate2( Codegen_LLVM *g ){
 	createVars2( sem_env,g );
 
 	stmts->translate2( g );
-	llvm::verifyFunction( *func );
 }
 #endif
 

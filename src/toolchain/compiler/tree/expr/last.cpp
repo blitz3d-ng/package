@@ -12,3 +12,10 @@ ExprNode *LastNode::semant( Environ *e ){
 TNode *LastNode::translate( Codegen *g ){
 	return call( "__bbObjLast",global( "_t"+ident ) );
 }
+
+#ifdef USE_LLVM
+llvm::Value *LastNode::translate2( Codegen_LLVM *g ){
+	llvm::Type *t=sem_type->llvmType( g->context.get() );
+	return g->CallIntrinsic( "_bbObjLast",t,1,sem_type->structType()->objty );
+}
+#endif

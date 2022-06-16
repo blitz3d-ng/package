@@ -13,6 +13,10 @@ struct DimNode : public StmtNode{
 	~DimNode(){ delete exprs; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+#ifdef USE_LLVM
+	virtual void translate2( Codegen_LLVM *g );
+#endif
+
 	json toJSON( Environ *e );
 };
 

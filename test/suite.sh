@@ -1,8 +1,13 @@
 #!/bin/sh
 
+cleanup () {
+  find . -name "*.gcda" -exec rm {} \;
+  find . -name "*.gcov" -exec rm {} \;
+}
+
 BLITZCC=_release/bin/blitzcc
 
-find . -name "*.gcda" -exec rm {} \;
+cleanup
 
 # run the proper suite
 $BLITZCC -r test test/all.bb
@@ -31,5 +36,12 @@ $BLITZCC -r test -j test/syntax-errors/division-by-zero.bb
 $BLITZCC -r d3d1 test/all.bb
 
 # generate the report...
-echo "Generating coverage report..."
-cd build && mkdir -p ../.coverage && gcovr -e '.*stdin.*' -r .. --html --html-details -o ../.coverage/coverage.html
+ENV=$($BLITZCC -e)
+if [ "$ENV" = "test" ]; then
+  echo "Generating coverage report..."
+  mkdir -p coverage
+  gcovr -e '.*stdin.*' --html --html-details -o ./coverage/coverage.html build/
+  cleanup
+fi
+
+exit 0

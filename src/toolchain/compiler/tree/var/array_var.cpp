@@ -32,6 +32,44 @@ TNode *ArrayVarNode::translate( Codegen *g ){
 	return t;
 }
 
+#ifdef USE_LLVM
+llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
+	auto zero=llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) );
+	auto int_ty=Type::int_type->llvmType( g->context.get() );
+	auto void_ty=llvm::PointerType::get( llvm::Type::getVoidTy( *g->context ),0 );
+	auto ty=sem_type->llvmType( g->context.get() );
+
+	auto glob=(llvm::GlobalVariable*)g->module->getGlobalVariable( "_a"+ident );
+
+	vector<llvm::Value*> di;
+	di.push_back( zero );
+	di.push_back( zero );
+	auto dataptr=g->builder->CreateLoad( void_ty,g->builder->CreateGEP( g->bbArray,glob,di ) );
+	auto data=g->builder->CreateBitOrPointerCast( dataptr,llvm::PointerType::get( ty,0 ) );
+
+	llvm::Value *t=0;
+	for( int k=0;k<exprs->size();++k ){
+		auto e=exprs->exprs[k]->translate2( g );
+		if( k ){
+			vector<llvm::Value*> idx;
+			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
+			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 1+k) ) );
+			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( glob->getType()->getPointerElementType(),glob,idx ) );
+			e=g->builder->CreateAdd( t,g->builder->CreateMul( e,s ) );
+		}
+		if( g->debug ){
+		// 	TNode *s=mem( add( global( "_a"+ident ),iconst( k*4+12 ) ) );
+		// 	t=jumpge( e,s,"__bbArrayBoundsEx" );
+		}else t=e;
+	}
+
+	vector<llvm::Value*> idx;
+	idx.push_back( t );
+	auto el=g->builder->CreateGEP( ty,data,idx );
+	return el;
+}
+#endif
+
 json ArrayVarNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="ArrayVarNode";
 	tree["sem_type"]=sem_type->toJSON();

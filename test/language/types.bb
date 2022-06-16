@@ -1,7 +1,13 @@
 
+Type Game
+	Field name$
+End Type
+
 Type Player
 	Field name$, x, y
 End Type
+
+game.Game = New Game
 
 p1.Player = New Player
 p1\name = "Kevin"

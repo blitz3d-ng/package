@@ -185,6 +185,10 @@ llvm::Value *Node::compare2( int op,llvm::Value *l,llvm::Value *r,Type *ty,Codeg
 		l=g->CallIntrinsic( "_bbStrCompare",it,2,l,r );
 		r=llvm::ConstantInt::get( it,0,true );
 	}else if( ty->structType() ){
+		auto ptrty=llvm::PointerType::get( g->bbObj,0 );
+		l=g->builder->CreateBitOrPointerCast( l,ptrty );
+		r=g->builder->CreateBitOrPointerCast( r,ptrty );
+
 		l=g->CallIntrinsic( "_bbObjCompare",it,2,l,r );
 		r=llvm::ConstantInt::get( it,0,true );
 	}

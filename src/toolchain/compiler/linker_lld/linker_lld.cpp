@@ -4,6 +4,9 @@
 #include <fstream>
 #include <vector>
 
+// TODO: this should probably be put elsewhere
+#define BB_ARCH_X86 "x86"
+
 Linker_LLD::Linker_LLD( const std::string &home, const Environ *env ):home(home),env(env){
 }
 
@@ -83,7 +86,7 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 	// macos
 	args.push_back("-lSystem");
 	args.push_back("-arch");
-	if (BB_ARCH == "x86") {
+	if (strcmp(BB_ARCH, BB_ARCH_X86) == 0) {
 		args.push_back("x86_64");
 	} else {
 		args.push_back("arm64");

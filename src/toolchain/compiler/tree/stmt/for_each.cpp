@@ -45,3 +45,38 @@ void ForEachNode::translate( Codegen *g ){
 
 	g->label( sem_brk );
 }
+
+#ifdef USE_LLVM
+void ForEachNode::translate2( Codegen_LLVM *g ){
+	llvm::Value *t,*l,*r;
+	string objFirst,objNext;
+
+	if( var->isObjParam() ){
+		objFirst="_bbObjEachFirst2";
+		objNext="_bbObjEachNext2";
+	}else{
+		objFirst="_bbObjEachFirst";
+		objNext="_bbObjEachNext";
+	}
+
+	auto func=g->builder->GetInsertBlock()->getParent();
+	auto loop=llvm::BasicBlock::Create( *g->context,"foreach_loop",func );
+	auto cont=llvm::BasicBlock::Create( *g->context,"foreach_cont",func );
+
+	auto ity=llvm::Type::getInt32Ty( *g->context );
+	auto bty=llvm::Type::getInt1Ty( *g->context );
+
+	l=var->translate2( g );
+
+	r=var->sem_type->structType()->objty;
+	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objFirst,ity,2,l,r ),bty ),loop,cont );
+
+	g->builder->SetInsertPoint( loop );
+	stmts->translate2( g );
+
+	// debug( nextPos,g );
+	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objNext,ity,2,var->translate2( g ) ),bty ),loop,cont );
+
+	g->builder->SetInsertPoint( cont );
+}
+#endif

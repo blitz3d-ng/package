@@ -104,9 +104,32 @@ static struct s_type : public Type{
 	}
 }s;
 
+#ifdef USE_LLVM
+llvm::Type *ArrayType::llvmType( llvm::LLVMContext *c ){
+	static llvm::StructType *ty=0;
+	if( !ty ) {
+		vector<llvm::Type*> els;
+		els.push_back( llvm::PointerType::get( llvm::Type::getVoidTy( *c ),0 ) );
+		ty=llvm::StructType::create( *c,els,"BBArray" );
+	}
+	return llvm::PointerType::get( ty,0 );
+}
+#endif
+
 bool StructType::canCastTo( Type *t ){
 	return t==this || t==Type::null_type || (this==Type::null_type && t->structType());
 }
+
+#ifdef USE_LLVM
+llvm::Type *StructType::llvmType( llvm::LLVMContext *c ){
+	return llvm::PointerType::get( structtype,0 );
+}
+
+llvm::Constant *StructType::llvmZero( llvm::LLVMContext *c ){
+	return llvm::ConstantPointerNull::get( (llvm::PointerType*)llvmType( c ) );
+}
+#endif
+
 
 bool VectorType::canCastTo( Type *t ){
 	if( this==t ) return true;

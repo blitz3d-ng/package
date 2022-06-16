@@ -17,6 +17,16 @@ TNode *BeforeNode::translate( Codegen *g ){
 	return call( "__bbObjPrev",t );
 }
 
+#ifdef USE_LLVM
+llvm::Value *BeforeNode::translate2( Codegen_LLVM *g ){
+	auto objty=llvm::PointerType::get( g->bbObj,0 );
+
+	auto t=g->CastToObjPtr( expr->translate2( g ) );
+	t=g->CallIntrinsic( "_bbObjPrev",objty,1,t );
+	return g->builder->CreateBitOrPointerCast( t,llvm::PointerType::get( sem_type->structType()->structtype,0 ) );
+}
+#endif
+
 json BeforeNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="BeforeNode";
 	tree["sem_type"]=sem_type->toJSON();

@@ -8,6 +8,9 @@ struct NewNode : public ExprNode{
 	NewNode( const string &i ):ident(i){}
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
+#ifdef USE_LLVM
+	virtual llvm::Value *translate2( Codegen_LLVM *g );
+#endif
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="NewNode";

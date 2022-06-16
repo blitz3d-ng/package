@@ -43,7 +43,7 @@ typedef struct BBObj{
 	BBField *fields;
 	BBObj *next,*prev;
 	BBObjType *type;
-	int ref_cnt;
+	bb_int_t ref_cnt;
 #ifdef __cplusplus
 	BBObj(){}
 	BBObj( BBField *f,BBObj *n,BBObj *p,BBObjType *t,int c ):fields(f),next(n),prev(p),type(t),ref_cnt(c){}
@@ -52,7 +52,7 @@ typedef struct BBObj{
 
 
 struct BBType{
-	int type;
+	bb_int_t type;
 #ifdef __cplusplus
 	BBType( int n ):type(n){}
 #endif
@@ -65,7 +65,7 @@ struct BBObjType{
 	BBType base;
 #endif
 	BBObj used,free;
-	int fieldCnt;
+	bb_int_t fieldCnt;
 	BBType *fieldTypes[1];
 #ifdef __cplusplus
 	BBObjType( int c,BBType *ft1 ):BBType(5),fieldCnt(c){
@@ -97,7 +97,7 @@ union BBField{
 
 struct BBArray{
 	void *data;
-	int elementType,dims,scales[1];
+	bb_int_t elementType,dims,scales[1];
 };
 
 #ifdef __cplusplus

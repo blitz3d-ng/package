@@ -201,14 +201,17 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 		d->ptr=glob;
 	}
 
+	structs->translate2( g );
+
 	funcs->translate2( g );
+
+	datas->translate2( g );
 
 	llvm::Type *void_type=llvm::Type::getVoidTy( *g->context );
 
 	vector<llvm::Type*> none( 0,void_type );
 	auto ft=llvm::FunctionType::get( void_type,none,false );
 	auto bbMain=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"bbMain",g->module.get() );
-
 	auto block = llvm::BasicBlock::Create( *g->context,"entry",bbMain );
 	g->builder->SetInsertPoint( block );
 
@@ -218,7 +221,6 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 	g->builder->CreateRetVoid();
 
 	g->verify();
-	// g->optimizer->run( *bbMain );
 }
 #endif
 

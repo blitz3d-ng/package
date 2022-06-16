@@ -11,8 +11,7 @@ TNode *VarNode::load( Codegen *g ){
 
 #ifdef USE_LLVM
 llvm::Value *VarNode::load2( Codegen_LLVM *g ){
-	cerr<<"load2 missing implementation for "<<typeid(*this).name()<<endl;
-	abort();
+	return g->builder->CreateLoad( sem_type->llvmType( g->context.get() ),translate2( g ) );
 }
 #endif
 

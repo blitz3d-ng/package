@@ -7,6 +7,7 @@
 #ifdef USE_LLVM
 #include <llvm/IR/Type.h>
 #include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/DerivedTypes.h>
 #endif
 
 struct FuncType;
@@ -75,6 +76,10 @@ struct ArrayType : public Type{
 		tree["dims"]=dims;
 		return tree;
 	}
+
+#ifdef USE_LLVM
+	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
+#endif
 };
 
 struct StructType : public Type{
@@ -85,6 +90,13 @@ struct StructType : public Type{
 	~StructType(){ delete fields; }
 	StructType *structType(){ return this; }
 	virtual bool canCastTo( Type *t );
+
+#ifdef USE_LLVM
+	llvm::StructType *structtype=0;
+	llvm::Value *objty=0;
+	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
+	virtual llvm::Constant *llvmZero( llvm::LLVMContext *c );
+#endif
 
 	json toJSON(){
 		json tree;tree["@class"]="StructType";

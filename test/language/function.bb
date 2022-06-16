@@ -1,5 +1,9 @@
 
 Function FullName$(first_name$, last_name$)
+	If first_name = "John"
+		Return "..."
+	EndIf
+
 	Return first_name + " " + last_name
 End Function
 

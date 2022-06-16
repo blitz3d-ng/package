@@ -4,6 +4,14 @@
 // Declared var //
 //////////////////
 
+void DeclVarNode::semant( Environ *e ){
+}
+
+TNode *DeclVarNode::translate( Codegen *g ){
+	if( sem_decl->kind==DECL_GLOBAL ) return global( "_v"+sem_decl->name );
+	return local( sem_decl->offset );
+}
+
 #ifdef USE_LLVM
 llvm::Value *DeclVarNode::load2( Codegen_LLVM *g ){
 	if( sem_decl->ptr ) {
@@ -14,17 +22,7 @@ llvm::Value *DeclVarNode::load2( Codegen_LLVM *g ){
 		return g->builder->GetInsertBlock()->getParent()->getArg( sem_decl->arg_index );
 	}
 }
-#endif
 
-void DeclVarNode::semant( Environ *e ){
-}
-
-TNode *DeclVarNode::translate( Codegen *g ){
-	if( sem_decl->kind==DECL_GLOBAL ) return global( "_v"+sem_decl->name );
-	return local( sem_decl->offset );
-}
-
-#ifdef USE_LLVM
 llvm::Value *DeclVarNode::translate2( Codegen_LLVM *g ){
 	return sem_decl->ptr;
 }

@@ -19,6 +19,17 @@ TNode *FieldVarNode::translate( Codegen *g ){
 	return add( t,iconst( sem_field->offset ) );
 }
 
+#ifdef USE_LLVM
+llvm::Value *FieldVarNode::translate2( Codegen_LLVM *g ){
+	vector<llvm::Value*> indices;
+	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
+	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, sem_field->offset/4+1) ) );
+	auto el=g->builder->CreateGEP( expr->sem_type->structType()->structtype,expr->translate2( g ),indices );
+
+	return el;
+}
+#endif
+
 json FieldVarNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="FieldVarNode";
 	tree["sem_type"]=sem_type->toJSON();

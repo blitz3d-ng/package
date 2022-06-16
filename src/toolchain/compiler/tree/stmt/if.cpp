@@ -56,7 +56,7 @@ void IfNode::translate2( Codegen_LLVM *g ){
 	stmts->translate2( g );
 
 	auto current_block = g->builder->GetInsertBlock();
-	if( !llvm::dyn_cast<llvm::BranchInst>(&current_block->back()) ) {
+	if( !g->builder->GetInsertBlock()->getTerminator() ) {
 		g->builder->CreateBr( cont );
 	}
 

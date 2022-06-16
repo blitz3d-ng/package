@@ -15,6 +15,9 @@ struct ForEachNode : public StmtNode{
 	~ForEachNode(){ delete var;delete stmts; }
 	void semant( Environ *e );
 	void translate( Codegen *g );
+#ifdef USE_LLVM
+	virtual void translate2( Codegen_LLVM *g );
+#endif
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="ForEachNode";

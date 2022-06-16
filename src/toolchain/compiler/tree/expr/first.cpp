@@ -12,3 +12,10 @@ ExprNode *FirstNode::semant( Environ *e ){
 TNode *FirstNode::translate( Codegen *g ){
 	return call( "__bbObjFirst",global( "_t"+ident ) );
 }
+
+#ifdef USE_LLVM
+llvm::Value *FirstNode::translate2( Codegen_LLVM *g ){
+	llvm::Type *t=sem_type->llvmType( g->context.get() );
+	return g->CallIntrinsic( "_bbObjFirst",t,1,sem_type->structType()->objty );
+}
+#endif

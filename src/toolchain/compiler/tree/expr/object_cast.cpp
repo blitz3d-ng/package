@@ -17,3 +17,12 @@ TNode *ObjectCastNode::translate( Codegen *g ){
 	t=call( "__bbObjFromHandle",t,global( "_t"+sem_type->structType()->ident ) );
 	return t;
 }
+
+#ifdef USE_LLVM
+llvm::Value *ObjectCastNode::translate2( Codegen_LLVM *g ){
+	auto ty=llvm::PointerType::get( g->bbObj,0 );
+	auto t=expr->translate2( g );
+	t=g->CallIntrinsic( "_bbObjFromHandle",ty,2,t,sem_type->structType()->objty );
+	return g->builder->CreateBitOrPointerCast( t,llvm::PointerType::get( sem_type->structType()->structtype,0 ) );
+}
+#endif
