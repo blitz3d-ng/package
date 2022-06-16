@@ -1,6 +1,9 @@
 name: CI
 on: [push]
 
+env:
+  blitzpath: ${{ env.GITHUB_WORKSPACE }}/_release
+
 jobs:
   windows:
     name: Windows
@@ -12,6 +15,7 @@ jobs:
           - windows-2022
         arch:
           - win32
+          - win64
     steps:
       - uses: actions/checkout@v2
         with:
@@ -20,11 +24,11 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
       - run: .\make.bat release ${{ matrix.arch }}
-      - run: .\test\entry.win32.bat
+      - run: .\test\entry.${{ matrix.arch }}.bat
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
-          name: blitz3d-ng-win32-v${{ github.run_id }}
+          name: blitz3d-ng-${{ matrix.arch }}-v${{ github.run_id }}
           path: _release/
 
   mingw:

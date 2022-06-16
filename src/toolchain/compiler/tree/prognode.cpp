@@ -189,7 +189,7 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 
 		llvm::Constant *init=0;
 		if( d->type->intType() ){
-			init=llvm::ConstantInt::get( g->module->getContext(),llvm::APInt(32,0) );
+			init=llvm::ConstantInt::get( g->module->getContext(),llvm::APInt(64,0) );
 		}if( d->type->floatType() ){
 			init=llvm::ConstantFP::get( g->module->getContext(),llvm::APFloat(0.0) );
 		}if( d->type->stringType() ){

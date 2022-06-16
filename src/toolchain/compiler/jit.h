@@ -122,7 +122,7 @@ public:
     return ES->lookup({&MainJD}, Mangle(Name.str()));
   }
 
-	void run( Codegen_LLVM *codegen, const std::string &home, const std::string &rt ) {
+	int run( Codegen_LLVM *codegen, const std::string &home, const std::string &rt ) {
 		std::string toolchain=home+"/toolchains/" BB_PLATFORM;
 		string runtimeLib( toolchain+"/lib/" BB_ENV "/libruntime."+rt+".shared.dylib" );
 
@@ -141,10 +141,8 @@ public:
 
 		char *argv[1] = { "blitzcc" };
 		int retcode = bbStart( 1, argv, bbMain );
-
-		cout<<"ret: "<<retcode<<endl;
-
 		cantFail(RT->remove());
+		return retcode;
 	}
 
 private:

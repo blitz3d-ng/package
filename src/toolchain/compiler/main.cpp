@@ -425,6 +425,8 @@ int main( int argc,char *argv[] ){
 
 	delete prog;
 
+	int ret=0;
+
 	if( out_file.size() ){
 		if( !veryquiet ) cout<<"Creating executable \""<<out_file<<"\"..."<<endl;
 		if( usellvm ) {
@@ -454,7 +456,7 @@ int main( int argc,char *argv[] ){
 		if ( usellvm ) {
 #ifdef USE_LLVM
 		codegen2.module.get()->setDataLayout( jit->getDataLayout() );
-		jit->run( &codegen2, home, rt );
+		ret=jit->run( &codegen2, home, rt );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();
@@ -465,7 +467,7 @@ int main( int argc,char *argv[] ){
 #endif
 		}
 
-		if( !entry ) return 0;
+		if( !entry ) return ret;
 
 #ifdef WIN32
 		HMODULE dbgHandle=0;
@@ -499,5 +501,5 @@ int main( int argc,char *argv[] ){
 
 	closeLibs();
 
-	return 0;
+	return ret;
 }
