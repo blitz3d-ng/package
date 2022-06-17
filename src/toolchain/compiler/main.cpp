@@ -42,7 +42,7 @@ using namespace std;
 #define DEBUGGER "debugger.console"
 #endif
 
-#ifdef BB_MACOS
+#ifdef BB_POSIX
 #include <unistd.h>
 #include <execinfo.h>
 #include <signal.h>
@@ -214,7 +214,7 @@ static const char *enumRuntimes( vector<string> &rts ){
 #endif
 
 int main( int argc,char *argv[] ){
-#ifdef BB_MACOS
+#ifdef BB_POSIX
 	signal(SIGABRT, handle_abort);
 	signal(SIGSEGV, handle_segfault);
 #endif

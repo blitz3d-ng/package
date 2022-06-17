@@ -328,7 +328,7 @@ void GLFW3Runtime::_onMouseButton( GLFWwindow *w,int button,int action,int mods 
 	bbOnEvent.run( &ev );
 }
 
-extern unsigned short GLFW_SCANCODE_MAP[316];
+extern unsigned short GLFW_SCANCODE_MAP[317];
 
 void GLFW3Runtime::_onKeyChange( GLFWwindow *w,int key,int scancode,int action,int mods ){
 	// cout<<"key: "<<key<<endl;

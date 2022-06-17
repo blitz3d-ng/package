@@ -207,9 +207,8 @@ BBGraphics *GLFMRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 		// glfwSetWindowSize( wnd,w,h );
 		// glfwShowWindow( wnd );
 		// glfwMakeContextCurrent( wnd );
-
-		return graphics;
 	}
+	return graphics;
 }
 
 void GLFMRuntime::closeGraphics( BBGraphics *g ){

@@ -4,6 +4,12 @@
 
 #include <bb/blitz/debug.h>
 
-extern "C" BBDECL Debugger * __cdecl debuggerGetDebugger( void *mod,void *env );
+#ifdef WIN32
+#define CDECL __cdecl
+#else
+#define CDECL
+#endif
+
+extern "C" BBDECL Debugger * CDECL debuggerGetDebugger( void *mod,void *env );
 
 #endif

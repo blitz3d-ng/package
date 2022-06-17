@@ -72,6 +72,11 @@ IF(BB_WINDOWS OR BB_MACOS OR BB_LINUX)
   add_definitions(-DBB_DESKTOP)
 ENDIF()
 
+IF(BB_MACOS OR BB_LINUX)
+  set (BB_POSIX true)
+  add_definitions(-DBB_POSIX)
+ENDIF()
+
 IF(BB_IOS OR BB_ANDROID)
   set (BB_MOBILE true)
   add_definitions(-DBB_MOBILE)

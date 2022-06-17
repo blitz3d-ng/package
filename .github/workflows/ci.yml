@@ -1,9 +1,6 @@
 name: CI
 on: [push]
 
-env:
-  blitzpath: ${{ env.GITHUB_WORKSPACE }}/_release
-
 jobs:
   windows:
     name: Windows
@@ -57,7 +54,7 @@ jobs:
           submodules: recursive
       - run: brew install ninja gcovr
       - run: make ENV=release PLATFORM=macos
-      - run: ./test/suite.sh
+      - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
 
   linux:
     name: Linux

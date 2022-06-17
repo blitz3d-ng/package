@@ -108,6 +108,8 @@ if(LLVM_ROOT)
     linker_lld/linker_lld.cpp
   )
 
+  set(LLVM_COMPONENTS core option linker lto orcjit all-targets)
+
   execute_process(
     COMMAND ${LLVM_ROOT}/bin/llvm-config --cxxflags
     OUTPUT_VARIABLE LLVM_CXX_FLAGS
@@ -115,22 +117,14 @@ if(LLVM_ROOT)
   )
 
   execute_process(
-    COMMAND ${LLVM_ROOT}/bin/llvm-config --ldflags --system-libs
+    COMMAND ${LLVM_ROOT}/bin/llvm-config --ldflags --libs --system-libs #${LLVM_COMPONENTS}
     OUTPUT_VARIABLE LLVM_LD_FLAGS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  execute_process(
-    COMMAND ${LLVM_ROOT}/bin/llvm-config --libs
-    OUTPUT_VARIABLE LLVM_LIBS
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
   target_compile_options(blitzcc PRIVATE "SHELL:${LLVM_CXX_FLAGS}" -fexceptions -frtti)
   target_link_options(blitzcc PRIVATE "SHELL:${LLVM_LD_FLAGS}")
-
-  target_link_libraries(blitzcc lldCommon lldMachO lldCOFF lldELF lldMinGW lldWasm ${LLVM_LIBS})
-
-  # TODO: figure out if this is optional...
+  target_link_libraries(blitzcc lldCommon lldMachO lldCOFF lldELF lldMinGW lldWasm)
   target_link_libraries(blitzcc zlibstatic ncurses)
 endif()
 
