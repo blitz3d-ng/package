@@ -11,7 +11,10 @@ endif()
 if (EXISTS ${llvm_path})
   set(LLVM_ROOT ${llvm_path})
 
-  add_link_options(-B${llvm_path}/bin -fuse-ld=lld)
+  if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_link_options(-B${llvm_path}/bin -fuse-ld=lld)
+  endif()
+
   set(CMAKE_C_COMPILER /usr/bin/clang)
   set(CMAKE_CXX_COMPILER /usr/bin/clang++)
   set(CMAKE_OBJC_COMPILER /usr/bin/clang++)
