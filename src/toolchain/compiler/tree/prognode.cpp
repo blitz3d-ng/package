@@ -205,8 +205,6 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 
 	funcs->translate2( g );
 
-	datas->translate2( g );
-
 	llvm::Type *void_type=llvm::Type::getVoidTy( *g->context );
 
 	vector<llvm::Type*> none( 0,void_type );
@@ -215,7 +213,14 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 	auto block = llvm::BasicBlock::Create( *g->context,"entry",bbMain );
 	g->builder->SetInsertPoint( block );
 
+	datas->translate2( g );
+
+	auto ty=llvm::ArrayType::get( Type::int_type->llvmType( g->context.get() ),g->data_values.size() );
+	g->bbData=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( "bbData",ty );
+	g->bbData->setInitializer( llvm::ConstantArray::get( ty,g->data_values ) );
+
 	createVars2( sem_env,g );
+
 	stmts->translate2( g );
 
 	g->builder->CreateRetVoid();

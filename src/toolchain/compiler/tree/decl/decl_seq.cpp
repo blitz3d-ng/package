@@ -36,6 +36,17 @@ void DeclSeqNode::translate( Codegen *g ){
 	}
 }
 
+void DeclSeqNode::transdata( Codegen *g ){
+	for( int k=0;k<decls.size();++k ){
+		try{ decls[k]->transdata( g ); }
+		catch( Ex &x ){
+			if( x.pos<0 ) x.pos=decls[k]->pos;
+			if(!x.file.size() ) x.file=decls[k]->file;
+			throw;
+		}
+	}
+}
+
 #ifdef USE_LLVM
 void DeclSeqNode::translate2( Codegen_LLVM *g ){
 	for( int k=0;k<decls.size();++k ){
@@ -47,11 +58,10 @@ void DeclSeqNode::translate2( Codegen_LLVM *g ){
 		}
 	}
 }
-#endif
 
-void DeclSeqNode::transdata( Codegen *g ){
+void DeclSeqNode::transdata2( Codegen_LLVM *g ){
 	for( int k=0;k<decls.size();++k ){
-		try{ decls[k]->transdata( g ); }
+		try{ decls[k]->transdata2( g ); }
 		catch( Ex &x ){
 			if( x.pos<0 ) x.pos=decls[k]->pos;
 			if(!x.file.size() ) x.file=decls[k]->file;
@@ -59,6 +69,7 @@ void DeclSeqNode::transdata( Codegen *g ){
 		}
 	}
 }
+#endif
 
 json DeclSeqNode::toJSON( Environ *e ){
 	json tree=json::array();

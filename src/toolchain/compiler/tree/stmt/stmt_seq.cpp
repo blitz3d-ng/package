@@ -54,7 +54,16 @@ void StmtSeqNode::translate( Codegen *g ){
 #ifdef USE_LLVM
 void StmtSeqNode::translate2( Codegen_LLVM *g ) {
 	for( int k=0;k<stmts.size();++k ){
-		stmts[k]->translate2( g );
+		StmtNode *stmt=stmts[k];
+		// stmt->debug2( stmts[k]->pos,g );
+		try{
+			stmt->translate2( g );
+		}
+		catch( Ex &x ){
+			if( x.pos<0 ) x.pos=stmts[k]->pos;
+			if( !x.file.size() ) x.file=file;
+			throw;
+		}
 	}
 }
 #endif

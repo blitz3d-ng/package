@@ -13,6 +13,11 @@ struct DataDeclNode : public DeclNode{
 	void semant( Environ *e );
 	void translate( Codegen *g );
 	void transdata( Codegen *g );
+#ifdef USE_LLVM
+	int values_idx;
+	virtual void translate2( Codegen_LLVM *g );
+	virtual void transdata2( Codegen_LLVM *g );
+#endif
 
 	json toJSON( Environ *e );
 };

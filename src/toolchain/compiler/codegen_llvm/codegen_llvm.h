@@ -35,6 +35,9 @@ public:
 
 	std::map<std::string,llvm::BasicBlock*> labels;
 
+	llvm::GlobalVariable *bbData;
+	std::vector<llvm::Constant*> data_values;
+
 	llvm::BasicBlock *getLabel( std::string ident );
 
 	void optimize();

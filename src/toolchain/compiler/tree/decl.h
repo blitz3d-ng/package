@@ -22,7 +22,12 @@ struct Decl{
 	Type *type;			//type
 	int kind,offset;
 	ConstType *defType;	//default value
-	Decl( const string &s,Type *t,int k,ConstType *d=0 ):name(s),type(t),kind(k),defType(d){}
+	Decl( const string &s,Type *t,int k,ConstType *d=0 ):name(s),type(t),kind(k),defType(d)
+#ifdef USE_LLVM
+	,arg_index(0)
+	,ptr(0)
+#endif
+	{}
 	~Decl();
 
 	virtual void getName( char *buff );

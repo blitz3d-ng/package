@@ -18,6 +18,7 @@ struct DeclSeqNode : public Node{
 
 #ifdef USE_LLVM
 	void translate2( Codegen_LLVM *g );
+	void transdata2( Codegen_LLVM *g );
 #endif
 };
 

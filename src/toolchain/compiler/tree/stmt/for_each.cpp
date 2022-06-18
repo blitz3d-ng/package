@@ -67,15 +67,15 @@ void ForEachNode::translate2( Codegen_LLVM *g ){
 	auto bty=llvm::Type::getInt1Ty( *g->context );
 
 	l=var->translate2( g );
-
 	r=var->sem_type->structType()->objty;
+
 	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objFirst,ity,2,l,r ),bty ),loop,cont );
 
 	g->builder->SetInsertPoint( loop );
 	stmts->translate2( g );
 
 	// debug( nextPos,g );
-	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objNext,ity,2,var->translate2( g ) ),bty ),loop,cont );
+	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objNext,ity,1,var->translate2( g ) ),bty ),loop,cont );
 
 	g->builder->SetInsertPoint( cont );
 }

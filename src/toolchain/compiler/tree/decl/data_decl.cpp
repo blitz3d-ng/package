@@ -32,6 +32,31 @@ void DataDeclNode::transdata( Codegen *g ){
 	}
 }
 
+#ifdef USE_LLVM
+void DataDeclNode::translate2( Codegen_LLVM *g ){
+	ConstNode *c=expr->constNode();
+	int ty;
+	llvm::Constant *v=0;
+	if( expr->sem_type==Type::int_type ){
+		ty=1;
+		v=(llvm::Constant*)c->translate2( g );
+	}else if( expr->sem_type==Type::float_type ){
+		ty=2;
+		v=(llvm::Constant*)c->translate2( g );
+	}else{
+		ty=4;
+		v=g->builder->CreateGlobalStringPtr( string( c->stringValue() ) );
+	}
+
+	values_idx=g->data_values.size();
+	g->data_values.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,ty ) ) );
+	g->data_values.push_back( v );
+}
+
+void DataDeclNode::transdata2( Codegen_LLVM *g ){
+}
+#endif
+
 json DataDeclNode::toJSON( Environ *e ){
 	json tree;tree["@class"]="DataDeclNode";
 	tree["pos"]=pos;

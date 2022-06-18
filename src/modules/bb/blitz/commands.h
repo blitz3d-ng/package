@@ -127,7 +127,7 @@ struct BBStr : public std::string{
 #endif
 
 struct BBData{
-	int fieldType;
+	bb_int_t fieldType;
 	BBField field;
 };
 typedef struct BBData BBData;
@@ -143,7 +143,7 @@ BBStr *	 BBCALL _bbStrLoad( BBStr **var );
 BBStr * BBCALL _bbStrCopy( BBStr *var );
 void	 BBCALL _bbStrRelease( BBStr *str );
 void	 BBCALL _bbStrStore( BBStr **var,BBStr *str );
-int		 BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs );
+bb_int_t BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs );
 
 BBStr *	 BBCALL _bbStrConcat( BBStr *s1,BBStr *s2 );
 bb_int_t		 BBCALL _bbStrToInt( BBStr *s );
@@ -171,18 +171,18 @@ BBObj *	 BBCALL _bbObjFirst( BBObjType *t );
 BBObj *  BBCALL _bbObjLast( BBObjType *t );
 void	 BBCALL _bbObjInsBefore( BBObj *o1,BBObj *o2 );
 void	 BBCALL _bbObjInsAfter( BBObj *o1,BBObj *o2 );
-int		 BBCALL _bbObjEachFirst( BBObj **var,BBObjType *type );
-int		 BBCALL _bbObjEachNext( BBObj **var );
-int		 BBCALL _bbObjEachFirst2( BBObj **var,BBObjType *type );
-int		 BBCALL _bbObjEachNext2( BBObj **var );
-int		 BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 );
+bb_int_t BBCALL _bbObjEachFirst( BBObj **var,BBObjType *type );
+bb_int_t BBCALL _bbObjEachNext( BBObj **var );
+bb_int_t BBCALL _bbObjEachFirst2( BBObj **var,BBObjType *type );
+bb_int_t BBCALL _bbObjEachNext2( BBObj **var );
+bb_int_t BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 );
 BBStr *	 BBCALL _bbObjToStr( BBObj *obj );
 bb_int_t		 BBCALL _bbObjToHandle( BBObj *obj );
 BBObj *	 BBCALL _bbObjFromHandle( bb_int_t handle,BBObjType *type );
 void	 BBCALL _bbNullObjEx();
 
 void	 BBCALL _bbRestore( BBData *data );
-int		 BBCALL _bbReadInt();
+bb_int_t		 BBCALL _bbReadInt();
 bb_float_t	 BBCALL _bbReadFloat();
 BBStr *	 BBCALL _bbReadStr();
 

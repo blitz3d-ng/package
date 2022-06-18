@@ -150,7 +150,7 @@ BBStr * BBCALL _bbStrConcat( BBStr *s1,BBStr *s2 ){
 	*s1+=*s2;delete s2;return s1;
 }
 
-int BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs ){
+bb_int_t BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs ){
 	int n=lhs->compare( *rhs );
 	delete lhs;delete rhs;return n;
 }
@@ -343,7 +343,7 @@ void BBCALL _bbObjStore( BBObj **var,BBObj *obj ){
 	*var=obj;
 }
 
-int BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 ){
+bb_int_t BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 ){
 	return (o1 ? o1->fields : 0)!=(o2 ? o2->fields : 0);
 }
 
@@ -383,22 +383,22 @@ void BBCALL _bbObjInsAfter( BBObj *o1,BBObj *o2 ){
 	insertObj( o1,o2->next );
 }
 
-int BBCALL _bbObjEachFirst( BBObj **var,BBObjType *type ){
+bb_int_t BBCALL _bbObjEachFirst( BBObj **var,BBObjType *type ){
 	_bbObjStore( var,_bbObjFirst( type ) );
 	return *var!=0;
 }
 
-int BBCALL _bbObjEachNext( BBObj **var ){
+bb_int_t BBCALL _bbObjEachNext( BBObj **var ){
 	_bbObjStore( var,_bbObjNext( *var ) );
 	return *var!=0;
 }
 
-int BBCALL _bbObjEachFirst2( BBObj **var,BBObjType *type ){
+bb_int_t BBCALL _bbObjEachFirst2( BBObj **var,BBObjType *type ){
 	*var=_bbObjFirst( type );
 	return *var!=0;
 }
 
-int BBCALL _bbObjEachNext2( BBObj **var ){
+bb_int_t BBCALL _bbObjEachNext2( BBObj **var ){
 	*var=_bbObjNext( *var );
 	return *var!=0;
 }
@@ -470,7 +470,7 @@ void BBCALL _bbRestore( BBData *data ){
 	dataPtr=data;
 }
 
-int BBCALL _bbReadInt(){
+bb_int_t BBCALL _bbReadInt(){
 	switch( dataPtr->fieldType ){
 	case BBTYPE_END:RTEX( "Out of data" );return 0;
 	case BBTYPE_INT:return dataPtr++->field.INT;

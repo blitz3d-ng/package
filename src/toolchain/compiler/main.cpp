@@ -214,7 +214,7 @@ static const char *enumRuntimes( vector<string> &rts ){
 #endif
 
 int main( int argc,char *argv[] ){
-#ifdef BB_POSIX
+#if defined(BB_POSIX) && !defined(BB_ASAN)
 	signal(SIGABRT, handle_abort);
 	signal(SIGSEGV, handle_segfault);
 #endif
