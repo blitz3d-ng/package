@@ -108,31 +108,10 @@ if(LLVM_ROOT)
     linker_lld/linker_lld.cpp
   )
 
-  set(LLVM_COMPONENTS core option linker lto orcjit all-targets)
+  target_include_directories(blitzcc PRIVATE ${LLVM_INCLUDE_DIRS})
 
-  execute_process(
-    COMMAND ${LLVM_ROOT}/bin/llvm-config --cxxflags
-    OUTPUT_VARIABLE LLVM_CXX_FLAGS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+  llvm_map_components_to_libnames(LLVM_LIBS orcjit)
 
-  execute_process(
-    COMMAND ${LLVM_ROOT}/bin/llvm-config --ldflags
-    OUTPUT_VARIABLE LLVM_LD_FLAGS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-
-  execute_process(
-    COMMAND ${LLVM_ROOT}/bin/llvm-config --libs --system-libs ${LLVM_COMPONENTS}
-    OUTPUT_VARIABLE LLVM_LIBS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  string(REPLACE "\n" " " LLVM_LIBS ${LLVM_LIBS})
-  string(REPLACE "-l" ""  LLVM_LIBS ${LLVM_LIBS})
-  string(REPLACE " " ";"  LLVM_LIBS ${LLVM_LIBS})
-
-  target_compile_options(blitzcc PRIVATE "SHELL:${LLVM_CXX_FLAGS}" -fexceptions -frtti)
-  target_link_options(blitzcc PRIVATE "SHELL:${LLVM_LD_FLAGS}")
   if(BB_WINDOWS)
     target_link_libraries(blitzcc lldCOFF lldMinGW)
   elseif(BB_MACOS)
@@ -140,7 +119,7 @@ if(LLVM_ROOT)
   elseif(BB_LINUX)
     target_link_libraries(blitzcc lldELF)
   endif()
-  target_link_libraries(blitzcc lldWasm lldCommon ${LLVM_LIBS} zlibstatic ncurses)
+  target_link_libraries(blitzcc ${LLVM_LIBS} zlibstatic ncurses)
 endif()
 
 if(BB_COVERAGE)
