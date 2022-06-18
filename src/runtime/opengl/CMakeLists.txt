@@ -5,9 +5,7 @@ include_directories (SYSTEM ../../modules)
 
 set(SOURCES false)
 
-IF(BB_MINGW32)
-  set(SOURCES mingw32.cpp)
-ELSEIF(BB_MACOS)
+IF(BB_MACOS)
   set(SOURCES macos.cpp)
 ELSEIF(BB_LINUX)
   set(SOURCES linux.cpp)

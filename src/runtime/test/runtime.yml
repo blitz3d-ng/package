@@ -1,8 +1,7 @@
 name: Test
 
 platforms:
-  - win32
-  - mingw32
+  - windows
   - macos
   - linux
   - ios

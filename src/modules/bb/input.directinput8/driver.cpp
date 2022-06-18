@@ -212,4 +212,4 @@ BBMODULE_CREATE( input_directinput8 ){
 
 BBMODULE_DESTROY( input_directinput8 ){
 	return true;
-}}
+}

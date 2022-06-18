@@ -328,7 +328,7 @@ int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func
 extern inline void debugBank( bbBank *b );
 extern inline void debugBank( bbBank *b,int offset );
 
-int BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out ){
+BBLIB bb_int_t BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out ){
 	if( bb_env.debug ){
 		if( in ) debugBank( in );
 		if( out ) debugBank( out );

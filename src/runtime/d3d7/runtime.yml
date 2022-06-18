@@ -1,8 +1,7 @@
 name: Direct3D 7
 
 platforms:
-  - win32
-  - mingw32
+  - windows
 
 modules:
   - blitz

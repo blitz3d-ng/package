@@ -3,15 +3,19 @@
 
 #include "../config.h"
 
+#undef CDECL
+
 #ifdef WIN32
-#define BBDECL extern "C" __declspec(dllexport)
+#define BBDECL __declspec(dllexport)
 #define BBCALL __stdcall
 #define CDECL __cdecl
 #else
-#define BBDECL extern "C"
+#define BBDECL
 #define BBCALL
 #define CDECL
 #endif
+
+#define BBLIB extern "C"
 
 #define BBMODULE_FUNC_NAME( name,action ) name##_##action
 
