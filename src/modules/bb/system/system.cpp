@@ -17,18 +17,18 @@ void BBCALL bbRuntimeError( BBStr *str ){
 	RTEX( err );
 }
 
-int BBCALL bbExecFile( BBStr *f ){
+bb_int_t BBCALL bbExecFile( BBStr *f ){
 	string t=*f;delete f;
 	int n=bbSystemDriver->execute( t );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	return n;
 }
 
-void BBCALL bbDelay( int ms ){
+void BBCALL bbDelay( bb_int_t ms ){
 	if( !bbSystemDriver->delay( ms ) ) RTEX( 0 );
 }
 
-int BBCALL bbMilliSecs(){
+bb_int_t BBCALL bbMilliSecs(){
 	return bbSystemDriver->getMilliSecs();
 }
 
@@ -55,21 +55,21 @@ void BBCALL bbSetEnv( BBStr *env_var,BBStr *val ){
 	delete val;
 }
 
-int BBCALL bbScreenWidth( int i ){
+bb_int_t BBCALL bbScreenWidth( bb_int_t i ){
 	return bbSystemDriver->getScreenWidth( i );
 }
 
-int BBCALL bbScreenHeight( int i ){
+bb_int_t BBCALL bbScreenHeight( bb_int_t i ){
 	return bbSystemDriver->getScreenHeight( i );
 }
 
-float BBCALL bbDPIScaleX(){
+bb_float_t BBCALL bbDPIScaleX(){
 	float x,y;
 	bbSystemDriver->dpiInfo( x,y );
 	return x;
 }
 
-float BBCALL bbDPIScaleY(){
+bb_float_t BBCALL bbDPIScaleY(){
 	float x,y;
 	bbSystemDriver->dpiInfo( x,y );
 	return y;

@@ -109,12 +109,12 @@ BBStr * BBCALL bbBin( int n ){
 	return d_new BBStr( buff );
 }
 
-int BBCALL bbAsc( BBStr *s ){
+bb_int_t BBCALL bbAsc( BBStr *s ){
 	int n=s->size() ? (*s)[0] & 255 : -1;
 	delete s;return n;
 }
 
-int BBCALL bbLen( BBStr *s ){
+bb_int_t BBCALL bbLen( BBStr *s ){
 	int n=s->size();
 	delete s;return n;
 }
