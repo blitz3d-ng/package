@@ -212,9 +212,4 @@ BBMODULE_CREATE( input_directinput8 ){
 
 BBMODULE_DESTROY( input_directinput8 ){
 	return true;
-}
-
-BBMODULE_LINK( input_directinput8 ){
-	rtSym( "EnableDirectInput%enable",bbEnableDirectInput );
-	rtSym( "%DirectInputEnabled",bbDirectInputEnabled );
-}
+}}

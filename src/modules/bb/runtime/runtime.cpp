@@ -36,7 +36,7 @@ bool bbRuntimeIdle(){
 	return bbRuntime->idle();
 }
 
-void BBCALL bbMoveMouse( int x,int y ){
+void BBCALL bbMoveMouse( bb_int_t x,bb_int_t y ){
   bbRuntime->moveMouse( x,y );
 	BBEvent ev=BBEvent( BBEVENT_MOUSEMOVE,1,x,y );
 	bbOnEvent.run( &ev );

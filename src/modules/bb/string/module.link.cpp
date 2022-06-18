@@ -4,7 +4,6 @@
 #include <bb/blitz/module.h>
 #include <bb/string/string.h>
 
-#ifdef WIN32
 BBMODULE_LINK( string ){
 	rtSym( "$String$string%repeat",bbString );
 	rtSym( "$Left$string%count",bbLeft );
@@ -25,4 +24,3 @@ BBMODULE_LINK( string ){
 	rtSym( "$CurrentDate",bbCurrentDate );
 	rtSym( "$CurrentTime",bbCurrentTime );
 }
-#endif

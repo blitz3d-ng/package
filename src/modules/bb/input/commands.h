@@ -2,7 +2,7 @@
 #define BB_INPUT_COMMANDS_H
 
 #include <bb/blitz/module.h>
-#include "../config.h"
+#include <bb/input/input.h>
 
 #ifdef __cplusplus
 extern "C" {

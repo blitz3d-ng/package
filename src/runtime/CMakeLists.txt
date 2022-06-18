@@ -43,6 +43,7 @@ macro(bb_runtime id)
     else()
       # TODO: figure this out...
       # set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " -static")
+      set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " --enable-export-all")
     endif()
   else()
     target_link_libraries(${name}.shared ${name}.static)

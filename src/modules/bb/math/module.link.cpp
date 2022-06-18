@@ -4,7 +4,6 @@
 #include <bb/blitz/module.h>
 #include <bb/math/math.h>
 
-#ifdef WIN32
 BBMODULE_LINK( math ){
 	rtSym( "#Sin#degrees",bbSin );
 	rtSym( "#Cos#degrees",bbCos );
@@ -24,4 +23,3 @@ BBMODULE_LINK( math ){
 	rtSym( "SeedRnd%seed",bbSeedRnd );
 	rtSym( "%RndSeed",bbRndSeed );
 }
-#endif

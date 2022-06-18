@@ -101,6 +101,18 @@ module Blitz3D
       symbols.size > 0 || commands.size > 0
     end
 
+    def new_decls?
+      File.exist?(commands_decls)
+    end
+
+    def link_cpp
+      "src/modules/bb/#{id}/module.link.cpp"
+    end
+
+    def commands_decls
+      "src/modules/bb/#{id}/commands.decls"
+    end
+
     def public_symbols?
       needs_to_link? && commands.any? { |command| command.name !~ /^_/ }
     end

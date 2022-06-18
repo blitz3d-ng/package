@@ -19,35 +19,35 @@ static inline void debugFont( BBFont *f ){
 	}
 }
 
-void BBCALL bbOrigin( int x,int y ){
+void BBCALL bbOrigin( bb_int_t x,bb_int_t y ){
 	gx_canvas->setOrigin( x,y );
 }
 
-void BBCALL bbViewport( int x,int y,int w,int h ){
+void BBCALL bbViewport( bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h ){
 	gx_canvas->setViewport( x,y,w,h );
 }
 
-void BBCALL bbColor( int r,int g,int b ){
+void BBCALL bbColor( bb_int_t r,bb_int_t g,bb_int_t b ){
 	gx_canvas->setColor( curr_color=(r<<16)|(g<<8)|b );
 }
 
-void BBCALL bbGetColor( int x,int y ){
+void BBCALL bbGetColor( bb_int_t x,bb_int_t y ){
 	gx_canvas->setColor( curr_color=gx_canvas->getPixel( x,y ) );
 }
 
-int BBCALL bbColorRed(){
+bb_int_t BBCALL bbColorRed(){
 	return (gx_canvas->getColor()>>16)&0xff;
 }
 
-int BBCALL bbColorGreen(){
+bb_int_t BBCALL bbColorGreen(){
 	return (gx_canvas->getColor()>>8)&0xff;
 }
 
-int BBCALL bbColorBlue(){
+bb_int_t BBCALL bbColorBlue(){
 	return gx_canvas->getColor()&0xff;
 }
 
-void BBCALL bbClsColor( int r,int g,int b ){
+void BBCALL bbClsColor( bb_int_t r,bb_int_t g,bb_int_t b ){
 	gx_canvas->setClsColor( curr_clsColor=(r<<16)|(g<<8)|b );
 }
 
@@ -55,23 +55,23 @@ void BBCALL bbCls(){
 	gx_canvas->cls();
 }
 
-void BBCALL bbPlot( int x,int y ){
+void BBCALL bbPlot( bb_int_t x,bb_int_t y ){
 	gx_canvas->plot( x,y );
 }
 
-void BBCALL bbLine( int x1,int y1,int x2,int y2 ){
+void BBCALL bbLine( bb_int_t x1,bb_int_t y1,bb_int_t x2,bb_int_t y2 ){
 	gx_canvas->line( x1,y1,x2,y2 );
 }
 
-void BBCALL bbRect( int x,int y,int w,int h,int solid ){
+void BBCALL bbRect( bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h,bb_int_t solid ){
 	gx_canvas->rect( x,y,w,h,solid ? true : false );
 }
 
-void BBCALL bbOval( int x,int y,int w,int h,int solid ){
+void BBCALL bbOval( bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h,bb_int_t solid ){
 	gx_canvas->oval( x,y,w,h,solid ? true : false );
 }
 
-void BBCALL bbText( int x,int y,BBStr *str,int centre_x,int centre_y ){
+void BBCALL bbText( bb_int_t x,bb_int_t y,BBStr *str,bb_int_t centre_x,bb_int_t centre_y ){
 	debugFont( curr_font );
 	if( centre_x ) x-=curr_font->getWidth( *str )/2;
 	if( centre_y ) y-=curr_font->getHeight()/2;
@@ -79,7 +79,7 @@ void BBCALL bbText( int x,int y,BBStr *str,int centre_x,int centre_y ){
 	delete str;
 }
 
-BBFont * BBCALL bbLoadFont( BBStr *name,int height,int bold,int italic,int underline ){
+BBFont * BBCALL bbLoadFont( BBStr *name,bb_int_t height,bb_int_t bold,bb_int_t italic,bb_int_t underline ){
 	int flags=
 		(bold ? BBFont::FONT_BOLD : 0 ) |
 		(italic ? BBFont::FONT_ITALIC : 0 ) |
@@ -100,23 +100,23 @@ void BBCALL bbSetFont( BBFont *f ){
 	gx_canvas->setFont( curr_font=f );
 }
 
-int BBCALL bbFontWidth(){
+bb_int_t BBCALL bbFontWidth(){
 	debugFont( curr_font );
 	return curr_font->getWidth();
 }
 
-int BBCALL bbFontHeight(){
+bb_int_t BBCALL bbFontHeight(){
 	debugFont( curr_font );
 	return curr_font->getHeight();
 }
 
-int BBCALL bbStringWidth( BBStr *str ){
+bb_int_t BBCALL bbStringWidth( BBStr *str ){
 	debugFont( curr_font );
 	string t=*str;delete str;
 	return curr_font->getWidth( t );
 }
 
-int BBCALL bbStringHeight( BBStr *str ){
+bb_int_t BBCALL bbStringHeight( BBStr *str ){
 	debugFont( curr_font );
 	delete str;
 	return curr_font->getHeight();

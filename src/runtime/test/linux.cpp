@@ -40,7 +40,7 @@ BBRuntime *bbCreateRuntime(){
 	return bbCreateConsoleRuntime();
 }
 
-#ifdef WIN32
+
 void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	math_link( link );
 	blitz_link( link );
@@ -58,7 +58,7 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	audio_link( link );
 	unit_test_link( link );
 }
-#endif
+
 bool bbruntime_create(){
 	if( math_create() ){
 				if( blitz_create() ){

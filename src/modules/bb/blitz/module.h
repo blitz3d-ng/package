@@ -1,12 +1,14 @@
 #ifndef BBMODULE_H
 #define BBMODULE_H
 
+#include "../config.h"
+
 #ifdef WIN32
-#define BBDECL __declspec(dllexport)
+#define BBDECL extern "C" __declspec(dllexport)
 #define BBCALL __stdcall
 #define CDECL __cdecl
 #else
-#define BBDECL
+#define BBDECL extern "C"
 #define BBCALL
 #define CDECL
 #endif

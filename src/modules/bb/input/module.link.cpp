@@ -4,7 +4,6 @@
 #include <bb/blitz/module.h>
 #include <bb/input/input.h>
 
-#ifdef WIN32
 BBMODULE_LINK( input ){
 	rtSym( "%KeyDown%key",bbKeyDown );
 	rtSym( "%KeyHit%key",bbKeyHit );
@@ -49,4 +48,3 @@ BBMODULE_LINK( input ){
 	rtSym( "%JoyVDir%port=0",bbJoyVDir );
 	rtSym( "FlushJoy",bbFlushJoy );
 }
-#endif

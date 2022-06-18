@@ -76,15 +76,15 @@ void BBCALL bbContext( BBStr *m ){
 	_bbContext( m, "<unknown>", 0 );
 }
 
-void BBCALL bbExpect( int condition,BBStr *m ){
+void BBCALL bbExpect( bb_int_t condition,BBStr *m ){
 	_bbExpect( condition,m,"<unknown>",0 );
 }
 
-void BBCALL bbExpectIntEq( int a,int b,BBStr *m ){
+void BBCALL bbExpectIntEq( bb_int_t a,bb_int_t b,BBStr *m ){
 	_bbExpectIntEq( a,b,m,"<unknown>",0 );
 }
 
-void BBCALL bbExpectFloatEq( float a,float b,BBStr *m ){
+void BBCALL bbExpectFloatEq( bb_float_t a,bb_float_t b,BBStr *m ){
 	_bbExpectIntEq( a,b,m,"<unknown>",0 );
 }
 

@@ -9,18 +9,18 @@ using namespace std;
 #define CHKPOS(x) if( (x)<0 ) RTEX( "parameter must be positive" );
 #define CHKOFF(x) if( (x)<=0 ) RTEX( "parameter must be greater than 0" );
 
-BBStr * BBCALL bbString( BBStr *s,int n ){
+BBStr * BBCALL bbString( BBStr *s,bb_int_t n ){
 	BBStr *t=d_new BBStr();
 	while( n-->0 ) *t+=*s;
 	delete s;return t;
 }
 
-BBStr * BBCALL bbLeft( BBStr *s,int n ){
+BBStr * BBCALL bbLeft( BBStr *s,bb_int_t n ){
 	CHKPOS( n );
 	*s=s->substr( 0,n );return s;
 }
 
-BBStr * BBCALL bbRight( BBStr *s,int n ){
+BBStr * BBCALL bbRight( BBStr *s,bb_int_t n ){
 	CHKPOS( n );
 	n=s->size()-n;if( n<0 ) n=0;
 	*s=s->substr( n );return s;
@@ -35,14 +35,14 @@ BBStr * BBCALL bbReplace( BBStr *s,BBStr *from,BBStr *to ){
 	delete from;delete to;return s;
 }
 
-int BBCALL bbInstr( BBStr *s,BBStr *t,int from ){
+bb_int_t BBCALL bbInstr( BBStr *s,BBStr *t,bb_int_t from ){
 	CHKOFF( from );--from;
 	int n=s->find( *t,from );
 	delete s;delete t;
 	return n==string::npos ? 0 : n+1;
 }
 
-BBStr * BBCALL bbMid( BBStr *s,int o,int n ){
+BBStr * BBCALL bbMid( BBStr *s,bb_int_t o,bb_int_t n ){
 	CHKOFF( o );--o;
 	if( o>s->size() ) o=s->size();
 	if( n>=0 ) *s=s->substr( o,n );
@@ -67,7 +67,7 @@ BBStr * BBCALL bbTrim( BBStr *s ){
 	*s=s->substr( n,p-n );return s;
 }
 
-BBStr * BBCALL bbLSet( BBStr *s,int n ){
+BBStr * BBCALL bbLSet( BBStr *s,bb_int_t n ){
 	CHKPOS(n);
 	if( s->size()>n ) *s=s->substr( 0,n );
 	else{
@@ -76,7 +76,7 @@ BBStr * BBCALL bbLSet( BBStr *s,int n ){
 	return s;
 }
 
-BBStr * BBCALL bbRSet( BBStr *s,int n ){
+BBStr * BBCALL bbRSet( BBStr *s,bb_int_t n ){
 	CHKPOS(n);
 	if( s->size()>n ) *s=s->substr( s->size()-n );
 	else{
@@ -85,12 +85,12 @@ BBStr * BBCALL bbRSet( BBStr *s,int n ){
 	return s;
 }
 
-BBStr * BBCALL bbChr( int n ){
+BBStr * BBCALL bbChr( bb_int_t n ){
 	BBStr *t=d_new BBStr();
 	*t+=(char)n;return t;
 }
 
-BBStr * BBCALL bbHex( int n ){
+BBStr * BBCALL bbHex( bb_int_t n ){
 	char buff[12];
 	for( int k=7;k>=0;n>>=4,--k ){
 		int t=(n&15)+'0';
@@ -100,7 +100,7 @@ BBStr * BBCALL bbHex( int n ){
 	return d_new BBStr( buff );
 }
 
-BBStr * BBCALL bbBin( int n ){
+BBStr * BBCALL bbBin( bb_int_t n ){
 	char buff[36];
 	for( int k=31;k>=0;n>>=1,--k ){
 		buff[k]=n&1 ? '1' : '0';

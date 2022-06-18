@@ -4,11 +4,11 @@
 // These functions provide "out-of-the-box" compatibility with existing
 // JV-ODE code.
 
-void BBCALL _odeRegisterODE( int key1,int key2,int key3,int key4 ){
+void BBCALL _odeRegisterODE( bb_int_t key1,bb_int_t key2,bb_int_t key3,bb_int_t key4 ){
   // THIS FUNCTION INTENTIONALLY LEFT BLANK
 }
 
-float BBCALL _odeGetVersion(){
+bb_float_t BBCALL _odeGetVersion(){
   return 1.0f;
 }
 

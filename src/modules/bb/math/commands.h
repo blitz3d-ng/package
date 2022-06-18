@@ -2,7 +2,7 @@
 #define BB_MATH_COMMANDS_H
 
 #include <bb/blitz/module.h>
-#include "../config.h"
+#include <bb/math/math.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -210,66 +210,66 @@ static Entity *findChild( Entity *e,const string &t ){
 ///////////////////////////
 // GLOBAL WORLD COMMANDS //
 ///////////////////////////
-void BBCALL bbLoaderMatrix( BBStr *ext,float xx,float xy,float xz,float yx,float yy,float yz,float zx,float zy,float zz ){
+BBDECL void BBCALL bbLoaderMatrix( BBStr *ext,bb_float_t xx,bb_float_t xy,bb_float_t xz,bb_float_t yx,bb_float_t yy,bb_float_t yz,bb_float_t zx,bb_float_t zy,bb_float_t zz ){
 	loader_mat_map.erase( *ext );
 	loader_mat_map[*ext]=Transform(Matrix(Vector(xx,xy,xz),Vector(yx,yy,yz),Vector(zx,zy,zz)));
 	delete ext;
 }
 
-int  BBCALL bbHWTexUnits(){
+BBDECL bb_int_t BBCALL bbHWTexUnits(){
 	debug3d();
 	return bbScene->hwTexUnits();
 }
 
-int	 BBCALL bbGfxDriverCaps3D(){
+BBDECL bb_int_t BBCALL bbGfxDriverCaps3D(){
 	debug3d();
 	return bbScene->gfxDriverCaps3D();
 }
 
-void BBCALL bbHWMultiTex( int enable ){
+BBDECL void BBCALL bbHWMultiTex( bb_int_t enable ){
 	debug3d();
 	bbScene->setHWMultiTex( !!enable );
 }
 
-void BBCALL bbWBuffer( int enable ){
+BBDECL void BBCALL bbWBuffer( bb_int_t enable ){
 	debug3d();
 	bbScene->setWBuffer( !!enable );
 }
 
-void BBCALL bbDither( int enable ){
+BBDECL void BBCALL bbDither( bb_int_t enable ){
 	debug3d();
 	bbScene->setDither( !!enable );
 }
 
-void BBCALL bbAntiAlias( int enable ){
+BBDECL void BBCALL bbAntiAlias( bb_int_t enable ){
 	debug3d();
 	bbScene->setAntialias( !!enable );
 }
 
-void BBCALL bbWireFrame( int enable ){
+BBDECL void BBCALL bbWireFrame( bb_int_t enable ){
 	debug3d();
 	bbScene->setWireframe( !!enable );
 }
 
-void BBCALL bbAmbientLight( float r,float g,float b ){
+BBDECL void BBCALL bbAmbientLight( bb_float_t r,bb_float_t g,bb_float_t b ){
 	debug3d();
 	Vector t( r*ctof,g*ctof,b*ctof );
 	bbScene->setAmbient( &(t.x) );
 }
 
-void BBCALL bbClearCollisions(){
+BBDECL void BBCALL bbClearCollisions(){
 	debug3d();
 	world->clearCollisions();
 }
 
-void BBCALL bbCollisions( int src_type,int dest_type,int method,int response ){
+BBDECL void BBCALL bbCollisions( bb_int_t src_type,bb_int_t dest_type,bb_int_t method,bb_int_t response ){
 	debug3d();
 	world->addCollision( src_type,dest_type,method,response );
 }
 
 static int update_ms;
 
-void BBCALL bbUpdateWorld( float elapsed ){
+BBDECL void BBCALL bbUpdateWorld( bb_float_t elapsed ){
 	debug3d();
 
 #ifndef BETA
@@ -282,12 +282,12 @@ void BBCALL bbUpdateWorld( float elapsed ){
 #endif
 }
 
-void BBCALL bbCaptureWorld(){
+BBDECL void BBCALL bbCaptureWorld(){
 	debug3d();
 	world->capture();
 }
 
-void BBCALL bbRenderWorld( float tween ){
+BBDECL void BBCALL bbRenderWorld( bb_float_t tween ){
 	debug3d();
 
 #ifndef BETA
@@ -302,8 +302,8 @@ void BBCALL bbRenderWorld( float tween ){
 	world->render( tween );
 	render_ms=bbMilliSecs()-render_ms;
 
-	extern int BBCALL bbKeyHit(int);
-	extern void BBCALL bbDelay(int);
+BBDECL 	extern bb_int_t BBCALL bbKeyHit(bb_int_t);
+BBDECL 	extern void BBCALL bbDelay(bb_int_t);
 	bbDelay(0);
 	if( bbKeyHit( 0x57 ) ){
 		stats_mode=!stats_mode;
@@ -337,11 +337,11 @@ void BBCALL bbRenderWorld( float tween ){
 #endif
 }
 
-int BBCALL bbTrisRendered(){
+BBDECL bb_int_t BBCALL bbTrisRendered(){
 	return tri_count;
 }
 
-float BBCALL bbStats3D( int n ){
+BBDECL bb_float_t BBCALL bbStats3D( bb_int_t n ){
 	return stats3d[n];
 }
 
@@ -351,7 +351,7 @@ float BBCALL bbStats3D( int n ){
 
 //Note: modify canvas->backup() to NOT release backup image!
 //
-Texture * BBCALL bbLoadTexture( BBStr *file,int flags ){
+BBDECL Texture * BBCALL bbLoadTexture( BBStr *file,bb_int_t flags ){
 	debug3d();
 	Texture *t=d_new Texture( *file,flags );delete file;
 	if( !t->getCanvas(0) ){ delete t;return 0; }
@@ -359,7 +359,7 @@ Texture * BBCALL bbLoadTexture( BBStr *file,int flags ){
 	return t;
 }
 
-Texture * BBCALL bbLoadAnimTexture( BBStr *file,int flags,int w,int h,int first,int cnt ){
+BBDECL Texture * BBCALL bbLoadAnimTexture( BBStr *file,bb_int_t flags,bb_int_t w,bb_int_t h,bb_int_t first,bb_int_t cnt ){
 	debug3d();
 	Texture *t=d_new Texture( *file,flags,w,h,first,cnt );
 	delete file;
@@ -371,7 +371,7 @@ Texture * BBCALL bbLoadAnimTexture( BBStr *file,int flags,int w,int h,int first,
 	return t;
 }
 
-Texture * BBCALL bbCreateTexture( int w,int h,int flags,int frames ){
+BBDECL Texture * BBCALL bbCreateTexture( bb_int_t w,bb_int_t h,bb_int_t flags,bb_int_t frames ){
 	if( bb_env.debug ){
 		debug3d();
 		if( frames<=0 ){
@@ -383,68 +383,68 @@ Texture * BBCALL bbCreateTexture( int w,int h,int flags,int frames ){
 	return t;
 }
 
-void BBCALL bbFreeTexture( Texture *t ){
+BBDECL void BBCALL bbFreeTexture( Texture *t ){
 	if( !t ) return;
 	debugTexture(t);
 	if( texture_set.erase( t ) ) delete t;
 }
 
-void BBCALL bbTextureBlend( Texture *t,int blend ){
+BBDECL void BBCALL bbTextureBlend( Texture *t,bb_int_t blend ){
 	debugTexture(t);
 	t->setBlend( blend );
 }
 
-void BBCALL bbTextureCoords( Texture *t,int flags ){
+BBDECL void BBCALL bbTextureCoords( Texture *t,bb_int_t flags ){
 	debugTexture(t);
 	t->setFlags( flags );
 }
 
-void BBCALL bbScaleTexture( Texture *t,float u_scale,float v_scale ){
+BBDECL void BBCALL bbScaleTexture( Texture *t,bb_float_t u_scale,bb_float_t v_scale ){
 	debugTexture(t);
 	t->setScale( 1/u_scale,1/v_scale );
 }
 
-void BBCALL bbRotateTexture( Texture *t,float angle ){
+BBDECL void BBCALL bbRotateTexture( Texture *t,bb_float_t angle ){
 	debugTexture(t);
 	t->setRotation( -angle*dtor );
 }
 
-void BBCALL bbPositionTexture( Texture *t,float u_pos,float v_pos ){
+BBDECL void BBCALL bbPositionTexture( Texture *t,bb_float_t u_pos,bb_float_t v_pos ){
 	debugTexture(t);
 	t->setPosition( -u_pos,-v_pos );
 }
 
-int BBCALL bbTextureWidth( Texture *t ){
+BBDECL bb_int_t BBCALL bbTextureWidth( Texture *t ){
 	debugTexture(t);
 	return t->getCanvas(0)->getWidth();
 }
 
-int BBCALL bbTextureHeight( Texture *t ){
+BBDECL bb_int_t BBCALL bbTextureHeight( Texture *t ){
 	debugTexture(t);
 	return t->getCanvas(0)->getHeight();
 }
 
-BBStr * BBCALL bbTextureName( Texture *t ){
+BBDECL BBStr * BBCALL bbTextureName( Texture *t ){
 	debugTexture(t);
 	CachedTexture *c=t->getCachedTexture();
 	return c ? d_new BBStr( c->getName().c_str() ) : d_new BBStr("");
 }
 
-void BBCALL bbSetCubeFace( Texture *t,int face ){
+BBDECL void BBCALL bbSetCubeFace( Texture *t,bb_int_t face ){
 	debugTexture(t);
 	if( BBCanvas *c=t->getCanvas( 0 ) ){
 		c->setCubeFace(face);
 	}
 }
 
-void BBCALL bbSetCubeMode( Texture *t,int mode ){
+BBDECL void BBCALL bbSetCubeMode( Texture *t,bb_int_t mode ){
 	debugTexture(t);
 	if( BBCanvas *c=t->getCanvas( 0 ) ){
 		c->setCubeMode( mode );
 	}
 }
 
-BBCanvas * BBCALL bbTextureBuffer( Texture *t,int frame ){
+BBDECL BBCanvas * BBCALL bbTextureBuffer( Texture *t,bb_int_t frame ){
 	//v1.04
 	debugTexture(t);
 	if( BBCanvas *c=t->getCanvas( frame ) ){
@@ -460,12 +460,12 @@ BBCanvas * BBCALL bbTextureBuffer( Texture *t,int frame ){
 	*/
 }
 
-void BBCALL bbClearTextureFilters(){
+BBDECL void BBCALL bbClearTextureFilters(){
 	debug3d();
 	Texture::clearFilters();
 }
 
-void BBCALL bbTextureFilter( BBStr *t,int flags ){
+BBDECL void BBCALL bbTextureFilter( BBStr *t,bb_int_t flags ){
 	debug3d();
 	Texture::addFilter( *t,flags );
 	delete t;
@@ -474,7 +474,7 @@ void BBCALL bbTextureFilter( BBStr *t,int flags ){
 ////////////////////
 // BRUSH COMMANDS //
 ////////////////////
-Brush * BBCALL bbCreateBrush( float r,float g,float b ){
+BBDECL Brush * BBCALL bbCreateBrush( bb_float_t r,bb_float_t g,bb_float_t b ){
 	debug3d();
 	Brush *br=d_new Brush();
 	br->setColor( Vector( r*ctof,g*ctof,b*ctof ) );
@@ -482,7 +482,7 @@ Brush * BBCALL bbCreateBrush( float r,float g,float b ){
 	return br;
 }
 
-Brush * BBCALL bbLoadBrush( BBStr *file,int flags,float u_scale,float v_scale ){
+BBDECL Brush * BBCALL bbLoadBrush( BBStr *file,bb_int_t flags,bb_float_t u_scale,bb_float_t v_scale ){
 	debug3d();
 	Texture t( *file,flags );
 	delete file;if( !t.getCanvas(0) ) return 0;
@@ -493,84 +493,84 @@ Brush * BBCALL bbLoadBrush( BBStr *file,int flags,float u_scale,float v_scale ){
 	return br;
 }
 
-void BBCALL bbFreeBrush( Brush *b ){
+BBDECL void BBCALL bbFreeBrush( Brush *b ){
 	if( !b ) return;
 	debugBrush(b);
 	if( brush_set.erase( b ) ) delete b;
 }
 
-void BBCALL bbBrushColor( Brush *br,float r,float g,float b ){
+BBDECL void BBCALL bbBrushColor( Brush *br,bb_float_t r,bb_float_t g,bb_float_t b ){
 	debugBrush(br);
 	br->setColor( Vector( r*ctof,g*ctof,b*ctof ) );
 }
 
-int BBCALL bbGetBrushRed( Brush *b ){
+BBDECL bb_int_t BBCALL bbGetBrushRed( Brush *b ){
 	debugBrush(b);
 	Vector c=b->getColor( );
 	return c.x*255.0f;
 }
 
-int BBCALL bbGetBrushGreen( Brush *b ){
+BBDECL bb_int_t BBCALL bbGetBrushGreen( Brush *b ){
 	debugBrush(b);
 	Vector c=b->getColor( );
 	return c.y*255.0f;
 }
 
-int BBCALL bbGetBrushBlue( Brush *b ){
+BBDECL bb_int_t BBCALL bbGetBrushBlue( Brush *b ){
 	debugBrush(b);
 	Vector c=b->getColor( );
 	return c.z*255.0f;
 }
 
-void BBCALL bbBrushAlpha( Brush *b,float alpha ){
+BBDECL void BBCALL bbBrushAlpha( Brush *b,bb_float_t alpha ){
 	debugBrush(b);
 	b->setAlpha( alpha );
 }
 
-float BBCALL bbGetBrushAlpha( Brush *b ){
+BBDECL bb_float_t BBCALL bbGetBrushAlpha( Brush *b ){
 	debugBrush(b);
 	return b->getAlpha( );
 }
 
-void BBCALL bbBrushShininess( Brush *b,float n ){
+BBDECL void BBCALL bbBrushShininess( Brush *b,bb_float_t n ){
 	debugBrush(b);
 	b->setShininess( n );
 }
 
-float BBCALL bbGetBrushShininess( Brush *b ){
+BBDECL bb_float_t BBCALL bbGetBrushShininess( Brush *b ){
 	debugBrush(b);
 	return b->getShininess( );
 }
 
-void BBCALL bbBrushTexture( Brush *b,Texture *t,int frame,int index ){
+BBDECL void BBCALL bbBrushTexture( Brush *b,Texture *t,bb_int_t frame,bb_int_t index ){
 	debugBrush(b);
 	debugTexture(t);
 	b->setTexture( index,*t,frame );
 }
 
-Texture *bbGetBrushTexture( Brush *b,int index ){
+Texture *bbGetBrushTexture( Brush *b,bb_int_t index ){
 	debugBrush(b);
 	Texture *tex=d_new Texture(b->getTexture(index));
 	texture_set.insert( tex );
 	return tex;
 }
 
-void BBCALL bbBrushBlend( Brush *b,int blend ){
+BBDECL void BBCALL bbBrushBlend( Brush *b,bb_int_t blend ){
 	debugBrush(b);
 	b->setBlend( blend );
 }
 
-int BBCALL bbGetBrushBlend( Brush *b ){
+BBDECL bb_int_t BBCALL bbGetBrushBlend( Brush *b ){
 	debugBrush(b);
 	return b->getBlend( );
 }
 
-void BBCALL bbBrushFX( Brush *b,int fx ){
+BBDECL void BBCALL bbBrushFX( Brush *b,bb_int_t fx ){
 	debugBrush(b);
 	b->setFX( fx );
 }
 
-int BBCALL bbGetBrushFX( Brush *b ){
+BBDECL bb_int_t BBCALL bbGetBrushFX( Brush *b ){
 	debugBrush(b);
 	return b->getFX( );
 }
@@ -578,13 +578,13 @@ int BBCALL bbGetBrushFX( Brush *b ){
 ///////////////////
 // MESH COMMANDS //
 ///////////////////
-Entity * BBCALL bbCreateMesh( Entity *p ){
+BBDECL Entity * BBCALL bbCreateMesh( Entity *p ){
 	debugParent(p);
 	MeshModel *m=d_new MeshModel();
 	return insertEntity( m,p );
 }
 
-Entity * BBCALL bbLoadMesh( BBStr *f,Entity *p ){
+BBDECL Entity * BBCALL bbLoadMesh( BBStr *f,Entity *p ){
 	debugParent(p);
 	Entity *e=loadEntity( f->c_str(),MeshLoader::HINT_COLLAPSE );
 	delete f;
@@ -595,7 +595,7 @@ Entity * BBCALL bbLoadMesh( BBStr *f,Entity *p ){
 	return insertEntity( m,p );
 }
 
-Entity * BBCALL bbLoadAnimMesh( BBStr *f,Entity *p ){
+BBDECL Entity * BBCALL bbLoadAnimMesh( BBStr *f,Entity *p ){
 	debugParent(p);
 	Entity *e=loadEntity( f->c_str(),0 );
 	delete f;
@@ -607,31 +607,31 @@ Entity * BBCALL bbLoadAnimMesh( BBStr *f,Entity *p ){
 	return insertEntity( e,p );
 }
 
-Entity * BBCALL bbCreateCube( Entity *p ){
+BBDECL Entity * BBCALL bbCreateCube( Entity *p ){
 	debugParent(p);
 	Entity *e=MeshUtil::createCube( Brush() );
 	return insertEntity( e,p );
 }
 
-Entity * BBCALL bbCreateSphere( int segs,Entity *p ){
+BBDECL Entity * BBCALL bbCreateSphere( bb_int_t segs,Entity *p ){
 	if( bb_env.debug ){ debugParent(p);if( segs<2 || segs>100 ) RTEX( "Illegal number of segments" ); }
 	Entity *e=MeshUtil::createSphere( Brush(),segs );
 	return insertEntity( e,p );
 }
 
-Entity * BBCALL bbCreateCylinder( int segs,int solid,Entity *p ){
+BBDECL Entity * BBCALL bbCreateCylinder( bb_int_t segs,bb_int_t solid,Entity *p ){
 	if( bb_env.debug ){ debugParent(p);if( segs<3 || segs>100 ) RTEX( "Illegal number of segments" ); }
 	Entity *e=MeshUtil::createCylinder( Brush(),segs,!!solid );
 	return insertEntity( e,p );
 }
 
-Entity * BBCALL bbCreateCone( int segs,int solid,Entity *p ){
+BBDECL Entity * BBCALL bbCreateCone( bb_int_t segs,bb_int_t solid,Entity *p ){
 	if( bb_env.debug ){ debugParent(p);if( segs<3 || segs>100 ) RTEX( "Illegal number of segments" ); }
 	Entity *e=MeshUtil::createCone( Brush(),segs,!!solid );
 	return insertEntity( e,p );
 }
 
-Entity * BBCALL bbCopyMesh( MeshModel *m,Entity *p ){
+BBDECL Entity * BBCALL bbCopyMesh( MeshModel *m,Entity *p ){
 	debugMesh(m);
 	debugParent(p);
 
@@ -640,22 +640,22 @@ Entity * BBCALL bbCopyMesh( MeshModel *m,Entity *p ){
 	return insertEntity( t,p );
 }
 
-void BBCALL bbScaleMesh( MeshModel *m,float x,float y,float z ){
+BBDECL void BBCALL bbScaleMesh( MeshModel *m,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugMesh(m);
 	m->transform( scaleMatrix(x,y,z) );
 }
 
-void BBCALL bbRotateMesh( MeshModel *m,float x,float y,float z ){
+BBDECL void BBCALL bbRotateMesh( MeshModel *m,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugMesh(m);
 	m->transform( rotationMatrix(x*dtor,y*dtor,z*dtor) );
 }
 
-void BBCALL bbPositionMesh( MeshModel *m,float x,float y,float z ){
+BBDECL void BBCALL bbPositionMesh( MeshModel *m,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugMesh(m);
 	m->transform( Vector(x,y,z) );
 }
 
-void BBCALL bbFitMesh( MeshModel *m,float x,float y,float z,float w,float h,float d,int uniform ){
+BBDECL void BBCALL bbFitMesh( MeshModel *m,bb_float_t x,bb_float_t y,bb_float_t z,bb_float_t w,bb_float_t h,bb_float_t d,bb_int_t uniform ){
 	debugMesh(m);
 	Box box( Vector(x,y,z) );
 	box.update( Vector(x+w,y+h,z+d) );
@@ -680,17 +680,17 @@ void BBCALL bbFitMesh( MeshModel *m,float x,float y,float z,float w,float h,floa
 	m->transform( t );
 }
 
-void BBCALL bbFlipMesh( MeshModel *m ){
+BBDECL void BBCALL bbFlipMesh( MeshModel *m ){
 	debugMesh(m);
 	m->flipTriangles();
 }
 
-void BBCALL bbPaintMesh( MeshModel *m,Brush *b ){
+BBDECL void BBCALL bbPaintMesh( MeshModel *m,Brush *b ){
 	if( bb_env.debug ){ debugMesh(m);debugBrush(b); }
 	m->paint( *b );
 }
 
-void BBCALL bbAddMesh( MeshModel *src,MeshModel *dest ){
+BBDECL void BBCALL bbAddMesh( MeshModel *src,MeshModel *dest ){
 	if( bb_env.debug ){
 		debugMesh(src);debugMesh(dest);
 		if( src==dest ) RTEX( "A mesh cannot be added to itself" );
@@ -699,42 +699,42 @@ void BBCALL bbAddMesh( MeshModel *src,MeshModel *dest ){
 	dest->add( *src );
 }
 
-void BBCALL bbUpdateNormals( MeshModel *m ){
+BBDECL void BBCALL bbUpdateNormals( MeshModel *m ){
 	debugMesh(m);
 	m->updateNormals();
 }
 
-void BBCALL bbLightMesh( MeshModel *m,float r,float g,float b,float range,float x,float y,float z ){
+BBDECL void BBCALL bbLightMesh( MeshModel *m,bb_float_t r,bb_float_t g,bb_float_t b,bb_float_t range,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugMesh(m);
 	MeshUtil::lightMesh( m,Vector(x,y,z),Vector(r*ctof,g*ctof,b*ctof),range );
 }
 
-float BBCALL bbMeshWidth( MeshModel *m ){
+BBDECL bb_float_t BBCALL bbMeshWidth( MeshModel *m ){
 	debugMesh(m);
 	return m->getBox().width();
 }
 
-float BBCALL bbMeshHeight( MeshModel *m ){
+BBDECL bb_float_t BBCALL bbMeshHeight( MeshModel *m ){
 	debugMesh(m);
 	return m->getBox().height();
 }
 
-float BBCALL bbMeshDepth( MeshModel *m ){
+BBDECL bb_float_t BBCALL bbMeshDepth( MeshModel *m ){
 	debugMesh(m);
 	return m->getBox().depth();
 }
 
-int BBCALL bbMeshesIntersect( MeshModel *a,MeshModel *b ){
+BBDECL bb_int_t BBCALL bbMeshesIntersect( MeshModel *a,MeshModel *b ){
 	if( bb_env.debug ){ debugMesh(a);debugMesh(b); }
 	return a->intersects( *b );
 }
 
-int BBCALL bbCountSurfaces( MeshModel *m ){
+BBDECL bb_int_t BBCALL bbCountSurfaces( MeshModel *m ){
 	debugMesh(m);
 	return m->getSurfaces().size();
 }
 
-Surface * BBCALL bbGetSurface( MeshModel *m,int index ){
+BBDECL Surface * BBCALL bbGetSurface( MeshModel *m,bb_int_t index ){
 	if( bb_env.debug ){
 		debugMesh(m);
 		if( index<1 || index>m->getSurfaces().size() ){
@@ -744,7 +744,7 @@ Surface * BBCALL bbGetSurface( MeshModel *m,int index ){
 	return m->getSurfaces()[index-1];
 }
 
-void BBCALL bbMeshCullBox( MeshModel *m,float x,float y,float z,float width,float height,float depth ){
+BBDECL void BBCALL bbMeshCullBox( MeshModel *m,bb_float_t x,bb_float_t y,bb_float_t z,bb_float_t width,bb_float_t height,bb_float_t depth ){
 	if( bb_env.debug ){
 		debugMesh( m );
 	}
@@ -755,40 +755,40 @@ void BBCALL bbMeshCullBox( MeshModel *m,float x,float y,float z,float width,floa
 //////////////////////
 // SURFACE COMMANDS //
 //////////////////////
-Surface * BBCALL bbFindSurface( MeshModel *m,Brush *b ){
+BBDECL Surface * BBCALL bbFindSurface( MeshModel *m,Brush *b ){
 	if( bb_env.debug ){ debugMesh(m);debugBrush(b); }
 	return m->findSurface(*b);
 }
 
-Surface * BBCALL bbCreateSurface( MeshModel *m,Brush *b ){
+BBDECL Surface * BBCALL bbCreateSurface( MeshModel *m,Brush *b ){
 	if( bb_env.debug ){ debugMesh(m);if( b ) debugBrush(b); }
 	Surface *s=b ? m->createSurface( *b ) : m->createSurface( Brush() );
 	return s;
 }
 
-Brush * BBCALL bbGetSurfaceBrush( Surface *s ){
+BBDECL Brush * BBCALL bbGetSurfaceBrush( Surface *s ){
 	Brush *br=d_new Brush( s->getBrush() );
 	brush_set.insert( br );
 	return br;
 }
 
-Brush * BBCALL bbGetEntityBrush( Model *m ){
+BBDECL Brush * BBCALL bbGetEntityBrush( Model *m ){
 	debugModel(m);
 	Brush *br=d_new Brush( m->getBrush() );
 	brush_set.insert( br );
 	return br;
 }
 
-void BBCALL bbClearSurface( Surface *s,int verts,int tris ){
+BBDECL void BBCALL bbClearSurface( Surface *s,bb_int_t verts,bb_int_t tris ){
 	s->clear( !!verts,!!tris );
 }
 
-void BBCALL bbPaintSurface( Surface *s,Brush *b ){
+BBDECL void BBCALL bbPaintSurface( Surface *s,Brush *b ){
 	debugBrush(b);
 	s->setBrush(*b);
 }
 
-int BBCALL bbAddVertex( Surface *s,float x,float y,float z,float tu,float tv,float tw ){
+BBDECL bb_int_t BBCALL bbAddVertex( Surface *s,bb_float_t x,bb_float_t y,bb_float_t z,bb_float_t tu,bb_float_t tv,bb_float_t tw ){
 	Surface::Vertex v;
 	v.coords=Vector(x,y,z);
 	v.color=0xffffffff;
@@ -798,22 +798,22 @@ int BBCALL bbAddVertex( Surface *s,float x,float y,float z,float tu,float tv,flo
 	return s->numVertices()-1;
 }
 
-int BBCALL bbAddTriangle( Surface *s,int v0,int v1,int v2 ){
+BBDECL bb_int_t BBCALL bbAddTriangle( Surface *s,bb_int_t v0,bb_int_t v1,bb_int_t v2 ){
 	Surface::Triangle t;
 	t.verts[0]=v0;t.verts[1]=v1;t.verts[2]=v2;
 	s->addTriangle( t );
 	return s->numTriangles()-1;
 }
 
-void BBCALL bbVertexCoords( Surface *s,int n,float x,float y,float z ){
+BBDECL void BBCALL bbVertexCoords( Surface *s,bb_int_t n,bb_float_t x,bb_float_t y,bb_float_t z ){
 	s->setCoords( n,Vector(x,y,z) );
 }
 
-void BBCALL bbVertexNormal( Surface *s,int n,float x,float y,float z ){
+BBDECL void BBCALL bbVertexNormal( Surface *s,bb_int_t n,bb_float_t x,bb_float_t y,bb_float_t z ){
 	s->setNormal( n,Vector(x,y,z) );
 }
 
-void BBCALL bbVertexColor( Surface *s,int n,float r,float g,float b,float a ){
+BBDECL void BBCALL bbVertexColor( Surface *s,bb_int_t n,bb_float_t r,bb_float_t g,bb_float_t b,bb_float_t a ){
 	if(r<0)r=0;else if(r>255)r=255;
 	if(g<0)g=0;else if(g>255)g=255;
 	if(b<0)b=0;else if(b>255)b=255;
@@ -821,78 +821,78 @@ void BBCALL bbVertexColor( Surface *s,int n,float r,float g,float b,float a ){
 	s->setColor( n,(int(a)<<24)|(int(r)<<16)|(int(g)<<8)|int(b) );
 }
 
-void BBCALL bbVertexTexCoords( Surface *s,int n,float u,float v,float w,int set ){
+BBDECL void BBCALL bbVertexTexCoords( Surface *s,bb_int_t n,bb_float_t u,bb_float_t v,bb_float_t w,bb_int_t set ){
 	s->setTexCoords( n,Vector(u,v,w),set );
 }
 
-int BBCALL bbCountVertices( Surface *s ){
+BBDECL bb_int_t BBCALL bbCountVertices( Surface *s ){
 	return s->numVertices();
 }
 
-int BBCALL bbCountTriangles( Surface *s ){
+BBDECL bb_int_t BBCALL bbCountTriangles( Surface *s ){
 	return s->numTriangles();
 }
 
-float BBCALL bbVertexX( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexX( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return s->getVertex(n).coords.x;
 }
-float BBCALL bbVertexY( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexY( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return s->getVertex(n).coords.y;
 }
-float BBCALL bbVertexZ( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexZ( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return s->getVertex(n).coords.z;
 }
-float BBCALL bbVertexNX( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexNX( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return s->getVertex(n).normal.x;
 }
-float BBCALL bbVertexNY( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexNY( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return s->getVertex(n).normal.y;
 }
-float BBCALL bbVertexNZ( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexNZ( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return s->getVertex(n).normal.z;
 }
-float BBCALL bbVertexRed( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexRed( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return (s->getVertex(n).color&0xff0000)>>16;
 }
-float BBCALL bbVertexGreen( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexGreen( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return (s->getVertex(n).color&0xff00)>>8;
 }
-float BBCALL bbVertexBlue( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexBlue( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return s->getVertex(n).color&0xff;
 }
-float BBCALL bbVertexAlpha( Surface *s,int n ){
+BBDECL bb_float_t BBCALL bbVertexAlpha( Surface *s,bb_int_t n ){
 	debugVertex(s,n);
 	return ((s->getVertex(n).color&0xff000000)>>24)/255.0f;
 }
-float BBCALL bbVertexU( Surface *s,int n,int t ){
+BBDECL bb_float_t BBCALL bbVertexU( Surface *s,bb_int_t n,bb_int_t t ){
 	debugVertex(s,n,t);
 	return s->getVertex(n).tex_coords[t][0];
 }
-float BBCALL bbVertexV( Surface *s,int n,int t ){
+BBDECL bb_float_t BBCALL bbVertexV( Surface *s,bb_int_t n,bb_int_t t ){
 	debugVertex(s,n,t);
 	return s->getVertex(n).tex_coords[t][1];
 }
-float BBCALL bbVertexW( Surface *s,int n,int t ){
+BBDECL bb_float_t BBCALL bbVertexW( Surface *s,bb_int_t n,bb_int_t t ){
 	debugVertex(s,n,t);
 	return 1;
 }
-int BBCALL bbTriangleVertex( Surface *s,int n,int v ){
+BBDECL bb_int_t BBCALL bbTriangleVertex( Surface *s,bb_int_t n,bb_int_t v ){
 	return s->getTriangle(n).verts[v];
 }
 
 /////////////////////
 // CAMERA COMMANDS //
 /////////////////////
-Entity * BBCALL bbCreateCamera( Entity *p ){
+BBDECL Entity * BBCALL bbCreateCamera( Entity *p ){
 	debugParent(p);
 	int x,y,w,h;
 	gx_canvas->getViewport( &x,&y,&w,&h );
@@ -901,52 +901,52 @@ Entity * BBCALL bbCreateCamera( Entity *p ){
 	return insertEntity( c,p );
 }
 
-void BBCALL bbCameraZoom( Camera *c,float zoom ){
+BBDECL void BBCALL bbCameraZoom( Camera *c,bb_float_t zoom ){
 	debugCamera(c);
 	c->setZoom( zoom );
 }
 
-void BBCALL bbCameraRange( Camera *c,float nr,float fr ){
+BBDECL void BBCALL bbCameraRange( Camera *c,bb_float_t nr,bb_float_t fr ){
 	debugCamera(c);
 	c->setRange( nr,fr );
 }
 
-void BBCALL bbCameraClsColor( Camera *c,float r,float g,float b ){
+BBDECL void BBCALL bbCameraClsColor( Camera *c,bb_float_t r,bb_float_t g,bb_float_t b ){
 	debugCamera(c);
 	c->setClsColor( Vector( r*ctof,g*ctof,b*ctof ) );
 }
 
-void BBCALL bbCameraClsMode( Camera *c,int cls_color,int cls_zbuffer ){
+BBDECL void BBCALL bbCameraClsMode( Camera *c,bb_int_t cls_color,bb_int_t cls_zbuffer ){
 	debugCamera(c);
 	c->setClsMode( cls_color ? true : false,cls_zbuffer ? true : false );
 }
 
-void BBCALL bbCameraProjMode( Camera *c,int mode ){
+BBDECL void BBCALL bbCameraProjMode( Camera *c,bb_int_t mode ){
 	debugCamera(c);
 	c->setProjMode( mode );
 }
 
-void BBCALL bbCameraViewport( Camera *c,int x,int y,int w,int h ){
+BBDECL void BBCALL bbCameraViewport( Camera *c,bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h ){
 	debugCamera(c);
 	c->setViewport( x,y,w,h );
 }
 
-void BBCALL bbCameraFogRange( Camera *c,float nr,float fr ){
+BBDECL void BBCALL bbCameraFogRange( Camera *c,bb_float_t nr,bb_float_t fr ){
 	debugCamera(c);
 	c->setFogRange( nr,fr );
 }
 
-void BBCALL bbCameraFogColor( Camera *c,float r,float g,float b ){
+BBDECL void BBCALL bbCameraFogColor( Camera *c,bb_float_t r,bb_float_t g,bb_float_t b ){
 	debugCamera(c);
 	c->setFogColor( Vector( r*ctof,g*ctof,b*ctof ) );
 }
 
-void BBCALL bbCameraFogMode( Camera *c,int mode ){
+BBDECL void BBCALL bbCameraFogMode( Camera *c,bb_int_t mode ){
 	debugCamera(c);
 	c->setFogMode( mode );
 }
 
-int BBCALL bbCameraProject( Camera *c,float x,float y,float z ){
+BBDECL bb_int_t BBCALL bbCameraProject( Camera *c,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugCamera(c);
 	Vector v=-c->getWorldTform()*Vector(x,y,z);
 	const Frustum &f=c->getFrustum();
@@ -979,15 +979,15 @@ int BBCALL bbCameraProject( Camera *c,float x,float y,float z ){
 	return 0;
 }
 
-float BBCALL bbProjectedX(){
+BBDECL bb_float_t BBCALL bbProjectedX(){
 	return projected.x;
 }
 
-float BBCALL bbProjectedY(){
+BBDECL bb_float_t BBCALL bbProjectedY(){
 	return projected.y;
 }
 
-float BBCALL bbProjectedZ(){
+BBDECL bb_float_t BBCALL bbProjectedZ(){
 	return projected.z;
 }
 
@@ -996,7 +996,7 @@ static Object *doPick( const Line &l,float radius ){
 	return world->traceRay( l,radius,&picked );
 }
 
-Entity * BBCALL bbCameraPick( Camera *c,float x,float y ){
+BBDECL Entity * BBCALL bbCameraPick( Camera *c,bb_float_t x,bb_float_t y ){
 	debugCamera(c);
 
 	int vp_x,vp_y,vp_w,vp_h;
@@ -1020,7 +1020,7 @@ Entity * BBCALL bbCameraPick( Camera *c,float x,float y ){
 	return doPick( l,0 );
 }
 
-Entity * BBCALL bbLinePick( float x,float y,float z,float dx,float dy,float dz,float radius ){
+BBDECL Entity * BBCALL bbLinePick( bb_float_t x,bb_float_t y,bb_float_t z,bb_float_t dx,bb_float_t dy,bb_float_t dz,bb_float_t radius ){
 	debug3d();
 
 	Line l( Vector( x,y,z ),Vector( dx,dy,dz ) );
@@ -1028,7 +1028,7 @@ Entity * BBCALL bbLinePick( float x,float y,float z,float dx,float dy,float dz,f
 	return doPick( l,radius );
 }
 
-Entity * BBCALL bbEntityPick( Object *src,float range ){
+BBDECL Entity * BBCALL bbEntityPick( Object *src,bb_float_t range ){
 	debugEntity(src);
 
 	Line l( src->getWorldPosition(),src->getWorldTform().m.k * range );
@@ -1036,13 +1036,13 @@ Entity * BBCALL bbEntityPick( Object *src,float range ){
 	return doPick( l,0 );
 }
 
-int BBCALL bbEntityVisible( Object *src,Object *dest ){
+BBDECL bb_int_t BBCALL bbEntityVisible( Object *src,Object *dest ){
 	if( bb_env.debug ){ debugObject(src);debugObject(dest); }
 
 	return world->checkLOS( src,dest ) ? 1 : 0;
 }
 
-int BBCALL bbEntityInView( Entity *e,Camera *c ){
+BBDECL bb_int_t BBCALL bbEntityInView( Entity *e,Camera *c ){
 	if( bb_env.debug ){ debugEntity(e);debugCamera(c); }
 	if( Model *p=e->getModel() ){
 		if( MeshModel *m=p->getMeshModel() ){
@@ -1059,66 +1059,66 @@ int BBCALL bbEntityInView( Entity *e,Camera *c ){
 	return c->getFrustum().cull( p,1 );
 }
 
-float BBCALL bbPickedX(){
+BBDECL bb_float_t BBCALL bbPickedX(){
 	return picked.coords.x;
 }
 
-float BBCALL bbPickedY(){
+BBDECL bb_float_t BBCALL bbPickedY(){
 	return picked.coords.y;
 }
 
-float BBCALL bbPickedZ(){
+BBDECL bb_float_t BBCALL bbPickedZ(){
 	return picked.coords.z;
 }
 
-float BBCALL bbPickedNX(){
+BBDECL bb_float_t BBCALL bbPickedNX(){
 	return picked.collision.normal.x;
 }
 
-float BBCALL bbPickedNY(){
+BBDECL bb_float_t BBCALL bbPickedNY(){
 	return picked.collision.normal.y;
 }
 
-float BBCALL bbPickedNZ(){
+BBDECL bb_float_t BBCALL bbPickedNZ(){
 	return picked.collision.normal.z;
 }
 
-float BBCALL bbPickedTime(){
+BBDECL bb_float_t BBCALL bbPickedTime(){
 	return picked.collision.time;
 }
 
-Object * BBCALL bbPickedEntity(){
+BBDECL Object * BBCALL bbPickedEntity(){
 	return picked.with;
 }
 
-void * BBCALL bbPickedSurface(){
-	return picked.collision.surface;
+BBDECL Surface * BBCALL bbPickedSurface(){
+	return (Surface*)picked.collision.surface;
 }
 
-int BBCALL bbPickedTriangle(){
+BBDECL bb_int_t BBCALL bbPickedTriangle(){
 	return picked.collision.index;
 }
 
 ////////////////////
 // LIGHT COMMANDS //
 ////////////////////
-Entity * BBCALL bbCreateLight( int type,Entity *p ){
+BBDECL Entity * BBCALL bbCreateLight( bb_int_t type,Entity *p ){
 	debugParent(p);
 	Light *t=d_new Light( type );
 	return insertEntity( t,p );
 }
 
-void BBCALL bbLightColor( Light *light,float r,float g,float b ){
+BBDECL void BBCALL bbLightColor( Light *light,bb_float_t r,bb_float_t g,bb_float_t b ){
 	debugLight(light);
 	light->setColor( Vector(r*ctof,g*ctof,b*ctof) );
 }
 
-void BBCALL bbLightRange( Light *light,float range ){
+BBDECL void BBCALL bbLightRange( Light *light,bb_float_t range ){
 	debugLight(light);
 	light->setRange( range );
 }
 
-void BBCALL bbLightConeAngles( Light *light,float inner,float outer ){
+BBDECL void BBCALL bbLightConeAngles( Light *light,bb_float_t inner,bb_float_t outer ){
 	debugLight(light);
 	inner*=dtor;
 	outer*=dtor;
@@ -1132,7 +1132,7 @@ void BBCALL bbLightConeAngles( Light *light,float inner,float outer ){
 ////////////////////
 // PIVOT COMMANDS //
 ////////////////////
-Entity * BBCALL bbCreatePivot( Entity *p ){
+BBDECL Entity * BBCALL bbCreatePivot( Entity *p ){
 	debugParent(p);
 	Pivot *t=d_new Pivot();
 	return insertEntity( t,p );
@@ -1141,14 +1141,14 @@ Entity * BBCALL bbCreatePivot( Entity *p ){
 /////////////////////
 // SPRITE COMMANDS //
 /////////////////////
-Entity * BBCALL bbCreateSprite( Entity *p ){
+BBDECL Entity * BBCALL bbCreateSprite( Entity *p ){
 	debugParent(p);
 	Sprite *s=d_new Sprite();
 	s->setFX( BBScene::FX_FULLBRIGHT );
 	return insertEntity( s,p );
 }
 
-Entity * BBCALL bbLoadSprite( BBStr *file,int flags,Entity *p ){
+BBDECL Entity * BBCALL bbLoadSprite( BBStr *file,bb_int_t flags,Entity *p ){
 	debugParent(p);
 	Texture t( *file,flags );
 	delete file;if( !t.getCanvas(0) ) return 0;
@@ -1163,22 +1163,22 @@ Entity * BBCALL bbLoadSprite( BBStr *file,int flags,Entity *p ){
 	return insertEntity( s,p );
 }
 
-void BBCALL bbRotateSprite( Sprite *s,float angle ){
+BBDECL void BBCALL bbRotateSprite( Sprite *s,bb_float_t angle ){
 	debugSprite(s);
 	s->setRotation( angle*dtor );
 }
 
-void BBCALL bbScaleSprite( Sprite *s,float x,float y ){
+BBDECL void BBCALL bbScaleSprite( Sprite *s,bb_float_t x,bb_float_t y ){
 	debugSprite(s);
 	s->setScale( x,y );
 }
 
-void BBCALL bbHandleSprite( Sprite *s,float x,float y ){
+BBDECL void BBCALL bbHandleSprite( Sprite *s,bb_float_t x,bb_float_t y ){
 	debugSprite(s);
 	s->setHandle( x,y );
 }
 
-void BBCALL bbSpriteViewMode( Sprite *s,int mode ){
+BBDECL void BBCALL bbSpriteViewMode( Sprite *s,bb_int_t mode ){
 	debugSprite(s);
 	s->setViewmode( mode );
 }
@@ -1186,7 +1186,7 @@ void BBCALL bbSpriteViewMode( Sprite *s,int mode ){
 /////////////////////
 // MIRROR COMMANDS //
 /////////////////////
-Entity * BBCALL bbCreateMirror( Entity *p ){
+BBDECL Entity * BBCALL bbCreateMirror( Entity *p ){
 	debugParent(p);
 	Mirror *t=d_new Mirror();
 	return insertEntity( t,p );
@@ -1195,7 +1195,7 @@ Entity * BBCALL bbCreateMirror( Entity *p ){
 ////////////////////
 // PLANE COMMANDS //
 ////////////////////
-Entity * BBCALL bbCreatePlane( int segs,Entity *p ){
+BBDECL Entity * BBCALL bbCreatePlane( bb_int_t segs,Entity *p ){
 	if( bb_env.debug ){
 		debugParent(p);
 		if( segs<1 || segs>20 ) RTEX( "Illegal number of segments" );
@@ -1207,29 +1207,29 @@ Entity * BBCALL bbCreatePlane( int segs,Entity *p ){
 //////////////////
 // MD2 COMMANDS //
 //////////////////
-Entity * BBCALL bbLoadMD2( BBStr *file,Entity *p ){
+BBDECL Entity * BBCALL bbLoadMD2( BBStr *file,Entity *p ){
 	debugParent(p);
 	MD2Model *t=d_new MD2Model( *file );delete file;
 	if( !t->getValid() ){ delete t;return 0; }
 	return insertEntity( t,p );
 }
 
-void BBCALL bbAnimateMD2( MD2Model *m,int mode,float speed,int first,int last,float trans ){
+BBDECL void BBCALL bbAnimateMD2( MD2Model *m,bb_int_t mode,bb_float_t speed,bb_int_t first,bb_int_t last,bb_float_t trans ){
 	debugMD2(m);
 	m->startMD2Anim( first,last,mode,speed,trans );
 }
 
-float BBCALL bbMD2AnimTime( MD2Model *m ){
+BBDECL bb_float_t BBCALL bbMD2AnimTime( MD2Model *m ){
 	debugMD2(m);
 	return m->getMD2AnimTime();
 }
 
-int BBCALL bbMD2AnimLength( MD2Model *m ){
+BBDECL bb_int_t BBCALL bbMD2AnimLength( MD2Model *m ){
 	debugMD2(m);
 	return m->getMD2AnimLength();
 }
 
-int BBCALL bbMD2Animating( MD2Model *m ){
+BBDECL bb_int_t BBCALL bbMD2Animating( MD2Model *m ){
 	debugMD2(m);
 	return m->getMD2Animating();
 }
@@ -1237,7 +1237,7 @@ int BBCALL bbMD2Animating( MD2Model *m ){
 //////////////////
 // BSP Commands //
 //////////////////
-Entity * BBCALL bbLoadBSP( BBStr *file,float gam,Entity *p ){
+BBDECL Entity * BBCALL bbLoadBSP( BBStr *file,bb_float_t gam,Entity *p ){
 	debugParent(p);
 	CachedTexture::setPath( filenamepath( *file ) );
 	Q3BSPModel *t=d_new Q3BSPModel( *file,gam );delete file;
@@ -1248,12 +1248,12 @@ Entity * BBCALL bbLoadBSP( BBStr *file,float gam,Entity *p ){
 	return insertEntity( t,p );
 }
 
-void BBCALL bbBSPAmbientLight( Q3BSPModel *t,float r,float g,float b ){
+BBDECL void BBCALL bbBSPAmbientLight( Q3BSPModel *t,bb_float_t r,bb_float_t g,bb_float_t b ){
 	debugBSP(t);
 	t->setAmbient( Vector( r*ctof,g*ctof,b*ctof ) );
 }
 
-void BBCALL bbBSPLighting( Q3BSPModel *t,int lmap ){
+BBDECL void BBCALL bbBSPLighting( Q3BSPModel *t,bb_int_t lmap ){
 	debugBSP(t);
 	t->setLighting( !!lmap );
 }
@@ -1261,7 +1261,7 @@ void BBCALL bbBSPLighting( Q3BSPModel *t,int lmap ){
 //////////////////////
 // TERRAIN COMMANDS //
 //////////////////////
-static float terrainHeight( Terrain *t,float x,float z ){
+static float terrainHeight( Terrain *t,bb_float_t x,bb_float_t z ){
 	int ix=floor(x);
 	int iz=floor(z);
 	float tx=x-ix,tz=z-iz;
@@ -1274,12 +1274,12 @@ static float terrainHeight( Terrain *t,float x,float z ){
 	return h;
 }
 
-static Vector terrainVector( Terrain *t,float x,float y,float z ){
+static Vector terrainVector( Terrain *t,bb_float_t x,bb_float_t y,bb_float_t z ){
 	Vector v=-t->getWorldTform() * Vector( x,y,z );
 	return t->getWorldTform() * Vector( v.x,terrainHeight( t,v.x,v.z ),v.z );
 }
 
-Entity * BBCALL bbCreateTerrain( int n,Entity *p ){
+BBDECL Entity * BBCALL bbCreateTerrain( bb_int_t n,Entity *p ){
 	debugParent(p);
 	int shift=0;
 	while( (1<<shift)<n ) ++shift;
@@ -1288,7 +1288,7 @@ Entity * BBCALL bbCreateTerrain( int n,Entity *p ){
 	return insertEntity( t,p );
 }
 
-Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
+BBDECL Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
 	debugParent(p);
 	BBPixmap *m=bbLoadPixmap( *file );
 	int w=m->getWidth(),h=m->getHeight();
@@ -1309,42 +1309,42 @@ Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
 	return insertEntity( t,p );
 }
 
-void BBCALL bbTerrainDetail( Terrain *t,int n,int m ){
+BBDECL void BBCALL bbTerrainDetail( Terrain *t,bb_int_t n,bb_int_t m ){
 	debugTerrain(t);
 	t->setDetail( n,!!m );
 }
 
-void BBCALL bbTerrainShading( Terrain *t,int enable ){
+BBDECL void BBCALL bbTerrainShading( Terrain *t,bb_int_t enable ){
 	debugTerrain(t);
 	t->setShading( !!enable );
 }
 
-float BBCALL bbTerrainX( Terrain *t,float x,float y,float z ){
+BBDECL bb_float_t BBCALL bbTerrainX( Terrain *t,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugTerrain(t);
 	return terrainVector( t,x,y,z ).x;
 }
 
-float BBCALL bbTerrainY( Terrain *t,float x,float y,float z ){
+BBDECL bb_float_t BBCALL bbTerrainY( Terrain *t,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugTerrain(t);
 	return terrainVector( t,x,y,z ).y;
 }
 
-float BBCALL bbTerrainZ( Terrain *t,float x,float y,float z ){
+BBDECL bb_float_t BBCALL bbTerrainZ( Terrain *t,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugTerrain(t);
 	return terrainVector( t,x,y,z ).z;
 }
 
-int BBCALL bbTerrainSize( Terrain *t ){
+BBDECL bb_int_t BBCALL bbTerrainSize( Terrain *t ){
 	debugTerrain(t);
 	return t->getSize();
 }
 
-float BBCALL bbTerrainHeight( Terrain *t,int x,int z ){
+BBDECL bb_float_t BBCALL bbTerrainHeight( Terrain *t,bb_int_t x,bb_int_t z ){
 	debugTerrain(t);
 	return t->getHeight( x,z );
 }
 
-void BBCALL bbModifyTerrain( Terrain *t,int x,int z,float h,int realtime ){
+BBDECL void BBCALL bbModifyTerrain( Terrain *t,bb_int_t x,bb_int_t z,bb_float_t h,bb_int_t realtime ){
 	debugTerrain(t);
 	t->setHeight( x,z,h,!!realtime );
 }
@@ -1352,7 +1352,7 @@ void BBCALL bbModifyTerrain( Terrain *t,int x,int z,float h,int realtime ){
 ////////////////////
 // AUDIO COMMANDS //
 ////////////////////
-Entity * BBCALL bbCreateListener( Entity *p,float roll,float dopp,float dist ){
+BBDECL Entity * BBCALL bbCreateListener( Entity *p,bb_float_t roll,bb_float_t dopp,bb_float_t dist ){
 	if( bb_env.debug ){
 		debugParent(p);
 		if( listener ) RTEX( "Listener already created" );
@@ -1361,7 +1361,7 @@ Entity * BBCALL bbCreateListener( Entity *p,float roll,float dopp,float dist ){
 	return insertEntity( listener,p );
 }
 
-BBChannel * BBCALL bbEmitSound( BBSound *sound,Object *o ){
+BBDECL BBChannel * BBCALL bbEmitSound( BBSound *sound,Object *o ){
 	if( bb_env.debug ){
 		debugObject(o);
 		if( !listener ) RTEX( "No Listener created" );
@@ -1372,7 +1372,7 @@ BBChannel * BBCALL bbEmitSound( BBSound *sound,Object *o ){
 /////////////////////
 // ENTITY COMMANDS //
 /////////////////////
-Entity * BBCALL bbCopyEntity( Entity *e,Entity *p ){
+BBDECL Entity * BBCALL bbCopyEntity( Entity *e,Entity *p ){
 	if( bb_env.debug ){
 		debugEntity(e);
 		debugParent(p);
@@ -1382,7 +1382,7 @@ Entity * BBCALL bbCopyEntity( Entity *e,Entity *p ){
 	return insertEntity( t,p );
 }
 
-void BBCALL bbFreeEntity( Entity *e ){
+BBDECL void BBCALL bbFreeEntity( Entity *e ){
 	if( !e ) return;
 	if( bb_env.debug ){
 		debugEntity(e);
@@ -1391,20 +1391,20 @@ void BBCALL bbFreeEntity( Entity *e ){
 	delete e;
 }
 
-void BBCALL bbHideEntity( Entity *e ){
+BBDECL void BBCALL bbHideEntity( Entity *e ){
 	debugEntity(e);
 	e->setEnabled(false);
 	e->setVisible(false);
 }
 
-void BBCALL bbShowEntity( Entity *e ){
+BBDECL void BBCALL bbShowEntity( Entity *e ){
 	debugEntity(e);
 	e->setVisible(true);
 	e->setEnabled(true);
 	e->getObject()->reset();
 }
 
-void BBCALL bbEntityParent( Entity *e,Entity *p,int global ){
+BBDECL void BBCALL bbEntityParent( Entity *e,Entity *p,bb_int_t global ){
 	if( bb_env.debug ){
 		debugEntity(e);
 		debugParent(p);
@@ -1429,21 +1429,21 @@ void BBCALL bbEntityParent( Entity *e,Entity *p,int global ){
 	}
 }
 
-int BBCALL bbCountChildren( Entity *e ){
+BBDECL bb_int_t BBCALL bbCountChildren( Entity *e ){
 	debugEntity(e);
 	int n=0;
 	for( Entity *p=e->children();p;p=p->successor() ) ++n;
 	return n;
 }
 
-Entity * BBCALL bbGetChild( Entity *e,int index ){
+BBDECL Entity * BBCALL bbGetChild( Entity *e,bb_int_t index ){
 	debugEntity(e);
 	Entity *p=e->children();
 	while( --index && p ) p=p->successor();
 	return p;
 }
 
-Entity * BBCALL bbFindChild( Entity *e,BBStr *t ){
+BBDECL Entity * BBCALL bbFindChild( Entity *e,BBStr *t ){
 	debugEntity(e);
 	e=findChild( e,*t );
 	delete t;
@@ -1453,7 +1453,7 @@ Entity * BBCALL bbFindChild( Entity *e,BBStr *t ){
 ////////////////////////
 // ANIMATION COMMANDS //
 ////////////////////////
-int BBCALL bbLoadAnimSeq( Object *o,BBStr *f ){
+BBDECL bb_int_t BBCALL bbLoadAnimSeq( Object *o,BBStr *f ){
 	debugObject( o );
 	if( Animator *anim=o->getAnimator() ){
 		Entity *t=loadEntity( f->c_str(),MeshLoader::HINT_ANIMONLY );
@@ -1471,7 +1471,7 @@ int BBCALL bbLoadAnimSeq( Object *o,BBStr *f ){
 	return -1;
 }
 
-void BBCALL bbSetAnimTime( Object *o,float time,int seq ){
+BBDECL void BBCALL bbSetAnimTime( Object *o,bb_float_t time,bb_int_t seq ){
 	debugObject( o );
 	if( Animator *anim=o->getAnimator() ){
 		anim->setAnimTime( time,seq );
@@ -1480,7 +1480,7 @@ void BBCALL bbSetAnimTime( Object *o,float time,int seq ){
 	}
 }
 
-void BBCALL bbAnimate( Object *o,int mode,float speed,int seq,float trans ){
+BBDECL void BBCALL bbAnimate( Object *o,bb_int_t mode,bb_float_t speed,bb_int_t seq,bb_float_t trans ){
 	debugObject( o );
 	if( Animator *anim=o->getAnimator() ){
 		anim->animate( mode,speed,seq,trans );
@@ -1489,7 +1489,7 @@ void BBCALL bbAnimate( Object *o,int mode,float speed,int seq,float trans ){
 	}
 }
 
-void BBCALL bbSetAnimKey( Object *o,int frame,int pos_key,int rot_key,int scl_key ){
+BBDECL void BBCALL bbSetAnimKey( Object *o,bb_int_t frame,bb_int_t pos_key,bb_int_t rot_key,bb_int_t scl_key ){
 	debugObject( o );
 	Animation anim=o->getAnimation();
 	if( pos_key ) anim.setPositionKey( frame,o->getLocalPosition() );
@@ -1498,7 +1498,7 @@ void BBCALL bbSetAnimKey( Object *o,int frame,int pos_key,int rot_key,int scl_ke
 	o->setAnimation( anim );
 }
 
-int BBCALL bbExtractAnimSeq( Object *o,int first,int last,int seq ){
+BBDECL bb_int_t BBCALL bbExtractAnimSeq( Object *o,bb_int_t first,bb_int_t last,bb_int_t seq ){
 	debugObject( o );
 	if( Animator *anim=o->getAnimator() ){
 		anim->extractSeq( first,last,seq );
@@ -1507,7 +1507,7 @@ int BBCALL bbExtractAnimSeq( Object *o,int first,int last,int seq ){
 	return -1;
 }
 
-int BBCALL bbAddAnimSeq( Object *o,int length ){
+BBDECL bb_int_t BBCALL bbAddAnimSeq( Object *o,bb_int_t length ){
 	debugObject( o );
 	Animator *anim=o->getAnimator();
 	if( anim ){
@@ -1519,25 +1519,25 @@ int BBCALL bbAddAnimSeq( Object *o,int length ){
 	return anim->numSeqs()-1;
 }
 
-int BBCALL bbAnimSeq( Object *o ){
+BBDECL bb_int_t BBCALL bbAnimSeq( Object *o ){
 	debugObject(o);
 	if( Animator *anim=o->getAnimator() ) return anim->animSeq();
 	return -1;
 }
 
-float BBCALL bbAnimTime( Object *o ){
+BBDECL bb_float_t BBCALL bbAnimTime( Object *o ){
 	debugObject(o);
 	if( Animator *anim=o->getAnimator() ) return anim->animTime();
 	return -1;
 }
 
-int BBCALL bbAnimLength( Object *o ){
+BBDECL bb_int_t BBCALL bbAnimLength( Object *o ){
 	debugObject(o);
 	if( Animator *anim=o->getAnimator() ) return anim->animLen();
 	return -1;
 }
 
-int BBCALL bbAnimating( Object *o ){
+BBDECL bb_int_t BBCALL bbAnimating( Object *o ){
 	debugObject(o);
 	if( Animator *anim=o->getAnimator() ) return anim->animating();
 	return 0;
@@ -1546,7 +1546,7 @@ int BBCALL bbAnimating( Object *o ){
 ////////////////////////////////
 // ENTITY SPECIAL FX COMMANDS //
 ////////////////////////////////
-void BBCALL bbPaintEntity( Model *m,Brush *b ){
+BBDECL void BBCALL bbPaintEntity( Model *m,Brush *b ){
 	if( bb_env.debug ){
 		debugModel(m);
 		debugBrush(b);
@@ -1554,43 +1554,43 @@ void BBCALL bbPaintEntity( Model *m,Brush *b ){
 	m->setBrush( *b );
 }
 
-void BBCALL bbEntityColor( Model *m,float r,float g,float b ){
+BBDECL void BBCALL bbEntityColor( Model *m,bb_float_t r,bb_float_t g,bb_float_t b ){
 	debugModel(m);
 	m->setColor( Vector( r*ctof,g*ctof,b*ctof ) );
 }
 
-void BBCALL bbEntityAlpha( Model *m,float alpha ){
+BBDECL void BBCALL bbEntityAlpha( Model *m,bb_float_t alpha ){
 	debugModel(m);
 	m->setAlpha( alpha );
 }
 
-void BBCALL bbEntityShininess( Model *m,float shininess ){
+BBDECL void BBCALL bbEntityShininess( Model *m,bb_float_t shininess ){
 	debugModel(m);
 	m->setShininess( shininess );
 }
 
-void BBCALL bbEntityTexture( Model *m,Texture *t,int frame,int index ){
+BBDECL void BBCALL bbEntityTexture( Model *m,Texture *t,bb_int_t frame,bb_int_t index ){
 	debugModel(m);
 	debugTexture(t);
 	m->setTexture( index,*t,frame );
 }
 
-void BBCALL bbEntityBlend( Model *m,int blend ){
+BBDECL void BBCALL bbEntityBlend( Model *m,bb_int_t blend ){
 	debugModel(m);
 	m->setBlend( blend );
 }
 
-void BBCALL bbEntityFX( Model *m,int fx ){
+BBDECL void BBCALL bbEntityFX( Model *m,bb_int_t fx ){
 	debugModel(m);
 	m->setFX( fx );
 }
 
-void BBCALL bbEntityAutoFade( Model *m,float nr,float fr ){
+BBDECL void BBCALL bbEntityAutoFade( Model *m,bb_float_t nr,bb_float_t fr ){
 	debugModel(m);
 	m->setAutoFade( nr,fr );
 }
 
-void BBCALL bbEntityOrder( Object *o,int n ){
+BBDECL void BBCALL bbEntityOrder( Object *o,bb_int_t n ){
 	if( bb_env.debug ){
 		debugEntity(o);
 		if( !o->getModel() && !o->getCamera() ){
@@ -1603,42 +1603,42 @@ void BBCALL bbEntityOrder( Object *o,int n ){
 //////////////////////////////
 // ENTITY PROPERTY COMMANDS //
 //////////////////////////////
-float BBCALL bbEntityX( Entity *e,int global ){
+BBDECL bb_float_t BBCALL bbEntityX( Entity *e,bb_int_t global ){
 	debugEntity(e);
 	return global ? e->getWorldPosition().x : e->getLocalPosition().x;
 }
 
-float BBCALL bbEntityY( Entity *e,int global ){
+BBDECL bb_float_t BBCALL bbEntityY( Entity *e,bb_int_t global ){
 	debugEntity(e);
 	return global ? e->getWorldPosition().y : e->getLocalPosition().y;
 }
 
-float BBCALL bbEntityZ( Entity *e,int global ){
+BBDECL bb_float_t BBCALL bbEntityZ( Entity *e,bb_int_t global ){
 	debugEntity(e);
 	return global ? e->getWorldPosition().z : e->getLocalPosition().z;
 }
 
-float BBCALL bbEntityPitch( Entity *e,int global ){
+BBDECL bb_float_t BBCALL bbEntityPitch( Entity *e,bb_int_t global ){
 	debugEntity(e);
 	return quatPitch( global ? e->getWorldRotation() : e->getLocalRotation() ) * rtod;
 }
 
-float BBCALL bbEntityYaw( Entity *e,int global ){
+BBDECL bb_float_t BBCALL bbEntityYaw( Entity *e,bb_int_t global ){
 	debugEntity(e);
 	return quatYaw( global ? e->getWorldRotation() : e->getLocalRotation() ) * rtod;
 }
 
-float BBCALL bbEntityRoll( Entity *e,int global ){
+BBDECL bb_float_t BBCALL bbEntityRoll( Entity *e,bb_int_t global ){
 	debugEntity(e);
 	return quatRoll( global ? e->getWorldRotation() : e->getLocalRotation() ) * rtod;
 }
 
-float BBCALL bbGetMatElement( Entity *e,int row,int col ){
+BBDECL bb_float_t BBCALL bbGetMatElement( Entity *e,bb_int_t row,bb_int_t col ){
 	debugEntity(e);
-	return row<3 ? e->getWorldTform().m[row][col] : e->getWorldTform().v[col];
+	return row<3 ? e->getWorldTform().m[(int)row][(int)col] : e->getWorldTform().v[(int)col];
 }
 
-void BBCALL bbTFormPoint( float x,float y,float z,Entity *src,Entity *dest ){
+BBDECL void BBCALL bbTFormPoint( bb_float_t x,bb_float_t y,bb_float_t z,Entity *src,Entity *dest ){
 	if( bb_env.debug ){
 		if( src ) debugEntity(src);
 		if( dest ) debugEntity(dest);
@@ -1648,7 +1648,7 @@ void BBCALL bbTFormPoint( float x,float y,float z,Entity *src,Entity *dest ){
 	if( dest ) tformed=-dest->getWorldTform() * tformed;
 }
 
-void BBCALL bbTFormVector( float x,float y,float z,Entity *src,Entity *dest ){
+BBDECL void BBCALL bbTFormVector( bb_float_t x,bb_float_t y,bb_float_t z,Entity *src,Entity *dest ){
 	if( bb_env.debug ){
 		if( src ) debugEntity(src);
 		if( dest ) debugEntity(dest);
@@ -1658,7 +1658,7 @@ void BBCALL bbTFormVector( float x,float y,float z,Entity *src,Entity *dest ){
 	if( dest ) tformed=-dest->getWorldTform().m * tformed;
 }
 
-void BBCALL bbTFormNormal( float x,float y,float z,Entity *src,Entity *dest ){
+BBDECL void BBCALL bbTFormNormal( bb_float_t x,bb_float_t y,bb_float_t z,Entity *src,Entity *dest ){
 	if( bb_env.debug ){
 		if( src ) debugEntity(src);
 		if( dest ) debugEntity(dest);
@@ -1669,27 +1669,27 @@ void BBCALL bbTFormNormal( float x,float y,float z,Entity *src,Entity *dest ){
 	tformed.normalize();
 }
 
-float BBCALL bbTFormedX(){
+BBDECL bb_float_t BBCALL bbTFormedX(){
 	return tformed.x;
 }
 
-float BBCALL bbTFormedY(){
+BBDECL bb_float_t BBCALL bbTFormedY(){
 	return tformed.y;
 }
 
-float BBCALL bbTFormedZ(){
+BBDECL bb_float_t BBCALL bbTFormedZ(){
 	return tformed.z;
 }
 
-float BBCALL bbVectorYaw( float x,float y,float z ){
+BBDECL bb_float_t BBCALL bbVectorYaw( bb_float_t x,bb_float_t y,bb_float_t z ){
 	return Vector(x,y,z).yaw() * rtod;
 }
 
-float BBCALL bbVectorPitch( float x,float y,float z ){
+BBDECL bb_float_t BBCALL bbVectorPitch( bb_float_t x,bb_float_t y,bb_float_t z ){
 	return Vector(x,y,z).pitch() * rtod;
 }
 
-float BBCALL bbDeltaYaw( Entity *src,Entity *dest ){
+BBDECL bb_float_t BBCALL bbDeltaYaw( Entity *src,Entity *dest ){
 	float x=src->getWorldTform().m.k.yaw();
 	float y=(dest->getWorldTform().v-src->getWorldTform().v).yaw();
 	float d=y-x;
@@ -1698,7 +1698,7 @@ float BBCALL bbDeltaYaw( Entity *src,Entity *dest ){
 	return d*rtod;
 }
 
-float BBCALL bbDeltaPitch( Entity *src,Entity *dest ){
+BBDECL bb_float_t BBCALL bbDeltaPitch( Entity *src,Entity *dest ){
 	float x=src->getWorldTform().m.k.pitch();
 	float y=(dest->getWorldTform().v-src->getWorldTform().v).pitch();
 	float d=y-x;
@@ -1710,12 +1710,12 @@ float BBCALL bbDeltaPitch( Entity *src,Entity *dest ){
 ///////////////////////////////
 // ENTITY COLLISION COMMANDS //
 ///////////////////////////////
-void BBCALL bbResetEntity( Object *o ){
+BBDECL void BBCALL bbResetEntity( Object *o ){
 	debugObject(o);
 	o->reset();
 }
 
-static void entityType( Entity *e,int type ){
+static void entityType( Entity *e,bb_int_t type ){
 	e->getObject()->setCollisionType(type);
 	e->getObject()->reset();
 	for( Entity *p=e->children();p;p=p->successor() ){
@@ -1723,7 +1723,7 @@ static void entityType( Entity *e,int type ){
 	}
 }
 
-void BBCALL bbEntityType( Object *o,int type,int recurs ){
+BBDECL void BBCALL bbEntityType( Object *o,bb_int_t type,bb_int_t recurs ){
 	if( bb_env.debug ){
 		debugObject(o);
 		if( type<0 || type>999 ) RTEX( "EntityType ID must be in the range 0...999" );
@@ -1735,36 +1735,36 @@ void BBCALL bbEntityType( Object *o,int type,int recurs ){
 	}
 }
 
-void BBCALL bbEntityPickMode( Object *o,int mode,int obs ){
+BBDECL void BBCALL bbEntityPickMode( Object *o,bb_int_t mode,bb_int_t obs ){
 	debugObject(o);
 	o->setPickGeometry( mode );
 	o->setObscurer( !!obs );
 }
 
-Entity * BBCALL bbGetParent( Entity *e ){
+BBDECL Entity * BBCALL bbGetParent( Entity *e ){
 	debugEntity(e);
 	return e->getParent();
 }
 
-int BBCALL bbGetEntityType( Object *o ){
+BBDECL bb_int_t BBCALL bbGetEntityType( Object *o ){
 	debugObject(o);
 	return o->getCollisionType();
 }
 
-void BBCALL bbEntityRadius( Object *o,float x_radius,float y_radius ){
+BBDECL void BBCALL bbEntityRadius( Object *o,bb_float_t x_radius,bb_float_t y_radius ){
 	debugObject(o);
 	Vector radii( x_radius,y_radius ? y_radius : x_radius,x_radius );
 	o->setCollisionRadii( radii );
 }
 
-void BBCALL bbEntityBox( Object *o,float x,float y,float z,float w,float h,float d ){
+BBDECL void BBCALL bbEntityBox( Object *o,bb_float_t x,bb_float_t y,bb_float_t z,bb_float_t w,bb_float_t h,bb_float_t d ){
 	debugObject(o);
 	Box b( Vector(x,y,z) );
 	b.update( Vector( x+w,y+h,z+d ) );
 	o->setCollisionBox( b );
 }
 
-Object * BBCALL bbEntityCollided( Object *o,int type ){
+BBDECL Object * BBCALL bbEntityCollided( Object *o,bb_int_t type ){
 	debugObject(o);
 	Object::Collisions::const_iterator it;
 	const Object::Collisions &c=o->getCollisions();
@@ -1775,62 +1775,62 @@ Object * BBCALL bbEntityCollided( Object *o,int type ){
 	return 0;
 }
 
-int BBCALL bbCountCollisions( Object *o ){
+BBDECL bb_int_t BBCALL bbCountCollisions( Object *o ){
 	debugObject(o);
 	return o->getCollisions().size();
 }
 
-float BBCALL bbCollisionX( Object *o,int index ){
+BBDECL bb_float_t BBCALL bbCollisionX( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->coords.x;
 }
 
-float BBCALL bbCollisionY( Object *o,int index ){
+BBDECL bb_float_t BBCALL bbCollisionY( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->coords.y;
 }
 
-float BBCALL bbCollisionZ( Object *o,int index ){
+BBDECL bb_float_t BBCALL bbCollisionZ( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->coords.z;
 }
 
-float BBCALL bbCollisionNX( Object *o,int index ){
+BBDECL bb_float_t BBCALL bbCollisionNX( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->collision.normal.x;
 }
 
-float BBCALL bbCollisionNY( Object *o,int index ){
+BBDECL bb_float_t BBCALL bbCollisionNY( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->collision.normal.y;
 }
 
-float BBCALL bbCollisionNZ( Object *o,int index ){
+BBDECL bb_float_t BBCALL bbCollisionNZ( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->collision.normal.z;
 }
 
-float BBCALL bbCollisionTime( Object *o,int index ){
+BBDECL bb_float_t BBCALL bbCollisionTime( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->collision.time;
 }
 
-Object * BBCALL bbCollisionEntity( Object *o,int index ){
+BBDECL Object * BBCALL bbCollisionEntity( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->with;
 }
 
-void * BBCALL bbCollisionSurface( Object *o,int index ){
+BBDECL Surface * BBCALL bbCollisionSurface( Object *o,bb_int_t index ){
 	debugColl(o,index);
-	return o->getCollisions()[index-1]->collision.surface;
+	return (Surface*)o->getCollisions()[index-1]->collision.surface;
 }
 
-int BBCALL bbCollisionTriangle( Object *o,int index ){
+BBDECL bb_int_t BBCALL bbCollisionTriangle( Object *o,bb_int_t index ){
 	debugColl(o,index);
 	return o->getCollisions()[index-1]->collision.index;
 }
 
-float BBCALL BBCALL bbEntityDistance( Entity *src,Entity *dest ){
+BBDECL bb_float_t BBCALL BBCALL bbEntityDistance( Entity *src,Entity *dest ){
 	debugEntity(src);
 	debugEntity(dest);
 	return src->getWorldPosition().distance( dest->getWorldPosition() );
@@ -1839,53 +1839,53 @@ float BBCALL BBCALL bbEntityDistance( Entity *src,Entity *dest ){
 ////////////////////////////////////
 // ENTITY TRANSFORMATION COMMANDS //
 ////////////////////////////////////
-void BBCALL bbMoveEntity( Entity *e,float x,float y,float z ){
+BBDECL void BBCALL bbMoveEntity( Entity *e,bb_float_t x,bb_float_t y,bb_float_t z ){
 	debugEntity(e);
 	e->setLocalPosition( e->getLocalPosition()+e->getLocalRotation()*Vector(x,y,z) );
 }
 
-void BBCALL bbTurnEntity( Entity *e,float p,float y,float r,int global ){
+BBDECL void BBCALL bbTurnEntity( Entity *e,bb_float_t p,bb_float_t y,bb_float_t r,bb_int_t global ){
 	debugEntity(e);
 	global?
 	e->setWorldRotation( rotationQuat( p*dtor,y*dtor,r*dtor )*e->getWorldRotation() ):
 	e->setLocalRotation( e->getLocalRotation()*rotationQuat( p*dtor,y*dtor,r*dtor ) );
 }
 
-void BBCALL bbTranslateEntity( Entity *e,float x,float y,float z,int global ){
+BBDECL void BBCALL bbTranslateEntity( Entity *e,bb_float_t x,bb_float_t y,bb_float_t z,bb_int_t global ){
 	debugEntity(e);
 	global?
 	e->setWorldPosition( e->getWorldPosition()+Vector( x,y,z ) ):
 	e->setLocalPosition( e->getLocalPosition()+Vector( x,y,z ) );
 }
 
-void BBCALL bbPositionEntity( Entity *e,bb_float_t x,bb_float_t y,bb_float_t z,bb_int_t global ){
+BBDECL void BBCALL bbPositionEntity( Entity *e,bb_float_t x,bb_float_t y,bb_float_t z,bb_int_t global ){
 	debugEntity(e);
 	global?
 	e->setWorldPosition(Vector(x,y,z)):
 	e->setLocalPosition(Vector(x,y,z));
 }
 
-void BBCALL bbScaleEntity( Entity *e,float x,float y,float z,int global ){
+BBDECL void BBCALL bbScaleEntity( Entity *e,bb_float_t x,bb_float_t y,bb_float_t z,bb_int_t global ){
 	debugEntity(e);
 	global?
 	e->setWorldScale(Vector(x,y,z)):
 	e->setLocalScale(Vector(x,y,z));
 }
 
-void BBCALL bbRotateEntity( Entity *e,float p,float y,float r,int global ){
+BBDECL void BBCALL bbRotateEntity( Entity *e,bb_float_t p,bb_float_t y,bb_float_t r,bb_int_t global ){
 	debugEntity(e);
 	global?
 	e->setWorldRotation( rotationQuat( p*dtor,y*dtor,r*dtor ) ):
 	e->setLocalRotation( rotationQuat( p*dtor,y*dtor,r*dtor ) );
 }
 
-void BBCALL bbPointEntity( Entity *e,Entity *t,float roll ){
+BBDECL void BBCALL bbPointEntity( Entity *e,Entity *t,bb_float_t roll ){
 	if( bb_env.debug ){ debugEntity(e);debugEntity(t); }
 	Vector v=t->getWorldTform().v-e->getWorldTform().v;
 	e->setWorldRotation( rotationQuat( v.pitch(),v.yaw(),roll*dtor ) );
 }
 
-void BBCALL bbAlignToVector( Entity *e,float nx,float ny,float nz,int axis,float rate ){
+BBDECL void BBCALL bbAlignToVector( Entity *e,bb_float_t nx,bb_float_t ny,bb_float_t nz,bb_int_t axis,bb_float_t rate ){
 	Vector ax( nx,ny,nz );
 	float l=ax.length();
 	if( l<=EPSILON ) return;
@@ -1913,18 +1913,18 @@ void BBCALL bbAlignToVector( Entity *e,float nx,float ny,float nz,int axis,float
 //////////////////////////
 // ENTITY MISC COMMANDS //
 //////////////////////////
-void BBCALL bbNameEntity( Entity *e,BBStr *t ){
+BBDECL void BBCALL bbNameEntity( Entity *e,BBStr *t ){
 	debugEntity(e);
 	e->setName( *t );
 	delete t;
 }
 
-BBStr * BBCALL bbEntityName( Entity *e ){
+BBDECL BBStr * BBCALL bbEntityName( Entity *e ){
 	debugEntity(e);
 	return d_new BBStr( e->getName() );
 }
 
-BBStr * BBCALL bbEntityClass( Entity *e ){
+BBDECL BBStr * BBCALL bbEntityClass( Entity *e ){
 	debugEntity(e);
 	const char *p="Pivot";
 	if( e->getLight() ) p="Light";
@@ -1942,7 +1942,7 @@ BBStr * BBCALL bbEntityClass( Entity *e ){
 	return new BBStr(p);
 }
 
-void BBCALL bbClearWorld( int e,int b,int t ){
+BBDECL void BBCALL bbClearWorld( bb_int_t e,bb_int_t b,bb_int_t t ){
 	if( e ){
 		while( Entity::orphans() ) bbFreeEntity( Entity::orphans() );
 	}
@@ -1956,7 +1956,7 @@ void BBCALL bbClearWorld( int e,int b,int t ){
 
 extern int active_texs;
 
-int BBCALL bbActiveTextures(){
+BBDECL bb_int_t BBCALL bbActiveTextures(){
 	return active_texs;
 }
 

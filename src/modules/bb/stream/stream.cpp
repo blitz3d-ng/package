@@ -22,38 +22,38 @@ bbStream::~bbStream(){
 	stream_set.erase( this );
 }
 
-int BBCALL bbEof( bbStream *s ){
+bb_int_t BBCALL bbEof( bbStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	return s->eof();
 }
 
-int BBCALL bbReadAvail( bbStream *s ){
+bb_int_t BBCALL bbReadAvail( bbStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	return s->avail();
 }
 
-int BBCALL bbReadByte( bbStream *s ){
+bb_int_t BBCALL bbReadByte( bbStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,1 );
 	return n;
 }
 
-int BBCALL bbReadShort( bbStream *s ){
+bb_int_t BBCALL bbReadShort( bbStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,2 );
 	return n;
 }
 
-int BBCALL bbReadInt( bbStream *s ){
+bb_int_t BBCALL bbReadInt( bbStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,4 );
 	return n;
 }
 
-float BBCALL bbReadFloat( bbStream *s ){
+bb_float_t BBCALL bbReadFloat( bbStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	float n=0;
 	s->read( (char*)&n,4 );
@@ -86,22 +86,22 @@ BBStr * BBCALL bbReadLine( bbStream *s ){
 	return str;
 }
 
-void BBCALL bbWriteByte( bbStream *s,int n ){
+void BBCALL bbWriteByte( bbStream *s,bb_int_t n ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,1 );
 }
 
-void BBCALL bbWriteShort( bbStream *s,int n ){
+void BBCALL bbWriteShort( bbStream *s,bb_int_t n ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,2 );
 }
 
-void BBCALL bbWriteInt( bbStream *s,int n ){
+void BBCALL bbWriteInt( bbStream *s,bb_int_t n ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,4 );
 }
 
-void BBCALL bbWriteFloat( bbStream *s,float n ){
+void BBCALL bbWriteFloat( bbStream *s,bb_float_t n ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,4 );
 }
@@ -121,7 +121,7 @@ void BBCALL bbWriteLine( bbStream *s,BBStr *t ){
 	delete t;
 }
 
-void BBCALL bbCopyStream( bbStream *s,bbStream *d,int buff_size ){
+void BBCALL bbCopyStream( bbStream *s,bbStream *d,bb_int_t buff_size ){
 	if( bb_env.debug ){
 		debugStream( s );debugStream( d );
 		if( buff_size<1 || buff_size>1024*1024 ) RTEX( "Illegal buffer size" );

@@ -4,7 +4,6 @@
 #include <bb/blitz/module.h>
 #include <bb/system/system.h>
 
-#ifdef WIN32
 BBMODULE_LINK( system ){
 	rtSym( "%ExecFile$file",bbExecFile );
 	rtSym( "Delay%millisecs",bbDelay );
@@ -17,4 +16,3 @@ BBMODULE_LINK( system ){
 	rtSym( "#DPIScaleX",bbDPIScaleX );
 	rtSym( "#DPIScaleY",bbDPIScaleY );
 }
-#endif

@@ -2,7 +2,7 @@
 #define BB_ENET_H
 
 #include <guid.h>
-#include <string>
+#include <bb/blitz/commands.h>
 
 class BBPlayer{
 public:

@@ -2,7 +2,7 @@
 #define BB_STRING_COMMANDS_H
 
 #include <bb/blitz/module.h>
-#include "../config.h"
+#include <bb/string/string.h>
 
 #ifdef __cplusplus
 extern "C" {

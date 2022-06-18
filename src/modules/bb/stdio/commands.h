@@ -2,7 +2,7 @@
 #define BB_STDIO_COMMANDS_H
 
 #include <bb/blitz/module.h>
-#include "../config.h"
+#include <bb/stdio/stdio.h>
 
 #ifdef __cplusplus
 extern "C" {

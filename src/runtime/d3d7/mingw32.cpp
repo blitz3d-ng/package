@@ -49,7 +49,7 @@ BBRuntime *bbCreateRuntime(){
 	return bbCreateD3D7Runtime();
 }
 
-#ifdef WIN32
+
 void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	blitz_link( link );
 	math_link( link );
@@ -70,7 +70,7 @@ void bbruntime_link( void (*link)( const char *sym,void *pc ) ){
 	blitz3d_link( link );
 	graphics_link( link );
 }
-#endif
+
 bool bbruntime_create(){
 	if( blitz_create() ){
 				if( hook_create() ){
