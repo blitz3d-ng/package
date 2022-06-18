@@ -44,7 +44,7 @@ static ObjCollision picked;
 
 extern float stats3d[10];
 
-#ifdef WIN32
+#ifndef USE_ASSIMP
 static Loader_X loader_x;
 #else
 static Loader_Assimp loader_x;

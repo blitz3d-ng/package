@@ -36,6 +36,16 @@
 
 #include "codegen_llvm/codegen_llvm.h"
 
+#ifdef BB_WINDOWS
+#define BB_SO_EXT "dll"
+#endif
+#ifdef BB_MACOS
+#define BB_SO_EXT "dylib"
+#endif
+#ifdef BB_LINUX
+#define BB_SO_EXT "so"
+#endif
+
 typedef void (*BBMAIN)();
 typedef int (*BBSTART)( int,char**,BBMAIN );
 
@@ -124,7 +134,7 @@ public:
 
 	int run( Codegen_LLVM *codegen, const std::string &home, const std::string &rt ) {
 		std::string toolchain=home+"/toolchains/" BB_PLATFORM;
-		string runtimeLib( toolchain+"/lib/" BB_ENV "/libruntime."+rt+".shared.dylib" );
+		string runtimeLib( toolchain+"/lib/" BB_ENV "/libruntime."+rt+".shared." BB_SO_EXT );
 
 		MainJD.addGenerator(cantFail(llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(DL.getGlobalPrefix())));
 		MainJD.addGenerator(cantFail(llvm::orc::DynamicLibrarySearchGenerator::Load( runtimeLib.c_str(),DL.getGlobalPrefix() )));

@@ -86,7 +86,10 @@ module Blitz3D
             f.write("\n#include <bb/stub/stub.h>\n\n")
             f.write("\n#include \"../../stdutil/stdutil.h\"\n\n")
 
-            f.write("\n// TODO: get rid of the dirty bbStart hack that's needed to keep clang from stripping...\n\n")
+            f.write("\n// TODO: get rid of the dirty bbStart hack that's needed to keep clang from stripping...")
+            f.write("\n#ifdef BB_WINDOWS")
+            f.write("\n#define bbStart( a,b,c ) ;")
+            f.write("\n#endif\n\n")
 
             modules.each do |mod|
               f.write("BBMODULE_DECL( #{mod.id.parameterize.underscore} );\n")

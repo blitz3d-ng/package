@@ -6,7 +6,7 @@ IF(NOT BB_EMSCRIPTEN AND NOT BB_NX)
   add_subdirectory(enet)
 ENDIF()
 
-add_subdirectory(luajit)
+# add_subdirectory(luajit)
 add_subdirectory(assimp)
 add_subdirectory(crossguid)
 add_subdirectory(freetype2)

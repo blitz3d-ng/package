@@ -5,7 +5,8 @@ target_include_directories (linker PRIVATE ../../modules)
 target_link_libraries(linker stdutil)
 
 if(BB_MINGW32)
-  set_property(TARGET linker APPEND_STRING PROPERTY LINK_FLAGS " -static")
+  # TODO: figure this out...
+  # set_property(TARGET linker APPEND_STRING PROPERTY LINK_FLAGS " -static")
 else()
   set_target_properties(linker PROPERTIES LINK_FLAGS "/subsystem:windows")
 endif()

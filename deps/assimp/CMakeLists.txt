@@ -81,9 +81,7 @@ set (SOURCE src/code/Assimp.cpp
   src/code/XFileParser.h
 )
 
-IF(NOT WIN32)
-  set (SOURCE ${SOURCE} src/contrib/ConvertUTF/ConvertUTF.c src/contrib/ConvertUTF/ConvertUTF.h)
-ENDIF()
+set (SOURCE ${SOURCE} src/contrib/ConvertUTF/ConvertUTF.c src/contrib/ConvertUTF/ConvertUTF.h)
 
 add_library (assimp STATIC ${SOURCE})
 

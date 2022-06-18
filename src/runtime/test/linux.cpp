@@ -8,6 +8,9 @@
 
 
 // TODO: get rid of the dirty bbStart hack that's needed to keep clang from stripping...
+#ifdef BB_WINDOWS
+#define bbStart( a,b,c ) ;
+#endif
 
 BBMODULE_DECL( math );
 BBMODULE_DECL( blitz );

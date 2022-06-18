@@ -117,15 +117,30 @@ if(LLVM_ROOT)
   )
 
   execute_process(
-    COMMAND ${LLVM_ROOT}/bin/llvm-config --ldflags --libs --system-libs #${LLVM_COMPONENTS}
+    COMMAND ${LLVM_ROOT}/bin/llvm-config --ldflags
     OUTPUT_VARIABLE LLVM_LD_FLAGS
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
+  execute_process(
+    COMMAND ${LLVM_ROOT}/bin/llvm-config --libs --system-libs ${LLVM_COMPONENTS}
+    OUTPUT_VARIABLE LLVM_LIBS
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  string(REPLACE "\n" " " LLVM_LIBS ${LLVM_LIBS})
+  string(REPLACE "-l" ""  LLVM_LIBS ${LLVM_LIBS})
+  string(REPLACE " " ";"  LLVM_LIBS ${LLVM_LIBS})
+
   target_compile_options(blitzcc PRIVATE "SHELL:${LLVM_CXX_FLAGS}" -fexceptions -frtti)
   target_link_options(blitzcc PRIVATE "SHELL:${LLVM_LD_FLAGS}")
-  target_link_libraries(blitzcc lldCommon lldMachO lldCOFF lldELF lldMinGW lldWasm)
-  target_link_libraries(blitzcc zlibstatic ncurses)
+  if(BB_WINDOWS)
+    target_link_libraries(blitzcc lldCOFF lldMinGW)
+  elseif(BB_MACOS)
+    target_link_libraries(blitzcc lldMachO)
+  elseif(BB_LINUX)
+    target_link_libraries(blitzcc lldELF)
+  endif()
+  target_link_libraries(blitzcc lldWasm lldCommon ${LLVM_LIBS} zlibstatic ncurses)
 endif()
 
 if(BB_COVERAGE)

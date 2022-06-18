@@ -4,6 +4,22 @@
 #include <fstream>
 #include <vector>
 
+#ifdef BB_MSVC
+#define FORMAT coff
+#endif
+
+#ifdef BB_MINGW
+#define FORMAT mingw
+#endif
+
+#ifdef BB_MACOS
+#define FORMAT macho
+#endif
+
+#ifdef BB_LINUX
+#define FORMAT elf
+#endif
+
 // TODO: this should probably be put elsewhere
 #define BB_ARCH_X86 "x86"
 
@@ -21,11 +37,49 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 
 	args.push_back("--error-limit=0");
 
-	args.push_back("--lto-O0");
+	// args.push_back("--lto-O0");
 
+#ifdef BB_MACOS
 	// TODO: use xcrun --show-sdk-path
 	args.push_back("-syslibroot");
 	args.push_back("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk");
+
+	// args.push_back("-lobjc");
+	args.push_back("-lc");
+	args.push_back("-lc++");
+
+	args.push_back("-lSystem");
+	args.push_back("-arch");
+	if (strcmp(BB_ARCH, BB_ARCH_X86) == 0) {
+		args.push_back("x86_64");
+	} else {
+		args.push_back("arm64");
+	}
+	args.push_back("-platform_version");args.push_back("macos");args.push_back("12.1");args.push_back("12.3");
+#endif
+
+
+#ifdef BB_LINUX
+	// TODO: find out the best way to get this information from the environment
+	// TODO: gcc --print-file-name=libc.a
+	args.push_back("-L");args.push_back("/usr/lib/x86_64-linux-gnu");
+	args.push_back("-L");args.push_back("/usr/lib/gcc/x86_64-linux-gnu/10");
+	args.push_back("-L");args.push_back("/usr/lib/llvm-11/lib/clang/11.0.1/lib/linux");
+
+	args.push_back("-lc");
+	args.push_back("-lstdc++");
+	args.push_back("-lgcc");
+	args.push_back("-lgcc_eh");
+
+	args.push_back("-lclang_rt.builtins-x86_64");
+	#ifdef BB_ASAN
+	args.push_back("-lclang_rt.asan-x86_64");
+	args.push_back("-lclang_rt.asan_cxx-x86_64");
+	#endif
+
+	// args.push_back("--static");
+	args.push_back("/usr/lib/x86_64-linux-gnu/crt1.o");
+#endif
 
 	args.push_back("-o");
 	args.push_back( exeFile.c_str() );
@@ -78,22 +132,9 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 		iface.close();
 	}
 
-	// args.push_back("-lobjc");
-	args.push_back("-lc");
-	args.push_back("-lc++");
 	// args.push_back("-static");
 
-	// macos
-	args.push_back("-lSystem");
-	args.push_back("-arch");
-	if (strcmp(BB_ARCH, BB_ARCH_X86) == 0) {
-		args.push_back("x86_64");
-	} else {
-		args.push_back("arm64");
-	}
-	args.push_back("-platform_version");args.push_back("macos");args.push_back("12.1");args.push_back("12.3");
-
-	if( !lld::macho::link(args, llvm::outs(), llvm::errs(), true, false) ) {
+	if( !lld::FORMAT::link(args, llvm::outs(), llvm::errs(), true, false) ) {
 		exit( 1 );
 	};
 }
