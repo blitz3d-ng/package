@@ -105,6 +105,31 @@ static struct s_type : public Type{
 }s;
 
 #ifdef USE_LLVM
+llvm::Function *FuncType::llvmFunction( string &ident, Codegen_LLVM *g ){
+	if( symbol=="" ){
+		symbol="f"+ident;
+	}
+
+	llvm::Function *func = g->module->getFunction( symbol );
+	if( !func ){
+		vector<llvm::Type*> decls;
+		for( int k=0;k<params->size();k++ ){
+			decls.push_back( params->decls[k]->type->llvmType( g->context.get() ) );
+		}
+
+		auto ret_type=returnType->llvmType( g->context.get() );
+
+		llvm::FunctionType *ft=llvm::FunctionType::get( ret_type,decls,false );
+
+		func=llvm::Function::Create( ft,llvm::GlobalValue::ExternalLinkage,symbol,g->module.get() );
+		func->setCallingConv( llvm::CallingConv::C );
+	}
+
+	return func;
+}
+#endif
+
+#ifdef USE_LLVM
 llvm::Type *ArrayType::llvmType( llvm::LLVMContext *c ){
 	static llvm::StructType *ty=0;
 	if( !ty ) {

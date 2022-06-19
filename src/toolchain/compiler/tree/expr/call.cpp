@@ -46,28 +46,8 @@ TNode *CallNode::translate( Codegen *g ){
 #include <llvm/IR/Attributes.h>
 
 llvm::Value *CallNode::translate2( Codegen_LLVM *g ){
-	string symbol=sem_decl->type->funcType()->symbol;
-
-	if( symbol=="" ){
-		symbol="f"+sem_decl->name;
-	}
-
-	llvm::Function *func = g->module->getFunction(symbol);
-	if( !func ){
-		FuncType *f=sem_decl->type->funcType();
-
-		vector<llvm::Type*> decls;
-		for( int k=0;k<f->params->size();k++ ){
-			decls.push_back( f->params->decls[k]->type->llvmType( g->context.get() ) );
-		}
-
-		auto ret_type=f->returnType->llvmType( g->context.get() );
-
-		llvm::FunctionType *ft=llvm::FunctionType::get( ret_type,decls,false );
-
-		func=llvm::Function::Create( ft,llvm::GlobalValue::ExternalLinkage,symbol,g->module.get() );
-		func->setCallingConv( llvm::CallingConv::C );
-	}
+	FuncType *f=sem_decl->type->funcType();
+	auto func = f->llvmFunction( sem_decl->name,g );
 
 	std::vector<llvm::Value*> args;
 	for( int i=0;i<exprs->size();i++ ){

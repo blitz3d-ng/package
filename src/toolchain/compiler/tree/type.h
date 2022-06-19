@@ -8,6 +8,7 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/DerivedTypes.h>
+#include "../codegen_llvm/codegen_llvm.h"
 #endif
 
 struct FuncType;
@@ -53,6 +54,9 @@ struct FuncType : public Type{
 	FuncType( Type *t,DeclSeq *p,bool ulib,bool cfn ):returnType(t),params(p),userlib(ulib),cfunc(cfn){}
 	~FuncType(){ delete params; }
 	FuncType *funcType(){ return this; }
+#ifdef USE_LLVM
+	llvm::Function *llvmFunction( string &ident, Codegen_LLVM *g );
+#endif
 
 	json toJSON(){
 		json tree;tree["@class"]="FuncType";

@@ -111,14 +111,18 @@ void SelectNode::translate2( Codegen_LLVM *g ){
 		func->getBasicBlockList().push_back( body );
 		g->builder->SetInsertPoint( body );
 		c->stmts->translate2( g );
-		g->builder->CreateBr( cont );
+		if( !body->getTerminator() ){
+			g->builder->CreateBr( cont );
+		}
 	}
 
 	if( def ) {
 		func->getBasicBlockList().push_back( def );
 		g->builder->SetInsertPoint( def );
 		defStmts->translate2( g );
-		g->builder->CreateBr( cont );
+		if( !def->getTerminator() ){
+			g->builder->CreateBr( cont );
+		}
 	}
 
 	func->getBasicBlockList().push_back( cont );
