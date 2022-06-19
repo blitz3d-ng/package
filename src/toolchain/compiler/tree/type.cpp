@@ -146,7 +146,20 @@ bool StructType::canCastTo( Type *t ){
 }
 
 #ifdef USE_LLVM
+llvm::Value *StructType::llvmTypeDef( Codegen_LLVM *g ){
+	if( !objty ){
+		deftype=llvm::StructType::create( *g->context,"_t"+ident+"data" );
+		auto temp=new llvm::GlobalVariable( *g->module,deftype,false,llvm::GlobalValue::ExternalLinkage,nullptr,"_t"+ident+"type" );
+		temp->setAlignment( llvm::MaybeAlign(8) );
+		objty=temp;
+	}
+	return objty;
+}
+
 llvm::Type *StructType::llvmType( llvm::LLVMContext *c ){
+	if(! structtype ){
+		structtype=llvm::StructType::create( *c,"_t"+ident );
+	}
 	return llvm::PointerType::get( structtype,0 );
 }
 
@@ -171,9 +184,42 @@ bool VectorType::canCastTo( Type *t ){
 
 #ifdef USE_LLVM
 llvm::Type *VectorType::llvmType( llvm::LLVMContext *c ){
-	int sz=1;
-	for( int k=0;k<sizes.size();++k ) sz*=sizes[k];
-	return llvm::VectorType::get( elementType->llvmType( c ),sz,false );
+	if( !ty ){
+		int sz=1;
+		for( int k=0;k<sizes.size();++k ) sz*=sizes[k];
+		ty=llvm::ArrayType::get( elementType->llvmType( c ),sz );
+	}
+	return llvm::PointerType::get( ty,0 );
+}
+
+llvm::GlobalVariable *VectorType::llvmDef( Codegen_LLVM *g ){
+	if( !temp ){
+		int sz=1;
+		for( int k=0;k<sizes.size();++k ) sz*=sizes[k];
+
+		llvm::GlobalVariable* gt=0;
+		string t;
+		Type *type=elementType;
+		if( type==Type::int_type ) t="_bbIntType";
+		else if( type==Type::float_type ) t="_bbFltType";
+		else if( type==Type::string_type ) t="_bbStrType";
+		else if( StructType *s=type->structType() ) gt=(llvm::GlobalVariable*)s->objty;
+		else if( VectorType *v=type->vectorType() ) t=label;
+		if( !gt ) {
+			gt=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( t,g->bbType );
+		}
+
+		vector<llvm::Constant*> els;
+		els.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,6  ) ) ); // type
+		els.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,sz ) ) ); // size
+		els.push_back( gt );                                                         // elementType
+		auto init=llvm::ConstantStruct::get( g->bbVecType,els );
+
+		temp=new llvm::GlobalVariable( *g->module,g->bbVecType,false,llvm::GlobalValue::ExternalLinkage,nullptr,label );
+		temp->setInitializer( init );
+	}
+
+	return temp;
 }
 #endif
 

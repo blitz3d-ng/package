@@ -47,7 +47,9 @@ void VectorDeclNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void VectorDeclNode::translate2( Codegen_LLVM *g ){
-	// if( expr ) sem_var->store2( g,expr->translate2( g ) );
+	// VectorType *v=sem_type->vectorType();
+
+	// if( kind==DECL_GLOBAL ) g->i_data( 0,"_v"+ident );
 }
 #endif
 

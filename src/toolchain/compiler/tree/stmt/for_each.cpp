@@ -63,11 +63,15 @@ void ForEachNode::translate2( Codegen_LLVM *g ){
 	auto loop=llvm::BasicBlock::Create( *g->context,"foreach_loop",func );
 	auto cont=llvm::BasicBlock::Create( *g->context,"foreach_cont",func );
 
-	auto ity=llvm::Type::getInt32Ty( *g->context );
+	auto ity=llvm::Type::getInt64Ty( *g->context );
 	auto bty=llvm::Type::getInt1Ty( *g->context );
 
-	l=var->translate2( g );
-	r=var->sem_type->structType()->objty;
+	l=g->builder->CreateBitOrPointerCast( var->translate2( g ),llvm::PointerType::get( g->bbObj,0 ) );
+	r=g->builder->CreateBitOrPointerCast( var->sem_type->structType()->objty,llvm::PointerType::get( g->bbType,0 ) );
+
+	// auto t=g->CallIntrinsic( "_bbObjLast",llvm::PointerType::get( g->bbObj,0 ),1,objty );
+	// return g->builder->CreateBitOrPointerCast( t,llvm::PointerType::get( sem_type->structType()->structtype,0 ) );
+
 
 	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objFirst,ity,2,l,r ),bty ),loop,cont );
 
@@ -75,7 +79,7 @@ void ForEachNode::translate2( Codegen_LLVM *g ){
 	stmts->translate2( g );
 
 	// debug( nextPos,g );
-	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objNext,ity,1,var->translate2( g ) ),bty ),loop,cont );
+	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objNext,ity,1,l ),bty ),loop,cont );
 
 	g->builder->SetInsertPoint( cont );
 }

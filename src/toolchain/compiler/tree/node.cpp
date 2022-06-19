@@ -110,6 +110,17 @@ void Node::createVars2( Environ *e, Codegen_LLVM *g ){
 		d->ptr=g->builder->CreateAlloca( d->type->llvmType( g->context.get() ),nullptr,d->name );
 		g->builder->CreateStore( d->type->llvmZero( g->context.get() ),d->ptr );
 	}
+	//initialize vectors
+	for( k=0;k<e->decls->size();++k ){
+		Decl *d=e->decls->decls[k];
+		if( d->kind==DECL_PARAM ) continue;
+		VectorType *v=d->type->vectorType();
+		if( !v ) continue;
+		// TNode *m=d->kind==DECL_GLOBAL ? global( "_v"+d->name ) : local( d->offset );
+		auto ty=v->llvmType( g->context.get() );
+		d->ptr=g->builder->CreateAlloca( ty,nullptr,d->name );
+		g->builder->CreateStore( g->CallIntrinsic( "_bbVecAlloc",ty,1,v->llvmDef( g ) ),d->ptr );
+	}
 }
 #endif
 

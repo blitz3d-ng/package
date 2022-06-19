@@ -43,16 +43,29 @@ TNode *VectorVarNode::translate( Codegen *g ){
 }
 
 #ifdef USE_LLVM
-llvm::Value *VectorVarNode::load2( Codegen_LLVM *g ){
-	// llvm::Value *t=translate2( g );
-	// if( sem_type==Type::string_type ) return g->CallIntrinsic( "_bbStrLoad",sem_type->llvmType( &g->context ),1,t );
-	// return g->builder->CreateLoad( sem_decl->type->llvmType( &g->context ),sem_decl->ptr );
-	return 0;
-}
-
 llvm::Value *VectorVarNode::translate2( Codegen_LLVM *g ){
-	// return sem_decl->ptr;
-	return 0;
+	int sz=1;
+	llvm::Value *t=0;
+	for( int k=0;k<exprs->size();++k ){
+		ExprNode *e=exprs->exprs[k];
+		auto p=e->translate2( g );
+		// if( g->debug ){
+		// 	p=jumpge( p,iconst( vec_type->sizes[k] ),"__bbVecBoundsEx" );
+		// }
+		p=g->builder->CreateMul( p,llvm::ConstantInt::get( *g->context,llvm::APInt( 64,sz ) ) );
+
+		sz=sz*vec_type->sizes[k]/4;
+		t=t ? g->builder->CreateAdd( t,p ) : p;
+	}
+
+
+	vector<llvm::Value*> indices;
+	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
+	indices.push_back( t );
+
+	auto ty=vec_type->llvmType( g->context.get() );
+	auto el=g->builder->CreateGEP( vec_type->ty,expr->translate2( g ),indices );
+	return el;
 }
 #endif
 

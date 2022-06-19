@@ -40,7 +40,7 @@ $BLITZCC -r test test/all.bb
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
   echo "Test suite failed. Fix it and then run the coverage generation again."
-  exit 1
+  fail=1
 fi
 
 echo "Verifying samples can compile"

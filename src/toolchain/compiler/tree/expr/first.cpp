@@ -15,7 +15,8 @@ TNode *FirstNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 llvm::Value *FirstNode::translate2( Codegen_LLVM *g ){
-	llvm::Type *t=sem_type->llvmType( g->context.get() );
-	return g->CallIntrinsic( "_bbObjFirst",t,1,sem_type->structType()->objty );
+	auto objty=g->builder->CreateBitOrPointerCast( sem_type->structType()->objty,llvm::PointerType::get( g->bbType,0 ) );
+	auto t=g->CallIntrinsic( "_bbObjFirst",llvm::PointerType::get( g->bbObj,0 ),1,objty );
+	return g->builder->CreateBitOrPointerCast( t,llvm::PointerType::get( sem_type->structType()->structtype,0 ) );
 }
 #endif

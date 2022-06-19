@@ -97,7 +97,10 @@ struct StructType : public Type{
 
 #ifdef USE_LLVM
 	llvm::StructType *structtype=0;
+	llvm::StructType *deftype=0;
 	llvm::Value *objty=0;
+	virtual llvm::Value *llvmTypeDef( Codegen_LLVM *g );
+
 	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
 	virtual llvm::Constant *llvmZero( llvm::LLVMContext *c );
 #endif
@@ -146,7 +149,10 @@ struct VectorType : public Type{
 	json toJSON();
 
 #ifdef USE_LLVM
+	llvm::ArrayType *ty=0;
+	llvm::GlobalVariable *temp=0;
 	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
+	virtual llvm::GlobalVariable *llvmDef( Codegen_LLVM *g );
 #endif
 };
 

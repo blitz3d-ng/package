@@ -29,6 +29,7 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	bbObj=llvm::StructType::create( *context,"BBObj" );
 	bbObjType=llvm::StructType::create( *context,"BBObjType" );
 	bbArray=llvm::StructType::create( *context,"BBArray" );
+	bbVecType=llvm::StructType::create( *context,"BBVecType" );
 
 	std::vector<llvm::Type*> objels;
 	objels.push_back( llvm::PointerType::get( bbField,0 ) );   // fields
@@ -51,6 +52,12 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	arrayels.push_back( llvm::PointerType::get( llvm::Type::getInt64Ty( *context ),0 ) ); // elementType
 	arrayels.push_back( llvm::PointerType::get( llvm::Type::getInt64Ty( *context ),0 ) ); // dims
 	bbArray->setBody( arrayels );
+
+	std::vector<llvm::Type*> vecels;
+	vecels.push_back( llvm::Type::getInt64Ty( *context ) ); // type
+	vecels.push_back( llvm::Type::getInt64Ty( *context ) ); // size
+	vecels.push_back( llvm::PointerType::get( bbType,0 ) ); // elementType
+	bbVecType->setBody( vecels );
 }
 
 Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,int n,... ){
@@ -115,12 +122,19 @@ void Codegen_LLVM::optimize(){
 }
 
 bool Codegen_LLVM::verify(){
-	errs()<<"\033[21;33m";
-	bool fail=llvm::verifyModule( *module,&llvm::errs() );
-	errs()<<"\033[0m\n";
+	std::string err;
+	raw_string_ostream os( err );
 
-	if( fail ){
+	if( llvm::verifyModule( *module,&os ) ){
 		dumpToStderr();
+#ifdef BB_POSIX
+		errs()<<"\033[21;31m";
+#endif
+		errs()<<err;
+#ifdef BB_POSIX
+		errs()<<"\033[0m\n";
+#endif
+
 		exit( 1 );
 	}
 
@@ -197,7 +211,11 @@ int Codegen_LLVM::dumpToObj( bool compileonly,const std::string &path ) {
 }
 
 void Codegen_LLVM::dumpToStderr() {
+#ifdef BB_POSIX
 	errs()<<"\033[21;90m";
-	module->print(errs(), nullptr);
+#endif
+	module->print( errs(),nullptr );
+#ifdef BB_POSIX
 	errs()<<"\033[0m\n";
+#endif
 }

@@ -68,13 +68,17 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 		Type *type=field->type;
 		fields.push_back( type->llvmType( g->context.get() ) );
 
+		llvm::GlobalVariable* gt=0;
 		string t;
 		if( type==Type::int_type ) t="_bbIntType";
 		else if( type==Type::float_type ) t="_bbFltType";
 		else if( type==Type::string_type ) t="_bbStrType";
-		else if( StructType *s=type->structType() ) t="_t"+s->ident;
+		else if( StructType *s=type->structType() ) gt=(llvm::GlobalVariable*)s->objty;
 		else if( VectorType *v=type->vectorType() ) t=v->label;
-		auto gt=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( t,g->bbType );
+
+		if( !gt ) {
+			gt=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( t,g->bbType );
+		}
 
 		if( k>0 ) {
 			template_types.push_back( gt );
@@ -83,15 +87,21 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 		}
 	}
 
-	auto ty=llvm::StructType::create( *g->context,fields,"_t"+ident );
+	sem_type->llvmTypeDef( g );
+	sem_type->llvmType( g->context.get() );
+
+	auto ty2=sem_type->deftype;
+
+	llvm::StructType* ty=(llvm::StructType*)sem_type->structtype;
+	ty->setBody( fields );
 
 	vector<llvm::Type*> templatefields;
 	templatefields.push_back( g->bbObjType ); // base
 	templatefields.push_back( template_typesary );
-	auto ty2=llvm::StructType::create( *g->context,templatefields,"_t"+ident+"data" );
 
-	auto temp=new llvm::GlobalVariable( *g->module,ty2,false,llvm::GlobalValue::ExternalLinkage,nullptr,"_t"+ident+"type" );
-	temp->setAlignment(llvm::MaybeAlign(8));
+	sem_type->deftype->setBody( templatefields );
+
+	auto temp=(llvm::GlobalVariable*)sem_type->objty;
 
 	vector<llvm::Constant*> objdata;
 	objdata.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( g->bbField,0 ) ) );   // fields
@@ -133,9 +143,6 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 	structfields.push_back( fieldtypesa );
 	auto init=llvm::ConstantStruct::get( ty2,structfields );
 	temp->setInitializer( init );
-
-	sem_type->structtype=ty;
-	sem_type->objty=temp;
 }
 #endif
 
