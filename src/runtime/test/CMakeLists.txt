@@ -23,6 +23,8 @@ ELSEIF(BB_WIN64)
   set(SOURCES win64.cpp)
 ELSEIF(BB_MINGW32)
   set(SOURCES mingw32.cpp)
+ELSEIF(BB_MINGW64)
+  set(SOURCES mingw64.cpp)
 ENDIF()
 
 if(NOT SOURCES)

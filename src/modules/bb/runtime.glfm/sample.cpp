@@ -33,7 +33,7 @@ void glfmMain( GLFMDisplay *display ) {
 
 	printf("Hello from iOS! RndSeed = %i\n", bbRndSeed());
 
-	ExampleApp *app = calloc(1, sizeof(ExampleApp));
+	ExampleApp *app = (ExampleApp*)calloc(1, sizeof(ExampleApp));
 
 	glfmSetDisplayConfig(display,
 	                     GLFMRenderingAPIOpenGLES2,
@@ -54,7 +54,7 @@ static bool onTouch(GLFMDisplay *display, int touch, GLFMTouchPhase phase, doubl
     if (phase == GLFMTouchPhaseHover) {
         return false;
     }
-    ExampleApp *app = glfmGetUserData(display);
+    ExampleApp *app = (ExampleApp*)glfmGetUserData(display);
     if (phase != GLFMTouchPhaseBegan) {
         int width, height;
         glfmGetDisplaySize(display, &width, &height);
@@ -69,7 +69,7 @@ static bool onTouch(GLFMDisplay *display, int touch, GLFMTouchPhase phase, doubl
 static bool onKey(GLFMDisplay *display, GLFMKey keyCode, GLFMKeyAction action, int modifiers) {
     bool handled = false;
     if (action == GLFMKeyActionPressed) {
-        ExampleApp *app = glfmGetUserData(display);
+        ExampleApp *app = (ExampleApp*)glfmGetUserData(display);
         switch (keyCode) {
             case GLFMKeyLeft:
                 app->offsetX -= 0.1f;
@@ -94,11 +94,11 @@ static bool onKey(GLFMDisplay *display, GLFMKey keyCode, GLFMKeyAction action, i
     return handled;
 }
 
-bb_int_t cube;
+Entity *cube=0;
 
 static void onSurfaceCreated(GLFMDisplay *display, int width, int height) {
 	bbGraphics3D( width,height,0,0 );
-	bb_int_t cam=bbCreateCamera( 0 );
+	Camera *cam=(Camera*)bbCreateCamera( 0 );
 	bbCameraClsColor( cam,0,100,100 );
 
 	cube=bbCreateCube( 0 );
@@ -127,7 +127,7 @@ static void onSurfaceDestroyed(GLFMDisplay *display) {
 }
 
 static void onFrame(GLFMDisplay *display, double frameTime) {
-	ExampleApp *app = glfmGetUserData(display);
+	ExampleApp *app = (ExampleApp*)glfmGetUserData(display);
 
 	bbTurnEntity( cube,0.0f,0.1f,0.0f,1 );
 	bbRenderWorld( 0.0f );

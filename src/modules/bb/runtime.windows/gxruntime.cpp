@@ -505,6 +505,6 @@ bool gxRuntime::graphicsLost(){
 }
 
 void gxRuntime::refreshSystemProperties(){
-	bbSystemProperties["apphwnd"]=itoa( (int)Frame::hwnd );
-	bbSystemProperties["apphinstance"]=itoa( (int)hinst );
+	bbSystemProperties["apphwnd"]=itoa( (bb_int_t)Frame::hwnd );
+	bbSystemProperties["apphinstance"]=itoa( (bb_int_t)hinst );
 }

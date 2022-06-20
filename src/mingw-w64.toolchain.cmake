@@ -1,8 +1,11 @@
 # the name of the target operating system
 set(CMAKE_SYSTEM_NAME Windows)
 
-set(ARCH i686)
-# set(ARCH x86_64)
+set(MINGW true)
+
+if(NOT ARCH)
+  set(ARCH i686)
+endif()
 
 set(CMAKE_C_COMPILER ${ARCH}-w64-mingw32-gcc)
 set(CMAKE_CXX_COMPILER ${ARCH}-w64-mingw32-g++)

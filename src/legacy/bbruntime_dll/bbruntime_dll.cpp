@@ -72,9 +72,9 @@ const char *Runtime::nextSym(){
 	return (sym_it++)->first;
 }
 
-int Runtime::symValue( const char *sym ){
+bb_int_t Runtime::symValue( const char *sym ){
 	map<const char*,void*>::iterator it=syms.find( sym );
-	if( it!=syms.end() ) return (int)it->second;
+	if( it!=syms.end() ) return (bb_int_t)it->second;
 	return -1;
 }
 
@@ -155,7 +155,7 @@ static Sym getSym( void **p ){
 	Sym sym;
 	char *t=(char*)*p;
 	while( char c=*t++ ) sym.name+=c;
-	sym.value=*(int*)t+(int)module_pc;
+	sym.value=*(int*)t+(bb_int_t)module_pc;
 	*p=t+4;return sym;
 }
 
@@ -213,7 +213,7 @@ static void link(){
 	cnt=*(int*)p;p=(int*)p+1;
 	for( k=0;k<cnt;++k ){
 		Sym sym=getSym( &p );
-		if( sym.value<(int)module_pc || sym.value>=(int)module_pc+sz ) fail();
+		if( sym.value<(bb_int_t)module_pc || sym.value>=(bb_int_t)module_pc+sz ) fail();
 		module_syms[sym.name]=sym.value;
 	}
 
@@ -222,7 +222,7 @@ static void link(){
 		Sym sym=getSym( &p );
 		int *pp=(int*)sym.value;
 		int dest=findSym( sym.name );
-		*pp+=dest-(int)pp;
+		*pp+=dest-(bb_int_t)pp;
 	}
 
 	cnt=*(int*)p;p=(int*)p+1;
@@ -237,7 +237,7 @@ static void link(){
 	module_syms.clear();
 }
 
-#ifdef BB_MINGW32
+#ifdef BB_MINGW
 #define BBWINMAIN         _bbWinMain
 #define DLLMAINCRTSTARTUP DllMainCRTStartup
 #else

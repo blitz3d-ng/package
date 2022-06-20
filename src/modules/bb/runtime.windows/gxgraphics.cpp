@@ -81,9 +81,9 @@ void gxGraphics::wipeSystemProperties(){
 }
 
 void gxGraphics::setSystemProperties(){
-	bbSystemProperties["direct3d7"]=itoa( (int)dir3d );
-	bbSystemProperties["direct3ddevice7"]=itoa( (int)dir3dDev );
-	bbSystemProperties["directdraw7"]=itoa( (int)dirDraw );
+	bbSystemProperties["direct3d7"]=itoa( (bb_int_t)dir3d );
+	bbSystemProperties["direct3ddevice7"]=itoa( (bb_int_t)dir3dDev );
+	bbSystemProperties["directdraw7"]=itoa( (bb_int_t)dirDraw );
 }
 
 void gxGraphics::setGamma( int r,int g,int b,float dr,float dg,float db ){

@@ -2,11 +2,11 @@ require 'yaml'
 
 module Blitz3D
   class Module
-    PLATFORMS = %w(win32 win64 mingw32 macos linux ios android emscripten nx).freeze
+    PLATFORMS = %w(win32 win64 mingw32 mingw64 macos linux ios android emscripten nx).freeze
 
     METAPLATFORMS = {
-      desktop: %w(win32 win64 mingw32 macos linux),
-      windows: %w(win32 win64 mingw32),
+      desktop: %w(win32 win64 mingw32 mingw64 macos linux),
+      windows: %w(win32 win64 mingw32 mingw64),
       mobile: %w(ios android),
       web: %w(emscripten)
     }

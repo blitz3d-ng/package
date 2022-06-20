@@ -216,7 +216,7 @@ bool WindowsSystemDriver::execute( const string &cmd_line ){
 
 	SetForegroundWindow( GetDesktopWindow() );
 
-	return (int)ShellExecute( GetDesktopWindow(),0,cmd.c_str(),params.size() ? params.c_str() : 0,0,SW_SHOW )>32;
+	return (bb_int_t)ShellExecute( GetDesktopWindow(),0,cmd.c_str(),params.size() ? params.c_str() : 0,0,SW_SHOW )>32;
 }
 
 int WindowsSystemDriver::getMilliSecs(){

@@ -25,7 +25,11 @@ CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/emsdk/upstream/emscripten/cmake/Module
 endif
 
 ifeq ($(PLATFORM), mingw32)
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake -DARCH=i686
+endif
+
+ifeq ($(PLATFORM), mingw64)
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake -DARCH=x86_64
 endif
 
 ifeq ($(PLATFORM), android)

@@ -21,7 +21,7 @@ ELSEIF(CMAKE_SIZEOF_VOID_P EQUAL 4)
   set(BB32 true)
 ENDIF()
 
-if(BB64 AND NOT MSVC)
+if(BB64 AND NOT MSVC AND NOT MINGW)
   if (DEFINED ENV{LLVM_ROOT})
     set(llvm_path $ENV{LLVM_ROOT})
   else()
@@ -69,8 +69,10 @@ ELSEIF(BB_PLATFORM MATCHES win64)
   add_definitions(-DBB_WIN64 -DBB_MSVC)
 ELSEIF(BB_PLATFORM MATCHES mingw32)
   set (BB_MINGW32 true)
-  set (BB_MINGW true)
-  add_definitions(-DBB_MINGW32 -DBB_MINGW)
+  add_definitions(-DBB_MINGW32)
+ELSEIF(BB_PLATFORM MATCHES mingw64)
+  set (BB_MINGW64 true)
+  add_definitions(-DBB_MINGW64)
 ELSEIF(BB_PLATFORM MATCHES macos)
   set (BB_MACOS true)
   add_definitions(-DBB_MACOS)
@@ -91,6 +93,11 @@ ELSEIF(BB_PLATFORM MATCHES nx)
   add_definitions(-DBB_NX)
 ELSE()
   message(FATAL_ERROR "Unrecognized platform: ${BB_PLATFORM}")
+ENDIF()
+
+IF(BB_MINGW32 OR BB_MINGW64)
+  set (BB_MINGW true)
+  add_definitions(-DBB_MINGW)
 ENDIF()
 
 IF(BB_WIN32 OR BB_WIN64 OR BB_MINGW)
@@ -130,9 +137,11 @@ IF(BB_ENV MATCHES debug OR BB_ENV MATCHES test)
   # TODO: work to remove the need for this...
   add_definitions(-D_DEBUG)
 ELSE()
-  set (CMAKE_BUILD_TYPE Release)
-  set (CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-  set (BB_RELEASE true)
+  set(CMAKE_BUILD_TYPE Release)
+  if(NOT BB_MINGW)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+  endif()
+  set(BB_RELEASE true)
 ENDIF()
 
 if(BB_ENV MATCHES test)
@@ -143,7 +152,8 @@ IF(NOT BB_EMSCRIPTEN)
   set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 ENDIF()
 
-set (BUILD_PATH ${CMAKE_SOURCE_DIR}/_release/toolchains/${BB_PLATFORM})
+set (RELEASE_PATH ${CMAKE_SOURCE_DIR}/_release)
+set (BUILD_PATH   ${RELEASE_PATH}/toolchains/${BB_PLATFORM})
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_PATH}/bin)
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BUILD_PATH}/lib/${BB_ENV})
@@ -155,6 +165,23 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
   set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/lib/${BB_ENV} )
   set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/lib/${BB_ENV}} )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+
+function(target_output_to_bin target)
+  set_target_properties(${target}
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${RELEASE_PATH}/bin
+    LIBRARY_OUTPUT_DIRECTORY ${RELEASE_PATH}/bin
+  )
+
+  foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+    string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
+    set_target_properties(${target}
+      PROPERTIES
+      CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${RELEASE_PATH}/bin
+      CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${RELEASE_PATH}/bin
+    )
+  endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+endfunction()
 
 IF(BB_MSVC)
   IF(BB_STATIC)
@@ -241,7 +268,6 @@ add_subdirectory(src/blitzide2)
 
 IF(BB_MSVC)
   add_subdirectory(src/legacy/blitzide)
-  add_subdirectory(src/legacy/bblaunch)
   add_subdirectory(src/legacy/debugger)
 ENDIF()
 
@@ -250,6 +276,7 @@ IF(BB_DESKTOP OR BB_EMSCRIPTEN)
 ENDIF()
 
 IF(BB_WINDOWS)
+  add_subdirectory(src/legacy/bblaunch)
   add_subdirectory(src/legacy/linker)
 ENDIF()
 

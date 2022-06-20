@@ -74,7 +74,7 @@ void *BBModule::link( Module *libs ){
 
 	for( it=rel_relocs.begin();it!=rel_relocs.end();++it ){
 		if( !findSym( it->second,libs,&dest ) ) return 0;
-		int *p=(int*)(data+it->first);*p+=(dest-(int)p);
+		int *p=(int*)(data+it->first);*p+=(dest-(bb_int_t)p);
 	}
 
 	for( it=abs_relocs.begin();it!=abs_relocs.end();++it ){
@@ -121,7 +121,7 @@ bool BBModule::findSymbol( const char *sym,int *pc ){
 	string t=string(sym);
 	map<string,int>::iterator it=symbols.find( t );
 	if( it==symbols.end() ) return false;
-	*pc=it->second + (int)data;
+	*pc=it->second + (bb_int_t)data;
 	return true;
 }
 
@@ -157,8 +157,8 @@ bool BBModule::createExe( const char *exe_file,const char *dll_file ){
 
 	//find proc address of bbWinMain
 	HMODULE hmod=LoadLibrary( dll_file );if( !hmod ) return false;
-	int proc=(int)GetProcAddress( hmod,"_bbWinMain@0" );
-	int entry=proc-(int)hmod;FreeLibrary( hmod );if( !proc ) return false;
+	bb_int_t proc=(bb_int_t)GetProcAddress( hmod,"_bbWinMain@0" );
+	bb_int_t entry=proc-(bb_int_t)hmod;FreeLibrary( hmod );if( !proc ) return false;
 
 	if( !CopyFile( dll_file,exe_file,false ) ) return false;
 

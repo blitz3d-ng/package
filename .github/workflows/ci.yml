@@ -31,13 +31,17 @@ jobs:
   mingw:
     name: MinGW
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - mingw32
+          # - mingw64
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - run: ./env.sh mingw make ENV=release PLATFORM=mingw32
-      # TODO: figure out why this triggers an infinite loop
-      # - run: ./env.sh mingw sh ./test/entry.mingw32.sh
+      - run: ./env.sh mingw make ENV=release PLATFORM=${{ matrix.arch }}
+      - run: ./env.sh mingw sh ./test/entry.mingw32.sh
 
   macos:
     name: macOS

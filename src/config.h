@@ -27,11 +27,11 @@
 #define VERSION		(BASE_VER|PRO_F|DEMO_F|EDU_F)
 
 #ifdef BB64
-typedef long   bb_int_t;
-typedef double bb_float_t;
+typedef long long int bb_int_t;
+typedef double        bb_float_t;
 #else
-typedef int    bb_int_t;
-typedef float  bb_float_t;
+typedef int   bb_int_t;
+typedef float bb_float_t;
 #endif
 
 typedef bb_int_t bb_ptr_t;
