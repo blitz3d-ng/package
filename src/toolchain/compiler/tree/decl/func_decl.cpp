@@ -70,12 +70,18 @@ void FuncDeclNode::translate2( Codegen_LLVM *g ){
 
 	for( int k=0;k<sem_type->params->size();k++ ){
 		Decl *d=sem_env->decls->decls[k];
-		d->arg_index=k;
+		d->ptr=g->builder->CreateAlloca( d->type->llvmType( g->context.get() ),nullptr,d->name );
+		g->builder->CreateStore( g->builder->GetInsertBlock()->getParent()->getArg( k ),d->ptr );
 	}
 
 	createVars2( sem_env,g );
 
 	stmts->translate2( g );
+
+	auto final_block=g->builder->GetInsertBlock();
+	if( final_block->size()==0 ){
+		final_block->eraseFromParent();
+	}
 }
 #endif
 

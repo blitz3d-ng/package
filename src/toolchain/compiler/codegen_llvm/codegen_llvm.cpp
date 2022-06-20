@@ -23,6 +23,8 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 
 	builder=new IRBuilder<>( *context );
 
+	voidPtr=llvm::PointerType::get( llvm::Type::getVoidTy( *context ),0 );
+
 	// initialize stdlib constructs...
 	bbType=llvm::StructType::create( *context,"BBType" );
 	bbField=llvm::StructType::create( *context,"BBField" );
@@ -48,7 +50,7 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	bbObjType->setBody( objtypeels );
 
 	std::vector<llvm::Type*> arrayels;
-	arrayels.push_back( llvm::PointerType::get( llvm::Type::getVoidTy( *context ),0 ) );  // data
+	arrayels.push_back( voidPtr );  // data
 	arrayels.push_back( llvm::PointerType::get( llvm::Type::getInt64Ty( *context ),0 ) ); // elementType
 	arrayels.push_back( llvm::PointerType::get( llvm::Type::getInt64Ty( *context ),0 ) ); // dims
 	bbArray->setBody( arrayels );
@@ -96,6 +98,10 @@ Value *Codegen_LLVM::CastToArrayPtr( llvm::Value *v ){
 	return builder->CreateBitOrPointerCast( v,aryty );
 }
 
+llvm::Constant *Codegen_LLVM::constantInt( int i ){
+	return llvm::ConstantInt::get( *context,llvm::APInt( 64,i ) );
+}
+
 llvm::BasicBlock *Codegen_LLVM::getLabel( std::string &ident ){
 	if( !labels[ident] ){
 		labels[ident] = llvm::BasicBlock::Create( *context, "_l"+ident );
@@ -104,9 +110,14 @@ llvm::BasicBlock *Codegen_LLVM::getLabel( std::string &ident ){
 	return labels[ident];
 }
 
-llvm::GlobalVariable *Codegen_LLVM::getArray( std::string &ident ){
+llvm::GlobalVariable *Codegen_LLVM::getArray( std::string &ident, int dims ){
 	if( !arrays[ident] ){
-		arrayTypes[ident]=llvm::StructType::create( *context,"_a"+ident+"data" );
+		std::vector<llvm::Type*> els;
+		els.push_back( bbArray );  // base
+		for( int k=0;k<dims;++k ) {
+			els.push_back( llvm::Type::getInt64Ty( *context ) ); // scales
+		}
+		arrayTypes[ident]=llvm::StructType::create( *context,els,"_a"+ident+"data" );
 		arrays[ident]=(llvm::GlobalVariable*)module->getOrInsertGlobal( "_a"+ident,arrayTypes[ident] );
 	}
 
@@ -127,7 +138,7 @@ void Codegen_LLVM::optimize(){
 		optimizer->run( F );
 	}
 
-	// module->print(errs(), nullptr);
+	// module->print( errs(),nullptr );
 }
 
 bool Codegen_LLVM::verify(){

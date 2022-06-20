@@ -24,9 +24,13 @@ void RestoreNode::translate2( Codegen_LLVM *g ){
 	llvm::Type *void_ty=llvm::Type::getVoidTy( *g->context );
 	llvm::Type *int_ty=Type::int_type->llvmType( g->context.get() );
 
-	vector<llvm::Value*> indices;
-	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,sem_label->data_sz*2 ) ) );
-	auto t=g->builder->CreateGEP( int_ty,g->bbData,indices );
+	llvm::Value *t=g->bbData;
+	if( sem_label ){
+		cout<<sem_label->data_sz<<endl;
+		vector<llvm::Value*> indices;
+		indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,sem_label->data_sz*2 ) ) );
+		t=g->builder->CreateGEP( int_ty,t,indices );
+	}
 
 	g->CallIntrinsic( "_bbRestore",void_ty,1,g->builder->CreateBitOrPointerCast( t,llvm::PointerType::get( int_ty,0 ) ) );
 }

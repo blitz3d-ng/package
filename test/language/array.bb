@@ -20,8 +20,7 @@ Dim tiles(5,5)
 
 tiles(1,1) = 1
 tiles(2,1) = 2
-tiles(1,2) = 3
-tiles(2,2) = 4
+FillTiles()
 
 Expect tiles(1,1) = 1, "array index 1,1 is 1"
 Expect tiles(2,1) = 2, "array index 2,1 is 2"
@@ -39,3 +38,9 @@ levels(i) = New Level
 levels(i)\name = "Intro"
 
 Expect levels(i)\name = "Intro", "Level 1 is Intro"
+
+Function FillTiles()
+	; make sure array global/type info available in codegen before dim
+	tiles(1,2) = 3
+	tiles(2,2) = 4
+End Function

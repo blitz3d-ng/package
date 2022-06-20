@@ -22,8 +22,8 @@ TNode *FieldVarNode::translate( Codegen *g ){
 #ifdef USE_LLVM
 llvm::Value *FieldVarNode::translate2( Codegen_LLVM *g ){
 	vector<llvm::Value*> indices;
-	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
-	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, sem_field->offset/4+1) ) );
+	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,0 ) ) );
+	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,sem_field->offset/4+1 ) ) );
 	auto el=g->builder->CreateGEP( expr->sem_type->structType()->structtype,expr->translate2( g ),indices );
 
 	return el;

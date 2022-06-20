@@ -85,7 +85,7 @@ struct BBVecType : public BBType{
 struct BBVecType{
 	BBType base;
 #endif
-	int size;
+	bb_int_t size;
 	BBType *elementType;
 };
 

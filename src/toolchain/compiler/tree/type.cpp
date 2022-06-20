@@ -203,9 +203,10 @@ llvm::GlobalVariable *VectorType::llvmDef( Codegen_LLVM *g ){
 		if( type==Type::int_type ) t="_bbIntType";
 		else if( type==Type::float_type ) t="_bbFltType";
 		else if( type==Type::string_type ) t="_bbStrType";
-		else if( StructType *s=type->structType() ) gt=(llvm::GlobalVariable*)s->objty;
+		else if( StructType *s=type->structType() ) gt=(llvm::GlobalVariable*)s->llvmTypeDef( g );
 		else if( VectorType *v=type->vectorType() ) t=label;
 		if( !gt ) {
+			assert( t.size() );
 			gt=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( t,g->bbType );
 		}
 

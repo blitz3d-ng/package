@@ -48,15 +48,27 @@ void ReturnNode::translate( Codegen *g ){
 void ReturnNode::translate2( Codegen_LLVM *g ){
 	// multiple `ret` calls in one block results in an error...there is probably
 	// a better way to do this.
-	if( g->builder->GetInsertBlock()->getTerminator() ) {
-		return;
-	}
+	// if( g->builder->GetInsertBlock()->getTerminator() ) {
+	// 	return;
+	// }
+
+	auto func=g->builder->GetInsertBlock()->getParent();
+	auto block=llvm::BasicBlock::Create( *g->context,"_ret",func );
+
+	g->builder->CreateBr( block );
+	g->builder->SetInsertPoint( block );
 
 	llvm::Value *v=expr
 		?expr->translate2( g )
 		:expr->sem_type->llvmZero( g->context.get() );
 
+	if( expr->sem_type->structType() ){
+		v=g->builder->CreateBitOrPointerCast( v,expr->sem_type->llvmType( g->context.get() ) );
+	}
+
 	g->builder->CreateRet( v );
+	auto cont=llvm::BasicBlock::Create( *g->context,"ret_cont",func );
+	g->builder->SetInsertPoint( cont );
 }
 #endif
 

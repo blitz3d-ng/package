@@ -57,20 +57,12 @@ void DimNode::translate2( Codegen_LLVM *g ){
 	else if( ty==Type::string_type ) et=3;
 	else et=5;
 
-	auto glob=g->getArray( ident );
+	auto glob=g->getArray( ident,sem_type->arrayType()->dims );
 	auto data_ty=g->arrayTypes[ident];
-
-	std::vector<llvm::Type*> els;
-	els.push_back( g->bbArray );  // base
-	for( int k=0;k<exprs->size();++k ) {
-		els.push_back( llvm::Type::getInt64Ty( *g->context ) ); // scales
-	}
-	data_ty->setBody( els );
-
 
 	vector<llvm::Constant*> fields;
 	fields.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( llvm::Type::getVoidTy( *g->context ),0 ) ) );
-	fields.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,et ) ) );
+	fields.push_back( g->constantInt( et ) );
 	fields.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,exprs->size() ) ) );
 	auto ary=llvm::ConstantStruct::get( g->bbArray,fields );
 

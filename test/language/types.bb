@@ -9,6 +9,17 @@ Type Player
 	Field name$, x, y
 End Type
 
+Function EchoPlayer.Player(p.Player)
+	; verifying casting of null ret
+	return p
+End Function
+
+Expect First Game = Null, "No games"
+Expect Last  Game = Null, "No games"
+
+Expect Last  Player = Null, "No players"
+Expect First Player = Null, "No players"
+
 game.Game = New Game
 game\name = "Demo"
 
@@ -32,6 +43,10 @@ p3\name = "Trevor"
 p3\x = 63
 p3\y = 12
 game\player[2] = p3
+
+Expect game\player[0] = p1, "Game player 1 is p1"
+Expect game\player[1] = p2, "Game player 2 is p2"
+Expect game\player[2] = p3, "Game player 3 is p3"
 
 Expect p1 <> Null, "Player 1 exists"
 Expect p1\name = "Kevin", "Player 1 name = Kevin"

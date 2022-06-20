@@ -66,7 +66,12 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 	for( int k=0;k<sem_type->fields->size();++k ){
 		Decl *field=sem_type->fields->decls[k];
 		Type *type=field->type;
-		fields.push_back( type->llvmType( g->context.get() ) );
+		type->llvmType( g->context.get() );
+		if( VectorType *v=type->vectorType() ){
+			fields.push_back( v->ty );
+		}else{
+			fields.push_back( type->llvmType( g->context.get() ) );
+		}
 
 		llvm::GlobalVariable* gt=0;
 		string t;

@@ -39,7 +39,7 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 	auto void_ty=llvm::PointerType::get( llvm::Type::getVoidTy( *g->context ),0 );
 	auto ty=sem_type->llvmType( g->context.get() );
 
-	auto glob=g->getArray( ident );
+	auto glob=g->getArray( ident,sem_decl->type->arrayType()->dims );
 
 	vector<llvm::Value*> di;
 	di.push_back( zero );
@@ -52,8 +52,8 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 		auto e=exprs->exprs[k]->translate2( g );
 		if( k ){
 			vector<llvm::Value*> idx;
-			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
-			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 1+k) ) );
+			idx.push_back( zero );
+			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,1+k ) ) );
 			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( glob->getType()->getPointerElementType(),glob,idx ) );
 			e=g->builder->CreateAdd( t,g->builder->CreateMul( e,s ) );
 		}

@@ -14,13 +14,9 @@ TNode *DeclVarNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 llvm::Value *DeclVarNode::load2( Codegen_LLVM *g ){
-	if( sem_decl->ptr ) {
-		llvm::Value *t=translate2( g );
-		if( sem_type==Type::string_type ) return g->CallIntrinsic( "_bbStrLoad",sem_type->llvmType( g->context.get() ),1,t );
-		return g->builder->CreateLoad( sem_decl->type->llvmType( g->context.get() ),sem_decl->ptr );
-	} else {
-		return g->builder->GetInsertBlock()->getParent()->getArg( sem_decl->arg_index );
-	}
+	llvm::Value *t=translate2( g );
+	if( sem_type==Type::string_type ) return g->CallIntrinsic( "_bbStrLoad",sem_type->llvmType( g->context.get() ),1,t );
+	return g->builder->CreateLoad( sem_decl->type->llvmType( g->context.get() ),sem_decl->ptr );
 }
 
 llvm::Value *DeclVarNode::translate2( Codegen_LLVM *g ){
