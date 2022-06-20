@@ -57,7 +57,9 @@ void DimNode::translate2( Codegen_LLVM *g ){
 	else if( ty==Type::string_type ) et=3;
 	else et=5;
 
-	auto data_ty=llvm::StructType::create( *g->context,"_a"+ident+"data" );
+	auto glob=g->getArray( ident );
+	auto data_ty=g->arrayTypes[ident];
+
 	std::vector<llvm::Type*> els;
 	els.push_back( g->bbArray );  // base
 	for( int k=0;k<exprs->size();++k ) {
@@ -65,7 +67,6 @@ void DimNode::translate2( Codegen_LLVM *g ){
 	}
 	data_ty->setBody( els );
 
-	auto glob=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( "_a"+ident,data_ty );
 
 	vector<llvm::Constant*> fields;
 	fields.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( llvm::Type::getVoidTy( *g->context ),0 ) ) );

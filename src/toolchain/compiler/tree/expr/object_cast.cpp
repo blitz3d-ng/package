@@ -21,8 +21,9 @@ TNode *ObjectCastNode::translate( Codegen *g ){
 #ifdef USE_LLVM
 llvm::Value *ObjectCastNode::translate2( Codegen_LLVM *g ){
 	auto ty=llvm::PointerType::get( g->bbObj,0 );
+	auto objty=g->builder->CreateBitOrPointerCast( sem_type->structType()->objty,llvm::PointerType::get( g->bbObjType,0 ) );
 	auto t=expr->translate2( g );
-	t=g->CallIntrinsic( "_bbObjFromHandle",ty,2,t,sem_type->structType()->objty );
+	t=g->CallIntrinsic( "_bbObjFromHandle",ty,2,t,objty );
 	return g->builder->CreateBitOrPointerCast( t,llvm::PointerType::get( sem_type->structType()->structtype,0 ) );
 }
 #endif

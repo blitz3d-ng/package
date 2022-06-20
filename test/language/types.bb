@@ -1,6 +1,7 @@
 
 Type Game
 	Field name$
+	Field player.Player[5]
 End Type
 
 Type Player
@@ -16,18 +17,21 @@ p1\game = game
 p1\name = "Kevin"
 p1\x = 20
 p1\y = 10
+game\player[0] = p1
 
 p2.Player = New Player
 p2\game = game
 p2\name = "Ryan"
 p2\x = 40
 p2\y = 23
+game\player[1] = p2
 
 p3.Player = New Player
 p3\game = game
 p3\name = "Trevor"
 p3\x = 63
 p3\y = 12
+game\player[2] = p3
 
 Expect p1 <> Null, "Player 1 exists"
 Expect p1\name = "Kevin", "Player 1 name = Kevin"
@@ -94,7 +98,22 @@ For g.Game = Each Game
 	count = count + 1
 Next
 
-Expect count = 3, "There should be 1 games."
+Expect count = 1, "There should be 1 games."
 
+; for each exit test...
+
+count = 0
+For g.Game = Each Game
+	Exit
+Next
+
+gamehandle = Handle(game)
+g.Game = Object.Game(gamehandle)
+
+Expect gamehandle > 0, "There is a handle."
+Expect g <> Null, "The object has been recreated from the handle."
+Expect g\name = "Demo" , "The recreated object has the right name."
+
+Delete game
 Delete Each Game
 Expect First Game = Null, "No more games..."

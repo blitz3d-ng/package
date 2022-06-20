@@ -39,7 +39,7 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 	auto void_ty=llvm::PointerType::get( llvm::Type::getVoidTy( *g->context ),0 );
 	auto ty=sem_type->llvmType( g->context.get() );
 
-	auto glob=(llvm::GlobalVariable*)g->module->getGlobalVariable( "_a"+ident );
+	auto glob=g->getArray( ident );
 
 	vector<llvm::Value*> di;
 	di.push_back( zero );

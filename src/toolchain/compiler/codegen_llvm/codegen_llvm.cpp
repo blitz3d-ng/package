@@ -96,12 +96,21 @@ Value *Codegen_LLVM::CastToArrayPtr( llvm::Value *v ){
 	return builder->CreateBitOrPointerCast( v,aryty );
 }
 
-llvm::BasicBlock *Codegen_LLVM::getLabel( std::string ident ){
+llvm::BasicBlock *Codegen_LLVM::getLabel( std::string &ident ){
 	if( !labels[ident] ){
 		labels[ident] = llvm::BasicBlock::Create( *context, "_l"+ident );
 	}
 
 	return labels[ident];
+}
+
+llvm::GlobalVariable *Codegen_LLVM::getArray( std::string &ident ){
+	if( !arrays[ident] ){
+		arrayTypes[ident]=llvm::StructType::create( *context,"_a"+ident+"data" );
+		arrays[ident]=(llvm::GlobalVariable*)module->getOrInsertGlobal( "_a"+ident,arrayTypes[ident] );
+	}
+
+	return arrays[ident];
 }
 
 void Codegen_LLVM::optimize(){

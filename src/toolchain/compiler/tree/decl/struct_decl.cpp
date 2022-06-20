@@ -74,7 +74,7 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 		else if( type==Type::float_type ) t="_bbFltType";
 		else if( type==Type::string_type ) t="_bbStrType";
 		else if( StructType *s=type->structType() ) gt=(llvm::GlobalVariable*)s->objty;
-		else if( VectorType *v=type->vectorType() ) t=v->label;
+		else if( VectorType *v=type->vectorType() ) gt=v->llvmDef( g );
 
 		if( !gt ) {
 			gt=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( t,g->bbType );

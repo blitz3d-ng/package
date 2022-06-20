@@ -76,7 +76,11 @@ void ForEachNode::translate2( Codegen_LLVM *g ){
 	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objFirst,ity,2,l,r ),bty ),loop,cont );
 
 	g->builder->SetInsertPoint( loop );
+
+	auto oldBreakBlock=g->breakBlock;
+	g->breakBlock=cont;
 	stmts->translate2( g );
+	g->breakBlock=oldBreakBlock;
 
 	// debug( nextPos,g );
 	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objNext,ity,1,l ),bty ),loop,cont );

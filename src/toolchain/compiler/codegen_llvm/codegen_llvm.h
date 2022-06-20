@@ -33,12 +33,16 @@ public:
 	llvm::StructType *bbArray;
 	llvm::StructType *bbVecType;
 
+	std::map<std::string,llvm::GlobalVariable*> arrays;
+	std::map<std::string,llvm::StructType*> arrayTypes;
+
 	std::map<std::string,llvm::BasicBlock*> labels;
 
 	llvm::GlobalVariable *bbData;
 	std::vector<llvm::Constant*> data_values;
 
-	llvm::BasicBlock *getLabel( std::string ident );
+	llvm::BasicBlock *getLabel( std::string &ident );
+	llvm::GlobalVariable *getArray( std::string &ident );
 
 	void optimize();
 	bool verify();
