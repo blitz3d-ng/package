@@ -1,3 +1,4 @@
+/* Win32 runtime dynamic link lib */
 
 #pragma warning( disable:4786 )
 
@@ -29,14 +30,6 @@ public:
 	virtual void debugSys( void *msg ){}
 };
 
-static HINSTANCE hinst;
-static map<const char*,void*> syms;
-map<const char*,void*>::iterator sym_it;
-
-static void linkSym( const char *sym,void *pc ){
-	syms[sym]=pc;
-}
-
 #ifdef PRODEMO
 static void killer(){
 	ExitProcess( -1 );
@@ -55,36 +48,6 @@ static void __cdecl seTranslator( unsigned int u,EXCEPTION_POINTERS* pExp ){
 		bbruntime_panic( "Stack overflow!" );
 	}
 	bbruntime_panic( "Unknown runtime exception" );
-}
-
-int Runtime::version(){
-	return VERSION;
-}
-
-const char *Runtime::nextSym(){
-	if( !syms.size() ){
-		bbruntime_link( linkSym );
-		sym_it=syms.begin();
-	}
-	if( sym_it==syms.end() ){
-		syms.clear();return 0;
-	}
-	return (sym_it++)->first;
-}
-
-bb_int_t Runtime::symValue( const char *sym ){
-	map<const char*,void*>::iterator it=syms.find( sym );
-	if( it!=syms.end() ) return (bb_int_t)it->second;
-	return -1;
-}
-
-void Runtime::startup( HINSTANCE h ){
-	hinst=h;
-}
-
-void Runtime::shutdown(){
-	trackmem( false );
-	syms.clear();
 }
 
 void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
@@ -122,16 +85,6 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 	_control87( _CW_DEFAULT,0xfffff );
 	_set_se_translator( old_trans );
 #endif
-}
-
-void Runtime::checkmem( streambuf *buf ){
-	ostream out( buf );
-	::checkmem( out );
-}
-
-Runtime *__cdecl runtimeGetRuntime(){
-	static Runtime runtime;
-	return &runtime;
 }
 
 /********************** BUTT UGLY DLL->EXE HOOK! *************************/
@@ -269,7 +222,7 @@ int __stdcall BBWINMAIN(){
 #endif
 
 	runtime=runtimeGetRuntime();
-	runtime->startup( inst );
+	runtime->startup();
 
 	link();
 

@@ -21,7 +21,6 @@ extern int dbg_ver;
 
 //openLibs
 extern string home;
-#ifdef WIN32
 extern Linker *linkerLib;
 extern Runtime *runtimeLib;
 
@@ -38,5 +37,3 @@ const char *openLibs( const string rt );
 const char *linkLibs( const string rt );
 
 void closeLibs();
-
-#endif

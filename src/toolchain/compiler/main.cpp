@@ -348,9 +348,7 @@ int main( int argc,char *argv[] ){
 
 	ProgNode *prog=0;
 	Environ *env=0;
-#ifdef WIN32
 	Module *module=0;
-#endif
 
 #ifdef USE_LLVM
 	string obj_file( string(tmpnam(0))+".o" );
@@ -456,7 +454,7 @@ int main( int argc,char *argv[] ){
 		if ( usellvm ) {
 #ifdef USE_LLVM
 		codegen2.module.get()->setDataLayout( jit->getDataLayout() );
-		ret=jit->run( &codegen2, home, rt );
+		ret=jit->run( runtimeLib, &codegen2, home, rt );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();

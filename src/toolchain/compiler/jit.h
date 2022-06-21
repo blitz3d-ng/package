@@ -35,6 +35,7 @@
 #include <llvm/Target/TargetMachine.h>
 
 #include "codegen_llvm/codegen_llvm.h"
+#include "libs.h"
 
 #ifdef BB_WINDOWS
 #define BB_SO_EXT "dll"
@@ -132,12 +133,9 @@ public:
     return ES->lookup({&MainJD}, Mangle(Name.str()));
   }
 
-	int run( Codegen_LLVM *codegen, const std::string &home, const std::string &rt ) {
-		std::string toolchain=home+"/toolchains/" BB_PLATFORM;
-		string runtimeLib( toolchain+"/lib/" BB_ENV "/libruntime."+rt+".shared." BB_SO_EXT );
-
+	int run( Runtime *runtime, Codegen_LLVM *codegen, const std::string &home, const std::string &rt ) {
 		MainJD.addGenerator(cantFail(llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(DL.getGlobalPrefix())));
-		MainJD.addGenerator(cantFail(llvm::orc::DynamicLibrarySearchGenerator::Load( runtimeLib.c_str(),DL.getGlobalPrefix() )));
+		MainJD.addGenerator(cantFail(llvm::orc::DynamicLibrarySearchGenerator::Load( runtime->path.c_str(),DL.getGlobalPrefix() )));
 
 	  auto RT = getMainJITDylib().createResourceTracker();
 

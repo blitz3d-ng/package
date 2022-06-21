@@ -3,6 +3,17 @@
 
 #ifdef WIN32
 #include <windows.h>
+#define OPENLIB( path ) LoadLibrary( path )
+#define CLOSELIB( handle ) FreeLibrary( handle )
+#define LIBSYM( handle,sym ) GetProcAddress( handle,sym );
+#define LIBPATH "\\bin\\" RUNTIMENAME "."+rt+"." LIBSUFFIX
+#else
+#include <dlfcn.h>
+#define OPENLIB( path ) dlopen( path,RTLD_LAZY )
+#define CLOSELIB( handle ) dlclose( handle )
+#define LIBSYM( handle,sym ) dlsym( handle,sym );
+#define LIBPATH "/toolchains/lib/" BB_TRIPLE "/libruntime."+rt+"." LIBSUFFIX
+typedef void* HMODULE;
 #endif
 
 #include <json.hpp>
@@ -23,9 +34,6 @@ vector<string> modules;
 vector<string> keyWords;
 vector<UserFunc> userFuncs;
 
-#ifndef WIN32
-typedef void* HMODULE;
-#endif
 static HMODULE linkerHMOD,runtimeHMOD;
 
 static Type *_typeof( int c ){
@@ -68,7 +76,6 @@ static int next( istream &in ){
 }
 
 static const char *linkRuntime(string rt){
-#ifdef WIN32
 	while( const char *sym=runtimeLib->nextSym() ){
 
 		string s( sym );
@@ -90,6 +97,9 @@ static const char *linkRuntime(string rt){
 
 		keyWords.push_back( s );
 
+		cout<<endl;
+		cout<<s<<endl;
+
 		//global!
 		int start=0,end;
 		Type *t=Type::void_type;
@@ -101,11 +111,15 @@ static const char *linkRuntime(string rt){
 		end=k;
 		DeclSeq *params=d_new DeclSeq();
 		string n=s.substr( start,end-start );
+		cout<<n<<endl;
+
 		while( k<s.size() ){
 			Type *t=_typeof(s[k++]);
 			int from=k;
 			for( ;isalnum(s[k])||s[k]=='_';++k ){}
 			string str=s.substr( from,k-from );
+			cout<<"  "<<str<<endl;
+
 			ConstType *defType=0;
 			if( s[k]=='=' ){
 				int from=++k;
@@ -113,15 +127,18 @@ static const char *linkRuntime(string rt){
 					for( ++k;s[k]!='\"';++k ){}
 					string t=s.substr( from+1,k-from-1 );
 					defType=d_new ConstType( t );++k;
+					cout<<"    s:"<<t<<endl;
 				}else{
 					if( s[k]=='-' ) ++k;
 					for( ;isdigit( s[k] );++k ){}
 					if( t==Type::int_type ){
 						int n=atoi( s.substr( from,k-from ) );
 						defType=d_new ConstType( n );
+						cout<<"    i:"<<n<<endl;
 					}else{
 						float n=atof( s.substr( from,k-from ) );
 						defType=d_new ConstType( n );
+						cout<<"    f:"<<n<<endl;
 					}
 				}
 			}
@@ -129,69 +146,11 @@ static const char *linkRuntime(string rt){
 		}
 
 		FuncType *f=d_new FuncType( t,params,false,cfunc );
+		f->symbol="bb"+n;
 		n=tolower(n);
 		runtimeEnviron->funcDecls->insertDecl( n,f,DECL_FUNC );
 		runtimeModule->addSymbol( ("_f"+n).c_str(),pc );
 	}
-#else
-	json index;
-	ifstream i(home+"/toolchains/" BB_PLATFORM "/"+rt+".runtime.json");
-	if( !i.good() ){
-		cout << "Missing '" << rt << "' runtime file for " BB_PLATFORM "." << endl;
-		exit(1);
-	}
-	i >> index;
-
-#ifdef USE_LLVM
-	runtimeEnviron->rt = rt;
-#endif
-
-	for( auto& module:index["modules"] ) {
-		modules.push_back( module["id"] );
-
-#ifdef USE_LLVM
-		runtimeEnviron->modules.push_back( module["id"] );
-#endif
-	}
-
-	for( auto& command:index["commands"] ) {
-		string n=command["name"];
-		bool cfunc=false;
-
-		keyWords.push_back( n );
-
-		string return_type=command["return_type"].is_string() ? command["return_type"] : "";
-
-		Type *t;
-
-		DeclSeq *params=d_new DeclSeq();
-		for( auto& param:command["parameters"] ) {
-			string ty=param["type"].is_string() ? param["type"] : "";
-			t=_typeof( ty[0] );
-
-			ConstType *defType=0;
-
-			json defValue=param["default"];
-			if( defValue.is_string() ){
-				defType=new ConstType( defValue.get<string>() );
-			}else if( defValue.is_number() ){
-				if( t==Type::int_type ){
-					defType=new ConstType( defValue.get<int>() );
-				}else{
-					defType=new ConstType( defValue.get<float>() );
-				}
-			}
-			Decl *d=params->insertDecl( param["ident"],t,DECL_PARAM,defType );
-		}
-
-		t=_typeof( return_type[0] );
-		FuncType *f=d_new FuncType( t,params,false,cfunc );
-		f->symbol=command["symbol"];
-		n=tolower(n);
-		runtimeEnviron->funcDecls->insertDecl( n,f,DECL_FUNC );
-	}
-
-#endif
 	return 0;
 }
 
@@ -333,18 +292,15 @@ const char *openLibs( const string rt ){
 	home=string(p);
 #endif
 
-#ifdef WIN32
-	linkerHMOD=LoadLibrary( (home+"/bin/" LINKERNAME ".dll").c_str() );
-	if( !linkerHMOD ) return "Unable to open " LINKERNAME ".dll";
+	linkerHMOD=OPENLIB( (home+"/bin/" LINKERNAME "." LIBSUFFIX).c_str() );
+	if( !linkerHMOD ) return "Unable to open " LINKERNAME "." LIBSUFFIX;
 
 	typedef Linker *(__cdecl*GetLinker)();
-	GetLinker gl=(GetLinker)GetProcAddress( linkerHMOD,"linkerGetLinker" );
-	if( !gl ) return "Error in " LINKERNAME ".dll";
+	GetLinker gl=(GetLinker)LIBSYM( linkerHMOD,"linkerGetLinker" );
+	if( !gl ) return "Error in " LINKERNAME "." LIBSUFFIX;
 	linkerLib=gl();
-#endif
 
-#ifdef WIN32
-	runtimeHMOD=LoadLibrary( (home+"\\bin\\" RUNTIMENAME "."+rt+".dll").c_str() );
+	runtimeHMOD=OPENLIB( (home+LIBPATH).c_str() );
 	if( !runtimeHMOD ){
 		string msg("Unable to open " RUNTIMENAME "."+rt+".");
 		strcpy( err,msg.c_str() );
@@ -352,32 +308,25 @@ const char *openLibs( const string rt ){
 	}
 
 	typedef Runtime *(__cdecl*GetRuntime)();
-	GetRuntime gr=(GetRuntime)GetProcAddress( runtimeHMOD,"runtimeGetRuntime" );
+	GetRuntime gr=(GetRuntime)LIBSYM( runtimeHMOD,"runtimeGetRuntime" );
 	if( !gr ){
-		string msg("Error in " RUNTIMENAME "."+rt+".dll");
+		string msg("Error in " RUNTIMENAME "."+rt+"." LIBSUFFIX);
 		strcpy( err,msg.c_str() );
 		return err;
 	}
 	runtimeLib=gr();
-#endif
+	runtimeLib->path=home+LIBPATH;
 
 	bcc_ver=VERSION;
-#ifdef WIN32
 	lnk_ver=linkerLib->version();
 	run_ver=runtimeLib->version();
-#else
-	lnk_ver=run_ver=bcc_ver;
-#endif
 
 	if( (lnk_ver>>16)!=(bcc_ver>>16) ||
 		(run_ver>>16)!=(bcc_ver>>16) ||
 		(lnk_ver>>16)!=(bcc_ver>>16) ) return "Library version error";
 
-#ifdef WIN32
-	runtimeLib->startup( GetModuleHandle(0) );
-
+	runtimeLib->startup();
 	runtimeModule=linkerLib->createModule();
-#endif
 	runtimeEnviron=d_new Environ( "",Type::int_type,0,0 );
 
 	keyWords.clear();
@@ -400,10 +349,8 @@ void closeLibs(){
 	delete runtimeEnviron;
 	if( linkerLib ) linkerLib->deleteModule( runtimeModule );
 	if( runtimeLib ) runtimeLib->shutdown();
-#ifdef WIN32
-	if( runtimeHMOD ) FreeLibrary( runtimeHMOD );
-	if( linkerHMOD ) FreeLibrary( linkerHMOD );
-#endif
+	if( runtimeHMOD ) CLOSELIB( runtimeHMOD );
+	if( linkerHMOD ) CLOSELIB( linkerHMOD );
 
 	runtimeEnviron=0;
 	linkerLib=0;

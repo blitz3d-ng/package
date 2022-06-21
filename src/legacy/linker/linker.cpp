@@ -35,7 +35,11 @@ private:
 		if( findSymbol( t.c_str(),n ) ) return true;
 		if( libs->findSymbol( t.c_str(),n ) ) return true;
 		string err="Symbol '"+t+"' not found";
+#ifdef BB_WINDOWS
 		MessageBox( GetDesktopWindow(),err.c_str(),"Blitz Linker Error",MB_TOPMOST|MB_SETFOREGROUND );
+#else
+		cerr<<err<<endl;
+#endif
 		return false;
 	}
 
@@ -54,12 +58,14 @@ BBModule::BBModule():data(0),data_sz(0),pc(0),linked(false){
 }
 
 BBModule::~BBModule(){
+#ifdef BB_WINDOWS // TODO: probably memleak...
 	if( linked ) VirtualFree( data,0,MEM_RELEASE );
 	else delete[] data;
+#endif
 }
 
 void *BBModule::link( Module *libs ){
-
+#ifdef BB_WINDOWS
 	if( linked ) return data;
 
 	int dest;
@@ -83,6 +89,9 @@ void *BBModule::link( Module *libs ){
 	}
 
 	return data;
+#else
+	return 0;
+#endif
 }
 
 int BBModule::getPC(){
@@ -150,7 +159,7 @@ Linker *__cdecl linkerGetLinker(){
 }
 
 bool BBModule::createExe( const char *exe_file,const char *dll_file ){
-
+#ifdef BB_WINDOWS
 #ifdef DEMO
 	return false;
 #else
@@ -210,5 +219,8 @@ bool BBModule::createExe( const char *exe_file,const char *dll_file ){
 	closeImage();
 
 	return true;
+#endif
+#else
+	return false;
 #endif
 }

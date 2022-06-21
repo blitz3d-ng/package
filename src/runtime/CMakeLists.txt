@@ -27,9 +27,9 @@ macro(bb_runtime id)
   endif()
 
   add_library(${name}.shared SHARED ${SOURCES})
+  target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
 
   if(BB_WINDOWS)
-    target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
     target_output_to_bin(${name}.shared)
 
     if(BB32)
@@ -52,11 +52,9 @@ macro(bb_runtime id)
       set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " -static")
     endif()
   else()
-    target_link_libraries(${name}.shared ${name}.static)
-
     set_target_properties(${name}.shared
       PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY ${TOOLCHAIN_PATH}/lib/${BB_PLATFORM}
+      LIBRARY_OUTPUT_DIRECTORY ${TOOLCHAIN_PATH}/lib/${BB_TRIPLE}
       OUTPUT_NAME "runtime.${id}"
     )
   endif()

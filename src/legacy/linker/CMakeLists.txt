@@ -6,12 +6,16 @@ target_link_libraries(linker stdutil)
 
 target_output_to_bin(linker)
 
-if(BB_MINGW)
-  set_property(TARGET linker APPEND_STRING PROPERTY LINK_FLAGS " -static")
-else()
-  set_target_properties(linker PROPERTIES LINK_FLAGS "/subsystem:windows")
-endif()
+set_target_properties(linker PROPERTIES PREFIX "")
 
-if(BB64)
-  set_target_properties(linker PROPERTIES OUTPUT_NAME "linker64")
+if(BB_WINDOWS)
+  if(BB_MINGW)
+    set_property(TARGET linker APPEND_STRING PROPERTY LINK_FLAGS " -static")
+  else()
+    set_target_properties(linker PROPERTIES LINK_FLAGS "/subsystem:windows")
+  endif()
+
+  if(BB64)
+    set_target_properties(linker PROPERTIES OUTPUT_NAME "linker64")
+  endif()
 endif()
