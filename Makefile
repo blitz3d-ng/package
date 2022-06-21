@@ -34,7 +34,7 @@ endif
 
 ifeq ($(PLATFORM), android)
 ANDROID_ABI := armeabi-v7a
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/android-sdk/ndk-bundle/build/cmake/android.toolchain.cmake -DANDROID_ABI="$(ANDROID_ABI)" -DANDROID_LD=deprecated
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/android-sdk/ndk-bundle/build/cmake/android.toolchain.cmake -DANDROID_ABI="$(ANDROID_ABI)" -DANDROID_LD=deprecated -DARCH=armeabi-v7a
 endif
 
 ifeq ($(PLATFORM), nx)

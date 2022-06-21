@@ -28,7 +28,7 @@ modules:
   - timer.windows
   - timer.noop
   - input
-  - input.directinput8
+  # - input.directinput8
   - audio
   - audio.fmod
   - audio.openal

@@ -29,7 +29,6 @@ BBMODULE_DECL( filesystem_windows );
 BBMODULE_DECL( timer );
 BBMODULE_DECL( timer_windows );
 BBMODULE_DECL( input );
-BBMODULE_DECL( input_directinput8 );
 BBMODULE_DECL( audio );
 BBMODULE_DECL( audio_fmod );
 BBMODULE_DECL( userlibs );
@@ -82,27 +81,24 @@ bool bbruntime_create(){
 																														if( timer_create() ){
 																																if( timer_windows_create() ){
 																																		if( input_create() ){
-																																				if( input_directinput8_create() ){
-																																						if( audio_create() ){
-																																								if( audio_fmod_create() ){
-																																										if( userlibs_create() ){
-																																												if( event_create() ){
-																																														if( runtime_console_create() ){
-																																																if( unit_test_create() ){
-																																																		return true;
-																								}else sue( "unit_test_create failed" );bbStart( 0,0,0 );
-																								runtime_console_destroy();
-																							}else sue( "runtime_console_create failed" );bbStart( 0,0,0 );
-																							event_destroy();
-																						}else sue( "event_create failed" );bbStart( 0,0,0 );
-																						userlibs_destroy();
-																					}else sue( "userlibs_create failed" );bbStart( 0,0,0 );
-																					audio_fmod_destroy();
-																				}else sue( "audio_fmod_create failed" );bbStart( 0,0,0 );
-																				audio_destroy();
-																			}else sue( "audio_create failed" );bbStart( 0,0,0 );
-																			input_directinput8_destroy();
-																		}else sue( "input_directinput8_create failed" );bbStart( 0,0,0 );
+																																				if( audio_create() ){
+																																						if( audio_fmod_create() ){
+																																								if( userlibs_create() ){
+																																										if( event_create() ){
+																																												if( runtime_console_create() ){
+																																														if( unit_test_create() ){
+																																																return true;
+																							}else sue( "unit_test_create failed" );bbStart( 0,0,0 );
+																							runtime_console_destroy();
+																						}else sue( "runtime_console_create failed" );bbStart( 0,0,0 );
+																						event_destroy();
+																					}else sue( "event_create failed" );bbStart( 0,0,0 );
+																					userlibs_destroy();
+																				}else sue( "userlibs_create failed" );bbStart( 0,0,0 );
+																				audio_fmod_destroy();
+																			}else sue( "audio_fmod_create failed" );bbStart( 0,0,0 );
+																			audio_destroy();
+																		}else sue( "audio_create failed" );bbStart( 0,0,0 );
 																		input_destroy();
 																	}else sue( "input_create failed" );bbStart( 0,0,0 );
 																	timer_windows_destroy();
@@ -147,7 +143,6 @@ bool bbruntime_destroy(){
 	userlibs_destroy();
 	audio_fmod_destroy();
 	audio_destroy();
-	input_directinput8_destroy();
 	input_destroy();
 	timer_windows_destroy();
 	timer_destroy();

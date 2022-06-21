@@ -1,7 +1,8 @@
-
 #include "std.h"
 #include "linker.h"
 #include "image_util.h"
+
+#include <cstring>
 
 class BBModule : public Module{
 public:
@@ -154,7 +155,7 @@ void Linker::deleteModule( Module *mod ){
 	delete mod;
 }
 
-Linker *__cdecl linkerGetLinker(){
+Linker * CDECL linkerGetLinker(){
 	static Linker linker;return &linker;
 }
 

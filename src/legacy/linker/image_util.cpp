@@ -1,6 +1,7 @@
-
 #include "std.h"
 #include "image_util.h"
+
+#include <cstring>
 
 #ifndef DEMO
 
@@ -26,7 +27,7 @@ struct Opts{
 	short subsys,dllchars;
 
 	int stack_reserve,stack_commit,heap_reserve,heap_commit,loadflags;
-	
+
 	int dir_entries;
 };
 
@@ -362,4 +363,3 @@ void closeImage(){
 }
 
 #endif
-

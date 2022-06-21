@@ -97,9 +97,6 @@ static const char *linkRuntime(string rt){
 
 		keyWords.push_back( s );
 
-		cout<<endl;
-		cout<<s<<endl;
-
 		//global!
 		int start=0,end;
 		Type *t=Type::void_type;
@@ -111,15 +108,11 @@ static const char *linkRuntime(string rt){
 		end=k;
 		DeclSeq *params=d_new DeclSeq();
 		string n=s.substr( start,end-start );
-		cout<<n<<endl;
-
 		while( k<s.size() ){
 			Type *t=_typeof(s[k++]);
 			int from=k;
 			for( ;isalnum(s[k])||s[k]=='_';++k ){}
 			string str=s.substr( from,k-from );
-			cout<<"  "<<str<<endl;
-
 			ConstType *defType=0;
 			if( s[k]=='=' ){
 				int from=++k;
@@ -127,18 +120,15 @@ static const char *linkRuntime(string rt){
 					for( ++k;s[k]!='\"';++k ){}
 					string t=s.substr( from+1,k-from-1 );
 					defType=d_new ConstType( t );++k;
-					cout<<"    s:"<<t<<endl;
 				}else{
 					if( s[k]=='-' ) ++k;
 					for( ;isdigit( s[k] );++k ){}
 					if( t==Type::int_type ){
 						int n=atoi( s.substr( from,k-from ) );
 						defType=d_new ConstType( n );
-						cout<<"    i:"<<n<<endl;
 					}else{
 						float n=atof( s.substr( from,k-from ) );
 						defType=d_new ConstType( n );
-						cout<<"    f:"<<n<<endl;
 					}
 				}
 			}
@@ -295,7 +285,7 @@ const char *openLibs( const string rt ){
 	linkerHMOD=OPENLIB( (home+"/bin/" LINKERNAME "." LIBSUFFIX).c_str() );
 	if( !linkerHMOD ) return "Unable to open " LINKERNAME "." LIBSUFFIX;
 
-	typedef Linker *(__cdecl*GetLinker)();
+	typedef Linker *(CDECL*GetLinker)();
 	GetLinker gl=(GetLinker)LIBSYM( linkerHMOD,"linkerGetLinker" );
 	if( !gl ) return "Error in " LINKERNAME "." LIBSUFFIX;
 	linkerLib=gl();
@@ -307,7 +297,7 @@ const char *openLibs( const string rt ){
 		return err;
 	}
 
-	typedef Runtime *(__cdecl*GetRuntime)();
+	typedef Runtime *(CDECL*GetRuntime)();
 	GetRuntime gr=(GetRuntime)LIBSYM( runtimeHMOD,"runtimeGetRuntime" );
 	if( !gr ){
 		string msg("Error in " RUNTIMENAME "."+rt+"." LIBSUFFIX);

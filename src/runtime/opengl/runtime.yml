@@ -28,7 +28,7 @@ modules:
   - timer.noop
   - bank
   - input
-  - input.directinput8
+  # - input.directinput8
   - audio
   - audio.fmod
   - audio.openal
