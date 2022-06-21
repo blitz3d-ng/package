@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <glfm.h>
-#define FILE_COMPAT_ANDROID_ACTIVITY glfmAndroidGetActivity()
-#include "file_compat.h"
 
 #include <bb/blitz/commands.h>
 #include <bb/math/commands.h>
 #include <bb/graphics/commands.h>
 #include <bb/blitz2d/commands.h>
 #include <bb/blitz3d/commands.h>
+
+#include <glfm.h>
+#define FILE_COMPAT_ANDROID_ACTIVITY glfmAndroidGetActivity()
+#include "file_compat.h"
+
 
 typedef struct {
     double lastTouchX;
@@ -25,8 +27,10 @@ static void onSurfaceDestroyed(GLFMDisplay *display);
 static bool onTouch(GLFMDisplay *display, int touch, GLFMTouchPhase phase, double x, double y);
 static bool onKey(GLFMDisplay *display, GLFMKey keyCode, GLFMKeyAction action, int modifiers);
 
+extern "C"
 int StartupIOS( GLFMDisplay *display );
 
+extern "C"
 void glfmMain( GLFMDisplay *display ) {
 	printf("Booting...\n");
 	StartupIOS( display );
