@@ -11,10 +11,8 @@ using namespace std;
 
 #include "environ.h"
 #include "tree/parser.h"
-#ifdef WIN32
 #include "../../legacy/linker/linker.h"
 #include "../../legacy/bbruntime_dll/bbruntime_dll.h"
-#endif
 
 extern int bcc_ver;
 extern int lnk_ver;

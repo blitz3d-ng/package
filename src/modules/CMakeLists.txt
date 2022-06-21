@@ -16,9 +16,11 @@ macro(bb_end_module)
     set_target_properties(bb.${MODULE_ID} PROPERTIES COMPILE_FLAGS ${BB_COVERAGE})
   endif()
 
-  file(WRITE  ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "ID: bb.${MODULE_ID}\n")
-  file(APPEND ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "MODULES: ${DEPENDS_ON}\n")
-  file(APPEND ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i "LIBS: ${LIBS}\n")
+  set(IFACE ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i)
+
+  file(WRITE  ${IFACE} "ID: bb.${MODULE_ID}\n")
+  file(APPEND ${IFACE} "MODULES: ${DEPENDS_ON}\n")
+  file(APPEND ${IFACE} "LIBS: ${LIBS}\n")
 
   if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/commands.decls")
     file(READ "${CMAKE_CURRENT_LIST_DIR}/commands.decls" COMMANDS)
@@ -89,6 +91,8 @@ macro(bb_end_module)
       elseif("${DECL}" STREQUAL "")
         # don't care...
       elseif("${DECL}" MATCHES "${REGEXP_SYM}")
+        file(APPEND ${IFACE} "SYM: ${DECL}\n")
+
         set(IDENT  ${CMAKE_MATCH_1})
         set(SYMBOL ${CMAKE_MATCH_3})
         link("\trtSym( \"${IDENT}\",${SYMBOL} );")
@@ -168,6 +172,8 @@ macro(bb_end_module)
         list(JOIN ARGS_LIST "," ARGS_STR)
 
         link("\trtSym( \"${RTSYM}\",${SYMBOL} );")
+
+        file(APPEND ${IFACE} "FUNC: ${RTSYM};${SYMBOL}\n")
 
         head("${CTYPE} BBCALL ${SYMBOL}( ${ARGS_STR} );")
       else()

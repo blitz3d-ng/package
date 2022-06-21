@@ -1,6 +1,7 @@
 # some useful macros...
 macro(bb_addmodule name)
-  if(TARGET ${name})
+  if(TARGET bb.${name})
+    set(LIBS ${LIBS} bb.${name})
     set(DEPENDS_ON ${DEPENDS_ON} ${name})
   endif()
 endmacro()
@@ -10,7 +11,11 @@ macro(bb_runtime id)
 
   # static
   add_library(${name}.static STATIC ${SOURCES})
-  target_link_libraries(${name}.static ${DEPENDS_ON} ${SYSTEM_LIBS} bb.stub)
+  target_link_libraries(${name}.static ${LIBS} ${SYSTEM_LIBS} bb.stub)
+
+  set(IFACE ${BUILD_PATH}/${name}.i)
+  file(WRITE  ${IFACE} "ID: ${id}\n")
+  file(APPEND ${IFACE} "DEPS: ${DEPENDS_ON}\n")
 
   if(BB_COVERAGE)
     set_property(TARGET ${name}.static APPEND_STRING PROPERTY COMPILE_FLAGS " ${BB_COVERAGE}")
@@ -32,7 +37,7 @@ macro(bb_runtime id)
     else()
       set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "runtime64.${id}")
     endif()
-    
+
     if(BB_MSVC)
       if(BB_WIN32)
         set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " /include:_runtimeGetRuntime")
@@ -48,6 +53,12 @@ macro(bb_runtime id)
     endif()
   else()
     target_link_libraries(${name}.shared ${name}.static)
+
+    set_target_properties(${name}.shared
+      PROPERTIES
+      LIBRARY_OUTPUT_DIRECTORY ${TOOLCHAIN_PATH}/lib/${BB_PLATFORM}
+      OUTPUT_NAME "runtime.${id}"
+    )
   endif()
 
   if(BB_COVERAGE)

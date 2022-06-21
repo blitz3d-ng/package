@@ -6,7 +6,7 @@ target_output_to_bin(bblaunch)
 set_target_properties(bblaunch PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${RELEASE_PATH})
 
 if(BB_MSVC)
-  target_link_options(bblaunch /ENTRY:\"wWinMainCRTStartup\" /subsystem:windows /p:CharacterSet=Unicode /w4100 /w4189)
+  target_link_options(bblaunch PUBLIC /ENTRY:\"wWinMainCRTStartup\" /subsystem:windows /p:CharacterSet=Unicode /w4100 /w4189)
 endif()
 
 if(BB64)

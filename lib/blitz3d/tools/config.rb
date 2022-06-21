@@ -163,7 +163,7 @@ module Blitz3D
           f.write "\nset(DEPENDS_ON )\n\n"
 
           runtime.dependencies(:list).each do |dep|
-            f.write("bb_addmodule(bb.#{dep.id})\n")
+            f.write("bb_addmodule(#{dep.id})\n")
           end
 
           f.write "\n"

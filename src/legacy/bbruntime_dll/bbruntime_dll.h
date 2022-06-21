@@ -4,7 +4,11 @@
 #ifndef BBRUNTIME_DLL_H
 #define BBRUNTIME_DLL_H
 
+#ifdef BB_WINDOWS
 #include <windows.h>
+#else
+#define HINSTANCE void*
+#endif
 
 #include "../../../stdutil/stdutil.h"
 
@@ -22,6 +26,6 @@ public:
 	virtual void execute( void (*pc)(),const char *args,Debugger *dbg );
 };
 
-extern "C" __declspec(dllexport) Runtime * __cdecl runtimeGetRuntime();
+extern "C" BBDECL Runtime * CDECL runtimeGetRuntime();
 
 #endif

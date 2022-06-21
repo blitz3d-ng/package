@@ -14,20 +14,19 @@ int run_ver;
 int dbg_ver;
 
 string home;
-#ifdef WIN32
 Linker *linkerLib;
 Runtime *runtimeLib;
 
 Module *runtimeModule;
-#endif
 Environ *runtimeEnviron;
 vector<string> modules;
 vector<string> keyWords;
 vector<UserFunc> userFuncs;
 
-#ifdef WIN32
-static HMODULE linkerHMOD,runtimeHMOD;
+#ifndef WIN32
+typedef void* HMODULE;
 #endif
+static HMODULE linkerHMOD,runtimeHMOD;
 
 static Type *_typeof( int c ){
 	switch( c ){
@@ -342,7 +341,9 @@ const char *openLibs( const string rt ){
 	GetLinker gl=(GetLinker)GetProcAddress( linkerHMOD,"linkerGetLinker" );
 	if( !gl ) return "Error in " LINKERNAME ".dll";
 	linkerLib=gl();
+#endif
 
+#ifdef WIN32
 	runtimeHMOD=LoadLibrary( (home+"\\bin\\" RUNTIMENAME "."+rt+".dll").c_str() );
 	if( !runtimeHMOD ){
 		string msg("Unable to open " RUNTIMENAME "."+rt+".");
@@ -397,18 +398,16 @@ const char *linkLibs( const string rt ){
 void closeLibs(){
 
 	delete runtimeEnviron;
-#ifdef WIN32
 	if( linkerLib ) linkerLib->deleteModule( runtimeModule );
 	if( runtimeLib ) runtimeLib->shutdown();
+#ifdef WIN32
 	if( runtimeHMOD ) FreeLibrary( runtimeHMOD );
 	if( linkerHMOD ) FreeLibrary( linkerHMOD );
 #endif
 
 	runtimeEnviron=0;
-#ifdef WIN32
 	linkerLib=0;
 	runtimeLib=0;
 	runtimeHMOD=0;
 	linkerHMOD=0;
-#endif
 }
