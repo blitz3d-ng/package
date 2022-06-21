@@ -3,7 +3,7 @@ add_library(jpeg STATIC src/Source/LibJPEG/jaricom.c src/Source/LibJPEG/jcapimin
 target_include_directories(jpeg PUBLIC src/Source/LibJPEG)
 
 # JXR
-IF(NOT BB_MACOS AND NOT BB_MINGW)
+IF(BB_MSVC)
   add_library(jxr STATIC src/Source/LibJXR/image/decode/decode.c src/Source/LibJXR/image/decode/JXRTranscode.c src/Source/LibJXR/image/decode/postprocess.c src/Source/LibJXR/image/decode/segdec.c src/Source/LibJXR/image/decode/strdec.c src/Source/LibJXR/image/decode/strdec_x86.c src/Source/LibJXR/image/decode/strInvTransform.c src/Source/LibJXR/image/decode/strPredQuantDec.c src/Source/LibJXR/image/encode/encode.c src/Source/LibJXR/image/encode/segenc.c src/Source/LibJXR/image/encode/strenc.c src/Source/LibJXR/image/encode/strenc_x86.c src/Source/LibJXR/image/encode/strFwdTransform.c src/Source/LibJXR/image/encode/strPredQuantEnc.c src/Source/LibJXR/image/sys/adapthuff.c src/Source/LibJXR/image/sys/image.c src/Source/LibJXR/image/sys/strcodec.c src/Source/LibJXR/image/sys/strPredQuant.c src/Source/LibJXR/image/sys/strTransform.c src/Source/LibJXR/jxrgluelib/JXRGlue.c src/Source/LibJXR/jxrgluelib/JXRGlueJxr.c src/Source/LibJXR/jxrgluelib/JXRGluePFC.c src/Source/LibJXR/jxrgluelib/JXRMeta.c src/Source/LibJXR/image/decode/decode.h src/Source/LibJXR/image/encode/encode.h src/Source/LibJXR/image/sys/ansi.h src/Source/LibJXR/image/sys/common.h src/Source/LibJXR/image/sys/perfTimer.h src/Source/LibJXR/image/sys/strcodec.h src/Source/LibJXR/image/sys/strTransform.h src/Source/LibJXR/image/sys/windowsmediaphoto.h src/Source/LibJXR/image/sys/xplatform_image.h src/Source/LibJXR/image/x86/x86.h src/Source/LibJXR/common/include/guiddef.h src/Source/LibJXR/common/include/wmsal.h src/Source/LibJXR/common/include/wmspecstring.h src/Source/LibJXR/common/include/wmspecstrings_adt.h src/Source/LibJXR/common/include/wmspecstrings_strict.h src/Source/LibJXR/common/include/wmspecstrings_undef.h src/Source/LibJXR/jxrgluelib/JXRGlue.h src/Source/LibJXR/jxrgluelib/JXRMeta.h)
 
   target_compile_options(jxr PRIVATE -DDISABLE_PERF_MEASUREMENT)
@@ -27,8 +27,6 @@ if(NOT BB_MINGW64)
     src/Source/OpenEXR/Imath
     src/Source/OpenEXR
   )
-
-  target_include_directories(openexr PUBLIC src/Source/OpenEXR/Half src/Source/OpenEXR/Iex src/Source/OpenEXR/lexMath src/Source/OpenEXR/IlmImf src/Source/OpenEXR/IlmThread src/Source/OpenEXR/Imath src/Source/OpenEXR)
 
   target_link_libraries(openexr ${ZLIB})
 endif()
@@ -64,7 +62,8 @@ target_include_directories(webp PUBLIC src/Source/LibWebP)
 
 # FreeImage
 set(SOURCES src/Source/FreeImage/BitmapAccess.cpp src/Source/FreeImage/ColorLookup.cpp src/Source/FreeImage/ConversionRGBA16.cpp src/Source/FreeImage/ConversionRGBAF.cpp src/Source/FreeImage/FreeImage.cpp src/Source/FreeImage/FreeImageC.c src/Source/FreeImage/FreeImageIO.cpp src/Source/FreeImage/GetType.cpp src/Source/FreeImage/LFPQuantizer.cpp src/Source/FreeImage/MemoryIO.cpp src/Source/FreeImage/PixelAccess.cpp src/Source/FreeImage/J2KHelper.cpp src/Source/FreeImage/MNGHelper.cpp src/Source/FreeImage/Plugin.cpp src/Source/FreeImage/PluginBMP.cpp src/Source/FreeImage/PluginCUT.cpp src/Source/FreeImage/PluginDDS.cpp src/Source/FreeImage/PluginG3.cpp src/Source/FreeImage/PluginGIF.cpp src/Source/FreeImage/PluginHDR.cpp src/Source/FreeImage/PluginICO.cpp src/Source/FreeImage/PluginIFF.cpp src/Source/FreeImage/PluginJ2K.cpp src/Source/FreeImage/PluginJNG.cpp src/Source/FreeImage/PluginJP2.cpp src/Source/FreeImage/PluginJPEG.cpp src/Source/FreeImage/PluginKOALA.cpp src/Source/FreeImage/PluginMNG.cpp src/Source/FreeImage/PluginPCD.cpp src/Source/FreeImage/PluginPCX.cpp src/Source/FreeImage/PluginPFM.cpp src/Source/FreeImage/PluginPICT.cpp src/Source/FreeImage/PluginPNG.cpp src/Source/FreeImage/PluginPNM.cpp src/Source/FreeImage/PluginPSD.cpp src/Source/FreeImage/PluginRAS.cpp src/Source/FreeImage/PluginRAW.cpp src/Source/FreeImage/PluginSGI.cpp src/Source/FreeImage/PluginTARGA.cpp src/Source/FreeImage/PluginTIFF.cpp src/Source/FreeImage/PluginWBMP.cpp src/Source/FreeImage/PluginWebP.cpp src/Source/FreeImage/PluginXBM.cpp src/Source/FreeImage/PluginXPM.cpp src/Source/FreeImage/PSDParser.cpp src/Source/FreeImage/TIFFLogLuv.cpp src/Source/FreeImage/Conversion.cpp src/Source/FreeImage/Conversion16_555.cpp src/Source/FreeImage/Conversion16_565.cpp src/Source/FreeImage/Conversion24.cpp src/Source/FreeImage/Conversion32.cpp src/Source/FreeImage/Conversion4.cpp src/Source/FreeImage/Conversion8.cpp src/Source/FreeImage/ConversionFloat.cpp src/Source/FreeImage/ConversionRGB16.cpp src/Source/FreeImage/ConversionRGBF.cpp src/Source/FreeImage/ConversionType.cpp src/Source/FreeImage/ConversionUINT16.cpp src/Source/FreeImage/Halftoning.cpp src/Source/FreeImage/tmoColorConvert.cpp src/Source/FreeImage/tmoDrago03.cpp src/Source/FreeImage/tmoFattal02.cpp src/Source/FreeImage/tmoReinhard05.cpp src/Source/FreeImage/ToneMapping.cpp src/Source/FreeImage/NNQuantizer.cpp src/Source/FreeImage/WuQuantizer.cpp src/Source/FreeImage/CacheFile.cpp src/Source/FreeImage/MultiPage.cpp src/Source/FreeImage/ZLibInterface.cpp src/Source/Metadata/Exif.cpp src/Source/Metadata/FIRational.cpp src/Source/Metadata/FreeImageTag.cpp src/Source/Metadata/IPTC.cpp src/Source/Metadata/TagConversion.cpp src/Source/Metadata/TagLib.cpp src/Source/Metadata/XTIFF.cpp src/Source/FreeImageToolkit/Background.cpp src/Source/FreeImageToolkit/BSplineRotate.cpp src/Source/FreeImageToolkit/Channels.cpp src/Source/FreeImageToolkit/ClassicRotate.cpp src/Source/FreeImageToolkit/Colors.cpp src/Source/FreeImageToolkit/CopyPaste.cpp src/Source/FreeImageToolkit/Display.cpp src/Source/FreeImageToolkit/Flip.cpp src/Source/FreeImageToolkit/JPEGTransform.cpp src/Source/FreeImageToolkit/MultigridPoissonSolver.cpp src/Source/FreeImageToolkit/Rescale.cpp src/Source/FreeImageToolkit/Resize.cpp)
-set(DEPS jpeg openjpeg png raw_ tiff4 webp ${ZLIB})
+
+set(DEPS jpeg openexr openjpeg png raw_ tiff4 webp ${ZLIB})
 
 if(TARGET jxr)
   set(DEPS ${DEPS} jxr)
@@ -73,16 +72,17 @@ else()
   set(SOURCES ${SOURCES} freeimage_jxr_stub.cpp)
 endif()
 
-if(TARGET openexr)
+if(TARGET jxr)
   set(DEPS ${DEPS} openexr)
   set(SOURCES ${SOURCES} src/Source/FreeImage/PluginEXR.cpp)
 else()
-  set(SOURCES ${SOURCES} freeimage_exr_stub.cpp src/Source/OpenEXR/Half/half.cpp)
+  set(SOURCES ${SOURCES} freeimage_exr_stub.cpp)
 endif()
 
 add_library(freeimage STATIC ${SOURCES})
 target_compile_definitions(freeimage PRIVATE -DLIBRAW_NODLL)
 target_compile_definitions(freeimage PUBLIC -DFREEIMAGE_LIB)
 target_include_directories(freeimage SYSTEM PUBLIC src/Source)
-target_include_directories(freeimage PRIVATE src/Source/LibJXR/jxrgluelib src/Source/LibJXR/image/sys)
+target_include_directories(freeimage PRIVATE src/Source/LibJXR/jxrgluelib src/Source/LibJXR/image/sys src/Source/OpenEXR/Half src/Source/OpenEXR/Iex src/Source/OpenEXR/lexMath src/Source/OpenEXR/IlmImf src/Source/OpenEXR/IlmThread src/Source/OpenEXR/Imath src/Source/OpenEXR)
+
 target_link_libraries(freeimage ${DEPS})
