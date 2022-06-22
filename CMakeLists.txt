@@ -27,18 +27,6 @@ ELSEIF(CMAKE_SIZEOF_VOID_P EQUAL 4)
   set(BB32 true)
 ENDIF()
 
-if(BB64 AND NOT MSVC AND NOT MINGW AND NOT DEVKITPRO AND NOT ANDROID_TOOLCHAIN)
-  if (DEFINED ENV{LLVM_ROOT})
-    set(llvm_path $ENV{LLVM_ROOT})
-  else()
-    set(llvm_path ${PROJECT_SOURCE_DIR}/_release/toolchains/llvm)
-  endif()
-
-  set(LLVM_ROOT ${llvm_path})
-  find_package(LLVM 14.0.4 REQUIRED CONFIG PATHS ${LLVM_ROOT})
-  find_package(LLD REQUIRED CONFIG PATHS ${LLVM_ROOT})
-endif()
-
 IF(NOT BB_PLATFORM)
   IF(WIN32)
     IF(BB64)
@@ -280,10 +268,6 @@ execute_process(
 add_definitions(-DPRO) # Blitz3D vs. Blitz2D
 IF(BB_WINDOWS)
   add_definitions(-DDIRECTSOUND_VERSION=0x700) # this one may not be needed
-ENDIF()
-
-IF (LLVM_ROOT)
-  add_compile_definitions(BB_LLVM)
 ENDIF()
 
 add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")

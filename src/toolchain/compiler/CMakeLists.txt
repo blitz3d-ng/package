@@ -1,5 +1,17 @@
 set (CMAKE_EXECUTABLE_SUFFIX_ )
 
+if(BB64)
+  if (DEFINED ENV{LLVM_ROOT})
+    set(llvm_path $ENV{LLVM_ROOT})
+  else()
+    set(llvm_path ${PROJECT_SOURCE_DIR}/_release/toolchains/llvm)
+  endif()
+
+  set(LLVM_ROOT ${llvm_path})
+  find_package(LLVM 14.0.4 REQUIRED CONFIG PATHS ${LLVM_ROOT})
+  find_package(LLD REQUIRED CONFIG PATHS ${LLVM_ROOT})
+endif()
+
 include_directories (SYSTEM ../../modules)
 
 add_executable(blitzcc
