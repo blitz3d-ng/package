@@ -28,7 +28,7 @@ Linker_LLD::Linker_LLD( const std::string &home, const Environ *env ):home(home)
 
 void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFile ){
 	std::string toolchain=home+"/toolchains/" BB_PLATFORM;
-	std::string lib_dir=toolchain+"/lib/" BB_ENV;
+	std::string lib_dir=toolchain+"/lib";
 
 	std::vector<const char *> args;
 
@@ -96,7 +96,7 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 		args.push_back( strdup(arg.c_str()) );
 
 		string line;
-		ifstream iface( toolchain+"/cfg/"+mod+"." BB_ENV ".i" );
+		ifstream iface( toolchain+"/cfg/"+mod+".i" );
 		if (!iface.is_open()) {
 			cerr<<"Cannot find interface file for "<<mod<<endl;
 			abort();

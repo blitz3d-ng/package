@@ -16,7 +16,7 @@ macro(bb_end_module)
     set_target_properties(bb.${MODULE_ID} PROPERTIES COMPILE_FLAGS ${BB_COVERAGE})
   endif()
 
-  set(IFACE ${BUILD_PATH}/cfg/${MODULE_ID}.${BB_ENV}.i)
+  set(IFACE ${BUILD_PATH}/cfg/${MODULE_ID}.i)
 
   file(WRITE  ${IFACE} "ID: bb.${MODULE_ID}\n")
   file(APPEND ${IFACE} "MODULES: ${DEPENDS_ON}\n")

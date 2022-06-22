@@ -26,7 +26,6 @@ void RestoreNode::translate2( Codegen_LLVM *g ){
 
 	llvm::Value *t=g->bbData;
 	if( sem_label ){
-		cout<<sem_label->data_sz<<endl;
 		vector<llvm::Value*> indices;
 		indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,sem_label->data_sz*2 ) ) );
 		t=g->builder->CreateGEP( int_ty,t,indices );
