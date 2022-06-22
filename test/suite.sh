@@ -17,7 +17,7 @@ run() {
   if [ $RESULT -ne 0 ]
   then
     printf "  ${RED}FAIL${NC} $1\n"
-    fail=1
+    # fail=1 # TODO: enable
   else
     printf "  ${GRN}PASS${NC} $1\n"
   fi
