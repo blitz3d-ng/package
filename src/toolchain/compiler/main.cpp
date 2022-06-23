@@ -218,6 +218,9 @@ int main( int argc,char *argv[] ){
 	signal(SIGABRT, handle_abort);
 	signal(SIGSEGV, handle_segfault);
 #endif
+	for( int i=0;i<argc;i++ ){
+		cout<<" "<<argv[i]<<endl;
+	}
 
 	string in_file,out_file,rt,args;
 	vector<string> rts;
@@ -354,10 +357,6 @@ int main( int argc,char *argv[] ){
 	string obj_file( string(tmpnam(0))+".o" );
 	Codegen_LLVM codegen2( debug );
 
-	llvm::InitializeNativeTarget();
-	llvm::InitializeNativeTargetAsmPrinter();
-	llvm::InitializeNativeTargetAsmParser();
-
 	auto jit = cantFail(BlitzJIT::Create());
 #endif
 
@@ -405,14 +404,16 @@ int main( int argc,char *argv[] ){
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
-			codegen2.dumpToObj( compileonly,obj_file );
+			if( out_file.size() ){
+				codegen2.injectMain();
+			}
+
+			codegen2.dumpToObj( obj_file );
 #endif
 		} else {
-#ifdef WIN32
 			module=linkerLib->createModule();
 			Assem_x86 assem( asmcode,module );
 			assem.assemble();
-#endif
 		}
 	}catch( Ex &x ){
 		string file='\"'+x.file+'\"';
@@ -453,16 +454,14 @@ int main( int argc,char *argv[] ){
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
-		codegen2.module.get()->setDataLayout( jit->getDataLayout() );
-		ret=jit->run( runtimeLib, &codegen2, home, rt );
+			codegen2.module.get()->setDataLayout( jit->getDataLayout() );
+			ret=jit->run( runtimeLib, &codegen2, home, rt );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();
 #endif
 		} else {
-#ifdef WIN32
 			entry=module->link( runtimeModule );
-#endif
 		}
 
 		if( !entry ) return ret;
@@ -483,18 +482,14 @@ int main( int argc,char *argv[] ){
 
 		if( !veryquiet ) cout<<"Executing..."<<endl;
 
-#ifdef WIN32
 		runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
 
+#ifdef WIN32
 		if( dbgHandle ) FreeLibrary( dbgHandle );
-#else
-		((void(*)())entry)();
 #endif
 	}
 
-#ifdef WIN32
 	delete module;
-#endif
 	delete env;
 
 	closeLibs();

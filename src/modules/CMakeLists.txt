@@ -164,6 +164,8 @@ macro(bb_end_module)
             set(PARAM_BBTYPE "%")
           endif()
 
+          string(REPLACE "\"" "\\\\\"" PARAM_DEF "${PARAM_DEF}")
+
           list(APPEND ARGS_LIST "${PARAM_CTYPE}${PARAM_IDENT}")
 
           set(RTSYM "${RTSYM}${PARAM_BBTYPE}${PARAM_IDENT}${PARAM_DEF}")

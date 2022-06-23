@@ -9,7 +9,7 @@ BBMODULE_LINK( blitz ){
 	rtSym( "Stop",bbStop );
 	rtSym( "DebugLog$text",bbDebugLog );
 	rtSym( "End",bbEnd );
-	rtSym( "AppTitle$title$close_prompt=""",bbAppTitle );
+	rtSym( "AppTitle$title$close_prompt=\"\"",bbAppTitle );
 	rtSym( "$CommandLine",bbCommandLine );
 	rtSym( "_bbIntType",&_bbIntType );
 	rtSym( "_bbFltType",&_bbFltType );

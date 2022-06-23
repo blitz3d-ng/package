@@ -55,7 +55,7 @@ Global newflameAfterFrames = 0
 Global flameCountFrame = 0
 
 While Not KeyHit(1)
-	
+
 	If MouseDown(1)
 		y_zoom=(MouseYSpeed()-y_zoom)/13+y_zoom
 		x_speed=(0-x_speed)/13+x_speed
@@ -65,7 +65,7 @@ While Not KeyHit(1)
 		x_speed=(MouseXSpeed()-x_speed)/13+x_speed
 		y_speed=(MouseYSpeed()-y_speed)/13+y_speed
 		y_zoom=(0-y_zoom)/13+y_zoom
-	
+
 	EndIf
 	TurnEntity shippivot,0,-x_speed,0
 	TurnEntity shippivot,-y_speed,0,0
@@ -73,7 +73,7 @@ While Not KeyHit(1)
 	MoveMouse GraphicsWidth()/2,GraphicsHeight()/2
 
 	DoFlame()
-	
+
 	flameCountFrame = flameCountFrame + 1
 	If flameCountFrame > newflameAfterFrames
 		j = Rnd(100)
@@ -89,15 +89,15 @@ While Not KeyHit(1)
 	RenderWorld
 	Text 0,0,"Craft Flare: [By Rob Hutchinson 2001]"
 	k = 0
-	Flip 
+	Flip
 
 Wend
 
 End
 
-Function CreateNewFlame(object,speed#,untildist#,scale#)
+Function CreateNewFlame(obj,speed#,untildist#,scale#)
 	n.ship_flame = New ship_flame
-	n\obj = CopyEntity(object)
+	n\obj = CopyEntity(obj)
 	RotateEntity n\obj,Rnd(0,360),Rnd(0,360),Rnd(0,360)
 	PointEntity    n\obj,pointflameent
 	MoveEntity n\obj,0,0,7
@@ -121,7 +121,7 @@ Function DoFlame()
 		ScaleSprite n\obj,n\scaledown#,n\scaledown#
 		n\alphadown = n\alphadown - n\alphacn
 		EntityAlpha n\obj,n\alphadown
-		
+
 		n\count = n\count + n\speed
 		If n\count > n\untildist
 			FreeEntity n\obj

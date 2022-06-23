@@ -20,14 +20,11 @@
 #define FORMAT elf
 #endif
 
-// TODO: this should probably be put elsewhere
-#define BB_ARCH_X86 "x86"
-
 Linker_LLD::Linker_LLD( const std::string &home, const Environ *env ):home(home),env(env){
 }
 
 void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFile ){
-	std::string toolchain=home+"/toolchains/" BB_PLATFORM;
+	std::string toolchain=home+"/toolchains/" BB_TRIPLE;
 	std::string lib_dir=toolchain+"/lib";
 
 	std::vector<const char *> args;
@@ -49,12 +46,11 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 	args.push_back("-lc++");
 
 	args.push_back("-lSystem");
+	// args.push_back("-lSystem_asan");
+
 	args.push_back("-arch");
-	if (strcmp(BB_ARCH, BB_ARCH_X86) == 0) {
-		args.push_back("x86_64");
-	} else {
-		args.push_back("arm64");
-	}
+	args.push_back(BB_ARCH);
+
 	args.push_back("-platform_version");args.push_back("macos");args.push_back("12.1");args.push_back("12.3");
 #endif
 
@@ -71,15 +67,21 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 	args.push_back("-lgcc");
 	args.push_back("-lgcc_eh");
 
-	args.push_back("-lclang_rt.builtins-x86_64");
-	#ifdef BB_ASAN
-	args.push_back("-lclang_rt.asan-x86_64");
-	args.push_back("-lclang_rt.asan_cxx-x86_64");
-	#endif
+	// args.push_back("-lclang_rt.builtins-x86_64");
 
 	// args.push_back("--static");
-	args.push_back("/usr/lib/x86_64-linux-gnu/crt1.o");
+	// args.push_back("/usr/lib/x86_64-linux-gnu/crt1.o");
 #endif
+
+// TODO: fix this hardcoding
+#ifdef BB_ASAN
+	#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/lib/darwin"
+
+	args.push_back("-rpath");args.push_back(CLANG_LIBS);
+	args.push_back(CLANG_LIBS "/libclang_rt.asan_osx_dynamic.dylib");
+	args.push_back(CLANG_LIBS "/libclang_rt.osx.a");
+#endif
+
 
 	args.push_back("-o");
 	args.push_back( exeFile.c_str() );
@@ -91,7 +93,37 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 
 	args.push_back( "-lbb.stub" );
 	args.push_back( strdup( ("-lruntime."+env->rt+".static").c_str() ) );
-	for (std::string mod : env->modules) {
+
+	ifstream rt( toolchain+"/runtime."+env->rt+".i" );
+	if (!rt.is_open()) {
+		cerr<<"Cannot find interface file for runtime."<<env->rt<<endl;
+		abort();
+	}
+
+	string line;
+	vector<string> modules;
+	while( getline( rt,line ) ) {
+		if( line.find("DEPS:")!=0 ) continue;
+
+		size_t s=5, e=line.find(";");
+		while( 1 ) {
+			string frag=line.substr( s,e-s );
+			while( frag[0] == ' ' ) frag=frag.substr( 1 );
+
+			if( frag.length() == 0 ) break;
+
+			modules.push_back( frag );
+
+			if( e==string::npos ) {
+				break;
+			}
+
+			s=e+1;
+			e=line.find(";",s);
+		}
+	}
+
+	for( std::string mod:modules ){
 		string arg( "-lbb." + mod );
 		args.push_back( strdup(arg.c_str()) );
 

@@ -36,6 +36,7 @@ public:
 	llvm::PointerType *voidPtr;
 
 	llvm::Constant *constantInt( int i );
+	llvm::Constant *constantFloat( double f );
 
 	std::map<std::string,llvm::GlobalVariable*> arrays;
 	std::map<std::string,llvm::StructType*> arrayTypes;
@@ -51,7 +52,9 @@ public:
 	void optimize();
 	bool verify();
 
-	int dumpToObj( bool compileonly,const std::string &path );
+	void injectMain();
+
+	int dumpToObj( const std::string &path );
 	void dumpToStderr();
 };
 

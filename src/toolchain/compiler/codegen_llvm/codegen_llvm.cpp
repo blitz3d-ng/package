@@ -18,6 +18,10 @@ using namespace llvm;
 #include <cstdarg>
 
 Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
+	InitializeNativeTarget();
+	InitializeNativeTargetAsmPrinter();
+	InitializeNativeTargetAsmParser();
+
 	context=std::make_unique<llvm::LLVMContext>();
 	module=std::make_unique<llvm::Module>( "",*context );
 
@@ -102,6 +106,10 @@ llvm::Constant *Codegen_LLVM::constantInt( int i ){
 	return llvm::ConstantInt::get( *context,llvm::APInt( 64,i ) );
 }
 
+llvm::Constant *Codegen_LLVM::constantFloat( double f ){
+	return llvm::ConstantFP::get( *context,llvm::APFloat( f ) );
+}
+
 llvm::BasicBlock *Codegen_LLVM::getLabel( std::string &ident ){
 	if( !labels[ident] ){
 		labels[ident] = llvm::BasicBlock::Create( *context, "_l"+ident );
@@ -161,32 +169,28 @@ bool Codegen_LLVM::verify(){
 	return false;
 }
 
-int Codegen_LLVM::dumpToObj( bool compileonly,const std::string &path ) {
-	if( compileonly ) {
-		llvm::Type *int_ty=llvm::Type::getInt32Ty( *context );
-		llvm::Type *charpp_ty=llvm::PointerType::get( llvm::PointerType::get( llvm::Type::getInt8Ty( *context ),0 ),0 );
-		llvm::Type *void_type=llvm::Type::getVoidTy( *context );
+void Codegen_LLVM::injectMain(){
+	llvm::Type *int_ty=llvm::Type::getInt32Ty( *context );
+	llvm::Type *charpp_ty=llvm::PointerType::get( llvm::PointerType::get( llvm::Type::getInt8Ty( *context ),0 ),0 );
+	llvm::Type *void_type=llvm::Type::getVoidTy( *context );
 
-		std::vector<llvm::Type*> args;
-		args.push_back( int_ty );
-		args.push_back( charpp_ty );
-		auto ft=llvm::FunctionType::get( int_ty,args,false );
-		auto main=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"main",module.get() );
+	std::vector<llvm::Type*> args;
+	args.push_back( int_ty );
+	args.push_back( charpp_ty );
+	auto ft=llvm::FunctionType::get( int_ty,args,false );
+	auto main=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"main",module.get() );
 
-		auto argc=main->getArg( 0 );
-		auto argv=main->getArg( 1 );
-		auto bbMain=builder->GetInsertBlock()->getParent();
+	auto argc=main->getArg( 0 );
+	auto argv=main->getArg( 1 );
+	auto bbMain=builder->GetInsertBlock()->getParent();
 
-		auto block = llvm::BasicBlock::Create( *context,"entry",main );
-		builder->SetInsertPoint( block );
-		builder->CreateRet( CallIntrinsic( "bbStart",int_ty,3,argc,argv,bbMain ) );
-	}
+	auto block = llvm::BasicBlock::Create( *context,"entry",main );
+	builder->SetInsertPoint( block );
+	builder->CreateRet( CallIntrinsic( "bbStart",int_ty,3,argc,argv,bbMain ) );
+}
 
+int Codegen_LLVM::dumpToObj( const std::string &path ) {
 	optimize();
-
-	InitializeNativeTarget();
-	InitializeNativeTargetAsmParser();
-	InitializeNativeTargetAsmPrinter();
 
 	auto TargetTriple = sys::getDefaultTargetTriple();
 	module->setTargetTriple(TargetTriple);

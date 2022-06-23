@@ -16,9 +16,6 @@
 typedef void* HMODULE;
 #endif
 
-#include <json.hpp>
-using namespace nlohmann;
-
 int bcc_ver;
 int lnk_ver;
 int run_ver;
@@ -318,6 +315,7 @@ const char *openLibs( const string rt ){
 	runtimeLib->startup();
 	runtimeModule=linkerLib->createModule();
 	runtimeEnviron=d_new Environ( "",Type::int_type,0,0 );
+	runtimeEnviron->rt=rt;
 
 	keyWords.clear();
 	userFuncs.clear();

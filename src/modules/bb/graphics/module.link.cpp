@@ -85,7 +85,7 @@ BBMODULE_LINK( graphics ){
 	rtSym( "%ImageRectOverlap%image%x%y%rect_x%rect_y%rect_width%rect_height",bbImageRectOverlap );
 	rtSym( "%ImageRectCollide%image%x%y%frame%rect_x%rect_y%rect_width%rect_height",bbImageRectCollide );
 	rtSym( "Write$string",bbWrite );
-	rtSym( "Print$string=""",bbPrint );
-	rtSym( "$Input$prompt=""",bbInput );
+	rtSym( "Print$string=\"\"",bbPrint );
+	rtSym( "$Input$prompt=\"\"",bbInput );
 	rtSym( "Locate%x%y",bbLocate );
 }
