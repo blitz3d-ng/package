@@ -148,7 +148,11 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 				inc=inc.substr( 1,inc.size()-2 );
 
 				inc=fullfilename( inc );
+#ifdef WIN32
+				// TODO: find out why this was originally done. not good outside of
+				// windows
 				inc=tolower( inc );
+#endif
 
 				if( included.find( inc )!=included.end() ) break;
 
