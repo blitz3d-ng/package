@@ -9,9 +9,9 @@ public:
 	std::string home;
 	const Environ *env;
 
-	Linker_LLD( const std::string &home, const Environ *env );
+	Linker_LLD( const std::string &home );
 
-	void createExe( const std::string &mainObj, const std::string &exeFile );
+	void createExe( const std::string &rt,const std::string &mainObj, const std::string &exeFile );
 };
 
 #endif

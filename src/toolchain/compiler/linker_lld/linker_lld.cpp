@@ -22,10 +22,10 @@
 #define FORMAT elf
 #endif
 
-Linker_LLD::Linker_LLD( const std::string &home, const Environ *env ):home(home),env(env){
+Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
-void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFile ){
+void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj, const std::string &exeFile ){
 	std::string toolchain=home+"/toolchains/" BB_TRIPLE;
 	std::string lib_dir=toolchain+"/lib";
 
@@ -103,17 +103,17 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 	args.push_back( lib_dir.c_str() );
 
 	args.push_back( "-lbb.stub" );
-	args.push_back( strdup( ("-lruntime."+env->rt+".static").c_str() ) );
+	args.push_back( strdup( ("-lruntime."+rt+".static").c_str() ) );
 
-	ifstream rt( toolchain+"/runtime."+env->rt+".i" );
-	if (!rt.is_open()) {
-		cerr<<"Cannot find interface file for runtime."<<env->rt<<endl;
+	ifstream rti( toolchain+"/runtime."+rt+".i" );
+	if (!rti.is_open()) {
+		cerr<<"Cannot find interface file for runtime."<<rt<<endl;
 		abort();
 	}
 
 	string line;
 	vector<string> modules;
-	while( getline( rt,line ) ) {
+	while( getline( rti,line ) ) {
 		if( line.find("DEPS:")!=0 ) continue;
 
 		size_t s=5, e=line.find(";");
