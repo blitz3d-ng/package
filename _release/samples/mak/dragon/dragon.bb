@@ -18,7 +18,7 @@ Include "../start.bb"
 cube=CreateCube()
 FitMesh cube,-250,0,-250,500,500,500
 FlipMesh cube
-tex=LoadTexture( "chorme-2.bmp" )
+tex=LoadTexture( "Chorme-2.BMP" )
 ScaleTexture tex,1.0/3,1.0/3
 EntityTexture cube,tex
 EntityAlpha cube,.4
@@ -51,7 +51,7 @@ While Not KeyHit(1)
 	Else If KeyDown(205)
 		cam_yr=cam_yr+2
 	EndIf
-	
+
 	If KeyDown(200)
 		cam_xr=cam_xr+2
 		If cam_xr>90 cam_xr=90
@@ -59,19 +59,19 @@ While Not KeyHit(1)
 		cam_xr=cam_xr-2
 		If cam_xr<5 cam_xr=5
 	EndIf
-	
+
 	If KeyDown(26)
 		cam_zr=cam_zr+2
 	Else If KeyDown(27)
 		cam_zr=cam_zr-2
 	EndIf
-	
+
 	If KeyDown(30)
 		cam_z=cam_z+1:If cam_z>-10 cam_z=-10
 	Else If KeyDown(44)
 		cam_z=cam_z-1:If cam_z<-180 cam_z=-180
 	EndIf
-	
+
 	PositionEntity camera,0,0,0
 	RotateEntity camera,cam_xr,cam_yr,cam_zr
 	MoveEntity camera,0,0,cam_z

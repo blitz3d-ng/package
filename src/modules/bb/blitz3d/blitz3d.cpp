@@ -353,7 +353,7 @@ BBLIB bb_float_t BBCALL bbStats3D( bb_int_t n ){
 //
 BBLIB Texture * BBCALL bbLoadTexture( BBStr *file,bb_int_t flags ){
 	debug3d();
-	Texture *t=d_new Texture( *file,flags );delete file;
+	Texture *t=d_new Texture( canonicalpath(*file),flags );delete file;
 	if( !t->getCanvas(0) ){ delete t;return 0; }
 	texture_set.insert( t );
 	return t;
@@ -1209,7 +1209,7 @@ BBLIB Entity * BBCALL bbCreatePlane( bb_int_t segs,Entity *p ){
 //////////////////
 BBLIB Entity * BBCALL bbLoadMD2( BBStr *file,Entity *p ){
 	debugParent(p);
-	MD2Model *t=d_new MD2Model( *file );delete file;
+	MD2Model *t=d_new MD2Model( canonicalpath(*file) );delete file;
 	if( !t->getValid() ){ delete t;return 0; }
 	return insertEntity( t,p );
 }

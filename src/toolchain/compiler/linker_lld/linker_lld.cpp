@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <libgen.h>
+#include <sys/stat.h>
 
 #ifdef BB_MSVC
 #define FORMAT coff
@@ -28,6 +30,15 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 	std::string lib_dir=toolchain+"/lib";
 
 	std::vector<const char *> args;
+
+	string bundlePath=exeFile+".app";
+	string binaryPath=exeFile;
+
+#ifdef BB_MACOS
+	string appname=basename( (char*)exeFile.c_str() );
+	mkdir( bundlePath.c_str(),0755 );
+	binaryPath=bundlePath+"/"+appname;
+#endif
 
 	// just the name?
 	args.push_back( exeFile.c_str() );
@@ -84,7 +95,7 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 
 
 	args.push_back("-o");
-	args.push_back( exeFile.c_str() );
+	args.push_back( binaryPath.c_str() );
 
 	args.push_back( mainObj.c_str() );
 
@@ -166,7 +177,7 @@ void Linker_LLD::createExe( const std::string &mainObj, const std::string &exeFi
 
 	// args.push_back("-static");
 
-	if( !lld::FORMAT::link(args, llvm::outs(), llvm::errs(), true, false) ) {
+	if( !lld::FORMAT::link( args,llvm::outs(),llvm::errs(),true,false ) ) {
 		exit( 1 );
 	};
 }

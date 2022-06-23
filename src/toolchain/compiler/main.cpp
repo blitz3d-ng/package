@@ -218,9 +218,6 @@ int main( int argc,char *argv[] ){
 	signal(SIGABRT, handle_abort);
 	signal(SIGSEGV, handle_segfault);
 #endif
-	for( int i=0;i<argc;i++ ){
-		cout<<" "<<argv[i]<<endl;
-	}
 
 	string in_file,out_file,rt,args;
 	vector<string> rts;

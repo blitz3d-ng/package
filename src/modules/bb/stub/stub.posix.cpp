@@ -13,6 +13,10 @@ using namespace std;
 #ifndef BB_ANDROID
 #include <execinfo.h>
 #endif
+#ifdef BB_MACOS
+#include <libgen.h>
+#include <mach-o/dyld.h>
+#endif
 
 class StdioDebugger : public Debugger{
 private:
@@ -68,6 +72,15 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
   bb_env.debug=true;
 #else
   bb_env.debug=false;
+#endif
+
+#ifdef BB_MACOS
+	if( argc > 0 ){
+		char path[PATH_MAX];
+		uint32_t path_len=sizeof( path );
+		_NSGetExecutablePath( path,&path_len );
+		chdir( dirname( path ) );
+	}
 #endif
 
 	bool trace=false;
