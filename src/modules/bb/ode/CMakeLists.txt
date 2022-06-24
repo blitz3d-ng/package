@@ -2,7 +2,7 @@
 if(NOT BB_ANDROID AND NOT BB_IOS)
   bb_start_module(ode)
   set(DEPENDS_ON bb.blitz3d)
-  set(SOURCES commands.h ode.h ode.cpp world.cpp space.cpp joints.cpp collision.cpp geom.cpp trimesh.cpp body.cpp jv-ode-compat.cpp module.link.cpp)
+  set(SOURCES commands.h ode.h ode.cpp world.cpp space.cpp joints.cpp collision.cpp geom.cpp trimesh.cpp body.cpp jv-ode-compat.cpp)
   set(LIBS ode)
   bb_end_module()
 endif()

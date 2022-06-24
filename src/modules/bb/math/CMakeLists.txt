@@ -1,5 +1,5 @@
 bb_start_module(math)
-set(SOURCES math.cpp math.h module.link.cpp)
+set(SOURCES math.cpp math.h)
 if (NOT BB_MSVC)
   set(LIBS m)
 endif()

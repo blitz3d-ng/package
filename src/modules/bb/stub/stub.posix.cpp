@@ -75,12 +75,12 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 #endif
 
 #ifdef BB_MACOS
-	if( argc > 0 ){
-		char path[PATH_MAX];
-		uint32_t path_len=sizeof( path );
-		_NSGetExecutablePath( path,&path_len );
-		chdir( dirname( path ) );
-	}
+	// if( argc > 0 ){
+	// 	char path[PATH_MAX];
+	// 	uint32_t path_len=sizeof( path );
+	// 	_NSGetExecutablePath( path,&path_len );
+	// 	chdir( dirname( path ) );
+	// }
 #endif
 
 	bool trace=false;

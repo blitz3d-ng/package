@@ -1,7 +1,7 @@
 IF(NOT BB_EMSCRIPTEN)
   bb_start_module(unit-test)
   set(DEPENDS_ON bb.blitz)
-  set(SOURCES unit-test.cpp unit-test.h module.link.cpp)
+  set(SOURCES unit-test.cpp unit-test.h)
   bb_end_module()
 
   # generate a unit_test userlib for legacy Blitz3D.

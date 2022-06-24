@@ -1,6 +1,6 @@
 IF(BB_WINDOWS)
   bb_start_module(userlibs)
   set(DEPENDS_ON bb.blitz)
-  set(SOURCES userlibs.cpp userlibs.h module.link.cpp)
+  set(SOURCES userlibs.cpp userlibs.h)
   bb_end_module()
 ENDIF()
