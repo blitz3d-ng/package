@@ -46,27 +46,32 @@ void ReturnNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void ReturnNode::translate2( Codegen_LLVM *g ){
-	// multiple `ret` calls in one block results in an error...there is probably
-	// a better way to do this.
-	// if( g->builder->GetInsertBlock()->getTerminator() ) {
-	// 	return;
-	// }
-
 	auto func=g->builder->GetInsertBlock()->getParent();
-	auto block=llvm::BasicBlock::Create( *g->context,"_ret",func );
 
-	g->builder->CreateBr( block );
-	g->builder->SetInsertPoint( block );
+	if( expr ){
+		auto block=llvm::BasicBlock::Create( *g->context,"_ret",func );
 
-	llvm::Value *v=expr
-		?expr->translate2( g )
-		:expr->sem_type->llvmZero( g->context.get() );
+		g->builder->CreateBr( block );
+		g->builder->SetInsertPoint( block );
 
-	if( expr->sem_type->structType() ){
-		v=g->builder->CreateBitOrPointerCast( v,expr->sem_type->llvmType( g->context.get() ) );
+		llvm::Value *v=expr->translate2( g );
+
+		if( expr->sem_type->structType() ){
+			v=g->builder->CreateBitOrPointerCast( v,expr->sem_type->llvmType( g->context.get() ) );
+		}
+
+		g->builder->CreateRet( v );
+	}else{
+		auto br=g->builder->CreateIndirectBr( g->CallIntrinsic( "_bbPopGosub",llvm::PointerType::get( *g->context,0 ),0 ) );
+		// TODO: a bit imprecise...should try to determine the only possible labels
+		for( auto value:g->labels ){
+			auto label=value.second;
+			if( label->getParent()==func ){
+				br->addDestination( label );
+			}
+		}
 	}
 
-	g->builder->CreateRet( v );
 	auto cont=llvm::BasicBlock::Create( *g->context,"ret_cont",func );
 	g->builder->SetInsertPoint( cont );
 }

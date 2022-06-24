@@ -528,6 +528,17 @@ bb_float_t BBCALL _bbFPow( bb_float_t x,bb_float_t y ){
 	return (bb_float_t)pow( x,y );
 }
 
+static void *gosub_stack[512] = { 0 };
+static int gosub_idx=0;
+
+void BBCALL _bbPushGosub( void *addr ){
+	gosub_stack[gosub_idx++]=addr;
+}
+
+void *BBCALL _bbPopGosub(){
+	return gosub_stack[--gosub_idx];
+}
+
 void BBCALL bbRuntimeStats(){
 	_bbDebugLog( ("Active strings :"+itoa(stringCnt)).c_str() );
 	_bbDebugLog( ("Active objects :"+itoa(objCnt)).c_str() );

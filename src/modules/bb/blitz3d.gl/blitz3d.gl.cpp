@@ -220,7 +220,6 @@ public:
 		// TODO: not the most elegant solution...
 		float sx,sy;
 		bbSystemDriver->dpiInfo( sx,sy );
-		cout<<sx<<","<<sy<<endl;
 		render_w*=sx;
 		render_h*=sy;
 	}

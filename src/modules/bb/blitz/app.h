@@ -3,6 +3,7 @@
 
 #include "basic.h"
 #include <bb/hook/hook.h>
+#include <string>
 
 struct BBApp{
   std::string title,close;

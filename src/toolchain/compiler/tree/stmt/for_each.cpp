@@ -66,12 +66,8 @@ void ForEachNode::translate2( Codegen_LLVM *g ){
 	auto ity=llvm::Type::getInt64Ty( *g->context );
 	auto bty=llvm::Type::getInt1Ty( *g->context );
 
-	l=g->builder->CreateBitOrPointerCast( var->translate2( g ),llvm::PointerType::get( g->bbObj,0 ) );
+	l=g->builder->CreateBitOrPointerCast( var->translate2( g ),g->bbObjPtr );
 	r=g->builder->CreateBitOrPointerCast( var->sem_type->structType()->objty,llvm::PointerType::get( g->bbType,0 ) );
-
-	// auto t=g->CallIntrinsic( "_bbObjLast",llvm::PointerType::get( g->bbObj,0 ),1,objty );
-	// return g->builder->CreateBitOrPointerCast( t,llvm::PointerType::get( sem_type->structType()->structtype,0 ) );
-
 
 	g->builder->CreateCondBr( g->builder->CreateTruncOrBitCast( g->CallIntrinsic( objFirst,ity,2,l,r ),bty ),loop,cont );
 

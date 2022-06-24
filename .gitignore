@@ -33,6 +33,7 @@ UpgradeLog.htm
 *.bb_bak*
 
 _release/bin/blitzcc
+_release/bin/ide2
 _release/cfg/blitzide.prefs
 _release/help/reference/modules
 _release/help/reference/index.html

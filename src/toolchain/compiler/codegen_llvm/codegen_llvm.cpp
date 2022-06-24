@@ -27,7 +27,9 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 
 	builder=new IRBuilder<>( *context );
 
-	voidPtr=llvm::PointerType::get( llvm::Type::getVoidTy( *context ),0 );
+	voidTy=llvm::Type::getVoidTy( *context );
+	intTy=llvm::Type::getInt64Ty( *context );
+	voidPtr=llvm::PointerType::get( voidTy,0 );
 
 	// initialize stdlib constructs...
 	bbType=llvm::StructType::create( *context,"BBType" );
@@ -37,31 +39,33 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	bbArray=llvm::StructType::create( *context,"BBArray" );
 	bbVecType=llvm::StructType::create( *context,"BBVecType" );
 
+	bbObjPtr=llvm::PointerType::get( bbObj,0 );
+
 	std::vector<llvm::Type*> objels;
 	objels.push_back( llvm::PointerType::get( bbField,0 ) );   // fields
-	objels.push_back( llvm::PointerType::get( bbObj,0 ) );     // next
-	objels.push_back( llvm::PointerType::get( bbObj,0 ) );     // prev
+	objels.push_back( bbObjPtr );     // next
+	objels.push_back( bbObjPtr );     // prev
 	objels.push_back( llvm::PointerType::get( bbObjType,0 ) ); // type
-	objels.push_back( llvm::Type::getInt64Ty( *context ) );    // ref_cnt
+	objels.push_back( intTy );    // ref_cnt
 	bbObj->setBody( objels );
 
 	std::vector<llvm::Type*> objtypeels;
-	objtypeels.push_back( llvm::Type::getInt64Ty( *context ) ); // type
+	objtypeels.push_back( intTy ); // type
 	objtypeels.push_back( bbObj );                              // used
 	objtypeels.push_back( bbObj );                              // free
-	objtypeels.push_back( llvm::Type::getInt64Ty( *context ) ); // fieldCnt
+	objtypeels.push_back( intTy ); // fieldCnt
 	objtypeels.push_back( llvm::PointerType::get( bbType,0 ) ); // fieldTypes
 	bbObjType->setBody( objtypeels );
 
 	std::vector<llvm::Type*> arrayels;
 	arrayels.push_back( voidPtr );  // data
-	arrayels.push_back( llvm::PointerType::get( llvm::Type::getInt64Ty( *context ),0 ) ); // elementType
-	arrayels.push_back( llvm::PointerType::get( llvm::Type::getInt64Ty( *context ),0 ) ); // dims
+	arrayels.push_back( llvm::PointerType::get( intTy,0 ) ); // elementType
+	arrayels.push_back( llvm::PointerType::get( intTy,0 ) ); // dims
 	bbArray->setBody( arrayels );
 
 	std::vector<llvm::Type*> vecels;
-	vecels.push_back( llvm::Type::getInt64Ty( *context ) ); // type
-	vecels.push_back( llvm::Type::getInt64Ty( *context ) ); // size
+	vecels.push_back( intTy ); // type
+	vecels.push_back( intTy ); // size
 	vecels.push_back( llvm::PointerType::get( bbType,0 ) ); // elementType
 	bbVecType->setBody( vecels );
 }

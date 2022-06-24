@@ -89,7 +89,7 @@ compile _release/samples/mak/fakelight/fakelight.bb
 compile _release/samples/mak/firepaint3d/firepaint3d.bb
 compile _release/samples/mak/flag/flag.bb
 compile _release/samples/mak/insaner/insaner.bb
-# compile _release/samples/mak/insectoids/insectoids.bb # TODO: gosub
+compile _release/samples/mak/insectoids/insectoids.bb
 compile _release/samples/mak/lights/lights.bb
 compile _release/samples/mak/multi_tex/multi_tex.bb
 compile _release/samples/mak/multicam/multicam.bb
@@ -114,7 +114,7 @@ compile _release/samples/RobCummings/PyromaniaBB/PyromaniaBB-1.bb
 compile _release/samples/RobHutchinson/BBLauncher/example.bb
 compile _release/samples/RobHutchinson/BBLauncher/launcher2d.bb
 compile _release/samples/RobHutchinson/BBLauncher/launcher3d.bb
-# compile _release/samples/RobHutchinson/BloxAndSpheres/blox\&spheres.bb # TODO: gosub
+compile _release/samples/RobHutchinson/BloxAndSpheres/blox\&spheres.bb
 compile _release/samples/RobHutchinson/CraftFlare/CraftFlare.bb
 compile _release/samples/RobHutchinson/CraftFlare/start.bb
 compile _release/samples/RobHutchinson/ModelChildren/modelchildren.bb

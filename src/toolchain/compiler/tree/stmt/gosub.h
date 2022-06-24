@@ -8,6 +8,9 @@ struct GosubNode : public StmtNode{
 	GosubNode( const string &s ):ident(s){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
+#ifdef USE_LLVM
+	virtual void translate2( Codegen_LLVM *g );
+#endif
 
 	json toJSON( Environ *e ){
 		json tree;tree["@class"]="GosubNode";

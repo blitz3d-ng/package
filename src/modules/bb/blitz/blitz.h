@@ -197,6 +197,9 @@ bb_float_t	 BBCALL _bbFSgn( bb_float_t n );
 bb_float_t	 BBCALL _bbFMod( bb_float_t x,bb_float_t y );
 bb_float_t	 BBCALL _bbFPow( bb_float_t x,bb_float_t y );
 
+void BBCALL _bbPushGosub( void *addr );
+void * BBCALL _bbPopGosub();
+
 // debug
 void BBCALL _bbDebugLog( const char *t );
 void BBCALL _bbDebugInfo( const char *e );

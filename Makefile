@@ -54,4 +54,9 @@ install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 	cp src/modules/bb/unit-test/unit_test.decls ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 
-.PHONY: build
+clean:
+	rm -rf build
+	rm -rf _release/toolchains/arm*
+	rm -rf _release/toolchains/x84*
+
+.PHONY: build llvm install-unit-test clean

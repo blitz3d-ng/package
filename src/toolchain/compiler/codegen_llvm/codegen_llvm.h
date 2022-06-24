@@ -33,6 +33,10 @@ public:
 	llvm::StructType *bbArray;
 	llvm::StructType *bbVecType;
 
+	llvm::PointerType *bbObjPtr;
+
+	llvm::Type *voidTy;
+	llvm::Type *intTy;
 	llvm::PointerType *voidPtr;
 
 	llvm::Constant *constantInt( int i );
