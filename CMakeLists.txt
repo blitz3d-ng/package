@@ -10,6 +10,12 @@ include(src/bin2h.cmake)
 set(BB_STATIC false)
 set(BB_SHARED true)
 
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  set(BB_CLANG)
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  set(BB_GNU)
+endif()
+
 # TODO: this will be extended a bit...
 if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES x86_64 OR CMAKE_HOST_SYSTEM_PROCESSOR MATCHES AMD64)
   set(BB_HOST_ARCH "x86_64")
@@ -32,7 +38,7 @@ else()
 endif()
 
 if(NOT BB_HOST_ARCH STREQUAL BB_ARCH)
-  if(NOT MSVC)
+  if(BB_CLANG)
     add_compile_options(-arch ${BB_ARCH})
     add_link_options(-arch ${BB_ARCH})
   endif()

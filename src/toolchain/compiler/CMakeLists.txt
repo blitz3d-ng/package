@@ -12,7 +12,7 @@ if(BB64)
   find_package(LLD CONFIG PATHS ${LLVM_ROOT})
 
   # TODO: this will go away once CI is sorted...
-  if(NOT LLVM_found OR NOT LLD_found)
+  if(NOT LLVM_FOUND OR NOT LLD_FOUND)
     return()
   endif()
 endif()
