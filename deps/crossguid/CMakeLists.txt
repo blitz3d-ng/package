@@ -1,7 +1,9 @@
 add_library(crossguid STATIC src/guid.h src/guid.cpp)
 target_include_directories(crossguid SYSTEM PUBLIC src)
 
-target_compile_options(crossguid PRIVATE -Wno-c++11-narrowing)
+IF(NOT BB_MSVC)
+  target_compile_options(crossguid PRIVATE -Wno-c++11-narrowing)
+ENDIF()
 
 IF(BB_WINDOWS)
   target_compile_definitions(crossguid PRIVATE -DGUID_WINDOWS)

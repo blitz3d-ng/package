@@ -8,8 +8,13 @@ if(BB64)
   endif()
 
   set(LLVM_ROOT ${llvm_path})
-  find_package(LLVM 14.0.4 REQUIRED CONFIG PATHS ${LLVM_ROOT})
-  find_package(LLD REQUIRED CONFIG PATHS ${LLVM_ROOT})
+  find_package(LLVM 14.0.4 CONFIG PATHS ${LLVM_ROOT})
+  find_package(LLD CONFIG PATHS ${LLVM_ROOT})
+
+  # TODO: this will go away once CI is sorted...
+  if(NOT LLVM_found OR NOT LLD_found)
+    return()
+  endif()
 endif()
 
 include_directories (SYSTEM ../../modules)

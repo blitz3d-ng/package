@@ -32,8 +32,10 @@ else()
 endif()
 
 if(NOT BB_HOST_ARCH STREQUAL BB_ARCH)
-  add_compile_options(-arch ${BB_ARCH})
-  add_link_options(-arch ${BB_ARCH})
+  if(NOT MSVC)
+    add_compile_options(-arch ${BB_ARCH})
+    add_link_options(-arch ${BB_ARCH})
+  endif()
 
   set(BB_CROSSCOMPILE true)
 endif()
@@ -200,21 +202,25 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
   set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/lib )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
-function(target_output_to_bin target)
+function(target_output_directory target dir)
   set_target_properties(${target}
     PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${RELEASE_PATH}/bin
-    LIBRARY_OUTPUT_DIRECTORY ${RELEASE_PATH}/bin
+    RUNTIME_OUTPUT_DIRECTORY ${dir}
+    LIBRARY_OUTPUT_DIRECTORY ${dir}
   )
 
   foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
     set_target_properties(${target}
       PROPERTIES
-      CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${RELEASE_PATH}/bin
-      CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${RELEASE_PATH}/bin
+      RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${dir}
+      LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${dir}
     )
   endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+endfunction()
+
+function(target_output_to_bin target)
+  target_output_directory(${target} ${RELEASE_PATH}/bin)
 endfunction()
 
 IF(BB_MSVC)

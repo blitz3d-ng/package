@@ -192,8 +192,11 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 				path=path.substr( 1,path.size()-2 );
 
 				char buf[2048];
+#ifndef BB_WINDOWS // TODO: solve this properly
 				string abspath=realpath( path.c_str(),buf );
-
+#else
+				string abspath=path;
+#endif
 				ifstream i_stream( abspath.c_str() );
 				if( !i_stream.good() ) ex( "Unable to open "+abspath );
 				i_stream.close();
