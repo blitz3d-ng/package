@@ -1,6 +1,8 @@
 add_library(crossguid STATIC src/guid.h src/guid.cpp)
 target_include_directories(crossguid SYSTEM PUBLIC src)
 
+target_compile_options(crossguid PRIVATE -Wno-c++11-narrowing)
+
 IF(BB_WINDOWS)
   target_compile_definitions(crossguid PRIVATE -DGUID_WINDOWS)
 ELSEIF(BB_MACOS)
@@ -8,4 +10,6 @@ ELSEIF(BB_MACOS)
   target_link_libraries(crossguid "-framework CoreFoundation")
 ELSEIF(BB_LINUX)
   target_compile_definitions(crossguid PRIVATE -DGUID_LIBUUID)
+ELSEIF(BB_ANDROID)
+  target_compile_definitions(crossguid PRIVATE -DGUID_ANDROID)
 ENDIF()

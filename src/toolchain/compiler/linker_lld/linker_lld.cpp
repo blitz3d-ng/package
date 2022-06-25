@@ -71,17 +71,14 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj, co
 	// TODO: gcc --print-file-name=libc.a
 	args.push_back("-L");args.push_back("/usr/lib/x86_64-linux-gnu");
 	args.push_back("-L");args.push_back("/usr/lib/gcc/x86_64-linux-gnu/10");
-	args.push_back("-L");args.push_back("/usr/lib/llvm-11/lib/clang/11.0.1/lib/linux");
 
 	args.push_back("-lc");
+	args.push_back("--entry");args.push_back("main");
 	args.push_back("-lstdc++");
 	args.push_back("-lgcc");
 	args.push_back("-lgcc_eh");
 
-	// args.push_back("-lclang_rt.builtins-x86_64");
-
 	// args.push_back("--static");
-	// args.push_back("/usr/lib/x86_64-linux-gnu/crt1.o");
 #endif
 
 // TODO: fix this hardcoding

@@ -116,7 +116,15 @@ macro(bb_end_runtime )
   file_write_changes(${RT_CPP} "${STUB_SRC}")
 
   # static
-  add_library(${name}.static STATIC ${RT_CPP})
+  foreach(dep IN LISTS DEPENDS_ON)
+    set(link_cpp ${PROJECT_SOURCE_DIR}/src/modules/bb/${dep}/module.link.cpp)
+
+    if(EXISTS ${link_cpp})
+      set(SOURCES ${SOURCES} ${link_cpp})
+    endif()
+  endforeach()
+
+  add_library(${name}.static STATIC ${RT_CPP} ${SOURCES})
   target_link_libraries(${name}.static ${LIBS} ${SYSTEM_LIBS} bb.stub)
   target_include_directories(${name}.static PUBLIC ../../modules)
 
@@ -129,16 +137,7 @@ macro(bb_end_runtime )
   endif()
 
   # shared
-  foreach(dep IN LISTS DEPENDS_ON)
-    set(rel_path ../../modules/bb/${dep}/module.link.cpp)
-    file(REAL_PATH ${rel_path} link_cpp)
-
-    if(EXISTS ${link_cpp})
-      set(SOURCES ${SOURCES} ${link_cpp})
-    endif()
-  endforeach()
-
-  add_library(${name}.shared SHARED ${SOURCES})
+  add_library(${name}.shared SHARED)
   target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
 
   if(BB_WINDOWS)
