@@ -21,7 +21,7 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
       - run: .\make.bat release ${{ matrix.arch }}
-      - run: .\test\entry.${{ matrix.arch }}.bat
+      #- run: .\test\entry.${{ matrix.arch }}.bat
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
