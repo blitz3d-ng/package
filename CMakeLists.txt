@@ -11,6 +11,16 @@ set(BB_STATIC false)
 set(BB_SHARED true)
 
 # TODO: this will be extended a bit...
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES x86_64 OR CMAKE_HOST_SYSTEM_PROCESSOR MATCHES AMD64)
+  set(BB_HOST_ARCH "x86_64")
+elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
+  set(BB_HOST_ARCH "arm64")
+endif()
+
+if($ENV{ARCH})
+  set(BB_ARCH $ENV{ARCH})
+endif()
+
 if(ARCH)
   set(BB_ARCH ${ARCH})
 else()
@@ -19,6 +29,13 @@ else()
   elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
     set(BB_ARCH "arm64")
   endif()
+endif()
+
+if(NOT BB_HOST_ARCH STREQUAL BB_ARCH)
+  add_compile_options(-arch ${BB_ARCH})
+  add_link_options(-arch ${BB_ARCH})
+
+  set(BB_CROSSCOMPILE true)
 endif()
 
 IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -285,7 +302,7 @@ IF(BB_MSVC)
   add_subdirectory(src/legacy/debugger)
 ENDIF()
 
-IF(BB_DESKTOP)
+IF(BB_DESKTOP AND NOT BB_CROSSCOMPILE)
   add_subdirectory(src/toolchain/compiler)
   add_subdirectory(src/legacy/linker)
 ENDIF()

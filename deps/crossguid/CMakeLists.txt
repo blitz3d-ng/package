@@ -5,7 +5,7 @@ target_compile_options(crossguid PRIVATE -Wno-c++11-narrowing)
 
 IF(BB_WINDOWS)
   target_compile_definitions(crossguid PRIVATE -DGUID_WINDOWS)
-ELSEIF(BB_MACOS)
+ELSEIF(BB_MACOS OR BB_IOS)
   target_compile_definitions(crossguid PRIVATE -DGUID_CFUUID)
   target_link_libraries(crossguid "-framework CoreFoundation")
 ELSEIF(BB_LINUX)

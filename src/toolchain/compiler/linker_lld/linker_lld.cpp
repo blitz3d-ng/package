@@ -35,9 +35,33 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj, co
 	string binaryPath=exeFile;
 
 #ifdef BB_MACOS
-	string appname=basename( (char*)exeFile.c_str() );
+	string appid=basename( (char*)exeFile.c_str() );
+	string apptitle=appid;
+	apptitle[0]=toupper(apptitle[0]);
+
 	mkdir( bundlePath.c_str(),0755 );
-	binaryPath=bundlePath+"/"+appname;
+
+	// TODO: a bit lazy...
+	system( ("cp "+home+"/cfg/bbexe.icns "+bundlePath+"/"+appid+".icns").c_str() );
+
+	ofstream plist;
+	plist.open( bundlePath+"/Info.plist");
+	plist << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+	plist << "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
+	plist << "<plist version=\"1.0\">\n";
+	plist << "<dict>\n";
+	plist << "  <key>CFBundleDisplayName</key>\n";
+	plist << "  <string>"<<apptitle<<"</string>\n";
+	plist << "  <key>CFBundleExecutable</key>\n";
+	plist << "  <string>"<<appid<<"</string>\n";
+	plist << "  <key>CFBundleIconFile</key>\n";
+	plist << "  <string>"<<appid<<".icns</string>\n";
+	plist << "</dict>\n";
+	plist << "</plist>\n";
+
+	plist.close();
+
+	binaryPath=bundlePath+"/"+appid;
 #endif
 
 	// just the name?
