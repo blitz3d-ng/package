@@ -75,12 +75,14 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 #endif
 
 #ifdef BB_MACOS
-	// if( argc > 0 ){
-	// 	char path[PATH_MAX];
-	// 	uint32_t path_len=sizeof( path );
-	// 	_NSGetExecutablePath( path,&path_len );
-	// 	chdir( dirname( path ) );
-	// }
+	// TODO: this is a little bit of a hack...but it should work for now.
+	char path[PATH_MAX];
+	uint32_t path_len=sizeof( path );
+	_NSGetExecutablePath( path,&path_len );
+	string dir=dirname( path );
+	if( dir.substr( dir.length()-4 )==".app" ){
+		chdir( dir.c_str() );
+	}
 #endif
 
 	bool trace=false;

@@ -349,6 +349,7 @@ int main( int argc,char *argv[] ){
 	ProgNode *prog=0;
 	Environ *env=0;
 	Module *module=0;
+	BundleInfo bundle;
 
 #ifdef USE_LLVM
 	string obj_file( string(tmpnam(0))+".o" );
@@ -363,6 +364,7 @@ int main( int argc,char *argv[] ){
 		Toker toker( in );
 		Parser parser( toker );
 		prog=parser.parse( in_file );
+		bundle=parser.bundle;
 
 		//semant
 		if( !veryquiet ) cout<<"Generating..."<<endl;
@@ -396,6 +398,12 @@ int main( int argc,char *argv[] ){
 			}
 		}
 
+		if( bundle.enabled&&out_file.size() ){
+#ifdef BB_MACOS
+			out_file+=".app";
+#endif
+		}
+
 		//assemble
 		if( !veryquiet ) cout<<"Assembling..."<<endl;
 
@@ -424,11 +432,11 @@ int main( int argc,char *argv[] ){
 	int ret=0;
 
 	if( out_file.size() ){
-		if( !veryquiet ) cout<<"Creating executable \""<<out_file<<"\"..."<<endl;
+		if( !veryquiet ) cout<<"Creating "+string(bundle.enabled?"bundle":"executable")+" \""<<out_file<<"\"..."<<endl;
 		if( usellvm ) {
 #ifdef USE_LLVM
 			Linker_LLD linker( home );
-			linker.createExe( rt,obj_file, out_file );
+			linker.createExe( rt,obj_file,bundle,out_file );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();

@@ -175,6 +175,33 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 				incfile=t_inc;
 			}
 			break;
+		case BUNDLEAPPNAME:
+			{
+				if( toker->next()!=STRINGCONST ) exp( "App name must be a string" );
+				string name=toker->text();toker->next();
+				name=name.substr( 1,name.size()-2 );
+
+				bundle.enabled=true;
+				bundle.appName=name;
+			}
+			break;
+		case BUNDLEFILE:
+			{
+				if( toker->next()!=STRINGCONST ) exp( "File must be a string" );
+				string path=toker->text();toker->next();
+				path=path.substr( 1,path.size()-2 );
+
+				char buf[2048];
+				string abspath=realpath( path.c_str(),buf );
+
+				ifstream i_stream( abspath.c_str() );
+				if( !i_stream.good() ) ex( "Unable to open "+abspath );
+				i_stream.close();
+
+				bundle.enabled=true;
+				bundle.files.push_back( BundleFile( path,abspath ) );
+			}
+			break;
 		case IDENT:
 			{
 				string ident=toker->text();

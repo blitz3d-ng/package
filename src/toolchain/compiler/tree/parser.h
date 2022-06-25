@@ -9,6 +9,7 @@
 #define PARSER_H
 
 #include "toker.h"
+#include "../bundle.h"
 #include "decl/decl_seq.h"
 #include "expr/call.h"
 #include "expr/expr_seq.h"
@@ -23,7 +24,7 @@ public:
 	Parser( Toker &t );
 
 	ProgNode *parse( const string &main );
-
+	BundleInfo bundle;
 private:
 	string incfile;
 	set<string> included;

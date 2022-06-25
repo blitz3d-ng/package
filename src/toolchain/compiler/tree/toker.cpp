@@ -79,6 +79,9 @@ static void makeKeywords(){
 	alphaTokes["Shr"]=SHR;
 	alphaTokes["Sar"]=SAR;
 
+	alphaTokes["BundleAppName"]=BUNDLEAPPNAME;
+	alphaTokes["BundleFile"]=BUNDLEFILE;
+
 	map<string,int>::const_iterator it;
 	for( it=alphaTokes.begin();it!=alphaTokes.end();++it ){
 		lowerTokes[tolower(it->first)]=it->second;

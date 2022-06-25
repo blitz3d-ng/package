@@ -3,8 +3,10 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#ifdef BB_POSIX
 #include <libgen.h>
 #include <sys/stat.h>
+#endif
 
 #ifdef BB_MSVC
 #define FORMAT coff
@@ -25,43 +27,79 @@
 Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
-void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj, const std::string &exeFile ){
+void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
 	std::string toolchain=home+"/toolchains/" BB_TRIPLE;
 	std::string lib_dir=toolchain+"/lib";
 
 	std::vector<const char *> args;
 
-	string bundlePath=exeFile+".app";
 	string binaryPath=exeFile;
 
 #ifdef BB_MACOS
-	string appid=basename( (char*)exeFile.c_str() );
-	string apptitle=appid;
-	apptitle[0]=toupper(apptitle[0]);
+	if( bundle.enabled ){
+		string bundlePath=binaryPath;
+		binaryPath=binaryPath.substr( 0,binaryPath.size()-4 ); // remove .app
+		string appid=basename( (char*)binaryPath.c_str() );
+		string apptitle=bundle.appName;
+		if( apptitle=="" ){
+			apptitle[0]=toupper(apptitle[0]);
+		}
 
-	mkdir( bundlePath.c_str(),0755 );
+		mkdir( bundlePath.c_str(),0755 );
+		remove( binaryPath.c_str() );
 
-	// TODO: a bit lazy...
-	system( ("cp "+home+"/cfg/bbexe.icns "+bundlePath+"/"+appid+".icns").c_str() );
+		// TODO: a bit lazy...
+		if( system( ("cp "+home+"/cfg/bbexe.icns "+bundlePath+"/"+appid+".icns").c_str() ) ){
+			exit( 1 );
+		}
+		for( auto &file:bundle.files ){
+			string from=file.absolutePath;
+			string to=file.relativePath;
 
-	ofstream plist;
-	plist.open( bundlePath+"/Info.plist");
-	plist << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-	plist << "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
-	plist << "<plist version=\"1.0\">\n";
-	plist << "<dict>\n";
-	plist << "  <key>CFBundleDisplayName</key>\n";
-	plist << "  <string>"<<apptitle<<"</string>\n";
-	plist << "  <key>CFBundleExecutable</key>\n";
-	plist << "  <string>"<<appid<<"</string>\n";
-	plist << "  <key>CFBundleIconFile</key>\n";
-	plist << "  <string>"<<appid<<".icns</string>\n";
-	plist << "</dict>\n";
-	plist << "</plist>\n";
+			// TODO: not perfect...
+			size_t pos=0;
+			while( (pos=to.find("../"))!=std::string::npos ){
+				to.replace( pos,3,"" );
+			}
 
-	plist.close();
+			string dir=bundlePath;
+			size_t start=0,end=0;
+			while( (end=to.find( "/",start ))!=std::string::npos ){
+				dir+="/"+to.substr( start,end );
+				mkdir( dir.c_str(),0755 );
+				start=end+1;
+			}
 
-	binaryPath=bundlePath+"/"+appid;
+			cout<<"Copying "+file.relativePath+"..."<<endl;
+			if( system( ("cp "+from+" "+bundlePath+"/"+to).c_str() ) ){
+				exit( 1 );
+			}
+		}
+
+		ofstream plist;
+		plist.open( bundlePath+"/Info.plist");
+		plist << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+		plist << "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
+		plist << "<plist version=\"1.0\">\n";
+		plist << "<dict>\n";
+		plist << "  <key>CFBundleName</key>\n";
+		plist << "  <string>"<<apptitle<<"</string>\n";
+		plist << "  <key>CFBundleDisplayName</key>\n";
+		plist << "  <string>"<<apptitle<<"</string>\n";
+		plist << "  <key>CFBundleExecutable</key>\n";
+		plist << "  <string>"<<appid<<"</string>\n";
+		plist << "  <key>CFBundleIconFile</key>\n";
+		plist << "  <string>"<<appid<<".icns</string>\n";
+		plist << "  <key>CFBundlePackageType</key>\n";
+		plist << "  <string>APPL</string>\n";
+
+		plist << "</dict>\n";
+		plist << "</plist>\n";
+
+		plist.close();
+
+		binaryPath=bundlePath+"/"+appid;
+	}
 #endif
 
 	// just the name?
@@ -69,7 +107,7 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj, co
 
 	args.push_back("--error-limit=0");
 
-	// args.push_back("--lto-O0");
+	args.push_back("--lto-O0");
 
 #ifdef BB_MACOS
 	// TODO: use xcrun --show-sdk-path
@@ -195,8 +233,6 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj, co
 		}
 		iface.close();
 	}
-
-	// args.push_back("-static");
 
 	if( !lld::FORMAT::link( args,llvm::outs(),llvm::errs(),true,false ) ) {
 		exit( 1 );
