@@ -33,7 +33,7 @@ using namespace std;
 #ifdef USE_LLVM
 #include "codegen_llvm/codegen_llvm.h"
 #include "linker_lld/linker_lld.h"
-#include "jit.h"
+#include "jit_orc/jit_orc.h"
 #endif
 
 #if defined(WIN32) && !defined(__MINGW32__)
@@ -47,14 +47,16 @@ using namespace std;
 #include <execinfo.h>
 #include <signal.h>
 
-static void print_trace() {
-	void *array[10];
+#define TRACE_DEPTH 100
+static
+void print_trace() {
+	void *array[TRACE_DEPTH];
 	char **strings;
 	int size, i;
 
-	size = backtrace (array, 100);
-	strings = backtrace_symbols (array, size);
-	if (strings != NULL) {
+	size = backtrace( array,TRACE_DEPTH );
+	strings = backtrace_symbols( array,size );
+	if( strings!=NULL ){
 		fprintf(stderr, "Obtained %d stack frames.\n", size);
 		for (i = 0; i < size; i++) {
 			fprintf(stderr, "%s\n", strings[i]);
@@ -355,7 +357,7 @@ int main( int argc,char *argv[] ){
 	string obj_file( string(tmpnam(0))+".o" );
 	Codegen_LLVM codegen2( debug );
 
-	auto jit = cantFail(BlitzJIT::Create());
+	auto jit = cantFail(JIT_ORC::Create());
 #endif
 
 	try{

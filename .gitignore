@@ -14,6 +14,7 @@
 *.res
 *.ilk
 *.pdb
+*.dSYM/
 *.sln
 *.vcxproj
 *.vcxproj.filters

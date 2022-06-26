@@ -101,6 +101,8 @@ add_executable(blitzcc
   assem_x86/asm_insts.cpp assem_x86/assem_x86.cpp assem_x86/assem_x86.h assem_x86/insts.h assem_x86/operand.cpp assem_x86/operand.h
   assem.h
 
+  jit_orc/jit_orc.cpp jit_orc/jit_orc.h
+
   std.cpp std.h
 )
 

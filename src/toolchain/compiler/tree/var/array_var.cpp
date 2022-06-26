@@ -34,9 +34,11 @@ TNode *ArrayVarNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
+	auto func=g->builder->GetInsertBlock()->getParent();
+
 	auto zero=llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) );
 	auto int_ty=Type::int_type->llvmType( g->context.get() );
-	auto void_ty=llvm::PointerType::get( llvm::Type::getVoidTy( *g->context ),0 );
+	auto void_ty=llvm::Type::getVoidTy( *g->context );
 	auto ty=sem_type->llvmType( g->context.get() );
 
 	auto glob=g->getArray( ident,sem_decl->type->arrayType()->dims );
@@ -44,7 +46,7 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 	vector<llvm::Value*> di;
 	di.push_back( zero );
 	di.push_back( zero );
-	auto dataptr=g->builder->CreateLoad( void_ty,g->builder->CreateGEP( g->bbArray,glob,di ) );
+	auto dataptr=g->builder->CreateLoad( g->voidPtr,g->builder->CreateGEP( g->bbArray,glob,di ) );
 	auto data=g->builder->CreateBitOrPointerCast( dataptr,llvm::PointerType::get( ty,0 ) );
 
 	llvm::Value *t=0;
@@ -53,14 +55,29 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 		if( k ){
 			vector<llvm::Value*> idx;
 			idx.push_back( zero );
-			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,1+k ) ) );
+			if( k==0 ) idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,0 ) ) );
+			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,k==0?2:k ) ) );
 			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( glob->getType()->getPointerElementType(),glob,idx ) );
 			e=g->builder->CreateAdd( t,g->builder->CreateMul( e,s ) );
 		}
 		if( g->debug ){
-		// 	TNode *s=mem( add( global( "_a"+ident ),iconst( k*4+12 ) ) );
-		// 	t=jumpge( e,s,"__bbArrayBoundsEx" );
-		}else t=e;
+			vector<llvm::Value*> idx;
+			idx.push_back( zero );
+			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,1+k ) ) );
+			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( glob->getType()->getPointerElementType(),glob,idx ) );
+
+			auto ex=llvm::BasicBlock::Create( *g->context,"bounds_ex",func );
+			auto cont=llvm::BasicBlock::Create( *g->context,"bounds_cont",func );
+
+			g->builder->CreateCondBr( g->builder->CreateICmpSGE( e,s ),ex,cont );
+
+			g->builder->SetInsertPoint( ex );
+			g->CallIntrinsic( "_bbArrayBoundsEx",void_ty,0 );
+			g->builder->CreateUnreachable();
+
+			g->builder->SetInsertPoint( cont );
+		}
+		t=e;
 	}
 
 	vector<llvm::Value*> idx;
