@@ -307,20 +307,19 @@ add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")
 add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
 
 add_subdirectory(src/stdutil)
-add_subdirectory(src/blitzide2)
-
-IF(BB_MSVC)
-  add_subdirectory(src/legacy/blitzide)
-  add_subdirectory(src/legacy/debugger)
-ENDIF()
 
 IF(BB_DESKTOP AND NOT BB_CROSSCOMPILE)
   add_subdirectory(src/toolchain/compiler)
-  add_subdirectory(src/legacy/linker)
-ENDIF()
+  add_subdirectory(src/blitzide2)
 
-IF(BB_WINDOWS)
-  add_subdirectory(src/legacy/bblaunch)
+  IF(BB_MSVC)
+    add_subdirectory(src/legacy/blitzide)
+    add_subdirectory(src/legacy/debugger)
+  ENDIF()
+
+  IF(BB_WINDOWS)
+    add_subdirectory(src/legacy/bblaunch)
+  ENDIF()
 ENDIF()
 
 add_subdirectory(src/modules)

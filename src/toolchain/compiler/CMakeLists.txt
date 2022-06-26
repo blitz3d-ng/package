@@ -101,14 +101,16 @@ add_executable(blitzcc
   assem_x86/asm_insts.cpp assem_x86/assem_x86.cpp assem_x86/assem_x86.h assem_x86/insts.h assem_x86/operand.cpp assem_x86/operand.h
   assem.h
 
+  linker_x86/linker.h linker_x86/linker.cpp linker_x86/image_util.h linker_x86/image_util.cpp
+
   std.cpp std.h
 )
 
 if(BB64 AND BB_WINDOWS)
   set_target_properties(blitzcc PROPERTIES OUTPUT_NAME "blitzcc64")
-  target_compile_definitions(blitzcc PRIVATE LINKERNAME="linker64" RUNTIMENAME="runtime64")
+  target_compile_definitions(blitzcc PRIVATE RUNTIMENAME="runtime64")
 else()
-  target_compile_definitions(blitzcc PRIVATE LINKERNAME="linker" RUNTIMENAME="runtime")
+  target_compile_definitions(blitzcc PRIVATE RUNTIMENAME="runtime")
 endif()
 
 if(BB_WINDOWS)

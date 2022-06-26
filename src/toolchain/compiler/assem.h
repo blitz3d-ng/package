@@ -2,7 +2,7 @@
 #ifndef ASSEM_H
 #define ASSEM_H
 
-#include "../../legacy/linker/linker.h"
+#include "linker_x86/linker.h"
 
 class Assem{
 public:

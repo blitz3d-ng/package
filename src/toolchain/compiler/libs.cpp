@@ -31,7 +31,7 @@ vector<string> modules;
 vector<string> keyWords;
 vector<UserFunc> userFuncs;
 
-static HMODULE linkerHMOD,runtimeHMOD;
+static HMODULE runtimeHMOD;
 
 static Type *_typeof( int c ){
 	switch( c ){
@@ -279,13 +279,7 @@ const char *openLibs( const string rt ){
 	home=string(p);
 #endif
 
-	linkerHMOD=OPENLIB( (home+"/bin/" LINKERNAME "." LIBSUFFIX).c_str() );
-	if( !linkerHMOD ) return "Unable to open " LINKERNAME "." LIBSUFFIX;
-
-	typedef Linker *(CDECL*GetLinker)();
-	GetLinker gl=(GetLinker)LIBSYM( linkerHMOD,"linkerGetLinker" );
-	if( !gl ) return "Error in " LINKERNAME "." LIBSUFFIX;
-	linkerLib=gl();
+	linkerLib=linkerGetLinker();
 
 	runtimeHMOD=OPENLIB( (home+LIBPATH).c_str() );
 	if( !runtimeHMOD ){
@@ -337,11 +331,9 @@ void closeLibs(){
 	if( linkerLib ) linkerLib->deleteModule( runtimeModule );
 	if( runtimeLib ) runtimeLib->shutdown();
 	if( runtimeHMOD ) CLOSELIB( runtimeHMOD );
-	if( linkerHMOD ) CLOSELIB( linkerHMOD );
 
 	runtimeEnviron=0;
 	linkerLib=0;
 	runtimeLib=0;
 	runtimeHMOD=0;
-	linkerHMOD=0;
 }

@@ -11,7 +11,7 @@ using namespace std;
 
 #include "environ.h"
 #include "tree/parser.h"
-#include "../../legacy/linker/linker.h"
+#include "linker_x86/linker.h"
 #include "../../legacy/bbruntime_dll/bbruntime_dll.h"
 
 extern int bcc_ver;
@@ -26,7 +26,6 @@ extern Runtime *runtimeLib;
 
 //linkLibs
 extern Module *runtimeModule;
-#endif
 extern Environ *runtimeEnviron;
 extern vector<string> modules;
 extern vector<string> keyWords;
@@ -37,3 +36,5 @@ const char *openLibs( const string rt );
 const char *linkLibs( const string rt );
 
 void closeLibs();
+
+#endif

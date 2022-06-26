@@ -2,7 +2,7 @@
 #ifndef DEBUGTREE_H
 #define DEBUGTREE_H
 
-#include "../linker/linker.h"
+#include "../../toolchain/compiler/linker_x86/linker.h"
 #include "../../toolchain/compiler/environ.h"
 
 class DebugTree : public CTreeCtrl{
