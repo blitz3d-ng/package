@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "commands.h"
 #include "blitz.h"
 #include "app.h"

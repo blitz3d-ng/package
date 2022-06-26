@@ -1,6 +1,6 @@
 
 #include <bb/blitz/blitz.h>
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "pixmap.h"
 using namespace std;
 

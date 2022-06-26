@@ -1,7 +1,7 @@
 
 #include <set>
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/blitz/blitz.h>
 #include "stream.h"
 

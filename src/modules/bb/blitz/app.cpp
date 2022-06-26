@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/runtime/runtime.h>
 #include "app.h"
 #include "ex.h"

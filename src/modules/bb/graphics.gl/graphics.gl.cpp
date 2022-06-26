@@ -1,4 +1,4 @@
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "graphics.gl.h"
 
 BBMODULE_CREATE( graphics_gl ){

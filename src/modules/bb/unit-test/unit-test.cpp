@@ -1,7 +1,7 @@
 
 #include <bb/blitz/blitz.h>
 #include <bb/math/math.h>
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "unit-test.h"
 
 using namespace std;

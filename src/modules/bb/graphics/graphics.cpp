@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "graphics.h"
 #include <bb/input/input.h>
 #include <bb/system/system.h>

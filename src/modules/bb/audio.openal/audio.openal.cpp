@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "audio.openal.h"
 #include <bb/audio/ogg_stream.h>
 #include <bb/audio/wav_stream.h>

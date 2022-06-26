@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "runtime.glfw3.h"
 #include <bb/pixmap/pixmap.h>
 #include <bb/event/event.h>

@@ -3,7 +3,7 @@
 #define STD_COMPILER_H
 
 #include "../../config.h"
-#include "../../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 
 #include <set>
 #include <map>

@@ -3,7 +3,7 @@
 #define STD_LINKER_H
 
 #include "../../config.h"
-#include "../../../stdutil/stdutil.h"
+#include "../../stdutil/stdutil.h"
 
 #include <map>
 #include <list>

@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "filesystem.h"
 #include <bb/stream/stream.h>
 #include <fstream>

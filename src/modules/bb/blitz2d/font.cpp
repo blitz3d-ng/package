@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/system/system.h>
 #include "font.h"
 using namespace std;

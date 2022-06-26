@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/blitz/blitz.h>
 #include "canvas.h"
 #include "asmcoder.h"

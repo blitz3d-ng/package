@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/blitz2d/font.h>
 #include "blitz2d.gles2.h"
 #include <cmath>

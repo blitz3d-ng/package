@@ -306,7 +306,7 @@ ENDIF()
 add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")
 add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
 
-add_subdirectory(stdutil)
+add_subdirectory(src/stdutil)
 add_subdirectory(src/blitzide2)
 
 IF(BB_MSVC)

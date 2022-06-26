@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/runtime.windows/gxgraphics.h>
 #include "graphics.d3d7.h"
 #include <windows.h>

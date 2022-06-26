@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "runtime.console.h"
 
 class ConsoleRuntime : public BBRuntime{

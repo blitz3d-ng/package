@@ -5,7 +5,7 @@
 #pragma warning( disable:4786 )
 
 #include "../config.h"
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 
 #include <set>
 #include <map>

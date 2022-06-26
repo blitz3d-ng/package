@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "sockets.h"
 #include <bb/runtime/runtime.h>
 #include <bb/system/system.h>

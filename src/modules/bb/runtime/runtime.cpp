@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/blitz/blitz.h>
 #include <bb/event/event.h>
 #include "runtime.h"

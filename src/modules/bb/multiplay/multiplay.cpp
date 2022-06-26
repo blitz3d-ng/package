@@ -5,7 +5,7 @@
 
   */
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "multiplay.h"
 #include "multiplay_setup.h"
 #include <map>

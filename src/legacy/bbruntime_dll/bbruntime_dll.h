@@ -2,7 +2,7 @@
 #define BBRUNTIME_DLL_H
 
 #include <bb/blitz/blitz.h>
-#include "../../../stdutil/stdutil.h"
+#include "../../stdutil/stdutil.h"
 
 #include <string>
 

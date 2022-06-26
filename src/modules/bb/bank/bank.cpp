@@ -1,7 +1,7 @@
 
 
 #include <bb/blitz/blitz.h>
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "bank.h"
 
 #include <cstring>

@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/blitz/module.h>
 #include <bb/runtime/runtime.h>
 #include <vector>
