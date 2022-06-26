@@ -9,7 +9,7 @@ macro(bb_start_module name)
 endmacro()
 
 macro(bb_end_module)
-  add_library (bb.${MODULE_ID} STATIC ${SOURCES})
+  add_library (bb.${MODULE_ID} OBJECT ${SOURCES})
   target_link_libraries (bb.${MODULE_ID} ${DEPENDS_ON} ${LIBS})
 
   if(BB_COVERAGE)

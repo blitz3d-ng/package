@@ -31,7 +31,8 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	std::string toolchain=home+"/toolchains/" BB_TRIPLE;
 	std::string lib_dir=toolchain+"/lib";
 
-	std::vector<const char *> args;
+	// TODO: sort out all the lazy strdup business below...
+	std::vector<const char *> args, libs;
 
 	string binaryPath=exeFile;
 
@@ -105,21 +106,22 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	// just the name?
 	args.push_back( exeFile.c_str() );
 
+#ifdef BB_POSIX
 	args.push_back("--error-limit=0");
-
 	args.push_back("--lto-O0");
+#endif
 
 #ifdef BB_MACOS
 	// TODO: use xcrun --show-sdk-path
 	args.push_back("-syslibroot");
 	args.push_back("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk");
 
-	// args.push_back("-lobjc");
-	args.push_back("-lc");
-	args.push_back("-lc++");
+	// libs.push_back("objc");
+	libs.push_back("c");
+	libs.push_back("c++");
 
-	args.push_back("-lSystem");
-	// args.push_back("-lSystem_asan");
+	libs.push_back("System");
+	// libs.push_back("System_asan");
 
 	args.push_back("-arch");
 	args.push_back(BB_ARCH);
@@ -134,11 +136,11 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	args.push_back("-L");args.push_back("/usr/lib/x86_64-linux-gnu");
 	args.push_back("-L");args.push_back("/usr/lib/gcc/x86_64-linux-gnu/10");
 
-	args.push_back("-lc");
+	libs.push_back("c");
 	args.push_back("--entry");args.push_back("main");
-	args.push_back("-lstdc++");
-	args.push_back("-lgcc");
-	args.push_back("-lgcc_eh");
+	libs.push_back("stdc++");
+	libs.push_back("gcc");
+	libs.push_back("gcc_eh");
 
 	// args.push_back("--static");
 #endif
@@ -152,22 +154,37 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	args.push_back(CLANG_LIBS "/libclang_rt.osx.a");
 #endif
 
-
-	args.push_back("-o");
-	args.push_back( binaryPath.c_str() );
+#ifdef BB_WINDOWS
+	string outArg="/out:"+binaryPath;
+	args.push_back( outArg.c_str() );
+#else
+	args.push_back("-o");args.push_back( binaryPath.c_str() );
+#endif
 
 	args.push_back( mainObj.c_str() );
 
-	args.push_back( "-L" );
-	args.push_back( lib_dir.c_str() );
+#ifdef BB_WINDOWS
+	string libPath="/libpath:"+lib_dir;
+	args.push_back( libPath.c_str() );
+#else
+	args.push_back( "-L" );args.push_back( lib_dir.c_str() );
+#endif
 
-	args.push_back( "-lbb.stub" );
-	args.push_back( strdup( ("-lruntime."+rt+".static").c_str() ) );
+#ifdef BB_WINDOWS
+	string libPath="/libpath:"+lib_dir;
+	args.push_back( libPath.c_str() );
+#else
+	args.push_back( "-L" );args.push_back( lib_dir.c_str() );
+#endif
+
+	// args.push_back( "-lbb.stub" );
+	string rtlib="runtime."+rt+".static";
+	libs.push_back( rtlib.c_str() );
 
 	ifstream rti( toolchain+"/runtime."+rt+".i" );
 	if (!rti.is_open()) {
 		cerr<<"Cannot find interface file for runtime."<<rt<<endl;
-		abort();
+		exit( 1 );
 	}
 
 	string line;
@@ -194,8 +211,8 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	}
 
 	for( std::string mod:modules ){
-		string arg( "-lbb." + mod );
-		args.push_back( strdup(arg.c_str()) );
+		// string arg( "-lbb." + mod );
+		// args.push_back( strdup(arg.c_str()) );
 
 		string line;
 		ifstream iface( toolchain+"/cfg/"+mod+".i" );
@@ -217,10 +234,10 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 					if( frag.find("-framework")==0 ) {
 						args.push_back("-framework");
 						arg = frag.substr( 11 );
+						args.push_back( strdup( arg.c_str() ) );
 					} else {
-						arg = "-l" + frag;
+						libs.push_back( strdup( frag.c_str() ) );
 					}
-					args.push_back( strdup( arg.c_str() ) );
 
 					if( e==string::npos ) {
 						break;
@@ -233,6 +250,17 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 		}
 		iface.close();
 	}
+
+	for( auto lib:libs ){
+		string arg;
+#ifdef BB_WINDOWS
+		arg=lib+".lib";
+#else
+		arg="-l"+string(lib);
+#endif
+		args.push_back( strdup( arg.c_str() ) );
+	}
+
 
 	if( !lld::FORMAT::link( args,llvm::outs(),llvm::errs(),true,false ) ) {
 		exit( 1 );

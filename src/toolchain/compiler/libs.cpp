@@ -276,7 +276,8 @@ const char *openLibs( const string rt ){
 	GetFullPathName( p,MAX_PATH,buff,NULL );
 	home=string(buff);
 #else
-	home=string(p);
+	char buff[PATH_MAX];
+	home=realpath( p,buff );
 #endif
 
 	linkerLib=linkerGetLinker();

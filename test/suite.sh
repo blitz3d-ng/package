@@ -27,6 +27,27 @@ compile() {
   result $? "$1"
 }
 
+make_exe() {
+  BASENAME="`basename $1 .bb`"
+  DIR="`pwd`/$BASENAME"
+  $BLITZCC -o $DIR "$1" > /dev/null 2>&1
+  RESULT=$?
+  result $RESULT "$1"
+
+  if [ $RESULT -eq 0 ]
+  then
+    if [[ "$OSTYPE" == "darwin"* ]]
+    then
+      test -f $DIR.app/$BASENAME
+      result $RESULT "  $BASENAME exists"
+      test -f $DIR.app/Info.plist
+      result $RESULT "  Info.plist exists"
+      test -f $DIR.app/$BASENAME.icns
+      result $RESULT "  $BASENAME.icns exists"
+    fi
+  fi
+}
+
 check_flag() {
   $BLITZCC $1 > /dev/null 2>&1
   result $? "$1"
@@ -139,6 +160,10 @@ echo "Verify games compile"
 compile _release/Games/bb3d_asteroids/EdzUpAsteroids.bb
 compile _release/Games/wing_ring/wing_ring.bb
 compile _release/Games/TunnelRun/tr.bb
+
+echo "Generate executables"
+
+make_exe _release/samples/mak/driver/driver.bundle.bb
 
 echo "Run misc compiler flags"
 check_flag -v
