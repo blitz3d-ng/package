@@ -24,6 +24,33 @@
 #define FORMAT elf
 #endif
 
+static
+void parse_list( std::string &line,std::vector<string> &libs ){
+	size_t s=0,e=line.find(";");
+	while( 1 ) {
+		string frag=line.substr( s,e-s );
+		while( frag[0] == ' ' ) frag=frag.substr( 1 );
+
+		if( frag.length() == 0 ) break;
+
+		string arg;
+		if( frag.find("-framework")==0 ) {
+			libs.push_back( "-framework" );
+			arg = frag.substr( 11 );
+			libs.push_back( arg );
+		} else {
+			libs.push_back( frag );
+		}
+
+		if( e==string::npos ) {
+			break;
+		}
+
+		s=e+1;
+		e=line.find(";",s);
+	}
+}
+
 Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
@@ -32,7 +59,7 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	std::string lib_dir=toolchain+"/lib";
 
 	// TODO: sort out all the lazy strdup business below...
-	std::vector<const char *> args, libs;
+	std::vector<string> args,libs,systemlibs;
 
 	string binaryPath=exeFile;
 
@@ -104,7 +131,7 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 #endif
 
 	// just the name?
-	args.push_back( exeFile.c_str() );
+	args.push_back( "linker" );
 
 #ifdef BB_POSIX
 	args.push_back("--error-limit=0");
@@ -117,10 +144,10 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	args.push_back("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk");
 
 	// libs.push_back("objc");
-	libs.push_back("c");
-	libs.push_back("c++");
+	libs.push_back( "c" );
+	libs.push_back( "c++" );
 
-	libs.push_back("System");
+	libs.push_back( "System" );
 	// libs.push_back("System_asan");
 
 	args.push_back("-arch");
@@ -131,18 +158,7 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 
 
 #ifdef BB_LINUX
-	// TODO: find out the best way to get this information from the environment
-	// TODO: gcc --print-file-name=libc.a
-	args.push_back("-L");args.push_back("/usr/lib/x86_64-linux-gnu");
-	args.push_back("-L");args.push_back("/usr/lib/gcc/x86_64-linux-gnu/10");
-
-	libs.push_back("c");
-	args.push_back("--entry");args.push_back("main");
-	libs.push_back("stdc++");
-	libs.push_back("gcc");
-	libs.push_back("gcc_eh");
-
-	// args.push_back("--static");
+	args.push_back("--as-needed");
 #endif
 
 // TODO: fix this hardcoding
@@ -156,30 +172,17 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 
 #ifdef BB_WINDOWS
 	string outArg="/out:"+binaryPath;
-	args.push_back( outArg.c_str() );
+	args.push_back( outArg );
 #else
-	args.push_back("-o");args.push_back( binaryPath.c_str() );
-#endif
-
-	args.push_back( mainObj.c_str() );
-
-#ifdef BB_WINDOWS
-	string libPath="/libpath:"+lib_dir;
-	args.push_back( libPath.c_str() );
-#else
-	args.push_back( "-L" );args.push_back( lib_dir.c_str() );
+	args.push_back("-o");args.push_back( binaryPath );
 #endif
 
 #ifdef BB_WINDOWS
 	string libPath="/libpath:"+lib_dir;
-	args.push_back( libPath.c_str() );
+	args.push_back( libPath );
 #else
-	args.push_back( "-L" );args.push_back( lib_dir.c_str() );
+	args.push_back( "-L" );args.push_back( lib_dir );
 #endif
-
-	// args.push_back( "-lbb.stub" );
-	string rtlib="runtime."+rt+".static";
-	libs.push_back( rtlib.c_str() );
 
 	ifstream rti( toolchain+"/runtime."+rt+".i" );
 	if (!rti.is_open()) {
@@ -190,29 +193,19 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	string line;
 	vector<string> modules;
 	while( getline( rti,line ) ) {
-		if( line.find("DEPS:")!=0 ) continue;
-
-		size_t s=5, e=line.find(";");
-		while( 1 ) {
-			string frag=line.substr( s,e-s );
-			while( frag[0] == ' ' ) frag=frag.substr( 1 );
-
-			if( frag.length() == 0 ) break;
-
-			modules.push_back( frag );
-
-			if( e==string::npos ) {
-				break;
-			}
-
-			s=e+1;
-			e=line.find(";",s);
+		string d="DEPS:";
+		if( line.find( d )==0 ){
+			line=line.substr( d.size() );
+			parse_list( line,modules );
 		}
 	}
 
+	string rtlib="runtime."+rt+".static";
+	libs.push_back( rtlib );
+
+	// libs.push_back( "bb."+mod );
 	for( std::string mod:modules ){
-		// string arg( "-lbb." + mod );
-		// args.push_back( strdup(arg.c_str()) );
+		// libs.push_back( "bb."+mod );
 
 		string line;
 		ifstream iface( toolchain+"/cfg/"+mod+".i" );
@@ -222,34 +215,19 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 		}
 
 		while( getline( iface,line ) ) {
-			if( line.find("LIBS:")==0 ) {
-				size_t s=5, e=line.find(";");
-				while( 1 ) {
-					string frag=line.substr( s,e-s );
-					while( frag[0] == ' ' ) frag=frag.substr( 1 );
-
-					if( frag.length() == 0 ) break;
-
-					string arg;
-					if( frag.find("-framework")==0 ) {
-						args.push_back("-framework");
-						arg = frag.substr( 11 );
-						args.push_back( strdup( arg.c_str() ) );
-					} else {
-						libs.push_back( strdup( frag.c_str() ) );
-					}
-
-					if( e==string::npos ) {
-						break;
-					}
-
-					s=e+1;
-					e=line.find(";",s);
-				}
+			string s="LIBS:",sl="SYSTEM_LIBS:";
+			if( line.find( s )==0 ){
+				line=line.substr( s.size() );
+				parse_list( line,libs );
+			}else if( line.find( sl )==0 ){
+				line=line.substr( sl.size() );
+				parse_list( line,systemlibs );
 			}
 		}
 		iface.close();
 	}
+
+	args.push_back( mainObj );
 
 	for( auto lib:libs ){
 		string arg;
@@ -258,11 +236,56 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 #else
 		arg="-l"+string(lib);
 #endif
-		args.push_back( strdup( arg.c_str() ) );
+		args.push_back( arg );
 	}
 
+#ifdef BB_LINUX
+	args.push_back("-dynamic-linker");args.push_back("/lib64/ld-linux-x86-64.so.2");
 
-	if( !lld::FORMAT::link( args,llvm::outs(),llvm::errs(),true,false ) ) {
+	// TODO: find out the best way to get this information from the environment
+	// TODO: gcc --print-file-name=libc.a
+
+	args.push_back("-L");args.push_back( LIBGCC_DIR );
+	args.push_back("-L");args.push_back( "/lib" );
+	args.push_back("-L");args.push_back( LIBARCH_DIR );
+	args.push_back("-L");args.push_back( "/usr/lib" );
+#endif
+
+	for( auto lib:systemlibs ){
+		string arg;
+#ifdef BB_WINDOWS
+		arg=lib+".lib";
+#else
+		arg="-l"+string(lib);
+#endif
+		args.push_back( arg );
+	}
+
+#ifdef BB_LINUX
+	args.push_back( LIBARCH_DIR "/crt1.o");
+	args.push_back( LIBARCH_DIR "/crti.o");
+	args.push_back( LIBGCC_DIR  "/crtbeginT.o");
+
+	args.push_back("-lstdc++");
+	args.push_back("--start-group");
+	args.push_back("-lgcc");
+	args.push_back("-lgcc_eh");
+	args.push_back("-lc");
+	args.push_back("--end-group");
+	args.push_back(  LIBGCC_DIR "/crtend.o");
+	args.push_back( LIBARCH_DIR "/crtn.o");
+#endif
+
+	std::vector<const char *> _args;
+	for( auto arg:args ){
+		_args.push_back( strdup( arg.c_str() ) );
+	}
+
+	if( !lld::FORMAT::link( _args,llvm::outs(),llvm::errs(),false,false ) ){
 		exit( 1 );
 	};
+
+	for( auto s:_args ){
+		free( (char*)s );
+	}
 }

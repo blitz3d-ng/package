@@ -125,7 +125,8 @@ macro(bb_end_runtime )
   endforeach()
 
   add_library(${name}.static STATIC ${RT_CPP} ${SOURCES})
-  target_link_libraries(${name}.static ${LIBS} ${SYSTEM_LIBS} bb.stub)
+  target_link_libraries(${name}.static PUBLIC ${LIBS} bb.stub)
+  target_link_libraries(${name}.static ${SYSTEM_LIBS})
   target_include_directories(${name}.static PUBLIC ../../modules)
 
   set(IFACE ${BUILD_PATH}/${name}.i)

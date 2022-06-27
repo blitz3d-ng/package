@@ -11,9 +11,9 @@ set(BB_STATIC false)
 set(BB_SHARED true)
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  set(BB_CLANG)
+  set(BB_CLANG true)
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  set(BB_GNU)
+  set(BB_GNU true)
 endif()
 
 # TODO: this will be extended a bit...
@@ -37,7 +37,7 @@ else()
   endif()
 endif()
 
-if(NOT BB_HOST_ARCH STREQUAL BB_ARCH)
+if(NOT BB_HOST_ARCH STREQUAL BB_ARCH AND NOT BB_PLATFORM MATCHES mingw)
   if(BB_CLANG)
     add_compile_options(-arch ${BB_ARCH})
     add_link_options(-arch ${BB_ARCH})
@@ -145,9 +145,9 @@ IF(BB_ENV MATCHES debug OR BB_ENV MATCHES test)
   add_definitions(-D_DEBUG)
 ELSE()
   set(CMAKE_BUILD_TYPE Release)
-  if(NOT BB_MINGW)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-  endif()
+  # TODO: perhaps enable this as a build option for those interested in speed
+  # over disk space.
+  # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
   set(BB_RELEASE true)
 ENDIF()
 
@@ -254,15 +254,15 @@ IF(BB_EMSCRIPTEN)
   add_compile_options(-pthread)
 ENDIF()
 
-IF(BB_DEBUG AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+IF(BB_DEBUG AND BB_CLANG)
   add_compile_definitions(BB_ASAN)
   add_compile_options(-fno-omit-frame-pointer -fsanitize=address)
   add_link_options(-fno-omit-frame-pointer -fsanitize=address)
 ENDIF()
 
-IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+IF (BB_GNU)
    add_compile_options (-fdiagnostics-color=always)
-ELSEIF ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+ELSEIF (BB_CLANG)
   add_compile_options (-fcolor-diagnostics)
 ENDIF ()
 

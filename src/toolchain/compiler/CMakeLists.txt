@@ -1,15 +1,14 @@
 set (CMAKE_EXECUTABLE_SUFFIX_ )
 
 if(BB64)
-  if (DEFINED ENV{LLVM_ROOT})
-    set(llvm_path $ENV{LLVM_ROOT})
-  else()
-    set(llvm_path ${PROJECT_SOURCE_DIR}/_release/toolchains/llvm)
-  endif()
+  set(LLVM_KNOWN_PATHS
+    $ENV{LLVM_ROOT}
+    ${PROJECT_SOURCE_DIR}/_release/toolchains/llvm
+    /usr/lib/llvm-14/lib/cmake/lld
+  )
 
-  set(LLVM_ROOT ${llvm_path})
-  find_package(LLVM 14.0.4 CONFIG PATHS ${LLVM_ROOT})
-  find_package(LLD CONFIG PATHS ${LLVM_ROOT})
+  find_package(LLVM 14 PATHS ${LLVM_KNOWN_PATHS})
+  find_package(LLD PATHS ${LLVM_KNOWN_PATHS})
 
   # TODO: this will go away once CI is sorted...
   if(NOT LLVM_FOUND OR NOT LLD_FOUND)
@@ -121,11 +120,18 @@ else()
   target_compile_definitions(blitzcc PRIVATE LIBSUFFIX="so")
 endif()
 
+if(BB_LINUX AND BB_GNU)
+  set(LIBARCH_DIR /usr/lib/x86_64-linux-gnu) # TODO: should find a way to derive this... `gcc -v` + parsing is an option.
+  execute_process(COMMAND gcc --print-file-name= OUTPUT_VARIABLE LIBGCC_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  target_compile_definitions(blitzcc PRIVATE LIBARCH_DIR="${LIBARCH_DIR}" LIBGCC_DIR="${LIBGCC_DIR}")
+endif()
+
 target_include_directories(blitzcc PRIVATE ../src/runtime)
 target_link_libraries(blitzcc stdutil nlohmann_json)
 target_output_to_bin(blitzcc)
 
-if(LLVM_ROOT)
+if(LLVM_FOUND)
   target_compile_definitions(blitzcc PRIVATE USE_LLVM)
 
   target_sources(blitzcc PUBLIC
