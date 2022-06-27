@@ -89,6 +89,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_COMMAND (wxID_ANY, OPEN_EVENT, MainFrame::OnOpen)
 wxEND_EVENT_TABLE()
 wxIMPLEMENT_APP(MyApp);
+
 bool MyApp::OnInit(){
   if( !wxGetEnv( "blitzpath",&blitzpath ) || blitzpath.length()==0 ){
     wxMessageBox( "blitzpath not set", "Blitz3D \"NG\"",wxOK|wxICON_ERROR );

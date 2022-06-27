@@ -131,6 +131,10 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	args.push_back("--lto-O0");
 #endif
 
+#ifdef BB_WINDOWS
+	args.push_back( "/NODEFAULTLIB" );
+#endif
+
 #ifdef BB_MACOS
 	// TODO: use xcrun --show-sdk-path
 	args.push_back("-syslibroot");
@@ -164,6 +168,9 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 #endif
 
 #ifdef BB_WINDOWS
+	string machine="/machine:X64";
+	args.push_back( machine );
+
 	string outArg="/out:"+binaryPath;
 	args.push_back( outArg );
 #else
@@ -225,7 +232,7 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	for( auto lib:libs ){
 		string arg;
 #ifdef BB_WINDOWS
-		arg=lib+".lib";
+		arg=lib+string(".lib");
 #else
 		arg="-l"+string(lib);
 #endif

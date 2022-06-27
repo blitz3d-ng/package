@@ -179,7 +179,7 @@ int MainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 		menu.InsertMenu( k,MF_BYPOSITION|MF_ENABLED,333+k,prefs.recentFiles[k].c_str() );
 	}
 	CMenu *file=GetMenu()->GetSubMenu( 0 );
-	file->InsertMenu( 12,MF_BYPOSITION|MF_ENABLED|MF_POPUP,(UINT)menu.m_hMenu,"&Recent Files" );
+	file->InsertMenu( 12,MF_BYPOSITION|MF_ENABLED|MF_POPUP,(UINT_PTR)menu.m_hMenu,"&Recent Files" );
 	menu.Detach();
 
 	CMenu *program=GetMenu()->GetSubMenu( 2 );
@@ -427,7 +427,7 @@ bool MainFrame::open( const string &f ){
 
 	if( isMediaFile( tolower( file ) ) ){
 		string t=prefs.homeDir+"/bin/mediaview.exe";
-		if( (int)ShellExecute( ::GetDesktopWindow(),0,t.c_str(),file.c_str(),0,SW_SHOW )>32 ){
+		if( (long long)ShellExecute( ::GetDesktopWindow(),0,t.c_str(),file.c_str(),0,SW_SHOW )>32 ){
 		}
 		return false;
 	}

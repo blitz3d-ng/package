@@ -279,7 +279,7 @@ bool Editor::setText( istream &in ){
 //	editCtrl.HideCaret();
 	fmtBusy=true;
 	EDITSTREAM es;
-	es.dwCookie=(DWORD)this;
+	es.dwCookie=(DWORD_PTR)this;
 	es.dwError=0;
 	es.pfnCallback=streamIn;
 	is_line="{\\rtf1\\ansi{{\\colortbl;"+rtfbgr(prefs.rgb_string)+rtfbgr(prefs.rgb_ident)+
@@ -316,7 +316,7 @@ string Editor::getName()const{
 bool Editor::getText( ostream &out ){
 	fixFmt(true);
 	EDITSTREAM es;
-	es.dwCookie=(DWORD)&out;
+	es.dwCookie=(DWORD_PTR)&out;
 	es.dwError=0;
 	es.pfnCallback=streamOut;
 	editCtrl.StreamOut( SF_TEXT,es );

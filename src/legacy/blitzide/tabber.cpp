@@ -51,7 +51,7 @@ void Tabber::OnSize( UINT type,int w,int h ){
 BOOL Tabber::OnEraseBkgnd( CDC *dc ){
 	CRect c;GetClientRect( &c );
 
-	HBRUSH hb=(HBRUSH)GetClassLong( m_hWnd,GCLP_HBRBACKGROUND );
+	HBRUSH hb=(HBRUSH)GetClassLongPtr( m_hWnd,GCLP_HBRBACKGROUND );
 	CBrush br;br.Attach( hb );
 
 	if( curr<0 ) dc->FillRect( &c,&br );

@@ -199,11 +199,11 @@ static const char *enumRuntimes( vector<string> &rts ){
 
 	WIN32_FIND_DATA ffd;
 	HANDLE find;
-	find=FindFirstFile( (home+"/bin/runtime.*.dll").c_str(),&ffd );
+	find=FindFirstFile( (home+"/bin/" RUNTIMENAME ".*.dll").c_str(),&ffd );
 	do{
 		string fname(ffd.cFileName);
 		if( !(ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) && fname.length()>0 ){
-			fname=fname.substr( 8 );
+			fname=fname.substr( strlen(RUNTIMENAME)+1 );
 			fname=fname.substr( 0,fname.length()-4 );
 			rts.push_back( fname );
 		}

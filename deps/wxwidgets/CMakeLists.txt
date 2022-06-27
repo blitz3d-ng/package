@@ -1,3 +1,4 @@
 set(wxBUILD_SHARED OFF CACHE STRING "" FORCE)
+set(wxBUILD_USE_STATIC_RUNTIME ON CACHE STRING "" FORCE)
 
 add_subdirectory(tree)
