@@ -33,14 +33,7 @@ void parse_list( std::string &line,std::vector<string> &libs ){
 
 		if( frag.length() == 0 ) break;
 
-		string arg;
-		if( frag.find("-framework")==0 ) {
-			libs.push_back( "-framework" );
-			arg = frag.substr( 11 );
-			libs.push_back( arg );
-		} else {
-			libs.push_back( frag );
-		}
+		libs.push_back( frag );
 
 		if( e==string::npos ) {
 			break;
@@ -252,13 +245,17 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 #endif
 
 	for( auto lib:systemlibs ){
-		string arg;
 #ifdef BB_WINDOWS
-		arg=lib+".lib";
+		args.push_back( lib+".lib" );
 #else
-		arg="-l"+string(lib);
+		string fw="-framework";
+		if( lib.find( fw )==0 ) {
+			args.push_back( fw );
+			args.push_back( lib.substr( fw.size()+1 ) );
+		} else {
+			args.push_back( "-l"+lib );
+		}
 #endif
-		args.push_back( arg );
 	}
 
 #ifdef BB_LINUX

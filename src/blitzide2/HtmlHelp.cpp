@@ -27,7 +27,7 @@ void HtmlHelp::OnNavigating( wxWebViewEvent& event ){
   wxDir dir( dirPath );
   if ( dir.IsOpened() ){
     event.StopPropagation();
-    
+
     wxCommandEvent event( OPEN_EVENT,GetId() );
     event.SetEventObject( this );
     event.SetString( dirPath );
@@ -40,7 +40,7 @@ void HtmlHelp::GoHome(){
   index.MakeAbsolute();
 
   browser->ClearHistory();
-  browser->LoadURL( index.GetFullPath() );
+  browser->LoadURL( "file://"+index.GetFullPath() );
 }
 
 bool HtmlHelp::GoBack(){

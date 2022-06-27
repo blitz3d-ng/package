@@ -13,6 +13,9 @@ public:
 
   bool Save();
   bool Save( wxString &newPath );
+
+	void Execute();
+	void Build( wxString &out );
 };
 
 #endif

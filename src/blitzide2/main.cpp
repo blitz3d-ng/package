@@ -43,6 +43,8 @@ private:
     void OnNew( wxCommandEvent& event );
     void OnOpen( wxCommandEvent& event );
     void OnClose( wxCommandEvent& event );
+    void OnRun( wxCommandEvent& event );
+    void OnExe( wxCommandEvent& event );
     void OnHome( wxCommandEvent& event );
     void OnBack( wxCommandEvent& event );
     void OnForward( wxCommandEvent& event );
@@ -66,22 +68,25 @@ enum
     ID_PASTE,
     ID_FIND,
     ID_RUN,
+    ID_EXE,
     ID_HOME,
     ID_BACK,
     ID_FORWARD
 };
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
-    EVT_MENU(ID_Hello,   MainFrame::OnHello)
-    EVT_MENU(wxID_EXIT,  MainFrame::OnExit)
-    EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
-    EVT_MENU(ID_NEW,     MainFrame::OnNew)
-    EVT_MENU(ID_OPEN,    MainFrame::OnOpen)
-    EVT_MENU(ID_CLOSE,   MainFrame::OnClose)
-    EVT_MENU(ID_HOME,    MainFrame::OnHome)
-    EVT_MENU(ID_BACK,    MainFrame::OnBack)
-    EVT_MENU(ID_FORWARD, MainFrame::OnForward)
+	EVT_MENU(ID_Hello,   MainFrame::OnHello)
+	EVT_MENU(wxID_EXIT,  MainFrame::OnExit)
+	EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
+	EVT_MENU(ID_NEW,     MainFrame::OnNew)
+	EVT_MENU(ID_OPEN,    MainFrame::OnOpen)
+	EVT_MENU(ID_CLOSE,   MainFrame::OnClose)
+	EVT_MENU(ID_RUN,     MainFrame::OnRun)
+	EVT_MENU(ID_EXE,     MainFrame::OnExe)
+	EVT_MENU(ID_HOME,    MainFrame::OnHome)
+	EVT_MENU(ID_BACK,    MainFrame::OnBack)
+	EVT_MENU(ID_FORWARD, MainFrame::OnForward)
 
-    EVT_COMMAND (wxID_ANY, OPEN_EVENT, MainFrame::OnOpen)
+	EVT_COMMAND (wxID_ANY, OPEN_EVENT, MainFrame::OnOpen)
 wxEND_EVENT_TABLE()
 wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit(){
@@ -89,7 +94,8 @@ bool MyApp::OnInit(){
     wxMessageBox( "blitzpath not set", "Blitz3D \"NG\"",wxOK|wxICON_ERROR );
     return false;
   }
-  MainFrame *frame = new MainFrame( "Blitz3D \"NG\"",wxPoint( 50*GetDPIScaleX(),50*GetDPIScaleY() ),wxSize( 800*GetDPIScaleX(),600*GetDPIScaleY() ) );
+  MainFrame *frame = new MainFrame( "Blitz3D \"NG\"",wxPoint( wxSystemSettings::GetMetric( wxSYS_SCREEN_X )*0.5-1024*GetDPIScaleX()*0.5
+,100*GetDPIScaleY() ),wxSize( 1024*GetDPIScaleX(),768*GetDPIScaleY() ) );
   frame->Show( true );
   return true;
 }
@@ -125,10 +131,10 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
   menuEdit->Append(wxID_ANY, "Show toolbars?");
 
   wxMenu *menuProgram = new wxMenu;
-  menuProgram->Append(wxID_ANY, "Run program");
+  menuProgram->Append(ID_RUN, "Run program");
   menuProgram->Append(wxID_ANY, "Run program again");
   menuProgram->Append(wxID_ANY, "Check for errors");
-  menuProgram->Append(wxID_ANY, "Create executable...");
+  menuProgram->Append(ID_EXE, "Create executable...");
   menuProgram->AppendSeparator();
   menuProgram->Append(wxID_ANY, "Program Command line...");
   menuProgram->Append(wxID_ANY, "Debug enabled?");
@@ -266,6 +272,33 @@ void MainFrame::OnClose( wxCommandEvent& WXUNUSED(event) ){
 
   nb->DeletePage( page );
   UpdateToolbar( page-1 );
+}
+
+void MainFrame::OnRun( wxCommandEvent& WXUNUSED(event) ){
+  size_t page = nb->GetSelection();
+  if ( page==0 ) return;
+
+	FileView *file=dynamic_cast<FileView*>( nb->GetCurrentPage() );
+	if( file ){
+		file->Execute();
+	}
+}
+
+void MainFrame::OnExe( wxCommandEvent& WXUNUSED(event) ){
+  size_t page=nb->GetSelection();
+  if ( page==0 ) return;
+
+	FileView *file=dynamic_cast<FileView*>( nb->GetCurrentPage() );
+	if( !file ){
+		return;
+	}
+
+	wxFileDialog saveExeDialog( this,wxT("Create executable..."),"","","",wxFD_SAVE|wxFD_OVERWRITE_PROMPT );
+	if( saveExeDialog.ShowModal()==wxID_CANCEL )
+		return;
+
+	wxString out=saveExeDialog.GetPath();
+	file->Build( out );
 }
 
 void MainFrame::OnHome( wxCommandEvent& WXUNUSED(event) ){
