@@ -1,4 +1,4 @@
-if (TARGET wxcore)
+if (TARGET wxstc AND TARGET wxwebview)
   add_executable(ide2 blitzide2.rc dpi.h dpi.cpp HtmlHelp.h HtmlHelp.cpp FileView.h FileView.cpp main.cpp)
   target_output_to_bin(ide2)
   target_link_libraries(ide2 wxwebview wxstc)

@@ -42,6 +42,7 @@ jobs:
           submodules: recursive
       - run: ./env.sh mingw make ENV=release PLATFORM=${{ matrix.arch }}
       - run: ./env.sh mingw sh ./test/entry.mingw32.sh
+        continue-on-error: true
 
   macos:
     name: macOS
