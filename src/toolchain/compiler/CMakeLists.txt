@@ -3,7 +3,7 @@ set (CMAKE_EXECUTABLE_SUFFIX_ )
 if(BB64)
   set(LLVM_KNOWN_PATHS
     $ENV{LLVM_ROOT}
-    ${PROJECT_SOURCE_DIR}/_release/toolchains/llvm
+    ${PROJECT_SOURCE_DIR}/llvm
     /usr/lib/llvm-14/lib/cmake/lld
   )
 

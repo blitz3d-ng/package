@@ -9,7 +9,7 @@ IF (BB_MACOS)
 ENDIF()
 
 add_subdirectory(tree)
-
+target_output_to_toolchain(glfw)
 target_compile_definitions(glfw PRIVATE GLEW_STATIC)
 
 # solve a strange linker issue with mingw...

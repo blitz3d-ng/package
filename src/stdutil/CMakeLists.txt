@@ -5,3 +5,4 @@ if(BB_ANDROID OR BB_NX)
 endif()
 
 add_library(stdutil STATIC ${SOURCES})
+target_output_to_toolchain(stdutil)

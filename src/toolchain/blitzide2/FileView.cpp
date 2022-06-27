@@ -1,6 +1,4 @@
-
 #include "FileView.h"
-#include <wx/stc/stc.h>
 #include <wx/textfile.h>
 
 enum {
@@ -27,7 +25,6 @@ void FileView::LoadKeywords(){
   }
 }
 
-
 FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),wxPanel( parent,id ){
   LoadKeywords();
 
@@ -40,6 +37,9 @@ FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),w
 #endif
 
   wxStyledTextCtrl* text = new wxStyledTextCtrl(this, wxID_ANY);
+
+	text->CmdKeyAssign( 'A',wxSTC_KEYMOD_META,wxSTC_CMD_HOME );
+	text->CmdKeyAssign( 'E',wxSTC_KEYMOD_META,wxSTC_CMD_LINEEND );
 
   if ( path.length()>0 ){
     wxTextFile file;

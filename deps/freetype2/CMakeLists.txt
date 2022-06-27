@@ -44,6 +44,7 @@ add_library(freetype2 STATIC
   tree/src/type42/type42.c
   tree/src/winfonts/winfnt.c)
 
+target_output_to_toolchain(freetype2)
 target_include_directories(freetype2 SYSTEM PUBLIC tree/include)
 target_compile_definitions(freetype2 PRIVATE -DFT2_BUILD_LIBRARY)
 target_link_libraries(freetype2 ${ZLIB})

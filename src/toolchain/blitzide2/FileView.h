@@ -2,6 +2,7 @@
 #define FILEVIEW_H
 
 #include "std.h"
+#include <wx/stc/stc.h>
 
 class FileView : public wxPanel{
 private:

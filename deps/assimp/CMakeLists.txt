@@ -84,6 +84,7 @@ set (SOURCE src/code/Assimp.cpp
 set (SOURCE ${SOURCE} src/contrib/ConvertUTF/ConvertUTF.c src/contrib/ConvertUTF/ConvertUTF.h)
 
 add_library (assimp STATIC ${SOURCE})
+target_output_to_toolchain(assimp)
 
 target_include_directories(assimp SYSTEM PUBLIC src/include include)
 target_link_libraries(assimp ${ZLIB})

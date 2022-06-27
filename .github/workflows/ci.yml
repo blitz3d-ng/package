@@ -23,10 +23,11 @@ jobs:
       - run: .\make.bat release ${{ matrix.arch }}
       #- run: .\test\entry.${{ matrix.arch }}.bat
       - name: Archive build
+        if: matrix.os == 'windows-2022'
         uses: actions/upload-artifact@v2
         with:
-          name: blitz3d-ng-${{ matrix.arch }}-v${{ github.run_id }}
-          path: _release/
+          name: toolchain-${{ matrix.arch }}
+          path: _release/bin
 
   mingw:
     name: MinGW
@@ -63,13 +64,13 @@ jobs:
           tar xf clang+llvm-14.0.4-x86_64-apple-darwin.tar.xz
           mv clang+llvm-14.0.4-x86_64-apple-darwin llvm
       - run: brew install ninja gcovr
-      - run: make ENV=release PLATFORM=macos
-      - run: LLVM_ROOT=$GITHUB_WORKSPACE/llvm blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
+      - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
+      - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
-          name: blitz3d-ng-${{ matrix.arch }}-v${{ github.run_id }}
-          path: _release/
+          name: toolchain-${{ matrix.os }}
+          path: _release/bin
 
   linux:
     name: Linux
@@ -96,6 +97,11 @@ jobs:
         with:
           submodules: recursive
       - run: make ENV=release PLATFORM=ios
+      - name: Archive build
+        uses: actions/upload-artifact@v2
+        with:
+          name: toolchain-ios
+          path: _release/bin
 
   android:
     name: Android

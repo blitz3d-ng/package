@@ -25,5 +25,6 @@ add_custom_command(TARGET UUID_EXTERNAL POST_BUILD
 
 add_library(uuid INTERFACE)
 add_dependencies(uuid UUID_EXTERNAL)
+target_output_to_toolchain(uuid)
 target_include_directories(uuid INTERFACE ${UUID_INCLUDE})
 target_link_libraries(uuid INTERFACE ${UUID_LIB})

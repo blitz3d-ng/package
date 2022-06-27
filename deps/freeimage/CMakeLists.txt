@@ -80,6 +80,7 @@ else()
 endif()
 
 add_library(freeimage STATIC ${SOURCES})
+target_output_to_toolchain(freeimage)
 target_compile_definitions(freeimage PRIVATE -DLIBRAW_NODLL)
 target_compile_definitions(freeimage PUBLIC -DFREEIMAGE_LIB)
 target_include_directories(freeimage SYSTEM PUBLIC src/Source)

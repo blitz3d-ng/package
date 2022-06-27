@@ -1,3 +1,5 @@
+set(CMAKE_SHARED_LIBRARY_PREFIX )
+
 # some useful macros...
 macro(bb_start_runtime id entry)
   set(RT_ID ${id})
@@ -125,11 +127,12 @@ macro(bb_end_runtime )
   endforeach()
 
   add_library(${name}.static STATIC ${RT_CPP} ${SOURCES})
+  target_output_to_toolchain(${name}.static /lib)
   target_link_libraries(${name}.static PUBLIC ${LIBS} bb.stub)
   target_link_libraries(${name}.static ${SYSTEM_LIBS})
   target_include_directories(${name}.static PUBLIC ../../modules)
 
-  set(IFACE ${BUILD_PATH}/${name}.i)
+  set(IFACE ${TOOLCHAIN_PATH}/${name}.i)
   file(WRITE  ${IFACE} "ID: ${id}\n")
   file(APPEND ${IFACE} "DEPS: ${DEPENDS_ON}\n")
 
@@ -140,13 +143,12 @@ macro(bb_end_runtime )
   # shared
   add_library(${name}.shared SHARED)
   target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
+  set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "runtime.${id}")
 
   if(BB_WINDOWS)
     target_output_to_bin(${name}.shared)
 
-    if(BB32)
-      set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "runtime.${id}")
-    else()
+    if(BB64)
       set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "runtime64.${id}")
     endif()
 
@@ -164,11 +166,7 @@ macro(bb_end_runtime )
       set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " -static")
     endif()
   else()
-    set_target_properties(${name}.shared
-      PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY ${TOOLCHAIN_PATH}/lib/${BB_TRIPLE}
-      OUTPUT_NAME "runtime.${id}"
-    )
+    target_output_to_toolchain(${name}.shared)
   endif()
 
   if(BB_COVERAGE)

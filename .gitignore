@@ -6,9 +6,10 @@
 *.exe
 *.dll
 *.dylib
-*.app/
 *.so
+*.app/
 *.lib
+*.a
 *.log
 *.exp
 *.asm
@@ -24,6 +25,7 @@
 *.VC.VC.opendb
 *.VC.db
 *.obj
+*.o
 *.pch
 *.tlog
 *.lastbuildstate
@@ -34,6 +36,7 @@ UpgradeLog.htm
 
 *.bb_bak*
 
+_release/bin/**/*.i
 _release/bin/blitzcc
 _release/bin/ide2
 _release/cfg/blitzide.prefs
@@ -48,5 +51,6 @@ _release/userlibs/*.decls
 /build
 /coverage/
 /innosetup/installs
+/llvm
 
 /tmp

@@ -194,24 +194,13 @@ ENDIF()
 set(BB_TRIPLE "${BB_ARCH}-${BB_VENDOR}-${BB_SYS}")
 
 set (RELEASE_PATH   ${CMAKE_SOURCE_DIR}/_release)
-set (TOOLCHAIN_PATH ${RELEASE_PATH}/toolchains)
-set (BUILD_PATH     ${TOOLCHAIN_PATH}/${BB_TRIPLE})
-
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_PATH}/bin)
-set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BUILD_PATH}/lib)
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BUILD_PATH}/lib)
-
-foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
-  string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
-  set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/bin )
-  set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/lib )
-  set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BUILD_PATH}/lib )
-endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+set (TOOLCHAIN_PATH ${RELEASE_PATH}/bin/${BB_TRIPLE})
 
 function(target_output_directory target dir)
   set_target_properties(${target}
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${dir}
+    ARCHIVE_OUTPUT_DIRECTORY ${dir}
     LIBRARY_OUTPUT_DIRECTORY ${dir}
   )
 
@@ -220,9 +209,22 @@ function(target_output_directory target dir)
     set_target_properties(${target}
       PROPERTIES
       RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${dir}
+      ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${dir}
       LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${dir}
     )
   endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+endfunction()
+
+function(target_output_to_toolchain target)
+  set(dir ${TOOLCHAIN_PATH})
+  get_target_property(target_type ${target} TYPE)
+  if(target_type STREQUAL "STATIC_LIBRARY")
+    set(dir ${TOOLCHAIN_PATH}/lib)
+  elseif(BB32)
+    set(dir ${RELEASE_PATH}/bin)
+  endif()
+
+  target_output_directory(${target} ${dir})
 endfunction()
 
 function(target_output_to_bin target)
@@ -233,11 +235,6 @@ IF(BB_MSVC)
   IF(BB_STATIC)
     include("./src/msvc.cmake")
     configure_msvc_runtime()
-  ENDIF()
-
-  IF(NOT BB_DEBUG)
-    # add_link_options(/GL) # TODO: only apply to executables/dlls
-    # add_compile_options(/LTCG)
   ENDIF()
 
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
@@ -311,6 +308,7 @@ add_subdirectory(src/stdutil)
 IF(BB_DESKTOP AND NOT BB_CROSSCOMPILE)
   add_subdirectory(src/toolchain/compiler)
   add_subdirectory(src/toolchain/blitzide2)
+  add_subdirectory(src/toolchain/bblaunch2)
 
   IF(BB_MSVC)
     add_subdirectory(src/legacy/blitzide)

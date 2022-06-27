@@ -48,7 +48,7 @@ Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
 void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
-	std::string toolchain=home+"/toolchains/" BB_TRIPLE;
+	std::string toolchain=home+"/bin/" BB_TRIPLE;
 	std::string lib_dir=toolchain+"/lib";
 
 	// TODO: sort out all the lazy strdup business below...

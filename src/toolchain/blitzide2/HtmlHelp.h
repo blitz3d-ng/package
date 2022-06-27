@@ -4,10 +4,6 @@
 #include "std.h"
 #include <wx/webview.h>
 
-#if !wxUSE_WEBVIEW_WEBKIT && !wxUSE_WEBVIEW_IE
-#error "You need wxWebView to build this."
-#endif
-
 class HtmlHelp : public wxPanel{
 private:
   wxWebView *browser;

@@ -12,7 +12,7 @@
 #define OPENLIB( path ) dlopen( path,RTLD_LAZY )
 #define CLOSELIB( handle ) dlclose( handle )
 #define LIBSYM( handle,sym ) dlsym( handle,sym );
-#define LIBPATH "/toolchains/lib/" BB_TRIPLE "/libruntime."+rt+"." LIBSUFFIX
+#define LIBPATH "/bin/" BB_TRIPLE "/runtime."+rt+"." LIBSUFFIX
 typedef void* HMODULE;
 #endif
 
