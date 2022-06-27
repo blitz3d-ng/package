@@ -310,7 +310,7 @@ add_subdirectory(src/stdutil)
 
 IF(BB_DESKTOP AND NOT BB_CROSSCOMPILE)
   add_subdirectory(src/toolchain/compiler)
-  add_subdirectory(src/blitzide2)
+  add_subdirectory(src/toolchain/blitzide2)
 
   IF(BB_MSVC)
     add_subdirectory(src/legacy/blitzide)
@@ -318,7 +318,7 @@ IF(BB_DESKTOP AND NOT BB_CROSSCOMPILE)
   ENDIF()
 
   IF(BB_WINDOWS)
-    add_subdirectory(src/legacy/bblaunch)
+    add_subdirectory(src/toolchain/bblaunch)
   ENDIF()
 ENDIF()
 

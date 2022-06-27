@@ -60,10 +60,15 @@ jobs:
           mkdir _release/toolchains
           wget https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.4/clang+llvm-14.0.4-x86_64-apple-darwin.tar.xz
           tar xf clang+llvm-14.0.4-x86_64-apple-darwin.tar.xz
-          mv clang+llvm-14.0.4-x86_64-apple-darwin _release/toolchains/llvm
+          mv clang+llvm-14.0.4-x86_64-apple-darwin llvm
       - run: brew install ninja gcovr
       - run: make ENV=release PLATFORM=macos
-      - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
+      - run: LLVM_ROOT=`pwd`/llvm blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
+      - name: Archive build
+        uses: actions/upload-artifact@v2
+        with:
+          name: blitz3d-ng-${{ matrix.arch }}-v${{ github.run_id }}
+          path: _release/
 
   linux:
     name: Linux
