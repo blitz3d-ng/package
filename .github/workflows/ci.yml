@@ -63,7 +63,7 @@ jobs:
           mv clang+llvm-14.0.4-x86_64-apple-darwin llvm
       - run: brew install ninja gcovr
       - run: make ENV=release PLATFORM=macos
-      - run: LLVM_ROOT=`pwd`/llvm blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
+      - run: LLVM_ROOT=$GITHUB_WORKSPACE/llvm blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
