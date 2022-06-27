@@ -191,8 +191,8 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 				string path=toker->text();toker->next();
 				path=path.substr( 1,path.size()-2 );
 
-				char buf[2048];
 #ifndef BB_WINDOWS // TODO: solve this properly
+				char buf[PATH_MAX];
 				string abspath=realpath( path.c_str(),buf );
 #else
 				string abspath=path;
