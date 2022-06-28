@@ -1,5 +1,7 @@
 #include "FileView.h"
 #include <wx/textfile.h>
+#include <wx/process.h>
+#include "BlitzCC.h"
 
 enum {
   MARGIN_LINE_NUMBERS
@@ -11,7 +13,7 @@ static bool keywordsLoaded=false;
 extern wxString blitzpath;
 
 void FileView::LoadKeywords(){
-  if (!keywordsLoaded) {
+  if( !keywordsLoaded ){
     wxArrayString keywords;
     wxExecute( blitzpath + "/bin/blitzcc -k",keywords );
 
@@ -124,10 +126,12 @@ bool FileView::Save(){
 }
 
 void FileView::Execute(){
-	wxArrayString keywords;
-	wxExecute( blitzpath + "/bin/blitzcc "+path );
+	BlitzCC *cc=new BlitzCC( blitzpath );
+	cc->Execute( path );
 }
 
 void FileView::Build( wxString &out ){
-	wxExecute( blitzpath + "/bin/blitzcc -o "+out+" "+path );
+	wxProcess *build=new wxProcess( this );
+	build->Redirect();
+	wxExecute( blitzpath + "/bin/blitzcc -o "+out+" "+path,wxEXEC_ASYNC|wxEXEC_HIDE_CONSOLE,build );
 }
