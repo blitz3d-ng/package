@@ -149,6 +149,10 @@ if(LLVM_FOUND)
   llvm_map_components_to_libnames(LLVM_LIBS orcjit)
 
   if(BB_WINDOWS)
+    if(BB_MSVC)
+      target_compile_options(blitzcc PRIVATE /wd4624)
+    endif()
+
     target_link_libraries(blitzcc lldCOFF lldMinGW)
   elseif(BB_MACOS)
     target_link_libraries(blitzcc lldMachO)

@@ -11,7 +11,7 @@ if(BB_SHARED)
   target_compile_definitions(debugger PRIVATE _AFXDLL)
 endif()
 
-set_target_properties(debugger PROPERTIES LINK_FLAGS "/subsystem:windows")
+set_target_properties(debugger PROPERTIES LINK_FLAGS "/subsystem:windows /NOIMPLIB /NOEXP")
 
 if(BB_WIN64)
   set_target_properties(debugger PROPERTIES OUTPUT_NAME "debugger64")
