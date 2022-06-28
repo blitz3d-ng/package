@@ -12,7 +12,7 @@ using namespace std;
 #include "environ.h"
 #include "tree/parser.h"
 #include "linker_x86/linker.h"
-#include "../../legacy/bbruntime_dll/bbruntime_dll.h"
+#include "../../runtime/base/bbruntime_dll.h"
 
 extern int bcc_ver;
 extern int lnk_ver;

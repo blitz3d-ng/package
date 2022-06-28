@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 3.16)
 project (Blitz3D)
 
+cmake_policy(SET CMP0069 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
@@ -307,27 +310,9 @@ add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")
 add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
 
 add_subdirectory(src/stdutil)
-
-IF(BB_DESKTOP AND NOT BB_CROSSCOMPILE)
-  add_subdirectory(src/toolchain/compiler)
-  add_subdirectory(src/toolchain/blitzide2)
-  add_subdirectory(src/toolchain/bblaunch2)
-
-  IF(BB_MSVC)
-    add_subdirectory(src/legacy/blitzide)
-    add_subdirectory(src/legacy/debugger)
-  ENDIF()
-
-  IF(BB_WINDOWS)
-    add_subdirectory(src/toolchain/bblaunch)
-  ENDIF()
-ENDIF()
-
 add_subdirectory(src/modules)
-IF(NOT BB_EMSCRIPTEN)
 add_subdirectory(src/runtime)
-add_subdirectory(src/bindings)
-ENDIF()
+add_subdirectory(src/toolchain)
 
-# depends on bb.stub, so we add it in here.
-add_subdirectory(src/legacy/bbruntime_dll)
+# extras...
+add_subdirectory(src/bindings)

@@ -28,7 +28,7 @@ using namespace std;
 
 #include "assem_x86/assem_x86.h"
 #include "codegen_x86/codegen_x86.h"
-#include "../../legacy/debugger/debugger.h"
+#include "../legacy/debugger/debugger.h"
 
 #ifdef USE_LLVM
 #include "codegen_llvm/codegen_llvm.h"
