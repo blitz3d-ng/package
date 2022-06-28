@@ -42,7 +42,7 @@ CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/devkita64.toolchain.cmake
 endif
 
 build:
-	cmake -G $(GENERATOR) -H. -Bbuild/$(PLATFORM)/$(ENV) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
+	cmake -G $(GENERATOR) -H. -Bbuild/$(PLATFORM)/$(ENV) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
 
 llvm:
 	test -d deps/llvm/tree || git clone -b llvmorg-$(LLVM_VERSION) --recursive https://github.com/llvm/llvm-project.git deps/llvm/tree

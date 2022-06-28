@@ -199,8 +199,12 @@ ENDIF()
 
 set(BB_TRIPLE "${BB_ARCH}-${BB_VENDOR}-${BB_SYS}")
 
-set (RELEASE_PATH   ${CMAKE_SOURCE_DIR}/_release)
-set (TOOLCHAIN_PATH ${RELEASE_PATH}/bin/${BB_TRIPLE})
+if(OUTPUT_PATH)
+  file(REAL_PATH ${OUTPUT_PATH} RELEASE_PATH)
+else()
+  set(RELEASE_PATH ${CMAKE_SOURCE_DIR}/_release)
+endif()
+set(TOOLCHAIN_PATH ${RELEASE_PATH}/bin/${BB_TRIPLE})
 
 function(target_output_directory target dir)
   set_target_properties(${target}
