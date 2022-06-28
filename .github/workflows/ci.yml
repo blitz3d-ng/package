@@ -9,7 +9,7 @@ jobs:
       matrix:
         os:
           - windows-2019
-          - windows-2022
+          #- windows-2022
         arch:
           - win32
           - win64
@@ -28,7 +28,7 @@ jobs:
       - run: .\make.bat release ${{ matrix.arch }}
       #- run: .\test\entry.${{ matrix.arch }}.bat
       - name: Archive build
-        if: matrix.os == 'windows-2022'
+        # if: matrix.os == 'windows-2022'
         uses: actions/upload-artifact@v2
         with:
           name: toolchain-${{ matrix.arch }}

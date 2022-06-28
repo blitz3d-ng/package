@@ -312,7 +312,7 @@ add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
 add_subdirectory(src/stdutil)
 add_subdirectory(src/modules)
 add_subdirectory(src/runtime)
-add_subdirectory(src/toolchain)
+add_subdirectory(src/tools)
 
 # extras...
 add_subdirectory(src/bindings)

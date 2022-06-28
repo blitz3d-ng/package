@@ -45,7 +45,6 @@ int main( int argc,char **argv )
 	CloseHandle( pi.hProcess );
 	CloseHandle( pi.hThread );
 #else
-int main( int argc,char **argv ){
 	string blitzpath;
 	blitzpath=string( dirname( argv[0] ) )+"/../../../";
 
