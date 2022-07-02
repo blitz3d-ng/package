@@ -4,6 +4,7 @@ platforms:
   - windows
 
 modules:
+  - stub
   - blitz
   - runtime
   - hook

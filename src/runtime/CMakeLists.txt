@@ -128,7 +128,7 @@ macro(bb_end_runtime )
 
   add_library(${name}.static STATIC ${RT_CPP} ${SOURCES})
   target_output_to_toolchain(${name}.static /lib)
-  target_link_libraries(${name}.static PUBLIC ${LIBS} bb.stub)
+  target_link_libraries(${name}.static PUBLIC ${LIBS})
   target_link_libraries(${name}.static ${SYSTEM_LIBS})
   target_include_directories(${name}.static PUBLIC ../../modules)
 

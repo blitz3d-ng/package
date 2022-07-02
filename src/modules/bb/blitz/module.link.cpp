@@ -62,6 +62,8 @@ BBMODULE_LINK( blitz ){
 	rtSym( "_bbFSgn",_bbFSgn );
 	rtSym( "_bbFMod",_bbFMod );
 	rtSym( "_bbFPow",_bbFPow );
+	rtSym( "_bbPushGosub",_bbPushGosub );
+	rtSym( "_bbPopGosub",_bbPopGosub );
 	rtSym( "_bbDebugStmt",_bbDebugStmt );
 	rtSym( "_bbDebugEnter",_bbDebugEnter );
 	rtSym( "_bbDebugLeave",_bbDebugLeave );

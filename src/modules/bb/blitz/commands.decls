@@ -61,6 +61,8 @@ _bbFAbs:"_bbFAbs"
 _bbFSgn:"_bbFSgn"
 _bbFMod:"_bbFMod"
 _bbFPow:"_bbFPow"
+_bbPushGosub:"_bbPushGosub"
+_bbPopGosub:"_bbPopGosub"
 
 ;debug
 _bbDebugStmt:"_bbDebugStmt"

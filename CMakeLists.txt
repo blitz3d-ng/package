@@ -268,9 +268,9 @@ IF(BB_DEBUG AND BB_CLANG)
 ENDIF()
 
 IF (BB_GNU)
-   add_compile_options (-fdiagnostics-color=always)
+  add_compile_options(-fdiagnostics-color=always)
 ELSEIF (BB_CLANG)
-  add_compile_options (-fcolor-diagnostics)
+  add_compile_options(-fcolor-diagnostics)
 ENDIF ()
 
 add_subdirectory(deps)

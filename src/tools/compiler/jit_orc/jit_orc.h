@@ -25,7 +25,6 @@ private:
 	llvm::orc::MangleAndInterner Mangle;
 	llvm::orc::RTDyldObjectLinkingLayer ObjectLayer;
 	llvm::orc::IRCompileLayer CompileLayer;
-	llvm::orc::IRTransformLayer OptimizeLayer;
 
 	llvm::orc::JITDylib &MainJD;
 public:
@@ -33,21 +32,11 @@ public:
 
 	~JIT_ORC();
 
-	static void handleLazyCallThroughError();
-
 	static llvm::Expected<std::unique_ptr<JIT_ORC>> Create();
 
 	const llvm::DataLayout &getDataLayout() const;
 
-	llvm::orc::JITDylib &getMainJITDylib();
-
-	llvm::Error addModule(llvm::orc::ThreadSafeModule TSM, llvm::orc::ResourceTrackerSP RT = nullptr);
-
-	llvm::Expected<llvm::JITEvaluatedSymbol> lookup(llvm::StringRef Name);
 	int run( Runtime *runtime, Codegen_LLVM *codegen, const std::string &home, const std::string &rt );
-
-private:
-	static llvm::Expected<llvm::orc::ThreadSafeModule> optimizeModule(llvm::orc::ThreadSafeModule TSM, const llvm::orc::MaterializationResponsibility &R);
 };
 
 

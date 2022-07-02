@@ -7,6 +7,7 @@ endif()
 
 bb_start_runtime(opengl bbCreateOpenGLRuntime)
 
+bb_addmodule(stub)
 bb_addmodule(blitz)
 bb_addmodule(hook)
 bb_addmodule(event)

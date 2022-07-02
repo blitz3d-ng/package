@@ -1,5 +1,5 @@
 bb_start_module(stub)
-set(SOURCES stub.h)
+set(SOURCES stub.h stub.cpp)
 IF(BB_WINDOWS)
   set(SOURCES ${SOURCES} stub.windows.cpp)
 ELSEIF(BB_EMSCRIPTEN)

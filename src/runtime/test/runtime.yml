@@ -8,6 +8,7 @@ platforms:
   - nx
 
 modules:
+  - stub
   - blitz
   - hook
   - event

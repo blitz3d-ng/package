@@ -33,6 +33,13 @@ bb_int_t Runtime::symValue( const char *sym ){
 	return -1;
 }
 
+void Runtime::loadSyms( map<const char*,void*> &_syms ){
+	bbruntime_link( linkSym );
+
+	std::copy( syms.begin(),syms.end(), std::inserter( _syms,_syms.end() ) );
+	syms.clear();
+}
+
 void Runtime::startup(){
 }
 

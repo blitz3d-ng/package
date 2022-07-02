@@ -7,6 +7,7 @@ endif()
 
 bb_start_runtime(test bbCreateConsoleRuntime)
 
+bb_addmodule(stub)
 bb_addmodule(math)
 bb_addmodule(blitz)
 bb_addmodule(string)
