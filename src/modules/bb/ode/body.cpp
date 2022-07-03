@@ -2,10 +2,7 @@
 #include "ode.h"
 #include <ode/ode.h>
 #include <bb/blitz3d/geom.h>
-
-//degrees to radians and back
-static const float dtor=0.0174532925199432957692369076848861f;
-static const float rtod=1/dtor;
+#include "common.h"
 
 // ODE_API dReal dBodyGetAutoDisableLinearThreshold (dBodyID);
 // ODE_API void  dBodySetAutoDisableLinearThreshold (dBodyID, dReal linear_average_threshold);

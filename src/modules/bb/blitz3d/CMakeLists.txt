@@ -12,6 +12,13 @@ ENDIF()
 
 bb_end_module()
 
+set_target_properties(bb.blitz3d PROPERTIES UNITY_BUILD_MODE GROUP)
+set_source_files_properties(${SOURCES} PROPERTIES UNITY_GROUP "group1")
+set_source_files_properties(loader_b3d.cpp PROPERTIES UNITY_GROUP "group2")
+set_source_files_properties(loader_3ds.cpp PROPERTIES UNITY_GROUP "group3")
+set_source_files_properties(loader_assimp.cpp PROPERTIES UNITY_GROUP "group4")
+set_source_files_properties(loader_x.cpp PROPERTIES UNITY_GROUP "group5")
+
 IF(BB_WINDOWS AND NOT BB_MINGW)
   target_link_libraries(bb.blitz3d dxsdk)
 ENDIF()

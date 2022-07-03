@@ -273,6 +273,8 @@ ELSEIF (BB_CLANG)
   add_compile_options(-fcolor-diagnostics)
 ENDIF ()
 
+set(ENABLE_UNITY_BUILD true)
+
 add_subdirectory(deps)
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
@@ -312,6 +314,8 @@ ENDIF()
 
 add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")
 add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
+
+set(CMAKE_UNITY_BUILD ${ENABLE_UNITY_BUILD})
 
 add_subdirectory(src/stdutil)
 add_subdirectory(src/modules)

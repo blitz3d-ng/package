@@ -1,6 +1,5 @@
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
-
 IF(BB_DESKTOP AND NOT BB_CROSSCOMPILE)
   add_subdirectory(compiler)
   add_subdirectory(blitzide2)

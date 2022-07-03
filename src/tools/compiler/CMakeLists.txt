@@ -18,12 +18,7 @@ endif()
 
 include_directories (SYSTEM ../../modules)
 
-add_executable(blitzcc
-  main.cpp
-  libs.cpp libs.h
-  environ.cpp environ.h
-  ex.h
-
+set(TREE_SOURCES
   tree/decl/node.cpp tree/decl/node.h
   tree/decl/data_decl.cpp tree/decl/data_decl.h
   tree/decl/decl_seq.cpp tree/decl/decl_seq.h
@@ -92,6 +87,15 @@ add_executable(blitzcc
   tree/type.cpp tree/type.h
   tree/parser.cpp tree/parser.h
   tree/toker.cpp tree/toker.h
+)
+
+add_executable(blitzcc
+  main.cpp
+  libs.cpp libs.h
+  environ.cpp environ.h
+  ex.h
+
+  ${TREE_SOURCES}
 
   codegen.h
   codegen_x86/codegen_x86.cpp codegen_x86/codegen_x86.h
@@ -104,6 +108,9 @@ add_executable(blitzcc
 
   std.cpp std.h
 )
+
+set_target_properties(blitzcc PROPERTIES UNITY_BUILD_MODE GROUP)
+set_source_files_properties(${TREE_SOURCES} PROPERTIES UNITY_GROUP "tree")
 
 if(BB64 AND BB_WINDOWS)
   set_target_properties(blitzcc PROPERTIES OUTPUT_NAME "blitzcc64")

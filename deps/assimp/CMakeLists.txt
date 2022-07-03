@@ -1,3 +1,5 @@
+set(CMAKE_UNITY_BUILD ${ENABLE_UNITY_BUILD})
+
 set (SOURCE src/code/Assimp.cpp
   src/code/BaseImporter.h
   src/code/BaseImporter.cpp
