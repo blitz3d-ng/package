@@ -35,6 +35,6 @@ IF(BB_WINDOWS)
   add_subdirectory(fmod)
 ENDIF()
 
-IF(BB_DESKTOP OR BB_EMSCRIPTEN OR BB_NX)
+IF((BB_DESKTOP OR BB_EMSCRIPTEN OR BB_NX) AND NOT BB_WOA64)
   add_subdirectory(ode)
 ENDIF()

@@ -13,7 +13,7 @@ IF "%ENV%" == "debug" (
   SET CONFIG=Debug
 )
 IF "%ENV%" == "release" (
-  SET CONFIG=MinSizeRel
+  SET CONFIG=Release
 )
 
 IF "%VisualStudioVersion%" == "16.0" (
@@ -26,7 +26,9 @@ IF "%VisualStudioVersion%" == "17.0" (
 
 IF NOT "%PLATFORM%" == "win32" (
   IF NOT "%PLATFORM%" == "win64" (
-    SET PLATFORM=win32
+    IF NOT "%PLATFORM%" == "woa64" (
+      SET PLATFORM=win32
+    )
   )
 )
 
@@ -36,6 +38,10 @@ IF "%PLATFORM%" == "win32" (
 
 IF "%PLATFORM%" == "win64" (
   SET ARCH=x64
+)
+
+IF "%PLATFORM%" == "woa64" (
+  SET ARCH=ARM64
 )
 
 ECHO Building %PLATFORM% in %ENV% mode using VS %VisualStudioVersion%.

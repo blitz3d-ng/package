@@ -1,3 +1,7 @@
+if (BB_MSVC)
+  set(CMAKE_UNITY_BUILD false)
+endif()
+
 if (TARGET wxstc AND TARGET wxwebview)
   add_executable(ide2 blitzide2.rc dpi.h dpi.cpp
     MainFrame.h MainFrame.cpp

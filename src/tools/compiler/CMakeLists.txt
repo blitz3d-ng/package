@@ -5,6 +5,9 @@ if(BB64)
     $ENV{LLVM_ROOT}
     ${PROJECT_SOURCE_DIR}/llvm
     /usr/lib/llvm-14/lib/cmake/lld
+    c:/llvm-x64
+    c:/llvm-14
+    c:/llvm
   )
 
   find_package(LLVM 14 PATHS ${LLVM_KNOWN_PATHS})

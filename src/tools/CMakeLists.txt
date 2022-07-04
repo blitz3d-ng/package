@@ -11,6 +11,6 @@ IF(BB_DESKTOP AND NOT BB_CROSSCOMPILE)
 ENDIF()
 
 IF(BB_MSVC AND NOT BB_CROSSCOMPILE)
-  add_subdirectory(src/legacy/blitzide)
-  add_subdirectory(src/legacy/debugger)
+  add_subdirectory(legacy/blitzide)
+  add_subdirectory(legacy/debugger)
 ENDIF()

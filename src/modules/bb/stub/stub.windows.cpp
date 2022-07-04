@@ -5,6 +5,11 @@
 #include <string>
 using namespace std;
 
+extern "C" int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
+	const char *t=bbruntime_run( bbMain,true );
+	return t!=0;
+};
+
 const char *bbruntime_run( void (*pc)(),bool dbg ){
 	bb_env.debug=dbg;
 

@@ -6,6 +6,7 @@ target_compile_definitions(ide PRIVATE -D_WIN32_WINNT=_WIN32_WINNT_WINXP -DNO_WA
 if(BB_SHARED)
   target_compile_definitions(ide PRIVATE _AFXDLL)
 endif()
+target_link_libraries(ide stdutil)
 
 if(BB_WIN64)
   set_target_properties(ide PROPERTIES OUTPUT_NAME "ide64")

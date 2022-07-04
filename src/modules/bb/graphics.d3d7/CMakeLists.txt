@@ -5,3 +5,5 @@ IF(BB_WINDOWS)
   set(LIBS ddraw dxguid)
   bb_end_module()
 ENDIF()
+
+set_target_properties(bb.graphics.d3d7 PROPERTIES UNITY_BUILD false)
