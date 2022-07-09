@@ -1,3 +1,5 @@
+optimize_for_size()
+
 add_library(freetype2 STATIC
   tree/src/base/ftbase.c
   tree/src/base/ftbbox.c

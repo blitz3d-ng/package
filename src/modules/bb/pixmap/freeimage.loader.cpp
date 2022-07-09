@@ -28,7 +28,7 @@ BBPixmap *bbLoadPixmapWithFreeImage( const std::string &file ){
 	switch( int bpp=FreeImage_GetBPP( t_dib ) ){
 	case 32:pm->format=PF_RGBA;break;
 	case 24:pm->format=PF_RGB;break;
-	case 8:pm->format=PF_RGB;break;
+	case 8:case 4:pm->format=PF_RGB;break;
 	default:RTEX( ("Unhandled image format: "+string(itoa(bpp))+" bpps").c_str() );
 	}
 

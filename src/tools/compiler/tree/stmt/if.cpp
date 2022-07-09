@@ -56,9 +56,7 @@ void IfNode::translate2( Codegen_LLVM *g ){
 	stmts->translate2( g );
 
 	auto current_block = g->builder->GetInsertBlock();
-	if( !g->builder->GetInsertBlock()->getTerminator() ) {
-		g->builder->CreateBr( cont );
-	}
+	g->builder->CreateBr( cont );
 
 	if( els ){
 		func->getBasicBlockList().push_back( els );
@@ -67,9 +65,7 @@ void IfNode::translate2( Codegen_LLVM *g ){
 		elseOpt->translate2( g );
 
 		auto current_block = g->builder->GetInsertBlock();
-		if( !llvm::dyn_cast<llvm::BranchInst>(&current_block->back()) ) {
-			g->builder->CreateBr( cont );
-		}
+		g->builder->CreateBr( cont );
 	}
 
 	func->getBasicBlockList().push_back( cont );

@@ -227,7 +227,11 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 		iface.close();
 	}
 
-	args.push_back( mainObj );
+	string mainPath=string(tmpnam(0))+".o";
+	std::ofstream mainFile( mainPath,std::ios_base::binary );
+	mainFile.write( mainObj.c_str(),mainObj.size() );
+	mainFile.flush();
+	args.push_back( mainPath );
 
 	for( auto lib:libs ){
 		string arg;
@@ -292,4 +296,6 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	for( auto s:_args ){
 		free( (char*)s );
 	}
+
+	remove( mainPath.c_str() );
 }

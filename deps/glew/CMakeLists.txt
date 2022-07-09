@@ -1,3 +1,5 @@
+optimize_for_size()
+
 if(NOT BB_ANDROID AND NOT BB_NX)
   add_library(glew STATIC src/glew.c)
   target_output_to_toolchain(glew)

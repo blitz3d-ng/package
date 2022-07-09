@@ -41,8 +41,8 @@ struct Type{
 	virtual json toFullJSON(){ return toJSON(); }
 
 #ifdef USE_LLVM
-	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
-	virtual llvm::Constant *llvmZero( llvm::LLVMContext *c );
+	virtual llvm::Type *llvmType( llvm::LLVMContext *c )=0;
+	virtual llvm::Constant *llvmZero( llvm::LLVMContext *c )=0;
 #endif
 };
 
@@ -55,6 +55,8 @@ struct FuncType : public Type{
 	~FuncType(){ delete params; }
 	FuncType *funcType(){ return this; }
 #ifdef USE_LLVM
+	llvm::Type *llvmType( llvm::LLVMContext *c );
+	llvm::Constant *llvmZero( llvm::LLVMContext *c );
 	llvm::Function *llvmFunction( string &ident, Codegen_LLVM *g );
 #endif
 
@@ -83,6 +85,7 @@ struct ArrayType : public Type{
 
 #ifdef USE_LLVM
 	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
+	virtual llvm::Constant *llvmZero( llvm::LLVMContext *c );
 #endif
 };
 
@@ -129,6 +132,11 @@ struct ConstType : public Type{
 	ConstType( const string &n ):stringValue(n),valueType(Type::string_type){}
 	ConstType *constType(){ return this; }
 
+#ifdef USE_LLVM
+	llvm::Type *llvmType( llvm::LLVMContext *c );
+	llvm::Constant *llvmZero( llvm::LLVMContext *c );
+#endif
+
 	json toJSON(){
 		json tree;tree["@class"]="ConstType";
 		tree["valueType"]=valueType->toJSON();
@@ -153,6 +161,7 @@ struct VectorType : public Type{
 	llvm::GlobalVariable *temp=0;
 	virtual llvm::Type *llvmType( llvm::LLVMContext *c );
 	virtual llvm::GlobalVariable *llvmDef( Codegen_LLVM *g );
+	virtual llvm::Constant *llvmZero( llvm::LLVMContext *c );
 #endif
 };
 

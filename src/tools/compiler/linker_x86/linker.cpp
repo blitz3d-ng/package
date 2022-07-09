@@ -4,11 +4,11 @@
 
 #include <cstring>
 
-class BBModule : public Module{
+class X86Module : public Module{
 public:
-	BBModule();
-	BBModule( istream &in );
-	~BBModule();
+	X86Module();
+	X86Module( istream &in );
+	~X86Module();
 
 	void *link( Module *libs );
 	bool createExe( const char *exe_file,const char *dll_file );
@@ -55,17 +55,17 @@ private:
 	}
 };
 
-BBModule::BBModule():data(0),data_sz(0),pc(0),linked(false){
+X86Module::X86Module():data(0),data_sz(0),pc(0),linked(false){
 }
 
-BBModule::~BBModule(){
+X86Module::~X86Module(){
 #ifdef BB_WINDOWS // TODO: probably memleak...
 	if( linked ) VirtualFree( data,0,MEM_RELEASE );
 	else delete[] data;
 #endif
 }
 
-void *BBModule::link( Module *libs ){
+void *X86Module::link( Module *libs ){
 #ifdef BB_WINDOWS
 	if( linked ) return data;
 
@@ -95,39 +95,39 @@ void *BBModule::link( Module *libs ){
 #endif
 }
 
-int BBModule::getPC(){
+int X86Module::getPC(){
 	return pc;
 }
 
-void BBModule::emit( int byte ){
+void X86Module::emit( int byte ){
 	ensure(1);data[pc++]=byte;
 }
 
-void BBModule::emitw( int word ){
+void X86Module::emitw( int word ){
 	ensure(2);*(short*)(data+pc)=word;pc+=2;
 }
 
-void BBModule::emitd( int dword ){
+void X86Module::emitd( int dword ){
 	ensure(4);*(int*)(data+pc)=dword;pc+=4;
 }
 
-void BBModule::emitx( void *mem,int sz ){
+void X86Module::emitx( void *mem,int sz ){
 	ensure(sz);memcpy( data+pc,mem,sz );pc+=sz;
 }
 
-bool BBModule::addSymbol( const char *sym,int pc ){
+bool X86Module::addSymbol( const char *sym,int pc ){
 	string t(sym);
 	if( symbols.find( t )!=symbols.end() ) return false;
 	symbols[t]=pc;return true;
 }
 
-bool BBModule::addReloc( const char *dest_sym,int pc,bool pcrel ){
+bool X86Module::addReloc( const char *dest_sym,int pc,bool pcrel ){
 	map<int,string> &rel=pcrel ? rel_relocs : abs_relocs;
 	if( rel.find( pc )!=rel.end() ) return false;
 	rel[pc]=string(dest_sym);return true;
 }
 
-bool BBModule::findSymbol( const char *sym,int *pc ){
+bool X86Module::findSymbol( const char *sym,int *pc ){
 	string t=string(sym);
 	map<string,int>::iterator it=symbols.find( t );
 	if( it==symbols.end() ) return false;
@@ -148,7 +148,7 @@ bool Linker::canCreateExe(){
 }
 
 Module *Linker::createModule(){
-	return d_new BBModule();
+	return d_new X86Module();
 }
 
 void Linker::deleteModule( Module *mod ){
@@ -159,7 +159,7 @@ Linker * CDECL linkerGetLinker(){
 	static Linker linker;return &linker;
 }
 
-bool BBModule::createExe( const char *exe_file,const char *dll_file ){
+bool X86Module::createExe( const char *exe_file,const char *dll_file ){
 #ifdef BB_WINDOWS
 #ifdef DEMO
 	return false;

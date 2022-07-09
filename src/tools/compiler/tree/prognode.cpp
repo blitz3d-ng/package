@@ -1,4 +1,5 @@
 #include "prognode.h"
+#include "../libs.h"
 
 //////////////////
 // The program! //
@@ -176,8 +177,6 @@ json ProgNode::toJSON( Environ *e ){
 #include <llvm/IR/Verifier.h>
 
 void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
-	llvm::Type *void_type=llvm::Type::getVoidTy( *g->context );
-
 	g->module->setModuleIdentifier(stmts->file);
 	g->module->setSourceFileName(stmts->file);
 
@@ -188,7 +187,7 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 		if( d->type->vectorType() ) continue;
 
 		auto ty=d->type->llvmType( g->context.get() );
-		auto glob=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( d->name,ty );
+		auto glob=new llvm::GlobalVariable( *g->module,ty,false,llvm::GlobalValue::ExternalLinkage,nullptr,d->name );
 
 		llvm::Constant *init=0;
 		if( d->type->intType() ){
@@ -200,19 +199,20 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 		}
 
 		glob->setInitializer( init );
-		glob->setLinkage( llvm::GlobalValue::LinkageTypes::ExternalLinkage );
 		d->ptr=glob;
 	}
 
-	vector<llvm::Type*> none( 0,void_type );
-	auto ft=llvm::FunctionType::get( void_type,none,false );
-	auto bbMain=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"bbMain",g->module.get() );
-	auto block = llvm::BasicBlock::Create( *g->context,"entry",bbMain );
+	llvm::Type *bool_ty=llvm::Type::getInt1Ty( *g->context );
+	vector<llvm::Type*> none( 0,g->voidTy );
+
+	auto mainFt=llvm::FunctionType::get( g->voidTy,none,false );
+	g->bbMain=llvm::Function::Create( mainFt,llvm::Function::ExternalLinkage,"bbMain",g->module.get() );
+	auto block = llvm::BasicBlock::Create( *g->context,"entry",g->bbMain );
 	g->builder->SetInsertPoint( block );
 
 	datas->translate2( g );
-	auto ty=llvm::ArrayType::get( Type::int_type->llvmType( g->context.get() ),g->data_values.size() );
-	g->bbData=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( "bbData",ty );
+	auto ty=llvm::ArrayType::get( g->intTy,g->data_values.size() );
+	g->bbData=new llvm::GlobalVariable( *g->module,ty,false,llvm::GlobalValue::ExternalLinkage,nullptr,"bbData" );
 	g->bbData->setInitializer( llvm::ConstantArray::get( ty,g->data_values ) );
 
 	structs->translate2( g );

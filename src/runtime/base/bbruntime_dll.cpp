@@ -74,12 +74,7 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 
 	bbStartup( 0,params.c_str() );
 
-	if( bbRuntime=bbCreateRuntime() ){
-
-		bbruntime_run( pc,debug );
-
-		bbCloseRuntime( bbRuntime );
-	}
+	bbruntime_run( pc,debug );
 
 #ifndef __MINGW32__
 	_control87( _CW_DEFAULT,0xfffff );

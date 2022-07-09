@@ -14,9 +14,11 @@ TNode *StringConstNode::translate( Codegen *g ){
 }
 
 #ifdef USE_LLVM
+map<string,llvm::Value*> ptrs;
+
 llvm::Value *StringConstNode::translate2( Codegen_LLVM *g ){
-	auto arg=g->builder->CreateGlobalStringPtr(value);
-	return g->CallIntrinsic( "_bbStrConst",sem_type->llvmType( g->context.get() ),1,arg );
+	auto t=g->constantString( value );
+	return g->CallIntrinsic( "_bbStrConst",sem_type->llvmType( g->context.get() ),1,t );
 }
 #endif
 

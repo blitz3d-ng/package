@@ -24,6 +24,8 @@ extern string home;
 extern Linker *linkerLib;
 extern Runtime *runtimeLib;
 
+extern BBRuntimeDylib rtdl;
+
 //linkLibs
 extern Module *runtimeModule;
 extern Environ *runtimeEnviron;
@@ -31,9 +33,9 @@ extern vector<string> modules;
 extern vector<string> keyWords;
 extern vector<UserFunc> userFuncs;
 
-const char *openLibs( const string rt );
+const char *openLibs( const string &rt );
 
-const char *linkLibs( const string rt );
+const char *linkLibs( const string &rt );
 
 void closeLibs();
 

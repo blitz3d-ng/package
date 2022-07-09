@@ -6,6 +6,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 
 class Debugger;
 
@@ -22,6 +23,28 @@ public:
 	virtual void checkmem( std::streambuf *buf );
 
 	virtual void execute( void (*pc)(),const char *args,Debugger *dbg );
+};
+
+struct BBSymbol{
+public:
+	std::string ident,sym;
+	bb_int_t value;
+};
+
+struct BBModule{
+public:
+	std::string id,ident;
+	std::vector<std::string> deps,libs,system_libs;
+	std::vector<BBSymbol> syms;
+	bool used=false,imported=false;
+};
+
+struct BBRuntimeDylib{
+public:
+	std::string id,entry;
+	std::map<std::string,BBModule> modules;
+	std::vector<std::string> order;
+	std::map<std::string,std::string> syms;
 };
 
 extern "C" BBDECL Runtime * CDECL runtimeGetRuntime();

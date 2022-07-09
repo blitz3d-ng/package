@@ -61,24 +61,23 @@ void DimNode::translate2( Codegen_LLVM *g ){
 	auto data_ty=g->arrayTypes[ident];
 
 	vector<llvm::Constant*> fields;
-	fields.push_back( llvm::ConstantPointerNull::get( llvm::PointerType::get( llvm::Type::getVoidTy( *g->context ),0 ) ) );
+	fields.push_back( llvm::ConstantPointerNull::get( g->voidPtr ) );
 	fields.push_back( g->constantInt( et ) );
-	fields.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,exprs->size() ) ) );
+	fields.push_back( g->constantInt( exprs->size() ) );
 	auto ary=llvm::ConstantStruct::get( g->bbArray,fields );
 
 	vector<llvm::Constant*> afields;
 	afields.push_back( ary );
 	for( int k=0;k<exprs->size();++k ) {
-		afields.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,0 ) ) );
+		afields.push_back( g->constantInt( 0 ) );
 	}
 	auto defdata=llvm::ConstantStruct::get( data_ty,afields );
 
 	glob->setInitializer( defdata );
 
-	auto void_ty=llvm::Type::getVoidTy( *g->context );
 	auto int_ty=Type::int_type->llvmType( g->context.get() );
 
-	g->CallIntrinsic( "_bbUndimArray",void_ty,1,g->CastToArrayPtr( glob ) );
+	g->CallIntrinsic( "_bbUndimArray",g->voidTy,1,g->CastToArrayPtr( glob ) );
 	for( int k=0;k<exprs->size();++k ){
 		vector<llvm::Value*> idx;
 		idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
@@ -86,7 +85,7 @@ void DimNode::translate2( Codegen_LLVM *g ){
 		auto t=g->builder->CreateGEP( data_ty,glob,idx );
 		g->builder->CreateStore( exprs->exprs[k]->translate2(g),t );
 	}
-	g->CallIntrinsic( "_bbDimArray",void_ty,1,g->CastToArrayPtr( glob ) );
+	g->CallIntrinsic( "_bbDimArray",g->voidTy,1,g->CastToArrayPtr( glob ) );
 }
 #endif
 

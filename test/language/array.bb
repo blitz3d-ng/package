@@ -37,7 +37,7 @@ i = 4
 levels(i) = New Level
 levels(i)\name = "Intro"
 
-Expect levels(i)\name = "Intro", "Level 1 is Intro"
+Expect levels(i)\name = "Intro", "Level 4 is Intro"
 
 Function FillTiles()
 	; make sure array global/type info available in codegen before dim

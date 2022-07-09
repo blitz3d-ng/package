@@ -241,6 +241,12 @@ function(target_output_to_bin target)
   target_output_directory(${target} ${RELEASE_PATH}/bin)
 endfunction()
 
+macro(optimize_for_size)
+  if(BB_RELEASE)
+    set(CMAKE_BUILD_TYPE MinSizeRel)
+  endif()
+endmacro()
+
 IF(BB_MSVC)
   IF(BB_STATIC)
     include("./src/msvc.cmake")

@@ -24,6 +24,7 @@ int dbg_ver;
 string home;
 Linker *linkerLib;
 Runtime *runtimeLib;
+BBRuntimeDylib rtdl;
 
 Module *runtimeModule;
 Environ *runtimeEnviron;
@@ -267,7 +268,7 @@ static const char *linkUserLibs(){
 
 static char err[255];
 
-const char *openLibs( const string rt ){
+const char *openLibs( const string &rt ){
 
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
@@ -317,7 +318,114 @@ const char *openLibs( const string rt ){
 	return 0;
 }
 
-const char *linkLibs( const string rt ){
+static
+void parse_list( std::string &line,std::vector<string> &libs ){
+	size_t s=0,e=line.find(";");
+	while( 1 ) {
+		string frag=line.substr( s,e-s );
+		while( frag[0] == ' ' ) frag=frag.substr( 1 );
+
+		if( frag.length() == 0 ) break;
+
+		libs.push_back( frag );
+
+		if( e==string::npos ) {
+			break;
+		}
+
+		s=e+1;
+		e=line.find(";",s);
+	}
+}
+
+static
+string underscore( const string &s ){
+	string t=s;
+	size_t i;
+	if( (i=t.find("."))!=string::npos ){
+		t.replace( i,1,"_" );
+	}
+	if( (i=t.find("-"))!=string::npos ){
+		t.replace( i,1,"_" );
+	}
+	return t;
+}
+
+void parseLibs( const string &rt ){
+	std::string toolchain=home+"/bin/" BB_TRIPLE;
+
+	ifstream rti( toolchain+"/runtime."+rt+".i" );
+	if (!rti.is_open()) {
+		cerr<<"Cannot find interface file for runtime."<<rt<<endl;
+		exit( 1 );
+	}
+
+	string line;
+	vector<string> modules;
+	while( getline( rti,line ) ) {
+		string i="ID: ",e="ENTRY: ",d="DEPS: ";
+		if( line.find( i )==0 ){
+			line=line.substr( i.size() );
+			rtdl.id=line;
+		}else if( line.find( e )==0 ){
+			line=line.substr( e.size() );
+			rtdl.entry=line;
+		}else if( line.find( d )==0 ){
+			line=line.substr( d.size() );
+			parse_list( line,modules );
+		}
+	}
+
+	for( string &id:modules ){
+		BBModule module;
+
+		ifstream iface( toolchain+"/cfg/"+id+".i" );
+		if( !iface.is_open() ){
+			cerr<<"Cannot find interface file for "<<id<<"."<<rt<<endl;
+			exit( 1 );
+		}
+
+		while( getline( iface,line ) ) {
+			string i="ID: ",m="MODULES: ",f="FUNC: ";
+			if( line.find( i )==0 ){
+				line=line.substr( i.size() );
+				module.id=line.substr( 3,line.size()-3 );
+				module.ident=underscore( id );
+			}else if( line.find( m )==0 ){
+				line=line.substr( m.size() );
+
+				vector<string> deps;
+				parse_list( line,deps );
+				for( auto &dep:deps ){
+					dep=dep.substr( 3,dep.size()-1 );
+					module.deps.push_back( dep );
+				}
+			}else if( line.find( f )==0 ){
+				line=line.substr( f.size() );
+
+				size_t s=0,e=1;
+				if( !isalnum(line[0]) && line[0]!='_' ){
+					s=1;
+				}
+				while( isalnum(line[e]) || line[e]=='_' ) e++;
+
+				BBSymbol sym;
+				sym.ident=line.substr( s,e-s );
+
+				rtdl.syms[tolower(sym.ident)]=module.id;
+
+				module.syms.push_back( sym );
+			}
+		}
+
+		rtdl.order.push_back( module.id );
+
+		rtdl.modules[module.id]=module;
+	}
+}
+
+const char *linkLibs( const string &rt ){
+	// parseLibs( rt );
 
 	if( const char *p=linkRuntime( rt ) ) return p;
 

@@ -12,7 +12,7 @@ Include "language/literals.bb"
 Include "language/loops.bb"
 Include "language/select.bb"
 Include "language/types.bb"
-; Include "language/vector.bb"
+Include "language/vector.bb"
 
 ;Include "modules/audio.bb"
 ;Include "modules/blitz3d.bb"

@@ -9,7 +9,6 @@
 #include <llvm/ExecutionEngine/Orc/JITTargetMachineBuilder.h>
 #include <llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h>
 
-#include "../codegen_llvm/codegen_llvm.h"
 #include "../libs.h"
 
 typedef void (*BBMAIN)();
@@ -24,7 +23,6 @@ private:
 
 	llvm::orc::MangleAndInterner Mangle;
 	llvm::orc::RTDyldObjectLinkingLayer ObjectLayer;
-	llvm::orc::IRCompileLayer CompileLayer;
 
 	llvm::orc::JITDylib &MainJD;
 public:
@@ -34,9 +32,7 @@ public:
 
 	static llvm::Expected<std::unique_ptr<JIT_ORC>> Create();
 
-	const llvm::DataLayout &getDataLayout() const;
-
-	int run( Runtime *runtime, Codegen_LLVM *codegen, const std::string &home, const std::string &rt );
+	int run( Runtime *runtime,const std::string &obj,const std::string &home,const std::string &rt );
 };
 
 

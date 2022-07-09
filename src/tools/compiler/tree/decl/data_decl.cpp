@@ -42,14 +42,14 @@ void DataDeclNode::translate2( Codegen_LLVM *g ){
 		v=(llvm::Constant*)c->translate2( g );
 	}else if( expr->sem_type==Type::float_type ){
 		ty=2;
-		v=(llvm::Constant*)c->translate2( g );
+		v=llvm::ConstantExpr::getBitCast( (llvm::Constant*)c->translate2( g ),g->intTy );
 	}else{
 		ty=4;
-		v=g->builder->CreateGlobalStringPtr( string( c->stringValue() ) );
+		v=llvm::ConstantExpr::getPtrToInt( g->builder->CreateGlobalStringPtr( string( c->stringValue() ) ),g->intTy );
 	}
 
 	values_idx=g->data_values.size();
-	g->data_values.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,ty ) ) );
+	g->data_values.push_back( g->constantInt( ty ) );
 	g->data_values.push_back( v );
 }
 

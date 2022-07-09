@@ -17,46 +17,53 @@
 #define BB_SO_EXT "so"
 #endif
 
+static void handleLazyCallThroughError() {
+	llvm::errs()<<"could not find function body";
+	exit(1);
+}
+
 JIT_ORC::JIT_ORC( std::unique_ptr<llvm::orc::ExecutionSession> ES,std::unique_ptr<llvm::orc::EPCIndirectionUtils> EPCIU,llvm::orc::JITTargetMachineBuilder JTMB, llvm::DataLayout DL ):
 	ES(std::move(ES)), EPCIU(std::move(EPCIU)), DL(std::move(DL)),
 	Mangle(*this->ES, this->DL),
 	ObjectLayer(*this->ES,[]() { return std::make_unique<llvm::SectionMemoryManager>(); }),
-	CompileLayer(*this->ES, ObjectLayer, std::make_unique<llvm::orc::ConcurrentIRCompiler>(std::move(JTMB))),
-	MainJD(this->ES->createBareJITDylib( "<main>" )
-){
+	MainJD( this->ES->createBareJITDylib( "<main>" ) )
+{
 }
 
 JIT_ORC::~JIT_ORC() {
-	if( auto Err=ES->endSession() ) ES->reportError( std::move(Err) );
-	if( auto Err=EPCIU->cleanup() ) ES->reportError( std::move(Err) );
+	cantFail( ES->endSession() );
+	cantFail( EPCIU->cleanup() ); // TODO: find out why this triggers an assertion
 }
 
 llvm::Expected<std::unique_ptr<JIT_ORC>> JIT_ORC::Create() {
-  auto EPC = llvm::orc::SelfExecutorProcessControl::Create();
-  if (!EPC)
-    return EPC.takeError();
-
-  auto ES = std::make_unique<llvm::orc::ExecutionSession>(std::move(*EPC));
-
-  auto EPCIU = llvm::orc::EPCIndirectionUtils::Create(ES->getExecutorProcessControl());
-  if (!EPCIU)
-    return EPCIU.takeError();
-
-  if (auto Err = setUpInProcessLCTMReentryViaEPCIU(**EPCIU))
-    return std::move(Err);
-
-  llvm::orc::JITTargetMachineBuilder JTMB( ES->getExecutorProcessControl().getTargetTriple() );
-  auto DL = JTMB.getDefaultDataLayoutForTarget();
-  if( !DL ){
-    return DL.takeError();
+	auto EPC=llvm::orc::SelfExecutorProcessControl::Create();
+	if( !EPC ){
+		return EPC.takeError();
 	}
 
-  return std::make_unique<JIT_ORC>( std::move(ES),std::move(*EPCIU),std::move(JTMB),std::move(*DL) );
+	auto ES=std::make_unique<llvm::orc::ExecutionSession>( std::move(*EPC) );
+
+	auto EPCIU=llvm::orc::EPCIndirectionUtils::Create( ES->getExecutorProcessControl() );
+	if( !EPCIU ){
+		return EPCIU.takeError();
+	}
+
+	(*EPCIU)->createLazyCallThroughManager( *ES,llvm::pointerToJITTargetAddress( &handleLazyCallThroughError ) );
+
+	if( auto Err=setUpInProcessLCTMReentryViaEPCIU( **EPCIU ) ){
+		return std::move(Err);
+	}
+
+	llvm::orc::JITTargetMachineBuilder JTMB( ES->getExecutorProcessControl().getTargetTriple() );
+	auto DL=JTMB.getDefaultDataLayoutForTarget();
+	if( !DL ){
+		return DL.takeError();
+	}
+
+	return std::make_unique<JIT_ORC>( std::move(ES),std::move(*EPCIU),std::move(JTMB),std::move(*DL) );
 }
 
-const llvm::DataLayout &JIT_ORC::getDataLayout() const { return DL; }
-
-int JIT_ORC::run( Runtime *runtime, Codegen_LLVM *codegen, const std::string &home, const std::string &rt ) {
+int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &home, const std::string &rt ) {
 	auto RT = MainJD.createResourceTracker();
 
 	// MainJD.addGenerator(cantFail(llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(DL.getGlobalPrefix())));
@@ -68,11 +75,11 @@ int JIT_ORC::run( Runtime *runtime, Codegen_LLVM *codegen, const std::string &ho
 	llvm::orc::SymbolMap symmap;
 	for( auto sym:syms ){
 		string ident=sym.first;
-		if( !isalpha(ident[0]) && ident[0]!='_' ){
+		if( !isalnum(ident[0]) && ident[0]!='_' ){
 			ident=ident.substr(1);
 		}
 		size_t e=1;
-		while( isalpha(ident[e]) || ident[e]=='_' ) e++;
+		while( isalnum(ident[e]) || ident[e]=='_' ) e++;
 		ident=ident.substr( 0,e );
 		if( ident[0]!='_' ) ident="bb"+ident;
 
@@ -86,8 +93,8 @@ int JIT_ORC::run( Runtime *runtime, Codegen_LLVM *codegen, const std::string &ho
 
 	llvm::cantFail( MainJD.define( llvm::orc::absoluteSymbols( symmap ),RT ) );
 
-	auto TSM = llvm::orc::ThreadSafeModule( std::move(codegen->module),std::move(codegen->context) );
-	cantFail( CompileLayer.add( RT,std::move(TSM) ) );
+	auto mem=llvm::MemoryBuffer::getMemBuffer( obj );
+	cantFail( ObjectLayer.add( MainJD,std::move( mem ) ) );
 
 	auto start_sym = cantFail( ES->lookup({ &MainJD }, Mangle( "_bbStart" )) );
 	auto main_sym  = cantFail( ES->lookup({ &MainJD }, Mangle( "bbMain" )) );

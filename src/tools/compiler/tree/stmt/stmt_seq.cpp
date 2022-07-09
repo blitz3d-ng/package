@@ -11,6 +11,18 @@ void StmtNode::debug( int pos,Codegen *g ){
 	}
 }
 
+#ifdef USE_LLVM
+static map<string,llvm::Value*> fileMap2;
+
+void StmtNode::debug2( int pos,Codegen_LLVM *g ){
+	if( g->debug ){
+		auto t=fileMap2[fileLabel];
+		if( !t ) t=fileMap2[fileLabel]=g->builder->CreateGlobalStringPtr( fileLabel );
+		g->CallIntrinsic( "_bbDebugStmt",g->voidTy,2,g->constantInt( pos ),t );
+	}
+}
+#endif
+
 void StmtSeqNode::reset( const string &file,const string &lab ){
 	fileLabel="";
 	fileMap.clear();
@@ -53,9 +65,11 @@ void StmtSeqNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void StmtSeqNode::translate2( Codegen_LLVM *g ) {
+	string t=fileLabel;
+	fileLabel=file.size() ? file : "";
 	for( int k=0;k<stmts.size();++k ){
 		StmtNode *stmt=stmts[k];
-		// stmt->debug2( stmts[k]->pos,g );
+		stmt->debug2( stmts[k]->pos,g );
 		try{
 			stmt->translate2( g );
 		}
@@ -65,6 +79,7 @@ void StmtSeqNode::translate2( Codegen_LLVM *g ) {
 			throw;
 		}
 	}
+	fileLabel=t;
 }
 #endif
 

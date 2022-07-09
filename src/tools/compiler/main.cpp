@@ -354,10 +354,7 @@ int main( int argc,char *argv[] ){
 	BundleInfo bundle;
 
 #ifdef USE_LLVM
-	string obj_file( string(tmpnam(0))+".o" );
-	Codegen_LLVM codegen2( debug );
-
-	auto jit = cantFail(JIT_ORC::Create());
+	string obj_code;
 #endif
 
 	try{
@@ -383,10 +380,18 @@ int main( int argc,char *argv[] ){
 		qstreambuf qbuf;
 		iostream asmcode( &qbuf );
 		Codegen_x86 codegen( asmcode,debug );
+#ifdef USE_LLVM
+		Codegen_LLVM codegen2( debug );
+#endif
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
 			prog->translate2( &codegen2,userFuncs );
+
+			if( out_file.size() ){
+				codegen2.injectMain();
+			}
+			codegen2.optimize();
 
 			if( dumpasm ){
 				codegen2.dumpToStderr();
@@ -411,11 +416,7 @@ int main( int argc,char *argv[] ){
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
-			if( out_file.size() ){
-				codegen2.injectMain();
-			}
-
-			codegen2.dumpToObj( obj_file );
+			codegen2.dumpToObj( obj_code );
 #endif
 		} else {
 			module=linkerLib->createModule();
@@ -438,7 +439,7 @@ int main( int argc,char *argv[] ){
 		if( usellvm ) {
 #ifdef USE_LLVM
 			Linker_LLD linker( home );
-			linker.createExe( rt,obj_file,bundle,out_file );
+			linker.createExe( rt,obj_code,bundle,out_file );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();
@@ -461,8 +462,10 @@ int main( int argc,char *argv[] ){
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
-			codegen2.module.get()->setDataLayout( jit->getDataLayout() );
-			ret=jit->run( runtimeLib, &codegen2, home, rt );
+			if( !veryquiet ) cout<<"Executing..."<<endl;
+
+			auto jit = cantFail( JIT_ORC::Create() );
+			ret=jit->run( runtimeLib,obj_code,home,rt );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();

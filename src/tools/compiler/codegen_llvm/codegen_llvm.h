@@ -1,24 +1,25 @@
 #ifndef CODEGEN_LLVM_H
 #define CODEGEN_LLVM_H
 
-#include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
-#include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/Target/TargetMachine.h>
 #include <map>
 #include <string>
 
 class Codegen_LLVM {
 public:
+	Codegen_LLVM( bool debug );
+
 	bool debug;
 
 	std::unique_ptr<llvm::LLVMContext> context;
 	std::unique_ptr<llvm::Module> module;
 
 	llvm::IRBuilder<> *builder;
-	llvm::legacy::FunctionPassManager *optimizer;
 
-	Codegen_LLVM( bool debug );
+	llvm::TargetMachine *targetMachine;
 
 	llvm::BasicBlock *breakBlock;
 
@@ -41,11 +42,13 @@ public:
 
 	llvm::Constant *constantInt( int i );
 	llvm::Constant *constantFloat( double f );
+	llvm::Constant *constantString( const std::string &s );
 
 	std::map<std::string,llvm::GlobalVariable*> arrays;
 	std::map<std::string,llvm::StructType*> arrayTypes;
 
 	std::map<std::string,llvm::BasicBlock*> labels;
+	std::map<std::string,llvm::Constant*> strings;
 
 	llvm::GlobalVariable *bbData;
 	std::vector<llvm::Constant*> data_values;
@@ -53,12 +56,14 @@ public:
 	llvm::BasicBlock *getLabel( std::string &ident );
 	llvm::GlobalVariable *getArray( std::string &ident,int dims );
 
+	llvm::Function *bbMain;
+
 	void optimize();
 	bool verify();
 
 	void injectMain();
 
-	int dumpToObj( const std::string &path );
+	int dumpToObj( std::string &out );
 	void dumpToStderr();
 };
 

@@ -1,3 +1,7 @@
+IF(BB_IOS)
+  set(CMAKE_UNITY_BUILD false)
+ENDIF()
+
 bb_start_module(pixmap)
 set(DEPENDS_ON bb.blitz)
 set(SOURCES pixmap.cpp pixmap.h)

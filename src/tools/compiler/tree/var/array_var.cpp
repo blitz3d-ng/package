@@ -49,6 +49,8 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 	auto dataptr=g->builder->CreateLoad( g->voidPtr,g->builder->CreateGEP( g->bbArray,glob,di ) );
 	auto data=g->builder->CreateBitOrPointerCast( dataptr,llvm::PointerType::get( ty,0 ) );
 
+	auto elty=g->arrayTypes[ident];
+
 	llvm::Value *t=0;
 	for( int k=0;k<exprs->size();++k ){
 		auto e=exprs->exprs[k]->translate2( g );
@@ -57,14 +59,14 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 			idx.push_back( zero );
 			if( k==0 ) idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,0 ) ) );
 			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,k==0?2:k ) ) );
-			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( glob->getType()->getPointerElementType(),glob,idx ) );
+			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( elty,glob,idx ) );
 			e=g->builder->CreateAdd( t,g->builder->CreateMul( e,s ) );
 		}
 		if( g->debug ){
 			vector<llvm::Value*> idx;
 			idx.push_back( zero );
 			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,1+k ) ) );
-			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( glob->getType()->getPointerElementType(),glob,idx ) );
+			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( elty,glob,idx ) );
 
 			auto ex=llvm::BasicBlock::Create( *g->context,"bounds_ex",func );
 			auto cont=llvm::BasicBlock::Create( *g->context,"bounds_cont",func );

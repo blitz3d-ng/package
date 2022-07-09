@@ -1,7 +1,11 @@
 #include "codegen_llvm.h"
 #include <llvm/ADT/Any.h>
 #include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IR/PassManager.h>
 #include <llvm/IR/Verifier.h>
+#include <llvm/Analysis/CGSCCPassManager.h>
+#include <llvm/Analysis/LoopAnalysisManager.h>
+#include <llvm/Passes/PassBuilder.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Support/raw_ostream.h>
@@ -13,6 +17,7 @@
 
 #include <llvm/Transforms/InstCombine/InstCombine.h>
 #include <llvm/Transforms/Scalar.h>
+#include <llvm/Transforms/IPO.h>
 using namespace llvm;
 
 #include <cstdarg>
@@ -27,9 +32,11 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 
 	builder=new IRBuilder<>( *context );
 
+	context->enableOpaquePointers();
+
 	voidTy=llvm::Type::getVoidTy( *context );
 	intTy=llvm::Type::getInt64Ty( *context );
-	voidPtr=llvm::PointerType::get( voidTy,0 );
+	voidPtr=llvm::PointerType::get( *context,0 );
 
 	// initialize stdlib constructs...
 	bbType=llvm::StructType::create( *context,"BBType" );
@@ -59,8 +66,8 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 
 	std::vector<llvm::Type*> arrayels;
 	arrayels.push_back( voidPtr );  // data
-	arrayels.push_back( llvm::PointerType::get( intTy,0 ) ); // elementType
-	arrayels.push_back( llvm::PointerType::get( intTy,0 ) ); // dims
+	arrayels.push_back( intTy ); // elementType
+	arrayels.push_back( intTy ); // dims
 	bbArray->setBody( arrayels );
 
 	std::vector<llvm::Type*> vecels;
@@ -68,6 +75,30 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	vecels.push_back( intTy ); // size
 	vecels.push_back( llvm::PointerType::get( bbType,0 ) ); // elementType
 	bbVecType->setBody( vecels );
+
+	// -------
+	auto triple=sys::getDefaultTargetTriple();
+
+	std::string err;
+	auto target = TargetRegistry::lookupTarget( triple,err );
+	if( !target ){
+		errs()<<err;
+		return;
+	}
+
+	auto cpu="generic",features="";
+	TargetOptions opt;
+	auto rm=Optional<Reloc::Model>();
+	targetMachine=target->createTargetMachine( triple,cpu,features,opt,rm );
+
+	module->setTargetTriple( triple );
+	module->setDataLayout( targetMachine->createDataLayout() );
+
+	if( debug ){
+		targetMachine->setOptLevel( CodeGenOpt::Level::None );
+		targetMachine->setFastISel( false );
+		targetMachine->setGlobalISel( false );
+	}
 }
 
 Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,int n,... ){
@@ -114,6 +145,14 @@ llvm::Constant *Codegen_LLVM::constantFloat( double f ){
 	return llvm::ConstantFP::get( *context,llvm::APFloat( f ) );
 }
 
+llvm::Constant *Codegen_LLVM::constantString( const std::string &s ){
+	auto v=strings[s];
+	if( !v ){
+		v=strings[s]=builder->CreateGlobalStringPtr( s );
+	}
+	return v;
+}
+
 llvm::BasicBlock *Codegen_LLVM::getLabel( std::string &ident ){
 	if( !labels[ident] ){
 		labels[ident] = llvm::BasicBlock::Create( *context, "_l"+ident );
@@ -137,20 +176,22 @@ llvm::GlobalVariable *Codegen_LLVM::getArray( std::string &ident, int dims ){
 }
 
 void Codegen_LLVM::optimize(){
-	auto optimizer=std::make_unique<legacy::FunctionPassManager>( module.get() );
-	optimizer->add( createInstructionCombiningPass() );
-	optimizer->add( createReassociatePass() );
-	optimizer->add( createNewGVNPass() );
-	optimizer->add( createCFGSimplificationPass() );
-	optimizer->add( createSCCPPass() );
-	optimizer->add( createDeadCodeEliminationPass() );
-	optimizer->doInitialization();
+	LoopAnalysisManager LAM;
+	FunctionAnalysisManager FAM;
+	CGSCCAnalysisManager CGAM;
+	ModuleAnalysisManager MAM;
 
-	for( auto &F:*module ){
-		optimizer->run( F );
-	}
+	PassBuilder PB( targetMachine );
 
-	// module->print( errs(),nullptr );
+	PB.registerModuleAnalyses( MAM );
+	PB.registerCGSCCAnalyses( CGAM );
+	PB.registerFunctionAnalyses( FAM );
+	PB.registerLoopAnalyses( LAM );
+	PB.crossRegisterProxies( LAM,FAM,CGAM,MAM );
+
+	ModulePassManager MPM = PB.buildPerModuleDefaultPipeline( OptimizationLevel::O3 );
+
+	MPM.run( *module,MAM );
 }
 
 bool Codegen_LLVM::verify(){
@@ -186,54 +227,25 @@ void Codegen_LLVM::injectMain(){
 
 	auto argc=main->getArg( 0 );
 	auto argv=main->getArg( 1 );
-	auto bbMain=builder->GetInsertBlock()->getParent();
 
 	auto block = llvm::BasicBlock::Create( *context,"entry",main );
 	builder->SetInsertPoint( block );
 	builder->CreateRet( CallIntrinsic( "bbStart",int_ty,3,argc,argv,bbMain ) );
 }
 
-int Codegen_LLVM::dumpToObj( const std::string &path ) {
-	optimize();
-
-	auto TargetTriple = sys::getDefaultTargetTriple();
-	module->setTargetTriple(TargetTriple);
-
-	std::string Error;
-	auto Target = TargetRegistry::lookupTarget(TargetTriple, Error);
-
-	if (!Target) {
-		errs() << Error;
-		return 1;
-	}
-
-	auto CPU = "generic";
-	auto Features = "";
-
-	TargetOptions opt;
-	auto RM = Optional<Reloc::Model>();
-	auto TheTargetMachine = Target->createTargetMachine( TargetTriple,CPU,Features,opt,RM );
-
-	module->setDataLayout( TheTargetMachine->createDataLayout() );
-
-	std::error_code EC;
-	raw_fd_ostream dest( path,EC,sys::fs::OF_None );
-
-	if( EC ){
-		errs()<<"Could not open file: "<<EC.message();
-		return 1;
-	}
+int Codegen_LLVM::dumpToObj( std::string &out ) {
+	raw_string_ostream sstr( out );
+	buffer_ostream dest( sstr );
 
 	legacy::PassManager pass;
-	auto FileType = CGFT_ObjectFile;
-
-	if (TheTargetMachine->addPassesToEmitFile(pass, dest, nullptr, FileType)) {
+	if( targetMachine->addPassesToEmitFile( pass,(raw_pwrite_stream &)sstr,0,CGFT_ObjectFile ) ){
 		errs() << "target can't emit a file of this type";
 		return 1;
 	}
 
-	pass.run(*module);
-	dest.flush();
+	pass.run( *module );
+
+	sstr.flush();
 
 	return 0;
 }

@@ -5,15 +5,6 @@
 #ifdef USE_LLVM
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DerivedTypes.h>
-
-llvm::Type *Type::llvmType( llvm::LLVMContext *c ){
-	return llvm::Type::getVoidTy(*c);
-}
-
-llvm::Constant *Type::llvmZero( llvm::LLVMContext *c ){
-	auto pty=llvm::PointerType::get( llvm::Type::getVoidTy( *c ),0 );
-	return llvm::ConstantPointerNull::get( pty );
-}
 #endif
 
 static struct v_type : public Type{
@@ -23,6 +14,10 @@ static struct v_type : public Type{
 #ifdef USE_LLVM
 	llvm::Type *llvmType( llvm::LLVMContext *c ){
 		return llvm::Type::getVoidTy(*c);
+	}
+	llvm::Constant *llvmZero( llvm::LLVMContext *c ){
+		cerr<<"not implemented"<<endl;
+		abort();
 	}
 #endif
 	json toJSON(){
@@ -105,12 +100,23 @@ static struct s_type : public Type{
 }s;
 
 #ifdef USE_LLVM
+llvm::Type *FuncType::llvmType( llvm::LLVMContext *c ){
+	cerr<<"not implemented"<<endl;
+	abort();
+}
+
+llvm::Constant *FuncType::llvmZero( llvm::LLVMContext *c ){
+	cerr<<"not implemented"<<endl;
+	abort();
+}
+
 llvm::Function *FuncType::llvmFunction( string &ident, Codegen_LLVM *g ){
-	if( symbol=="" ){
-		symbol="f"+ident;
+	string sym=symbol;
+	if( sym=="" ){
+		sym="f"+ident;
 	}
 
-	llvm::Function *func = g->module->getFunction( symbol );
+	llvm::Function *func = g->module->getFunction( sym );
 	if( !func ){
 		vector<llvm::Type*> decls;
 		for( int k=0;k<params->size();k++ ){
@@ -121,7 +127,7 @@ llvm::Function *FuncType::llvmFunction( string &ident, Codegen_LLVM *g ){
 
 		llvm::FunctionType *ft=llvm::FunctionType::get( ret_type,decls,false );
 
-		func=llvm::Function::Create( ft,llvm::GlobalValue::ExternalLinkage,symbol,g->module.get() );
+		func=llvm::Function::Create( ft,llvm::GlobalValue::ExternalLinkage,sym,g->module.get() );
 		func->setCallingConv( llvm::CallingConv::C );
 	}
 
@@ -138,6 +144,11 @@ llvm::Type *ArrayType::llvmType( llvm::LLVMContext *c ){
 		ty=llvm::StructType::create( *c,els,"BBArray" );
 	}
 	return llvm::PointerType::get( ty,0 );
+}
+
+llvm::Constant *ArrayType::llvmZero( llvm::LLVMContext *c ){
+	cout<<"not implemented!!!"<<endl;
+	abort();
 }
 #endif
 
@@ -168,6 +179,15 @@ llvm::Constant *StructType::llvmZero( llvm::LLVMContext *c ){
 }
 #endif
 
+#ifdef USE_LLVM
+llvm::Type *ConstType::llvmType( llvm::LLVMContext *c ){
+	return valueType->llvmType( c );
+}
+
+llvm::Constant *ConstType::llvmZero( llvm::LLVMContext *c ){
+	return valueType->llvmZero( c );
+}
+#endif
 
 bool VectorType::canCastTo( Type *t ){
 	if( this==t ) return true;
@@ -221,6 +241,11 @@ llvm::GlobalVariable *VectorType::llvmDef( Codegen_LLVM *g ){
 	}
 
 	return temp;
+}
+
+llvm::Constant *VectorType::llvmZero( llvm::LLVMContext *c ){
+	cerr<<"not implemented"<<endl;
+	abort();
 }
 #endif
 
