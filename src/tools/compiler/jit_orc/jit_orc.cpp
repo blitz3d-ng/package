@@ -7,16 +7,6 @@
 #include <llvm/ExecutionEngine/SectionMemoryManager.h>
 #include <llvm/ExecutionEngine/JITSymbol.h>
 
-#ifdef BB_WINDOWS
-#define BB_SO_EXT "dll"
-#endif
-#ifdef BB_MACOS
-#define BB_SO_EXT "dylib"
-#endif
-#ifdef BB_LINUX
-#define BB_SO_EXT "so"
-#endif
-
 static void handleLazyCallThroughError() {
 	llvm::errs()<<"could not find function body";
 	exit(1);

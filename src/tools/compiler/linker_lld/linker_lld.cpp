@@ -132,7 +132,27 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 #endif
 
 #ifdef BB_WINDOWS
-	args.push_back( "/NODEFAULTLIB" );
+	args.push_back( "/errorlimit:0" );
+
+	// args.push_back( "/subsystem:windows" );
+
+	args.push_back( "/nodefaultlib" );
+	args.push_back( "oldnames.lib" );
+	string winsdk="C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.22621.0";
+	string msvc="C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.32.31326";
+	args.push_back( "/libpath:"+winsdk+"\\ucrt\\x64" );
+	args.push_back( "/libpath:"+winsdk+"\\um\\x64" );
+	args.push_back( "/libpath:"+msvc+"\\lib\\x64" );
+
+	args.push_back( "libucrt.lib" );
+	args.push_back( "libvcruntime.lib" );
+	args.push_back( "libcmt.lib" );
+	args.push_back( "libcpmt.lib" );
+
+	// args.push_back( "ucrt.lib" );
+	// args.push_back( "vcruntime.lib" );
+	// args.push_back( "msvcrt.lib" );
+	// args.push_back( "msvcprt.lib" );
 #endif
 
 #ifdef BB_MACOS
@@ -168,6 +188,8 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 #endif
 
 #ifdef BB_WINDOWS
+	args.push_back( "/lldignoreenv" );
+
 	string machine="/machine:X64";
 	args.push_back( machine );
 

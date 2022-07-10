@@ -10,8 +10,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 include(src/bin2h.cmake)
 
 # TODO: make this toggleable
-set(BB_STATIC false)
-set(BB_SHARED true)
+if(MSVC)
+  set(BB_STATIC true)
+  set(BB_SHARED false)
+else()
+  set(BB_STATIC false)
+  set(BB_SHARED true)
+endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   set(BB_CLANG true)
@@ -255,8 +260,7 @@ endmacro()
 
 IF(BB_MSVC)
   IF(BB_STATIC)
-    include("./src/msvc.cmake")
-    configure_msvc_runtime()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
   ENDIF()
 
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
