@@ -15,6 +15,8 @@ void GosubNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void GosubNode::translate2( Codegen_LLVM *g ){
+	g->gosubUsed=true;
+
 	auto func=g->builder->GetInsertBlock()->getParent();
 
 	string label_cont=ident+"_"+string(itoa((bb_int_t)this))+"_cont";

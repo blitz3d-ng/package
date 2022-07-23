@@ -13,6 +13,7 @@ public:
 	Codegen_LLVM( bool debug );
 
 	bool debug;
+	bool gosubUsed=false;
 
 	std::unique_ptr<llvm::LLVMContext> context;
 	std::unique_ptr<llvm::Module> module;

@@ -128,7 +128,7 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 
 #ifdef BB_POSIX
 	args.push_back("--error-limit=0");
-	args.push_back("--lto-O0");
+	// args.push_back("--lto-O0");
 #endif
 
 #ifdef BB_WINDOWS

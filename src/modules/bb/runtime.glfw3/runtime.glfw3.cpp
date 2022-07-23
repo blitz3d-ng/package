@@ -375,7 +375,7 @@ public:
 	int numJoysticks()const{ return 0; }
 
 	int toAscii( int key )const{
-		cout<<key<<endl;
+		// cout<<key<<endl;
 		if( key==28 ) return '\n';
 		return 65;
 	}

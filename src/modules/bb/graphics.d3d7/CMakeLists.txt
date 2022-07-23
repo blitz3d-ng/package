@@ -4,6 +4,6 @@ IF(BB_WINDOWS)
   set(SOURCES graphics.d3d7.h driver.cpp driver.h canvas.cpp canvas2.cpp canvas.h ddutil.cpp ddutil.h asmcoder.h)
   set(LIBS ddraw dxguid)
   bb_end_module()
-ENDIF()
 
-set_target_properties(bb.graphics.d3d7 PROPERTIES UNITY_BUILD false)
+  set_target_properties(bb.graphics.d3d7 PROPERTIES UNITY_BUILD false)
+ENDIF()

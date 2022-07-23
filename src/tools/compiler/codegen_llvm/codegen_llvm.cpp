@@ -93,12 +93,6 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 
 	module->setTargetTriple( triple );
 	module->setDataLayout( targetMachine->createDataLayout() );
-
-	if( debug ){
-		targetMachine->setOptLevel( CodeGenOpt::Level::None );
-		targetMachine->setFastISel( false );
-		targetMachine->setGlobalISel( false );
-	}
 }
 
 Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,int n,... ){
@@ -176,6 +170,15 @@ llvm::GlobalVariable *Codegen_LLVM::getArray( std::string &ident, int dims ){
 }
 
 void Codegen_LLVM::optimize(){
+	// until the gosub implementation is improved, we have to relax optimization
+	// to avoid long build times...
+	if( gosubUsed ){
+		targetMachine->setOptLevel( CodeGenOpt::Level::None );
+		targetMachine->setFastISel( false );
+		targetMachine->setGlobalISel( false );
+		return;
+	}
+
 	LoopAnalysisManager LAM;
 	FunctionAnalysisManager FAM;
 	CGSCCAnalysisManager CGAM;
