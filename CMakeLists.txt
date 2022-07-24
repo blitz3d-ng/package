@@ -45,7 +45,7 @@ else()
   endif()
 endif()
 
-if(NOT BB_HOST_ARCH STREQUAL BB_ARCH AND NOT BB_PLATFORM MATCHES mingw)
+if(NOT BB_HOST_ARCH STREQUAL BB_ARCH AND NOT BB_PLATFORM MATCHES mingw AND NOT BB_PLATFORM STREQUAL android)
   if(BB_CLANG)
     add_compile_options(-arch ${BB_ARCH})
     add_link_options(-arch ${BB_ARCH})

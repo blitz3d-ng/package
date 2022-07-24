@@ -1,4 +1,4 @@
-if(BB_DESKTOP OR BB_IOS)
+if(TARGET sdl)
   bb_start_module(runtime.sdl)
   set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.timer)
   set(SOURCES runtime.sdl.cpp runtime.sdl.h)

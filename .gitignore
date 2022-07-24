@@ -32,7 +32,7 @@
 UpgradeLog.htm
 *.tmp
 
-.DS_Store
+*.DS_Store
 
 *.bb_bak*
 
