@@ -19,7 +19,10 @@ add_subdirectory(json-hpp)
 add_subdirectory(ogg)
 add_subdirectory(vorbis)
 add_subdirectory(steamworks)
-add_subdirectory(sdl)
+
+IF(NOT BB_NX)
+  add_subdirectory(sdl)
+ENDIF()
 
 IF(BB_DESKTOP)
   add_subdirectory(freeimage)
