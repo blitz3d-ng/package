@@ -101,6 +101,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
+      - run: brew install ninja gcovr
       - run: make ENV=release PLATFORM=ios
       - name: Archive build
         uses: actions/upload-artifact@v2
