@@ -44,7 +44,7 @@ bb_addmodule(graphics)
 bb_addmodule(blitz3d.gl)
 bb_addmodule(runtime.glfm)
 bb_addmodule(graphics.gl)
-bb_addmodule(runtime.glfw3)
+bb_addmodule(runtime.sdl)
 bb_addmodule(runtime.html)
 
 bb_end_runtime()

@@ -292,6 +292,7 @@ ENDIF ()
 set(ENABLE_UNITY_BUILD true)
 
 add_subdirectory(deps)
+enable_language(OBJC) # TODO: needed after adding SDL...seems like a deep root cmake bug
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")

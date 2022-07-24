@@ -37,7 +37,7 @@ modules:
   - blitz3d.gles2
   - userlibs
   - runtime.glfm
-  - runtime.glfw3
+  - runtime.sdl
   - runtime.html
 
 entry:

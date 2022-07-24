@@ -1,5 +1,5 @@
 name: GLFW3 Runtime
-description: Provides runtime via GLFW3.
+description: Provides runtime via SDL2.
 
 platforms:
   - desktop
