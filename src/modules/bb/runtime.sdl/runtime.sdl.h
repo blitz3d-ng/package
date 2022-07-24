@@ -3,8 +3,18 @@
 
 #include <bb/runtime/runtime.h>
 #include <bb/graphics/graphics.h>
+#ifdef BB_DESKTOP
 #include <bb/blitz2d.gl/blitz2d.gl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
+#else
+#include <bb/blitz2d.gles2/blitz2d.gles2.h>
+#include <bb/blitz3d.gles2/blitz3d.gles2.h>
+// TODO: not the best approach...
+#define GLB3DGraphics      GLES2B3DGraphics
+#define GLB2DTextureCanvas GLES2B2DTextureCanvas
+#define GLB2DDefaultCanvas GLES2B2DDefaultCanvas
+#define GLB2DCanvas        GLES2B2DCanvas
+#endif
 #include <SDL.h>
 
 class SDLGraphics;

@@ -6,4 +6,4 @@ platforms:
 
 dependencies:
   - blitz3d
-  - blitz2d.gl
+  - blitz2d.gles2

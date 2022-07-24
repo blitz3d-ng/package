@@ -36,7 +36,7 @@ modules:
   - blitz3d.gl
   - blitz3d.gles2
   - userlibs
-  - runtime.glfm
+  # - runtime.glfm
   - runtime.sdl
   - runtime.html
 

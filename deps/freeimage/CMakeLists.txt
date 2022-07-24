@@ -36,7 +36,7 @@ endif()
 # openjpeg
 add_library(openjpeg OBJECT src/Source/LibOpenJPEG/bio.c src/Source/LibOpenJPEG/cio.c src/Source/LibOpenJPEG/dwt.c src/Source/LibOpenJPEG/event.c src/Source/LibOpenJPEG/function_list.c src/Source/LibOpenJPEG/image.c src/Source/LibOpenJPEG/invert.c src/Source/LibOpenJPEG/j2k.c src/Source/LibOpenJPEG/jp2.c src/Source/LibOpenJPEG/mct.c src/Source/LibOpenJPEG/mqc.c src/Source/LibOpenJPEG/openjpeg.c src/Source/LibOpenJPEG/opj_clock.c src/Source/LibOpenJPEG/pi.c src/Source/LibOpenJPEG/raw.c src/Source/LibOpenJPEG/t1.c src/Source/LibOpenJPEG/t2.c src/Source/LibOpenJPEG/tcd.c src/Source/LibOpenJPEG/tgt.c)
 target_compile_definitions(openjpeg PUBLIC -DOPJ_STATIC)
-set_target_properties(openjpeg PROPERTIES UNITY_BUILD ${ENABLE_UNITY_BUILD})
+# set_target_properties(openjpeg PROPERTIES UNITY_BUILD ${ENABLE_UNITY_BUILD})
 
 # png
 add_library(png OBJECT src/Source/LibPNG/png.c src/Source/LibPNG/pngerror.c src/Source/LibPNG/pngget.c src/Source/LibPNG/pngmem.c src/Source/LibPNG/pngpread.c src/Source/LibPNG/pngread.c src/Source/LibPNG/pngrio.c src/Source/LibPNG/pngrtran.c src/Source/LibPNG/pngrutil.c src/Source/LibPNG/pngset.c src/Source/LibPNG/pngtrans.c src/Source/LibPNG/pngwio.c src/Source/LibPNG/pngwrite.c src/Source/LibPNG/pngwtran.c src/Source/LibPNG/pngwutil.c )

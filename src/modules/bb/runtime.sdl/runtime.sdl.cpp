@@ -221,11 +221,6 @@ BBGraphics *SDLRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 		SDL_SetWindowFullscreen( wnd,SDL_WINDOW_FULLSCREEN );
 	}
 
-#if defined(BB_WINDOWS) || defined(BB_LINUX)
-	int err=glewInit();
-	if( err!=GLEW_OK ) RTEX( (const char*)glewGetErrorString(err) );
-#endif
-
 	if( (graphics=d_new SDLGraphics( wnd )) ){
 		SDL_RaiseWindow( wnd );
 		return graphics;
