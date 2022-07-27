@@ -175,6 +175,16 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 				incfile=t_inc;
 			}
 			break;
+		case BUNDLEIDENTIFIER:
+			{
+				if( toker->next()!=STRINGCONST ) exp( "App ID must be a string" );
+				string name=toker->text();toker->next();
+				name=name.substr( 1,name.size()-2 );
+
+				bundle.enabled=true;
+				bundle.identifier=name;
+			}
+			break;
 		case BUNDLEAPPNAME:
 			{
 				if( toker->next()!=STRINGCONST ) exp( "App name must be a string" );

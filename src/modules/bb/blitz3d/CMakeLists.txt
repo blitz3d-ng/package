@@ -4,7 +4,7 @@ set(SOURCES animation.cpp animator.cpp blitz3d.h blitz3d.cpp brush.cpp cachedtex
 
 IF(NOT BB_MSVC)
   set(SOURCES ${SOURCES} loader_assimp.cpp loader_assimp.h)
-  set(LIBS ${LIBS} assimp)
+  set(LIBS ${LIBS} assimp ${ZLIB})
 ELSE()
   set(SOURCES ${SOURCES} loader_x.cpp loader_x.h)
   set(LIBS ${LIBS} d3dxof)

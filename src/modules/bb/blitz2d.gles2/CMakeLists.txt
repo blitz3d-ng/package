@@ -5,7 +5,7 @@ IF(BB_MOBILE OR BB_WEB OR BB_NX)
   bin2h(SOURCE_FILE texture.vert HEADER_FILE texture.vert.h VARIABLE_NAME TEXTURE_VERT)
 
   bb_start_module(blitz2d.gles2)
-  set(DEPENDS_ON bb.blitz2d)
+  set(DEPENDS_ON bb.blitz2d bb.graphics.gl)
   set(SOURCES blitz2d.gles2.cpp blitz2d.gles2.h simple.frag.h simple.vert.h texture.frag.h texture.vert.h)
   bb_end_module()
 ENDIF()

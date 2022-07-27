@@ -7,6 +7,7 @@
 #include <libgen.h>
 #include <sys/stat.h>
 #endif
+#include <unistd.h>
 
 #ifdef BB_MSVC
 #define FORMAT coff
@@ -47,8 +48,8 @@ void parse_list( std::string &line,std::vector<string> &libs ){
 Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
-void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
-	std::string toolchain=home+"/bin/" BB_TRIPLE;
+void Linker_LLD::createExe( const std::string &rt,const std::string &target,const std::string &triple,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
+	std::string toolchain=home+"/bin/"+triple;
 	std::string lib_dir=toolchain+"/lib";
 
 	// TODO: sort out all the lazy strdup business below...
@@ -60,6 +61,7 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	if( bundle.enabled ){
 		string bundlePath=binaryPath;
 		binaryPath=binaryPath.substr( 0,binaryPath.size()-4 ); // remove .app
+		string bundleid=bundle.identifier;
 		string appid=basename( (char*)binaryPath.c_str() );
 		string apptitle=bundle.appName;
 		if( apptitle=="" ){
@@ -113,11 +115,31 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 		plist << "  <string>"<<appid<<".icns</string>\n";
 		plist << "  <key>CFBundlePackageType</key>\n";
 		plist << "  <string>APPL</string>\n";
-
+		plist << "  <key>CFBundleIdentifier</key>\n";
+		plist << "  <string>"<<bundleid<<"</string>\n";
+		plist << "  <key>CFBundleInfoDictionaryVersion</key>\n";
+		plist << "  <string>6.0</string>\n";
+		plist << "  <key>CFBundleShortVersionString</key>\n";
+		plist << "  <string>1.0.0</string>\n";
+		plist << "  <key>CFBundleSignature</key>\n";
+		plist << "  <string>????</string>\n";
+		plist << "  <key>CFBundleVersion</key>\n";
+		plist << "  <string>1.0</string>\n";
+		plist << "  <key>NSMainNibFile</key>\n";
+		plist << "  <string></string>\n";
+		plist << "  <key>UILaunchStoryboardName</key>\n";
+		plist << "  <string>iOS Launch Screen</string>\n";
+		plist << "  <key>UIApplicationSupportsIndirectInputEvents</key>\n";
+		plist << "  <true/>\n";
 		plist << "</dict>\n";
 		plist << "</plist>\n";
 
 		plist.close();
+
+		ofstream pkginfo;
+		pkginfo.open( bundlePath+"/PkgInfo");
+		pkginfo << "APPL????";
+		pkginfo.close();
 
 		binaryPath=bundlePath+"/"+appid;
 	}
@@ -156,11 +178,31 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 #endif
 
 #ifdef BB_MACOS
+	std::string sdkname;
+	std::string platform_id,platform_version_min,platform_version_max;
+
+	if( target=="ios" ){
+		sdkname="iPhoneOS";
+		platform_id="ios";
+		platform_version_min="15.4";
+		platform_version_max="15.4";
+	}else if( target=="ios-sim" ){
+		sdkname="iPhoneSimulator";
+		platform_id="ios-simulator";
+		platform_version_min="15.4";
+		platform_version_max="15.4";
+	}else{
+		sdkname="MacOSX";
+		platform_id="macos";
+		platform_version_min="12.1";
+		platform_version_max="12.3";
+	}
+
 	// TODO: use xcrun --show-sdk-path
 	args.push_back("-syslibroot");
-	args.push_back("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk");
+	args.push_back( "/Applications/Xcode.app/Contents/Developer/Platforms/"+sdkname+".platform/Developer/SDKs/"+sdkname+".sdk" );
 
-	// libs.push_back("objc");
+	libs.push_back( "objc" );
 	libs.push_back( "c" );
 	libs.push_back( "c++" );
 
@@ -170,7 +212,8 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	args.push_back("-arch");
 	args.push_back(BB_ARCH);
 
-	args.push_back("-platform_version");args.push_back("macos");args.push_back("12.1");args.push_back("12.3");
+	args.push_back( "-platform_version" );args.push_back( platform_id );
+	args.push_back( platform_version_min );args.push_back( platform_version_max );
 #endif
 
 
@@ -320,4 +363,10 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &mainObj,con
 	}
 
 	remove( mainPath.c_str() );
+
+#ifdef BB_MACOS
+	if( bundle.enabled && bundle.signerId.size()>0 ){
+		system( ("codesign -s '"+bundle.signerId+"' "+binaryPath).c_str() );
+	}
+#endif
 }

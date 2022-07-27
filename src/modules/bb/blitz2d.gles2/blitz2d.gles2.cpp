@@ -2,7 +2,10 @@
 #include "../stdutil/stdutil.h"
 #include <bb/blitz2d/font.h>
 #include "blitz2d.gles2.h"
+#include <syslog.h>
 #include <cmath>
+#include <map>
+using namespace std;
 
 #include "simple.vert.h"
 #include "simple.frag.h"
@@ -20,8 +23,6 @@ void GLES2B2DCanvas::setColor( unsigned argb ){
 	color[0]=((argb>>16)&255)/255.0f;
 	color[1]=((argb>>8)&255)/255.0f;;
 	color[2]=(argb&255)/255.0f;;
-
-	// glColor3fv( color );
 }
 
 void GLES2B2DCanvas::setClsColor( unsigned argb ){
@@ -29,14 +30,12 @@ void GLES2B2DCanvas::setClsColor( unsigned argb ){
 	int g = (argb >> 8) & 255;
 	int b = argb & 255;
 
-	// glClearColor( r/255.0f,g/255.0f,b/255.0f,1.0f );
+	GL( glClearColor( r/255.0f,g/255.0f,b/255.0f,1.0f ) );
 }
 
 void GLES2B2DCanvas::setOrigin( int x,int y ){
-	// glMatrixMode(GL_MODELVIEW);
-	// glLoadIdentity();
-
-	// glTranslatef( x,y,0 );
+	origin_x=x;
+	origin_y=y;
 }
 
 void GLES2B2DCanvas::setHandle( int x,int y ){
@@ -45,15 +44,11 @@ void GLES2B2DCanvas::setHandle( int x,int y ){
 }
 
 void GLES2B2DCanvas::setViewport( int x,int y,int w,int h ){
-	// glMatrixMode(GL_PROJECTION);
-	// glLoadIdentity();
-	// glOrtho( 0.0f,w,h,0.0f,-1.0f,1.0f );
-
-	// glViewport( 0,0,w,h );
+	GL( glViewport( 0,0,w,h ) );
 }
 
 void GLES2B2DCanvas::cls(){
-	// glClear(GL_COLOR_BUFFER_BIT);
+	GL( glClear( GL_COLOR_BUFFER_BIT ) );
 }
 
 void GLES2B2DCanvas::plot( int x,int y ){
@@ -78,86 +73,83 @@ static GLuint compileShader(GLenum type, const char *shaderName, const unsigned 
 	memset( shaderString,0,sizeof(shaderString) );
 	memcpy( shaderString,shaderData,shaderLength );
 
-    // Compile
-		const char *shaderSource[1] = { shaderString };
-    GLuint shader = glCreateShader(type);
-    glShaderSource(shader, 1, shaderSource, NULL);
-    glCompileShader(shader);
+	// Compile
+	const char *shaderSource[1] = { shaderString };
+	GLuint shader = glCreateShader(type);
+	GL( glShaderSource(shader, 1, shaderSource, NULL) );
+	GL( glCompileShader(shader) );
 
-    // Check compile status
-    GLint status;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-    if (status == 0) {
-        printf( "Couldn't compile shader: %s\n",shaderName );
-        GLint logLength;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-        if (logLength > 0) {
-            GLchar *log = (GLchar*)malloc(logLength);
-            glGetShaderInfoLog(shader, logLength, &logLength, log);
-            if (log[0] != 0) {
-                printf("Shader log: %s\n", log);
-            }
-            free(log);
-        }
-        glDeleteShader(shader);
-        shader = 0;
-    }
-    return shader;
+	// Check compile status
+	GLint status;
+	GL( glGetShaderiv(shader, GL_COMPILE_STATUS, &status) );
+	if( status==0 ){
+		syslog( LOG_WARNING,"Couldn't compile shader: %s\n",shaderName );
+		GLint logLength;
+		GL( glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength) );
+		if( logLength>0 ){
+			GLchar *log = (GLchar*)malloc(logLength);
+			GL( glGetShaderInfoLog(shader, logLength, &logLength, log) );
+			if( log[0]!=0 ){
+				syslog( LOG_WARNING,"Shader log: %s\n",log );
+			}
+			free( log );
+		}
+		GL( glDeleteShader(shader) );
+		shader=0;
+	}
+	return shader;
 }
 
 void GLES2B2DCanvas::rect( int x,int y,int w,int h,bool solid ){
 	static GLuint program = 0;
 	static GLuint vertexBuffer = 0;
-
-	if( program == 0 ){
-		GLuint vertShader = compileShader(GL_VERTEX_SHADER, "simple.vert", SIMPLE_VERT, SIMPLE_VERT_SIZE);
-		GLuint fragShader = compileShader(GL_FRAGMENT_SHADER, "simple.frag", SIMPLE_FRAG, SIMPLE_FRAG_SIZE);
-		// if (vertShader == 0 || fragShader == 0) {
-		// 		glfmSetMainLoopFunc(display, NULL);
-		// 		return;
-		// }
-		program = glCreateProgram();
-
-		glAttachShader(program, vertShader);
-		glAttachShader(program, fragShader);
-
-		glBindAttribLocation(program, 0, "a_position");
-
-		glLinkProgram(program);
-
-		glDeleteShader(vertShader);
-		glDeleteShader(fragShader);
-	}
-	glUseProgram(program);
-	if( vertexBuffer==0 ){
-		glGenBuffers( 1,&vertexBuffer );
-	}
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	const size_t stride=sizeof(GLfloat)*3;
-	glEnableVertexAttribArray( 0) ;
-	glVertexAttribPointer( 0,3,GL_FLOAT,GL_FALSE,stride,(void *)0 );
-	// glEnableVertexAttribArray(1);
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void *)(sizeof(GLfloat) * 3));
-
-	GLint posAndSizeLocation=glGetUniformLocation( program,"u_xywh" );
-	glUniform4f( posAndSizeLocation,(float)x,(float)y,(float)w,(float)h );
-
-	GLint colorLocation=glGetUniformLocation( program,"u_color" );
-	glUniform3fv( colorLocation,1,color );
-
-	const GLfloat vertices[] = {
-			// x,y,z, r,g,b
-			// app->offsetX + 0.0f, app->offsetY + 1.0f, 0.0,  1.0, 0.0, 0.0,
-			// app->offsetX - 0.5f, app->offsetY - 0.5f, 0.0,  0.0, 1.0, 0.0,
-			// app->offsetX + 0.5f, app->offsetY - 0.5f, 0.0,  0.0, 0.0, 1.0,
-			0.0, 0.0, 0.0,
-			0.0, 1.0, 0.0,
-			1.0, 0.0, 0.0,
-			1.0, 1.0, 0.0
+	static const GLfloat vertices[] = {
+		0.0, 0.0, 0.0, 0.0, 1.0,
+		0.0, 1.0, 0.0, 0.0, 0.0,
+		1.0, 0.0, 0.0, 1.0, 1.0,
+		1.0, 1.0, 0.0, 1.0, 0.0
 	};
 
-	glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW );
-	glDrawArrays( GL_TRIANGLE_STRIP,0,4 );
+	if( program == 0 ){
+		GLuint vertShader=compileShader( GL_VERTEX_SHADER,"simple.vert",SIMPLE_VERT,SIMPLE_VERT_SIZE );
+		GLuint fragShader=compileShader( GL_FRAGMENT_SHADER,"simple.frag",SIMPLE_FRAG,SIMPLE_FRAG_SIZE );
+		program=GL( glCreateProgram() );
+
+		GL( glAttachShader( program,vertShader ) );
+		GL( glAttachShader( program,fragShader ) );
+
+		GL( glBindAttribLocation( program,0,"a_position" ) );
+		GL( glBindAttribLocation( program,1,"a_texcoord" ) );
+
+		GL( glLinkProgram( program ) );
+
+		GL( glDeleteShader( vertShader ) );
+		GL( glDeleteShader( fragShader ) );
+	}
+
+	GL( glUseProgram( program ) );
+	GLint texLocation=GL( glGetUniformLocation( program,"u_tex" ) );
+	GLint resLocation=GL( glGetUniformLocation( program,"u_res" ) );
+	GLint posAndSizeLocation=GL( glGetUniformLocation( program,"u_xywh" ) );
+	GLint colorLocation=GL( glGetUniformLocation( program,"u_color" ) );
+	GL( glUniform1i( texLocation,0 ) );
+	GL( glUniform2f( resLocation,width,height ) );
+	GL( glUniform4f( posAndSizeLocation,(float)x,(float)y,(float)w,(float)h ) );
+	GL( glUniform3fv( colorLocation,1,color ) );
+
+	if( vertexBuffer==0 ){
+		GL( glGenBuffers( 1,&vertexBuffer ) );
+		GL( glBindBuffer( GL_ARRAY_BUFFER,vertexBuffer ) );
+		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW ) );
+	}
+
+	GL( glBindBuffer( GL_ARRAY_BUFFER,vertexBuffer ) );
+	GL( glEnableVertexAttribArray( 0 ) );
+	GL( glEnableVertexAttribArray( 1 ) );
+	GL( glVertexAttribPointer( 0,3,GL_FLOAT,GL_FALSE,sizeof(float)*5,0 ) );
+	GL( glVertexAttribPointer( 1,2,GL_FLOAT,GL_FALSE,sizeof(float)*5,(void*)(sizeof(float)*3) ) );
+
+	GL( glDrawArrays( GL_TRIANGLE_STRIP,0,4 ) );
 
 	// glPolygonMode( GL_FRONT_AND_BACK,solid?GL_FILL:GL_LINE );
 	// glBegin( GL_QUADS );
@@ -289,14 +281,12 @@ void GLES2B2DCanvas::image( BBCanvas *c,int x,int y,bool solid ){
 
 	src->bind();
 
-	// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-	// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-	// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
-	// glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
+	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR ) );
+	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR ) );
+	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT ) );
+	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT ) );
 
-	const float white[3]={ 1.0f,1.0f,1.0f };
-	// glColor3fv( white );
-	// rect( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true );
+	rect( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true );
 	// glColor3fv( color );
 
 	// glDisable( GL_TEXTURE_2D );

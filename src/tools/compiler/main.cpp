@@ -221,7 +221,7 @@ int main( int argc,char *argv[] ){
 	signal(SIGSEGV, handle_segfault);
 #endif
 
-	string in_file,out_file,rt,args;
+	string in_file,out_file,rt,args,target,signerId;
 	vector<string> rts;
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
@@ -272,6 +272,12 @@ int main( int argc,char *argv[] ){
 		}else if( t=="-o" ){
 			if( out_file.size() || k==argc-1 ) usageErr();
 			out_file=argv[++k];
+		}else if( t=="-t" ){
+			if( out_file.size() || k==argc-1 ) usageErr();
+			target=argv[++k];
+		}else if( t=="-sign" ){
+			if( out_file.size() || k==argc-1 ) usageErr();
+			signerId=argv[++k];
 		}else{
 			if( in_file.size() || t[0]=='-' || t[0]=='+' ) usageErr();
 			in_file=argv[k];
@@ -305,6 +311,22 @@ int main( int argc,char *argv[] ){
 		rt="opengl";
 	}
 #endif
+
+	if( target.size() ){
+		if( target=="native" ){}
+		#ifdef BB_MACOS
+		else if( target=="ios"||target=="ios-sim" ){}
+		#endif
+		else{
+			err( "Invalid target" );
+		}
+	}else{
+		target="native";
+	}
+
+	if( target!="native" ){
+		compileonly=true;
+	}
 
 	if( out_file.size() && !in_file.size() ) usageErr();
 
@@ -364,6 +386,9 @@ int main( int argc,char *argv[] ){
 		Parser parser( toker );
 		prog=parser.parse( in_file );
 		bundle=parser.bundle;
+		if( signerId.size()>0 ){
+			bundle.signerId = signerId;
+		}
 
 		//semant
 		if( !veryquiet ) cout<<"Generating..."<<endl;
@@ -382,6 +407,7 @@ int main( int argc,char *argv[] ){
 		Codegen_x86 codegen( asmcode,debug );
 #ifdef USE_LLVM
 		Codegen_LLVM codegen2( debug );
+		codegen2.SetTarget( target );
 #endif
 
 		if ( usellvm ) {
@@ -438,8 +464,13 @@ int main( int argc,char *argv[] ){
 		if( !veryquiet ) cout<<"Creating "+string(bundle.enabled?"bundle":"executable")+" \""<<out_file<<"\"..."<<endl;
 		if( usellvm ) {
 #ifdef USE_LLVM
+			string triple=BB_TRIPLE;
+			if( target=="ios-sim" ){
+				triple=BB_ARCH"-apple-ios-sim";
+			}
+
 			Linker_LLD linker( home );
-			linker.createExe( rt,obj_code,bundle,out_file );
+			linker.createExe( rt,target,triple,obj_code,bundle,out_file );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();

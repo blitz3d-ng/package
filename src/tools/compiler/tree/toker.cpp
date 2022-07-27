@@ -79,6 +79,7 @@ static void makeKeywords(){
 	alphaTokes["Shr"]=SHR;
 	alphaTokes["Sar"]=SAR;
 
+	alphaTokes["BundleIdentifier"]=BUNDLEIDENTIFIER;
 	alphaTokes["BundleAppName"]=BUNDLEAPPNAME;
 	alphaTokes["BundleFile"]=BUNDLEFILE;
 

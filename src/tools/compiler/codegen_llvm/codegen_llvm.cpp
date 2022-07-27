@@ -75,13 +75,22 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	vecels.push_back( intTy ); // size
 	vecels.push_back( llvm::PointerType::get( bbType,0 ) ); // elementType
 	bbVecType->setBody( vecels );
+}
 
-	// -------
+void Codegen_LLVM::SetTarget( const std::string &t ){
+	target=t;
+
 	auto triple=sys::getDefaultTargetTriple();
+	// TODO: not the cleanest, but works for now...
+	if( target=="ios" ){
+		triple="arm64-apple-ios";
+	}else if( target=="ios-sim" ){
+		triple=BB_ARCH"-apple-ios-simulator";
+	}
 
 	std::string err;
-	auto target = TargetRegistry::lookupTarget( triple,err );
-	if( !target ){
+	auto targ = TargetRegistry::lookupTarget( triple,err );
+	if( !targ ){
 		errs()<<err;
 		return;
 	}
@@ -89,7 +98,7 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	auto cpu="generic",features="";
 	TargetOptions opt;
 	auto rm=Optional<Reloc::Model>();
-	targetMachine=target->createTargetMachine( triple,cpu,features,opt,rm );
+	targetMachine=targ->createTargetMachine( triple,cpu,features,opt,rm );
 
 	module->setTargetTriple( triple );
 	module->setDataLayout( targetMachine->createDataLayout() );
@@ -218,6 +227,12 @@ bool Codegen_LLVM::verify(){
 }
 
 void Codegen_LLVM::injectMain(){
+	std::string mainsym="main";
+	// TODO: not the cleanest, but works for now...
+	if( target=="ios"||target=="ios-sim" ){
+		mainsym="SDL_main";
+	}
+
 	llvm::Type *int_ty=llvm::Type::getInt32Ty( *context );
 	llvm::Type *charpp_ty=llvm::PointerType::get( llvm::PointerType::get( llvm::Type::getInt8Ty( *context ),0 ),0 );
 	llvm::Type *void_type=llvm::Type::getVoidTy( *context );
@@ -226,7 +241,7 @@ void Codegen_LLVM::injectMain(){
 	args.push_back( int_ty );
 	args.push_back( charpp_ty );
 	auto ft=llvm::FunctionType::get( int_ty,args,false );
-	auto main=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,"main",module.get() );
+	auto main=llvm::Function::Create( ft,llvm::Function::ExternalLinkage,mainsym,module.get() );
 
 	auto argc=main->getArg( 0 );
 	auto argv=main->getArg( 1 );

@@ -17,6 +17,8 @@ map<SDL_Window*,SDLRuntime*> runtimes;
 BBRuntime *bbCreateOpenGLRuntime(){
 	if( SDL_Init(SDL_INIT_VIDEO)<0 ) return 0;
 
+	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,1 );
+
 	SDL_Window* window=SDL_CreateWindow( "",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,1,1,SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI );
 	if( window==NULL ){
 		SDL_Quit();
@@ -208,6 +210,11 @@ BBGraphics *SDLRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 
 	bool windowed=flags & BBGraphics::GRAPHICS_WINDOWED ? true : false;
 
+#ifdef BB_MOBILE
+	// no point in 'windowed' on mobile, right?
+	windowed=false;
+#endif
+
 	SDL_DisplayMode mode;
 	SDL_GetCurrentDisplayMode( 0,&mode );
 	SDL_SetWindowPosition( wnd,(mode.w-w)/2.0f,(mode.h-h)/2.0f );
@@ -239,7 +246,7 @@ bool SDLRuntime::graphicsLost(){
 }
 
 void SDLRuntime::flip( bool vwait ){
-	SDL_GL_SetSwapInterval( vwait ? 1 : 0 );
+	// SDL_GL_SetSwapInterval( vwait ? 1 : 0 );
 	SDL_GL_SwapWindow( wnd );
 }
 

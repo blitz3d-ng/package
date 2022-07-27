@@ -2,18 +2,10 @@
 #define BB_BLITZ2D_GLES2_H
 
 #include <iostream>
-using namespace std;
 
+#include <bb/graphics.gl/graphics.gl.h>
 #include <bb/blitz2d/blitz2d.h>
 #include <bb/pixmap/pixmap.h>
-
-#ifdef __APPLE__
-#include <OpenGLES/ES2/gl.h>
-#else
-#include <GLES2/gl2.h>
-#endif
-
-#include <iostream>
 
 class GLES2B2DCanvas : public BBCanvas{
 protected:
@@ -23,6 +15,7 @@ protected:
 	mutable unsigned char *pixels;
   BBImageFont *font;
 
+	int origin_x,origin_y;
 	int handle_x,handle_y;
 	float color[3];
 
@@ -34,7 +27,7 @@ public:
 	}
 
 	void resize( int w,int h ){
-		cout<<"resize: "<<w<<","<<h<<endl;
+		std::cout<<"resize: "<<w<<","<<h<<std::endl;
 		width=w;height=h;
 	}
 
@@ -129,9 +122,9 @@ public:
 	unsigned int textureId(){
 		if( texture ) return texture;
 
-		// glGenTextures( 1,&texture );
-		// glBindTexture( GL_TEXTURE_2D,texture );
-		// glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
+		glGenTextures( 1,&texture );
+		glBindTexture( GL_TEXTURE_2D,texture );
+		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
     // glGenerateMipmap( GL_TEXTURE_2D );
 
 		return texture;
@@ -171,15 +164,15 @@ public:
 		width=pm->width;
 		height=pm->height;
 
-		// if( !texture ) glGenTextures( 1,&texture );
-		// glBindTexture( GL_TEXTURE_2D,texture );
+		if( !texture ) glGenTextures( 1,&texture );
+		glBindTexture( GL_TEXTURE_2D,texture );
 		// glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
-		// glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
-	}
+		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
+  }
 
   void bind()const{
-    // glEnable( GL_TEXTURE_2D );
-    // glBindTexture( GL_TEXTURE_2D,texture );
+    GL( glEnable( GL_TEXTURE_2D ) );
+    GL( glBindTexture( GL_TEXTURE_2D,texture ) );
   }
 };
 

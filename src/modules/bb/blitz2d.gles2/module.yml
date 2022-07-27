@@ -6,3 +6,4 @@ platforms:
 
 dependencies:
   - blitz2d
+  - graphics.gl

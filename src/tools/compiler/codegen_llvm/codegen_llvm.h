@@ -12,6 +12,7 @@ class Codegen_LLVM {
 public:
 	Codegen_LLVM( bool debug );
 
+	std::string target="native";
 	bool debug;
 	bool gosubUsed=false;
 
@@ -58,6 +59,8 @@ public:
 	llvm::GlobalVariable *getArray( std::string &ident,int dims );
 
 	llvm::Function *bbMain;
+
+	void SetTarget( const std::string &target );
 
 	void optimize();
 	bool verify();
