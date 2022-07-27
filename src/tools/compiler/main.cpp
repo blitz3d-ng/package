@@ -314,6 +314,7 @@ int main( int argc,char *argv[] ){
 
 	if( target.size() ){
 		if( target=="native" ){}
+		else if( target=="wasm" ){}
 		#ifdef BB_MACOS
 		else if( target=="ios"||target=="ios-sim" ){}
 		#endif

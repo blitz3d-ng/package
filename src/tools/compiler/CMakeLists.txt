@@ -169,7 +169,7 @@ if(LLVM_FOUND)
   elseif(BB_LINUX)
     target_link_libraries(blitzcc lldELF)
   endif()
-  target_link_libraries(blitzcc ${LLVM_LIBS} zlibstatic)
+  target_link_libraries(blitzcc lldWasm ${LLVM_LIBS} zlibstatic)
 endif()
 
 if(BB_COVERAGE)

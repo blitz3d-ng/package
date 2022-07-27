@@ -86,13 +86,20 @@ void Codegen_LLVM::SetTarget( const std::string &t ){
 		triple="arm64-apple-ios";
 	}else if( target=="ios-sim" ){
 		triple=BB_ARCH"-apple-ios-simulator";
+	}else if( target=="wasm" ){
+		InitializeAllTargetInfos();
+		InitializeAllTargets();
+		InitializeAllTargetMCs();
+		InitializeAllAsmParsers();
+		InitializeAllAsmPrinters();
+		triple="wasm32-unknown-emscripten";
 	}
 
 	std::string err;
 	auto targ = TargetRegistry::lookupTarget( triple,err );
 	if( !targ ){
-		errs()<<err;
-		return;
+		errs()<<err<<'\n';
+		exit( 1 );
 	}
 
 	auto cpu="generic",features="";
@@ -257,7 +264,7 @@ int Codegen_LLVM::dumpToObj( std::string &out ) {
 
 	legacy::PassManager pass;
 	if( targetMachine->addPassesToEmitFile( pass,(raw_pwrite_stream &)sstr,0,CGFT_ObjectFile ) ){
-		errs() << "target can't emit a file of this type";
+		errs()<<"target can't emit a file of this type\n";
 		return 1;
 	}
 

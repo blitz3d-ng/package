@@ -3,7 +3,7 @@
 
 #include <bb/graphics/graphics.h>
 
-#ifdef BB_DESKTOP
+#if defined(BB_DESKTOP) || defined(BB_EMSCRIPTEN)
 	#ifdef BB_MACOS
 		#include <OpenGL/gl.h>
 		#include <OpenGL/glext.h>
