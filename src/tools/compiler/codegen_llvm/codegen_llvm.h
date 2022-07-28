@@ -7,6 +7,7 @@
 #include <llvm/Target/TargetMachine.h>
 #include <map>
 #include <string>
+#include "../target.h"
 
 class Codegen_LLVM {
 public:
@@ -60,7 +61,7 @@ public:
 
 	llvm::Function *bbMain;
 
-	void SetTarget( const std::string &target );
+	void SetTarget( const Target &target );
 
 	void optimize();
 	bool verify();

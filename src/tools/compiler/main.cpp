@@ -34,6 +34,7 @@ using namespace std;
 #include "codegen_llvm/codegen_llvm.h"
 #include "linker_lld/linker_lld.h"
 #include "jit_orc/jit_orc.h"
+#include "target.h"
 #endif
 
 #if defined(WIN32) && !defined(__MINGW32__)
@@ -221,8 +222,7 @@ int main( int argc,char *argv[] ){
 	signal(SIGSEGV, handle_segfault);
 #endif
 
-	string in_file,out_file,rt,args,target,signerId;
-	vector<string> rts;
+	string in_file,out_file,rt,args,targetid,signerId,teamId;
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
 	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false,dumptree=false;
@@ -272,12 +272,15 @@ int main( int argc,char *argv[] ){
 		}else if( t=="-o" ){
 			if( out_file.size() || k==argc-1 ) usageErr();
 			out_file=argv[++k];
-		}else if( t=="-t" ){
+		}else if( t=="-target" ){
 			if( out_file.size() || k==argc-1 ) usageErr();
-			target=argv[++k];
+			targetid=argv[++k];
 		}else if( t=="-sign" ){
 			if( out_file.size() || k==argc-1 ) usageErr();
 			signerId=argv[++k];
+		}else if( t=="-team" ){
+			if( out_file.size() || k==argc-1 ) usageErr();
+			teamId=argv[++k];
 		}else{
 			if( in_file.size() || t[0]=='-' || t[0]=='+' ) usageErr();
 			in_file=argv[k];
@@ -289,6 +292,17 @@ int main( int argc,char *argv[] ){
 			}
 		}
 	}
+
+	// TODO: needs to be more dynamic...
+	vector<string> rts;
+	vector<Target> targets;
+	targets.push_back( Target( BB_TRIPLE,"native",BB_ARCH,"21.2.0" ) );
+#ifdef BB_MACOS
+	targets.push_back( Target( "arm64-apple-ios15.4","ios","arm64","15.4" ) );
+	targets.push_back( Target( BB_ARCH"-apple-ios-sim15.4","ios-sim",BB_ARCH,"15.4" ) );
+#endif
+	targets.push_back( Target( "wasm32-unknown-emscripten","wasm","wasm32","" ) );
+	Target target=targets[0];
 
 #ifdef WIN32
 	if( const char *er=enumRuntimes( rts ) ) err( er );
@@ -312,20 +326,19 @@ int main( int argc,char *argv[] ){
 	}
 #endif
 
-	if( target.size() ){
-		if( target=="native" ){}
-		else if( target=="wasm" ){}
-		#ifdef BB_MACOS
-		else if( target=="ios"||target=="ios-sim" ){}
-		#endif
-		else{
-			err( "Invalid target" );
+	int ti=-1;
+	if( targetid.size() ){
+		for( int i=0;i<targets.size();i++ ){
+			if( targetid==targets[i].triple||targetid==targets[i].type ){
+				ti=i;
+			}
 		}
-	}else{
-		target="native";
-	}
 
-	if( target!="native" ){
+		if( ti==-1 ) err( "Invalid target" );
+	}
+	target=targets[ti];
+
+	if( target.type=="native" ){
 		compileonly=true;
 	}
 
@@ -386,10 +399,10 @@ int main( int argc,char *argv[] ){
 		Toker toker( in );
 		Parser parser( toker );
 		prog=parser.parse( in_file );
+
 		bundle=parser.bundle;
-		if( signerId.size()>0 ){
-			bundle.signerId = signerId;
-		}
+		bundle.signerId = signerId;
+		bundle.teamId = teamId;
 
 		//semant
 		if( !veryquiet ) cout<<"Generating..."<<endl;
@@ -465,13 +478,8 @@ int main( int argc,char *argv[] ){
 		if( !veryquiet ) cout<<"Creating "+string(bundle.enabled?"bundle":"executable")+" \""<<out_file<<"\"..."<<endl;
 		if( usellvm ) {
 #ifdef USE_LLVM
-			string triple=BB_TRIPLE;
-			if( target=="ios-sim" ){
-				triple=BB_ARCH"-apple-ios-sim";
-			}
-
 			Linker_LLD linker( home );
-			linker.createExe( rt,target,triple,obj_code,bundle,out_file );
+			linker.createExe( rt,target,obj_code,bundle,out_file );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();

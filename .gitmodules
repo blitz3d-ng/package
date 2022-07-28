@@ -22,9 +22,6 @@
 [submodule "crossguid"]
 	path = deps/crossguid/src
 	url = https://github.com/graeme-hill/crossguid.git
-[submodule "src/deps/glfm/src"]
-	path = deps/glfm/src
-	url = https://github.com/brackeen/glfm.git
 [submodule "src/deps/zlib/src"]
 	path = deps/zlib/tree
 	url = https://github.com/madler/zlib.git

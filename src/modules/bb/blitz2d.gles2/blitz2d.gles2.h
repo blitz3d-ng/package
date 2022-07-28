@@ -21,6 +21,7 @@ protected:
 
   virtual void bind()const=0;
 
+	void quad( int x,int y,int w,int h,bool solid,bool tex,float tx,float ty );
 public:
 	GLES2B2DCanvas( int f ):width(0),height(0),pixels(0),handle_x(0),handle_y(0){
 		flags=f;
@@ -96,9 +97,12 @@ public:
 
 class GLES2B2DTextureCanvas : public GLES2B2DCanvas{
 protected:
-  unsigned int texture,framebuffer,depthbuffer;
+	unsigned int texture,framebuffer,depthbuffer;
+	int twidth,theight;
 public:
-	GLES2B2DTextureCanvas( int f ):GLES2B2DCanvas( f ),texture(0),framebuffer(0),depthbuffer(0){
+	float tx,ty;
+
+	GLES2B2DTextureCanvas( int f ):GLES2B2DCanvas( f ),texture(0),framebuffer(0),depthbuffer(0),twidth(0),theight(0){
 	}
 
 	GLES2B2DTextureCanvas( int w,int h,int f ):GLES2B2DTextureCanvas(f){
@@ -113,9 +117,9 @@ public:
 	int getDepth()const{ return 8; }
 
 	void unset(){
-		// glFlush();
+		glFlush();
 
-		// glBindTexture( GL_TEXTURE_2D,texture );
+		glBindTexture( GL_TEXTURE_2D,texture );
 		// glGenerateMipmap( GL_TEXTURE_2D );
 	}
 
@@ -124,7 +128,7 @@ public:
 
 		glGenTextures( 1,&texture );
 		glBindTexture( GL_TEXTURE_2D,texture );
-		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
+		// glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 );
     // glGenerateMipmap( GL_TEXTURE_2D );
 
 		return texture;
@@ -164,16 +168,54 @@ public:
 		width=pm->width;
 		height=pm->height;
 
+#define pow2(v) pow(2, ceil(log(v)/log(2)));
+		twidth=pow2( width );
+		theight=pow2( height );
+#undef pow2
+
+		unsigned char *data=pm->bits;
+		if( pm->width!=twidth||pm->height!=theight ){
+			data=(unsigned char *)malloc( twidth*theight*4 );
+			memset( data,0,twidth*theight*4 );
+			for( int y=0;y<pm->height;y++ ){
+				for( int x=0;x<pm->width;x++ ){
+					memcpy( data+((pm->height-1-y)*twidth+x)*4,pm->bits+(y*pm->width+x)*4,4 );
+				}
+			}
+		}
+
+		tx=(float)width/twidth;
+		ty=(float)height/theight;
+
 		if( !texture ) glGenTextures( 1,&texture );
-		glBindTexture( GL_TEXTURE_2D,texture );
-		// glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
-		glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,pm->width,pm->height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits );
+		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
+		// // glTexParameteri( GL_TEXTURE_2D,GL_GENERATE_MIPMAP,GL_TRUE );
+		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,twidth,theight,0,GL_RGBA,GL_UNSIGNED_BYTE,data ) );
+
+			// unsigned char white[]={
+			// 	0xff,0,0xff,0xff,
+			// 	0xff,0,0xff,0xff,
+			// 	0xff,0,0xff,0xff,
+			// 	0xff,0,0xff,0xff,
+			// };
+			// glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,2,2,0,GL_RGBA,GL_UNSIGNED_BYTE,white );
+
+
+		// static white_tex=0;
+		// if( !white_tex ){
+		// 	unsigned char white[]={ 0xff,0xff,0xff,0xff };
+		// 	glBindTexture( GL_TEXTURE_2D,texture );
+		// 	glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,1,1,0,GL_RGBA,GL_UNSIGNED_BYTE,white );
+		// }
+		// glBindTexture( GL_TEXTURE_2D,white_tex );
+
+
   }
 
-  void bind()const{
-    GL( glEnable( GL_TEXTURE_2D ) );
-    GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-  }
+	void bind()const{
+		GL( glActiveTexture( GL_TEXTURE0 ) );
+		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
+	}
 };
 
 class GLES2B2DDefaultCanvas : public GLES2B2DCanvas{

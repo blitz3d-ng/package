@@ -101,6 +101,11 @@ static GLuint compileShader(GLenum type, const char *shaderName, const unsigned 
 }
 
 void GLES2B2DCanvas::rect( int x,int y,int w,int h,bool solid ){
+	GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+	quad( x,y,w,h,solid,false,1.0,1.0 );
+}
+
+void GLES2B2DCanvas::quad( int x,int y,int w,int h,bool solid,bool texenabled,float tx,float ty ){
 	static GLuint program = 0;
 	static GLuint vertexBuffer = 0;
 	static const GLfloat vertices[] = {
@@ -129,10 +134,14 @@ void GLES2B2DCanvas::rect( int x,int y,int w,int h,bool solid ){
 
 	GL( glUseProgram( program ) );
 	GLint texLocation=GL( glGetUniformLocation( program,"u_tex" ) );
+	GLint texScaleLocation=GL( glGetUniformLocation( program,"u_texscale" ) );
+	GLint texEnabledLocation=GL( glGetUniformLocation( program,"u_texenabled" ) );
 	GLint resLocation=GL( glGetUniformLocation( program,"u_res" ) );
 	GLint posAndSizeLocation=GL( glGetUniformLocation( program,"u_xywh" ) );
 	GLint colorLocation=GL( glGetUniformLocation( program,"u_color" ) );
 	GL( glUniform1i( texLocation,0 ) );
+	GL( glUniform2f( texScaleLocation,tx,ty ) );
+	GL( glUniform1i( texEnabledLocation,texenabled ) );
 	GL( glUniform2f( resLocation,width,height ) );
 	GL( glUniform4f( posAndSizeLocation,(float)x,(float)y,(float)w,(float)h ) );
 	GL( glUniform3fv( colorLocation,1,color ) );
@@ -152,16 +161,6 @@ void GLES2B2DCanvas::rect( int x,int y,int w,int h,bool solid ){
 	GL( glDrawArrays( GL_TRIANGLE_STRIP,0,4 ) );
 
 	// glPolygonMode( GL_FRONT_AND_BACK,solid?GL_FILL:GL_LINE );
-	// glBegin( GL_QUADS );
-	// 	glTexCoord2f( 0.0f,0.0f );
-	// 	glVertex2f( x,y+h );
-	// 	glTexCoord2f( 1.0f,0.0f );
-	// 	glVertex2f( x+w,y+h );
-	// 	glTexCoord2f( 1.0f,1.0f );
-	// 	glVertex2f( x+w,y );
-	// 	glTexCoord2f( 0.0f,1.0f );
-	// 	glVertex2f( x,y );
-	// glEnd();
 }
 
 void GLES2B2DCanvas::oval( int x,int y,int w,int h,bool solid ){
@@ -277,7 +276,7 @@ void GLES2B2DCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w
 }
 
 void GLES2B2DCanvas::image( BBCanvas *c,int x,int y,bool solid ){
-	GLES2B2DCanvas *src=(GLES2B2DCanvas*)c;
+	GLES2B2DTextureCanvas *src=(GLES2B2DTextureCanvas*)c;
 
 	src->bind();
 
@@ -286,7 +285,7 @@ void GLES2B2DCanvas::image( BBCanvas *c,int x,int y,bool solid ){
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT ) );
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT ) );
 
-	rect( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true );
+	quad( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true,true,src->tx,src->ty );
 	// glColor3fv( color );
 
 	// glDisable( GL_TEXTURE_2D );

@@ -16,7 +16,6 @@ struct BBPixmap *bbLoadPixmapWithUIKit( const char *f ){
 
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
   pixmap->bpp=4;
-  NSUInteger bitsPerComponent = 8;
   CGContextRef context = CGBitmapContextCreate( pixmap->bits,pixmap->width,pixmap->height,8,pixmap->bpp*pixmap->width,colorSpace,kCGImageAlphaPremultipliedLast|kCGBitmapByteOrder32Big );
 
   CGColorSpaceRelease( colorSpace );

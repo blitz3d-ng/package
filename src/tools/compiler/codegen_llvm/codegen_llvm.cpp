@@ -77,26 +77,19 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	bbVecType->setBody( vecels );
 }
 
-void Codegen_LLVM::SetTarget( const std::string &t ){
-	target=t;
+void Codegen_LLVM::SetTarget( const ::Target &t ){
+	target=t.type;
 
-	auto triple=sys::getDefaultTargetTriple();
-	// TODO: not the cleanest, but works for now...
-	if( target=="ios" ){
-		triple="arm64-apple-ios";
-	}else if( target=="ios-sim" ){
-		triple=BB_ARCH"-apple-ios-simulator";
-	}else if( target=="wasm" ){
+	if( target!="native" ){
 		InitializeAllTargetInfos();
 		InitializeAllTargets();
 		InitializeAllTargetMCs();
 		InitializeAllAsmParsers();
 		InitializeAllAsmPrinters();
-		triple="wasm32-unknown-emscripten";
 	}
 
 	std::string err;
-	auto targ = TargetRegistry::lookupTarget( triple,err );
+	auto targ = TargetRegistry::lookupTarget( t.triple,err );
 	if( !targ ){
 		errs()<<err<<'\n';
 		exit( 1 );
@@ -105,9 +98,9 @@ void Codegen_LLVM::SetTarget( const std::string &t ){
 	auto cpu="generic",features="";
 	TargetOptions opt;
 	auto rm=Optional<Reloc::Model>();
-	targetMachine=targ->createTargetMachine( triple,cpu,features,opt,rm );
+	targetMachine=targ->createTargetMachine( t.triple,cpu,features,opt,rm );
 
-	module->setTargetTriple( triple );
+	module->setTargetTriple( t.triple );
 	module->setDataLayout( targetMachine->createDataLayout() );
 }
 

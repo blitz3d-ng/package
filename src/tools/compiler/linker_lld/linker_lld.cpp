@@ -48,8 +48,8 @@ void parse_list( std::string &line,std::vector<string> &libs ){
 Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
-void Linker_LLD::createExe( const std::string &rt,const std::string &target,const std::string &triple,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
-	std::string toolchain=home+"/bin/"+triple;
+void Linker_LLD::createExe( const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
+	std::string toolchain=home+"/bin/"+target.triple;
 	std::string lib_dir=toolchain+"/lib";
 
 	// TODO: sort out all the lazy strdup business below...
@@ -99,6 +99,13 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &target,cons
 			}
 		}
 
+		if( target.type=="ios"||target.type=="ios-sim" ){
+			cout<<"Copying b3dsplash-ipad@3.png..."<<endl;
+			if( system( ("cp "+home+"/cfg/b3dsplash-ipad@3.png "+bundlePath+"/splash-ipad@3.png").c_str() ) ){
+				exit( 1 );
+			}
+		}
+
 		ofstream plist;
 		plist.open( bundlePath+"/Info.plist");
 		plist << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -122,15 +129,36 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &target,cons
 		plist << "  <key>CFBundleShortVersionString</key>\n";
 		plist << "  <string>1.0.0</string>\n";
 		plist << "  <key>CFBundleSignature</key>\n";
-		plist << "  <string>????</string>\n";
+		plist << "  <string>\?\?\?\?</string>\n";
 		plist << "  <key>CFBundleVersion</key>\n";
 		plist << "  <string>1.0</string>\n";
 		plist << "  <key>NSMainNibFile</key>\n";
 		plist << "  <string></string>\n";
-		plist << "  <key>UILaunchStoryboardName</key>\n";
-		plist << "  <string>iOS Launch Screen</string>\n";
+		// plist << "  <key>UILaunchStoryboardName</key>\n";
+		// plist << "  <string>launch</string>\n";
+		plist << "  <key>UILaunchImages</key>\n";
+		plist << "  <array>\n";
+		plist << "    <dict>\n";
+		plist << "      <key>UILaunchImageName</key>\n";
+		plist << "      <string>splash-ipad@3.png</string>\n";
+		plist << "      <key>UILaunchImageOrientation</key>\n";
+		plist << "      <string>Landscape</string>\n";
+		plist << "    </dict>\n";
+		plist << "  </array>\n";
+		plist << "  <key>UISupportedInterfaceOrientations</key>\n";
+		plist << "  <array>\n";
+		plist << "    <string>UIInterfaceOrientationPortrait</string>\n";
+		plist << "    <string>UIInterfaceOrientationPortraitUpsideDown</string>\n";
+		plist << "    <string>UIInterfaceOrientationLandscapeLeft</string>\n";
+		plist << "    <string>UIInterfaceOrientationLandscapeRight</string>\n";
+		plist << "  </array>\n";
 		plist << "  <key>UIApplicationSupportsIndirectInputEvents</key>\n";
 		plist << "  <true/>\n";
+		plist << "  <key>UIDeviceFamily</key>\n";
+		plist << "  <array>\n";
+		plist << "    <string>1</string>\n";
+		plist << "    <string>2</string>\n";
+		plist << "  </array>\n";
 		plist << "</dict>\n";
 		plist << "</plist>\n";
 
@@ -181,21 +209,19 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &target,cons
 	std::string sdkname;
 	std::string platform_id,platform_version_min,platform_version_max;
 
-	if( target=="ios" ){
+	if( target.type=="ios" ){
 		sdkname="iPhoneOS";
 		platform_id="ios";
 		platform_version_min="15.4";
 		platform_version_max="15.4";
-	}else if( target=="ios-sim" ){
+	}else if( target.type=="ios-sim" ){
 		sdkname="iPhoneSimulator";
 		platform_id="ios-simulator";
-		platform_version_min="15.4";
-		platform_version_max="15.4";
+		platform_version_min=platform_version_max=target.version;
 	}else{
 		sdkname="MacOSX";
 		platform_id="macos";
-		platform_version_min="12.1";
-		platform_version_max="12.3";
+		platform_version_min=platform_version_max=target.version;
 	}
 
 	// TODO: use xcrun --show-sdk-path
@@ -210,7 +236,7 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &target,cons
 	// libs.push_back("System_asan");
 
 	args.push_back("-arch");
-	args.push_back(BB_ARCH);
+	args.push_back( target.arch );
 
 	args.push_back( "-platform_version" );args.push_back( platform_id );
 	args.push_back( platform_version_min );args.push_back( platform_version_max );
@@ -366,7 +392,28 @@ void Linker_LLD::createExe( const std::string &rt,const std::string &target,cons
 
 #ifdef BB_MACOS
 	if( bundle.enabled && bundle.signerId.size()>0 ){
-		system( ("codesign -s '"+bundle.signerId+"' "+binaryPath).c_str() );
+		string options="--force --timestamp=none --sign '"+bundle.signerId+"'";
+		if( bundle.teamId.size()>0 ){
+			string xcentPath=string( tmpnam(0) )+".xcent";
+
+			ofstream xcent;
+			xcent.open( xcentPath );
+			xcent<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+			xcent<<"<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
+			xcent<<"<plist version=\"1.0\">\n";
+			xcent<<"<dict>\n";
+			xcent<<"  <key>application-identifier</key>\n";
+			xcent<<"  <string>"<<bundle.teamId<<"."<<bundle.identifier<<"</string>\n";
+			xcent<<"  <key>com.apple.developer.team-identifier</key>\n";
+			xcent<<"  <string>"<<bundle.teamId<<"</string>\n";
+			xcent<<"</dict>\n";
+			xcent<<"</plist>\n";
+			xcent.close();
+
+			options +=" --entitlements "+xcentPath;
+		}
+
+		system( ("codesign "+options+" "+binaryPath).c_str() );
 	}
 #endif
 }

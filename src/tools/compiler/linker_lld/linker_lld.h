@@ -3,6 +3,7 @@
 
 #include "../environ.h"
 #include "../bundle.h"
+#include "../target.h"
 #include <string>
 
 class Linker_LLD {
@@ -12,7 +13,7 @@ public:
 
 	Linker_LLD( const std::string &home );
 
-	void createExe( const std::string &rt,const std::string &target,const std::string &triple,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile );
+	void createExe( const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile );
 };
 
 #endif

@@ -16,7 +16,7 @@ struct BundleInfo {
 	string identifier; // platform specific ID
 	string appName; // label used wherever a human readable title is needed
 	vector<BundleFile> files; // files to copy into the bundle
-	string signerId;
+	string signerId,teamId;
 };
 
 #endif
