@@ -1,6 +1,6 @@
 if(BB_IOS)
   bb_start_module(system.ios)
   set(DEPENDS_ON bb.system)
-  set(SOURCES system.ios.cpp system.ios.h)
+  set(SOURCES system.ios.cpp system.ios.h system.ios.m)
   bb_end_module()
 endif()

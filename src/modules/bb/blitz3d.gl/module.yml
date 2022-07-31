@@ -3,6 +3,7 @@ description: Provides OpenGL Blitz3D.
 
 platforms:
   - desktop
+  - mobile
 
 dependencies:
   - blitz3d

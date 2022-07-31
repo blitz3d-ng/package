@@ -3,16 +3,19 @@ set(DEPENDS_ON bb.graphics)
 set(SOURCES graphics.gl.cpp)
 
 IF(BB_WINDOWS)
-  set(LIBS glew)
   set(SYSTEM_LIBS opengl32)
 ELSEIF(BB_MACOS)
   set(SYSTEM_LIBS "-framework OpenGL")
 ELSEIF(BB_LINUX)
-  set(LIBS glew)
   set(SYSTEM_LIBS GL X11 Xrandr Xinerama Xcursor Xxf86vm pthread)
 ELSEIF(BB_IOS)
   set(SYSTEM_LIBS "-framework OpenGLES")
 ENDIF()
+
+IF(BB_DESKTOP)
+  set(LIBS ${LIBS} glew)
+ENDIF()
+
 bb_end_module()
 
 if(BB_MACOS)

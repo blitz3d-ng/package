@@ -575,11 +575,11 @@ void BBCALL bbFlip( bb_int_t vwait ){
 }
 
 bb_int_t BBCALL bbGraphicsWidth(){
-	return gx_graphics->getWidth();
+	return gx_graphics->getLogicalWidth();
 }
 
 bb_int_t BBCALL bbGraphicsHeight(){
-	return gx_graphics->getHeight();
+	return gx_graphics->getLogicalHeight();
 }
 
 bb_int_t BBCALL bbGraphicsDepth(){

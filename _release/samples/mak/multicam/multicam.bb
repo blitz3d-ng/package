@@ -1,5 +1,9 @@
 
-Graphics3D 640,480
+Global info1$="Multicam Demo"
+Global info2$="Features use of multiple cameras"
+Global info3$="Use arrow keys to pan, A/Z to zoom"
+
+Include "../start.bb"
 
 tex=CreateTexture( 64,64 )
 SetBuffer TextureBuffer( tex )

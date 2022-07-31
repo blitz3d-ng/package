@@ -202,5 +202,7 @@ endmacro()
 # add all modules in bb/
 file(GLOB modules RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} bb/*)
 foreach(module ${modules})
-  add_subdirectory(${module})
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${module}/CMakeLists.txt)
+    add_subdirectory(${module})
+  endif()
 endforeach()

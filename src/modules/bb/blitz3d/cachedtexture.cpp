@@ -110,7 +110,11 @@ CachedTexture::CachedTexture( const string &f_,int flags,int w,int h,int first,i
 	string f=f_;
 	if( f.substr(0,2)==".\\" ) f=f.substr(2);
 	if( path.size() ){
+#ifdef BB_WINDOWS // TODO: decide if tolower should get pushed into filenamefile/fullfilename
 		string t=path+tolower( filenamefile( f ) );
+#else
+		string t=path+filenamefile( f );
+#endif
 		if( (rep=findRep( t,flags,w,h,first,cnt )) ) return;
 		rep=d_new Rep( t,flags,w,h,first,cnt );
 		if( rep->frames.size() ){
@@ -119,7 +123,10 @@ CachedTexture::CachedTexture( const string &f_,int flags,int w,int h,int first,i
 		}
 		delete rep;
 	}
-	string t=tolower( fullfilename( f ) );
+	string t=fullfilename( f );
+#ifdef BB_WINDOWS
+	t=tolower( t );
+#endif
 	if( (rep=findRep( t,flags,w,h,first,cnt )) ) return;
 	rep=d_new Rep( t,flags,w,h,first,cnt );
 	rep_set.insert( rep );

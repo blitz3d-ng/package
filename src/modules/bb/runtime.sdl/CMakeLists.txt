@@ -1,13 +1,10 @@
 if(TARGET SDL2)
   bb_start_module(runtime.sdl)
-  set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d bb.timer)
+  set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d.gl bb.timer)
   set(SOURCES runtime.sdl.cpp runtime.sdl.h)
-  set(LIBS SDL2)
 
-  if(BB_DESKTOP)
-    set(DEPENDS_ON ${DEPENDS_ON} bb.blitz3d.gl)
-  else()
-    set(DEPENDS_ON ${DEPENDS_ON} bb.blitz3d.gles2)
+  set(LIBS SDL2)
+  if(BB_MOBILE)
     set(LIBS ${LIBS} SDL2main)
   endif()
 

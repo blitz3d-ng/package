@@ -335,10 +335,12 @@ int main( int argc,char *argv[] ){
 		}
 
 		if( ti==-1 ) err( "Invalid target" );
+	}else{
+		ti=0;
 	}
 	target=targets[ti];
 
-	if( target.type=="native" ){
+	if( target.type!="native" ){
 		compileonly=true;
 	}
 

@@ -3,11 +3,72 @@
 #include <bb/blitz2d/font.h>
 #include "blitz2d.gl.h"
 #include <cmath>
+#include <map>
+using namespace std;
 
-// TODO: derive this value from hardware info
-#define MAX_TEXTURES 8
+#include "default.glsl.h"
 
-static map<BBImageFont*,unsigned int> font_textures;
+map<BBImageFont*,unsigned int> font_textures;
+
+struct Vertex{
+	float x,y;
+	float u,v;
+};
+
+static GLuint defaultProgram=0;
+
+// TODO: change over to uniform buffers...
+static
+bool makeProgram( float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
+	if( !glIsProgram( defaultProgram ) ){
+		_bbLog( "rebuilding 2d shader...\n" );
+
+		string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
+		defaultProgram=GL( _bbGLCompileProgram( "default.glsl",src ) );
+		if( !defaultProgram ){
+			return false;
+		}
+
+		GL( glUseProgram( defaultProgram ) );
+
+		GLint texLocation=GL( glGetUniformLocation( defaultProgram,"u_tex" ) );
+		GL( glUniform1i( texLocation,0 ) );
+	}
+
+	GL( glUseProgram( defaultProgram ) );
+
+	GLint texScaleLocation=GL( glGetUniformLocation( defaultProgram,"u_texscale" ) );
+	GLint texEnabledLocation=GL( glGetUniformLocation( defaultProgram,"u_texenabled" ) );
+	GLint resLocation=GL( glGetUniformLocation( defaultProgram,"u_res" ) );
+	GLint posAndSizeLocation=GL( glGetUniformLocation( defaultProgram,"u_xywh" ) );
+	GLint colorLocation=GL( glGetUniformLocation( defaultProgram,"u_color" ) );
+	GL( glUniform2f( texScaleLocation,tx,ty ) );
+	GL( glUniform1i( texEnabledLocation,tex_enabled ) );
+	GL( glUniform2f( resLocation,resx,resy ) );
+	GL( glUniform4f( posAndSizeLocation,x,y,width,height ) );
+	GL( glUniform3fv( colorLocation,1,color ) );
+
+	return true;
+}
+
+static
+void initArrays( int size,GLuint* buffer,GLuint *array ){
+	if( !glIsVertexArray( buffer[0] ) ){
+		GL( glGenVertexArrays( size,array ) );
+		GL( glGenBuffers( size,buffer ) );
+
+		for( int i=0;i<size;i++) {
+			GL( glBindVertexArray( array[i] ) );
+			GL( glBindBuffer( GL_ARRAY_BUFFER,buffer[i] ) );
+
+			GL( glEnableVertexAttribArray( 0 ) );
+			GL( glEnableVertexAttribArray( 1 ) );
+
+			GL( glVertexAttribPointer( 0,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),0 ) );
+			GL( glVertexAttribPointer( 1,2,GL_FLOAT,GL_FALSE,sizeof(Vertex),(void*)offsetof( Vertex,u ) ) );
+		}
+	}
+}
 
 void GLB2DCanvas::setFont( BBFont *f ){
 	font=reinterpret_cast<BBImageFont*>(f);
@@ -20,8 +81,6 @@ void GLB2DCanvas::setColor( unsigned argb ){
 	color[0]=((argb>>16)&255)/255.0f;
 	color[1]=((argb>>8)&255)/255.0f;;
 	color[2]=(argb&255)/255.0f;;
-
-	glColor3fv( color );
 }
 
 void GLB2DCanvas::setClsColor( unsigned argb ){
@@ -29,14 +88,12 @@ void GLB2DCanvas::setClsColor( unsigned argb ){
 	int g = (argb >> 8) & 255;
 	int b = argb & 255;
 
-	glClearColor( r/255.0f,g/255.0f,b/255.0f,1.0f );
+	GL( glClearColor( r/255.0f,g/255.0f,b/255.0f,1.0f ) );
 }
 
 void GLB2DCanvas::setOrigin( int x,int y ){
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glTranslatef( x,y,0 );
+	origin_x=x;
+	origin_y=y;
 }
 
 void GLB2DCanvas::setHandle( int x,int y ){
@@ -45,45 +102,78 @@ void GLB2DCanvas::setHandle( int x,int y ){
 }
 
 void GLB2DCanvas::setViewport( int x,int y,int w,int h ){
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho( 0.0f,w,h,0.0f,-1.0f,1.0f );
-
-	glViewport( 0,0,w,h );
+	GL( glEnable( GL_SCISSOR_TEST ) );
+	GL( glViewport( x,y,w,h ) );
+	GL( glScissor( x,y,w,h ) );
 }
 
 void GLB2DCanvas::cls(){
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL( glClear( GL_COLOR_BUFFER_BIT ) );
 }
 
 void GLB2DCanvas::plot( int x,int y ){
-	glBegin( GL_POINTS );
-		glVertex2f( x,y );
-	glEnd();
-	glFlush();
+	// glBegin( GL_POINTS );
+	// 	glVertex2f( x,y );
+	// glEnd();
+	// glFlush();
 }
 
 void GLB2DCanvas::line( int x,int y,int x2,int y2 ){
-	glBegin( GL_LINES );
-		glVertex2f( x,y );
-		glVertex2f( x2,y2 );
-	glEnd();
-	glFlush();
+	const Vertex vertices[2] = {
+		{ (float)x,(float)y,0.0,0.0 },
+		{ (float)x2,(float)y2,0.0,0.0 }
+	};
+
+	static GLuint buffer=0,array=0;
+	initArrays( 1,&buffer,&array );
+
+	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
+	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW ) );
+
+	makeProgram( 1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
+
+	GL( glBindVertexArray( array ) );
+	GL( glDrawArrays( GL_LINES,0,2 ) );
+	GL( glBindVertexArray( 0 ) );
 }
 
 void GLB2DCanvas::rect( int x,int y,int w,int h,bool solid ){
-	glPolygonMode( GL_FRONT_AND_BACK,solid?GL_FILL:GL_LINE );
-	glBegin( GL_QUADS );
-		glTexCoord2f( 0.0f,0.0f );
-		glVertex2f( x,y+h );
-		glTexCoord2f( 1.0f,0.0f );
-		glVertex2f( x+w,y+h );
-		glTexCoord2f( 1.0f,1.0f );
-		glVertex2f( x+w,y );
-		glTexCoord2f( 0.0f,1.0f );
-		glVertex2f( x,y );
-	glEnd();
-	glFlush();
+	quad( x,y,w,h,solid,false,1.0,1.0,color );
+}
+
+void GLB2DCanvas::quad( int x,int y,int w,int h,bool solid,bool texenabled,float tx,float ty,float color[3] ){
+	static const Vertex vertices[2][4] = {
+		{
+			{ 0.0, 0.0, 0.0, 0.0 },
+			{ 0.0, 1.0, 0.0, 1.0 },
+			{ 1.0, 0.0, 1.0, 0.0 },
+			{ 1.0, 1.0, 1.0, 1.0 }
+		},
+		{
+			{ 0.0, 0.0, 0.0, 0.0 },
+			{ 0.0, 1.0, 0.0, 1.0 },
+			{ 1.0, 1.0, 1.0, 1.0 },
+			{ 1.0, 0.0, 1.0, 0.0 }
+		}
+	};
+
+	static GLuint buffer[2]={ 0,0 },array[2]={ 0,0 };
+	if( buffer[0]==0 ){
+		initArrays( 2,buffer,array );
+
+		GL( glBindBuffer( GL_ARRAY_BUFFER,buffer[0] ) );
+		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices[0]),vertices[0],GL_STATIC_DRAW ) );
+
+		GL( glBindBuffer( GL_ARRAY_BUFFER,buffer[1] ) );
+		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices[1]),vertices[1],GL_STATIC_DRAW ) );
+	}
+
+	makeProgram( tx,ty,texenabled,width,height,x,y,w,h,color );
+
+	int i=solid?0:1;
+	GL( glBindVertexArray( array[i] ) );
+	GL( glDrawArrays( solid?GL_TRIANGLE_STRIP:GL_LINE_LOOP,0,4 ) );
+	GL( glBindVertexArray( 0 ) );
 }
 
 void GLB2DCanvas::oval( int x,int y,int w,int h,bool solid ){
@@ -97,66 +187,66 @@ void GLB2DCanvas::oval( int x,int y,int w,int h,bool solid ){
 
 	float vx=1.0f,vy=0.0f;
 
-	glBegin( solid?GL_TRIANGLE_FAN:GL_LINE_LOOP );
+	vector<Vertex> verts;
 	for( int i=0;i<segs;i++ ){
-		glVertex2f( vx*rx+x,vy*ry+y );
+		verts.push_back( { vx*rx+x,vy*ry+y,0.0,0.0 } );
 
 		t=vx;
 		vx=c*vx-s*vy;
 		vy=s*t+c*vy;
 	}
-	glEnd();
-	glFlush();
+	std::reverse( verts.begin(),verts.end() );
+
+	static GLuint buffer=0,array=0;
+	if( buffer==0 ){
+		initArrays( 1,&buffer,&array );
+	}
+
+	makeProgram( 1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
+
+	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
+	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_STATIC_DRAW ) );
+
+	GL( glBindVertexArray( array ) );
+	GL( glDrawArrays( solid?GL_TRIANGLE_FAN:GL_LINE_LOOP,0,verts.size() ) );
+	GL( glBindVertexArray( 0 ) );
 }
 
 void GLB2DCanvas::text( int x,int y,const std::string &t ){
 	if( !font ) return;
 
-	glEnable( GL_ALPHA_TEST );
-	glEnable( GL_BLEND );
-	glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
-
 	unsigned int texture;
 	if( font_textures.count(font)==0 ){
-		glGenTextures( 1,&texture );
+		GL( glGenTextures( 1,&texture ) );
 		font_textures[font]=texture;
 	}else{
 		texture=font_textures[font];
 	}
 
-	for( int i=1;i<MAX_TEXTURES;i++ ){
-		glActiveTexture( GL_TEXTURE0+i );
-		glClientActiveTexture( GL_TEXTURE0+i );
-		glDisable( GL_TEXTURE_2D );
-		glBindTexture( GL_TEXTURE_2D,0 );
-	}
-
-	glActiveTexture( GL_TEXTURE0 );
-	glClientActiveTexture( GL_TEXTURE0 );
-	glEnable( GL_TEXTURE_2D );
-	glBindTexture( GL_TEXTURE_2D,texture );
+	GL( glActiveTexture( GL_TEXTURE0 ) );
+	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
 
 	if( font->loadChars( t ) ){
 		font->rebuildAtlas();
 
-		glPixelStorei( GL_UNPACK_ALIGNMENT,1 );
-		glTexImage2D( GL_TEXTURE_2D,0,GL_ALPHA,font->atlas->width,font->atlas->height,0,GL_ALPHA,GL_UNSIGNED_BYTE,font->atlas->bits );
+		int size=font->atlas->width*font->atlas->height;
+		vector<char> bmp( size*4 );
+		for( int i=0;i<font->atlas->width*font->atlas->height;i++ ){
+			bmp[i*4+0]=font->atlas->bits[i];
+			bmp[i*4+1]=font->atlas->bits[i];
+			bmp[i*4+2]=font->atlas->bits[i];
+			bmp[i*4+3]=font->atlas->bits[i];
+		}
+
+		GL( glPixelStorei( GL_UNPACK_ALIGNMENT,1 ) );
+		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,font->atlas->width,font->atlas->height,0,GL_RGBA,GL_UNSIGNED_BYTE,bmp.data() ) );
+		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
+		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
+		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR ) );
+		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR ) );
 	}
 
-	glPolygonMode( GL_FRONT_AND_BACK,GL_FILL );
-
-	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-
-	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
-
-	glDisable( GL_TEXTURE_GEN_S );
-	glDisable( GL_TEXTURE_GEN_T );
-
-	glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
-
-	glBegin( GL_QUADS );
+	vector<Vertex> verts;
 
 	y+=font->baseline;
 
@@ -174,60 +264,64 @@ void GLB2DCanvas::text( int x,int y,const std::string &t ){
 		float t=c.y/(float)font->atlas->height;
 		float b=(c.y+c.height)/(float)font->atlas->height;
 
-		glTexCoord2f( l,b );
-		glVertex2f( cx,cy+c.height );
+		Vertex lb={ (float)cx,(float)cy+c.height,l,b },
+		       rb={ (float)cx+c.width,(float)cy+c.height,r,b },
+		       rt={ (float)cx+c.width,(float)cy,r,t },
+		       lt={ (float)cx,(float)cy,l,t };
 
-		glTexCoord2f( r,b );
-		glVertex2f( cx+c.width,cy+c.height );
-
-		glTexCoord2f( r,t );
-		glVertex2f( cx+c.width,cy );
-
-		glTexCoord2f( l,t );
-		glVertex2f( cx,cy );
+		verts.push_back( lb );verts.push_back( rb );verts.push_back( rt );
+		verts.push_back( lb );verts.push_back( rt );verts.push_back( lt );
 
 		x+=c.advance;
 	}
 
-	glEnd();
-	glFlush();
+	GL( glEnable( GL_BLEND ) );
+	GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA ) );
 
-	glDisable( GL_TEXTURE_2D );
-	glDisable( GL_ALPHA_TEST );
-	glDisable( GL_BLEND );
+	static GLuint buffer=0,array=0;
+	if( buffer==0 ){
+		initArrays( 1,&buffer,&array );
+	}
+
+	makeProgram( 1.0,1.0,true,width,height,0.0,0.0,1.0,1.0,color );
+
+	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
+	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_STATIC_DRAW ) );
+
+	GL( glBindVertexArray( array ) );
+	GL( glDrawArrays( GL_TRIANGLES,0,verts.size() ) );
+	GL( glBindVertexArray( 0 ) );
+
+	GL( glDisable( GL_BLEND ) );
 }
 
 void GLB2DCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid ){
 	unsigned int cfb;
-	glGetIntegerv( GL_FRAMEBUFFER_BINDING,(GLint*)&cfb );
+	GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,(GLint*)&cfb ) );
 
 	GLB2DCanvas *src=(GLB2DCanvas*)s;
 
 	unsigned int rfb=src->framebufferId(),dfb=framebufferId();
 
-	glBindFramebuffer( GL_READ_FRAMEBUFFER,rfb );
-	glBindFramebuffer( GL_DRAW_FRAMEBUFFER,dfb );
-	glBlitFramebuffer( src_x,src_y,src_w,src_h,x,y,src_w,src_h,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST );
+	GL( glBindFramebuffer( GL_READ_FRAMEBUFFER,rfb ) );
+	GL( glBindFramebuffer( GL_DRAW_FRAMEBUFFER,dfb ) );
+	GL( glBlitFramebuffer( src_x,src_y,src_w,src_h,x,y,src_w,src_h,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
 
-	glBindFramebuffer( GL_FRAMEBUFFER,cfb );
+	GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
 }
 
 void GLB2DCanvas::image( BBCanvas *c,int x,int y,bool solid ){
-	GLB2DCanvas *src=(GLB2DCanvas*)c;
+	GLB2DTextureCanvas *src=(GLB2DTextureCanvas*)c;
 
 	src->bind();
 
-	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT );
+	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR ) );
+	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR ) );
+	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
+	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
 
-	const float white[3]={ 1.0f,1.0f,1.0f };
-	glColor3fv( white );
-	rect( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true );
-	glColor3fv( color );
-
-	glDisable( GL_TEXTURE_2D );
+	float white[3]={ 1.0,1.0,1.0 };
+	quad( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true,true,src->tx,src->ty,white );
 }
 
 void GLB2DCanvas::setPixel( int x,int y,unsigned argb ){
@@ -240,8 +334,14 @@ void GLB2DCanvas::setPixelFast( int x,int y,unsigned argb ){
 	unsigned char rgba[4]={ UC((argb>>16)&255),UC((argb>>8)&255),UC(argb&255),UC((argb>>24)&255) };
 
 	set();
-	glRasterPos2f( x,y+1 );
-	glDrawPixels( 1,1,GL_RGBA,GL_UNSIGNED_BYTE,rgba );
+	// glRasterPos2f( x,y+1 );
+	// glDrawPixels( 1,1,GL_RGBA,GL_UNSIGNED_BYTE,rgba );
 }
 
-BBMODULE_EMPTY( blitz2d_gl )
+BBMODULE_CREATE( blitz2d_gl ){
+	return true;
+}
+
+BBMODULE_DESTROY( blitz2d_gl ){
+	return true;
+}

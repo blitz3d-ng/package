@@ -71,8 +71,13 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		mkdir( bundlePath.c_str(),0755 );
 		remove( binaryPath.c_str() );
 
+		string iconPath=home+"/cfg/bbexe.icns";
+		if( target.type=="ios"||target.type=="ios-sim" ){
+			iconPath=home+"/cfg/bbios.icns";
+		}
+
 		// TODO: a bit lazy...
-		if( system( ("cp "+home+"/cfg/bbexe.icns "+bundlePath+"/"+appid+".icns").c_str() ) ){
+		if( system( ("cp "+iconPath+" "+bundlePath+"/"+appid+".icns").c_str() ) ){
 			exit( 1 );
 		}
 		for( auto &file:bundle.files ){
@@ -100,10 +105,13 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		}
 
 		if( target.type=="ios"||target.type=="ios-sim" ){
-			cout<<"Copying b3dsplash-ipad@3.png..."<<endl;
-			if( system( ("cp "+home+"/cfg/b3dsplash-ipad@3.png "+bundlePath+"/splash-ipad@3.png").c_str() ) ){
+			cout<<"Copying b3dlogo.png..."<<endl;
+			if( system( ("cp "+home+"/cfg/b3dlogo.png "+bundlePath+"/launch-logo.png").c_str() ) ){
 				exit( 1 );
 			}
+
+			cout<<"Generating launch storyboard..."<<endl;
+			system( ("ibtool --compile '"+bundlePath+"/launch.storyboardc' '"+home+"/cfg/b3dsplash.storyboard'").c_str() );
 		}
 
 		ofstream plist;
@@ -134,31 +142,24 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		plist << "  <string>1.0</string>\n";
 		plist << "  <key>NSMainNibFile</key>\n";
 		plist << "  <string></string>\n";
-		// plist << "  <key>UILaunchStoryboardName</key>\n";
-		// plist << "  <string>launch</string>\n";
-		plist << "  <key>UILaunchImages</key>\n";
-		plist << "  <array>\n";
-		plist << "    <dict>\n";
-		plist << "      <key>UILaunchImageName</key>\n";
-		plist << "      <string>splash-ipad@3.png</string>\n";
-		plist << "      <key>UILaunchImageOrientation</key>\n";
-		plist << "      <string>Landscape</string>\n";
-		plist << "    </dict>\n";
-		plist << "  </array>\n";
-		plist << "  <key>UISupportedInterfaceOrientations</key>\n";
-		plist << "  <array>\n";
-		plist << "    <string>UIInterfaceOrientationPortrait</string>\n";
-		plist << "    <string>UIInterfaceOrientationPortraitUpsideDown</string>\n";
-		plist << "    <string>UIInterfaceOrientationLandscapeLeft</string>\n";
-		plist << "    <string>UIInterfaceOrientationLandscapeRight</string>\n";
-		plist << "  </array>\n";
 		plist << "  <key>UIApplicationSupportsIndirectInputEvents</key>\n";
 		plist << "  <true/>\n";
-		plist << "  <key>UIDeviceFamily</key>\n";
-		plist << "  <array>\n";
-		plist << "    <string>1</string>\n";
-		plist << "    <string>2</string>\n";
-		plist << "  </array>\n";
+		if( target.type=="ios"||target.type=="ios-sim" ){
+			plist << "  <key>UILaunchStoryboardName</key>\n";
+			plist << "  <string>launch</string>\n";
+			plist << "  <key>UISupportedInterfaceOrientations</key>\n";
+			plist << "  <array>\n";
+			plist << "    <string>UIInterfaceOrientationPortrait</string>\n";
+			plist << "    <string>UIInterfaceOrientationPortraitUpsideDown</string>\n";
+			plist << "    <string>UIInterfaceOrientationLandscapeLeft</string>\n";
+			plist << "    <string>UIInterfaceOrientationLandscapeRight</string>\n";
+			plist << "  </array>\n";
+			plist << "  <key>UIDeviceFamily</key>\n";
+			plist << "  <array>\n";
+			plist << "    <string>1</string>\n";
+			plist << "    <string>2</string>\n";
+			plist << "  </array>\n";
+		}
 		plist << "</dict>\n";
 		plist << "</plist>\n";
 

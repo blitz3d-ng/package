@@ -40,6 +40,8 @@ public:
   //ACCESSORS
   virtual int getWidth()const=0;
   virtual int getHeight()const=0;
+  virtual int getLogicalWidth()const=0;
+  virtual int getLogicalHeight()const=0;
   virtual int getDepth()const=0;
   virtual int getScanLine()const=0;
   virtual int getAvailVidmem()const=0;

@@ -17,7 +17,14 @@ map<SDL_Window*,SDLRuntime*> runtimes;
 BBRuntime *bbCreateOpenGLRuntime(){
 	if( SDL_Init(SDL_INIT_VIDEO)<0 ) return 0;
 
-	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,1 );
+#ifdef BB_DESKTOP
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,4 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
+#else
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,3 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
+#endif
 
 	SDL_Window* window=SDL_CreateWindow( "",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,1,1,SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI );
 	if( window==NULL ){
@@ -75,8 +82,7 @@ class SDLDefaultCanvas : public GLB2DDefaultCanvas{
 protected:
 	SDL_Window *wnd;
 public:
-	SDLDefaultCanvas( SDL_Window *wnd,int mode,int flags ):GLB2DDefaultCanvas(mode,flags),wnd(wnd){
-	}
+	SDLDefaultCanvas( SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLB2DDefaultCanvas(framebuffer,mode,flags),wnd(wnd){}
 
 	// int getWidth()const{
 	//   // int width,height;
@@ -104,12 +110,19 @@ protected:
 	BBImageFont *def_font;
 public:
 	SDLGraphics( SDL_Window *wnd ):wnd(wnd){
-		front_canvas=d_new SDLDefaultCanvas( wnd,GL_FRONT,0 );
-		back_canvas=d_new SDLDefaultCanvas( wnd,GL_BACK,0 );
+		unsigned framebuffer=0;
+#ifdef BB_IOS
+		// ios doesn't supply a default framebuffer
+		GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,(int*)&framebuffer ) );
+		_bbLog( "framebuffer: %i\n", framebuffer );
+#endif
 
-		def_font=(BBImageFont*)loadFont( "courier",12*bbDPIScaleY(),0 );
+		front_canvas=d_new SDLDefaultCanvas( wnd,framebuffer,GL_FRONT,0 );
+		back_canvas=d_new SDLDefaultCanvas( wnd,framebuffer,GL_BACK,0 );
+
+		def_font=(BBImageFont*)loadFont( "courier",12,0 );
 		if( def_font==0 ){
-			def_font=(BBImageFont*)loadFont( "courier new",12*bbDPIScaleY(),0 );
+			def_font=(BBImageFont*)loadFont( "courier new",12,0 );
 		}
 
 		for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
@@ -157,6 +170,8 @@ public:
 	//ACCESSORS
 	int getWidth()const{ return front_canvas->getWidth(); }
 	int getHeight()const{ return front_canvas->getHeight(); }
+	int getLogicalWidth()const{ return front_canvas->getWidth()*0.5; };
+	int getLogicalHeight()const{ return front_canvas->getHeight()*0.5; };
 	int getDepth()const{ return 0; }
 	int getScanLine()const{ return 0; }
 	int getAvailVidmem()const{ return 0; }
@@ -220,7 +235,32 @@ BBGraphics *SDLRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	SDL_SetWindowPosition( wnd,(mode.w-w)/2.0f,(mode.h-h)/2.0f );
 	SDL_SetWindowSize( wnd,w,h );
 	SDL_ShowWindow( wnd );
-	SDL_GL_CreateContext( wnd );
+
+	static bool inited=false;
+	if( !inited ){
+		SDL_GL_CreateContext( wnd );
+
+		int screen_w,screen_h;
+		int drawableW,drawableH;
+
+		SDL_GetWindowSize( wnd,&screen_w,&screen_h );
+		SDL_GL_GetDrawableSize( wnd,&drawableW,&drawableH );
+
+		_bbLog( "GL Version:  %s\n",glGetString( GL_VERSION ) );
+		_bbLog( "GL Vendor:   %s\n",glGetString( GL_VENDOR ) );
+		_bbLog( "GL window:   %ix%i\n",screen_w,screen_h );
+		_bbLog( "GL drawable: %ix%i\n",drawableW,drawableH );
+
+		inited=true;
+	}
+
+#ifdef BB_DESKTOP
+	static bool glewOk=false;
+	if( !glewOk ) {
+		glewInit();
+		glewOk=true;
+	}
+#endif
 
 	if( windowed ){
 		SDL_SetWindowFullscreen( wnd,0 );

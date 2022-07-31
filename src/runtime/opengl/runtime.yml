@@ -34,7 +34,6 @@ modules:
   - audio.fmod
   - audio.openal
   - blitz3d.gl
-  - blitz3d.gles2
   - userlibs
   # - runtime.glfm
   - runtime.sdl

@@ -3,19 +3,22 @@
 
 #include <bb/graphics/graphics.h>
 
+#ifdef BB_DESKTOP
+#include <GL/glew.h>
+#endif
+
 #if defined(BB_DESKTOP) || defined(BB_EMSCRIPTEN)
 	#ifdef BB_MACOS
 		#include <OpenGL/gl.h>
 		#include <OpenGL/glext.h>
 	#else
-		#include <GL/glew.h>
 		#define GL_GLEXT_PROTOTYPES
 		#include <GL/gl.h>
 		// #include <GL/glext.h>
 	#endif
 #else
 	#ifdef BB_IOS
-		#include <OpenGLES/ES2/gl.h>
+		#include <OpenGLES/ES3/gl.h>
 	#endif
 
 	#ifdef BB_ANDROID
@@ -23,13 +26,14 @@
 	#endif
 #endif
 
+GLuint _bbGLCompileProgram( const std::string &name,const std::string &src );
 
+
+// #ifdef NDEBUG
+// #define GL( func ) func;
+// #else
 void bbGLGraphicsCheckErrors( const char *file, int line );
-
-#ifdef NDEBUG
-#define GL( func ) func;
-#else
 #define GL( func ) func; bbGLGraphicsCheckErrors( __FILE__,__LINE__ );
-#endif
+// #endif
 
 #endif
