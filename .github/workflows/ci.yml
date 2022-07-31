@@ -20,7 +20,7 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
-      - if: matrix.os == 'win64'
+      - if: matrix.arch == 'win64'
         shell: pwsh
         run: |
           Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v1/llvm-14.0.4-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"

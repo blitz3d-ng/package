@@ -21,11 +21,7 @@
 		#include <OpenGLES/ES3/gl.h>
 	#endif
 
-	#ifdef BB_ANDROID
-		#include <GLES3/gl3.h>
-	#endif
-
-	#ifdef BB_NX
+	#if defined(BB_ANDROID) || defined(BB_NX)
 		#include <GLES3/gl3.h>
 	#endif
 #endif
