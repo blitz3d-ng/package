@@ -20,9 +20,10 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
-      - shell: pwsh
+      - if: matrix.os == 'win64'
+        shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v1/llvm-14.0.4-win64.zip" -OutFile "llvm.zip"
+          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v1/llvm-14.0.4-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
           Rename-Item llvm-14.0.4 llvm
       - run: .\make.bat release ${{ matrix.arch }}
@@ -34,21 +35,21 @@ jobs:
           name: toolchain-${{ matrix.arch }}
           path: _release/bin
 
-  mingw:
-    name: MinGW
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch:
-          - mingw32
-          # - mingw64
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - run: ./env.sh mingw make ENV=release PLATFORM=${{ matrix.arch }}
-      - run: ./env.sh mingw sh ./test/entry.mingw32.sh
-        continue-on-error: true
+  # mingw:
+  #   name: MinGW
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       arch:
+  #         - mingw32
+  #         # - mingw64
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         submodules: recursive
+  #     - run: ./env.sh mingw make ENV=release PLATFORM=${{ matrix.arch }}
+  #     - run: ./env.sh mingw sh ./test/entry.mingw32.sh
+  #       continue-on-error: true
 
   macos:
     name: macOS
