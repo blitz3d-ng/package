@@ -106,6 +106,7 @@ public:
 class SDLGraphics : public B2DGraphics{
 protected:
 	SDL_Window *wnd;
+	int window_width,window_height,drawable_width,drawable_height;
 
 	unsigned short gamma_red[256], gamma_green[256], gamma_blue[256];
 
@@ -129,9 +130,7 @@ public:
 
 		for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
 
-		int w,h;
-		SDL_GL_GetDrawableSize( wnd,&w,&h );
-		resize( w,h );
+		resize( 0,0 );
 	}
 
 	~SDLGraphics(){
@@ -141,8 +140,11 @@ public:
 	}
 
 	void resize( int w,int h ){
-		((GLB2DCanvas*)front_canvas)->resize( w,h );
-		((GLB2DCanvas*)back_canvas)->resize( w,h );
+		SDL_GetWindowSize( wnd,&window_width,&window_height );
+		SDL_GL_GetDrawableSize( wnd,&drawable_width,&drawable_height );
+
+		((GLB2DCanvas*)front_canvas)->resize( drawable_width,drawable_height );
+		((GLB2DCanvas*)back_canvas)->resize( drawable_width,drawable_height );
 	}
 
 	// graphics
@@ -170,10 +172,10 @@ public:
 	}
 
 	//ACCESSORS
-	int getWidth()const{ return front_canvas->getWidth(); }
-	int getHeight()const{ return front_canvas->getHeight(); }
-	int getLogicalWidth()const{ return front_canvas->getWidth()*0.5; };
-	int getLogicalHeight()const{ return front_canvas->getHeight()*0.5; };
+	int getWidth()const{ return drawable_width; }
+	int getHeight()const{ return drawable_height; }
+	int getLogicalWidth()const{ return window_width; };
+	int getLogicalHeight()const{ return window_height; };
 	int getDepth()const{ return 0; }
 	int getScanLine()const{ return 0; }
 	int getAvailVidmem()const{ return 0; }

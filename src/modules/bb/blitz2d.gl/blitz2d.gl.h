@@ -205,30 +205,18 @@ protected:
 	int mode;
 	unsigned int framebuffer;
 
-	void bind()const{}
+	void bind()const;
 public:
-	GLB2DDefaultCanvas( unsigned int fb,int m,int f ):GLB2DCanvas(f),framebuffer(fb),mode(m){
-		set();
-		GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
-	}
+	GLB2DDefaultCanvas( unsigned int fb,int m,int f );
 
-	void unset(){
-		GL( glFlush() );
-	}
-	void set(){
-		GL( glBindFramebuffer( GL_FRAMEBUFFER,framebuffer ) );
-#ifdef BB_DESKTOP
-		if( framebuffer==0 ){
-			GL( glDrawBuffer( mode ) );
-		}
-#endif
-	}
+	void unset();
+	void set();
 
-	unsigned int framebufferId(){ return framebuffer; }
+	unsigned int framebufferId();
 
-	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){}
+	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid );
 
-	int getDepth()const{ return 8; }
+	int getDepth()const;
 };
 
 #endif

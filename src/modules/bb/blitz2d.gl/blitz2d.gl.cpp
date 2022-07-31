@@ -11,6 +11,15 @@ using namespace std;
 
 map<BBImageFont*,unsigned int> font_textures;
 
+struct UniformState{
+	float xywh[4];
+	float res[2];
+	float texscale[2];
+	float color[3];
+	int texenabled;
+	float scale;
+};
+
 struct Vertex{
 	float x,y;
 	float u,v;
@@ -18,7 +27,6 @@ struct Vertex{
 
 static GLuint defaultProgram=0;
 
-// TODO: change over to uniform buffers...
 static
 bool makeProgram( float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
 	if( !glIsProgram( defaultProgram ) ){
@@ -38,16 +46,28 @@ bool makeProgram( float tx,float ty,bool tex_enabled,float resx,float resy,float
 
 	GL( glUseProgram( defaultProgram ) );
 
-	GLint texScaleLocation=GL( glGetUniformLocation( defaultProgram,"u_texscale" ) );
-	GLint texEnabledLocation=GL( glGetUniformLocation( defaultProgram,"u_texenabled" ) );
-	GLint resLocation=GL( glGetUniformLocation( defaultProgram,"u_res" ) );
-	GLint posAndSizeLocation=GL( glGetUniformLocation( defaultProgram,"u_xywh" ) );
-	GLint colorLocation=GL( glGetUniformLocation( defaultProgram,"u_color" ) );
-	GL( glUniform2f( texScaleLocation,tx,ty ) );
-	GL( glUniform1i( texEnabledLocation,tex_enabled ) );
-	GL( glUniform2f( resLocation,resx,resy ) );
-	GL( glUniform4f( posAndSizeLocation,x,y,width,height ) );
-	GL( glUniform3fv( colorLocation,1,color ) );
+	static UniformState us;
+	us.texscale[0]=tx;us.texscale[1]=ty;
+	us.texenabled=tex_enabled;
+	us.res[0]=resx;us.res[1]=resy;
+	us.xywh[0]=x;us.xywh[1]=y;us.xywh[2]=width;us.xywh[3]=height;
+	us.color[0]=color[0];us.color[1]=color[1];us.color[2]=color[2];
+	us.scale=2.0;
+
+	static unsigned int ubo=0;
+	if( !ubo ){
+		GLint texStateIdx=GL( glGetUniformBlockIndex( defaultProgram,"BBRenderState" ) );
+		GL( glUniformBlockBinding( defaultProgram,texStateIdx,0 ) );
+
+		GL( glGenBuffers( 1,&ubo ) );
+		GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
+		GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(UniformState),0,GL_STATIC_DRAW ) );
+		GL( glBindBufferRange(GL_UNIFORM_BUFFER,0,ubo,0,sizeof(UniformState) ) );
+	}
+
+	GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
+	GL( glBufferSubData( GL_UNIFORM_BUFFER,0,sizeof(UniformState),&us ) );
+	GL( glBindBuffer( GL_UNIFORM_BUFFER,0 ) );
 
 	return true;
 }
@@ -113,10 +133,24 @@ void GLB2DCanvas::cls(){
 }
 
 void GLB2DCanvas::plot( int x,int y ){
-	// glBegin( GL_POINTS );
-	// 	glVertex2f( x,y );
-	// glEnd();
-	// glFlush();
+	static GLuint buffer=0,array=0;
+	if( buffer==0 ){
+		const Vertex vertices[1] = {
+			{ 0.0,0.0,0.0,0.0 }
+		};
+
+		initArrays( 1,&buffer,&array );
+		GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
+		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW ) );
+	}
+
+	// GL( glEnable(GL_PROGRAM_POINT_SIZE) );
+
+	makeProgram( 1.0,1.0,false,width,height,x,y,1.0,1.0,color );
+
+	GL( glBindVertexArray( array ) );
+	GL( glDrawArrays( GL_POINTS,0,1 ) );
+	GL( glBindVertexArray( 0 ) );
 }
 
 void GLB2DCanvas::line( int x,int y,int x2,int y2 ){
@@ -337,6 +371,40 @@ void GLB2DCanvas::setPixelFast( int x,int y,unsigned argb ){
 	set();
 	// glRasterPos2f( x,y+1 );
 	// glDrawPixels( 1,1,GL_RGBA,GL_UNSIGNED_BYTE,rgba );
+}
+
+// --- GLB2DDefaultCanvas ---
+
+void GLB2DDefaultCanvas::bind()const{
+}
+
+GLB2DDefaultCanvas::GLB2DDefaultCanvas( unsigned int fb,int m,int f ):GLB2DCanvas(f),framebuffer(fb),mode(m){
+	set();
+	GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
+}
+
+void GLB2DDefaultCanvas::unset(){
+	GL( glFlush() );
+}
+
+void GLB2DDefaultCanvas::set(){
+	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebuffer ) );
+#ifdef BB_DESKTOP
+	if( framebuffer==0 ){
+		GL( glDrawBuffer( mode ) );
+	}
+#endif
+}
+
+unsigned int GLB2DDefaultCanvas::framebufferId(){
+	return framebuffer;
+}
+
+void GLB2DDefaultCanvas::blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
+}
+
+int GLB2DDefaultCanvas::getDepth()const{
+	return 8;
 }
 
 BBMODULE_CREATE( blitz2d_gl ){

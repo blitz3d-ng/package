@@ -132,6 +132,16 @@ public:
 	}
 };
 
+// TODO: merge this with GLLight...
+struct LightState{
+	struct LightData{
+		float mat[16];
+		float color[4];
+	} data[8];
+
+	int lights_used;
+};
+
 struct UniformState{
 	float ambient[4];
 	float brush_color[4];
@@ -161,25 +171,19 @@ private:
 	float view_matrix[16];
 
 	void setLights(){
+		LightState ls={ 0 };
+
 		// FIXME: replace hardcoded '8' with proper hardward-backed value.
 		for( unsigned long i=0;i<8;i++ ){
 			if( i>=lights.size() ){
 				// glDisable( GL_LIGHT0+i );
-				continue;
+				break;
 			}
 
-			// glEnable( GL_LIGHT0+i );
-			// glPushMatrix();
-			// glMultMatrixf( lights[i]->matrix );
+			ls.lights_used++;
 
-			if( i==0 ){
-				GLint loc=GL( glGetUniformLocation( defaultProgram,"bbLightMatrix0" ) );
-				GL( glUniformMatrix4fv( loc,1,GL_FALSE,lights[i]->matrix ) );
-			}
-
-			float white_light[4]={ 1.0f,1.0f,1.0f,1.0f };
-
-			// glLightfv( GL_LIGHT0+i,GL_SPECULAR,white_light );
+			memcpy( ls.data[i].mat,lights[i]->matrix,sizeof(ls.data[i].mat) );
+			ls.data[i].color[0]=lights[i]->r;ls.data[i].color[1]=lights[i]->g;ls.data[i].color[2]=lights[i]->b;ls.data[i].color[3]=1.0;
 
 			float z=1.0f,w=0.0f;
 			if( lights[i]->type!=Light::LIGHT_DISTANT ){
@@ -188,9 +192,7 @@ private:
 			}
 
 			float pos[]={ 0.0,0.0,z,w };
-			float rgba[]={ lights[i]->r,lights[i]->g,lights[i]->b,1.0f };
 			// glLightfv( GL_LIGHT0+i,GL_POSITION,pos );
-			// glLightfv( GL_LIGHT0+i,GL_DIFFUSE,rgba );
 
 			if( lights[i]->type!=Light::LIGHT_DISTANT ){
 				float light_range[]={ 0.0f };
@@ -210,6 +212,22 @@ private:
 
 			// glPopMatrix();
 		}
+
+		static unsigned int ubo=0;
+		if( !ubo ){
+			GLint idx=GL( glGetUniformBlockIndex( defaultProgram,"BBLightState" ) );
+			GL( glUniformBlockBinding( defaultProgram,idx,1 ) );
+
+			GL( glGenBuffers( 1,&ubo ) );
+			GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
+			GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(ls),0,GL_STATIC_DRAW ) );
+			GL( glBindBufferRange(GL_UNIFORM_BUFFER,1,ubo,0,sizeof(ls) ) );
+		}else{
+			GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
+		}
+
+		GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(ls),&ls,GL_STATIC_DRAW ) );
+		GL( glBindBuffer( GL_UNIFORM_BUFFER,0 ) );
 	}
 
 public:
@@ -269,13 +287,13 @@ public:
 	void setViewport( int x,int y,int w,int h ){
 		// y=context_height-(h+y);
 
-		x*=2.0;y*=2.0;
-		w*=2;h*=2;
+		// x*=2.0;y*=2.0;
+		// w*=2;h*=2;
 
 		GL( glViewport( x,y,w,h ) );
 		GL( glScissor( x,y,w,h ) );
 	}
-  void setOrthoProj( float nr,float fr,float w,float h ){}
+	void setOrthoProj( float nr,float fr,float w,float h ){}
 
 	// lifted from Mesa3D
 	void _math_matrix_frustum( float *mat,
