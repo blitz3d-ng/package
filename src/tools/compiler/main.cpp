@@ -26,6 +26,7 @@
 
 using namespace std;
 
+#include "target.h"
 #include "assem_x86/assem_x86.h"
 #include "codegen_x86/codegen_x86.h"
 #include "../legacy/debugger/debugger.h"
@@ -34,7 +35,6 @@ using namespace std;
 #include "codegen_llvm/codegen_llvm.h"
 #include "linker_lld/linker_lld.h"
 #include "jit_orc/jit_orc.h"
-#include "target.h"
 #endif
 
 #if defined(WIN32) && !defined(__MINGW32__)

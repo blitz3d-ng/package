@@ -22,7 +22,11 @@
 	#endif
 
 	#ifdef BB_ANDROID
-		#include <GLES2/gl2.h>
+		#include <GLES3/gl3.h>
+	#endif
+
+	#ifdef BB_NX
+		#include <GLES3/gl3.h>
 	#endif
 #endif
 

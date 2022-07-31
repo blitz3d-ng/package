@@ -256,7 +256,7 @@ int Codegen_LLVM::dumpToObj( std::string &out ) {
 	buffer_ostream dest( sstr );
 
 	legacy::PassManager pass;
-	if( targetMachine->addPassesToEmitFile( pass,(raw_pwrite_stream &)sstr,0,CGFT_ObjectFile ) ){
+	if( targetMachine->addPassesToEmitFile( pass,dest,0,CGFT_ObjectFile ) ){
 		errs()<<"target can't emit a file of this type\n";
 		return 1;
 	}

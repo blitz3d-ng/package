@@ -6,6 +6,7 @@ platforms:
   - linux
   - ios
   - emscripten
+  - nx
 
 modules:
   - stub

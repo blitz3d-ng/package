@@ -233,6 +233,14 @@ int gxGraphics::getHeight()const{
 	return front_canvas->getHeight();
 }
 
+int gxGraphics::getLogicalWidth()const{
+	return front_canvas->getWidth();
+}
+
+int gxGraphics::getLogicalHeight()const{
+	return front_canvas->getHeight();
+}
+
 int gxGraphics::getDepth()const{
 	return front_canvas->getDepth();
 }

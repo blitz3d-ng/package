@@ -4,6 +4,7 @@
 #include "blitz2d.gl.h"
 #include <cmath>
 #include <map>
+#include <algorithm>
 using namespace std;
 
 #include "default.glsl.h"

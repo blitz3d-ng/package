@@ -67,6 +67,8 @@ public:
 	//ACCESSORS
 	int getWidth()const;
 	int getHeight()const;
+	int getLogicalWidth()const;
+	int getLogicalHeight()const;
 	int getDepth()const;
 	int getScanLine()const;
 	int getAvailVidmem()const;

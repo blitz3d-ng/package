@@ -7,6 +7,8 @@
 #include <bb/input/input.h>
 #include <bb/hook/hook.h>
 
+#include <SDL_syswm.h>
+
 #include <map>
 using namespace std;
 
@@ -345,7 +347,7 @@ void *SDLRuntime::window(){
 	SDL_SysWMinfo info;
 	SDL_VERSION( &info.version );
 	SDL_GetWindowWMInfo( wnd,&info );
-	return wmInfo.info.win.window;
+	return info.info.win.window;
 #else
 	return 0;
 #endif

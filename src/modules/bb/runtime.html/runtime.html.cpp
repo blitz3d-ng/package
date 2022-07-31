@@ -2,12 +2,12 @@
 #include "../stdutil/stdutil.h"
 #include "runtime.html.h"
 
-#include <bb/blitz2d.gles2/blitz2d.gles2.h>
-#include <bb/blitz3d.gles2/blitz3d.gles2.h>
+#include <bb/blitz2d.gl/blitz2d.gl.h>
+#include <bb/blitz3d.gl/blitz3d.gl.h>
 
-class Canvas : public GLES2B2DDefaultCanvas{
+class Canvas : public GLB2DDefaultCanvas{
 public:
-	Canvas( int mode,int flags ):GLES2B2DDefaultCanvas(mode,flags){
+	Canvas( int mode,int flags ):GLB2DDefaultCanvas(0,mode,flags){
 	}
 
 	int getWidth()const{
@@ -24,7 +24,7 @@ public:
 };
 
 
-class HtmlRuntime : public BBRuntime, public BBContextDriver, public GLES2B3DGraphics, public B2DGraphics{
+class HtmlRuntime : public BBRuntime, public BBContextDriver, public GLB3DGraphics, public B2DGraphics{
 public:
 	HtmlRuntime(){
 		front_canvas=d_new Canvas( 0,0 );
@@ -94,6 +94,12 @@ public:
 		return 0;
 	}
 	int getHeight()const{
+		return 0;
+	}
+	int getLogicalWidth()const{
+		return 0;
+	}
+	int getLogicalHeight()const{
 		return 0;
 	}
 	int getDepth()const{
