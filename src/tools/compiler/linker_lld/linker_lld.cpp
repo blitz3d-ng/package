@@ -6,8 +6,8 @@
 #ifdef BB_POSIX
 #include <libgen.h>
 #include <sys/stat.h>
-#endif
 #include <unistd.h>
+#endif
 
 #ifdef BB_MSVC
 #define FORMAT coff
