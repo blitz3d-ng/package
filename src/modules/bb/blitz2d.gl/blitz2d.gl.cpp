@@ -28,7 +28,7 @@ struct Vertex{
 static GLuint defaultProgram=0;
 
 static
-bool makeProgram( float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
+bool makeProgram( float dpi,float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
 	if( !glIsProgram( defaultProgram ) ){
 		_bbLog( "rebuilding 2d shader...\n" );
 
@@ -42,31 +42,31 @@ bool makeProgram( float tx,float ty,bool tex_enabled,float resx,float resy,float
 
 		GLint texLocation=GL( glGetUniformLocation( defaultProgram,"u_tex" ) );
 		GL( glUniform1i( texLocation,0 ) );
+
+		GLint idx=GL( glGetUniformBlockIndex( defaultProgram,"BBRenderState" ) );
+		GL( glUniformBlockBinding( defaultProgram,idx,0 ) );
 	}
 
 	GL( glUseProgram( defaultProgram ) );
 
-	static UniformState us;
+	UniformState us={ 0 };
 	us.texscale[0]=tx;us.texscale[1]=ty;
 	us.texenabled=tex_enabled;
-	us.res[0]=resx;us.res[1]=resy;
+	us.res[0]=resx*dpi;us.res[1]=resy*dpi;
 	us.xywh[0]=x;us.xywh[1]=y;us.xywh[2]=width;us.xywh[3]=height;
 	us.color[0]=color[0];us.color[1]=color[1];us.color[2]=color[2];
-	us.scale=2.0;
+	us.scale=dpi;
 
 	static unsigned int ubo=0;
 	if( !ubo ){
-		GLint texStateIdx=GL( glGetUniformBlockIndex( defaultProgram,"BBRenderState" ) );
-		GL( glUniformBlockBinding( defaultProgram,texStateIdx,0 ) );
-
 		GL( glGenBuffers( 1,&ubo ) );
 		GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
-		GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(UniformState),0,GL_STATIC_DRAW ) );
-		GL( glBindBufferRange(GL_UNIFORM_BUFFER,0,ubo,0,sizeof(UniformState) ) );
+		GL( glBindBufferRange( GL_UNIFORM_BUFFER,0,ubo,0,sizeof(us) ) );
+	}else{
+		GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
 	}
 
-	GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
-	GL( glBufferSubData( GL_UNIFORM_BUFFER,0,sizeof(UniformState),&us ) );
+	GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(us),&us,GL_DYNAMIC_DRAW ) );
 	GL( glBindBuffer( GL_UNIFORM_BUFFER,0 ) );
 
 	return true;
@@ -123,6 +123,9 @@ void GLB2DCanvas::setHandle( int x,int y ){
 }
 
 void GLB2DCanvas::setViewport( int x,int y,int w,int h ){
+	x*=dpi;y*=dpi;
+	w*=dpi;h*=dpi;
+
 	GL( glEnable( GL_SCISSOR_TEST ) );
 	GL( glViewport( x,y,w,h ) );
 	GL( glScissor( x,y,w,h ) );
@@ -146,7 +149,7 @@ void GLB2DCanvas::plot( int x,int y ){
 
 	// GL( glEnable(GL_PROGRAM_POINT_SIZE) );
 
-	makeProgram( 1.0,1.0,false,width,height,x,y,1.0,1.0,color );
+	makeProgram( dpi,1.0,1.0,false,width,height,x,y,1.0,1.0,color );
 
 	GL( glBindVertexArray( array ) );
 	GL( glDrawArrays( GL_POINTS,0,1 ) );
@@ -163,9 +166,9 @@ void GLB2DCanvas::line( int x,int y,int x2,int y2 ){
 	initArrays( 1,&buffer,&array );
 
 	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
-	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW ) );
+	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_DYNAMIC_DRAW ) );
 
-	makeProgram( 1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( dpi,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
 
 	GL( glBindVertexArray( array ) );
 	GL( glDrawArrays( GL_LINES,0,2 ) );
@@ -201,9 +204,11 @@ void GLB2DCanvas::quad( int x,int y,int w,int h,bool solid,bool texenabled,float
 
 		GL( glBindBuffer( GL_ARRAY_BUFFER,buffer[1] ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices[1]),vertices[1],GL_STATIC_DRAW ) );
+
+		GL( glBindBuffer( GL_ARRAY_BUFFER,0 ) );
 	}
 
-	makeProgram( tx,ty,texenabled,width,height,x,y,w,h,color );
+	makeProgram( dpi,tx,ty,texenabled,width,height,x,y,w,h,color );
 
 	int i=solid?0:1;
 	GL( glBindVertexArray( array[i] ) );
@@ -237,10 +242,10 @@ void GLB2DCanvas::oval( int x,int y,int w,int h,bool solid ){
 		initArrays( 1,&buffer,&array );
 	}
 
-	makeProgram( 1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( dpi,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
 
 	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
-	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_STATIC_DRAW ) );
+	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_DYNAMIC_DRAW ) );
 
 	GL( glBindVertexArray( array ) );
 	GL( glDrawArrays( solid?GL_TRIANGLE_FAN:GL_LINE_LOOP,0,verts.size() ) );
@@ -318,10 +323,11 @@ void GLB2DCanvas::text( int x,int y,const std::string &t ){
 		initArrays( 1,&buffer,&array );
 	}
 
-	makeProgram( 1.0,1.0,true,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( dpi,1.0,1.0,true,width,height,0.0,0.0,1.0,1.0,color );
 
 	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
-	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_STATIC_DRAW ) );
+	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_DYNAMIC_DRAW ) );
+	GL( glBindBuffer( GL_ARRAY_BUFFER,0 ) );
 
 	GL( glBindVertexArray( array ) );
 	GL( glDrawArrays( GL_TRIANGLES,0,verts.size() ) );
@@ -366,9 +372,9 @@ void GLB2DCanvas::setPixel( int x,int y,unsigned argb ){
 #define UC(c) static_cast<unsigned char>(c)
 
 void GLB2DCanvas::setPixelFast( int x,int y,unsigned argb ){
-	unsigned char rgba[4]={ UC((argb>>16)&255),UC((argb>>8)&255),UC(argb&255),UC((argb>>24)&255) };
-
 	set();
+
+	// unsigned char rgba[4]={ UC((argb>>16)&255),UC((argb>>8)&255),UC(argb&255),UC((argb>>24)&255) };
 	// glRasterPos2f( x,y+1 );
 	// glDrawPixels( 1,1,GL_RGBA,GL_UNSIGNED_BYTE,rgba );
 }
@@ -389,11 +395,14 @@ void GLB2DDefaultCanvas::unset(){
 
 void GLB2DDefaultCanvas::set(){
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebuffer ) );
+
 #ifdef BB_DESKTOP
 	if( framebuffer==0 ){
 		GL( glDrawBuffer( mode ) );
 	}
 #endif
+
+	GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
 }
 
 unsigned int GLB2DDefaultCanvas::framebufferId(){

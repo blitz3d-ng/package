@@ -130,7 +130,7 @@ public:
 
 		for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
 
-		resize( 0,0 );
+		resize();
 	}
 
 	~SDLGraphics(){
@@ -139,12 +139,12 @@ public:
 		front_canvas=back_canvas=0;
 	}
 
-	void resize( int w,int h ){
+	void resize(){
 		SDL_GetWindowSize( wnd,&window_width,&window_height );
 		SDL_GL_GetDrawableSize( wnd,&drawable_width,&drawable_height );
 
-		((GLB2DCanvas*)front_canvas)->resize( drawable_width,drawable_height );
-		((GLB2DCanvas*)back_canvas)->resize( drawable_width,drawable_height );
+		((GLB2DCanvas*)front_canvas)->resize( window_width,window_height,getDensity() );
+		((GLB2DCanvas*)back_canvas)->resize( window_width,window_height,getDensity() );
 	}
 
 	// graphics
@@ -177,6 +177,7 @@ public:
 	int getLogicalWidth()const{ return window_width; };
 	int getLogicalHeight()const{ return window_height; };
 	int getDepth()const{ return 0; }
+	float getDensity()const{ return (float)drawable_width/window_width; };
 	int getScanLine()const{ return 0; }
 	int getAvailVidmem()const{ return 0; }
 	int getTotalVidmem()const{ return 0; }
@@ -228,16 +229,19 @@ BBGraphics *SDLRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	if( graphics ) return 0;
 
 	bool windowed=flags & BBGraphics::GRAPHICS_WINDOWED ? true : false;
+	bool scaled=windowed && (flags & BBGraphics::GRAPHICS_SCALED ? true : false);
 
 #ifdef BB_MOBILE
 	// no point in 'windowed' on mobile, right?
 	windowed=false;
+	scaled=false;
 #endif
 
 	SDL_DisplayMode mode;
 	SDL_GetCurrentDisplayMode( 0,&mode );
 	SDL_SetWindowPosition( wnd,(mode.w-w)/2.0f,(mode.h-h)/2.0f );
 	SDL_SetWindowSize( wnd,w,h );
+	SDL_SetWindowResizable( wnd,scaled?SDL_TRUE:SDL_FALSE );
 	SDL_ShowWindow( wnd );
 
 	static bool inited=false;
@@ -254,6 +258,11 @@ BBGraphics *SDLRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 		_bbLog( "GL Vendor:   %s\n",glGetString( GL_VENDOR ) );
 		_bbLog( "GL window:   %ix%i\n",screen_w,screen_h );
 		_bbLog( "GL drawable: %ix%i\n",drawableW,drawableH );
+
+		GL( glViewport( 0.0,0.0,drawableW,drawableH ) );
+		GL( glScissor( 0.0,0.0,drawableW,drawableH ) );
+		GL( glClearColor( 0.0,0.0,0.0,1.0 ) );
+		GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
 
 		inited=true;
 	}
@@ -310,7 +319,7 @@ bool SDLRuntime::idle(){
 			RTEX( 0 );
 		}else if( event.type==SDL_WINDOWEVENT ){
 			if( event.window.event==SDL_WINDOWEVENT_RESIZED ) {
-				resize( event.window.data1,event.window.data2 );
+				resize();
 			}
 		}else if( event.type==SDL_MOUSEMOTION ){
 			BBEvent ev( BBEVENT_MOUSEMOVE,0,event.motion.x,event.motion.y );
@@ -320,11 +329,13 @@ bool SDLRuntime::idle(){
 			bbOnEvent.run( &ev );
 		}else if( (event.type==SDL_KEYDOWN||event.type==SDL_KEYUP) && event.key.repeat==0 ){
 			int code=event.key.keysym.scancode;
-			cout<<"code: "<<code<<endl;
 			if( code>=MAX_SDL_SCANCODES ) continue;
 
 			int key=SDL_SCANCODE_MAP[code];
-			if( !key ) continue;
+			if( !key ){
+				cout<<"unmapped key code: "<<code<<endl;
+				continue;
+			}
 
 			BBEvent ev;
 			switch( event.type ){
@@ -371,8 +382,11 @@ void SDLRuntime::setTitle( const char *title ){
 	SDL_SetWindowTitle( wnd,title );
 }
 
-void SDLRuntime::resize( int width,int height ){
-	if( graphics ) graphics->resize( width,height );
+void SDLRuntime::resize(){
+	if( graphics ) {
+		graphics->resize();
+		GLB3DGraphics::resize( graphics->getLogicalWidth(),graphics->getLogicalHeight(),graphics->getDensity() );
+	}
 }
 
 #include <bb/input/input.h>

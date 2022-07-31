@@ -455,8 +455,8 @@ void BBCALL bbGraphics3D( bb_int_t w,bb_int_t h,bb_int_t d,bb_int_t mode ){
 	default:RTEX( "Illegal Graphics3D mode" );
 	}
 	graphics( w,h,d,flags );
-	extern void blitz3d_open( int w,int h );
-	blitz3d_open( w,h );
+	extern void blitz3d_open( int w,int h,float d );
+	blitz3d_open( w,h,gx_graphics->getDensity() );
 }
 #endif
 

@@ -10,6 +10,7 @@ protected:
 	void backup()const{}
 
 	int width,height;
+	float dpi;
 	mutable unsigned char *pixels;
 	BBImageFont *font;
 
@@ -25,8 +26,9 @@ public:
 		flags=f;
 	}
 
-	void resize( int w,int h ){
+	void resize( int w,int h,float d ){
 		width=w;height=h;
+		dpi=d;
 	}
 
 	virtual unsigned int framebufferId()=0;
@@ -115,6 +117,10 @@ public:
 
 	int getDepth()const{ return 8; }
 
+	void set(){
+		GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
+	}
+
 	void unset(){
 		GL( glFlush() );
 
@@ -149,10 +155,6 @@ public:
 		GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
 
 		return framebuffer;
-	}
-
-	void set(){
-		GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
 	}
 
 	void setPixmap( BBPixmap *pm ){

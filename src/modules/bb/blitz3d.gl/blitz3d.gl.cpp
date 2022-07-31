@@ -121,8 +121,7 @@ public:
 		verts[n].normal[0]=normal[0];verts[n].normal[1]=normal[1];verts[n].normal[2]=normal[2];
 		verts[n].tex_coord[0][0]=tex_coords[0][0];verts[n].tex_coord[0][1]=tex_coords[0][1];
 		verts[n].tex_coord[1][0]=tex_coords[1][0];verts[n].tex_coord[1][1]=tex_coords[1][1];
-		verts[n].color[0]=1.0;verts[n].color[1]=1.0;verts[n].color[2]=1.0;verts[n].color[3]=1.0;
-		// v_color[n]=argb;
+		verts[n].color[0]=((argb>>16)&255)/255.0;verts[n].color[1]=((argb>>8)&255)/255.0;verts[n].color[2]=(argb&255)/255.0;verts[n].color[3]=((argb>>24)&255)/255.0;
 	}
 
 	void setTriangle( int n,int v0,int v1,int v2 ){
@@ -163,8 +162,11 @@ struct UniformState{
 class GLScene : public BBScene{
 private:
 	int context_width,context_height;
+	float dpi;
 	bool wireframe;
 	UniformState us={ 0 };
+	GLuint defaultProgram=0;
+	int viewport[4];
 
 	std::vector<GLLight*> lights;
 
@@ -214,28 +216,29 @@ private:
 		}
 
 		static unsigned int ubo=0;
-		if( !ubo ){
-			GLint idx=GL( glGetUniformBlockIndex( defaultProgram,"BBLightState" ) );
-			GL( glUniformBlockBinding( defaultProgram,idx,1 ) );
-
+		if( ubo==0 ){
 			GL( glGenBuffers( 1,&ubo ) );
 			GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
-			GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(ls),0,GL_STATIC_DRAW ) );
-			GL( glBindBufferRange(GL_UNIFORM_BUFFER,1,ubo,0,sizeof(ls) ) );
+			GL( glBindBufferRange( GL_UNIFORM_BUFFER,1,ubo,0,sizeof(ls) ) );
 		}else{
 			GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
 		}
 
-		GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(ls),&ls,GL_STATIC_DRAW ) );
+		GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(ls),&ls,GL_DYNAMIC_DRAW ) );
 		GL( glBindBuffer( GL_UNIFORM_BUFFER,0 ) );
 	}
 
 public:
-	GLScene( int context_width,int context_height ):context_width(context_width),context_height(context_height),wireframe(false){
+	GLScene( int w,int h,float d ):context_width(w),context_height(h),dpi(d),wireframe(false){
 		memset( &us,0,sizeof(UniformState) );
 
 		const float MIDLEVEL[]={ 0.5f,0.5f,0.5f,1.0f };
 		setAmbient( MIDLEVEL );
+	}
+
+	void resize( int w,int h,float d ){
+		context_width=w;context_height=h;
+		dpi=d;
 	}
 
 	int  hwTexUnits(){ return 8; }
@@ -285,10 +288,10 @@ public:
 		}
 	}
 	void setViewport( int x,int y,int w,int h ){
-		// y=context_height-(h+y);
+		y=context_height-(h+y);
 
-		// x*=2.0;y*=2.0;
-		// w*=2;h*=2;
+		x*=dpi;y*=dpi;
+		w*=dpi;h*=dpi;
 
 		GL( glViewport( x,y,w,h ) );
 		GL( glScissor( x,y,w,h ) );
@@ -500,24 +503,17 @@ public:
 		}
 
 		static unsigned int ubo=0;
-		if( !ubo ){
-			GLint texStateIdx=GL( glGetUniformBlockIndex( defaultProgram,"BBRenderState" ) );
-			GL( glUniformBlockBinding( defaultProgram,texStateIdx,0 ) );
-
+		if( ubo==0 ){
 			GL( glGenBuffers( 1,&ubo ) );
 			GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
-			GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(UniformState),0,GL_STATIC_DRAW ) );
-			GL( glBindBufferRange(GL_UNIFORM_BUFFER,0,ubo,0,sizeof(UniformState) ) );
+			GL( glBindBufferRange( GL_UNIFORM_BUFFER,2,ubo,0,sizeof(us) ) );
+		}else{
+			GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
 		}
 
-		GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
-		GL( glBufferSubData( GL_UNIFORM_BUFFER,0,sizeof(UniformState),&us ) );
+		GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(us),&us,GL_DYNAMIC_DRAW ) );
 		GL( glBindBuffer( GL_UNIFORM_BUFFER,0 ) );
 	}
-
-	GLuint defaultProgram=0;
-
-	int viewport[4];
 
   //rendering
 	bool begin( const std::vector<BBLightRep*> &l ){
@@ -540,6 +536,12 @@ public:
 				GLint texLocation=GL( glGetUniformLocation( defaultProgram,sampler_name ) );
 				GL( glUniform1i( texLocation,i ) );
 			}
+
+			GLint lightIdx=GL( glGetUniformBlockIndex( defaultProgram,"BBLightState" ) );
+			GL( glUniformBlockBinding( defaultProgram,lightIdx,1 ) );
+
+			GLint renderIdx=GL( glGetUniformBlockIndex( defaultProgram,"BBRenderState" ) );
+			GL( glUniformBlockBinding( defaultProgram,renderIdx,2 ) );
 		}
 
 		GL( glUseProgram( defaultProgram ) );
@@ -608,8 +610,10 @@ public:
   int getTrianglesDrawn()const{ return 0; }
 };
 
-BBScene *GLB3DGraphics::createScene( int w,int h,int flags ){
-  return d_new GLScene( w,h );
+static GLScene *scene=0; // TODO: I don't like this...consider a better approach...
+
+BBScene *GLB3DGraphics::createScene( int w,int h,float d,int flags ){
+  return (scene=d_new GLScene( w,h,d ));
 }
 
 BBScene *GLB3DGraphics::verifyScene( BBScene *scene ){
@@ -619,10 +623,14 @@ BBScene *GLB3DGraphics::verifyScene( BBScene *scene ){
 void GLB3DGraphics::freeScene( BBScene *scene ){
 }
 
+void GLB3DGraphics::resize( int w,int h,float dpi ){
+	scene->resize( w,h,dpi );
+}
+
 BBMODULE_CREATE( blitz3d_gl ){
-  return true;
+	return true;
 }
 
 BBMODULE_DESTROY( blitz3d_gl ){
-  return true;
+	return true;
 }

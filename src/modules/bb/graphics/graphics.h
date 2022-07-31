@@ -43,6 +43,7 @@ public:
   virtual int getLogicalWidth()const=0;
   virtual int getLogicalHeight()const=0;
   virtual int getDepth()const=0;
+  virtual float getDensity()const=0;
   virtual int getScanLine()const=0;
   virtual int getAvailVidmem()const=0;
   virtual int getTotalVidmem()const=0;

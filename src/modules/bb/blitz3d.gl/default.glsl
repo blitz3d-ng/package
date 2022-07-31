@@ -111,7 +111,7 @@ void main() {
 
       nDotVP = max( 0.0,dot( bbVertex.Normal,LightPos ) );
       nDotHV = max( 0.0,dot( bbVertex.Normal,vec3( halfVector )));
-      pf = pow( nDotHV,100.0 )*int(nDotVP!=0.0);
+      pf = pow( nDotHV,100.0 )*float(nDotVP!=0.0);
 
       Diffuse  += LS.Light[i].Color * nDotVP;
       Specular += LS.Light[i].Color * pf;

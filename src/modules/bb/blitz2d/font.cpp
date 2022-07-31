@@ -11,11 +11,9 @@ BBFont::~BBFont(){
 }
 
 BBImageFont::BBImageFont( FT_Face f,int height ):face(f),atlas(0){
-	while( height ){
-		if( !FT_Set_Pixel_Sizes( face,0,height ) ) break;
-		height-=1;
-	}
-	baseline=(face->ascender+face->descender)>>6;
+	// TODO: this isn't quite right...
+	FT_Set_Char_Size( face,0,(height-3)*64,0,0 );
+	baseline=height;
 }
 
 BBImageFont *BBImageFont::load( const string &name,int height,int flags ){
