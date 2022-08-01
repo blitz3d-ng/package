@@ -1,4 +1,5 @@
 #include "linker_lld.h"
+#include "../package/package.h"
 #include <lld/Common/Driver.h>
 #include <iostream>
 #include <fstream>
@@ -57,8 +58,12 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 
 	string binaryPath=exeFile;
 
+	if( bundle.enabled && target.type=="android" ){
+		createApk( toolchain,bundle,target );
+	}
+
 #ifdef BB_MACOS
-	if( bundle.enabled ){
+	if( bundle.enabled && target.type=="native"||target.type=="ios"||target.type=="ios-sim" ){
 		string bundlePath=binaryPath;
 		binaryPath=binaryPath.substr( 0,binaryPath.size()-4 ); // remove .app
 		string bundleid=bundle.identifier;
@@ -177,84 +182,115 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	// just the name?
 	args.push_back( "linker" );
 
+	// TODO: should use find it via the environment...
+	string ndkroot="/opt/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64";
+	string sysroot=ndkroot+"/sysroot";
+
 #ifdef BB_POSIX
 	args.push_back("--error-limit=0");
 	// args.push_back("--lto-O0");
 #endif
 
+	if( target.type=="native" ){
 #ifdef BB_WINDOWS
-	args.push_back( "/errorlimit:0" );
+		args.push_back( "/errorlimit:0" );
 
-	// args.push_back( "/subsystem:windows" );
+		// args.push_back( "/subsystem:windows" );
 
-	args.push_back( "/nodefaultlib" );
-	args.push_back( "oldnames.lib" );
-	string winsdk="C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.22621.0";
-	string msvc="C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.32.31326";
-	args.push_back( "/libpath:"+winsdk+"\\ucrt\\x64" );
-	args.push_back( "/libpath:"+winsdk+"\\um\\x64" );
-	args.push_back( "/libpath:"+msvc+"\\lib\\x64" );
+		args.push_back( "/nodefaultlib" );
+		args.push_back( "oldnames.lib" );
+		string winsdk="C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.22621.0";
+		string msvc="C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.32.31326";
+		args.push_back( "/libpath:"+winsdk+"\\ucrt\\x64" );
+		args.push_back( "/libpath:"+winsdk+"\\um\\x64" );
+		args.push_back( "/libpath:"+msvc+"\\lib\\x64" );
 
-	args.push_back( "libucrt.lib" );
-	args.push_back( "libvcruntime.lib" );
-	args.push_back( "libcmt.lib" );
-	args.push_back( "libcpmt.lib" );
+		args.push_back( "libucrt.lib" );
+		args.push_back( "libvcruntime.lib" );
+		args.push_back( "libcmt.lib" );
+		args.push_back( "libcpmt.lib" );
 
-	// args.push_back( "ucrt.lib" );
-	// args.push_back( "vcruntime.lib" );
-	// args.push_back( "msvcrt.lib" );
-	// args.push_back( "msvcprt.lib" );
+		// args.push_back( "ucrt.lib" );
+		// args.push_back( "vcruntime.lib" );
+		// args.push_back( "msvcrt.lib" );
+		// args.push_back( "msvcprt.lib" );
 #endif
+	}else if( target.type=="android" ){
+		args.push_back("-m");args.push_back("aarch64linux");
 
-#ifdef BB_MACOS
-	std::string sdkname;
-	std::string platform_id,platform_version_min,platform_version_max;
+		args.push_back("-shared");
+		args.push_back("-u");args.push_back("SDL_main");
 
-	if( target.type=="ios" ){
-		sdkname="iPhoneOS";
-		platform_id="ios";
-		platform_version_min="15.4";
-		platform_version_max="15.4";
-	}else if( target.type=="ios-sim" ){
-		sdkname="iPhoneSimulator";
-		platform_id="ios-simulator";
-		platform_version_min=platform_version_max=target.version;
-	}else{
-		sdkname="MacOSX";
-		platform_id="macos";
-		platform_version_min=platform_version_max=target.version;
+		args.push_back("-z");args.push_back("noexecstack");
+		args.push_back("-EL");
+		args.push_back("--fix-cortex-a53-843419");
+		args.push_back("--warn-shared-textrel");
+		args.push_back("-z");args.push_back("now");
+		args.push_back("-z");args.push_back("relro");
+		args.push_back("-z");
+		args.push_back("max-page-size=4096");
+		args.push_back("--hash-style=both");
+		args.push_back("--enable-new-dtags");
+		args.push_back("--eh-frame-hdr");
+
+		args.push_back( ndkroot+"/sysroot/usr/lib/aarch64-linux-android/"+target.version+"/crtbegin_so.o");
+		args.push_back("-L");args.push_back( ndkroot+"/lib64/clang/11.0.5/lib/linux/aarch64");
+		args.push_back("-L");args.push_back( ndkroot+"/lib/gcc/aarch64-linux-android/4.9.x");
+		args.push_back("-L");args.push_back( ndkroot+"/aarch64-linux-android/lib64");
+		args.push_back("-L");args.push_back( ndkroot+"/aarch64-linux-android/lib");
+		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib/aarch64-linux-android/"+target.version);
+		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib/aarch64-linux-android");
+		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib");
 	}
 
-	// TODO: use xcrun --show-sdk-path
-	args.push_back("-syslibroot");
-	args.push_back( "/Applications/Xcode.app/Contents/Developer/Platforms/"+sdkname+".platform/Developer/SDKs/"+sdkname+".sdk" );
+#ifdef BB_MACOS
+	if( target.type=="native"||target.type=="ios"||target.type=="ios-sim" ){
+		std::string sdkname;
+		std::string platform_id,platform_version_min,platform_version_max;
 
-	libs.push_back( "objc" );
-	libs.push_back( "c" );
-	libs.push_back( "c++" );
+		if( target.type=="ios" ){
+			sdkname="iPhoneOS";
+			platform_id="ios";
+			platform_version_min="15.4";
+			platform_version_max="15.4";
+		}else if( target.type=="ios-sim" ){
+			sdkname="iPhoneSimulator";
+			platform_id="ios-simulator";
+			platform_version_min=platform_version_max=target.version;
+		}else{
+			sdkname="MacOSX";
+			platform_id="macos";
+			platform_version_min=platform_version_max=target.version;
+		}
 
-	libs.push_back( "System" );
-	// libs.push_back("System_asan");
+		// TODO: use xcrun --show-sdk-path
+		args.push_back("-syslibroot");
+		args.push_back( "/Applications/Xcode.app/Contents/Developer/Platforms/"+sdkname+".platform/Developer/SDKs/"+sdkname+".sdk" );
 
-	args.push_back("-arch");
-	args.push_back( target.arch );
+		libs.push_back( "objc" );
+		libs.push_back( "c" );
+		libs.push_back( "c++" );
 
-	args.push_back( "-platform_version" );args.push_back( platform_id );
-	args.push_back( platform_version_min );args.push_back( platform_version_max );
+		libs.push_back( "System" );
+		// libs.push_back("System_asan");
+
+		args.push_back("-arch");
+		args.push_back( target.arch );
+
+		args.push_back( "-platform_version" );args.push_back( platform_id );
+		args.push_back( platform_version_min );args.push_back( platform_version_max );
+	}
 #endif
 
+#if defined(BB_MACOS) && defined(BB_ASAN)
+	if( target.type=="native" ){
+		// TODO: fix this hardcoding
+		#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/lib/darwin"
 
-#ifdef BB_LINUX
-	args.push_back("--as-needed");
-#endif
-
-// TODO: fix this hardcoding
-#ifdef BB_ASAN
-	#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/lib/darwin"
-
-	args.push_back("-rpath");args.push_back(CLANG_LIBS);
-	args.push_back(CLANG_LIBS "/libclang_rt.asan_osx_dynamic.dylib");
-	args.push_back(CLANG_LIBS "/libclang_rt.osx.a");
+		args.push_back("-rpath");args.push_back(CLANG_LIBS);
+		args.push_back(CLANG_LIBS "/libclang_rt.asan_osx_dynamic.dylib");
+		args.push_back(CLANG_LIBS "/libclang_rt.osx.a");
+	}
 #endif
 
 #ifdef BB_WINDOWS
@@ -325,6 +361,8 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	mainFile.flush();
 	args.push_back( mainPath );
 
+	//*------------------------
+
 	for( auto lib:libs ){
 		string arg;
 #ifdef BB_WINDOWS
@@ -335,17 +373,20 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		args.push_back( arg );
 	}
 
+	if( target.type=="native" ){
 #ifdef BB_LINUX
-	args.push_back("-dynamic-linker");args.push_back("/lib64/ld-linux-x86-64.so.2");
+		args.push_back("-dynamic-linker");args.push_back("/lib64/ld-linux-x86-64.so.2");
 
-	// TODO: find out the best way to get this information from the environment
-	// TODO: gcc --print-file-name=libc.a
-
-	args.push_back("-L");args.push_back( LIBGCC_DIR );
-	args.push_back("-L");args.push_back( "/lib" );
-	args.push_back("-L");args.push_back( LIBARCH_DIR );
-	args.push_back("-L");args.push_back( "/usr/lib" );
+		// TODO: find out the best way to get this information from the environment
+		// TODO: gcc --print-file-name=libc.a
+		args.push_back("-L");args.push_back( LIBGCC_DIR );
+		args.push_back("-L");args.push_back( "/lib" );
+		args.push_back("-L");args.push_back( LIBARCH_DIR );
+		args.push_back("-L");args.push_back( "/usr/lib" );
 #endif
+	}else if( target.type=="android" ){
+		args.push_back("-dynamic-linker");args.push_back("/system/bin/linker64");
+	}
 
 	for( auto lib:systemlibs ){
 #ifdef BB_WINDOWS
@@ -361,20 +402,29 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #endif
 	}
 
+	if( target.type=="native" ){
 #ifdef BB_LINUX
-	args.push_back( LIBARCH_DIR "/crt1.o");
-	args.push_back( LIBARCH_DIR "/crti.o");
-	args.push_back( LIBGCC_DIR  "/crtbeginT.o");
+		args.push_back( LIBARCH_DIR "/crt1.o");
+		args.push_back( LIBARCH_DIR "/crti.o");
+		args.push_back( LIBGCC_DIR  "/crtbeginT.o");
 
-	args.push_back("-lstdc++");
-	args.push_back("--start-group");
-	args.push_back("-lgcc");
-	args.push_back("-lgcc_eh");
-	args.push_back("-lc");
-	args.push_back("--end-group");
-	args.push_back(  LIBGCC_DIR "/crtend.o");
-	args.push_back( LIBARCH_DIR "/crtn.o");
+		args.push_back("-lstdc++");
+		args.push_back("--start-group");
+		args.push_back("-lgcc");
+		args.push_back("-lgcc_eh");
+		args.push_back("-lc");
+		args.push_back("--end-group");
+		args.push_back(  LIBGCC_DIR "/crtend.o");
+		args.push_back( LIBARCH_DIR "/crtn.o");
 #endif
+	}else if( target.type=="android" ){
+		args.push_back("-l");args.push_back("c++_static");
+		args.push_back("-l");args.push_back("c++abi");
+		args.push_back("-l");args.push_back("gcc");
+		args.push_back("-l");args.push_back("c");
+		args.push_back("-l");args.push_back("gcc");
+		args.push_back( ndkroot+"/sysroot/usr/lib/aarch64-linux-android/"+target.version+"/crtend_so.o" );
+	}
 
 	std::vector<const char *> _args;
 	for( auto arg:args ){

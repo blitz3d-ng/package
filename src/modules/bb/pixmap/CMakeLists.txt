@@ -2,7 +2,7 @@ bb_start_module(pixmap)
 set(DEPENDS_ON bb.blitz)
 set(SOURCES pixmap.cpp pixmap.h)
 
-IF(BB_DESKTOP)
+IF(TARGET freeimage)
   set(SOURCES ${SOURCES} freeimage.loader.cpp)
   set(LIBS freeimage ${ZLIB})
 ELSEIF(BB_IOS)

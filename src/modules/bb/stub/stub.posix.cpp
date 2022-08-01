@@ -8,6 +8,12 @@
 #include <cstring>
 using namespace std;
 
+#ifndef BB_ANDROID
+#ifdef BB_DEBUG
+#define BB_BACKTRACE
+#endif
+#endif
+
 #include <signal.h>
 #include <unistd.h>
 #ifndef BB_ANDROID
@@ -50,7 +56,7 @@ public:
 	}
 };
 
-#ifdef BB_DEBUG
+#ifdef BB_BACKTRACE
 #define BACKTRACE_DEPTH 10
 static
 void dump_backtrace(int sig) {
@@ -67,8 +73,11 @@ void dump_backtrace(int sig) {
 
 extern "C"
 int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
-#ifdef BB_DEBUG
+#ifdef BB_BACKTRACE
 	signal(SIGSEGV, dump_backtrace);
+#endif
+
+#ifdef BB_DEBUG
   bb_env.debug=true;
 #else
   bb_env.debug=false;

@@ -5,18 +5,18 @@
 #include <vector>
 
 struct BundleFile {
-	string relativePath;
-	string absolutePath;
+	std::string relativePath;
+	std::string absolutePath;
 
-	BundleFile( string relpath,string abspath ):relativePath(relpath),absolutePath(abspath){};
+	BundleFile( std::string relpath,std::string abspath ):relativePath(relpath),absolutePath(abspath){};
 };
 
 struct BundleInfo {
 	bool enabled=false; // bundle this app?
-	string identifier; // platform specific ID
-	string appName; // label used wherever a human readable title is needed
-	vector<BundleFile> files; // files to copy into the bundle
-	string signerId,teamId;
+	std::string identifier; // platform specific ID
+	std::string appName; // label used wherever a human readable title is needed
+	std::vector<BundleFile> files; // files to copy into the bundle
+	std::string signerId,teamId;
 };
 
 #endif

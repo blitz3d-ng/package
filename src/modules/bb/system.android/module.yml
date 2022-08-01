@@ -1,0 +1,8 @@
+name: Android System
+description: Provides access to various Android operating system functions.
+
+platforms:
+  - android
+
+dependencies:
+  - system

@@ -2,6 +2,10 @@ IF(NOT BB_IOS)
   add_subdirectory(zlib)
 ENDIF()
 
+IF(BB_ANDROID)
+  add_subdirectory(android_native_app_glue)
+ENDIF()
+
 IF(NOT BB_EMSCRIPTEN AND NOT BB_NX)
   add_subdirectory(enet)
 ENDIF()
@@ -24,11 +28,12 @@ IF(NOT BB_NX)
   add_subdirectory(sdl)
 ENDIF()
 
-IF(BB_DESKTOP)
+IF(BB_DESKTOP OR BB_ANDROID)
   add_subdirectory(freeimage)
-  if(BB64)
-    add_subdirectory(wxwidgets)
-  endif()
+ENDIF()
+
+IF(BB_DESKTOP AND BB64)
+  add_subdirectory(wxwidgets)
 ENDIF()
 
 IF(BB_WINDOWS)

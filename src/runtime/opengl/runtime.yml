@@ -1,10 +1,8 @@
 name: OpenGL
 
 platforms:
-  - windows
-  - macos
-  - linux
-  - ios
+  - desktop
+  - mobile
   - emscripten
   - nx
 
@@ -24,6 +22,7 @@ modules:
   - system.macos
   - system.linux
   - system.ios
+  - system.android
   - filesystem.windows
   - filesystem.posix
   - timer.windows

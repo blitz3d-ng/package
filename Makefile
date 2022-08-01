@@ -4,6 +4,12 @@ GENERATOR_OPTIONS := -k 0
 
 LLVM_VERSION=14.0.4
 
+ifeq ($(shell uname -m), arm64)
+ARCH := arm64
+else
+ARCH := x86_64
+endif
+
 ifeq ($(shell uname), Darwin)
 NUMBER_OF_CORES=$(shell sysctl -n hw.ncpu)
 PLATFORM := macos
@@ -12,18 +18,21 @@ NUMBER_OF_CORES=$(shell grep -c ^processor /proc/cpuinfo)
 PLATFORM := linux
 endif
 
-IOS_VERSION=15.4
+IOS_VERSION:=15.4
 IOS_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/ios.toolchain.cmake -DENABLE_BITCODE=OFF -DDEPLOYMENT_TARGET=$(IOS_VERSION)
 
+ANDROID_PLATFORM:=29
+
 ifeq ($(PLATFORM), ios)
-CMAKE_OPTIONS=$(IOS_OPTIONS) -DARCH=arm64 -DARCHS=arm64 -DPLATFORM=OS64
+ARCH=arm64
+CMAKE_OPTIONS=$(IOS_OPTIONS) -DARCHS=arm64 -DPLATFORM=OS64
 endif
 
 ifeq ($(PLATFORM), ios-sim)
-ifeq ($(shell uname -m), arm64)
-IOS_PLATFORM := SIMULATORARM64
+ifeq ($(ARCH), arm64)
+IOS_PLATFORM:=SIMULATORARM64
 else
-IOS_PLATFORM := SIMULATOR64
+IOS_PLATFORM:=SIMULATOR64
 endif
 CMAKE_OPTIONS=$(IOS_OPTIONS) -DPLATFORM=$(IOS_PLATFORM)
 endif
@@ -33,24 +42,28 @@ CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/emsdk/upstream/emscripten/cmake/Module
 endif
 
 ifeq ($(PLATFORM), mingw32)
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake -DARCH=i686
+ARCH=i686
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake
 endif
 
 ifeq ($(PLATFORM), mingw64)
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake -DARCH=x86_64
+ARCH=x86_64
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/mingw-w64.toolchain.cmake
 endif
 
 ifeq ($(PLATFORM), android)
-ANDROID_ABI := armeabi-v7a
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/android-sdk/ndk-bundle/build/cmake/android.toolchain.cmake -DANDROID_ABI="$(ANDROID_ABI)" -DANDROID_LD=deprecated -DARCH=armeabi-v7a
+ARCH:=arm64-v8a# armeabi-v7a x86_64 x86
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=$(ANDROID_HOME)/ndk-bundle/build/cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=$(ANDROID_PLATFORM) -DANDROID_PLATFORM=$(ANDROID_PLATFORM) -DANDROID_ABI="$(ARCH)" -DANDROID_LD=deprecated -DARCH=$(ARCH)
 endif
 
 ifeq ($(PLATFORM), nx)
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/devkita64.toolchain.cmake
 endif
 
+BUILD_DIR=build/$(ARCH)-$(PLATFORM)/$(ENV)
+
 build:
-	cmake -G $(GENERATOR) -H. -Bbuild/$(PLATFORM)/$(ENV) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) $(CMAKE_OPTIONS) && (cd build/$(PLATFORM)/$(ENV) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
+	cmake -G $(GENERATOR) -H. -B$(BUILD_DIR) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) -DARCH=$(ARCH) $(CMAKE_OPTIONS) && (cd $(BUILD_DIR) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
 
 llvm:
 	test -d deps/llvm/tree || git clone -b llvmorg-$(LLVM_VERSION) --recursive https://github.com/llvm/llvm-project.git deps/llvm/tree

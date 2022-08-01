@@ -10,6 +10,7 @@
 *.app/
 *.lib
 *.a
+*.jar
 *.log
 *.exp
 *.asm
@@ -37,6 +38,7 @@ UpgradeLog.htm
 *.bb_bak*
 
 _release/bin/**/*.i
+_release/bin/**/*.xml
 _release/bin/blitzcc
 _release/bin/ide2
 _release/cfg/blitzide.prefs

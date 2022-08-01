@@ -229,7 +229,7 @@ bool Codegen_LLVM::verify(){
 void Codegen_LLVM::injectMain(){
 	std::string mainsym="main";
 	// TODO: not the cleanest, but works for now...
-	if( target=="ios"||target=="ios-sim" ){
+	if( target=="ios"||target=="ios-sim"||target=="android" ){
 		mainsym="SDL_main";
 	}
 

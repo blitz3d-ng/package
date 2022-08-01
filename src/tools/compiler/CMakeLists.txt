@@ -109,6 +109,8 @@ add_executable(blitzcc
 
   linker_x86/linker.h linker_x86/linker.cpp linker_x86/image_util.h linker_x86/image_util.cpp
 
+  package/package_apk.cpp package/package_app.cpp package/package.h
+
   std.cpp std.h
 )
 
@@ -150,6 +152,9 @@ if(LLVM_FOUND)
 
     linker_lld/linker_lld.h
     linker_lld/linker_lld.cpp
+
+    package/package_app.cpp
+    package/package_apk.cpp
 
     jit_orc/jit_orc.cpp jit_orc/jit_orc.h
   )

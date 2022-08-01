@@ -16,6 +16,19 @@ if(TARGET SDL2)
     set(LIBS ${LIBS} dxguid)
   elseif(BB_IOS)
     set(SYSTEM_LIBS "-framework Foundation" "-framework UIKit" "-framework CoreFoundation" "-framework CoreVideo" "-framework CoreAudio" "-framework AVFAudio" "-framework AudioToolBox" "-framework Metal" "-framework GameController" "-framework CoreHaptics" "-framework CoreBluetooth" "-framework CoreMotion" "-framework CoreGraphics" "-framework QuartzCore" iconv)
+  elseif(BB_ANDROID)
+    set(SYSTEM_LIBS GLESv1_CM GLESv2 OpenSLES android dl)
   endif()
   bb_end_module()
+
+  if(BB_ANDROID)
+    add_jar(RTjar android/Game.java
+      INCLUDE_JARS ${ANDROID_JAR}
+                   ${TOOLCHAIN_PATH}/lib/SDL.jar
+      OUTPUT_NAME Runtime
+      OUTPUT_DIR ${TOOLCHAIN_PATH}/lib
+    )
+
+    file(INSTALL android/manifest.template.xml DESTINATION ${TOOLCHAIN_PATH})
+  endif()
 endif()
