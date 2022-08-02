@@ -624,7 +624,9 @@ void GLB3DGraphics::freeScene( BBScene *scene ){
 }
 
 void GLB3DGraphics::resize( int w,int h,float dpi ){
-	scene->resize( w,h,dpi );
+	if( scene ){
+		scene->resize( w,h,dpi );
+	}
 }
 
 BBMODULE_CREATE( blitz3d_gl ){

@@ -5,27 +5,78 @@
 #include <vector>
 using namespace std;
 
-void createApk( const string &toolchain,const BundleInfo &bundle,const Target &target ){
-	string tmpdir=string( tmpnam(0) );
-	string manifestpath=/*tmpdir+*/"AndroidManifest.xml";
+#include <unistd.h>
 
-	// cout<<"path: "<<manifestpath<<endl;
+#define RUN( args ) if( system( string(args).c_str() )!=0 ) { cerr<<"error on "<<__FILE__<<":"<<__LINE__<<endl;abort(); }
 
-	vector<string> features;
-	features.push_back( "android.hardware.touchscreen" );
-	features.push_back( "android.hardware.bluetooth" );
-	features.push_back( "android.hardware.gamepad" );
-	features.push_back( "android.hardware.usb.host" );
-	features.push_back( "android.hardware.type.pc" );
+void createApk( const string &out,const string &tmpdir,const string &home,const string &toolchain,const BundleInfo &bundle,const Target &target,const string &androidsdk ){
+	string libdir=toolchain+"/lib";
 
-	vector<string> permissions;
-	permissions.push_back( "android.permission.BLUETOOTH" );
-	permissions.push_back( "android.permission.BLUETOOTH_CONNECT" );
-	permissions.push_back( "android.permission.VIBRATE" );
-	permissions.push_back( "android.permission.HIGH_SAMPLING_RATE_SENSORS" );
+	string btversion="30.0.2";
+	string buildtools=androidsdk+"/build-tools/"+btversion;
+	string aapt=buildtools+"/aapt";
+	string aapt2=buildtools+"/aapt2";
+	string dex=buildtools+"/dx";
+	string apksigner=buildtools+"/apksigner";
+	string zipalign=buildtools+"/zipalign";
+	string androidjar=androidsdk+"/platforms/android-"+target.version+"/android.jar";
 
+	// TODO: support release keys...
+	string keystore=home+"/cfg/debug.keystore";
+	string keystorepass="pass:android";
+
+	string manifest=tmpdir+"/AndroidManifest.xml";
+
+	string resdir=tmpdir+"/res";
+
+	RUN( "mkdir -p "+resdir );
+
+	// icons...
+	RUN( "mkdir -p "+resdir+"/mipmap-hdpi" );
+	RUN( "mkdir -p "+resdir+"/mipmap-mdpi" );
+	RUN( "mkdir -p "+resdir+"/mipmap-xhdpi" );
+	RUN( "mkdir -p "+resdir+"/mipmap-xxhdpi" );
+	RUN( "mkdir -p "+resdir+"/mipmap-xxxhdpi" );
+
+	RUN( "cp "+home+"/cfg/bbexe.png "+resdir+"/mipmap-hdpi/ic_launcher.png" );
+	RUN( "cp "+home+"/cfg/bbexe.png "+resdir+"/mipmap-mdpi/ic_launcher.png" );
+	RUN( "cp "+home+"/cfg/bbexe.png "+resdir+"/mipmap-xhdpi/ic_launcher.png" );
+	RUN( "cp "+home+"/cfg/bbexe.png "+resdir+"/mipmap-xxhdpi/ic_launcher.png" );
+	RUN( "cp "+home+"/cfg/bbexe.png "+resdir+"/mipmap-xxxhdpi/ic_launcher.png" );
+
+	// values...
+	RUN( "mkdir -p "+resdir+"/values" );
+
+	ofstream colors;
+	colors.open( resdir+"/values/colors.xml" );
+	colors<<"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+	colors<<"<resources>\n";
+	colors<<"  <color name=\"colorPrimary\">#3F51B5</color>\n";
+	colors<<"  <color name=\"colorPrimaryDark\">#303F9F</color>\n";
+	colors<<"  <color name=\"colorAccent\">#FF4081</color>\n";
+	colors<<"</resources>\n";
+	colors.close();
+
+	ofstream strings;
+	strings.open( resdir+"/values/strings.xml" );
+	strings<<"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+	strings<<"<resources>\n";
+	strings<<"    <string name=\"app_name\">"+bundle.appName+"</string>\n";
+	strings<<"</resources>\n";
+	strings.close();
+
+	ofstream styles;
+	styles.open( resdir+"/values/styles.xml" );
+	styles<<"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+	styles<<"<resources>\n";
+	styles<<"  <style name=\"AppTheme\" parent=\"android:Theme.Holo.Light.DarkActionBar\">\n";
+	styles<<"  </style>\n";
+	styles<<"</resources>\n";
+	styles.close();
+
+	// manifest...
 	ofstream m;
-	m.open( manifestpath );
+	m.open( manifest );
 	m<<"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 	m<<"<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n";
 	m<<"  package=\""+bundle.identifier+"\"\n";
@@ -46,4 +97,31 @@ void createApk( const string &toolchain,const BundleInfo &bundle,const Target &t
 	}
 	m<<"</manifest>\n";
 	m.close();
+
+	// assets...
+	RUN( "mkdir -p "+tmpdir+"/assets" );
+	bundleFiles( bundle,tmpdir+"/assets" );
+
+	// build the apk...
+
+	RUN( dex+" --dex --output="+tmpdir+"/classes.dex "+libdir+"/SDL.jar "+libdir+"/Runtime.jar" );
+	RUN( aapt2+" compile -v --dir "+resdir+" -o "+tmpdir+"/resources.zip" );
+	RUN( aapt2+" link -v -o "+tmpdir+"/unaligned.apk -I "+androidjar+" --manifest "+manifest+" -A "+tmpdir+"/assets "+tmpdir+"/resources.zip" );
+
+	// since relative paths create issues...
+	char dir[PATH_MAX];
+	getwd( dir );
+	string currdir=string( dir );
+	chdir( tmpdir.c_str() );
+	RUN( "zip -u unaligned.apk classes.dex lib/**/*.so" );
+	chdir( currdir.c_str() );
+
+	RUN( (zipalign+" -f 4 "+tmpdir+"/unaligned.apk "+tmpdir+"/signed.apk").c_str() );
+
+	if( access( keystore.c_str(),F_OK ) ) {
+		RUN( ("keytool -genkey -v -keystore "+keystore+" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname \"C=US, O=Android, CN=Android Debug\"" ).c_str() );
+	}
+	RUN( (apksigner+" sign --ks "+keystore+" --ks-pass "+keystorepass+" "+tmpdir+"/signed.apk").c_str() );
+
+	RUN( ("cp "+tmpdir+"/signed.apk "+out).c_str() );
 }

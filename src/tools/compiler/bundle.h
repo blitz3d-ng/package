@@ -19,4 +19,6 @@ struct BundleInfo {
 	std::string signerId,teamId;
 };
 
+void bundleFiles( const BundleInfo &bundle,const std::string &path );
+
 #endif

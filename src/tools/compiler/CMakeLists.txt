@@ -153,11 +153,15 @@ if(LLVM_FOUND)
     linker_lld/linker_lld.h
     linker_lld/linker_lld.cpp
 
-    package/package_app.cpp
+    package/bundle.cpp
     package/package_apk.cpp
 
     jit_orc/jit_orc.cpp jit_orc/jit_orc.h
   )
+
+  if(BB_MACOS)
+    target_sources(blitzcc PUBLIC package/package_app.cpp)
+  endif()
 
   target_include_directories(blitzcc PRIVATE ${LLVM_INCLUDE_DIRS})
 
@@ -171,10 +175,8 @@ if(LLVM_FOUND)
     target_link_libraries(blitzcc lldCOFF lldMinGW)
   elseif(BB_MACOS)
     target_link_libraries(blitzcc lldMachO)
-  elseif(BB_LINUX)
-    target_link_libraries(blitzcc lldELF)
   endif()
-  target_link_libraries(blitzcc lldWasm ${LLVM_LIBS} zlibstatic)
+  target_link_libraries(blitzcc lldWasm lldELF ${LLVM_LIBS} zlibstatic)
 endif()
 
 if(BB_COVERAGE)

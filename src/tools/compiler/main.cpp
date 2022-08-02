@@ -301,7 +301,7 @@ int main( int argc,char *argv[] ){
 	targets.push_back( Target( "arm64-apple-ios15.4","ios","arm64","15.4" ) );
 	targets.push_back( Target( BB_ARCH"-apple-ios-sim15.4","ios-sim",BB_ARCH,"15.4" ) );
 #endif
-	targets.push_back( Target( "arm64-v8a-android-29","android","arm64-v8a","29" ) );
+	targets.push_back( Target( "arm64-v8a-android-30","android","arm64-v8a","30" ) );
 	targets.push_back( Target( "wasm32-unknown-emscripten","wasm","wasm32","" ) );
 	Target target=targets[0];
 
@@ -448,7 +448,7 @@ int main( int argc,char *argv[] ){
 			}
 		}
 
-		if( bundle.enabled&&out_file.size() ){
+		if( bundle.enabled && out_file.size() && target.type=="native" ){
 #ifdef BB_MACOS
 			out_file+=".app";
 #endif

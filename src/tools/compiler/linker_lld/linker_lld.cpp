@@ -12,18 +12,22 @@
 
 #ifdef BB_MSVC
 #define FORMAT coff
+#define UNAME
 #endif
 
 #ifdef BB_MINGW
 #define FORMAT mingw
+#define UNAME
 #endif
 
 #ifdef BB_MACOS
 #define FORMAT macho
+#define UNAME "darwin"
 #endif
 
 #ifdef BB_LINUX
 #define FORMAT elf
+#define UNAME "linux"
 #endif
 
 static
@@ -51,139 +55,58 @@ Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 
 void Linker_LLD::createExe( const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
 	std::string toolchain=home+"/bin/"+target.triple;
-	std::string lib_dir=toolchain+"/lib";
+	std::string libdir=toolchain+"/lib";
+
+	// string tmpdir=string( tmpnam(0) );
+	string tmpdir="tmp/apk";
 
 	// TODO: sort out all the lazy strdup business below...
 	std::vector<string> args,libs,systemlibs;
 
 	string binaryPath=exeFile;
 
-	if( bundle.enabled && target.type=="android" ){
-		createApk( toolchain,bundle,target );
+	bool apk=false,app=false,ios=false;
+
+	if( bundle.enabled||target.type=="android" ){
+		if( target.type=="android" ){
+			apk=true;
+		}else if( target.type=="ios"||target.type=="ios-sim" ){
+#ifdef BB_MACOS
+			ios=true;
+			app=true;
+#endif
+		}else if( target.type=="native" ){
+#ifdef BB_MACOS
+			app=true;
+#endif
+		}
 	}
 
+	if( apk ){
+		remove( exeFile.c_str() );
+		system( ("rm -rf "+tmpdir).c_str() );
+
+		// arm64-v8a armeabi-v7a x86_64 x86
+		system( ("mkdir -p "+tmpdir+"/lib/arm64-v8a").c_str() );
+		binaryPath=tmpdir+"/lib/arm64-v8a/libmain.so";
+	}
 #ifdef BB_MACOS
-	if( bundle.enabled && target.type=="native"||target.type=="ios"||target.type=="ios-sim" ){
-		string bundlePath=binaryPath;
+	if( app ){
 		binaryPath=binaryPath.substr( 0,binaryPath.size()-4 ); // remove .app
-		string bundleid=bundle.identifier;
 		string appid=basename( (char*)binaryPath.c_str() );
-		string apptitle=bundle.appName;
-		if( apptitle=="" ){
-			apptitle[0]=toupper(apptitle[0]);
-		}
+		binaryPath=exeFile+"/"+appid;
 
-		mkdir( bundlePath.c_str(),0755 );
+		system( ("mkdir -p "+exeFile).c_str() );
 		remove( binaryPath.c_str() );
-
-		string iconPath=home+"/cfg/bbexe.icns";
-		if( target.type=="ios"||target.type=="ios-sim" ){
-			iconPath=home+"/cfg/bbios.icns";
-		}
-
-		// TODO: a bit lazy...
-		if( system( ("cp "+iconPath+" "+bundlePath+"/"+appid+".icns").c_str() ) ){
-			exit( 1 );
-		}
-		for( auto &file:bundle.files ){
-			string from=file.absolutePath;
-			string to=file.relativePath;
-
-			// TODO: not perfect...
-			size_t pos=0;
-			while( (pos=to.find("../"))!=std::string::npos ){
-				to.replace( pos,3,"" );
-			}
-
-			string dir=bundlePath;
-			size_t start=0,end=0;
-			while( (end=to.find( "/",start ))!=std::string::npos ){
-				dir+="/"+to.substr( start,end );
-				mkdir( dir.c_str(),0755 );
-				start=end+1;
-			}
-
-			cout<<"Copying "+file.relativePath+"..."<<endl;
-			if( system( ("cp "+from+" "+bundlePath+"/"+to).c_str() ) ){
-				exit( 1 );
-			}
-		}
-
-		if( target.type=="ios"||target.type=="ios-sim" ){
-			cout<<"Copying b3dlogo.png..."<<endl;
-			if( system( ("cp "+home+"/cfg/b3dlogo.png "+bundlePath+"/launch-logo.png").c_str() ) ){
-				exit( 1 );
-			}
-
-			cout<<"Generating launch storyboard..."<<endl;
-			system( ("ibtool --compile '"+bundlePath+"/launch.storyboardc' '"+home+"/cfg/b3dsplash.storyboard'").c_str() );
-		}
-
-		ofstream plist;
-		plist.open( bundlePath+"/Info.plist");
-		plist << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-		plist << "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
-		plist << "<plist version=\"1.0\">\n";
-		plist << "<dict>\n";
-		plist << "  <key>CFBundleName</key>\n";
-		plist << "  <string>"<<apptitle<<"</string>\n";
-		plist << "  <key>CFBundleDisplayName</key>\n";
-		plist << "  <string>"<<apptitle<<"</string>\n";
-		plist << "  <key>CFBundleExecutable</key>\n";
-		plist << "  <string>"<<appid<<"</string>\n";
-		plist << "  <key>CFBundleIconFile</key>\n";
-		plist << "  <string>"<<appid<<".icns</string>\n";
-		plist << "  <key>CFBundlePackageType</key>\n";
-		plist << "  <string>APPL</string>\n";
-		plist << "  <key>CFBundleIdentifier</key>\n";
-		plist << "  <string>"<<bundleid<<"</string>\n";
-		plist << "  <key>CFBundleInfoDictionaryVersion</key>\n";
-		plist << "  <string>6.0</string>\n";
-		plist << "  <key>CFBundleShortVersionString</key>\n";
-		plist << "  <string>1.0.0</string>\n";
-		plist << "  <key>CFBundleSignature</key>\n";
-		plist << "  <string>\?\?\?\?</string>\n";
-		plist << "  <key>CFBundleVersion</key>\n";
-		plist << "  <string>1.0</string>\n";
-		plist << "  <key>NSMainNibFile</key>\n";
-		plist << "  <string></string>\n";
-		plist << "  <key>UIApplicationSupportsIndirectInputEvents</key>\n";
-		plist << "  <true/>\n";
-		if( target.type=="ios"||target.type=="ios-sim" ){
-			plist << "  <key>UILaunchStoryboardName</key>\n";
-			plist << "  <string>launch</string>\n";
-			plist << "  <key>UISupportedInterfaceOrientations</key>\n";
-			plist << "  <array>\n";
-			plist << "    <string>UIInterfaceOrientationPortrait</string>\n";
-			plist << "    <string>UIInterfaceOrientationPortraitUpsideDown</string>\n";
-			plist << "    <string>UIInterfaceOrientationLandscapeLeft</string>\n";
-			plist << "    <string>UIInterfaceOrientationLandscapeRight</string>\n";
-			plist << "  </array>\n";
-			plist << "  <key>UIDeviceFamily</key>\n";
-			plist << "  <array>\n";
-			plist << "    <string>1</string>\n";
-			plist << "    <string>2</string>\n";
-			plist << "  </array>\n";
-		}
-		plist << "</dict>\n";
-		plist << "</plist>\n";
-
-		plist.close();
-
-		ofstream pkginfo;
-		pkginfo.open( bundlePath+"/PkgInfo");
-		pkginfo << "APPL????";
-		pkginfo.close();
-
-		binaryPath=bundlePath+"/"+appid;
 	}
 #endif
 
 	// just the name?
 	args.push_back( "linker" );
 
-	// TODO: should use find it via the environment...
-	string ndkroot="/opt/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64";
+	// TODO: verify environment...
+	string androidsdk=string( getenv("ANDROID_HOME") );
+	string ndkroot=androidsdk+"/ndk-bundle/toolchains/llvm/prebuilt/" UNAME "-x86_64";
 	string sysroot=ndkroot+"/sysroot";
 
 #ifdef BB_POSIX
@@ -306,10 +229,10 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #endif
 
 #ifdef BB_WINDOWS
-	string libPath="/libpath:"+lib_dir;
+	string libPath="/libpath:"+libdir;
 	args.push_back( libPath );
 #else
-	args.push_back( "-L" );args.push_back( lib_dir );
+	args.push_back( "-L" );args.push_back( libdir );
 #endif
 
 	ifstream rti( toolchain+"/runtime."+rt+".i" );
@@ -431,9 +354,17 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		_args.push_back( strdup( arg.c_str() ) );
 	}
 
-	if( !lld::FORMAT::link( _args,llvm::outs(),llvm::errs(),false,false ) ){
+	bool success=false;
+	if( target.type=="android" ){
+		success=lld::elf::link( _args,llvm::outs(),llvm::errs(),false,false );
+	}else{
+		success=lld::FORMAT::link( _args,llvm::outs(),llvm::errs(),false,false );
+	}
+
+	if( !success ){
+		cerr<<"failed to link"<<endl;
 		exit( 1 );
-	};
+	}
 
 	for( auto s:_args ){
 		free( (char*)s );
@@ -442,29 +373,11 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	remove( mainPath.c_str() );
 
 #ifdef BB_MACOS
-	if( bundle.enabled && bundle.signerId.size()>0 ){
-		string options="--force --timestamp=none --sign '"+bundle.signerId+"'";
-		if( bundle.teamId.size()>0 ){
-			string xcentPath=string( tmpnam(0) )+".xcent";
-
-			ofstream xcent;
-			xcent.open( xcentPath );
-			xcent<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-			xcent<<"<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
-			xcent<<"<plist version=\"1.0\">\n";
-			xcent<<"<dict>\n";
-			xcent<<"  <key>application-identifier</key>\n";
-			xcent<<"  <string>"<<bundle.teamId<<"."<<bundle.identifier<<"</string>\n";
-			xcent<<"  <key>com.apple.developer.team-identifier</key>\n";
-			xcent<<"  <string>"<<bundle.teamId<<"</string>\n";
-			xcent<<"</dict>\n";
-			xcent<<"</plist>\n";
-			xcent.close();
-
-			options +=" --entitlements "+xcentPath;
-		}
-
-		system( ("codesign "+options+" "+binaryPath).c_str() );
+	if( app ){
+		createApp( exeFile,home,bundle,target );
 	}
 #endif
+	if( apk ){
+		createApk( exeFile,tmpdir,home,toolchain,bundle,target,androidsdk );
+	}
 }
