@@ -105,6 +105,9 @@ public:
 	int getDepth()const{
 		return 0;
 	}
+	float getDensity()const{
+		return 1.0;
+	}
 	int getScanLine()const{
 		return 0;
 	}

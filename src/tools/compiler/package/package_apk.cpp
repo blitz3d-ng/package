@@ -6,6 +6,7 @@
 using namespace std;
 
 #include <unistd.h>
+#include <limits.h>
 
 #define RUN( args ) if( system( string(args).c_str() )!=0 ) { cerr<<"error on "<<__FILE__<<":"<<__LINE__<<endl;abort(); }
 
@@ -103,7 +104,6 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	bundleFiles( bundle,tmpdir+"/assets" );
 
 	// build the apk...
-
 	RUN( dex+" --dex --output="+tmpdir+"/classes.dex "+libdir+"/SDL.jar "+libdir+"/Runtime.jar" );
 	RUN( aapt2+" compile -v --dir "+resdir+" -o "+tmpdir+"/resources.zip" );
 	RUN( aapt2+" link -v -o "+tmpdir+"/unaligned.apk -I "+androidjar+" --manifest "+manifest+" -A "+tmpdir+"/assets "+tmpdir+"/resources.zip" );
