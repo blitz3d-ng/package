@@ -34,14 +34,17 @@ IF NOT "%PLATFORM%" == "win32" (
 
 IF "%PLATFORM%" == "win32" (
   SET ARCH=Win32
+  SET BBARCH=x86
 )
 
 IF "%PLATFORM%" == "win64" (
   SET ARCH=x64
+  SET BBARCH=x86_64
 )
 
 IF "%PLATFORM%" == "woa64" (
   SET ARCH=ARM64
+  SET BBARCH=arm64
 )
 
 ECHO Building %PLATFORM% in %ENV% mode using VS %VisualStudioVersion%.
@@ -49,7 +52,7 @@ ECHO Building %PLATFORM% in %ENV% mode using VS %VisualStudioVersion%.
 set OUTPUT=_release\toolchains\%PLATFORM%
 set RELEASE=_release
 
-cmake -G "%GENERATOR%" -H. -B"%cd%\build\%PLATFORM%\%ENV%" -A%ARCH% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b 1
+cmake -G "%GENERATOR%" -H. -B"%cd%\build\%PLATFORM%\%ENV%" -A%ARCH% -DARCH=%BBARCH% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b 1
 msbuild /nologo /verbosity:normal /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%CONFIG% /property:Platform=%ARCH% || exit /b 1
 
 COPY /Y deps\fmod\bin\fmod*.dll %RELEASE%\bin

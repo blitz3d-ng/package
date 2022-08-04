@@ -245,6 +245,10 @@ int gxGraphics::getDepth()const{
 	return front_canvas->getDepth();
 }
 
+float gxGraphics::getDensity()const{
+	return 1.0;
+}
+
 BBFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 	int bold=flags & BBFont::FONT_BOLD ? FW_BOLD : FW_REGULAR;
 	int italic=flags & BBFont::FONT_ITALIC ? 1 : 0;
@@ -528,7 +532,7 @@ static void pickTexFmts( gxGraphics *g,int hi ){
 	}
 }
 
-BBScene *gxGraphics::createScene( int w,int h,int flags ){
+BBScene *gxGraphics::createScene( int w,int h,float d,int flags ){
 	if( scene_set.size() ) return 0;
 
 	//get d3d
