@@ -54,11 +54,25 @@ Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
 void Linker_LLD::createExe( const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
+	// string tmpdir=string( tmpnam(0) );
+	string tmpdir="tmp/apk";
+
 	std::string toolchain=home+"/bin/"+target.triple;
 	std::string libdir=toolchain+"/lib";
 
-	// string tmpdir=string( tmpnam(0) );
-	string tmpdir="tmp/apk";
+	string androidsdk,ndkroot,sysroot;
+	if( target.type=="android" ){
+		char *androidhome=getenv("ANDROID_HOME");
+		// TODO: verify environment at the start...
+		if( androidhome==0 ){
+			cerr<<"ANDROID_HOME is not set"<<endl;
+			exit( 1 );
+		}
+
+		androidsdk=string( androidhome );
+		ndkroot=androidsdk+"/ndk-bundle/toolchains/llvm/prebuilt/" UNAME "-x86_64";
+		sysroot=ndkroot+"/sysroot";
+	}
 
 	// TODO: sort out all the lazy strdup business below...
 	std::vector<string> args,libs,systemlibs;
@@ -103,11 +117,6 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 
 	// just the name?
 	args.push_back( "linker" );
-
-	// TODO: verify environment...
-	string androidsdk=string( getenv("ANDROID_HOME") );
-	string ndkroot=androidsdk+"/ndk-bundle/toolchains/llvm/prebuilt/" UNAME "-x86_64";
-	string sysroot=ndkroot+"/sysroot";
 
 #ifdef BB_POSIX
 	args.push_back("--error-limit=0");

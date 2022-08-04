@@ -177,8 +177,12 @@ json ProgNode::toJSON( Environ *e ){
 #include <llvm/IR/Verifier.h>
 
 void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
-	g->module->setModuleIdentifier(stmts->file);
-	g->module->setSourceFileName(stmts->file);
+	g->module->setModuleIdentifier( stmts->file );
+	g->module->setSourceFileName( stmts->file );
+
+	if( g->debug ){
+		g->dbgCU=g->dbgBuilder->createCompileUnit( llvm::dwarf::DW_LANG_C,g->dbgBuilder->createFile( "const.bb","/Users/kevin/b3d/test/language" ),"blitzcc",0,"",0 );
+	}
 
 	int k;
 	for( k=0;k<sem_env->decls->size();++k ){
@@ -207,6 +211,19 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 
 	auto mainFt=llvm::FunctionType::get( g->voidTy,none,false );
 	g->bbMain=llvm::Function::Create( mainFt,llvm::Function::ExternalLinkage,"bbMain",g->module.get() );
+
+	if( g->debug ){
+		llvm::DIFile *Unit=g->dbgBuilder->createFile( "const.bb","/Users/kevin/b3d/test/language" );
+		llvm::DIScope *FContext=Unit;
+		unsigned LineNo=0,ScopeLine=0;
+		llvm::SmallVector<llvm::Metadata*,8> EltTys;
+		llvm::DISubroutineType *sub=g->dbgBuilder->createSubroutineType( g->dbgBuilder->getOrCreateTypeArray( EltTys ) );
+		llvm::DISubprogram *SP = g->dbgBuilder->createFunction( FContext,"bbMain",llvm::StringRef(),Unit,LineNo,sub,ScopeLine,llvm::DINode::FlagPrototyped,llvm::DISubprogram::SPFlagDefinition );
+		g->bbMain->setSubprogram( SP );
+
+		g->dbgBlocks.push_back( SP );
+	}
+
 	auto block = llvm::BasicBlock::Create( *g->context,"entry",g->bbMain );
 	g->builder->SetInsertPoint( block );
 
@@ -225,6 +242,10 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 
 	g->builder->CreateRetVoid();
 
+	if( g->debug ){
+		g->dbgBlocks.pop_back();
+		g->dbgBuilder->finalize();
+	}
 	g->verify();
 }
 #endif

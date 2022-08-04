@@ -16,6 +16,11 @@ static map<string,llvm::Value*> fileMap2;
 
 void StmtNode::debug2( int pos,Codegen_LLVM *g ){
 	if( g->debug ){
+		llvm::DIScope *scope=g->dbgBlocks.back();
+		int row=(pos>>16)&0xffff;
+		int col=pos&0xffff;
+		g->builder->SetCurrentDebugLocation( llvm::DILocation::get( scope->getContext(),row,col,scope ) );
+
 		auto t=fileMap2[fileLabel];
 		if( !t ) t=fileMap2[fileLabel]=g->builder->CreateGlobalStringPtr( fileLabel );
 		g->CallIntrinsic( "_bbDebugStmt",g->voidTy,2,g->constantInt( pos ),t );

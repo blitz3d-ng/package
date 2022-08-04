@@ -75,6 +75,11 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	vecels.push_back( intTy ); // size
 	vecels.push_back( llvm::PointerType::get( bbType,0 ) ); // elementType
 	bbVecType->setBody( vecels );
+
+	if( debug ){
+		dbgBuilder=new DIBuilder( *module );
+		dbgFloatTy=dbgBuilder->createBasicType( "double",64,dwarf::DW_ATE_float );
+	}
 }
 
 void Codegen_LLVM::SetTarget( const ::Target &t ){
@@ -179,6 +184,10 @@ llvm::GlobalVariable *Codegen_LLVM::getArray( std::string &ident, int dims ){
 }
 
 void Codegen_LLVM::optimize(){
+	if( debug ){
+		return;
+	}
+
 	// until the gosub implementation is improved, we have to relax optimization
 	// to avoid long build times...
 	if( gosubUsed ){

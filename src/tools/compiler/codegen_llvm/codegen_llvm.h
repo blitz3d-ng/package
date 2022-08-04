@@ -4,6 +4,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/DIBuilder.h>
 #include <llvm/Target/TargetMachine.h>
 #include <map>
 #include <string>
@@ -70,6 +71,12 @@ public:
 
 	int dumpToObj( std::string &out );
 	void dumpToStderr();
+
+	// debug
+	llvm::DIBuilder *dbgBuilder;
+	llvm::DICompileUnit *dbgCU;
+	llvm::DIType *dbgFloatTy;
+	std::vector<llvm::DIScope *> dbgBlocks;
 };
 
 #endif
