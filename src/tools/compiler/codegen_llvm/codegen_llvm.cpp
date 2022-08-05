@@ -85,7 +85,7 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 void Codegen_LLVM::SetTarget( const ::Target &t ){
 	target=t.type;
 
-	if( target!="native" ){
+	if( !t.host ){
 		InitializeAllTargetInfos();
 		InitializeAllTargets();
 		InitializeAllTargetMCs();

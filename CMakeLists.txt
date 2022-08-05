@@ -192,15 +192,18 @@ ELSEIF(BB_MINGW)
   set(BB_VENDOR windows)
   set(BB_SYS mingw)
 ELSEIF(BB_MACOS)
+  execute_process(COMMAND sw_vers -productVersion OUTPUT_VARIABLE BB_PLATFORM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
   set(BB_VENDOR apple)
-  set(BB_SYS darwin${CMAKE_SYSTEM_VERSION})
+  set(BB_SYS darwin${BB_PLATFORM_VERSION})
 ELSEIF(BB_LINUX)
   set(BB_VENDOR linux)
   set(BB_SYS gnu)
 ELSEIF(BB_IOS)
+  set(BB_PLATFORM_VERSION ${DEPLOYMENT_TARGET})
   set(BB_VENDOR apple)
   set(BB_SYS ${BB_PLATFORM}${DEPLOYMENT_TARGET})
 ELSEIF(BB_ANDROID)
+  set(BB_PLATFORM_VERSION ${ANDROID_PLATFORM})
   set(BB_VENDOR android)
   set(BB_SYS ${ANDROID_PLATFORM})
 ELSEIF(BB_EMSCRIPTEN)
@@ -351,3 +354,11 @@ add_subdirectory(src/tools)
 
 # extras...
 add_subdirectory(src/bindings)
+
+file(WRITE ${TOOLCHAIN_PATH}/toolchain.toml "id = \"${BB_TRIPLE}\"
+platform = \"${BB_PLATFORM}\"
+platform_version = \"${BB_PLATFORM_VERSION}\"
+arch = \"${BB_ARCH}\"
+\n${RUNTIMES_IFACE}
+${MODULES_IFACE}
+")

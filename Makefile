@@ -60,10 +60,20 @@ ifeq ($(PLATFORM), nx)
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/devkita64.toolchain.cmake
 endif
 
-BUILD_DIR=build/$(ARCH)-$(PLATFORM)/$(ENV)
+BUILD_DIR=build/$(ARCH)-$(PLATFORM)-$(ENV)
 
-build:
+host:
 	cmake -G $(GENERATOR) -H. -B$(BUILD_DIR) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) -DARCH=$(ARCH) $(CMAKE_OPTIONS) && (cd $(BUILD_DIR) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
+
+ios:
+	make PLATFORM=ios
+	make PLATFORM=ios-sim
+
+android:
+	make PLATFORM=android ARCH=arm64-v8a
+	make PLATFORM=android ARCH=armeabi-v7a
+	make PLATFORM=android ARCH=x86_64
+	make PLATFORM=android ARCH=x86
 
 llvm:
 	test -d deps/llvm/tree || git clone -b llvmorg-$(LLVM_VERSION) --recursive https://github.com/llvm/llvm-project.git deps/llvm/tree
@@ -77,7 +87,6 @@ install-unit-test:
 
 clean:
 	rm -rf build
-	rm -rf _release/toolchains/arm*
-	rm -rf _release/toolchains/x84*
+	rm -rf _release/bin
 
 .PHONY: build llvm install-unit-test clean

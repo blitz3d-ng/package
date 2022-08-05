@@ -40,6 +40,7 @@ UpgradeLog.htm
 
 _release/bin/**/*.i
 _release/bin/**/*.xml
+_release/bin/**/*.toml
 _release/bin/blitzcc
 _release/bin/ide2
 _release/cfg/blitzide.prefs

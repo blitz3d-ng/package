@@ -140,7 +140,7 @@ if(BB_LINUX AND BB_GNU)
 endif()
 
 target_include_directories(blitzcc PRIVATE ../src/runtime)
-target_link_libraries(blitzcc stdutil nlohmann_json)
+target_link_libraries(blitzcc stdutil toml11 nlohmann_json)
 target_output_to_bin(blitzcc)
 
 if(LLVM_FOUND)

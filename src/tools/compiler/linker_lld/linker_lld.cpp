@@ -30,26 +30,6 @@
 #define UNAME "linux"
 #endif
 
-static
-void parse_list( std::string &line,std::vector<string> &libs ){
-	size_t s=0,e=line.find(";");
-	while( 1 ) {
-		string frag=line.substr( s,e-s );
-		while( frag[0] == ' ' ) frag=frag.substr( 1 );
-
-		if( frag.length() == 0 ) break;
-
-		libs.push_back( frag );
-
-		if( e==string::npos ) {
-			break;
-		}
-
-		s=e+1;
-		e=line.find(";",s);
-	}
-}
-
 Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
@@ -89,7 +69,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 			ios=true;
 			app=true;
 #endif
-		}else if( target.type=="native" ){
+	}else if( target.host ){
 #ifdef BB_MACOS
 			app=true;
 #endif
@@ -123,7 +103,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	// args.push_back("--lto-O0");
 #endif
 
-	if( target.type=="native" ){
+	if( target.host ){
 #ifdef BB_WINDOWS
 		args.push_back( "/errorlimit:0" );
 
@@ -176,7 +156,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	}
 
 #ifdef BB_MACOS
-	if( target.type=="native"||target.type=="ios"||target.type=="ios-sim" ){
+	if( target.host||target.type=="ios"||target.type=="ios-sim" ){
 		std::string sdkname;
 		std::string platform_id,platform_version_min,platform_version_max;
 
@@ -215,7 +195,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #endif
 
 #if defined(BB_MACOS) && defined(BB_ASAN)
-	if( target.type=="native" ){
+	if( target.host ){
 		// TODO: fix this hardcoding
 		#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/lib/darwin"
 
@@ -244,47 +224,13 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	args.push_back( "-L" );args.push_back( libdir );
 #endif
 
-	ifstream rti( toolchain+"/runtime."+rt+".i" );
-	if (!rti.is_open()) {
-		cerr<<"Cannot find interface file for runtime."<<rt<<endl;
-		exit( 1 );
-	}
+	libs.push_back( "runtime."+rt+".static" );
 
-	string line;
-	vector<string> modules;
-	while( getline( rti,line ) ) {
-		string d="DEPS:";
-		if( line.find( d )==0 ){
-			line=line.substr( d.size() );
-			parse_list( line,modules );
-		}
-	}
-
-	string rtlib="runtime."+rt+".static";
-	libs.push_back( rtlib );
-
-	// libs.push_back( "bb."+mod );
-	for( std::string mod:modules ){
-		// libs.push_back( "bb."+mod );
-
-		string line;
-		ifstream iface( toolchain+"/cfg/"+mod+".i" );
-		if (!iface.is_open()) {
-			cerr<<"Cannot find interface file for "<<mod<<endl;
-			abort();
-		}
-
-		while( getline( iface,line ) ) {
-			string s="LIBS:",sl="SYSTEM_LIBS:";
-			if( line.find( s )==0 ){
-				line=line.substr( s.size() );
-				parse_list( line,libs );
-			}else if( line.find( sl )==0 ){
-				line=line.substr( sl.size() );
-				parse_list( line,systemlibs );
-			}
-		}
-		iface.close();
+	const Target::Runtime &rti=target.runtimes.at( rt );
+	for( std::string mod:rti.modules ){
+		const Target::Module &m=target.modules.at( mod );
+		for( string lib:m.libs ) libs.push_back( lib );
+		for( string lib:m.system_libs ) systemlibs.push_back( lib );
 	}
 
 	string mainPath=string(tmpnam(0))+".o";
@@ -305,7 +251,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		args.push_back( arg );
 	}
 
-	if( target.type=="native" ){
+	if( target.host ){
 #ifdef BB_LINUX
 		args.push_back("-dynamic-linker");args.push_back("/lib64/ld-linux-x86-64.so.2");
 
@@ -334,7 +280,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #endif
 	}
 
-	if( target.type=="native" ){
+	if( target.host ){
 #ifdef BB_LINUX
 		args.push_back( LIBARCH_DIR "/crt1.o");
 		args.push_back( LIBARCH_DIR "/crti.o");

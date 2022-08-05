@@ -31,6 +31,8 @@ using namespace std;
 #include "codegen_x86/codegen_x86.h"
 #include "../legacy/debugger/debugger.h"
 
+#include <toml.hpp>
+
 #ifdef USE_LLVM
 #include "codegen_llvm/codegen_llvm.h"
 #include "linker_lld/linker_lld.h"
@@ -47,6 +49,7 @@ using namespace std;
 #include <unistd.h>
 #include <execinfo.h>
 #include <signal.h>
+#include <dirent.h>
 
 #define TRACE_DEPTH 100
 static
@@ -192,6 +195,60 @@ static void demoError(){
 	exit(0);
 }
 
+#ifndef BB_WIN32
+const char *enumTargets( vector<Target> &targets ){
+	char *p=getenv( "blitzpath" );
+	if( !p ) return "Can't find blitzpath environment variable";
+	string home=string( p );
+
+	string binpath=home+"/bin";
+	DIR *bindir=opendir( binpath.c_str() );
+	if( bindir ){
+		struct dirent *ent;
+		while( (ent=readdir( bindir ))!=NULL ){
+			if( ent->d_type==DT_DIR && string(ent->d_name)!=string(".") && string(ent->d_name)!=string("..") ){
+				string toolpath=binpath+"/"+ent->d_name;
+				DIR *tooldir=opendir( toolpath.c_str() );
+				while( (ent=readdir( tooldir ))!=NULL ){
+					if( ent->d_type==DT_REG && string(ent->d_name)=="toolchain.toml" ){
+
+						auto data=toml::parse( toolpath+"/"+ent->d_name );
+						const string triple=toml::find<std::string>( data,"id" );
+						const string platform=toml::find<std::string>( data,"platform" );
+						const string platform_version=toml::find<std::string>( data,"platform_version" );
+						const string arch=toml::find<std::string>( data,"arch" );
+
+						Target t=Target( triple,platform,arch,platform_version );
+
+						for( const auto &[ id,data ]:toml::find( data,"runtime" ).as_table() ){
+							Target::Runtime rt;
+							rt.id=id;
+							rt.entry=toml::find<std::string>( data,"entry" );;
+							rt.modules=toml::find<vector<string>>( data,"deps" );
+							t.runtimes.insert( pair<string,Target::Runtime>( id,rt ) );
+						}
+
+						for( const auto &[ id,data ]:toml::find( data,"module" ).as_table() ){
+							Target::Module mod;
+							mod.id=id;
+							if( data.contains("libs") ) mod.libs=toml::find<vector<string>>( data,"libs" );
+							if( data.contains("system_libs") ) mod.system_libs=toml::find<vector<string>>( data,"system_libs" );
+							t.modules.insert( pair<string,Target::Module>( id,mod ) );
+						}
+
+						targets.push_back( t );
+					}
+				}
+				closedir( tooldir );
+			}
+		}
+		closedir( bindir );
+	}
+
+	return 0;
+}
+#endif
+
 #ifdef WIN32
 static const char *enumRuntimes( vector<string> &rts ){
 	char *p=getenv( "blitzpath" );
@@ -293,18 +350,10 @@ int main( int argc,char *argv[] ){
 		}
 	}
 
-	// TODO: needs to be more dynamic...
-	vector<string> rts;
 	vector<Target> targets;
-	targets.push_back( Target( BB_TRIPLE,"native",BB_ARCH,"21.2.0" ) );
-#ifdef BB_MACOS
-	targets.push_back( Target( "arm64-apple-ios15.4","ios","arm64","15.4" ) );
-	targets.push_back( Target( BB_ARCH"-apple-ios-sim15.4","ios-sim",BB_ARCH,"15.4" ) );
-#endif
-	targets.push_back( Target( "arm64-v8a-android-30","android","arm64-v8a","30" ) );
-	targets.push_back( Target( "wasm32-unknown-emscripten","wasm","wasm32","" ) );
-	Target target=targets[0];
+	if( const char *er=enumTargets( targets ) ) err( er );
 
+	vector<string> rts;
 #ifdef WIN32
 	if( const char *er=enumRuntimes( rts ) ) err( er );
 
@@ -328,20 +377,21 @@ int main( int argc,char *argv[] ){
 #endif
 
 	int ti=-1;
-	if( targetid.size() ){
-		for( int i=0;i<targets.size();i++ ){
-			if( targetid==targets[i].triple||targetid==targets[i].type ){
-				ti=i;
-			}
+	for( int i=0;i<targets.size();i++ ){
+		if(
+			(targetid.size()==0&&targets[i].host)||
+			(targetid=="host"&&targets[i].host)||
+			(targetid==targets[i].triple||targetid==targets[i].type)
+		){
+			ti=i;
+			break;
 		}
-
-		if( ti==-1 ) err( "Invalid target" );
-	}else{
-		ti=0;
 	}
-	target=targets[ti];
 
-	if( target.type!="native" ){
+	if( ti==-1 ) err( "Invalid target" );
+
+	Target target=targets[ti];
+	if( !target.host ){
 		compileonly=true;
 	}
 
@@ -448,7 +498,7 @@ int main( int argc,char *argv[] ){
 			}
 		}
 
-		if( bundle.enabled && out_file.size() && target.type=="native" ){
+		if( bundle.enabled && out_file.size() && target.host ){
 #ifdef BB_MACOS
 			out_file+=".app";
 #endif

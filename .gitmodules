@@ -34,3 +34,6 @@
 [submodule "deps/sdl/tree"]
 	path = deps/sdl/tree
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "deps/toml11/tree"]
+	path = deps/toml11/tree
+	url = https://github.com/ToruNiina/toml11.git
