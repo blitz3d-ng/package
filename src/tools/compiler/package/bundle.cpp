@@ -3,8 +3,13 @@
 #include <iostream>
 using namespace std;
 
+#ifdef BB_WINDOWS
+#include <direct.h>
+#define mkdir( p,a ) mkdir( p )
+#else
 #include <unistd.h>
 #include <libgen.h>
+#endif
 #include <sys/stat.h>
 
 void bundleFiles( const BundleInfo &bundle,const string &path ){

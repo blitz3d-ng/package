@@ -5,7 +5,20 @@
 #include <vector>
 using namespace std;
 
+#ifdef BB_WINDOWS
+#include <io.h>
+#include <direct.h>
+#include <stdlib.h>
+#define PATH_MAX _MAX_PATH
+#define getwd( buff ) _getcwd( buff,_MAX_PATH )
+#define access( a,b ) (_access( a,b )==0)
+#define chdir _chdir
+#define F_OK 00
+#define FILE_EXISTS 0
+#else
 #include <unistd.h>
+#define FILE_EXISTS
+#endif
 #include <limits.h>
 
 #define RUN( args ) if( system( string(args).c_str() )!=0 ) { cerr<<"error on "<<__FILE__<<":"<<__LINE__<<endl;abort(); }

@@ -70,6 +70,7 @@ public:
 	int getLogicalWidth()const;
 	int getLogicalHeight()const;
 	int getDepth()const;
+	float getDensity()const;
 	int getScanLine()const;
 	int getAvailVidmem()const;
 	int getTotalVidmem()const;
@@ -90,7 +91,7 @@ public:
 	BBFont *verifyFont( BBFont *font );
 	void freeFont( BBFont *font );
 
-	BBScene *createScene( int w,int h,int flags );
+	BBScene *createScene( int w,int h,float d,int flags );
 	BBScene *verifyScene( BBScene *scene );
 	void freeScene( BBScene *scene );
 };
