@@ -195,7 +195,7 @@ static void demoError(){
 	exit(0);
 }
 
-#ifndef BB_WIN32
+#ifndef WIN32
 const char *enumTargets( vector<Target> &targets ){
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
@@ -245,6 +245,11 @@ const char *enumTargets( vector<Target> &targets ){
 		closedir( bindir );
 	}
 
+	return 0;
+}
+#else
+const char *enumTargets( vector<Target> &targets ){
+	targets.push_back( Target( BB_TRIPLE,BB_PLATFORM,BB_ARCH,"" ) );
 	return 0;
 }
 #endif
