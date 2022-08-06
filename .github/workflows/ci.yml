@@ -59,39 +59,43 @@ jobs:
   #     - run: ./env.sh mingw sh ./test/entry.mingw32.sh
   #       continue-on-error: true
 
-  # macos:
-  #   name: macOS
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     matrix:
-  #       os:
-  #         # - macos-10.15
-  #         - macos-11
-  #         - macos-12
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         submodules: recursive
-  #     # - run: |
-  #     #     mkdir _release/toolchains
-  #     #     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.4/clang+llvm-14.0.4-x86_64-apple-darwin.tar.xz
-  #     #     tar xf clang+llvm-14.0.4-x86_64-apple-darwin.tar.xz
-  #     #     mv clang+llvm-14.0.4-x86_64-apple-darwin llvm
-  #     # - run: brew install ninja gcovr
-  #     # - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
-  #     # - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
-  #     - name: Archive toolchain and package
-  #       run: |
-  #         mkdir -p _release/bin
-  #         echo "hello, world" > _release/bin/hello-world.txt
-  #         make dist-toolchain dist-pkg
-  #         mv toolchain.zip toolchain-${{ matrix.os }}.zip
-  #         mv package.zip package-${{ matrix.os }}.zip
-  #     - name: Upload toolchain and package
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: ${{ matrix.os }}
-  #         path: "*-${{ matrix.os }}.zip"
+  macos:
+    name: macOS
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          # - macos-10.15
+          - macos-11
+          - macos-12
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      # - run: |
+      #     mkdir _release/toolchains
+      #     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.4/clang+llvm-14.0.4-x86_64-apple-darwin.tar.xz
+      #     tar xf clang+llvm-14.0.4-x86_64-apple-darwin.tar.xz
+      #     mv clang+llvm-14.0.4-x86_64-apple-darwin llvm
+      # - run: brew install ninja gcovr
+      # - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
+      # - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
+      - name: Archive toolchain and package
+        run: |
+          mkdir -p _release/bin/macos _release/hello-world.app
+          echo "hello, world" > _release/bin/macos/hello-world.txt
+          echo "hello, world" > _release/bin/hello-world.txt
+          echo "hello, world" > _release/hello-world.app/hello-world.txt
+      # make dist-toolchain dist-pkg
+      # mv toolchain.zip toolchain-${{ matrix.os }}.zip
+      # mv package.zip package-${{ matrix.os }}.zip
+      - name: Upload toolchain and package
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.os }}
+          path: |
+            _release/bin
+            _release/*.app
 
 
   # linux:
@@ -111,30 +115,32 @@ jobs:
   #     - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
   #     #- run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
 
-  # ios:
-  #   name: iOS
-  #   runs-on: macos-latest
-  #   strategy:
-  #     matrix:
-  #       device:
-  #         - ios
-  #         - ios-sim
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         submodules: recursive
-  #     - run: brew install ninja gcovr
-  #     - run: make ENV=release PLATFORM=${{ matrix.device }}
-  #     - name: Archive toolchain and package
-  #       run: |
-  #         make dist-toolchain dist-pkg
-  #         mv toolchain.zip toolchain-${{ matrix.device }}.zip
-  #         mv package.zip package-${{ matrix.device }}.zip
-  #     - name: Upload toolchain and package
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: ${{ matrix.device }}
-  #         path: "*-${{ matrix.device }}.zip"
+  ios:
+    name: iOS
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        device:
+          - ios
+          - ios-sim
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: brew install ninja gcovr
+      - run: make ENV=release PLATFORM=${{ matrix.device }}
+      - name: Archive toolchain and package
+        run: |
+          mkdir -p _release/bin/ios
+          echo "hello, world" > _release/bin/ios/hello-world.txt
+      # make dist-toolchain dist-pkg
+      # mv toolchain.zip toolchain-${{ matrix.device }}.zip
+      # mv package.zip package-${{ matrix.device }}.zip
+      - name: Upload toolchain and package
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.device }}
+          path: _release/bin
 
   # android:
   #   name: Android
@@ -200,8 +206,8 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - windows
-      # - macos
-      # - ios
+      - macos
+      - ios
       # - android
     #if: startsWith(github.ref, 'refs/tags/v')
     steps:
@@ -212,6 +218,9 @@ jobs:
           export GITHUB_TAG=$(echo ${GITHUB_REF#refs/tags/})
           echo "GITHUB_TAG=$GITHUB_TAG" >> $GITHUB_ENV
 
+      ##
+      # Windows
+      #
       - name: Download win32
         uses: actions/download-artifact@v3
         with:
@@ -224,31 +233,66 @@ jobs:
           name: win64
           path: _release
 
-      # - name: Download macos-11
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: macos-11
+      - name: Create Windows package
+        run: |
+          make dist-pkg
+          mv package.zip blitz3d-ng-${{ env.GITHUB_TAG }}-windows.zip
+          git clean -xfd _release
+
+      ##
+      # macOS 11
       #
-      # - name: Download macos-12
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: macos-12
+      - name: Download macos-11
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-11
 
-      # - name: Download ios
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: toolchain-ios
+      - name: Download ios
+        uses: actions/download-artifact@v3
+        with:
+          name: toolchain-ios
+
+      - name: Download ios-sim
+        uses: actions/download-artifact@v3
+        with:
+          name: toolchain-ios-sim
+
+      - name: Create macOS 11 package
+        run: |
+          make dist-pkg
+          mv package.zip blitz3d-ng-${{ env.GITHUB_TAG }}-macos11.zip
+          git clean -xfd _release
+
+      ##
+      # macOS 12
       #
-      # - name: Download ios-sim
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: toolchain-ios-sim
+      - name: Download macos-12
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-12
 
-      - run: find .
+      - name: Download ios
+        uses: actions/download-artifact@v3
+        with:
+          name: toolchain-ios
 
-      # - name: Release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     prerelease: ${{ contains(github.ref, 'beta') }}
-      #     generate_release_notes: false
-      #     files: "*.zip"
+      - name: Download ios-sim
+        uses: actions/download-artifact@v3
+        with:
+          name: toolchain-ios-sim
+
+      - name: Create macOS 12 package
+        run: |
+          make dist-pkg
+          mv package.zip blitz3d-ng-${{ env.GITHUB_TAG }}-macos12.zip
+          git clean -xfd _release
+
+      ##
+      # Final step...
+      #
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: ${{ contains(github.ref, 'beta') }}
+          generate_release_notes: false
+          files: "*.zip"
