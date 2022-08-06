@@ -85,6 +85,12 @@ install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 	cp src/modules/bb/unit-test/unit_test.decls ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 
+dist-pkg:
+	(cd _release/ && zip -r -x".DS_Store" ../package.zip .)
+
+dist-toolchain:
+	(cd _release/bin && zip -r -x".DS_Store" ../../toolchain.zip .)
+
 clean:
 	rm -rf build
 	rm -rf _release/bin
