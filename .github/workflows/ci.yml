@@ -198,8 +198,8 @@ jobs:
     needs:
       - windows
       - macos
-      - ios
-      - android
+      # - ios
+      # - android
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Get tag name
