@@ -226,11 +226,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          prerelease: true
+          prerelease: contains(github.ref, 'beta')
           generate_release_notes: false
-          files: |
-            blitz3d-ng-${{ env.GITHUB_TAG }}-win32.zip
-            blitz3d-ng-${{ env.GITHUB_TAG }}-macos11.zip
-            blitz3d-ng-${{ env.GITHUB_TAG }}-macos12.zip
-            toolchain-${{ env.GITHUB_TAG }}-ios.zip
-            toolchain-${{ env.GITHUB_TAG }}-ios-sim.zip
+          files: ${{ env.GITHUB_WORKSPACE }}/*.zip
