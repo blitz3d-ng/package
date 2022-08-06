@@ -30,7 +30,7 @@ static GLuint defaultProgram=0;
 static
 bool makeProgram( float dpi,float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
 	if( !glIsProgram( defaultProgram ) ){
-		_bbLog( "rebuilding 2d shader...\n" );
+		// _bbLog( "rebuilding 2d shader...\n" );
 
 		string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
 		defaultProgram=GL( _bbGLCompileProgram( "default.glsl",src ) );

@@ -254,10 +254,10 @@ BBGraphics *SDLRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 		SDL_GetWindowSize( wnd,&screen_w,&screen_h );
 		SDL_GL_GetDrawableSize( wnd,&drawableW,&drawableH );
 
-		_bbLog( "GL Version:  %s\n",glGetString( GL_VERSION ) );
-		_bbLog( "GL Vendor:   %s\n",glGetString( GL_VENDOR ) );
-		_bbLog( "GL window:   %ix%i\n",screen_w,screen_h );
-		_bbLog( "GL drawable: %ix%i\n",drawableW,drawableH );
+		// _bbLog( "GL Version:  %s\n",glGetString( GL_VERSION ) );
+		// _bbLog( "GL Vendor:   %s\n",glGetString( GL_VENDOR ) );
+		// _bbLog( "GL window:   %ix%i\n",screen_w,screen_h );
+		// _bbLog( "GL drawable: %ix%i\n",drawableW,drawableH );
 
 		GL( glViewport( 0.0,0.0,drawableW,drawableH ) );
 		GL( glScissor( 0.0,0.0,drawableW,drawableH ) );
@@ -414,21 +414,22 @@ public:
 		memset( axis_states,0,sizeof(axis_states) );
 		memset( down_state,0,sizeof(down_state) );
 
-		// snprintf( id,sizeof(id),"%s",glfwGetJoystickName( idx ) );
-		// snprintf( name,sizeof(name),"%s",glfwGetJoystickName( idx ) );
+		SDL_JoystickGetGUIDString( SDL_JoystickGetGUID(js),id,sizeof(id) );
+		snprintf( name,sizeof(name),"%s",SDL_JoystickName( js ) );
 	}
 
 	void update(){
-		// int ax_count;
-		// const float *ax_state=glfwGetJoystickAxes( idx,&ax_count );
-		// if( ax_count>32 ) ax_count=32;
-		// memcpy( axis_states,ax_state,ax_count*sizeof(float) );
-		//
-		// int btn_count;
-		// const unsigned char *btn_state=glfwGetJoystickButtons( idx,&btn_count );
-		// for( int i=0;i<32;i++ ){
-		// 	setDownState( i,btn_state[i] );
-		// }
+		int ax_count=SDL_JoystickNumAxes( js );
+		if( ax_count>32 ) ax_count=32;
+
+		for( int i=0;i<ax_count;i++ ){
+			axis_states[i]=(float)SDL_JoystickGetAxis( js,i )/SHRT_MAX;
+		}
+
+		int btn_count=SDL_JoystickNumButtons( js );
+		for( int i=0;i<32;i++ ){
+			setDownState( i,SDL_JoystickGetButton( js,i ) );
+		}
 	}
 };
 

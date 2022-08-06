@@ -520,7 +520,7 @@ public:
 		if( !glIsProgram( defaultProgram ) ){
 			GL( glUseProgram( 0 ) );
 
-			_bbLog( "rebuilding shader...\n" );
+			// _bbLog( "rebuilding shader...\n" );
 
 			string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
 			defaultProgram=_bbGLCompileProgram( "default.glsl",src );
