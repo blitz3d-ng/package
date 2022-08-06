@@ -214,15 +214,14 @@ jobs:
       - name: Download ios
         uses: actions/download-artifact@v3
         with:
-          name: package-ios
+          name: toolchain-ios
           path: toolchain-${{ env.GITHUB_TAG }}-ios.zip
 
       - name: Download ios-sim
         uses: actions/download-artifact@v3
         with:
-          name: package-ios-sim
+          name: toolchain-ios-sim
           path: toolchain-${{ env.GITHUB_TAG }}-ios-sim.zip
-
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -233,3 +232,5 @@ jobs:
             blitz3d-ng-${{ env.GITHUB_TAG }}-win32.zip
             blitz3d-ng-${{ env.GITHUB_TAG }}-macos11.zip
             blitz3d-ng-${{ env.GITHUB_TAG }}-macos12.zip
+            toolchain-${{ env.GITHUB_TAG }}-ios.zip
+            toolchain-${{ env.GITHUB_TAG }}-ios-sim.zip
