@@ -3,18 +3,17 @@
 [![Build status](https://github.com/blitz3d-ng/blitz3d-ng/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/blitz3d-ng/blitz3d-ng/actions?query=branch%3Amaster)
 [![Help](https://img.shields.io/badge/help-discord-7289DA.svg?logo=discord)](https://discord.gg/E6kTHXn)
 
-This project is an attempt to revive & modernize Blitz3D by adding cross-platform & 64-bit support.
+This project is an attempt to modernize Blitz3D by adding cross-platform & 64-bit support.
 
-So far, we've made huge strides in making this happen. Some of the basic samples (such as [castle](_release/samples/mak/castle), [driver](_release/samples/driver), and [tron](_release/samples/mak/tron)) can run on macOS (64 bit!) with little-to-no modifications.
+So far, we've made huge strides in making this happen. Some of the basic samples (such as [castle](_release/samples/mak/castle), [driver](_release/samples/mak/driver), and [tron](_release/samples/mak/tron)) can run on macOS with little-to-no modifications.
 
-This is achieved by translating Blitz source into C code & then piping that output to a C compiler. Long term, this will
-be replaced by [LLVM](#LLVM).
+This is achieved by adding [LLVM](#LLVM)-powered code generation to the original compiler. A basic test suite [test/all.bb](test/all.bb)
 
-(Note: The Windows build still uses the original Blitz code generation.)
+(Note: The 32-bit Windows build still uses the original Blitz code generation.)
 
 ## Download
 
-You can get the latest Windows build directly from the artifacts of the latest [CI build](https://github.com/blitz3d-ng/blitz3d-ng/actions?query=branch%3Amaster). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
+You can get the latest Windows build from the [releases page](https://github.com/blitz3d-ng/blitz3d-ng/releases). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
 
 If you're looking to customize your build further or interested in macOS or Linux, please see the next section.
 
@@ -28,11 +27,7 @@ For bug reports & feature requests, feel free to open an [issue](https://github.
 
 To keep the project simple to build, all 3rd-party dependencies are included in the repo or linked as submodules.
 
-### Prerequisites (All platforms)
-
-You'll need [cmake (3.16+)](https://cmake.org/download/) and a [ruby 3.1.2](https://www.ruby-lang.org/en/) install.
-
-We use these tools to generate the appropriate build files per-platform as well as documentation.
+You'll need [cmake (3.16+)](https://cmake.org/download/).
 
 ### Windows
 
@@ -41,8 +36,8 @@ Install [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/). 
 Open up a command prompt via `Start -> Visual Studio 2022 -> Developer Command Prompt for VS2022`.
 
 ```
-> git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
-> cd blitz3d-ng
+> git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
+> cd b3d
 > make release win32
 > make release win64
 ```
@@ -55,11 +50,12 @@ as expected.
 Install [Xcode](https://developer.apple.com/xcode/) and [brew](http://brew.sh/).
 
 ```bash
-$ brew install cmake wxmac
+$ brew install cmake
 $ bundle
-$ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
-$ cd blitz3d-ng
-$ bin/blitz3d config && make ENV=release
+$ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
+$ cd b3d
+$ make llvm
+$ make ENV=release
 ```
 
 ### Linux
@@ -69,29 +65,21 @@ Setup will vary across distributions, but here is an example for Ubuntu.
 ```bash
 $ sudo apt-get install -y libxml2-dev zlib1g-dev build-essential autoconf libtool gettext autopoint gperf cmake clang libwxgtk3.0-gtk3-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev
 $ bundle
-$ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng
-$ cd blitz3d-ng
-$ bin/blitz3d config && make ENV=release
+$ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
+$ cd b3d
+$ make llvm
+$ make ENV=release
 ```
 
 Alternatively, you can build everything with [docker](https://docker.io). See
 [env.sh](env.sh) and the [env](https://github.com/blitz3d-ng/env) repo for some
 example Dockerfiles.
 
-### LLVM
-
-In order to properly support cross-platform compilation, a new LLVM-based codegen
-system is in the works. It is implemented along side the original x86 codegen
-and will eventually replace it.
-
-```bash
-$ make llvm
-$ make ENV=release
-```
-
 ## Documentation
 
-The original Blitz3D help is available in the [\_release/help](_release/help) directory in HTML form. We've started replacing it with a Markdown based system.
+The original Blitz3D help is available in the [\_release/help](_release/help) directory in HTML form. We've
+started replacing it with a Markdown based system. You'll need a [ruby 3.1.2](https://www.ruby-lang.org/en/) install
+to generate the documentation.
 
 ```bash
 $ bundle install
@@ -103,9 +91,7 @@ $ bin/blitz3d help --build
 - Add misc. quick fixes & improvements (i.e., add "missing" features like [BlitzClose](http://www.blitzbasic.com/codearcs/codearcs.php?code=832).)
 - Improve help files & styling.
 - Swap out FMOD for something with a more permissive license.
-- Integrate [Assimp](http://www.assimp.org/) so that we don't depend on the DirectX X library anymore.
-- OpenGL & newer Direct3D renderers.
-- 64-bit support.
+- OpenGL, Vulkan, Metal, and newer Direct3D renderers.
 - macOS, Linux, Android, iOS support.
 
 ## License
