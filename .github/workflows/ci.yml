@@ -214,8 +214,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Get tag name
-        run: |
           export GITHUB_TAG=$(echo ${GITHUB_REF#refs/tags/})
+          export GITHUB_TAG=$(echo ${GITHUB_TAG#refs/heads/})
           echo "GITHUB_TAG=$GITHUB_TAG" >> $GITHUB_ENV
 
       ##
