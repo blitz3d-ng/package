@@ -209,7 +209,6 @@ jobs:
       - macos
       - ios
       # - android
-    #if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v2
 
@@ -288,10 +287,13 @@ jobs:
           mv package.zip blitz3d-ng-${{ env.GITHUB_TAG }}-macos12.zip
           git clean -xfd _release
 
+      - run: ls -l
+
       ##
       # Final step...
       #
       - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
           prerelease: ${{ contains(github.ref, 'beta') }}
