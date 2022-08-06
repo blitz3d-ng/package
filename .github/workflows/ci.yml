@@ -34,8 +34,9 @@ jobs:
           Compress-Archive -Path _release\* -DestinationPath package-${{ matrix.arch }}.zip
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
-        with: |
-          *-${{ matrix.arch }}.zip
+        with:
+          name: ${{ matrix.arch }}
+          path: *-${{ matrix.arch }}.zip
 
   # mingw:
   #   name: MinGW
@@ -81,8 +82,9 @@ jobs:
           mv package.zip package-${{ matrix.os }}.zip
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
-        with: |
-          *-${{ matrix.os }}.zip
+        with:
+          name: ${{ matrix.os }}
+          path: *-${{ matrix.os }}.zip
 
 
   linux:
@@ -123,8 +125,9 @@ jobs:
           mv package.zip package-${{ matrix.device }}.zip
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
-        with: |
-          *-${{ matrix.device }}.zip
+        with:
+          name: ${{ matrix.device }}
+          path: *-${{ matrix.device }}.zip
 
   android:
     name: Android
@@ -148,8 +151,9 @@ jobs:
           mv package.zip package-android-${{ matrix.arch }}.zip
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
-        with: |
-          *-android-${{ matrix.arch }}.zip
+        with:
+          name: android-${{ matrix.arch }}
+          path: *-android-${{ matrix.arch }}.zip
 
   emscripten:
     name: Emscripten (Web)
@@ -203,32 +207,28 @@ jobs:
       - name: Download win32
         uses: actions/download-artifact@v3
         with:
-          name: package-win32.zip
-          path: blitz3d-ng-${{ env.GITHUB_TAG }}.zip
+          name: package-win32
 
       - name: Download macos-11
         uses: actions/download-artifact@v3
         with:
-          name: package-macos-11.zip
-          path: blitz3d-ng-${{ env.GITHUB_TAG }}-macos11.zip
+          name: package-macos-11
 
       - name: Download macos-12
         uses: actions/download-artifact@v3
         with:
-          name: package-macos-12.zip
-          path: blitz3d-ng-${{ env.GITHUB_TAG }}-macos12.zip
+          name: package-macos-12
 
       - name: Download ios
         uses: actions/download-artifact@v3
         with:
-          name: toolchain-ios.zip
-          path: toolchain-${{ env.GITHUB_TAG }}-ios.zip
+          name: toolchain-ios
 
       - name: Download ios-sim
         uses: actions/download-artifact@v3
         with:
-          name: toolchain-ios-sim.zip
-          path: toolchain-${{ env.GITHUB_TAG }}-ios-sim.zip
+          name: toolchain-ios-sim
+
 
       - name: Release
         uses: softprops/action-gh-release@v1
