@@ -226,6 +226,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          prerelease: contains(github.ref, 'beta')
+          prerelease: ${{ contains(github.ref, 'beta') }}
           generate_release_notes: false
           files: ${{ env.GITHUB_WORKSPACE }}/*.zip
