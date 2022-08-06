@@ -235,4 +235,5 @@ jobs:
         with:
           prerelease: ${{ contains(github.ref, 'beta') }}
           generate_release_notes: false
-          files: *.zip
+          files: |
+            *.zip
