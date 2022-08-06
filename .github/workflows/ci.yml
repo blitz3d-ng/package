@@ -205,7 +205,7 @@ jobs:
       # - android
     #if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      # - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Get tag name
         run: |
@@ -216,11 +216,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: win32
+          path: _release
 
       - name: Download win64
         uses: actions/download-artifact@v3
         with:
           name: win64
+          path: _release
 
       # - name: Download macos-11
       #   uses: actions/download-artifact@v3
