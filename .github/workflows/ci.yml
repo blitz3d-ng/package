@@ -251,12 +251,12 @@ jobs:
       - name: Download ios
         uses: actions/download-artifact@v3
         with:
-          name: toolchain-ios
+          name: ios
 
       - name: Download ios-sim
         uses: actions/download-artifact@v3
         with:
-          name: toolchain-ios-sim
+          name: ios-sim
 
       - name: Create macOS 11 package
         run: |
