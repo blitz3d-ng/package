@@ -14,9 +14,9 @@ jobs:
           - win32
           - win64
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
+      # - uses: actions/checkout@v2
+      #   with:
+      #     submodules: recursive
       # - uses: ilammy/msvc-dev-cmd@v1
       #   with:
       #     arch: ${{ matrix.arch }}
@@ -69,9 +69,9 @@ jobs:
           - macos-11
           - macos-12
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
+      # - uses: actions/checkout@v2
+      #   with:
+      #     submodules: recursive
       # - run: |
       #     mkdir _release/toolchains
       #     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-14.0.4/clang+llvm-14.0.4-x86_64-apple-darwin.tar.xz
@@ -124,11 +124,11 @@ jobs:
           - ios
           - ios-sim
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - run: brew install ninja gcovr
-      - run: make ENV=release PLATFORM=${{ matrix.device }}
+      # - uses: actions/checkout@v2
+      #   with:
+      #     submodules: recursive
+      # - run: brew install ninja gcovr
+      # - run: make ENV=release PLATFORM=${{ matrix.device }}
       - name: Archive toolchain and package
         run: |
           mkdir -p _release/bin/ios
