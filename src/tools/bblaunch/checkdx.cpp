@@ -328,6 +328,10 @@ VOID GetDXVersion( DWORD* pdwDXVersion, DWORD* pdwDXPlatform )
 }
 
 int getDXVersion(){
+#ifdef BB64
+  // TODO: might nice to not have this hack...probably doesn't matter.
+  return 9;
+#endif
 	DWORD version,platform;
 
 	GetDXVersion( &version,&platform );

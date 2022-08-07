@@ -1,2 +1,3 @@
 IDI_ICON1  ICON  "../legacy/blitzide/blitzide.ico"
+#define wxUSE_DPI_AWARE_MANIFEST 1
 #include "wx/msw/wx.rc"
