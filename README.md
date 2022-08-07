@@ -13,9 +13,9 @@ This is achieved by adding [LLVM](#LLVM)-powered code generation to the original
 
 ## Download
 
-You can get the latest Windows build from the [releases page](https://github.com/blitz3d-ng/blitz3d-ng/releases). This build includes Direct3D 7 & OpenGL runtimes, without DirectPlay.
+You can get the latest Windows & macOS builds from the [releases page](https://github.com/blitz3d-ng/blitz3d-ng/releases).
 
-If you're looking to customize your build further or interested in macOS or Linux, please see the next section.
+If you're looking to customize your build further or interested in Linux/other platforms, see [Building](#Building).
 
 ## Support
 
@@ -25,15 +25,15 @@ For bug reports & feature requests, feel free to open an [issue](https://github.
 
 ## Building
 
-To keep the project simple to build, all 3rd-party dependencies are included in the repo or linked as submodules.
+All 3rd-party dependencies are included in the repo or linked as submodules to keep the project simple to build,
 
-You'll need [cmake (3.16+)](https://cmake.org/download/).
+To start, you'll need [cmake (3.16+)](https://cmake.org/download/).
 
 ### Windows
 
 Install [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/). Be sure to install the MFC components.
 
-Open up a command prompt via `Start -> Visual Studio 2022 -> Developer Command Prompt for VS2022`.
+Open up a command prompt via `Start -> Visual Studio 2022 -> Developer PowerShell for VS2022`.
 
 ```
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d

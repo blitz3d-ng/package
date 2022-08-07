@@ -27,7 +27,7 @@ void FileView::LoadKeywords(){
   }
 }
 
-FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),wxPanel( parent,id ){
+FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),dirty(false),cc(0),wxPanel( parent,id ){
   LoadKeywords();
 
   // Inconsolata, Monaco, Consolas, 'Courier New', Courier
@@ -38,25 +38,12 @@ FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),w
   font = wxFontInfo(12).FaceName("Monaco");
 #endif
 
-  wxStyledTextCtrl* text = new wxStyledTextCtrl(this, wxID_ANY);
-
+	text=new wxStyledTextCtrl(this, wxID_ANY);
 	text->CmdKeyAssign( 'A',wxSTC_KEYMOD_META,wxSTC_CMD_HOME );
 	text->CmdKeyAssign( 'E',wxSTC_KEYMOD_META,wxSTC_CMD_LINEEND );
 
   if ( path.length()>0 ){
-    wxTextFile file;
-    file.Open( path );
-
-    source.Clear();
-
-    while( !file.Eof() ) {
-      source.Append( file.GetNextLine() );
-      source.Append( "\n" );
-    }
-
-    file.Close();
-
-    text->SetText( source );
+		Open( path );
   }
 
 	wxColour rgb_bkgrnd=wxColour( 0x22,0x55,0x88 );
@@ -72,12 +59,13 @@ FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),w
   text->StyleSetBackground( wxSTC_STYLE_DEFAULT,rgb_bkgrnd );
   text->StyleSetForeground( wxSTC_STYLE_DEFAULT,rgb_default );
 
-  text->SetMarginWidth (MARGIN_LINE_NUMBERS, 25);
-
   text->SetCaretForeground( wxColour( 0xff,0xff,0xff ) );
   text->SetCaretLineBackground( wxColour( 0x1e,0x4a,0x76 ) );
   text->SetCaretLineVisible( true );
 
+  text->SetTabWidth( 4 );
+
+	text->SetMarginWidth( MARGIN_LINE_NUMBERS,25 );
   text->SetMarginType( MARGIN_LINE_NUMBERS,wxSTC_MARGIN_NUMBER );
 
   text->SetLexer( wxSTC_LEX_BLITZBASIC );
@@ -108,26 +96,64 @@ FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),w
 
   text->SetKeyWords( 0,keywordsList );
 
+	text->Bind( wxEVT_STC_CHANGE,&FileView::OnTextEvent,this,wxID_ANY );
+
   wxBoxSizer *sizer = new wxBoxSizer( wxVERTICAL );
   sizer->Add( text,1,wxEXPAND,0 );
   SetSizer( sizer );
 }
 
-bool FileView::Save(){
-  wxTextFile file( path );
-  file.Open();
-
-  file.AddLine( source );
-
-  file.Write();
-  file.Close();
-
-  return true;
+wxString FileView::GetTitle(){
+	if ( path.length() == 0 ){
+		return wxT( "<untitled>" );
+	} else {
+		return wxFileName( path ).GetFullName();
+	}
 }
 
-void FileView::Execute(){
-	BlitzCC *cc=new BlitzCC( blitzpath );
-	cc->Execute( path );
+void FileView::Open( wxString &path ){
+	source.Clear();
+
+	wxTextFile file;
+	file.Open( path );
+	while( !file.Eof() ) {
+		source.Append( file.GetNextLine() );
+		source.Append( "\n" );
+	}
+
+	file.Close();
+
+	text->SetText( source );
+}
+
+bool FileView::Save(){
+	if( !dirty ) return true;
+
+	wxTextFile file( path );
+	file.Open();
+	file.Clear();
+	file.AddLine( text->GetText() );
+	file.Write();
+	file.Close();
+
+	source=text->GetText();
+
+	return true;
+}
+
+void FileView::OnTextEvent( wxStyledTextEvent& event ){
+	dirty=true;
+}
+
+void FileView::Execute( const Target &target ){
+	cc=new BlitzCC( GetParent(),blitzpath );
+	cc->Execute( path,target );
+}
+
+void FileView::Kill(){
+	if( cc ){
+		cc->Kill();
+	}
 }
 
 void FileView::Build( wxString &out ){

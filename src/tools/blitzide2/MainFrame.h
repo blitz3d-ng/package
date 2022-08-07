@@ -3,7 +3,7 @@
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-    #include <wx/wx.h>
+#include <wx/wx.h>
 #endif
 
 #include <wx/notebook.h>
@@ -12,38 +12,55 @@
 
 #include "HtmlHelp.h"
 #include "FileView.h"
+#include "BuildDialog.h"
 
-class MainFrame: public wxFrame
-{
+class MainFrame:public wxFrame{
 public:
-    MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+	MainFrame( const wxString& title );
 
-    void AddFile( wxString &path );
-    void AddFiles( wxArrayString &path );
+	void AddFile( wxString &path );
+	void AddFiles( wxArrayString &path );
 
-    void UpdateToolbar( int pageIndex );
+	void UpdateMenu( int pageIndex );
+	void UpdateToolbar( int pageIndex );
 private:
-    wxToolBar *toolbar;
-    HtmlHelp *help;
-    wxNotebook *nb;
+	wxMenuBar *menuBar;
+	wxToolBar *toolbar;
+	HtmlHelp *help;
+	wxNotebook *nb;
+	FileView *buildFile;
+	wxMenu *platformMenu;
+	BuildDialog *buildDialog;
+	std::vector<Target> devices;
+	int deviceIdx;
 
+	void UnlockFile();
+	void EnumerateDevices();
 
-    void OnHello(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
+	void OnExit(wxCommandEvent& event);
+	void OnAbout(wxCommandEvent& event);
 
-    void OnNew( wxCommandEvent& event );
-    void OnOpen( wxCommandEvent& event );
-    void OnClose( wxCommandEvent& event );
-    void OnRun( wxCommandEvent& event );
-    void OnExe( wxCommandEvent& event );
-    void OnHome( wxCommandEvent& event );
-    void OnBack( wxCommandEvent& event );
-    void OnForward( wxCommandEvent& event );
+	void OnNew( wxCommandEvent& event );
+	void OnOpen( wxCommandEvent& event );
+	void OnClose( wxCommandEvent& event );
+	void OnSave( wxCommandEvent& event );
+	void OnPreferences( wxCommandEvent& event );
+	void OnRun( wxCommandEvent& event );
+	void OnExe( wxCommandEvent& event );
+	void OnTarget( wxCommandEvent& event );
+	void OnBuildBegin( wxCommandEvent& event );
+	void OnBuildProgress( wxCommandEvent& event );
+	void OnBuildEnd( wxCommandEvent& event );
+	void OnBuildKill( wxCommandEvent& event );
+	void OnLockFile( wxCommandEvent& event );
+	void OnUnlockFile( wxCommandEvent& event );
+	void OnHome( wxCommandEvent& event );
+	void OnBack( wxCommandEvent& event );
+	void OnForward( wxCommandEvent& event );
 
-    void OnPageChanged( wxBookCtrlEvent& event );
+	void OnPageChanged( wxBookCtrlEvent& event );
 
-    wxDECLARE_EVENT_TABLE();
+	wxDECLARE_EVENT_TABLE();
 };
 
 #endif

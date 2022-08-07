@@ -3,7 +3,6 @@
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
 #endif
-
 #include "MainFrame.h"
 #include "dpi.h"
 
@@ -33,8 +32,8 @@ bool MyApp::OnInit(){
 		return false;
 	}
 
-	frame = new MainFrame( "Blitz3D \"NG\"",wxPoint( wxSystemSettings::GetMetric( wxSYS_SCREEN_X )*0.5-1024*GetDPIScaleX()*0.5
-	,100*GetDPIScaleY() ),wxSize( 1024*GetDPIScaleX(),768*GetDPIScaleY() ) );
+	frame = new MainFrame( "Blitz3D \"NG\"" );
+	frame->SetClientSize( frame->FromDIP( wxSize( 800,600 ) ) );
 	frame->AddFiles( filesToOpen );
 	frame->Show( true );
 	return true;

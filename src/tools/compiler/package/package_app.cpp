@@ -104,6 +104,8 @@ void createApp( const string &bundlePath,const string &home,const BundleInfo &bu
 	pkginfo.close();
 
 	if( bundle.signerId.size()>0 ){
+		cout<<"Signing "+bundle.identifier+"..."<<endl;
+
 		string options="--force --timestamp=none --sign '"+bundle.signerId+"'";
 		if( bundle.teamId.size()>0 ){
 			string xcentPath=string( tmpnam(0) )+".xcent";
