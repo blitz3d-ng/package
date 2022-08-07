@@ -239,6 +239,12 @@ jobs:
           mv package.zip blitz3d-ng-${{ env.GITHUB_TAG }}-windows.zip
           git clean -xfd _release
 
+      - name: Upload Windows packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows
+          path: blitz3d-ng-${{ env.GITHUB_TAG }}-windows.zip
+
       ##
       # macOS 11
       #
@@ -246,22 +252,31 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: macos-11
+          path: _release
 
       - name: Download ios
         uses: actions/download-artifact@v3
         with:
           name: ios
+          path: _release
 
       - name: Download ios-sim
         uses: actions/download-artifact@v3
         with:
           name: ios-sim
+          path: _release
 
       - name: Create macOS 11 package
         run: |
           make dist-pkg
           mv package.zip blitz3d-ng-${{ env.GITHUB_TAG }}-macos11.zip
           git clean -xfd _release
+
+      - name: Upload macOS 11 packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-11-package
+          path: blitz3d-ng-${{ env.GITHUB_TAG }}-macos11.zip
 
       ##
       # macOS 12
@@ -270,16 +285,19 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: macos-12
+          path: _release
 
       - name: Download ios
         uses: actions/download-artifact@v3
         with:
           name: ios
+          path: _release
 
       - name: Download ios-sim
         uses: actions/download-artifact@v3
         with:
           name: ios-sim
+          path: _release
 
       - name: Create macOS 12 package
         run: |
@@ -287,7 +305,12 @@ jobs:
           mv package.zip blitz3d-ng-${{ env.GITHUB_TAG }}-macos12.zip
           git clean -xfd _release
 
-      - run: ls -l
+      - name: Upload macOS 12 packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-12-package
+          path: blitz3d-ng-${{ env.GITHUB_TAG }}-macos12.zip
+
 
       ##
       # Final step...
