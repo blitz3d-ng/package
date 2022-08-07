@@ -213,6 +213,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - macos
+      - ios
     steps:
       - uses: actions/checkout@v2
       - name: Get tag name
@@ -256,6 +257,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - macos
+      - ios
     steps:
       - uses: actions/checkout@v2
       - name: Get tag name
