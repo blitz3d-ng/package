@@ -8,6 +8,7 @@ if (TARGET wxstc AND TARGET wxwebview)
     HtmlHelp.h HtmlHelp.cpp
     FileView.h FileView.cpp
     PreferencesDialog.h PreferencesDialog.cpp
+    Preferences.h Preferences.cpp
     BlitzCC.h BlitzCC.cpp
 
     BuildDialog.h BuildDialog.cpp

@@ -13,6 +13,7 @@
 #include "HtmlHelp.h"
 #include "FileView.h"
 #include "BuildDialog.h"
+#include "Preferences.h"
 
 class MainFrame:public wxFrame{
 public:
@@ -30,6 +31,8 @@ private:
 	wxNotebook *nb;
 	FileView *buildFile;
 	wxMenu *platformMenu;
+
+	Preferences prefs;
 	BuildDialog *buildDialog;
 	std::vector<Target> devices;
 	int deviceIdx;

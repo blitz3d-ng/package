@@ -48,11 +48,10 @@ int BlitzCC::Monitor(){
 wxThread::ExitCode BlitzCC::Entry(){
 	wxPostEvent( dest,wxCommandEvent( BUILD_BEGIN ) );
 
-
 	wxFileName out( path );
 	out.ClearExt();
 	out.SetExt( "app" );
-	out.Normalize();
+	out.Normalize( wxPATH_NORM_ABSOLUTE );
 
 	wxString signId="";
 	wxString teamId="";

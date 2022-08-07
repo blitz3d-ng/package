@@ -56,6 +56,8 @@ MainFrame::MainFrame( const wxString& title )
 {
 	SetIcon( wxIcon("IDI_ICON1") );
 
+	prefs.Load( blitzpath );
+
   wxMenu *menuFile = new wxMenu;
   menuFile->Append( ID_NEW,"&New...\tCtrl-N" );
   menuFile->Append( ID_OPEN,"&Open...\tCtrl-O" );
@@ -360,8 +362,8 @@ void MainFrame::OnClose( wxCommandEvent& WXUNUSED(event) ){
 }
 
 void MainFrame::OnPreferences( wxCommandEvent& WXUNUSED(event) ){
-	PreferencesDialog *prefs=new PreferencesDialog( this );
-	prefs->ShowModal();
+	PreferencesDialog *dlg=new PreferencesDialog( this,&prefs );
+	dlg->ShowModal();
 }
 
 void MainFrame::OnRun( wxCommandEvent& WXUNUSED(event) ){

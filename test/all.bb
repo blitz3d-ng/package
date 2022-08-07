@@ -16,5 +16,5 @@ Include "language/vector.bb"
 
 ;Include "modules/audio.bb"
 ;Include "modules/blitz3d.bb"
-;Include "modules/filesystem.bb"
+Include "modules/filesystem.bb"
 Include "modules/math.bb"
