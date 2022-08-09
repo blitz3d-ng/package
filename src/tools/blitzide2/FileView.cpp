@@ -146,9 +146,9 @@ void FileView::OnTextEvent( wxStyledTextEvent& event ){
 	dirty=true;
 }
 
-void FileView::Execute( const Target &target ){
+void FileView::Execute( const Target &target,const Preferences *prefs ){
 	cc=new BlitzCC( GetParent(),blitzpath );
-	cc->Execute( path,target );
+	cc->Execute( path,target,prefs );
 }
 
 void FileView::Kill(){

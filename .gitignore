@@ -44,6 +44,7 @@ _release/bin/**/*.toml
 _release/bin/blitzcc
 _release/bin/ide2
 _release/cfg/blitzide.prefs
+_release/cfg/blitzide.toml
 _release/help/reference/modules
 _release/help/reference/index.html
 _release/help/reference/commands.js

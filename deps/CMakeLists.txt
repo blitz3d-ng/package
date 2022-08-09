@@ -29,7 +29,7 @@ IF(NOT BB_NX)
   add_subdirectory(sdl)
 ENDIF()
 
-IF(BB_DESKTOP OR BB_ANDROID)
+IF(BB_DESKTOP OR BB_ANDROID OR BB_OVR)
   add_subdirectory(freeimage)
 ENDIF()
 

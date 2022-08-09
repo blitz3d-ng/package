@@ -3,10 +3,11 @@
 using namespace std;
 
 void Preferences::Load( const wxString &blitzpath ){
-	string path=(blitzpath+"/cfg/blitzide.toml").ToStdString();
-	ifstream ifs( path,ios_base::binary );
+	path=blitzpath+"/cfg/blitzide.toml";
+
+	ifstream ifs( path.ToStdString(),ios_base::binary );
 	if( ifs.good() ){
-		const toml::value data=toml::parse( ifs,path );
+		const toml::value data=toml::parse( ifs,path.ToStdString() );
 		signId=wxString( toml::find<string>(data,"signId") );
 		teamId=wxString( toml::find<string>(data,"teamId") );
 	}else{
@@ -14,16 +15,14 @@ void Preferences::Load( const wxString &blitzpath ){
 	}
 }
 
-void Preferences::Save( const wxString &blitzpath ){
-	string path=(blitzpath+"/cfg/blitzide.toml").ToStdString();
-
+void Preferences::Save(){
 	toml::value table{
 		{ "signId",signId.ToStdString() },
 		{ "teamId",teamId.ToStdString() }
 	};
 
 	ofstream out;
-	out.open( path );
+	out.open( path.ToStdString() );
 	out<<table;
 	out.close();
 }

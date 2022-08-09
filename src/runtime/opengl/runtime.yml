@@ -3,6 +3,7 @@ name: OpenGL
 platforms:
   - desktop
   - mobile
+  - ovr
   - emscripten
   - nx
 

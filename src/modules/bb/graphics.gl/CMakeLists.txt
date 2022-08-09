@@ -10,7 +10,7 @@ ELSEIF(BB_LINUX)
   set(SYSTEM_LIBS GL X11 Xrandr Xinerama Xcursor Xxf86vm pthread)
 ELSEIF(BB_IOS)
   set(SYSTEM_LIBS "-framework OpenGLES")
-ELSEIF(BB_ANDROID)
+ELSEIF(BB_ANDROID OR BB_OVR)
   set(SYSTEM_LIBS EGL GLESv3)
 ENDIF()
 

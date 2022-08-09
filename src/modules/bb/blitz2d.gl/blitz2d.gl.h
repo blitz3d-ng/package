@@ -101,8 +101,6 @@ protected:
 	unsigned int texture,framebuffer,depthbuffer;
 	int twidth,theight;
 public:
-	float tx,ty;
-
 	GLB2DTextureCanvas( int f ):GLB2DCanvas( f ),texture(0),framebuffer(0),depthbuffer(0),twidth(0),theight(0){
 	}
 
@@ -169,29 +167,10 @@ public:
 		width=pm->width;
 		height=pm->height;
 
-#define pow2(v) pow(2, ceil(log(v)/log(2)));
-		twidth=pow2( width );
-		theight=pow2( height );
-#undef pow2
-
-		unsigned char *data=pm->bits;
-		if( pm->width!=twidth||pm->height!=theight ){
-			data=(unsigned char *)malloc( twidth*theight*4 );
-			memset( data,0,twidth*theight*4 );
-			for( int y=0;y<pm->height;y++ ){
-				for( int x=0;x<pm->width;x++ ){
-					memcpy( data+(y*twidth+x)*4,pm->bits+(y*pm->width+x)*4,4 );
-				}
-			}
-		}
-
-		tx=(float)width/twidth;
-		ty=(float)height/theight;
-
 		if( !texture ) GL( glGenTextures( 1,&texture ) );
 		GL( glActiveTexture( GL_TEXTURE0 ) );
 		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,twidth,theight,0,GL_RGBA,GL_UNSIGNED_BYTE,data ) );
+		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits ) );
 		GL( glGenerateMipmap( GL_TEXTURE_2D ) );
 
 		GL( glBindTexture( GL_TEXTURE_2D,0 ) );

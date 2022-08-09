@@ -16,9 +16,10 @@ BlitzCC::BlitzCC( wxEvtHandler *dest,const wxString &blitzpath ):dest(dest),blit
 BlitzCC::~BlitzCC(){
 }
 
-void BlitzCC::Execute( const wxString &p,const Target &t ){
+void BlitzCC::Execute( const wxString &p,const Target &t,const Preferences *pf ){
 	path=p;
 	target=t;
+	prefs=pf;
 	Run();
 }
 
@@ -54,13 +55,11 @@ wxThread::ExitCode BlitzCC::Entry(){
 	out.SetExt( "app" );
 	out.Normalize( wxPATH_NORM_ABSOLUTE );
 
-	wxString signId="";
-	wxString teamId="";
 	wxString args;
 	if( !target.host ){
-		args += " -c -sign "+signId;
+		args += " -c -sign "+prefs->signId;
 		if( target.platform=="ios" ){ // only need entitlement when deploying to real device
-			args +=" -team "+teamId;
+			args +=" -team "+prefs->teamId;
 		}
 		args += " -target "+target.platform+" -o "+out.GetFullPath();
 	}

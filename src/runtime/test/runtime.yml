@@ -2,8 +2,8 @@ name: Test
 
 platforms:
   - desktop
-  - ios
-  - android
+  - mobile
+  - ovr
   - emscripten
   - nx
 

@@ -25,7 +25,7 @@ public:
   bool Save();
   bool Save( wxString &newPath );
 
-	void Execute( const Target &target );
+	void Execute( const Target &target,const Preferences *prefs );
 	void Kill();
 	void Build( wxString &out );
 };

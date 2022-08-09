@@ -7,13 +7,14 @@
 #endif
 
 struct Preferences{
-	wxString signId;
-	wxString teamId;
+	wxString path;
+
+	wxString signId,teamId;
 
 	void ResetToDefaults();
 
 	void Load( const wxString &blitzpath );
-	void Save( const wxString &blitzpath );
+	void Save();
 };
 
 #endif

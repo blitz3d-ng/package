@@ -362,7 +362,7 @@ void GLB2DCanvas::image( BBCanvas *c,int x,int y,bool solid ){
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
 
 	float white[3]={ 1.0,1.0,1.0 };
-	quad( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true,true,src->tx,src->ty,white );
+	quad( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true,true,1.0,1.0,white );
 }
 
 void GLB2DCanvas::setPixel( int x,int y,unsigned argb ){

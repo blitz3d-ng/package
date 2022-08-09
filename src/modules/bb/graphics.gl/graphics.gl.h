@@ -21,7 +21,7 @@
 		#include <OpenGLES/ES3/gl.h>
 	#endif
 
-	#if defined(BB_ANDROID) || defined(BB_NX)
+	#ifdef __BIONIC__
 		#include <GLES3/gl3.h>
 	#endif
 #endif

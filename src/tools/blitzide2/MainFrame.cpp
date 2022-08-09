@@ -375,7 +375,7 @@ void MainFrame::OnRun( wxCommandEvent& WXUNUSED(event) ){
 		file=dynamic_cast<FileView*>( nb->GetCurrentPage() );
 	}
 
-	file->Execute( devices[deviceIdx] );
+	file->Execute( devices[deviceIdx],&prefs );
 }
 
 void MainFrame::OnExe( wxCommandEvent& WXUNUSED(event) ){

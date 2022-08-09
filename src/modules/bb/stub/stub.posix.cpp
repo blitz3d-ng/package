@@ -16,7 +16,7 @@ using namespace std;
 
 #include <signal.h>
 #include <unistd.h>
-#ifndef BB_ANDROID
+#ifndef __BIONIC__
 #include <execinfo.h>
 #endif
 #ifdef BB_MACOS
