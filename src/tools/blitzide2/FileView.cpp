@@ -1,6 +1,7 @@
 #include "FileView.h"
 #include <wx/textfile.h>
 #include <wx/process.h>
+#include <wx/filename.h>
 #include "BlitzCC.h"
 
 enum {

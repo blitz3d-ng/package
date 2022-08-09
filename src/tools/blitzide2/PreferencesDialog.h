@@ -5,6 +5,7 @@
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
+#include <wx/notebook.h>
 
 #include "Preferences.h"
 

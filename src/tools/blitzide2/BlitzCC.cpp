@@ -2,6 +2,7 @@
 #include <wx/sstream.h>
 #include <wx/txtstrm.h>
 #include <wx/msgdlg.h>
+#include <wx/filename.h>
 #include <iostream>
 
 wxDEFINE_EVENT( BUILD_BEGIN,wxCommandEvent );

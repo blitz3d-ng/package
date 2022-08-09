@@ -1,4 +1,5 @@
 #include "BuildDialog.h"
+#include "BlitzCC.h"
 
 wxBEGIN_EVENT_TABLE(BuildDialog, wxDialog)
 	EVT_BUTTON( wxID_ANY,BuildDialog::OnTerminate )
