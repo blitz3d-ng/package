@@ -27,6 +27,7 @@ layout(std140) uniform BBRenderState {
 
   struct BBTextureState {
     mat4 TForm;
+    int Blend,_0,_1,_2;
   } Texture[8];
 
   vec2 FogRange;
@@ -142,18 +143,27 @@ void main() {
 in BBPerVertex bbVertex;
 out vec4 bbFragColor;
 
+vec4 Blend( vec4 t0,int i ){
+  vec4 t1=texture( bbTexture[i],bbVertex.TexCoord[i] );
+  switch( RS.Texture[i].Blend ){
+  case 0:return t0;
+  case 2:return t0*t1;
+  case 3:return t0+t1;
+  }
+}
+
 void main() {
   vec4 tex=vec4( 1.0,1.0,1.0,1.0 );
 
   // TODO; ES doesn't allow dynamic indexing...
-  if( 0<RS.TexturesUsed ) tex *= texture( bbTexture[0],bbVertex.TexCoord[0] );
-  if( 1<RS.TexturesUsed ) tex *= texture( bbTexture[1],bbVertex.TexCoord[1] );
-  if( 2<RS.TexturesUsed ) tex *= texture( bbTexture[2],bbVertex.TexCoord[2] );
-  if( 3<RS.TexturesUsed ) tex *= texture( bbTexture[3],bbVertex.TexCoord[3] );
-  if( 4<RS.TexturesUsed ) tex *= texture( bbTexture[4],bbVertex.TexCoord[4] );
-  if( 5<RS.TexturesUsed ) tex *= texture( bbTexture[5],bbVertex.TexCoord[5] );
-  if( 6<RS.TexturesUsed ) tex *= texture( bbTexture[6],bbVertex.TexCoord[6] );
-  if( 7<RS.TexturesUsed ) tex *= texture( bbTexture[7],bbVertex.TexCoord[7] );
+  if( 0<RS.TexturesUsed ) tex=Blend( tex,0 );
+  if( 1<RS.TexturesUsed ) tex=Blend( tex,1 );
+  if( 2<RS.TexturesUsed ) tex=Blend( tex,2 );
+  if( 3<RS.TexturesUsed ) tex=Blend( tex,3 );
+  if( 4<RS.TexturesUsed ) tex=Blend( tex,4 );
+  if( 5<RS.TexturesUsed ) tex=Blend( tex,5 );
+  if( 6<RS.TexturesUsed ) tex=Blend( tex,6 );
+  if( 7<RS.TexturesUsed ) tex=Blend( tex,7 );
 
   bbFragColor=bbVertex.Color * tex;
 

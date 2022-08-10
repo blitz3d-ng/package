@@ -148,6 +148,7 @@ struct UniformState{
 
 	struct GLTexState{
 		float mat[16];
+		int blend, _0, _1, _2;
 	} texs[8];
 
 	float fog_range[2];
@@ -468,6 +469,7 @@ public:
 					// glDisable( GL_TEXTURE_GEN_T );
 				}
 
+				us.texs[us.texs_used].blend=ts.blend;
 				switch( ts.blend ){
 				case BLEND_REPLACE:
 					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
