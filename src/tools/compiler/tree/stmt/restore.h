@@ -17,7 +17,7 @@ struct RestoreNode : public StmtNode{
 		json tree;tree["@class"]="RestoreNode";
 		tree["pos"]=pos;
 		tree["ident"]=ident;
-		tree["sem_label"]=sem_label->toJSON();
+		if( sem_label ) tree["sem_label"]=sem_label->toJSON();
 		return tree;
 	}
 };

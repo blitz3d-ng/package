@@ -562,8 +562,7 @@ int main( int argc,char *argv[] ){
 #ifdef USE_LLVM
 			if( !veryquiet ) cout<<"Executing..."<<endl;
 
-			auto jit = cantFail( JIT_ORC::Create() );
-			ret=jit->run( runtimeLib,obj_code,home,rt );
+			ret=JIT_ORC::run( runtimeLib,obj_code,home,rt );
 #else
 			cerr<<"llvm support was not compiled in"<<endl;
 			abort();
