@@ -217,8 +217,20 @@ void enumToolchainFiles( const string &binpath,vector<string> &paths ){
 	closedir( bindir );
 }
 #else
-void enumToolchainFiles( const string &binpath,vector<string> paths ){
-	targets.push_back( home+"/bin/" BB_TRIPLE "/toolchain.toml" );
+void enumToolchainFiles( const string &binpath,vector<string> &paths ){
+	WIN32_FIND_DATA bindata;
+	HANDLE bindir;
+	bindir=FindFirstFile( (binpath+"/*").c_str(),&bindata );
+	do{
+		string toolname( bindata.cFileName );
+		if( (bindata.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) && toolname.length()>0 ){
+			string toolpath=canonicalpath( binpath+"/"+toolname+"/toolchain.toml" );
+			if( !(GetFileAttributes( toolpath.c_str() )&FILE_ATTRIBUTE_DIRECTORY) ){
+				paths.push_back( toolpath );
+			}
+		}
+	}while( FindNextFile( bindir,&bindata )!=0 );
+	FindClose( bindir );
 }
 #endif
 
@@ -239,20 +251,20 @@ const char *enumTargets( vector<Target> &targets ){
 
 		Target t=Target( triple,platform,arch,platform_version );
 
-		for( const auto &[ id,data ]:toml::find( data,"runtime" ).as_table() ){
+		for( const auto &ent:toml::find( data,"runtime" ).as_table() ){
 			Target::Runtime rt;
-			rt.id=id;
-			rt.entry=toml::find<std::string>( data,"entry" );;
-			rt.modules=toml::find<vector<string>>( data,"deps" );
-			t.runtimes.insert( pair<string,Target::Runtime>( id,rt ) );
+			rt.id=ent.first;
+			rt.entry=toml::find<std::string>( ent.second,"entry" );;
+			rt.modules=toml::find<vector<string>>( ent.second,"deps" );
+			t.runtimes.insert( pair<string,Target::Runtime>( ent.first,rt ) );
 		}
 
-		for( const auto &[ id,data ]:toml::find( data,"module" ).as_table() ){
+		for( const auto &ent:toml::find( data,"module" ).as_table() ){
 			Target::Module mod;
-			mod.id=id;
-			if( data.contains("libs") ) mod.libs=toml::find<vector<string>>( data,"libs" );
-			if( data.contains("system_libs") ) mod.system_libs=toml::find<vector<string>>( data,"system_libs" );
-			t.modules.insert( pair<string,Target::Module>( id,mod ) );
+			mod.id=ent.first;
+			if( ent.second.contains("libs") ) mod.libs=toml::find<vector<string>>( ent.second,"libs" );
+			if( ent.second.contains("system_libs") ) mod.system_libs=toml::find<vector<string>>( ent.second,"system_libs" );
+			t.modules.insert( pair<string,Target::Module>( ent.first,mod ) );
 		}
 
 		targets.push_back( t );
