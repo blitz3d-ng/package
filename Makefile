@@ -63,6 +63,7 @@ CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=$(ANDROID_HOME)/ndk-bundle/build/cmake/andr
 endif
 
 ifeq ($(PLATFORM), nx)
+ARCH=aarch64
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/devkita64.toolchain.cmake
 endif
 

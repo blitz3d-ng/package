@@ -198,7 +198,7 @@ static int _bb_isnan( double n ){		// definition: exponent 2047, nonzero fractio
 }
 
 // these functions are not available in the bionic stdlib
-#ifdef __BIONIC__
+#if defined(__BIONIC__) || defined(BB_NX)
 extern "C" {
 char *ecvt(double arg, int ndigits, int *decptp, int *signp);
 char *gcvt(double value, int ndigit, char *buf);
