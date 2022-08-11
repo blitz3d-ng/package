@@ -196,63 +196,70 @@ static void demoError(){
 }
 
 #ifndef WIN32
+void enumToolchainFiles( const string &binpath,vector<string> &paths ){
+	DIR *bindir=opendir( binpath.c_str() );
+	if( !bindir ) return;
+
+	struct dirent *ent;
+	while( (ent=readdir( bindir ))!=NULL ){
+		if( ent->d_type==DT_DIR && string(ent->d_name)!=string(".") && string(ent->d_name)!=string("..") ){
+			string toolpath=binpath+"/"+ent->d_name;
+			DIR *tooldir=opendir( toolpath.c_str() );
+			while( (ent=readdir( tooldir ))!=NULL ){
+				if( ent->d_type==DT_REG && string(ent->d_name)=="toolchain.toml" ){
+					paths.push_back( toolpath+"/"+ent->d_name );
+				}
+			}
+			closedir( tooldir );
+		}
+	}
+
+	closedir( bindir );
+}
+#else
+void enumToolchainFiles( const string &binpath,vector<string> paths ){
+	targets.push_back( home+"/bin/" BB_TRIPLE "/toolchain.toml" );
+}
+#endif
+
 const char *enumTargets( vector<Target> &targets ){
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
 	string home=string( p );
 
-	string binpath=home+"/bin";
-	DIR *bindir=opendir( binpath.c_str() );
-	if( bindir ){
-		struct dirent *ent;
-		while( (ent=readdir( bindir ))!=NULL ){
-			if( ent->d_type==DT_DIR && string(ent->d_name)!=string(".") && string(ent->d_name)!=string("..") ){
-				string toolpath=binpath+"/"+ent->d_name;
-				DIR *tooldir=opendir( toolpath.c_str() );
-				while( (ent=readdir( tooldir ))!=NULL ){
-					if( ent->d_type==DT_REG && string(ent->d_name)=="toolchain.toml" ){
+	vector<string> paths;
+	enumToolchainFiles( home+"/bin",paths );
 
-						auto data=toml::parse( toolpath+"/"+ent->d_name );
-						const string triple=toml::find<std::string>( data,"id" );
-						const string platform=toml::find<std::string>( data,"platform" );
-						const string platform_version=toml::find<std::string>( data,"platform_version" );
-						const string arch=toml::find<std::string>( data,"arch" );
+	for( const string &toolpath:paths ){
+		auto data=toml::parse( toolpath );
+		const string triple=toml::find<std::string>( data,"id" );
+		const string platform=toml::find<std::string>( data,"platform" );
+		const string platform_version=toml::find<std::string>( data,"platform_version" );
+		const string arch=toml::find<std::string>( data,"arch" );
 
-						Target t=Target( triple,platform,arch,platform_version );
+		Target t=Target( triple,platform,arch,platform_version );
 
-						for( const auto &[ id,data ]:toml::find( data,"runtime" ).as_table() ){
-							Target::Runtime rt;
-							rt.id=id;
-							rt.entry=toml::find<std::string>( data,"entry" );;
-							rt.modules=toml::find<vector<string>>( data,"deps" );
-							t.runtimes.insert( pair<string,Target::Runtime>( id,rt ) );
-						}
-
-						for( const auto &[ id,data ]:toml::find( data,"module" ).as_table() ){
-							Target::Module mod;
-							mod.id=id;
-							if( data.contains("libs") ) mod.libs=toml::find<vector<string>>( data,"libs" );
-							if( data.contains("system_libs") ) mod.system_libs=toml::find<vector<string>>( data,"system_libs" );
-							t.modules.insert( pair<string,Target::Module>( id,mod ) );
-						}
-
-						targets.push_back( t );
-					}
-				}
-				closedir( tooldir );
-			}
+		for( const auto &[ id,data ]:toml::find( data,"runtime" ).as_table() ){
+			Target::Runtime rt;
+			rt.id=id;
+			rt.entry=toml::find<std::string>( data,"entry" );;
+			rt.modules=toml::find<vector<string>>( data,"deps" );
+			t.runtimes.insert( pair<string,Target::Runtime>( id,rt ) );
 		}
-		closedir( bindir );
+
+		for( const auto &[ id,data ]:toml::find( data,"module" ).as_table() ){
+			Target::Module mod;
+			mod.id=id;
+			if( data.contains("libs") ) mod.libs=toml::find<vector<string>>( data,"libs" );
+			if( data.contains("system_libs") ) mod.system_libs=toml::find<vector<string>>( data,"system_libs" );
+			t.modules.insert( pair<string,Target::Module>( id,mod ) );
+		}
+
+		targets.push_back( t );
 	}
 
 	return 0;
 }
-#else
-const char *enumTargets( vector<Target> &targets ){
-	targets.push_back( Target( BB_TRIPLE,BB_PLATFORM,BB_ARCH,"" ) );
-	return 0;
-}
-#endif
 
 #ifdef WIN32
 static const char *enumRuntimes( vector<string> &rts ){

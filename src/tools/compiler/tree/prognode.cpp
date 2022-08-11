@@ -177,11 +177,16 @@ json ProgNode::toJSON( Environ *e ){
 #include <llvm/IR/Verifier.h>
 
 void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
-	g->module->setModuleIdentifier( stmts->file );
-	g->module->setSourceFileName( stmts->file );
+	string filepath=stmts->file; // TODO: should make this absolute
+	size_t slash_idx=filepath.find_last_of("/\\");
+	string filedir=filepath.substr( 0,slash_idx );
+	string filename=filepath.substr( slash_idx+1 );
+
+	g->module->setModuleIdentifier( filepath );
+	g->module->setSourceFileName( filepath );
 
 	if( g->debug ){
-		g->dbgCU=g->dbgBuilder->createCompileUnit( llvm::dwarf::DW_LANG_C,g->dbgBuilder->createFile( "const.bb","/Users/kevin/b3d/test/language" ),"blitzcc",0,"",0 );
+		g->dbgCU=g->dbgBuilder->createCompileUnit( llvm::dwarf::DW_LANG_C,g->dbgBuilder->createFile( filename,filedir ),"blitzcc",0,"",0 );
 	}
 
 	int k;
@@ -213,7 +218,7 @@ void ProgNode::translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs ){
 	g->bbMain=llvm::Function::Create( mainFt,llvm::Function::ExternalLinkage,"bbMain",g->module.get() );
 
 	if( g->debug ){
-		llvm::DIFile *Unit=g->dbgBuilder->createFile( "const.bb","/Users/kevin/b3d/test/language" );
+		llvm::DIFile *Unit=g->dbgBuilder->createFile( filename,filedir );
 		llvm::DIScope *FContext=Unit;
 		unsigned LineNo=0,ScopeLine=0;
 		llvm::SmallVector<llvm::Metadata*,8> EltTys;

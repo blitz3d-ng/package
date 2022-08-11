@@ -56,6 +56,6 @@ _release/userlibs/*.decls
 /build
 /coverage/
 /innosetup/installs
-/llvm
+/llvm*
 
 /tmp
