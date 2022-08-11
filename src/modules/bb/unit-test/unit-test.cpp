@@ -8,16 +8,7 @@ using namespace std;
 
 static int _bbPasses, _bbFails;
 
-#ifndef BB_WINDOWS
-#define GREEN "\033[1;32m"
-#define RED "\033[1;31m"
-#define CLEAR "\033[0m"
-#else
-// no color support in Windows...
-#define GREEN ""
-#define RED ""
-#define CLEAR ""
-#endif
+static string GREEN="\033[1;32m",RED="\033[1;31m",CLEAR="\033[0m";
 
 #define FAIL(mesg) cout << RED << "FAIL: " << CLEAR << mesg << ". [" << file << ":" << line << "]" << endl;_bbFails++
 #define PASS(mesg) cout << GREEN << "PASS: " << CLEAR << mesg << ". [" << file << ":" << line << "]" << endl;_bbPasses++
@@ -100,6 +91,13 @@ void BBCALL bbExpectFloatEq( bb_float_t a,bb_float_t b,BBStr *m ){
 BBMODULE_CREATE( unit_test ){
 	_bbPasses = 0;
 	_bbFails = 0;
+
+#ifdef WIN32
+	HANDLE handle=GetStdHandle( STD_OUTPUT_HANDLE );
+	DWORD mode;
+	GetConsoleMode( handle,&mode);
+	SetConsoleMode( handle,mode|ENABLE_VIRTUAL_TERMINAL_PROCESSING|DISABLE_NEWLINE_AUTO_RETURN );
+#endif
 
 #ifdef USERLIB
 	if( AllocConsole() ){

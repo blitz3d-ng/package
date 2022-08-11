@@ -103,7 +103,8 @@ void Codegen_LLVM::SetTarget( const ::Target &t ){
 	auto cpu="generic",features="";
 	TargetOptions opt;
 	auto rm=Optional<Reloc::Model>();
-	targetMachine=targ->createTargetMachine( t.triple,cpu,features,opt,rm );
+	auto cm=Optional<CodeModel::Model>( CodeModel::Model::Large );
+	targetMachine=targ->createTargetMachine( t.triple,cpu,features,opt,rm,cm );
 
 	module->setTargetTriple( t.triple );
 	module->setDataLayout( targetMachine->createDataLayout() );
