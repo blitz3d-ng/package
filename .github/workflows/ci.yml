@@ -28,6 +28,10 @@ jobs:
           Expand-Archive llvm.zip -DestinationPath .\
           Rename-Item llvm-14.0.4 llvm
       - run: .\make.bat release
+      - shell: pwsh
+        run: |
+          $env:blitzpath='_release'
+          .\test\suite.bat
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
         with:

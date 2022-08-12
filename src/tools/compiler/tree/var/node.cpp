@@ -11,7 +11,9 @@ TNode *VarNode::load( Codegen *g ){
 
 #ifdef USE_LLVM
 llvm::Value *VarNode::load2( Codegen_LLVM *g ){
-	return g->builder->CreateLoad( sem_type->llvmType( g->context.get() ),translate2( g ) );
+	auto t=translate2( g );
+	if( sem_type==Type::string_type ) return g->CallIntrinsic( "_bbStrLoad",sem_type->llvmType( g->context.get() ),1,t );
+	return g->builder->CreateLoad( sem_type->llvmType( g->context.get() ),t );
 }
 #endif
 

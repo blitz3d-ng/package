@@ -25,4 +25,4 @@ IF NOT "%BBENV%" == "debug" (
 set BBBUILDDIR=%cd%\build\%BBPLATFORM%-%BBENV%
 
 cmake -G Ninja -H. -B%BBBUILDDIR% -DARCH=%BBARCH% -DBB_PLATFORM=%BBPLATFORM% -DBB_ENV=%BBENV% || exit /b 1
-cmake --build %BBBUILDDIR%
+cmake --build %BBBUILDDIR% || exit /b 1
