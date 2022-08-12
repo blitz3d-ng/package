@@ -171,7 +171,7 @@ macro(bb_end_runtime )
     endif()
 
     if(BB_MSVC)
-      set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " /NOIMPLIB /NOEXP")
+      target_link_options(${name}.shared PRIVATE /NOIMPLIB /NOEXP)
 
       if(BB_WIN32)
         set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " /include:_runtimeGetRuntime")

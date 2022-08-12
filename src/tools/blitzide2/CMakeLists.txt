@@ -20,6 +20,6 @@ if (TARGET wxstc AND TARGET wxwebview)
   if(BB_MSVC)
     # TODO: find out why wxUSE_DPI_AWARE_MANIFEST isn't working...
     target_sources(ide2 PUBLIC ../../../deps/wxwidgets/tree/include/wx/msw/wx_dpi_aware_pmv2.manifest)
-    target_link_options(ide2 PUBLIC /ENTRY:\"WinMainCRTStartup\" /subsystem:windows)
+    target_link_options(ide2 PUBLIC /subsystem:windows)
   endif()
 endif()

@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
+      - uses: seanmiddleditch/gha-setup-ninja@master
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
@@ -26,7 +27,7 @@ jobs:
           Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v1/llvm-14.0.4-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
           Rename-Item llvm-14.0.4 llvm
-      - run: .\make.bat release ${{ matrix.arch }}
+      - run: .\make.bat release
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
         with:

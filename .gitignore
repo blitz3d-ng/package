@@ -52,6 +52,7 @@ _release/tmp
 _release/toolchains
 _release/userlibs/*.dll
 _release/userlibs/*.decls
+_release/**/*.manifest
 
 /build
 /coverage/

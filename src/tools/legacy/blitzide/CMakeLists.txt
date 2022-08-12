@@ -1,11 +1,8 @@
 set(CMAKE_MFC_FLAG 1)
-add_executable(ide about.cpp about.h blitzide.cpp blitzide.h editor.cpp editor.h funclist.cpp funclist.h htmlhelp.cpp htmlhelp.h libs.cpp libs.h mainframe.cpp mainframe.h prefs.cpp prefs.h stdafx.cpp stdafx.h tabber.cpp tabber.h dpi.cpp dpi.h blitzide.rc)
+add_executable(ide about.cpp about.h blitzide.cpp blitzide.h editor.cpp editor.h funclist.cpp funclist.h htmlhelp.cpp htmlhelp.h libs.cpp libs.h mainframe.cpp mainframe.h prefs.cpp prefs.h stdafx.cpp stdafx.h tabber.cpp tabber.h dpi.cpp dpi.h blitzide.rc dpi.manifest)
 target_output_to_bin(ide)
-set_target_properties(ide PROPERTIES LINK_FLAGS "/ENTRY:\"WinMainCRTStartup\" /subsystem:windows")
+target_link_options(ide PRIVATE /ENTRY:WinMainCRTStartup /subsystem:windows)
 target_compile_definitions(ide PRIVATE -D_WIN32_WINNT=_WIN32_WINNT_WINXP -DNO_WARN_MBCS_MFC_DEPRECATION /w4100 /w4189)
-if(BB_SHARED)
-  target_compile_definitions(ide PRIVATE _AFXDLL)
-endif()
 target_link_libraries(ide stdutil)
 
 if(BB_WIN64)
