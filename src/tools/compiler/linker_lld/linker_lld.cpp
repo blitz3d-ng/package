@@ -229,6 +229,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	const Target::Runtime &rti=target.runtimes.at( rt );
 	for( std::string mod:rti.modules ){
 		const Target::Module &m=target.modules.at( mod );
+		libs.push_back( "bb."+mod );
 		for( string lib:m.libs ) libs.push_back( lib );
 		for( string lib:m.system_libs ) systemlibs.push_back( lib );
 	}

@@ -11,8 +11,9 @@ macro(bb_start_module name)
 endmacro()
 
 macro(bb_end_module)
-  add_library (bb.${MODULE_ID} OBJECT ${SOURCES})
+  add_library (bb.${MODULE_ID} STATIC ${SOURCES})
   target_link_libraries (bb.${MODULE_ID} ${DEPENDS_ON} ${LIBS} ${SYSTEM_LIBS})
+  target_output_to_toolchain(bb.${MODULE_ID})
 
   if(BB_COVERAGE)
     set_target_properties(bb.${MODULE_ID} PROPERTIES COMPILE_FLAGS ${BB_COVERAGE})
