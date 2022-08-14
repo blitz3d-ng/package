@@ -20,6 +20,11 @@ macro(bb_end_runtime )
     return()
   endif()
 
+  if(BB_LINUX OR BB_ANDROID)
+    set(START_GROUP "-Wl,--start-group")
+    set(END_GROUP "-Wl,--end-group")
+  endif()
+
   set(id ${RT_ID})
   set(entry ${RT_ENTRY})
 
@@ -132,8 +137,7 @@ macro(bb_end_runtime )
   # static
   add_library(${name}.static STATIC ${RT_CPP} ${SOURCES})
   target_output_to_toolchain(${name}.static)
-  target_link_libraries(${name}.static PUBLIC ${LIBS})
-  target_link_libraries(${name}.static ${SYSTEM_LIBS})
+  target_link_libraries(${name}.static PUBLIC ${LIBS} ${SYSTEM_LIBS} ${END_GROUP})
   target_include_directories(${name}.static PUBLIC ../../modules)
 
   set(RUNTIME_IFACE )
@@ -160,7 +164,7 @@ macro(bb_end_runtime )
   endforeach()
 
   add_library(${name}.shared SHARED ${SOURCES})
-  target_link_libraries(${name}.shared bbruntime_dll ${name}.static ${name}.static)
+  target_link_libraries(${name}.shared ${START_GROUP} bbruntime_dll ${name}.static)
   set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "runtime.${id}")
 
   if(BB_WINDOWS)

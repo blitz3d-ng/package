@@ -38,6 +38,7 @@ CMAKE_OPTIONS=$(IOS_OPTIONS) -DPLATFORM=$(IOS_PLATFORM)
 endif
 
 ifeq ($(PLATFORM), emscripten)
+ARCH=asmjs
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
 endif
 

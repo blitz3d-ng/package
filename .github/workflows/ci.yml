@@ -100,7 +100,7 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
-      #- run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
+      - run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
 
   ios:
     name: iOS
