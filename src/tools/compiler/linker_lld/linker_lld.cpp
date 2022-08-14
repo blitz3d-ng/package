@@ -224,6 +224,10 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	args.push_back( "-L" );args.push_back( libdir );
 #endif
 
+#ifdef BB_LINUX
+	args.push_back("--start-group");
+#endif
+
 	libs.push_back( "runtime."+rt+".static" );
 
 	const Target::Runtime &rti=target.runtimes.at( rt );
@@ -233,6 +237,10 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		for( string lib:m.libs ) libs.push_back( lib );
 		for( string lib:m.system_libs ) systemlibs.push_back( lib );
 	}
+
+#ifdef BB_LINUX
+	args.push_back("--end-group");
+#endif
 
 	string mainPath=string(tmpnam(0))+".o";
 	std::ofstream mainFile( mainPath,std::ios_base::binary );
