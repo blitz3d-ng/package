@@ -160,7 +160,7 @@ macro(bb_end_runtime )
   endforeach()
 
   add_library(${name}.shared SHARED ${SOURCES})
-  target_link_libraries(${name}.shared bbruntime_dll ${name}.static)
+  target_link_libraries(${name}.shared bbruntime_dll ${name}.static ${name}.static)
   set_target_properties(${name}.shared PROPERTIES OUTPUT_NAME "runtime.${id}")
 
   if(BB_WINDOWS)
