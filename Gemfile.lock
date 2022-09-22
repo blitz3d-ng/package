@@ -7,7 +7,7 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     colored (1.2)
-    commonmarker (0.23.5)
+    commonmarker (0.23.6)
     concurrent-ruby (1.1.10)
     filewatcher (1.1.1)
       optimist (~> 3.0)
