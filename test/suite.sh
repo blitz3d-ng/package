@@ -2,6 +2,14 @@
 
 fail=0
 
+# if valgrind is available, we'll use it. right now, we're ignoring leaked
+# memory. this should change when there's time.
+VALGRIND="valgrind --leak-check=no --error-exitcode=101"
+if ! command -v $VALGRIND #&> /dev/null
+then
+    VALGRIND=""
+fi
+
 RED='\033[0;31m'
 GRN='\033[0;32m'
 NC='\033[0m'
@@ -53,14 +61,17 @@ check_flag() {
   result $? "$1"
 }
 
-BLITZCC=_release/bin/blitzcc
+BLITZCC="_release/bin/blitzcc"
 
 cleanup
 
 # run the proper suite
-$BLITZCC -r test test/all.bb
+$VALGRIND $BLITZCC -r test test/all.bb
 RESULT=$?
-if [ $RESULT -ne 0 ]; then
+if [ $RESULT -eq 101 ]; then
+  echo "Test suite failed because of a memory related error. Fix it and then run the coverage generation again."
+  fail=1
+elif [ $RESULT -ne 0 ]; then
   echo "Test suite failed. Fix it and then run the coverage generation again."
   fail=1
 fi
@@ -160,6 +171,9 @@ echo "Verify games compile"
 compile _release/Games/bb3d_asteroids/EdzUpAsteroids.bb
 compile _release/Games/wing_ring/wing_ring.bb
 compile _release/Games/TunnelRun/tr.bb
+
+# since it's slow, only start defaulting it here
+BLITZCC="$VALGRIND $BLITZCC"
 
 echo "Generate executables"
 
