@@ -3,6 +3,8 @@
 [![Build status](https://github.com/blitz3d-ng/blitz3d-ng/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/blitz3d-ng/blitz3d-ng/actions?query=branch%3Amaster)
 [![Help](https://img.shields.io/badge/help-discord-7289DA.svg?logo=discord)](https://discord.gg/E6kTHXn)
 
+![New IDE on macOS](docs/screenshot-macos.png)
+
 This project is an attempt to modernize Blitz3D by adding cross-platform & 64-bit support.
 
 So far, we've made huge strides in making this happen. Some of the basic samples (such as [castle](_release/samples/mak/castle), [driver](_release/samples/mak/driver), and [tron](_release/samples/mak/tron)) can run on macOS with little-to-no modifications.
