@@ -1,11 +1,12 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.2.8)
-      i18n (~> 0.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
-      tzinfo (~> 1.1)
+    activesupport (6.1.7.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
+      zeitwerk (~> 2.3)
     colored (1.2)
     commonmarker (0.23.8)
     concurrent-ruby (1.2.2)
@@ -13,26 +14,26 @@ GEM
       module_methods (~> 0.1.0)
     github-markup (4.0.1)
     htmlbeautifier (1.4.2)
-    i18n (0.9.5)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     mini_portile2 (2.8.1)
-    minitest (5.17.0)
+    minitest (5.18.0)
     module_methods (0.1.0)
     nokogiri (1.14.2)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     os (1.1.4)
     racc (1.6.2)
-    thread_safe (0.3.6)
-    tzinfo (1.2.11)
-      thread_safe (~> 0.1)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
+    zeitwerk (2.6.7)
 
 PLATFORMS
   ruby
   x64-mingw32
 
 DEPENDENCIES
-  activesupport (= 4.2.8)
+  activesupport (= 6.1.7.1)
   colored
   commonmarker
   filewatcher
