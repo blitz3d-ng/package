@@ -71,6 +71,7 @@ module Blitz3D
 
       def example_path
         return false if example_link.nil?
+
         example_path = File.join(command.mod.path, 'docs', example_href)
         example_path && File.exist?(example_path) && example_path
       end
@@ -119,9 +120,7 @@ module Blitz3D
     end
 
     def html_help
-      markdown = File.read(help_exists? ? help_path : 'src/docs/commands/not_found.md')
-
-      markdown = Help::Reference::Command.new([], self).render(markdown)
+      markdown = File.read(help_exists? ? help_path : File.expand_path('../views/commands/not_found.md', __dir__))
 
       source = GitHub::Markup.render_s(GitHub::Markups::MARKUP_MARKDOWN, markdown)
 

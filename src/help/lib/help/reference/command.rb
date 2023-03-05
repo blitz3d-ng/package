@@ -4,10 +4,6 @@ module Blitz3D
       class Command < Template
         attr_accessor :modules, :command
 
-        def self.path
-          'src/docs/commands/_command.html.erb'
-        end
-
         def initialize(modules, command)
           @modules = modules
           @command = command
@@ -28,7 +24,6 @@ module Blitz3D
         def generate(source)
           template = File.read(layout_path)
           out = render(template) { source }
-          out = HtmlBeautifier.beautify(out)
 
           FileUtils.mkdir_p(File.dirname(output_path))
           File.open(output_path, 'w') { |f| f.write out }

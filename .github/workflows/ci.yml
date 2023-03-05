@@ -174,7 +174,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: bin/blitz3d help --build
+      - run: make help
 
   package_windows:
     name: Build Windows Package

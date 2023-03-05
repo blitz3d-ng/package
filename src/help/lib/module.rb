@@ -15,7 +15,7 @@ module Blitz3D
 
     def self.all
       @@store ||= {}
-      Dir.glob('src/modules/bb/*/module.yml').map { |path| @@store[path] ||= new(path) }
+      Dir.glob(File.expand_path('../../modules/bb/*/module.yml', __dir__)).map { |path| @@store[path] ||= new(path) }
       @@store.values
     end
 

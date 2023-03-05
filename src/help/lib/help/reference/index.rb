@@ -3,7 +3,7 @@ module Blitz3D
     module Reference
       class Index < Template
         def input_path
-          'src/docs/commands/_index.html.erb'
+          File.expand_path('../../../views/commands/_index.html.erb', __dir__)
         end
 
         def output_path
@@ -21,7 +21,7 @@ module Blitz3D
         def generate
           template = File.read(layout_path)
           out = render(template) { File.open(input_path).read }
-          write HtmlBeautifier.beautify(out)
+          write out
         end
       end
     end

@@ -2,10 +2,10 @@ require 'yaml'
 
 module Blitz3D
   class Runtime
-    attr_accessor :id, :name, :platforms, :modules, :entry, :premake5
+    attr_accessor :id, :name, :platforms, :modules, :entry
 
     def self.all
-      Dir.glob('src/runtime/*/runtime.yml').map { |path| new(path) }
+      Dir.glob(File.expand_path('../../runtime/*/runtime.yml')).map { |path| new(path) }
     end
 
     def self.find(id)
@@ -30,8 +30,6 @@ module Blitz3D
 
       @entry = config['entry'] || {}
       @entry['runtime'] ||= 'bbCreateUnspecifiedRuntime'
-
-      @premake5 = config['premake5'] || {}
     end
 
     def dependencies(view = :raw, platform = nil)
