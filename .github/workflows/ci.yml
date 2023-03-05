@@ -14,7 +14,7 @@ jobs:
           - win32
           - win64
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - uses: seanmiddleditch/gha-setup-ninja@master
@@ -49,7 +49,7 @@ jobs:
   #         - mingw32
   #         # - mingw64
   #   steps:
-  #     - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v3
   #       with:
   #         submodules: recursive
   #     - run: ./env.sh mingw make ENV=release PLATFORM=${{ matrix.arch }}
@@ -66,7 +66,7 @@ jobs:
           - macos-11
           - macos-12
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: |
@@ -96,7 +96,7 @@ jobs:
           - ubuntu-20.04
           - ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
@@ -111,7 +111,7 @@ jobs:
           - ios
           - ios-sim
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: brew install ninja gcovr
@@ -133,7 +133,7 @@ jobs:
           - "x86"
           - "x86_64"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: ./env.sh android make ENV=release PLATFORM=android ARCH=${{ matrix.arch }}
@@ -147,7 +147,7 @@ jobs:
     name: Emscripten (Web)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       # TODO: find out why the first time always fails...
@@ -159,7 +159,7 @@ jobs:
     name: Switch
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: ./env.sh nx make ENV=release PLATFORM=nx
@@ -168,7 +168,7 @@ jobs:
     name: Help
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - uses: ruby/setup-ruby@v1
@@ -182,7 +182,7 @@ jobs:
     needs:
       - windows
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Get tag name
         run: |
           export GITHUB_TAG=$(echo ${GITHUB_REF#refs/tags/})
@@ -220,7 +220,7 @@ jobs:
       - macos
       - ios
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Get tag name
         run: |
           export GITHUB_TAG=$(echo ${GITHUB_REF#refs/tags/})
@@ -264,7 +264,7 @@ jobs:
       - macos
       - ios
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Get tag name
         run: |
           export GITHUB_TAG=$(echo ${GITHUB_REF#refs/tags/})
@@ -314,7 +314,7 @@ jobs:
       - nx
       - android
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Get tag name
         run: |

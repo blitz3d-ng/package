@@ -580,7 +580,7 @@ public:
 		GLMesh *mesh=(GLMesh*)m;
 
 		GL( glBindVertexArray( mesh->vertex_array ) );
-		GL( glDrawRangeElements( GL_TRIANGLES,first_tri*3,tri_cnt*3,tri_cnt*3,GL_UNSIGNED_INT,0 ) );
+		GL( glDrawRangeElements( GL_TRIANGLES,first_tri,tri_cnt*3,tri_cnt*3,GL_UNSIGNED_INT,0 ) );
 		GL( glBindVertexArray( 0 ) );
 	}
 

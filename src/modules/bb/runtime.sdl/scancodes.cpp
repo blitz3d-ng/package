@@ -225,14 +225,14 @@ unsigned short SDL_SCANCODE_MAP[MAX_SDL_SCANCODES]={
 	0,  // SDL_SCANCODE_KP_HEXADECIMAL = 221,
 	0,  //
 	0,  //
-	0,  // SDL_SCANCODE_LCTRL = 224,
-	0,  // SDL_SCANCODE_LSHIFT = 225,
-	0,  // SDL_SCANCODE_LALT = 226, /**< alt, option */
-	0,  // SDL_SCANCODE_LGUI = 227, /**< windows, command (apple), meta */
-	0,  // SDL_SCANCODE_RCTRL = 228,
-	0,  // SDL_SCANCODE_RSHIFT = 229,
-	0,  // SDL_SCANCODE_RALT = 230, /**< alt gr, option */
-	0,  // SDL_SCANCODE_RGUI = 231, /**< windows, command (apple), meta */
+	29, // SDL_SCANCODE_LCTRL = 224,
+	42, // SDL_SCANCODE_LSHIFT = 225,
+	56, // SDL_SCANCODE_LALT = 226, /**< alt, option */
+	219,// SDL_SCANCODE_LGUI = 227, /**< windows, command (apple), meta */
+	157,// SDL_SCANCODE_RCTRL = 228,
+	54, // SDL_SCANCODE_RSHIFT = 229,
+	184,// SDL_SCANCODE_RALT = 230, /**< alt gr, option */
+	220,// SDL_SCANCODE_RGUI = 231, /**< windows, command (apple), meta */
 	0,  //
 	0,  //
 	0,  //

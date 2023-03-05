@@ -33,6 +33,7 @@ GLuint _bbGLCompileProgram( const std::string &name,const std::string &src );
 // #define GL( func ) func;
 // #else
 void bbGLGraphicsCheckErrors( const char *file, int line );
+const char * bbGLFramebufferStatusString( GLenum status );
 #define GL( func ) func; bbGLGraphicsCheckErrors( __FILE__,__LINE__ );
 // #endif
 
