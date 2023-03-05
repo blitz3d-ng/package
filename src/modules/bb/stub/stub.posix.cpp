@@ -8,10 +8,20 @@
 #include <cstring>
 using namespace std;
 
+#ifndef BB_ANDROID
+#ifdef BB_DEBUG
+#define BB_BACKTRACE
+#endif
+#endif
+
 #include <signal.h>
 #include <unistd.h>
-#ifndef BB_ANDROID
+#ifndef __BIONIC__
 #include <execinfo.h>
+#endif
+#ifdef BB_MACOS
+#include <libgen.h>
+#include <mach-o/dyld.h>
 #endif
 
 class StdioDebugger : public Debugger{
@@ -46,8 +56,9 @@ public:
 	}
 };
 
-#ifdef BB_DEBUG
+#ifdef BB_BACKTRACE
 #define BACKTRACE_DEPTH 10
+static
 void dump_backtrace(int sig) {
 	void *array[BACKTRACE_DEPTH];
 
@@ -60,14 +71,27 @@ void dump_backtrace(int sig) {
 }
 #endif
 
-extern "C" void bbMain();
-
-int main( int argc,char *argv[] ){
-#ifdef BB_DEBUG
+extern "C"
+int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
+#ifdef BB_BACKTRACE
 	signal(SIGSEGV, dump_backtrace);
+#endif
+
+#ifdef BB_DEBUG
   bb_env.debug=true;
 #else
   bb_env.debug=false;
+#endif
+
+#ifdef BB_MACOS
+	// TODO: this is a little bit of a hack...but it should work for now.
+	char path[PATH_MAX];
+	uint32_t path_len=sizeof( path );
+	_NSGetExecutablePath( path,&path_len );
+	string dir=dirname( path );
+	if( dir.substr( dir.length()-4 )==".app" ){
+		chdir( dir.c_str() );
+	}
 #endif
 
 	bool trace=false;
@@ -82,11 +106,6 @@ int main( int argc,char *argv[] ){
 
 	StdioDebugger debugger( trace );
 	bbAttachDebugger( &debugger );
-
-	if( !(bbRuntime=bbCreateRuntime()) ){
-		cerr<<"Failed to create runtime"<<endl;
-		return 1;
-	}
 
 	int retcode=0;
 	try{

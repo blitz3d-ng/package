@@ -1,14 +1,14 @@
 name: OpenGL
 
 platforms:
-  - windows
-  - mingw32
-  - macos
-  - linux
-  - ios
+  - desktop
+  - mobile
+  - ovr
   - emscripten
+  - nx
 
 modules:
+  - stub
   - blitz
   - runtime
   - hook
@@ -23,21 +23,21 @@ modules:
   - system.macos
   - system.linux
   - system.ios
+  - system.android
   - filesystem.windows
   - filesystem.posix
   - timer.windows
   - timer.noop
   - bank
   - input
-  - input.directinput8
+  # - input.directinput8
   - audio
   - audio.fmod
   - audio.openal
   - blitz3d.gl
-  - blitz3d.gles2
   - userlibs
-  - runtime.glfm
-  - runtime.glfw3
+  # - runtime.glfm
+  - runtime.sdl
   - runtime.html
 
 entry:

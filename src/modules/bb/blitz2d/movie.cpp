@@ -13,7 +13,7 @@ BBMovie * BBCALL bbOpenMovie( BBStr *s ){
 	return movie;
 }
 
-int BBCALL bbDrawMovie( BBMovie *movie,int x,int y,int w,int h ){
+bb_int_t BBCALL bbDrawMovie( BBMovie *movie,bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h ){
 	if( w<0 ) w=movie->getWidth();
 	if( h<0 ) h=movie->getHeight();
 	int playing=movie->draw( gx_canvas,x,y,w,h );
@@ -21,15 +21,15 @@ int BBCALL bbDrawMovie( BBMovie *movie,int x,int y,int w,int h ){
 	return playing;
 }
 
-int BBCALL bbMovieWidth( BBMovie *movie ){
+bb_int_t BBCALL bbMovieWidth( BBMovie *movie ){
 	return movie->getWidth();
 }
 
-int BBCALL bbMovieHeight( BBMovie *movie ){
+bb_int_t BBCALL bbMovieHeight( BBMovie *movie ){
 	return movie->getHeight();
 }
 
-int BBCALL bbMoviePlaying( BBMovie *movie ){
+bb_int_t BBCALL bbMoviePlaying( BBMovie *movie ){
 	return movie->isPlaying();
 }
 

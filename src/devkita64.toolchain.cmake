@@ -1,11 +1,13 @@
 set(CMAKE_SYSTEM_NAME Generic)
 
-set(ARCH aarch64)
-set(TRUPLE ${ARCH}-none-elf)
+set(DEVKITPRO true)
 
-set(CMAKE_C_COMPILER   ${TRUPLE}-gcc)
-set(CMAKE_CXX_COMPILER ${TRUPLE}-g++)
-set(CMAKE_RC_COMPILER  ${TRUPLE}-windres)
+set(ARCH aarch64)
+set(TRIPLE ${ARCH}-none-elf)
+
+set(CMAKE_C_COMPILER   ${TRIPLE}-gcc)
+set(CMAKE_CXX_COMPILER ${TRIPLE}-g++)
+set(CMAKE_RC_COMPILER  ${TRIPLE}-windres)
 
 set(CMAKE_EXE_LINKER_FLAGS " -static")
 set(CMAKE_SHARED_LIBRARY_PREFIX_CXX "")

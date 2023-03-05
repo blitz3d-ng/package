@@ -4,7 +4,7 @@ root = true
 indent_style = space
 indent_size = 2
 
-[*.{c,cpp,h,bb}]
+[*.{c,cpp,h,m,bb}]
 indent_style = tab
 
 [Makefile]

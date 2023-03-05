@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "filesystem.h"
 #include <bb/stream/stream.h>
 #include <fstream>
@@ -86,11 +86,11 @@ void BBCALL bbCloseFile( bbFile *f ){
 	delete f;
 }
 
-int BBCALL bbFilePos( bbFile *f ){
+bb_int_t BBCALL bbFilePos( bbFile *f ){
 	return f->buf->pubseekoff( 0,ios_base::cur );
 }
 
-int BBCALL bbSeekFile( bbFile *f,int pos ){
+bb_int_t BBCALL bbSeekFile( bbFile *f,bb_int_t pos ){
 	return f->buf->pubseekoff( pos,ios_base::beg );
 }
 
@@ -131,14 +131,14 @@ void BBCALL bbDeleteDir( BBStr *d ){
 	delete d;
 }
 
-int BBCALL bbFileType( BBStr *f ){
+bb_int_t BBCALL bbFileType( BBStr *f ){
 	string t=*f;delete f;
 	debugFileSys();
 	int n=gx_filesys->getFileType( t );
 	return n==BBFileSystem::FILE_TYPE_FILE ? 1 : (n==BBFileSystem::FILE_TYPE_DIR ? 2 : 0);
 }
 
-int BBCALL bbFileSize( BBStr *f ){
+bb_int_t BBCALL bbFileSize( BBStr *f ){
 	string t=*f;delete f;
 	debugFileSys();
 	return gx_filesys->getFileSize( t );

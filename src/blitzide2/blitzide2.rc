@@ -1,2 +1,0 @@
-IDI_ICON1  ICON  "../legacy/blitzide/blitzide.ico"
-#include "wx/msw/wx.rc"

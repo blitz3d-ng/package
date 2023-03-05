@@ -1,19 +1,21 @@
 #include "unit-test.h"
 
+#define BBEXPORT BBDECL
+
 BBEXPORT void BBCALL bbContext( const char *m ){
-	__bbContext( m, "<unknown>", 0 );
+	bbContext( m );
 }
 
 BBEXPORT void BBCALL bbExpect( int condition,const char *m ){
-	__bbExpect( condition,m,"<unknown>",0 );
+	bbExpect( condition,m );
 }
 
 BBEXPORT void BBCALL bbExpectIntEq( int a,int b,const char *m ){
-	__bbExpectIntEq( a,b,m,"<unknown>",0 );
+	bbExpectIntEq( a,b,m );
 }
 
 BBEXPORT void BBCALL bbExpectFloatEq( float a,float b,const char *m ){
-	__bbExpectIntEq( a,b,m,"<unknown>",0 );
+	bbExpectIntEq( a,b,m );
 }
 
 // TODO: make this unneccesary.

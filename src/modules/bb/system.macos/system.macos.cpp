@@ -1,8 +1,9 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "system.macos.h"
 
 #include <CoreServices/CoreServices.h>
+#include <CoreGraphics/CoreGraphics.h>
 #include <unistd.h>
 #include <mach-o/dyld.h>
 
@@ -29,11 +30,13 @@ int MacOSSystemDriver::getMilliSecs(){
 }
 
 int MacOSSystemDriver::getScreenWidth( int i ){
-  return 0;
+	auto id=CGMainDisplayID();
+	return CGDisplayPixelsWide( id );
 }
 
 int MacOSSystemDriver::getScreenHeight( int i ){
-  return 0;
+	auto id=CGMainDisplayID();
+	return CGDisplayPixelsHigh( id );
 }
 
 void MacOSSystemDriver::dpiInfo( float &scale_x,float &scale_y ){

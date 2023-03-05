@@ -8,13 +8,13 @@ static set<BBTimer*> timers;
 BBTimer::~BBTimer(){
 }
 
-BBTimer * BBCALL bbCreateTimer( int hertz ){
+BBTimer * BBCALL bbCreateTimer( bb_int_t hertz ){
 	BBTimer *t=_bbCreateTimer( hertz );
 	timers.insert( t );
 	return t;
 }
 
-int BBCALL bbWaitTimer( BBTimer *t ){
+bb_int_t BBCALL bbWaitTimer( BBTimer *t ){
 	int n=t->wait();
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	return n;

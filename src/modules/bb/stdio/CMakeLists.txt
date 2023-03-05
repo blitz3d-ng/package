@@ -1,4 +1,7 @@
 bb_start_module(stdio)
 set(DEPENDS_ON bb.blitz)
-set(SOURCES stdio.cpp commands.h module.link.cpp)
+set(SOURCES stdio.cpp commands.h)
+if(BB_ANDROID)
+  set(LIBS log)
+endif()
 bb_end_module()

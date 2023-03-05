@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 
 #include <bb/runtime/runtime.h>
 #include <bb/system/system.h>
@@ -11,7 +11,8 @@
 
 // ugly hack to avoid conflicts with GLFW
 #include <initguid.h>
-DEFINE_GUID(IID_IDirectInput8A,		0xBF798030,0x483A,0x4DA2,0xAA,0x99,0x5D,0x64,0xED,0x36,0x97,0x00);
+DEFINE_GUID(IID_IDirectInput8A, 0xBF798030,0x483A,0x4DA2,0xAA,0x99,0x5D,0x64,0xED,0x36,0x97,0x00);
+DEFINE_GUID(IID_IDirectInput8W, 0xBF798031,0x483A,0x4DA2,0xAA,0x99,0x5D,0x64,0xED,0x36,0x97,0x00);
 
 using namespace std;
 
@@ -201,7 +202,7 @@ BBMODULE_CREATE( input_directinput8 ){
 				_bbDebugInfo( "Failed to enumerate input devices" );
 				gx_input=0;
 			} else {
-				bbSystemProperties["directinput8"]=itoa( (int)di );
+				bbSystemProperties["directinput8"]=itoa( (bb_int_t)di );
 			}
 		}else{
 			_bbDebugInfo( "Create DirectInput failed" );
@@ -212,9 +213,4 @@ BBMODULE_CREATE( input_directinput8 ){
 
 BBMODULE_DESTROY( input_directinput8 ){
 	return true;
-}
-
-BBMODULE_LINK( input_directinput8 ){
-	rtSym( "EnableDirectInput%enable",bbEnableDirectInput );
-	rtSym( "%DirectInputEnabled",bbDirectInputEnabled );
 }

@@ -1,5 +1,5 @@
 bb_start_module(stub)
-set(SOURCES stub.h)
+set(SOURCES stub.h stub.cpp)
 IF(BB_WINDOWS)
   set(SOURCES ${SOURCES} stub.windows.cpp)
 ELSEIF(BB_EMSCRIPTEN)
@@ -10,7 +10,6 @@ ELSE()
   set(SOURCES ${SOURCES} stub.posix.cpp)
 ENDIF()
 bb_end_module()
-
 
 IF(BB_NX)
   target_include_directories(bb.stub PUBLIC /opt/devkitpro/libnx/include)

@@ -4,7 +4,6 @@
 #include <bb/blitz/module.h>
 #include <bb/steamworks/steamworks.h>
 
-#ifdef WIN32
 BBMODULE_LINK( steamworks ){
 	rtSym( "SteamAPI_ISteamAppList_GetAppBuildId%Self%nAppID",bbSteamAPI_ISteamAppList_GetAppBuildId );
 	rtSym( "SteamAPI_ISteamAppList_GetAppInstallDir%Self%nAppID%pchDirectory%cchNameMax",bbSteamAPI_ISteamAppList_GetAppInstallDir );
@@ -873,4 +872,3 @@ BBMODULE_LINK( steamworks ){
 	rtSym( "SteamAPI_ISteamVideo_GetVideoURL%Self%unVideoAppID",bbSteamAPI_ISteamVideo_GetVideoURL );
 	rtSym( "SteamAPI_ISteamVideo_IsBroadcasting%Self%pnNumViewers",bbSteamAPI_ISteamVideo_IsBroadcasting );
 }
-#endif

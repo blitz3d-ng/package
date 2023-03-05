@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "graphics.h"
 #include <bb/input/input.h>
 #include <bb/system/system.h>
@@ -263,24 +263,24 @@ bool BBContextDriver::graphicsOpened(){
 	return !!graphics;
 }
 
-int BBCALL bbCountGfxDrivers(){
+bb_int_t BBCALL bbCountGfxDrivers(){
 	return bbContextDriver->numGraphicsDrivers();
 }
 
-BBStr *	BBCALL bbGfxDriverName( int n ){
+BBStr *	BBCALL bbGfxDriverName( bb_int_t n ){
 	debugDriver( n );
 	string t;int caps;
 	bbContextDriver->graphicsDriverInfo( n-1,&t,&caps );
 	return d_new BBStr( t );
 }
 
-void  BBCALL bbSetGfxDriver( int n ){
+void  BBCALL bbSetGfxDriver( bb_int_t n ){
 	debugDriver( n );
 	gfx_modes.clear();
 	gx_driver=n-1;
 }
 
-int  BBCALL bbCountGfxModes(){
+bb_int_t BBCALL bbCountGfxModes(){
 	gfx_modes.clear();
 	int n=bbContextDriver->numGraphicsModes( gx_driver );
 	for( int k=0;k<n;++k ){
@@ -291,17 +291,17 @@ int  BBCALL bbCountGfxModes(){
 	return gfx_modes.size();
 }
 
-int  BBCALL bbGfxModeWidth( int n ){
+bb_int_t BBCALL bbGfxModeWidth( bb_int_t n ){
 	debugMode( n );
 	return gfx_modes[n-1].w;
 }
 
-int  BBCALL bbGfxModeHeight( int n ){
+bb_int_t BBCALL bbGfxModeHeight( bb_int_t n ){
 	debugMode( n );
 	return gfx_modes[n-1].h;
 }
 
-int  BBCALL bbGfxModeDepth( int n ){
+bb_int_t BBCALL bbGfxModeDepth( bb_int_t n ){
 	debugMode( n );
 	return gfx_modes[n-1].d;
 }
@@ -317,19 +317,19 @@ static int modeExists( int w,int h,int d,bool bb3d ){
 	return 0;
 }
 
-int  BBCALL bbGfxModeExists( int w,int h,int d ){
+bb_int_t BBCALL bbGfxModeExists( bb_int_t w,bb_int_t h,bb_int_t d ){
 	return modeExists( w,h,d,false );
 }
 
 #ifdef PRO
-int  BBCALL bbGfxDriver3D( int n ){
+bb_int_t BBCALL bbGfxDriver3D( bb_int_t n ){
 	debugDriver( n );
 	string t;int caps;
 	bbContextDriver->graphicsDriverInfo( n-1,&t,&caps );
 	return (caps & BBContextDriver::GFXMODECAPS_3D) ? 1 : 0;
 }
 
-int BBCALL bbCountGfxModes3D(){
+bb_int_t BBCALL bbCountGfxModes3D(){
 	gfx_modes.clear();
 	int n=bbContextDriver->numGraphicsModes( gx_driver );
 	for( int k=0;k<n;++k ){
@@ -340,27 +340,27 @@ int BBCALL bbCountGfxModes3D(){
 	return gfx_modes.size();
 }
 
-int BBCALL bbGfxMode3DExists( int w,int h,int d ){
+bb_int_t BBCALL bbGfxMode3DExists( bb_int_t w,bb_int_t h,bb_int_t d ){
 	return modeExists( w,h,d,true );
 }
 
-int BBCALL bbGfxMode3D( int n ){
+bb_int_t BBCALL bbGfxMode3D( bb_int_t n ){
 	debugMode( n );
 	return gfx_modes[n-1].caps & BBContextDriver::GFXMODECAPS_3D ? 1 :0;
 }
 
-int BBCALL bbWindowed3D(){
+bb_int_t BBCALL bbWindowed3D(){
 	int tc;
 	bbContextDriver->windowedModeInfo( &tc );
 	return (tc & BBContextDriver::GFXMODECAPS_3D) ? 1 : 0;
 }
 #endif
 
-int BBCALL bbTotalVidMem(){
+bb_int_t BBCALL bbTotalVidMem(){
 	return gx_graphics->getTotalVidmem();
 }
 
-int BBCALL bbAvailVidMem(){
+bb_int_t BBCALL bbAvailVidMem(){
 	return gx_graphics->getAvailVidmem();
 }
 
@@ -381,7 +381,7 @@ BBCanvas * BBCALL bbGraphicsBuffer(){
 	return gx_canvas;
 }
 
-int BBCALL bbLoadBuffer( BBCanvas *c,BBStr *str ){
+bb_int_t BBCALL bbLoadBuffer( BBCanvas *c,BBStr *str ){
 	debugCanvas( c );
 	string s=*str;delete str;
 	BBCanvas *t=gx_graphics->loadCanvas( s,0 );
@@ -399,7 +399,7 @@ int BBCALL bbLoadBuffer( BBCanvas *c,BBStr *str ){
 	return 1;
 }
 
-int BBCALL bbSaveBuffer( BBCanvas *c,BBStr *str ){
+bb_int_t BBCALL bbSaveBuffer( BBCanvas *c,BBStr *str ){
 	debugCanvas( c );
 	string t=*str;delete str;
 	return saveCanvas( c,t ) ? 1 : 0;
@@ -427,7 +427,7 @@ static void graphics( int w,int h,int d,int flags ){
 	bbSetBuffer( buff );
 }
 
-void BBCALL bbGraphics( int w,int h,int d,int mode ){
+void BBCALL bbGraphics( bb_int_t w,bb_int_t h,bb_int_t d,bb_int_t mode ){
 	int flags=0;
 	switch( mode ){
 	case 0:flags|=bb_env.debug ? BBGraphics::GRAPHICS_WINDOWED : 0 ;break;
@@ -443,7 +443,7 @@ void BBCALL bbGraphics( int w,int h,int d,int mode ){
 
 #ifdef PRO
 
-void BBCALL bbGraphics3D( int w,int h,int d,int mode ){
+void BBCALL bbGraphics3D( bb_int_t w,bb_int_t h,bb_int_t d,bb_int_t mode ){
 	int flags=BBGraphics::GRAPHICS_3D;
 	switch( mode ){
 	case 0:flags|=(bb_env.debug && bbWindowed3D()) ? BBGraphics::GRAPHICS_WINDOWED : 0 ;break;
@@ -455,8 +455,8 @@ void BBCALL bbGraphics3D( int w,int h,int d,int mode ){
 	default:RTEX( "Illegal Graphics3D mode" );
 	}
 	graphics( w,h,d,flags );
-	extern void blitz3d_open( int w,int h );
-	blitz3d_open( w,h );
+	extern void blitz3d_open( int w,int h,float d );
+	blitz3d_open( w,h,gx_graphics->getDensity() );
 }
 #endif
 
@@ -476,15 +476,15 @@ void BBCALL bbEndGraphics(){
 	RTEX( "Unable to set graphics mode" );
 }
 
-int BBCALL bbGraphicsLost(){
+bb_int_t BBCALL bbGraphicsLost(){
 	return bbContextDriver->graphicsLost();
 }
 
-int BBCALL bbGraphicsOpen(){
+bb_int_t BBCALL bbGraphicsOpen(){
 	return !!bbContextDriver->graphicsOpened();
 }
 
-void BBCALL bbSetGamma( int r,int g,int b,float dr,float dg,float db ){
+void BBCALL bbSetGamma( bb_int_t r,bb_int_t g,bb_int_t b,bb_float_t dr,bb_float_t dg,bb_float_t db ){
 	if( dr<0 ) dr=0;
 	else if( dr>255.0f ) dr=255.0f;
 	if( dg<0 ) dg=0;
@@ -494,23 +494,23 @@ void BBCALL bbSetGamma( int r,int g,int b,float dr,float dg,float db ){
 	gx_graphics->setGamma( r,g,b,dr,dg,db );
 }
 
-void BBCALL bbUpdateGamma( int calibrate ){
+void BBCALL bbUpdateGamma( bb_int_t calibrate ){
 	gx_graphics->updateGamma( !!calibrate );
 }
 
-float BBCALL bbGammaRed( int n ){
+bb_float_t BBCALL bbGammaRed( bb_int_t n ){
 	float dr,dg,db;
 	gx_graphics->getGamma( n,n,n,&dr,&dg,&db );
 	return dr;
 }
 
-float BBCALL bbGammaGreen( int n ){
+bb_float_t BBCALL bbGammaGreen( bb_int_t n ){
 	float dr,dg,db;
 	gx_graphics->getGamma( n,n,n,&dr,&dg,&db );
 	return dg;
 }
 
-float BBCALL bbGammaBlue( int n ){
+bb_float_t BBCALL bbGammaBlue( bb_int_t n ){
 	float dr,dg,db;
 	gx_graphics->getGamma( n,n,n,&dr,&dg,&db );
 	return db;
@@ -534,59 +534,59 @@ void BBCALL bbUnlockBuffer( BBCanvas *buff ){
 	(buff ? buff : gx_canvas)->unlock();
 }
 
-int BBCALL bbReadPixel( int x,int y,BBCanvas *buff ){
+bb_int_t BBCALL bbReadPixel( bb_int_t x,bb_int_t y,BBCanvas *buff ){
 	if( buff ) debugCanvas( buff );
 	return (buff ? buff : gx_canvas)->getPixel( x,y );
 }
 
-void BBCALL bbWritePixel( int x,int y,int argb,BBCanvas *buff ){
+void BBCALL bbWritePixel( bb_int_t x,bb_int_t y,bb_int_t argb,BBCanvas *buff ){
 	if( buff ) debugCanvas( buff );
 	(buff ? buff : gx_canvas)->setPixel( x,y,argb );
 }
 
-int BBCALL bbReadPixelFast( int x,int y,BBCanvas *buff ){
+bb_int_t BBCALL bbReadPixelFast( bb_int_t x,bb_int_t y,BBCanvas *buff ){
 	return (buff ? buff : gx_canvas)->getPixelFast( x,y );
 }
 
-void BBCALL bbWritePixelFast( int x,int y,int argb,BBCanvas *buff ){
+void BBCALL bbWritePixelFast( bb_int_t x,bb_int_t y,bb_int_t argb,BBCanvas *buff ){
 	(buff ? buff : gx_canvas)->setPixelFast( x,y,argb );
 }
 
-void BBCALL bbCopyPixel( int src_x,int src_y,BBCanvas *src,int dest_x,int dest_y,BBCanvas *buff ){
+void BBCALL bbCopyPixel( bb_int_t src_x,bb_int_t src_y,BBCanvas *src,bb_int_t dest_x,bb_int_t dest_y,BBCanvas *buff ){
 	(buff ? buff : gx_canvas)->copyPixel( dest_x,dest_y,src ? src : gx_canvas,src_x,src_y );
 }
 
-void BBCALL bbCopyPixelFast( int src_x,int src_y,BBCanvas *src,int dest_x,int dest_y,BBCanvas *buff ){
+void BBCALL bbCopyPixelFast( bb_int_t src_x,bb_int_t src_y,BBCanvas *src,bb_int_t dest_x,bb_int_t dest_y,BBCanvas *buff ){
 	(buff ? buff : gx_canvas)->copyPixelFast( dest_x,dest_y,src ? src : gx_canvas,src_x,src_y );
 }
 
-int BBCALL bbScanLine(){
+bb_int_t BBCALL bbScanLine(){
 	return gx_graphics->getScanLine();
 }
 
-void BBCALL bbVWait( int n ){
+void BBCALL bbVWait( bb_int_t n ){
 	gx_graphics->vwait();
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
-void BBCALL bbFlip( int vwait ){
+void BBCALL bbFlip( bb_int_t vwait ){
 	bbContextDriver->flip( vwait ? true : false );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 }
 
-int BBCALL bbGraphicsWidth(){
-	return gx_graphics->getWidth();
+bb_int_t BBCALL bbGraphicsWidth(){
+	return gx_graphics->getLogicalWidth();
 }
 
-int BBCALL bbGraphicsHeight(){
-	return gx_graphics->getHeight();
+bb_int_t BBCALL bbGraphicsHeight(){
+	return gx_graphics->getLogicalHeight();
 }
 
-int BBCALL bbGraphicsDepth(){
+bb_int_t BBCALL bbGraphicsDepth(){
 	return gx_graphics->getDepth();
 }
 
-void BBCALL bbCopyRect( int sx,int sy,int w,int h,int dx,int dy,BBCanvas *src,BBCanvas *dest ){
+void BBCALL bbCopyRect( bb_int_t sx,bb_int_t sy,bb_int_t w,bb_int_t h,bb_int_t dx,bb_int_t dy,BBCanvas *src,BBCanvas *dest ){
 	if( src ) debugCanvas( src );
 	else src=gx_canvas;
 	if( dest ) debugCanvas( dest );
@@ -607,7 +607,7 @@ bbImage * BBCALL bbLoadImage( BBStr *s ){
 	return i;
 }
 
-bbImage * BBCALL bbLoadAnimImage( BBStr *s,int w,int h,int first,int cnt ){
+bbImage * BBCALL bbLoadAnimImage( BBStr *s,bb_int_t w,bb_int_t h,bb_int_t first,bb_int_t cnt ){
 
 	string t=*s;delete s;
 
@@ -673,7 +673,7 @@ bbImage * BBCALL bbCopyImage( bbImage *i ){
 	return t;
 }
 
-bbImage * BBCALL bbCreateImage( int w,int h,int n ){
+bbImage * BBCALL bbCreateImage( bb_int_t w,bb_int_t h,bb_int_t n ){
 	vector<BBCanvas*> frames;
 	for( int k=0;k<n;++k ){
 		BBCanvas *c=gx_graphics->createCanvas( w,h,0 );
@@ -702,14 +702,14 @@ void BBCALL bbFreeImage( bbImage *i ){
 	delete i;
 }
 
-int BBCALL bbSaveImage( bbImage *i,BBStr *str,int n ){
+bb_int_t BBCALL bbSaveImage( bbImage *i,BBStr *str,bb_int_t n ){
 	debugImage( i,n );
 	string t=*str;delete str;
 	BBCanvas *c=i->getFrames()[n];
 	return saveCanvas( c,t ) ? 1 : 0;
 }
 
-void BBCALL bbGrabImage( bbImage *i,int x,int y,int n ){
+void BBCALL bbGrabImage( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t n ){
 	debugImage( i,n );
 	BBCanvas *c=i->getFrames()[n];
 	int src_ox,src_oy,dst_hx,dst_hy;
@@ -721,24 +721,24 @@ void BBCALL bbGrabImage( bbImage *i,int x,int y,int n ){
 	if( auto_dirty ) c->backup();
 }
 
-BBCanvas * BBCALL bbImageBuffer( bbImage *i,int n ){
+BBCanvas * BBCALL bbImageBuffer( bbImage *i,bb_int_t n ){
 	debugImage( i,n );
 	return i->getFrames()[n];
 }
 
-void BBCALL bbDrawImage( bbImage *i,int x,int y,int frame ){
+void BBCALL bbDrawImage( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->image( c,x,y,false );
 }
 
-void BBCALL bbDrawBlock( bbImage *i,int x,int y,int frame ){
+void BBCALL bbDrawBlock( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->image( c,x,y,true );
 }
 
-static void tile( bbImage *i,int x,int y,int frame,bool solid ){
+static void tile( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame,bool solid ){
 	BBCanvas *c=i->getFrames()[frame];
 
 	int hx,hy;
@@ -762,36 +762,36 @@ static void tile( bbImage *i,int x,int y,int frame,bool solid ){
 	}
 }
 
-void BBCALL bbTileImage( bbImage *i,int x,int y,int frame ){
+void BBCALL bbTileImage( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
 	debugImage( i,frame );
 	tile( i,x,y,frame,false );
 }
 
-void BBCALL bbTileBlock( bbImage *i,int x,int y,int frame ){
+void BBCALL bbTileBlock( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
 	debugImage( i,frame );
 	tile( i,x,y,frame,true );
 }
 
-void BBCALL bbDrawImageRect( bbImage *i,int x,int y,int r_x,int r_y,int r_w,int r_h,int frame ){
+void BBCALL bbDrawImageRect( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t r_x,bb_int_t r_y,bb_int_t r_w,bb_int_t r_h,bb_int_t frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->blit( x,y,c,r_x,r_y,r_w,r_h,false );
 }
 
-void BBCALL bbDrawBlockRect( bbImage *i,int x,int y,int r_x,int r_y,int r_w,int r_h,int frame ){
+void BBCALL bbDrawBlockRect( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t r_x,bb_int_t r_y,bb_int_t r_w,bb_int_t r_h,bb_int_t frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->blit( x,y,c,r_x,r_y,r_w,r_h,true );
 }
 
-void BBCALL bbMaskImage( bbImage *i,int r,int g,int b ){
+void BBCALL bbMaskImage( bbImage *i,bb_int_t r,bb_int_t g,bb_int_t b ){
 	debugImage( i );
 	unsigned argb=(r<<16)|(g<<8)|b;
 	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setMask( argb );
 }
 
-void BBCALL bbHandleImage( bbImage *i,int x,int y ){
+void BBCALL bbHandleImage( bbImage *i,bb_int_t x,bb_int_t y ){
 	debugImage( i );
 	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setHandle( x,y );
@@ -803,35 +803,35 @@ void BBCALL bbMidHandle( bbImage *i ){
 	for( int k=0;k<f.size();++k ) f[k]->setHandle( f[k]->getWidth()/2,f[k]->getHeight()/2 );
 }
 
-void BBCALL bbAutoMidHandle( int enable ){
+void BBCALL bbAutoMidHandle( bb_int_t enable ){
 	auto_midhandle=enable ? true : false;
 }
 
-int BBCALL bbImageWidth( bbImage *i ){
+bb_int_t BBCALL bbImageWidth( bbImage *i ){
 	debugImage( i );
 	return i->getFrames()[0]->getWidth();
 }
 
-int BBCALL bbImageHeight( bbImage *i ){
+bb_int_t BBCALL bbImageHeight( bbImage *i ){
 	debugImage( i );
 	return i->getFrames()[0]->getHeight();
 }
 
-int BBCALL bbImageXHandle( bbImage *i ){
+bb_int_t BBCALL bbImageXHandle( bbImage *i ){
 	debugImage( i );
 	int x,y;
 	i->getFrames()[0]->getHandle( &x,&y );
 	return x;
 }
 
-int BBCALL bbImageYHandle( bbImage *i ){
+bb_int_t BBCALL bbImageYHandle( bbImage *i ){
 	debugImage( i );
 	int x,y;
 	i->getFrames()[0]->getHandle( &x,&y );
 	return y;
 }
 
-int BBCALL bbImagesOverlap( bbImage *i1,int x1,int y1,bbImage *i2,int x2,int y2 ){
+bb_int_t BBCALL bbImagesOverlap( bbImage *i1,bb_int_t x1,bb_int_t y1,bbImage *i2,bb_int_t x2,bb_int_t y2 ){
 	debugImage( i1 );
 	debugImage( i2 );
 	BBCanvas *c1=i1->getFrames()[0];
@@ -839,7 +839,7 @@ int BBCALL bbImagesOverlap( bbImage *i1,int x1,int y1,bbImage *i2,int x2,int y2 
 	return c1->collide( x1,y1,c2,x2,y2,true );
 }
 
-int BBCALL bbImagesCollide( bbImage *i1,int x1,int y1,int f1,bbImage *i2,int x2,int y2,int f2 ){
+bb_int_t BBCALL bbImagesCollide( bbImage *i1,bb_int_t x1,bb_int_t y1,bb_int_t f1,bbImage *i2,bb_int_t x2,bb_int_t y2,bb_int_t f2 ){
 	debugImage( i1,f1 );
 	debugImage( i2,f2 );
 	BBCanvas *c1=i1->getFrames()[f1];
@@ -847,24 +847,24 @@ int BBCALL bbImagesCollide( bbImage *i1,int x1,int y1,int f1,bbImage *i2,int x2,
 	return c1->collide( x1,y1,c2,x2,y2,false );
 }
 
-int BBCALL bbRectsOverlap( int x1,int y1,int w1,int h1,int x2,int y2,int w2,int h2 ){
+bb_int_t BBCALL bbRectsOverlap( bb_int_t x1,bb_int_t y1,bb_int_t w1,bb_int_t h1,bb_int_t x2,bb_int_t y2,bb_int_t w2,bb_int_t h2 ){
 	if( x1+w1<=x2 || x1>=x2+w2 || y1+h1<=y2 || y1>=y2+h2 ) return 0;
 	return 1;
 }
 
-int BBCALL bbImageRectOverlap( bbImage *i,int x,int y,int x2,int y2,int w2,int h2 ){
+bb_int_t BBCALL bbImageRectOverlap( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t x2,bb_int_t y2,bb_int_t w2,bb_int_t h2 ){
 	debugImage( i );
 	BBCanvas *c=i->getFrames()[0];
 	return c->rect_collide( x,y,x2,y2,w2,h2,true );
 }
 
-int BBCALL bbImageRectCollide( bbImage *i,int x,int y,int f,int x2,int y2,int w2,int h2 ){
+bb_int_t BBCALL bbImageRectCollide( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t f,bb_int_t x2,bb_int_t y2,bb_int_t w2,bb_int_t h2 ){
 	debugImage( i,f );
 	BBCanvas *c=i->getFrames()[f];
 	return c->rect_collide( x,y,x2,y2,w2,h2,false );
 }
 
-void BBCALL bbTFormImage( bbImage *i,float a,float b,float c,float d ){
+void BBCALL bbTFormImage( bbImage *i,bb_float_t a,bb_float_t b,bb_float_t c,bb_float_t d ){
 	debugImage( i );
 	const vector<BBCanvas*> &f=i->getFrames();
 	int k;
@@ -885,24 +885,24 @@ void BBCALL bbTFormImage( bbImage *i,float a,float b,float c,float d ){
 	}
 }
 
-void BBCALL bbScaleImage( bbImage *i,float w,float h ){
+void BBCALL bbScaleImage( bbImage *i,bb_float_t w,bb_float_t h ){
 	debugImage( i );
 	bbTFormImage( i,w,0,0,h );
 }
 
-void BBCALL bbResizeImage( bbImage *i,float w,float h ){
+void BBCALL bbResizeImage( bbImage *i,bb_float_t w,bb_float_t h ){
 	debugImage( i );
 	BBCanvas *c=i->getFrames()[0];
 	bbTFormImage( i,w/(float)c->getWidth(),0,0,h/(float)c->getHeight() );
 }
 
-void BBCALL bbRotateImage( bbImage *i,float d ){
+void BBCALL bbRotateImage( bbImage *i,bb_float_t d ){
 	debugImage( i );
 	d*=-dtor;
 	bbTFormImage( i,cos(d),-sin(d),sin(d),cos(d) );
 }
 
-void BBCALL bbTFormFilter( int enable ){
+void BBCALL bbTFormFilter( bb_int_t enable ){
 	filter=enable ? true : false;
 }
 
@@ -1089,7 +1089,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 	return d_new BBStr( str );
 }
 
-void BBCALL bbLocate( int x,int y ){
+void BBCALL bbLocate( bb_int_t x,bb_int_t y ){
 	BBCanvas *c=gx_graphics->getFrontCanvas();
 	curs_x=x<0 ? 0 : (x > c->getWidth() ? c->getWidth() : x);
 	curs_y=y<0 ? 0 : (y > c->getHeight() ? c->getHeight() : y);

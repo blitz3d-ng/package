@@ -37,19 +37,19 @@ void BBCALL bbLoopSound( BBSound *sound ){
 	sound->setLoop( true );
 }
 
-void BBCALL bbSoundPitch( BBSound *sound,int pitch ){
+void BBCALL bbSoundPitch( BBSound *sound,bb_int_t pitch ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setPitch( pitch );
 }
 
-void BBCALL bbSoundVolume( BBSound *sound,float volume ){
+void BBCALL bbSoundVolume( BBSound *sound,bb_float_t volume ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setVolume( volume );
 }
 
-void BBCALL bbSoundPan( BBSound *sound,float pan ){
+void BBCALL bbSoundPan( BBSound *sound,bb_float_t pan ){
 	if( !sound ) return;
 	debugSound( sound );
 	sound->setPan( pan );
@@ -65,7 +65,7 @@ BBChannel * BBCALL bbPlayMusic( BBStr *f ){
 	return playMusic( f,false );
 }
 
-BBChannel * BBCALL bbPlayCDTrack( int track,int mode ){
+BBChannel * BBCALL bbPlayCDTrack( bb_int_t track,bb_int_t mode ){
 	return gx_audio ? gx_audio->playCDTrack( track,mode ) : 0;
 }
 
@@ -84,22 +84,22 @@ void BBCALL bbResumeChannel( BBChannel *channel ){
 	channel->setPaused( false );
 }
 
-void BBCALL bbChannelPitch( BBChannel *channel,int pitch ){
+void BBCALL bbChannelPitch( BBChannel *channel,bb_int_t pitch ){
 	if( !channel ) return;
 	channel->setPitch( pitch );
 }
 
-void BBCALL bbChannelVolume( BBChannel *channel,float volume ){
+void BBCALL bbChannelVolume( BBChannel *channel,bb_float_t volume ){
 	if( !channel ) return;
 	channel->setVolume( volume );
 }
 
-void BBCALL bbChannelPan( BBChannel *channel,float pan ){
+void BBCALL bbChannelPan( BBChannel *channel,bb_float_t pan ){
 	if( !channel ) return;
 	channel->setPan( pan );
 }
 
-int BBCALL bbChannelPlaying( BBChannel *channel ){
+bb_int_t BBCALL bbChannelPlaying( BBChannel *channel ){
 	return channel ? channel->isPlaying() : 0;
 }
 

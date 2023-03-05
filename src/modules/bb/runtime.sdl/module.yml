@@ -1,0 +1,15 @@
+name: GLFW3 Runtime
+description: Provides runtime via SDL2.
+
+platforms:
+  - desktop
+
+dependencies:
+  - runtime
+  - graphics.gl
+  - blitz2d
+  - blitz3d.gl
+  - pixmap
+
+  - input
+  - timer

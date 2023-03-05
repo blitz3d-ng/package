@@ -6,13 +6,19 @@
 *.exe
 *.dll
 *.dylib
+*.so
+*.app/
 *.lib
+*.a
+*.jar
+*.keystore
 *.log
 *.exp
 *.asm
 *.res
 *.ilk
 *.pdb
+*.dSYM/
 *.sln
 *.vcxproj
 *.vcxproj.filters
@@ -21,17 +27,24 @@
 *.VC.VC.opendb
 *.VC.db
 *.obj
+*.o
 *.pch
 *.tlog
 *.lastbuildstate
 UpgradeLog.htm
 *.tmp
 
-.DS_Store
+*.DS_Store
 
 *.bb_bak*
 
+_release/bin/**/*.i
+_release/bin/**/*.xml
+_release/bin/**/*.toml
+_release/bin/blitzcc
+_release/bin/ide2
 _release/cfg/blitzide.prefs
+_release/cfg/blitzide.toml
 _release/help/reference/modules
 _release/help/reference/index.html
 _release/help/reference/commands.js
@@ -39,10 +52,11 @@ _release/tmp
 _release/toolchains
 _release/userlibs/*.dll
 _release/userlibs/*.decls
-
-.coverage/
+_release/**/*.manifest
 
 /build
+/coverage/
 /innosetup/installs
+/llvm*
 
 /tmp

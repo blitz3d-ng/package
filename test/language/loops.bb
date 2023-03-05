@@ -45,4 +45,25 @@ For i = 0 To 99
 	count = count + 1
 Next
 
-Expect count = 100, "should have iterated 100 times"
+Expect count = 100, "should have iterated 100 times, counting up"
+
+;------
+
+count = 100
+For i = 99 To 0 Step -1
+	count = count - 1
+Next
+
+Expect count = 0, "should have iterated 100 times, counting down"
+
+;------
+
+count = 0
+For i = 0 To 99
+	count = count + 1
+	If count = 50
+		Exit
+	EndIf
+Next
+
+Expect count = 50, "should have iterated 50 times, exiting early"

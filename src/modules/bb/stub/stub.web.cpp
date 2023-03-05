@@ -52,11 +52,6 @@ extern "C" int EMSCRIPTEN_KEEPALIVE main(){
 	StdioDebugger debugger( trace );
 	bbAttachDebugger( &debugger );
 
-	if( !(bbRuntime=bbCreateRuntime()) ){
-		cerr<<"Failed to create runtime"<<endl;
-		return 1;
-	}
-
 	int retcode=0;
 	try{
 		if( !bbruntime_create() ) return 1;

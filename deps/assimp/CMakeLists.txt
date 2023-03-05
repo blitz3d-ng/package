@@ -1,4 +1,4 @@
-set (CMAKE_CXX_STANDARD 11)
+# set(CMAKE_UNITY_BUILD ${ENABLE_UNITY_BUILD})
 
 set (SOURCE src/code/Assimp.cpp
   src/code/BaseImporter.h
@@ -83,11 +83,10 @@ set (SOURCE src/code/Assimp.cpp
   src/code/XFileParser.h
 )
 
-IF(NOT WIN32)
-  set (SOURCE ${SOURCE} src/contrib/ConvertUTF/ConvertUTF.c src/contrib/ConvertUTF/ConvertUTF.h)
-ENDIF()
+set (SOURCE ${SOURCE} src/contrib/ConvertUTF/ConvertUTF.c src/contrib/ConvertUTF/ConvertUTF.h)
 
 add_library (assimp STATIC ${SOURCE})
+target_output_to_toolchain(assimp)
 
 target_include_directories(assimp SYSTEM PUBLIC src/include include)
 target_link_libraries(assimp ${ZLIB})

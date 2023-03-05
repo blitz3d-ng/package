@@ -1,7 +1,7 @@
 IF(TARGET enet)
   bb_start_module(enet)
   set(DEPENDS_ON bb.blitz bb.hook)
-  set(SOURCES commands.h enet.cpp enet.h module.link.cpp)
+  set(SOURCES commands.h enet.cpp enet.h)
   set(LIBS enet crossguid)
 
   IF(BB_WINDOWS)

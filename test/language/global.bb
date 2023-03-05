@@ -13,3 +13,12 @@ ChangeTheValue()
 
 Expect AGlobalValue = 5678, "AGlobalValue is now 5678"
 Expect ALocalValue = 0, "ALocalValue is still 0"
+
+Type Character
+	Field name$
+End Type
+
+Global MainPlayer.Character = New Character
+MainPlayer\name = "John"
+
+Expect MainPlayer\name = "John", "Main players name is john"

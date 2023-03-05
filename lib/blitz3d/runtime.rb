@@ -25,7 +25,7 @@ module Blitz3D
       @modules = config['modules'] || []
 
       @platforms = config['platforms'] || []
-      @platforms += %w(win32 win64 mingw32) if @platforms.delete('windows')
+      @platforms += %w(win32 win64 mingw32 mingw64) if @platforms.delete('windows')
       @platforms = Module::PLATFORMS.dup if @platforms.empty?
 
       @entry = config['entry'] || {}

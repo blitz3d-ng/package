@@ -22,37 +22,6 @@ end
 command = ARGV[0]
 
 case command
-when 'run'
-  if ARGV.include?('-r')
-    runtime = ARGV[ARGV.find_index('-r') + 1] || []
-  else
-    runtime = 'opengl'
-  end
-
-  if runtime.nil?
-    puts "Missing runtime.".red
-    exit 1
-  end
-
-  in_file = ARGV[-1]
-
-  # grab a temp file path instead of using it. Executable won't run on linux for some reason.
-  tmp_file = Tempfile.new('blitzcc')
-  out_file = tmp_file.path
-  tmp_file.unlink
-
-  command = "#{__dir__}/../_release/bin/blitzcc -r #{runtime || 'opengl'} +q -d -j #{in_file} | #{__dir__}/ast2c | clang++ -x c -o #{out_file} \`#{__dir__}/bb-config --#{runtime}\` -"
-  puts command if ENV['DEBUG'].present?
-
-  was_built = system command
-  if !was_built
-    File.unlink out_file if File.exist?(out_file) && tmp_file
-    STDERR.puts 'Failed to build.'
-    exit 1
-  end
-  result = system "cd #{File.dirname(in_file)} && #{out_file}"
-  File.unlink out_file if File.exist?(out_file)
-  exit 1 unless result
 when 'help'
   if ARGV.include?('--lint')
     module_names = [ARGV[ARGV.find_index('--lint') + 1]] || []
@@ -86,7 +55,6 @@ when 'help'
       end
     end
   end
-when 'import'
 when 'config'
   run Blitz3D::Tools::Config
 else

@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "commands.h"
 #include "blitz.h"
 #include "app.h"
@@ -150,7 +150,7 @@ BBStr * BBCALL _bbStrConcat( BBStr *s1,BBStr *s2 ){
 	*s1+=*s2;delete s2;return s1;
 }
 
-int BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs ){
+bb_int_t BBCALL _bbStrCompare( BBStr *lhs,BBStr *rhs ){
 	int n=lhs->compare( *rhs );
 	delete lhs;delete rhs;return n;
 }
@@ -343,7 +343,7 @@ void BBCALL _bbObjStore( BBObj **var,BBObj *obj ){
 	*var=obj;
 }
 
-int BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 ){
+bb_int_t BBCALL _bbObjCompare( BBObj *o1,BBObj *o2 ){
 	return (o1 ? o1->fields : 0)!=(o2 ? o2->fields : 0);
 }
 
@@ -383,22 +383,22 @@ void BBCALL _bbObjInsAfter( BBObj *o1,BBObj *o2 ){
 	insertObj( o1,o2->next );
 }
 
-int BBCALL _bbObjEachFirst( BBObj **var,BBObjType *type ){
+bb_int_t BBCALL _bbObjEachFirst( BBObj **var,BBObjType *type ){
 	_bbObjStore( var,_bbObjFirst( type ) );
 	return *var!=0;
 }
 
-int BBCALL _bbObjEachNext( BBObj **var ){
+bb_int_t BBCALL _bbObjEachNext( BBObj **var ){
 	_bbObjStore( var,_bbObjNext( *var ) );
 	return *var!=0;
 }
 
-int BBCALL _bbObjEachFirst2( BBObj **var,BBObjType *type ){
+bb_int_t BBCALL _bbObjEachFirst2( BBObj **var,BBObjType *type ){
 	*var=_bbObjFirst( type );
 	return *var!=0;
 }
 
-int BBCALL _bbObjEachNext2( BBObj **var ){
+bb_int_t BBCALL _bbObjEachNext2( BBObj **var ){
 	*var=_bbObjNext( *var );
 	return *var!=0;
 }
@@ -470,7 +470,7 @@ void BBCALL _bbRestore( BBData *data ){
 	dataPtr=data;
 }
 
-int BBCALL _bbReadInt(){
+bb_int_t BBCALL _bbReadInt(){
 	switch( dataPtr->fieldType ){
 	case BBTYPE_END:RTEX( "Out of data" );return 0;
 	case BBTYPE_INT:return dataPtr++->field.INT;
@@ -480,7 +480,7 @@ int BBCALL _bbReadInt(){
 	}
 }
 
-float BBCALL _bbReadFloat(){
+bb_float_t BBCALL _bbReadFloat(){
 	switch( dataPtr->fieldType ){
 	case BBTYPE_END:RTEX( "Out of data" );return 0;
 	case BBTYPE_INT:return dataPtr++->field.INT;
@@ -500,32 +500,43 @@ BBStr * BBCALL _bbReadStr(){
 	}
 }
 
-int BBCALL _bbAbs( int n ){
+bb_int_t BBCALL _bbAbs( bb_int_t n ){
 	return n>=0 ? n : -n;
 }
 
-int BBCALL _bbSgn( int n ){
+bb_int_t BBCALL _bbSgn( bb_int_t n ){
 	return n>0 ? 1 : (n<0 ? -1 : 0);
 }
 
-int BBCALL _bbMod( int x,int y ){
+bb_int_t BBCALL _bbMod( bb_int_t x,bb_int_t y ){
 	return x%y;
 }
 
-float BBCALL _bbFAbs( float n ){
+bb_float_t BBCALL _bbFAbs( bb_float_t n ){
 	return n>=0 ? n : -n;
 }
 
-float BBCALL _bbFSgn( float n ){
+bb_float_t BBCALL _bbFSgn( bb_float_t n ){
 	return n>0.0f ? 1.0f : (n<0.0f ? -1.0f : 0.0f);
 }
 
-float BBCALL _bbFMod( float x,float y ){
+bb_float_t BBCALL _bbFMod( bb_float_t x,bb_float_t y ){
 	return (float)fmod( x,y );
 }
 
-float BBCALL _bbFPow( float x,float y ){
-	return (float)pow( x,y );
+bb_float_t BBCALL _bbFPow( bb_float_t x,bb_float_t y ){
+	return (bb_float_t)pow( x,y );
+}
+
+static void *gosub_stack[512] = { 0 };
+static int gosub_idx=0;
+
+void BBCALL _bbPushGosub( void *addr ){
+	gosub_stack[gosub_idx++]=addr;
+}
+
+void *BBCALL _bbPopGosub(){
+	return gosub_stack[--gosub_idx];
 }
 
 void BBCALL bbRuntimeStats(){

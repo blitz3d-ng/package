@@ -5,9 +5,9 @@ endif()
 set(BUILD_SHARED_LIBS off)
 
 add_subdirectory(tree)
-target_include_directories(zlib PUBLIC tree ${CMAKE_BINARY_DIR}/deps/zlib/tree)
-target_include_directories(zlibstatic PUBLIC tree ${CMAKE_BINARY_DIR}/deps/zlib/tree)
 
+target_include_directories(zlibstatic PUBLIC tree ${CMAKE_BINARY_DIR}/deps/zlib/tree)
+target_output_to_toolchain(zlibstatic)
 set_target_properties(zlibstatic PROPERTIES OUTPUT_NAME zlibstatic)
 
 # disable these since the CMakeLists.txt does not offer a flag.

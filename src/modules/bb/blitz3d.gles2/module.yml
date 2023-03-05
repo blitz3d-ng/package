@@ -1,9 +1,0 @@
-name: OpenGL ES 2.0 for Blitz3D
-description: Provides OpenGL ES 2.0 for Blitz3D.
-
-platforms:
-  - mobile
-
-dependencies:
-  - blitz3d
-  - blitz2d.gl

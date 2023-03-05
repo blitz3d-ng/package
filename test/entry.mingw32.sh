@@ -2,13 +2,15 @@
 
 set -e
 
-export blitzpath=_release/toolchains/mingw32
-cp deps/fmod/bin/fmod.dll _release/toolchains/mingw32/bin
+export blitzpath=_release
+cp deps/fmod/bin/fmod*.dll _release/bin
+
+BLITZCC="wine _release/bin/blitzcc.exe"
 
 # compile an executable...
-wine _release/toolchains/mingw32/bin/blitzcc.exe -r test -o blank.exe test/blank.bb
+$BLITZCC -r test -o blank.exe test/blank.bb
 cp deps/fmod/bin/fmod.dll test/
 wine test/blank.exe
 
 # run the specs...
-wine _release/toolchains/mingw32/bin/blitzcc.exe -r test test/all.bb
+$BLITZCC -r test test/all.bb

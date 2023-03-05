@@ -1,7 +1,7 @@
 #ifndef BB_STEAMWORKS_H
 #define BB_STEAMWORKS_H
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 
 typedef unsigned int uint32;
 

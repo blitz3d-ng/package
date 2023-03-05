@@ -3,7 +3,7 @@
 #define STD_H
 
 #include "../config.h"
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 
 #pragma warning( disable:4786 )
 

@@ -41,16 +41,11 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 		f+=file[i] == WRONG_DIV ? RIGHT_DIV : file[i];
 	}
 
-#if BB_DESKTOP || BB_IOS
-	#ifdef BB_DESKTOP
-		return bbLoadPixmapWithFreeImage( f );
-	#else
-		return nullptr;
-		// return bbLoadPixmapWithUIKit( f.c_str() );
-	#endif
+#ifdef BB_IOS
+	_bbLog( "load: %s\n", f.c_str() );
+	return bbLoadPixmapWithUIKit( f.c_str() );
 #else
-	// TODO: fix this...
-	return nullptr;
+	return bbLoadPixmapWithFreeImage( f );
 #endif
 }
 

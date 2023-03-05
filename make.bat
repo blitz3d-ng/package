@@ -1,58 +1,28 @@
-REM @echo off
+REM A quick script.
+@echo off
 
-set ENV=%1
-set PLATFORM=%2
+set BBENV=%1
 
-IF NOT "%ENV%" == "debug" (
-  IF NOT "%ENV%" == "release" (
-    SET ENV=debug
+IF "%Platform%" == "x86" (
+  set BBARCH=x86
+  set BBPLATFORM=win32
+) ELSE (
+  IF "%Platform%" == "x64" (
+    set BBARCH=x86_64
+    set BBPLATFORM=win64
+  ) ELSE (
+    echo Unsupport platform %Platform%.
+    exit /b 1
   )
 )
 
-IF "%ENV%" == "debug" (
-  SET CONFIG=Debug
-)
-IF "%ENV%" == "release" (
-  SET CONFIG=MinSizeRel
-)
-
-IF "%VisualStudioVersion%" == "16.0" (
-  SET GENERATOR=Visual Studio 16 2019
-)
-
-IF "%VisualStudioVersion%" == "17.0" (
-  SET GENERATOR=Visual Studio 17 2022
-)
-
-IF NOT "%PLATFORM%" == "win32" (
-  IF NOT "%PLATFORM%" == "win64" (
-    SET PLATFORM=win32
+IF NOT "%BBENV%" == "debug" (
+  IF NOT "%BBENV%" == "release" (
+    SET BBENV=release
   )
 )
 
-IF "%PLATFORM%" == "win32" (
-  SET ARCH=Win32
-)
+set BBBUILDDIR=%cd%\build\%BBPLATFORM%-%BBENV%
 
-IF "%PLATFORM%" == "win64" (
-  SET ARCH=x64
-)
-
-ECHO Building %PLATFORM% in %ENV% mode using VS %VisualStudioVersion%.
-
-set OUTPUT=_release\toolchains\%PLATFORM%
-set RELEASE=_release
-
-cmake -G "%GENERATOR%" -H. -B"%cd%\build\%PLATFORM%\%ENV%" -A%ARCH% -DBB_PLATFORM=%PLATFORM% -DBB_ENV=%ENV% || exit /b 1
-msbuild /nologo /verbosity:normal /m build\%PLATFORM%\%ENV%\Blitz3D.sln /property:Configuration=%CONFIG% /property:Platform=%ARCH% || exit /b 1
-
-COPY /Y %OUTPUT%\bin\Blitz3D*.exe %RELEASE%
-COPY /Y %OUTPUT%\bin\ide*.exe %RELEASE%\bin
-COPY /Y %OUTPUT%\bin\blitzcc*.exe %RELEASE%\bin
-COPY /Y %OUTPUT%\bin\linker*.dll %RELEASE%\bin
-COPY /Y %OUTPUT%\bin\debugger*.dll %RELEASE%\bin
-COPY /Y %OUTPUT%\bin\runtime*.dll %RELEASE%\bin
-
-COPY /Y deps\fmod\bin\fmod*.dll %RELEASE%\bin
-COPY /Y %OUTPUT%\bin\unit_test.dll %RELEASE%\userlibs
-COPY /Y src\modules\bb\unit-test\unit_test.decls %RELEASE%\userlibs
+cmake -G Ninja -H. -B%BBBUILDDIR% -DARCH=%BBARCH% -DBB_PLATFORM=%BBPLATFORM% -DBB_ENV=%BBENV% || exit /b 1
+cmake --build %BBBUILDDIR% || exit /b 1

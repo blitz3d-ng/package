@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include "system.ios.h"
 
 #include <CoreFoundation/CFDate.h>
@@ -7,6 +7,11 @@
 
 #include <fstream>
 using namespace std;
+
+extern "C" {
+	int iosScreenWidth();
+	int iosScreenHeight();
+}
 
 bool iOSSystemDriver::delay( int ms ){
   usleep( ms * 1000 );
@@ -18,18 +23,18 @@ bool iOSSystemDriver::execute( const std::string &cmd ){
 }
 
 int iOSSystemDriver::getMilliSecs(){
-	CFAbsoluteTime abst;
-	abst=CFAbsoluteTimeGetCurrent();
+	struct timespec ts;
+	clock_gettime( CLOCK_UPTIME_RAW,&ts );
 
-	return (int) (long long) ( abst/(1000.0/512.0) );
+	return ts.tv_sec*1000+(ts.tv_nsec/1.0e6);
 }
 
 int iOSSystemDriver::getScreenWidth( int i ){
-  return 0;
+	return iosScreenWidth();
 }
 
 int iOSSystemDriver::getScreenHeight( int i ){
-  return 0;
+	return iosScreenHeight();
 }
 
 void iOSSystemDriver::dpiInfo( float &scale_x,float &scale_y ){

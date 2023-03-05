@@ -1,5 +1,5 @@
 
-#include "../../stdutil/stdutil.h"
+#include "../stdutil/stdutil.h"
 #include <bb/blitz/module.h>
 #include <bb/runtime/runtime.h>
 #include "system.windows.h"
@@ -216,7 +216,7 @@ bool WindowsSystemDriver::execute( const string &cmd_line ){
 
 	SetForegroundWindow( GetDesktopWindow() );
 
-	return (int)ShellExecute( GetDesktopWindow(),0,cmd.c_str(),params.size() ? params.c_str() : 0,0,SW_SHOW )>32;
+	return (bb_int_t)ShellExecute( GetDesktopWindow(),0,cmd.c_str(),params.size() ? params.c_str() : 0,0,SW_SHOW )>32;
 }
 
 int WindowsSystemDriver::getMilliSecs(){
@@ -328,7 +328,7 @@ int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func
 extern inline void debugBank( bbBank *b );
 extern inline void debugBank( bbBank *b,int offset );
 
-int BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out ){
+BBLIB bb_int_t BBCALL bbCallDLL( BBStr *dll,BBStr *fun,bbBank *in,bbBank *out ){
 	if( bb_env.debug ){
 		if( in ) debugBank( in );
 		if( out ) debugBank( out );

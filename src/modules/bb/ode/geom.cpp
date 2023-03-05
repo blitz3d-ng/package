@@ -2,10 +2,7 @@
 #include "ode.h"
 #include <ode/ode.h>
 #include <bb/blitz3d/geom.h>
-
-//degrees to radians and back
-static const float dtor=0.0174532925199432957692369076848861f;
-static const float rtod=1/dtor;
+#include "common.h"
 
 // ODE_API void dGeomDestroy (dGeomID geom);
 // ODE_API void dGeomSetData (dGeomID geom, void* data);
@@ -20,15 +17,15 @@ void BBCALL _odeGeomSetBody( bb_ptr_t g,bb_ptr_t b ){
 // ODE_API void dGeomSetRotation (dGeomID geom, const dMatrix3 R);
 // ODE_API void dGeomSetQuaternion (dGeomID geom, const dQuaternion Q);
 
-float BBCALL _odeGeomGetPositionX( bb_ptr_t g ){
+bb_float_t BBCALL _odeGeomGetPositionX( bb_ptr_t g ){
   return dGeomGetPosition( (dGeomID)g )[0];
 }
 
-float BBCALL _odeGeomGetPositionY( bb_ptr_t g ){
+bb_float_t BBCALL _odeGeomGetPositionY( bb_ptr_t g ){
   return dGeomGetPosition( (dGeomID)g )[1];
 }
 
-float BBCALL _odeGeomGetPositionZ( bb_ptr_t g ){
+bb_float_t BBCALL _odeGeomGetPositionZ( bb_ptr_t g ){
   return dGeomGetPosition( (dGeomID)g )[2];
 }
 
@@ -53,7 +50,7 @@ else
 }
 
 
-float BBCALL _odeGeomGetPitch( bb_ptr_t g ){
+bb_float_t BBCALL _odeGeomGetPitch( bb_ptr_t g ){
   float p,y,r;
   const dReal *m=dGeomGetRotation( (dGeomID)g );
   get_euler( m,p,y,r );
@@ -65,7 +62,7 @@ float BBCALL _odeGeomGetPitch( bb_ptr_t g ){
 	// return quatPitch( q ) * rtod;
 }
 
-float BBCALL _odeGeomGetYaw( bb_ptr_t g ){
+bb_float_t BBCALL _odeGeomGetYaw( bb_ptr_t g ){
   float p,y,r;
   const dReal *m=dGeomGetRotation( (dGeomID)g );
   get_euler( m,p,y,r );
@@ -77,7 +74,7 @@ float BBCALL _odeGeomGetYaw( bb_ptr_t g ){
 	// return quatYaw( q ) * rtod;
 }
 
-float BBCALL _odeGeomGetRoll( bb_ptr_t g ){
+bb_float_t BBCALL _odeGeomGetRoll( bb_ptr_t g ){
   float p,y,r;
   const dReal *m=dGeomGetRotation( (dGeomID)g );
   get_euler( m,p,y,r );

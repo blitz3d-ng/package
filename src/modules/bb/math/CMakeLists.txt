@@ -1,6 +1,6 @@
 bb_start_module(math)
-set(SOURCES math.cpp math.h module.link.cpp)
-if (NOT BB_MSVC)
+set(SOURCES math.cpp math.h)
+if (NOT BB_MSVC AND NOT BB_EMSCRIPTEN)
   set(LIBS m)
 endif()
 bb_end_module()

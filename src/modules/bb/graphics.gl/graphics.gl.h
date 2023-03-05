@@ -3,17 +3,38 @@
 
 #include <bb/graphics/graphics.h>
 
-#if defined(__linux__) || defined(_WIN32)
+#ifdef BB_DESKTOP
 #include <GL/glew.h>
 #endif
 
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
+#if defined(BB_DESKTOP) || defined(BB_EMSCRIPTEN)
+	#ifdef BB_MACOS
+		#include <OpenGL/gl.h>
+		#include <OpenGL/glext.h>
+	#else
+		#define GL_GLEXT_PROTOTYPES
+		#include <GL/gl.h>
+		// #include <GL/glext.h>
+	#endif
 #else
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-// #include <GL/glext.h>
+	#ifdef BB_IOS
+		#include <OpenGLES/ES3/gl.h>
+	#endif
+
+	#if defined(__BIONIC__) || defined(BB_NX)
+		#include <GLES3/gl3.h>
+	#endif
 #endif
+
+GLuint _bbGLCompileProgram( const std::string &name,const std::string &src );
+
+
+// #ifdef NDEBUG
+// #define GL( func ) func;
+// #else
+void bbGLGraphicsCheckErrors( const char *file, int line );
+const char * bbGLFramebufferStatusString( GLenum status );
+#define GL( func ) func; bbGLGraphicsCheckErrors( __FILE__,__LINE__ );
+// #endif
 
 #endif

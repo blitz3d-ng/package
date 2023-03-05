@@ -1,16 +1,14 @@
 name: Test
 
 platforms:
-  - win32
-  - mingw32
-  - macos
-  - linux
-  - ios
-  - android
+  - desktop
+  - mobile
+  - ovr
   - emscripten
   - nx
 
 modules:
+  - stub
   - blitz
   - hook
   - event
@@ -29,7 +27,7 @@ modules:
   - timer.windows
   - timer.noop
   - input
-  - input.directinput8
+  # - input.directinput8
   - audio
   - audio.fmod
   - audio.openal
@@ -38,7 +36,7 @@ modules:
   - userlibs
   - runtime
   - runtime.console
-  - runtime.html
+  # - runtime.html
   - unit-test
 
 entry:

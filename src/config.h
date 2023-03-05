@@ -26,15 +26,14 @@
 
 #define VERSION		(BASE_VER|PRO_F|DEMO_F|EDU_F)
 
-#if INTPTR_MAX == INT64_MAX
-#define BB64
-typedef long   bb_int_t;
-typedef double bb_float_t;
+#ifdef BB64
+typedef long long int bb_int_t;
+typedef double        bb_float_t;
 #else
-#define BB32
-typedef int    bb_int_t;
-typedef float  bb_float_t;
+typedef int   bb_int_t;
+typedef float bb_float_t;
 #endif
+
 typedef bb_int_t bb_ptr_t;
 
 #endif

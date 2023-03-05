@@ -1,7 +1,7 @@
 IF(BB_DESKTOP)
   bb_start_module(sockets)
   set(DEPENDS_ON bb.stream)
-  set(SOURCES sockets.cpp sockets.h module.link.cpp)
+  set(SOURCES sockets.cpp sockets.h)
   if(BB_WINDOWS)
     set(LIBS wsock32)
   endif()
