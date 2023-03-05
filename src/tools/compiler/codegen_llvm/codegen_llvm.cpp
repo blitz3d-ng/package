@@ -32,7 +32,7 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 
 	builder=new IRBuilder<>( *context );
 
-	context->enableOpaquePointers();
+	context->setOpaquePointers(true);
 
 	voidTy=llvm::Type::getVoidTy( *context );
 	intTy=llvm::Type::getInt64Ty( *context );
@@ -102,8 +102,8 @@ void Codegen_LLVM::SetTarget( const ::Target &t ){
 
 	auto cpu="generic",features="";
 	TargetOptions opt;
-	auto rm=Optional<Reloc::Model>();
-	auto cm=Optional<CodeModel::Model>( CodeModel::Model::Large );
+	auto rm=std::optional<Reloc::Model>();
+	auto cm=std::optional<CodeModel::Model>( CodeModel::Model::Large );
 	targetMachine=targ->createTargetMachine( t.triple,cpu,features,opt,rm,cm );
 
 	module->setTargetTriple( t.triple );

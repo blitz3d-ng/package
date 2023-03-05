@@ -1,3 +1,5 @@
+set(CMAKE_CXX_STANDARD 14)
+
 optimize_for_size()
 
 # JPEG

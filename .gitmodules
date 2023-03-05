@@ -37,3 +37,6 @@
 [submodule "deps/toml11/tree"]
 	path = deps/toml11/tree
 	url = https://github.com/ToruNiina/toml11.git
+[submodule "deps/env"]
+	path = deps/env
+	url = https://github.com/blitz3d-ng/env

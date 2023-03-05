@@ -35,8 +35,8 @@ int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &ho
 
 	auto main_sym=cantFail( J->lookup( "bbMain" ) );
 	auto start_sym=cantFail( J->lookup( "_bbStart" ) );
-	BBMAIN bbMain=(BBMAIN)main_sym.getAddress();
-	BBSTART bbStart=(BBSTART)start_sym.getAddress();
+	BBMAIN bbMain=(BBMAIN)main_sym.getValue();
+	BBSTART bbStart=(BBSTART)start_sym.getValue();
 
 	char *argv[1]={ "blitzcc" };
 	int retcode=bbStart( 1, argv, bbMain );

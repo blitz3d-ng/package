@@ -102,13 +102,13 @@ void SelectNode::translate2( Codegen_LLVM *g ){
 		for( int j=0;j<c->exprs->size();++j ){
 			ExprNode *e=c->exprs->exprs[j];
 
-			func->getBasicBlockList().push_back( conds[j] );
+			func->insert( func->end(),conds[j] );
 			g->builder->SetInsertPoint( conds[j] );
 			auto *t=compare2( '=',sem_temp->load2( g ),e->translate2( g ),ty,g );
 			g->builder->CreateCondBr( t,body,conds[j+1] );
 		}
 
-		func->getBasicBlockList().push_back( body );
+		func->insert( func->end(),body );
 		g->builder->SetInsertPoint( body );
 		c->stmts->translate2( g );
 		if( !g->builder->GetInsertBlock()->getTerminator() ){
@@ -117,7 +117,7 @@ void SelectNode::translate2( Codegen_LLVM *g ){
 	}
 
 	if( def ) {
-		func->getBasicBlockList().push_back( def );
+		func->insert( func->end(),def );
 		g->builder->SetInsertPoint( def );
 		defStmts->translate2( g );
 		if( !g->builder->GetInsertBlock()->getTerminator() ){
@@ -125,7 +125,7 @@ void SelectNode::translate2( Codegen_LLVM *g ){
 		}
 	}
 
-	func->getBasicBlockList().push_back( cont );
+	func->insert( func->end(),cont );
 	g->builder->SetInsertPoint( cont );
 }
 #endif

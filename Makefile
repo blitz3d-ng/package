@@ -2,8 +2,6 @@ ENV := release
 GENERATOR := Ninja
 GENERATOR_OPTIONS := -k 0
 
-LLVM_VERSION=14.0.4
-
 ifeq ($(shell uname -m), arm64)
 ARCH := arm64
 else
@@ -84,10 +82,7 @@ android:
 	make PLATFORM=android ARCH=x86
 
 llvm:
-	test -d deps/llvm/tree || git clone -b llvmorg-$(LLVM_VERSION) --recursive https://github.com/llvm/llvm-project.git deps/llvm/tree
-	cmake -S deps/llvm -B build/llvm -G $(GENERATOR)
-	(cd build/llvm && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
-	(cd build/llvm && cmake --install .)
+	./deps/env/build-llvm.sh build/llvm llvm
 
 install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/

@@ -20,7 +20,7 @@ void LabelNode::translate2( Codegen_LLVM *g ){
 	auto block=g->getLabel( ident );
 
 	auto func=g->builder->GetInsertBlock()->getParent();
-	func->getBasicBlockList().push_back( block );
+	func->insert( func->end(),block );
 
 	g->builder->CreateBr( block );
 	g->builder->SetInsertPoint( block );
