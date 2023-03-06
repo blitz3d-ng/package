@@ -188,7 +188,7 @@ jobs:
         with:
           submodules: recursive
       - uses: ruby/setup-ruby@v1
-        working_directory: src/help
+        working-directory: src/help
         with:
           bundler-cache: true
       - run: make help
