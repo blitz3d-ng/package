@@ -137,6 +137,8 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh android make ENV=release PLATFORM=android ARCH=${{ matrix.arch }}
+      # - run: ./env.sh android ./test/suite.sh TARGET=${{ matrix.arch }}-android-30
+      #   if: matrix.arch == 'arm64-v8a'
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
         with:
@@ -186,6 +188,7 @@ jobs:
         with:
           submodules: recursive
       - uses: ruby/setup-ruby@v1
+        working_directory: src/help
         with:
           bundler-cache: true
       - run: make help

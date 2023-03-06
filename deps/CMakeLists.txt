@@ -6,6 +6,10 @@ IF(BB_ANDROID)
   add_subdirectory(android_native_app_glue)
 ENDIF()
 
+IF(BB_OVR)
+  add_subdirectory(vrapi)
+ENDIF()
+
 IF(NOT BB_EMSCRIPTEN AND NOT BB_NX)
   add_subdirectory(enet)
 ENDIF()

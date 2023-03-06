@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 ##
 # A basic docker wrapper for our environment containers.
 # See https://github.com/blitz3d-ng/env
@@ -13,7 +15,7 @@ OPTIONS="--cap-add=SYS_PTRACE --security-opt seccomp=unconfined --rm -w /b3d -v 
 
 if [ -t 1 ]
 then
-  OPTIONS="-it $OPTIONS"
+  OPTIONS="--rm -it $OPTIONS"
 fi
 
 docker run $OPTIONS $IMAGE $@

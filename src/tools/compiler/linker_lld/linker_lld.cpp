@@ -40,8 +40,9 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	std::string toolchain=home+"/bin/"+target.triple;
 	std::string libdir=toolchain+"/lib";
 
+	bool android=(target.type=="android"||target.type=="ovr");
 	string androidsdk,ndkroot,sysroot;
-	if( target.type=="android" ){
+	if( android ){
 		char *androidhome=getenv("ANDROID_HOME");
 		// TODO: verify environment at the start...
 		if( androidhome==0 ){
@@ -61,8 +62,8 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 
 	bool apk=false,app=false,ios=false;
 
-	if( bundle.enabled||target.type=="android" ){
-		if( target.type=="android" ){
+	if( bundle.enabled||android ){
+		if( android ){
 			apk=true;
 		}else if( target.type=="ios"||target.type=="ios-sim" ){
 #ifdef BB_MACOS
@@ -127,10 +128,10 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		// args.push_back( "msvcrt.lib" );
 		// args.push_back( "msvcprt.lib" );
 #endif
-	}else if( target.type=="android" ){
+	}else if( android ){
 		args.push_back("-m");args.push_back("aarch64linux");
 
-		args.push_back("-shared");
+		args.push_back( "-shared" );
 		args.push_back("-u");args.push_back("SDL_main");
 
 		args.push_back("-z");args.push_back("noexecstack");
@@ -271,7 +272,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		args.push_back("-L");args.push_back( LIBARCH_DIR );
 		args.push_back("-L");args.push_back( "/usr/lib" );
 #endif
-	}else if( target.type=="android" ){
+	}else if( android ){
 		args.push_back("-dynamic-linker");args.push_back("/system/bin/linker64");
 	}
 
@@ -304,7 +305,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		args.push_back(  LIBGCC_DIR "/crtend.o");
 		args.push_back( LIBARCH_DIR "/crtn.o");
 #endif
-	}else if( target.type=="android" ){
+	}else if( android ){
 		args.push_back("-l");args.push_back("c++_static");
 		args.push_back("-l");args.push_back("c++abi");
 		args.push_back("-l");args.push_back("gcc");
@@ -319,7 +320,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	}
 
 	bool success=false;
-	if( target.type=="android" ){
+	if( android ){
 		success=lld::elf::link( _args,llvm::outs(),llvm::errs(),false,false );
 	}else{
 		success=lld::FORMAT::link( _args,llvm::outs(),llvm::errs(),false,false );

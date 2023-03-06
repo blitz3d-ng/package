@@ -21,7 +21,7 @@
 using namespace llvm;
 
 #include <cstdarg>
-
+#include <iostream>
 Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	InitializeNativeTarget();
 	InitializeNativeTargetAsmPrinter();
@@ -102,7 +102,7 @@ void Codegen_LLVM::SetTarget( const ::Target &t ){
 
 	auto cpu="generic",features="";
 	TargetOptions opt;
-	auto rm=std::optional<Reloc::Model>();
+	auto rm=std::optional<Reloc::Model>( llvm::Reloc::PIC_ );
 	auto cm=std::optional<CodeModel::Model>( CodeModel::Model::Large );
 	targetMachine=targ->createTargetMachine( t.triple,cpu,features,opt,rm,cm );
 

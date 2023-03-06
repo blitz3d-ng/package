@@ -11,6 +11,7 @@
 *.lib
 *.a
 *.jar
+*.zip
 *.keystore
 *.log
 *.exp
@@ -60,6 +61,8 @@ _release/**/*.manifest
 /build
 /coverage/
 /innosetup/installs
+
 /llvm*
+/ovr-sdk
 
 /tmp

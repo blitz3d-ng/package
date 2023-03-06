@@ -66,20 +66,37 @@ ARCH=aarch64
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/devkita64.toolchain.cmake
 endif
 
+PROJECT_TO_BUILD := all
+
 BUILD_DIR=build/$(ARCH)-$(PLATFORM)-$(ENV)
 
 host:
-	cmake -G $(GENERATOR) -H. -B$(BUILD_DIR) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) -DARCH=$(ARCH) $(CMAKE_OPTIONS) && (cd $(BUILD_DIR) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
+	cmake -G $(GENERATOR) -H. -B$(BUILD_DIR) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) -DARCH=$(ARCH) $(CMAKE_OPTIONS) && (cd $(BUILD_DIR) && cmake --build . -j $(NUMBER_OF_CORES) --target $(PROJECT_TO_BUILD) -- $(GENERATOR_OPTIONS))
+
+compiler:
+	make host # PROJECT_TO_BUILD=blitzcc
 
 ios:
+	make compiler
 	make PLATFORM=ios
 	make PLATFORM=ios-sim
 
 android:
+	make compiler
 	make PLATFORM=android ARCH=arm64-v8a
 	make PLATFORM=android ARCH=armeabi-v7a
 	make PLATFORM=android ARCH=x86_64
 	make PLATFORM=android ARCH=x86
+
+ovr: ovr-sdk
+	make compiler
+	make PLATFORM=ovr
+
+ovr-sdk:
+	wget -O ovr-sdk.zip https://securecdn.oculus.com/binaries/download/?id=4643347799061523 # 1.50.0
+	mkdir ovr-sdk
+	cd ovr-sdk && unzip ../ovr-sdk.zip
+	rm ovr-sdk.zip
 
 llvm:
 	./deps/env/build-llvm.sh build/llvm llvm
@@ -100,5 +117,7 @@ dist-toolchain:
 clean:
 	rm -rf build
 	rm -rf _release/bin
+	rm -rf coverage
+	rm -rf tmp
 
 .PHONY: build llvm install-unit-test help clean
