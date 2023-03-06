@@ -9,7 +9,7 @@
 	url = https://github.com/lsalzman/enet.git
 [submodule "ode"]
 	path = deps/ode/tree
-	url = https://github.com/blitz3d-ng/ode
+	url = https://bitbucket.org/odedevs/ode.git
 [submodule "freetype2"]
 	path = deps/freetype2/tree
 	url = https://github.com/blitz3d-ng/freetype2.git

@@ -330,6 +330,20 @@ ENDIF ()
 
 set(ENABLE_UNITY_BUILD true)
 
+function(file_write_changes path src)
+  set(changed true)
+  if(EXISTS ${path})
+    file(READ ${path} prev_src)
+    if("${src}" STREQUAL "${prev_src}")
+      set(changed false)
+    endif()
+  endif()
+
+  if(changed)
+    file(WRITE ${path} "${src}")
+  endif()
+endfunction()
+
 add_subdirectory(deps)
 if(APPLE)
   enable_language(OBJC) # TODO: needed after adding SDL...seems like a deep root cmake bug
