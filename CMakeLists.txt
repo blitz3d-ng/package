@@ -153,6 +153,11 @@ IF(BB_IOS OR BB_ANDROID)
   add_definitions(-DBB_MOBILE)
 ENDIF()
 
+IF(BB_ANDROID OR BB_OVR)
+  set (BB_NDK true)
+  add_definitions(-DBB_NDK)
+ENDIF()
+
 IF(BB_EMSCRIPTEN)
   set (BB_WEB true)
   add_definitions(-DBB_WEB)

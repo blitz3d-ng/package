@@ -143,6 +143,20 @@ jobs:
           name: android-${{ matrix.arch }}
           path: _release/bin
 
+  ovr:
+    name: OVR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - run: ./env.sh android make ENV=release PLATFORM=ovr ARCH=arm64-v8a
+      - name: Upload toolchain and package
+        uses: actions/upload-artifact@v2
+        with:
+          name: ovr-${{ matrix.arch }}
+          path: _release/bin
+
   emscripten:
     name: Emscripten (Web)
     runs-on: ubuntu-latest
@@ -310,9 +324,10 @@ jobs:
       - package_macos_11
       - package_macos_12
       - linux
+      - android
+      - ovr
       - emscripten
       - nx
-      - android
     steps:
       - uses: actions/checkout@v3
 

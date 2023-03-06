@@ -32,7 +32,7 @@ macro(bb_end_runtime )
     return()
   endif()
 
-  if(BB_LINUX OR BB_ANDROID)
+  if(BB_LINUX OR BB_NDK)
     set(START_GROUP "-Wl,--start-group")
     set(END_GROUP "-Wl,--end-group")
   endif()

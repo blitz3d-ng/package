@@ -2,16 +2,23 @@
 
 fail=0
 
+trap interrupt INT
+function interrupt() {
+  echo "Exiting..."
+  exit 1
+}
+
 # if valgrind is available, we'll use it. right now, we're ignoring leaked
 # memory. this should change when there's time.
-VALGRIND="valgrind --leak-check=no --error-exitcode=101"
-if ! command -v $VALGRIND #&> /dev/null
+VALGRIND="valgrind --leak-check=no --track-origins=yes --error-exitcode=101"
+if ! command -v $VALGRIND &> /dev/null
 then
     VALGRIND=""
 fi
 
 RED='\033[0;31m'
 GRN='\033[0;32m'
+GRY='\033[0;90m'
 NC='\033[0m'
 
 cleanup () {
@@ -31,16 +38,38 @@ result() {
 }
 
 compile() {
-  $BLITZCC -c "$1" > /dev/null 2>&1
-  result $? "$1"
+  blitzcc "$1" -c "$1"
+}
+
+blitzcc() {
+  TITLE=$1
+  shift
+  OUT=$($BLITZCC "$@" 2>&1)
+  RESULT=$?
+  result $RESULT "$TITLE"
+
+  if [ $RESULT -ne 0 ]
+  then
+    printf "${GRY}$OUT${NC}\n"
+  fi
+
+  return $RESULT
+}
+
+blitzcc_stream() {
+  TITLE=$1
+  shift
+  $BLITZCC "$@"
+  RESULT=$?
+  result $RESULT "$TITLE"
+
+  return $RESULT
 }
 
 make_exe() {
   BASENAME="`basename $1 .bb`"
   DIR="`pwd`/$BASENAME"
-  $BLITZCC -o $DIR "$1" > /dev/null 2>&1
-  RESULT=$?
-  result $RESULT "$1"
+  blitzcc $1 -o $DIR "$1"
 
   if [ $RESULT -eq 0 ]
   then
@@ -53,20 +82,21 @@ make_exe() {
       test -f $DIR.app/$BASENAME.icns
       result $RESULT "  $BASENAME.icns exists"
     fi
+  else
+    printf "$OUT"
   fi
 }
 
 check_flag() {
-  $BLITZCC $1 > /dev/null 2>&1
-  result $? "$1"
+  blitzcc $1 $1
 }
 
-BLITZCC="_release/bin/blitzcc"
+BLITZCC="$VALGRIND _release/bin/blitzcc"
 
 cleanup
 
 # run the proper suite
-$VALGRIND $BLITZCC -r test test/all.bb
+blitzcc_stream test/all.bb -r test test/all.bb
 RESULT=$?
 if [ $RESULT -eq 101 ]; then
   echo "Test suite failed because of a memory related error. Fix it and then run the coverage generation again."
@@ -171,9 +201,6 @@ echo "Verify games compile"
 compile _release/Games/bb3d_asteroids/EdzUpAsteroids.bb
 compile _release/Games/wing_ring/wing_ring.bb
 compile _release/Games/TunnelRun/tr.bb
-
-# since it's slow, only start defaulting it here
-BLITZCC="$VALGRIND $BLITZCC"
 
 echo "Generate executables"
 
