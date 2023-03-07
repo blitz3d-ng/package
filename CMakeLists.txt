@@ -16,6 +16,11 @@ if(ANDROID)
   set(ANDROID_JAR $ENV{ANDROID_HOME}/platforms/android-${ANDROID_PLATFORM}/android.jar)
 endif()
 
+# c++17/windows.h conflict
+if (MSVC)
+  add_compile_definitions(_HAS_STD_BYTE=0)
+endif()
+
 # TODO: make this toggleable
 if(MSVC)
   set(BB_STATIC true)
