@@ -93,17 +93,28 @@ void Codegen_LLVM::SetTarget( const ::Target &t ){
 		InitializeAllAsmPrinters();
 	}
 
+	// TODO: remove this bad hack
+	auto tt=t.triple;
+	if( tt.rfind("armeabi-v7a", 0) == 0) {
+		tt="arm";
+	}else if( tt.rfind("x86-", 0) == 0) {
+		tt="i686";
+	}
+
 	std::string err;
-	auto targ = TargetRegistry::lookupTarget( t.triple,err );
+	auto targ = TargetRegistry::lookupTarget( tt,err );
 	if( !targ ){
 		errs()<<err<<'\n';
+		for( auto tt:TargetRegistry::targets() ){
+			std::cout<<"  "<<tt.getName()<<" - "<<tt.getShortDescription()<<std::endl;
+		}
 		exit( 1 );
 	}
 
 	auto cpu="generic",features="";
 	TargetOptions opt;
 	auto rm=std::optional<Reloc::Model>( llvm::Reloc::PIC_ );
-	auto cm=std::optional<CodeModel::Model>( CodeModel::Model::Large );
+	auto cm=std::optional<CodeModel::Model>( CodeModel::Model::Small );
 	targetMachine=targ->createTargetMachine( t.triple,cpu,features,opt,rm,cm );
 
 	module->setTargetTriple( t.triple );

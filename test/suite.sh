@@ -240,7 +240,10 @@ fi
 
 if [[ "$TARGET" = *"-ovr-"* || "$TARGET" = *"-android-"* ]]
 then
-  blitzcc "driver.apk" -c -o tmp/driver.apk _release/samples/mak/driver/driver.bundle.bb
+  blitzcc "driver.apk" -c -o `pwd`/tmp/driver.apk _release/samples/mak/driver/driver.bundle.bb
+elif [[ "$TARGET" = *"-io"* ]]
+then
+  blitzcc "driver.app" -c -o `pwd`/tmp/driver.app _release/samples/mak/driver/driver.bundle.bb
 fi
 
 # generate the report...
