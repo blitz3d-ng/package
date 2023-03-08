@@ -8,7 +8,7 @@ function interrupt() {
   exit 1
 }
 
-TARGET=${TARGET:-host}
+TARGET=${1:-host}
 
 # if valgrind is available, we'll use it. right now, we're ignoring leaked
 # memory. this should change when there's time.

@@ -74,7 +74,7 @@ host:
 	cmake -G $(GENERATOR) -H. -B$(BUILD_DIR) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) -DARCH=$(ARCH) $(CMAKE_OPTIONS) && (cd $(BUILD_DIR) && cmake --build . -j $(NUMBER_OF_CORES) --target $(PROJECT_TO_BUILD) -- $(GENERATOR_OPTIONS))
 
 compiler:
-	make host # PROJECT_TO_BUILD=blitzcc
+	make host PROJECT_TO_BUILD=blitzcc
 
 ios:
 	make compiler

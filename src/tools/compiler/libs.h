@@ -13,6 +13,7 @@ using namespace std;
 #include "tree/parser.h"
 #include "linker_x86/linker.h"
 #include "../../runtime/base/bbruntime_dll.h"
+#include "target.h"
 
 extern int bcc_ver;
 extern int lnk_ver;
@@ -33,9 +34,9 @@ extern vector<string> modules;
 extern vector<string> keyWords;
 extern vector<UserFunc> userFuncs;
 
-const char *openLibs( const string &rt );
+const char *openLibs( const Target &t,const string &rt );
 
-const char *linkLibs( const string &rt );
+const char *linkLibs( const Target &t,const string &rt );
 
 void closeLibs();
 
