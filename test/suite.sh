@@ -237,11 +237,13 @@ then
   make_exe _release/samples/mak/driver/driver.bundle.bb
 fi
 
-if [[ "$TARGET" = *"-ovr-"* || "$TARGET" = *"-android-"* ]]
+if [[ "$TARGET" = *"ovr"* || "$TARGET" = *"android"* ]]
 then
+  mkdir -p tmp/
   blitzcc "driver.apk" -c -o `pwd`/tmp/driver.apk _release/samples/mak/driver/driver.bundle.bb
-elif [[ "$TARGET" = *"-io"* ]]
+elif [[ "$TARGET" = *"ios"* ]]
 then
+  mkdir -p tmp/
   blitzcc "driver.app" -c -o `pwd`/tmp/driver.app _release/samples/mak/driver/driver.bundle.bb
 fi
 
