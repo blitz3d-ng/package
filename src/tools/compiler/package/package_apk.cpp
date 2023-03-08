@@ -124,7 +124,7 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	for( std::string mod:rti.modules ){
 		const Target::Module &m=target.modules.at( mod );
 		for( string lib:m.extra_files ){
-			if( lib.substr( max( 4UL,lib.size() )-4 )==".jar" ){
+			if( lib.substr( max( 4,(int)lib.size() )-4 )==".jar" ){
 				jars=jars+" "+libdir+"/"+lib;
 			}
 		}

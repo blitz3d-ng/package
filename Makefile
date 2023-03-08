@@ -117,6 +117,8 @@ dist-toolchain:
 clean:
 	rm -rf build
 	rm -rf _release/bin
+	rm -rf _release/*.exe
+	rm -rf _release/*.app
 	rm -rf coverage
 	rm -rf tmp
 
