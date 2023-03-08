@@ -361,6 +361,6 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	}
 #endif
 	if( apk ){
-		createApk( exeFile,tmpdir,home,toolchain,bundle,target,androidsdk );
+		createApk( exeFile,tmpdir,home,toolchain,bundle,target,rt,androidsdk );
 	}
 }

@@ -18,6 +18,7 @@ if(TARGET SDL2)
     set(SYSTEM_LIBS "-framework Foundation" "-framework UIKit" "-framework CoreFoundation" "-framework CoreVideo" "-framework CoreAudio" "-framework AVFAudio" "-framework AudioToolBox" "-framework Metal" "-framework GameController" "-framework CoreHaptics" "-framework CoreBluetooth" "-framework CoreMotion" "-framework CoreGraphics" "-framework QuartzCore" iconv)
   elseif(BB_ANDROID)
     set(SYSTEM_LIBS GLESv1_CM GLESv2 OpenSLES android dl)
+    set(EXTRA_FILES SDL.jar Runtime.jar)
   endif()
   bb_end_module()
 

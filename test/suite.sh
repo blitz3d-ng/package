@@ -54,12 +54,11 @@ blitzcc() {
   RESULT=$?
   result $RESULT "$TITLE"
 
-  if [ $RESULT -ne 0 ]
+  if [[ "$VERBOSE" != "" || $RESULT -ne 0 ]]
   then
     while IFS= read -r line; do
-      printf "       ${GRY}$line${NC}\n"
+      printf "       ${GRY}%s${NC}\n" "$line"
     done <<< "$OUT"
-
   fi
 
   return $RESULT
@@ -92,7 +91,7 @@ make_exe() {
       result $RESULT "  $BASENAME.icns exists"
     fi
   else
-    printf "$OUT"
+    printf "%" "$OUT"
   fi
 }
 

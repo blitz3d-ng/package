@@ -24,7 +24,7 @@ jobs:
       - if: matrix.arch == 'win64'
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/test/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
+          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
       - shell: pwsh
@@ -61,7 +61,6 @@ jobs:
     strategy:
       matrix:
         os:
-          # - macos-10.15
           - macos-11
           - macos-12
     steps:
@@ -70,7 +69,7 @@ jobs:
           submodules: recursive
       - run: |
           mkdir _release/toolchains
-          wget https://github.com/blitz3d-ng/env/releases/download/test/llvm-16.0.0-rc3-${{ matrix.os }}.zip
+          wget https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-${{ matrix.os }}.zip
           unzip llvm-16.0.0-rc3-${{ matrix.os }}.zip
       - run: brew install ninja gcovr
       - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
@@ -113,6 +112,7 @@ jobs:
         with:
           submodules: recursive
       - run: brew install ninja gcovr
+      - run: make compiler
       - run: make ENV=release PLATFORM=${{ matrix.device }}
       - run: TARGET=arm64-apple-${{ matrix.device }}15.4 ./test/suite.sh
       - name: Upload toolchain and package
@@ -135,6 +135,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - run: ./env.sh android make compiler
       - run: ./env.sh android make ENV=release PLATFORM=android ARCH=${{ matrix.arch }}
       - run: ./env.sh android TARGET=${{ matrix.arch }}-android-30 ./test/suite.sh
       - name: Upload toolchain and package
@@ -150,6 +151,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - run: ./env.sh android make compiler
       - run: ./env.sh android make ENV=release PLATFORM=ovr ARCH=arm64-v8a
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
@@ -164,6 +166,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - run: ./env.sh emscripten make compiler
       # TODO: find out why the first time always fails...
       - run: ./env.sh emscripten make ENV=release PLATFORM=emscripten
         continue-on-error: true
@@ -176,6 +179,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - run: ./env.sh nx make compiler
       - run: ./env.sh nx make ENV=release PLATFORM=nx
 
   help:
