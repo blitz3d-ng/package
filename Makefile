@@ -109,7 +109,9 @@ help:
 	(cd src/help && bundle && ./build.rb)
 
 dist-pkg:
-	(cd _release/ && zip -r -x".DS_Store" ../package.zip .)
+	mv _release blitz3d-ng
+	zip -r -x".DS_Store" ./package.zip blitz3d-ng
+	mv blitz3d-ng _release
 
 dist-toolchain:
 	(cd _release/bin && zip -r -x".DS_Store" ../../toolchain.zip .)

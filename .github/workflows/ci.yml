@@ -223,7 +223,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: help
-          path: _release
+          path: _release/help
 
       - name: Download win32
         uses: actions/download-artifact@v3
@@ -268,7 +268,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: help
-          path: _release
+          path: _release/help
 
       - name: Download macos-11
         uses: actions/download-artifact@v3
