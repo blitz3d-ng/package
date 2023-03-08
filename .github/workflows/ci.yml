@@ -118,7 +118,7 @@ jobs:
       - run: brew install ninja gcovr
       - run: make compiler
       - run: make ENV=release PLATFORM=${{ matrix.device }}
-      - run: ./test/suite.sh arm64-apple-${{ matrix.device }}15.4
+      - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh arm64-apple-${{ matrix.device }}15.4
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
         with:
@@ -157,7 +157,7 @@ jobs:
           submodules: recursive
       - run: ./env.sh android make compiler
       - run: ./env.sh android make ENV=release PLATFORM=ovr ARCH=arm64-v8a
-      - run: ./test/suite.sh arm64-v8a-ovr-24
+      - run: ./env.sh android ./test/suite.sh arm64-v8a-ovr-24
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
         with:
