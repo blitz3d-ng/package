@@ -21,7 +21,7 @@ void GosubNode::translate2( Codegen_LLVM *g ){
 
 	string label_cont=ident+"_"+string(itoa((bb_int_t)this))+"_cont";
 	auto cont=g->getLabel( label_cont );
-	func->getBasicBlockList().push_back( cont );
+	func->insert( func->end(),cont );
 
 	g->CallIntrinsic( "_bbPushGosub",g->voidTy,1,llvm::BlockAddress::get( cont ) );
 	g->builder->CreateBr( g->getLabel( ident ) );

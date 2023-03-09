@@ -10,7 +10,7 @@ if(BB64)
     c:/llvm
   )
 
-  find_package(LLVM 14 PATHS ${LLVM_KNOWN_PATHS})
+  find_package(LLVM 16 PATHS ${LLVM_KNOWN_PATHS})
   find_package(LLD PATHS ${LLVM_KNOWN_PATHS})
 
   # TODO: this will go away once CI is sorted...

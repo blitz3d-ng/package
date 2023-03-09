@@ -49,7 +49,7 @@ void RepeatNode::translate2( Codegen_LLVM *g ){
 	g->builder->CreateBr( iter );
 	g->breakBlock=oldBreakBlock;
 
-	func->getBasicBlockList().push_back( iter );
+	func->insert( func->end(),iter );
 	g->builder->SetInsertPoint( iter );
 	if( expr ) {
 		auto cond=expr->translate2( g );
@@ -64,7 +64,7 @@ void RepeatNode::translate2( Codegen_LLVM *g ){
 		g->builder->CreateBr( loop );
 	}
 
-	func->getBasicBlockList().push_back( cont );
+	func->insert( func->end(),cont );
 	g->builder->SetInsertPoint( cont );
 }
 #endif

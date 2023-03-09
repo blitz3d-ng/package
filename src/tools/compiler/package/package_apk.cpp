@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 #ifdef BB_WINDOWS
@@ -23,7 +24,7 @@ using namespace std;
 
 #define RUN( args ) if( system( string(args).c_str() )!=0 ) { cerr<<"error on "<<__FILE__<<":"<<__LINE__<<endl;abort(); }
 
-void createApk( const string &out,const string &tmpdir,const string &home,const string &toolchain,const BundleInfo &bundle,const Target &target,const string &androidsdk ){
+void createApk( const string &out,const string &tmpdir,const string &home,const string &toolchain,const BundleInfo &bundle,const Target &target,const string &rt,const string &androidsdk ){
 	string libdir=toolchain+"/lib";
 
 	string btversion="30.0.2";
@@ -117,7 +118,22 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	bundleFiles( bundle,tmpdir+"/assets" );
 
 	// build the apk...
-	RUN( dex+" --dex --output="+tmpdir+"/classes.dex "+libdir+"/SDL.jar "+libdir+"/Runtime.jar" );
+	string jars="";
+
+	const Target::Runtime &rti=target.runtimes.at( rt );
+	for( std::string mod:rti.modules ){
+		const Target::Module &m=target.modules.at( mod );
+		for( string lib:m.extra_files ){
+			if( lib.substr( max( 4,(int)lib.size() )-4 )==".jar" ){
+				jars=jars+" "+libdir+"/"+lib;
+			}
+		}
+	}
+
+	if( jars!="" ){
+		RUN( dex+" --dex --output="+tmpdir+"/classes.dex "+jars );
+	}
+
 	RUN( aapt2+" compile -v --dir "+resdir+" -o "+tmpdir+"/resources.zip" );
 	RUN( aapt2+" link -v -o "+tmpdir+"/unaligned.apk -I "+androidjar+" --manifest "+manifest+" -A "+tmpdir+"/assets "+tmpdir+"/resources.zip" );
 
@@ -126,7 +142,7 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	getwd( dir );
 	string currdir=string( dir );
 	chdir( tmpdir.c_str() );
-	RUN( "zip -u unaligned.apk classes.dex lib/**/*.so" );
+	RUN( "zip -u unaligned.apk *.dex lib/**/*.so" );
 	chdir( currdir.c_str() );
 
 	RUN( (zipalign+" -f 4 "+tmpdir+"/unaligned.apk "+tmpdir+"/signed.apk").c_str() );

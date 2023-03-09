@@ -53,7 +53,7 @@ void WhileNode::translate2( Codegen_LLVM *g ){
 
 		g->builder->CreateCondBr( v,body,next );
 
-		func->getBasicBlockList().push_back( body );
+		func->insert( func->end(),body );
 		g->builder->SetInsertPoint( body );
 	}
 
@@ -64,7 +64,7 @@ void WhileNode::translate2( Codegen_LLVM *g ){
 
 	g->builder->CreateBr( loop );
 
-	func->getBasicBlockList().push_back( next );
+	func->insert( func->end(),next );
 	g->builder->SetInsertPoint( next );
 }
 #endif

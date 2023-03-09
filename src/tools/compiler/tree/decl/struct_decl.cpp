@@ -103,8 +103,7 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 	vector<llvm::Type*> templatefields;
 	templatefields.push_back( g->bbObjType ); // base
 	templatefields.push_back( template_typesary );
-
-	sem_type->deftype->setBody( templatefields );
+	ty2->setBody( templatefields );
 
 	auto temp=(llvm::GlobalVariable*)sem_type->objty;
 

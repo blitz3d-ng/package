@@ -29,9 +29,9 @@ For bug reports & feature requests, feel free to open an [issue](https://github.
 
 All 3rd-party dependencies are included in the repo or linked as submodules to keep the project simple to build.
 
-To start, you'll need [cmake (3.16+)](https://cmake.org/download/).
-
 ### Windows
+
+Download [cmake (3.16+)](https://cmake.org/download/) and [ninja](https://github.com/ninja-build/ninja/releases).
 
 Install [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/). Be sure to install the MFC components.
 
@@ -52,7 +52,7 @@ as expected.
 Install [Xcode](https://developer.apple.com/xcode/) and [brew](http://brew.sh/).
 
 ```bash
-$ brew install cmake
+$ brew install cmake ninja
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
 $ cd b3d
 $ make llvm
@@ -64,7 +64,7 @@ $ make ENV=release
 Setup will vary across distributions, but here is an example for Ubuntu.
 
 ```bash
-$ sudo apt-get install -y libxml2-dev zlib1g-dev build-essential autoconf libtool gettext autopoint gperf cmake clang libwxgtk3.0-gtk3-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev
+$ sudo apt-get install -y git ninja-build libxml2-dev zlib1g-dev build-essential autoconf libtool gettext autopoint gperf cmake clang libwxgtk3.0-gtk3-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
 $ cd b3d
 $ make llvm

@@ -59,7 +59,7 @@ void IfNode::translate2( Codegen_LLVM *g ){
 	g->builder->CreateBr( cont );
 
 	if( els ){
-		func->getBasicBlockList().push_back( els );
+		func->insert( func->end(),els );
 		g->builder->SetInsertPoint( els );
 
 		elseOpt->translate2( g );
@@ -68,7 +68,7 @@ void IfNode::translate2( Codegen_LLVM *g ){
 		g->builder->CreateBr( cont );
 	}
 
-	func->getBasicBlockList().push_back( cont );
+	func->insert( func->end(),cont );
 	g->builder->SetInsertPoint( cont );
 }
 #endif

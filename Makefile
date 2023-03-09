@@ -2,8 +2,6 @@ ENV := release
 GENERATOR := Ninja
 GENERATOR_OPTIONS := -k 0
 
-LLVM_VERSION=14.0.4
-
 ifeq ($(shell uname -m), arm64)
 ARCH := arm64
 else
@@ -68,33 +66,52 @@ ARCH=aarch64
 CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/devkita64.toolchain.cmake
 endif
 
+PROJECT_TO_BUILD := all
+
 BUILD_DIR=build/$(ARCH)-$(PLATFORM)-$(ENV)
 
 host:
-	cmake -G $(GENERATOR) -H. -B$(BUILD_DIR) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) -DARCH=$(ARCH) $(CMAKE_OPTIONS) && (cd $(BUILD_DIR) && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
+	cmake -G $(GENERATOR) -H. -B$(BUILD_DIR) -DOUTPUT_PATH=$(OUTPUT_PATH) -DBB_PLATFORM=$(PLATFORM) -DBB_ENV=$(ENV) -DARCH=$(ARCH) $(CMAKE_OPTIONS) && (cd $(BUILD_DIR) && cmake --build . -j $(NUMBER_OF_CORES) --target $(PROJECT_TO_BUILD) -- $(GENERATOR_OPTIONS))
+
+compiler:
+	make host PROJECT_TO_BUILD=blitzcc
 
 ios:
+	make compiler
 	make PLATFORM=ios
 	make PLATFORM=ios-sim
 
 android:
+	make compiler
 	make PLATFORM=android ARCH=arm64-v8a
 	make PLATFORM=android ARCH=armeabi-v7a
 	make PLATFORM=android ARCH=x86_64
 	make PLATFORM=android ARCH=x86
 
+ovr: ovr-sdk
+	make compiler
+	make PLATFORM=ovr
+
+ovr-sdk:
+	wget -O ovr-sdk.zip https://securecdn.oculus.com/binaries/download/?id=4643347799061523 # 1.50.0
+	mkdir ovr-sdk
+	cd ovr-sdk && unzip ../ovr-sdk.zip
+	rm ovr-sdk.zip
+
 llvm:
-	test -d deps/llvm/tree || git clone -b llvmorg-$(LLVM_VERSION) --recursive https://github.com/llvm/llvm-project.git deps/llvm/tree
-	cmake -S deps/llvm -B build/llvm -G $(GENERATOR)
-	(cd build/llvm && cmake --build . -j $(NUMBER_OF_CORES) -- $(GENERATOR_OPTIONS))
-	(cd build/llvm && cmake --install .)
+	./deps/env/build-llvm.sh build/llvm llvm
 
 install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 	cp src/modules/bb/unit-test/unit_test.decls ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 
+help:
+	(cd src/help && bundle && ./build.rb)
+
 dist-pkg:
-	(cd _release/ && zip -r -x".DS_Store" ../package.zip .)
+	mv _release blitz3d-ng
+	zip -r -x".DS_Store" ./package.zip blitz3d-ng
+	mv blitz3d-ng _release
 
 dist-toolchain:
 	(cd _release/bin && zip -r -x".DS_Store" ../../toolchain.zip .)
@@ -102,5 +119,9 @@ dist-toolchain:
 clean:
 	rm -rf build
 	rm -rf _release/bin
+	rm -rf _release/*.exe
+	rm -rf _release/*.app
+	rm -rf coverage
+	rm -rf tmp
 
-.PHONY: build llvm install-unit-test clean
+.PHONY: build llvm install-unit-test help clean

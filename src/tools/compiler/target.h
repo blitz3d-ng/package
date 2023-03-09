@@ -13,7 +13,7 @@ struct Target{
 
 	struct Module{
 		std::string id;
-		std::vector<std::string> dependencies,libs,system_libs;
+		std::vector<std::string> dependencies,libs,system_libs,extra_files,symbols;
 	};
 
 	bool host;

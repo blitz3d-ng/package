@@ -1,6 +1,8 @@
 
 #include "libs.h"
 
+#include <toml.hpp>
+
 #ifdef WIN32
 #include <windows.h>
 #define OPENLIB( path ) LoadLibrary( path )
@@ -268,7 +270,7 @@ static const char *linkUserLibs(){
 
 static char err[255];
 
-const char *openLibs( const string &rt ){
+const char *openLibs( const Target &t,const string &rt ){
 
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
@@ -281,35 +283,38 @@ const char *openLibs( const string &rt ){
 	home=realpath( p,buff );
 #endif
 
-	linkerLib=linkerGetLinker();
+	if( t.host ){
+		linkerLib=linkerGetLinker();
 
-	runtimeHMOD=OPENLIB( (home+LIBPATH).c_str() );
-	if( !runtimeHMOD ){
-		string msg("Unable to open " RUNTIMENAME "."+rt+".");
-		strcpy( err,msg.c_str() );
-		return err;
+		runtimeHMOD=OPENLIB( (home+LIBPATH).c_str() );
+		if( !runtimeHMOD ){
+			string msg("Unable to open " RUNTIMENAME "."+rt+".");
+			strcpy( err,msg.c_str() );
+			return err;
+		}
+
+		typedef Runtime *(CDECL*GetRuntime)();
+		GetRuntime gr=(GetRuntime)LIBSYM( runtimeHMOD,"runtimeGetRuntime" );
+		if( !gr ){
+			string msg("Error in " RUNTIMENAME "."+rt+"." LIBSUFFIX);
+			strcpy( err,msg.c_str() );
+			return err;
+		}
+		runtimeLib=gr();
+		runtimeLib->path=home+LIBPATH;
+
+		bcc_ver=VERSION;
+		lnk_ver=linkerLib->version();
+		run_ver=runtimeLib->version();
+
+		if( (lnk_ver>>16)!=(bcc_ver>>16) ||
+			(run_ver>>16)!=(bcc_ver>>16) ||
+			(lnk_ver>>16)!=(bcc_ver>>16) ) return "Library version error";
+
+		runtimeLib->startup();
+		runtimeModule=linkerLib->createModule();
 	}
 
-	typedef Runtime *(CDECL*GetRuntime)();
-	GetRuntime gr=(GetRuntime)LIBSYM( runtimeHMOD,"runtimeGetRuntime" );
-	if( !gr ){
-		string msg("Error in " RUNTIMENAME "."+rt+"." LIBSUFFIX);
-		strcpy( err,msg.c_str() );
-		return err;
-	}
-	runtimeLib=gr();
-	runtimeLib->path=home+LIBPATH;
-
-	bcc_ver=VERSION;
-	lnk_ver=linkerLib->version();
-	run_ver=runtimeLib->version();
-
-	if( (lnk_ver>>16)!=(bcc_ver>>16) ||
-		(run_ver>>16)!=(bcc_ver>>16) ||
-		(lnk_ver>>16)!=(bcc_ver>>16) ) return "Library version error";
-
-	runtimeLib->startup();
-	runtimeModule=linkerLib->createModule();
 	runtimeEnviron=d_new Environ( "",Type::int_type,0,0 );
 
 	keyWords.clear();
@@ -318,118 +323,85 @@ const char *openLibs( const string &rt ){
 	return 0;
 }
 
-static
-void parse_list( std::string &line,std::vector<string> &libs ){
-	size_t s=0,e=line.find(";");
-	while( 1 ) {
-		string frag=line.substr( s,e-s );
-		while( frag[0] == ' ' ) frag=frag.substr( 1 );
+void parseSymbols( const Target &t ){
+	for( auto mod:t.modules ){
+		for( auto sym:mod.second.symbols ){
+			string s( sym );
 
-		if( frag.length() == 0 ) break;
+			int pc=0;
 
-		libs.push_back( frag );
-
-		if( e==string::npos ) {
-			break;
-		}
-
-		s=e+1;
-		e=line.find(";",s);
-	}
-}
-
-static
-string underscore( const string &s ){
-	string t=s;
-	size_t i;
-	if( (i=t.find("."))!=string::npos ){
-		t.replace( i,1,"_" );
-	}
-	if( (i=t.find("-"))!=string::npos ){
-		t.replace( i,1,"_" );
-	}
-	return t;
-}
-
-void parseLibs( const string &rt ){
-	std::string toolchain=home+"/bin/" BB_TRIPLE;
-
-	ifstream rti( toolchain+"/runtime."+rt+".i" );
-	if (!rti.is_open()) {
-		cerr<<"Cannot find interface file for runtime."<<rt<<endl;
-		exit( 1 );
-	}
-
-	string line;
-	vector<string> modules;
-	while( getline( rti,line ) ) {
-		string i="ID: ",e="ENTRY: ",d="DEPS: ";
-		if( line.find( i )==0 ){
-			line=line.substr( i.size() );
-			rtdl.id=line;
-		}else if( line.find( e )==0 ){
-			line=line.substr( e.size() );
-			rtdl.entry=line;
-		}else if( line.find( d )==0 ){
-			line=line.substr( d.size() );
-			parse_list( line,modules );
-		}
-	}
-
-	for( string &id:modules ){
-		BBModule module;
-
-		ifstream iface( toolchain+"/cfg/"+id+".i" );
-		if( !iface.is_open() ){
-			cerr<<"Cannot find interface file for "<<id<<"."<<rt<<endl;
-			exit( 1 );
-		}
-
-		while( getline( iface,line ) ) {
-			string i="ID: ",m="MODULES: ",f="FUNC: ";
-			if( line.find( i )==0 ){
-				line=line.substr( i.size() );
-				module.id=line.substr( 3,line.size()-3 );
-				module.ident=underscore( id );
-			}else if( line.find( m )==0 ){
-				line=line.substr( m.size() );
-
-				vector<string> deps;
-				parse_list( line,deps );
-				for( auto &dep:deps ){
-					dep=dep.substr( 3,dep.size()-1 );
-					module.deps.push_back( dep );
-				}
-			}else if( line.find( f )==0 ){
-				line=line.substr( f.size() );
-
-				size_t s=0,e=1;
-				if( !isalnum(line[0]) && line[0]!='_' ){
-					s=1;
-				}
-				while( isalnum(line[e]) || line[e]=='_' ) e++;
-
-				BBSymbol sym;
-				sym.ident=line.substr( s,e-s );
-
-				rtdl.syms[tolower(sym.ident)]=module.id;
-
-				module.syms.push_back( sym );
+			//internal?
+			if( s[0]=='_' ){
+				if( runtimeModule ) runtimeModule->addSymbol( ("_"+s).c_str(),pc );
+				continue;
 			}
+
+			bool cfunc=false;
+
+			if( s[0]=='!' ){
+				cfunc=true;
+				s=s.substr(1);
+			}
+
+			keyWords.push_back( s );
+
+			//global!
+			int start=0,end;
+			Type *t=Type::void_type;
+			if( !isalpha( s[0] ) ){ start=1;t=_typeof( s[0] ); }
+			int k;
+			for( k=1;k<s.size();++k ){
+				if( !isalnum( s[k] ) && s[k]!='_' ) break;
+			}
+			end=k;
+			DeclSeq *params=d_new DeclSeq();
+			string n=s.substr( start,end-start );
+			while( k<s.size() && s[k]!=':' ){
+				Type *t=_typeof(s[k++]);
+				int from=k;
+				for( ;isalnum(s[k])||s[k]=='_';++k ){}
+				string str=s.substr( from,k-from );
+				ConstType *defType=0;
+				if( s[k]=='=' ){
+					int from=++k;
+					if( s[k]=='\"' ){
+						for( ++k;s[k]!='\"';++k ){}
+						string t=s.substr( from+1,k-from-1 );
+						defType=d_new ConstType( t );++k;
+					}else{
+						if( s[k]=='-' ) ++k;
+						for( ;isdigit( s[k] );++k ){}
+						if( t==Type::int_type ){
+							int n=atoi( s.substr( from,k-from ) );
+							defType=d_new ConstType( n );
+						}else{
+							float n=atof( s.substr( from,k-from ) );
+							defType=d_new ConstType( n );
+						}
+					}
+				}
+				Decl *d=params->insertDecl( str,t,DECL_PARAM,defType );
+			}
+
+			string symbol=s.substr( k+1 );
+
+			FuncType *f=d_new FuncType( t,params,false,cfunc );
+			f->symbol=symbol;
+			n=tolower(n);
+			runtimeEnviron->funcDecls->insertDecl( n,f,DECL_FUNC );
+			if( runtimeModule ) runtimeModule->addSymbol( ("_f"+n).c_str(),pc );
 		}
-
-		rtdl.order.push_back( module.id );
-
-		rtdl.modules[module.id]=module;
 	}
 }
 
-const char *linkLibs( const string &rt ){
-	// parseLibs( rt );
+const char *linkLibs( const Target &t,const string &rt ){
+	if( t.host ){
+		if( const char *p=linkRuntime( rt ) ) return p;
 
-	if( const char *p=linkRuntime( rt ) ) return p;
-
-	if( const char *p=linkUserLibs() ) return p;
+		if( const char *p=linkUserLibs() ) return p;
+	}else{
+		parseSymbols( t );
+	}
 
 	return 0;
 }

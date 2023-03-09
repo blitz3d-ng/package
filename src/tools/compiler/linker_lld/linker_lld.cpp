@@ -40,8 +40,9 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	std::string toolchain=home+"/bin/"+target.triple;
 	std::string libdir=toolchain+"/lib";
 
-	string androidsdk,ndkroot,sysroot;
-	if( target.type=="android" ){
+	bool android=(target.type=="android"||target.type=="ovr");
+	string androidsdk,ndkroot,sysroot,ndktriple,ndkarch;
+	if( android ){
 		char *androidhome=getenv("ANDROID_HOME");
 		// TODO: verify environment at the start...
 		if( androidhome==0 ){
@@ -52,6 +53,20 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		androidsdk=string( androidhome );
 		ndkroot=androidsdk+"/ndk-bundle/toolchains/llvm/prebuilt/" UNAME "-x86_64";
 		sysroot=ndkroot+"/sysroot";
+
+		if( target.arch=="arm64-v8a" ){
+			ndktriple="aarch64-linux-android";
+			ndkarch="aarch64";
+		}else if( target.arch=="armeabi-v7a" ){
+			ndktriple="arm-linux-androideabi";
+			ndkarch="arm";
+		}else if( target.arch=="x86_64" ){
+			ndktriple="x86_64-linux-android";
+			ndkarch="x86_64";
+		}else if( target.arch=="x86" ){
+			ndktriple="i686-linux-android";
+			ndkarch="x86";
+		}
 	}
 
 	// TODO: sort out all the lazy strdup business below...
@@ -61,8 +76,8 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 
 	bool apk=false,app=false,ios=false;
 
-	if( bundle.enabled||target.type=="android" ){
-		if( target.type=="android" ){
+	if( bundle.enabled||android ){
+		if( android ){
 			apk=true;
 		}else if( target.type=="ios"||target.type=="ios-sim" ){
 #ifdef BB_MACOS
@@ -127,15 +142,19 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		// args.push_back( "msvcrt.lib" );
 		// args.push_back( "msvcprt.lib" );
 #endif
-	}else if( target.type=="android" ){
-		args.push_back("-m");args.push_back("aarch64linux");
+	}else if( android ){
+		if( ndkarch=="aarch64" ){
+			args.push_back("-m");args.push_back("aarch64linux");
+		}
 
-		args.push_back("-shared");
+		args.push_back( "-shared" );
 		args.push_back("-u");args.push_back("SDL_main");
 
 		args.push_back("-z");args.push_back("noexecstack");
 		args.push_back("-EL");
-		args.push_back("--fix-cortex-a53-843419");
+		if( ndkarch=="aarch64" ){
+			args.push_back("--fix-cortex-a53-843419");
+		}
 		args.push_back("--warn-shared-textrel");
 		args.push_back("-z");args.push_back("now");
 		args.push_back("-z");args.push_back("relro");
@@ -145,13 +164,13 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		args.push_back("--enable-new-dtags");
 		args.push_back("--eh-frame-hdr");
 
-		args.push_back( ndkroot+"/sysroot/usr/lib/aarch64-linux-android/"+target.version+"/crtbegin_so.o");
-		args.push_back("-L");args.push_back( ndkroot+"/lib64/clang/11.0.5/lib/linux/aarch64");
-		args.push_back("-L");args.push_back( ndkroot+"/lib/gcc/aarch64-linux-android/4.9.x");
-		args.push_back("-L");args.push_back( ndkroot+"/aarch64-linux-android/lib64");
-		args.push_back("-L");args.push_back( ndkroot+"/aarch64-linux-android/lib");
-		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib/aarch64-linux-android/"+target.version);
-		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib/aarch64-linux-android");
+		args.push_back( sysroot+"/usr/lib/"+ndktriple+"/"+target.version+"/crtbegin_so.o");
+		args.push_back("-L");args.push_back( ndkroot+"/lib64/clang/11.0.5/lib/linux/"+ndkarch);
+		args.push_back("-L");args.push_back( ndkroot+"/lib/gcc/"+ndktriple+"/4.9.x");
+		args.push_back("-L");args.push_back( ndkroot+"/"+ndktriple+"/lib64");
+		args.push_back("-L");args.push_back( ndkroot+"/"+ndktriple+"/lib");
+		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib/"+ndktriple+"/"+target.version);
+		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib/"+ndktriple+"");
 		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib");
 	}
 
@@ -271,7 +290,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		args.push_back("-L");args.push_back( LIBARCH_DIR );
 		args.push_back("-L");args.push_back( "/usr/lib" );
 #endif
-	}else if( target.type=="android" ){
+	}else if( android ){
 		args.push_back("-dynamic-linker");args.push_back("/system/bin/linker64");
 	}
 
@@ -304,13 +323,13 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		args.push_back(  LIBGCC_DIR "/crtend.o");
 		args.push_back( LIBARCH_DIR "/crtn.o");
 #endif
-	}else if( target.type=="android" ){
+	}else if( android ){
 		args.push_back("-l");args.push_back("c++_static");
 		args.push_back("-l");args.push_back("c++abi");
 		args.push_back("-l");args.push_back("gcc");
 		args.push_back("-l");args.push_back("c");
 		args.push_back("-l");args.push_back("gcc");
-		args.push_back( ndkroot+"/sysroot/usr/lib/aarch64-linux-android/"+target.version+"/crtend_so.o" );
+		args.push_back( ndkroot+"/sysroot/usr/lib/"+ndktriple+"/"+target.version+"/crtend_so.o" );
 	}
 
 	std::vector<const char *> _args;
@@ -319,7 +338,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	}
 
 	bool success=false;
-	if( target.type=="android" ){
+	if( android ){
 		success=lld::elf::link( _args,llvm::outs(),llvm::errs(),false,false );
 	}else{
 		success=lld::FORMAT::link( _args,llvm::outs(),llvm::errs(),false,false );
@@ -342,6 +361,6 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	}
 #endif
 	if( apk ){
-		createApk( exeFile,tmpdir,home,toolchain,bundle,target,androidsdk );
+		createApk( exeFile,tmpdir,home,toolchain,bundle,target,rt,androidsdk );
 	}
 }

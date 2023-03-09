@@ -264,6 +264,8 @@ const char *enumTargets( vector<Target> &targets ){
 			mod.id=ent.first;
 			if( ent.second.contains("libs") ) mod.libs=toml::find<vector<string>>( ent.second,"libs" );
 			if( ent.second.contains("system_libs") ) mod.system_libs=toml::find<vector<string>>( ent.second,"system_libs" );
+			if( ent.second.contains("extra_files") ) mod.extra_files=toml::find<vector<string>>( ent.second,"extra_files" );
+			if( ent.second.contains("symbols") ) mod.symbols=toml::find<vector<string>>( ent.second,"symbols" );
 			t.modules.insert( pair<string,Target::Module>( ent.first,mod ) );
 		}
 
@@ -421,9 +423,9 @@ int main( int argc,char *argv[] ){
 
 	if( out_file.size() && !in_file.size() ) usageErr();
 
-	if( const char *er=openLibs( rt ) ) err( er );
+	if( const char *er=openLibs( target,rt ) ) err( er );
 
-	if( const char *er=linkLibs( rt ) ) err( er );
+	if( const char *er=linkLibs( target,rt ) ) err( er );
 
 	if( showhelp ) showHelp();
 	if( dumpkeys ) dumpKeys( true,true,dumphelp );

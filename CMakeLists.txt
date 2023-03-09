@@ -4,7 +4,7 @@ project (Blitz3D)
 cmake_policy(SET CMP0069 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 include(src/bin2h.cmake)
@@ -14,6 +14,11 @@ if(ANDROID)
   include(UseJava)
   set(CMAKE_JAVA_COMPILE_FLAGS -source 1.7 -target 1.7)
   set(ANDROID_JAR $ENV{ANDROID_HOME}/platforms/android-${ANDROID_PLATFORM}/android.jar)
+endif()
+
+# c++17/windows.h conflict
+if (MSVC)
+  add_compile_definitions(_HAS_STD_BYTE=0)
 endif()
 
 # TODO: make this toggleable
@@ -112,6 +117,7 @@ ELSEIF(BB_PLATFORM MATCHES android)
   add_definitions(-DBB_ANDROID)
 ELSEIF(BB_PLATFORM MATCHES ovr)
   set (BB_OVR true)
+  set (OVR_HOME ${PROJECT_SOURCE_DIR}/ovr-sdk)
   add_definitions(-DBB_OVR)
 ELSEIF(BB_PLATFORM MATCHES emscripten)
   set (BB_EMSCRIPTEN true)
@@ -153,6 +159,11 @@ IF(BB_IOS OR BB_ANDROID)
   add_definitions(-DBB_MOBILE)
 ENDIF()
 
+IF(BB_ANDROID OR BB_OVR)
+  set (BB_NDK true)
+  add_definitions(-DBB_NDK)
+ENDIF()
+
 IF(BB_EMSCRIPTEN)
   set (BB_WEB true)
   add_definitions(-DBB_WEB)
@@ -181,7 +192,9 @@ if(BB_ENV MATCHES test)
   set(BB_COVERAGE "-fprofile-arcs -ftest-coverage")
 endif()
 
-IF(NOT BB_EMSCRIPTEN)
+IF(BB_EMSCRIPTEN)
+  set (CMAKE_POSITION_INDEPENDENT_CODE OFF)
+else()
   set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 ENDIF()
 
@@ -321,6 +334,20 @@ ELSEIF (BB_CLANG)
 ENDIF ()
 
 set(ENABLE_UNITY_BUILD true)
+
+function(file_write_changes path src)
+  set(changed true)
+  if(EXISTS ${path})
+    file(READ ${path} prev_src)
+    if("${src}" STREQUAL "${prev_src}")
+      set(changed false)
+    endif()
+  endif()
+
+  if(changed)
+    file(WRITE ${path} "${src}")
+  endif()
+endfunction()
 
 add_subdirectory(deps)
 if(APPLE)
