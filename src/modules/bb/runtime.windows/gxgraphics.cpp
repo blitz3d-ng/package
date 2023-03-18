@@ -1,7 +1,7 @@
 
-#include "std.h"
 #include "gxgraphics.h"
 #include <bb/system.windows/system.windows.h>
+#include <bb/blitz2d.d3d7/gxmovie.h>
 
 // ugly hack to avoid conflicts with GLFW
 #include <initguid.h>
@@ -20,7 +20,7 @@ DEFINE_GUID(IID_IDirectDrawGammaControl,0x69c11c3e,0xb46b,0x11d1,0xad,0x7a,0x00,
 #define D3D7CANVAS(c) ((D3D7Canvas*)c)
 
 gxGraphics::gxGraphics( IDirectDraw7 *dd,IDirectDrawSurface7 *fs,IDirectDrawSurface7 *bs,bool d3d ):
-dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
+dirDraw(dd),def_font(0),gfx_lost(false){
 	dirDraw->QueryInterface( IID_IDirectDraw,(void**)&ds_dirDraw );
 
 	bbSceneDriver=this;
@@ -54,16 +54,13 @@ dirDraw(dd),dir3d(0),dir3dDev(0),def_font(0),gfx_lost(false),dummy_mesh(0){
 
 gxGraphics::~gxGraphics(){
 	if( _gamma ) _gamma->Release();
-#ifdef PRO
-	while( scene_set.size() ) freeScene( *scene_set.begin() );
-#endif
-	while( movie_set.size() ) closeMovie( *movie_set.begin() );
-	while( font_set.size() ) freeFont( *font_set.begin() );
 	while( canvas_set.size() ) freeCanvas( *canvas_set.begin() );
 
-	set<string>::iterator it;
+	std::set<std::string>::iterator it;
 	for( it=font_res.begin();it!=font_res.end();++it ) RemoveFontResource( (*it).c_str() );
 	font_res.clear();
+
+	D3D7CANVAS(back_canvas)->releaseZBuffer();
 
 	delete back_canvas;
 	delete front_canvas;
@@ -120,15 +117,15 @@ bool gxGraphics::restore(){
 	dirDraw->RestoreAllSurfaces();
 
 	//restore all canvases
-	set<BBCanvas*>::iterator it;
+	std::set<BBCanvas*>::iterator it;
 	for( it=canvas_set.begin();it!=canvas_set.end();++it ){
 		D3D7CANVAS(*it)->restore();
 	}
 
 #ifdef PRO
-	set<gxScene*>::iterator scene_it;
+	std::set<BBScene*>::iterator scene_it;
 	for( scene_it=scene_set.begin();scene_it!=scene_set.end();++scene_it ){
-		(*scene_it)->restore();
+		((gxScene*)(*scene_it))->restore();
 	}
 	if( dir3d ) dir3d->EvictManagedTextures();
 #endif
@@ -169,7 +166,7 @@ int gxGraphics::getAvailVidmem()const{
 	return caps.dwVidMemFree;
 }
 
-BBMovie *gxGraphics::openMovie( const string &file,int flags ){
+BBMovie *gxGraphics::openMovie( const std::string &file,int flags ){
 
 	IAMMultiMediaStream *iam_stream;
 
@@ -200,14 +197,6 @@ BBMovie *gxGraphics::openMovie( const string &file,int flags ){
 	return 0;
 }
 
-BBMovie *gxGraphics::verifyMovie( BBMovie *m ){
-	return movie_set.count( (gxMovie*)m ) ? m : 0;
-}
-
-void gxGraphics::closeMovie( BBMovie *m ){
-	if( movie_set.erase( (gxMovie*)m ) ) delete m;
-}
-
 BBCanvas *gxGraphics::createCanvas( int w,int h,int flags ){
 	ddSurf *s=ddUtil::createSurface( w,h,flags,this );
 	if( !s ) return 0;
@@ -217,7 +206,7 @@ BBCanvas *gxGraphics::createCanvas( int w,int h,int flags ){
 	return c;
 }
 
-BBCanvas *gxGraphics::loadCanvas( const string &f,int flags ){
+BBCanvas *gxGraphics::loadCanvas( const std::string &f,int flags ){
 	ddSurf *s=ddUtil::loadSurface( f,flags,this );
 	if( !s ) return 0;
 	gxCanvas *c=d_new gxCanvas( dirDraw,s,def_font,flags );
@@ -249,15 +238,15 @@ float gxGraphics::getDensity()const{
 	return 1.0;
 }
 
-BBFont *gxGraphics::loadFont( const string &f,int height,int flags ){
+BBFont *gxGraphics::loadFont( const std::string &f,int height,int flags ){
 	int bold=flags & BBFont::FONT_BOLD ? FW_BOLD : FW_REGULAR;
 	int italic=flags & BBFont::FONT_ITALIC ? 1 : 0;
 	int underline=flags & BBFont::FONT_UNDERLINE ? 1 : 0;
 	int strikeout=0;
 
-	string t;
+	std::string t;
 	int n=f.find('.');
-	if( n!=string::npos ){
+	if( n!=std::string::npos ){
 		t=fullfilename(f);
 		if( !font_res.count(t) && AddFontResource( t.c_str() ) ) font_res.insert( t );
 		t=filenamefile( f.substr(0,n) );
@@ -373,230 +362,3 @@ BBFont *gxGraphics::loadFont( const string &f,int height,int flags ){
 	SystemParametersInfo( SPI_SETFONTSMOOTHING,smoothing,0,0 );
 	return 0;
 }
-
-BBFont *gxGraphics::verifyFont( BBFont *f ){
-	return font_set.count( f ) ? f : 0;
-}
-
-void gxGraphics::freeFont( BBFont *f ){
-	if( font_set.erase( f ) ) delete f;
-}
-
-//////////////
-// 3D STUFF //
-//////////////
-
-#ifdef PRO
-
-static int maxDevType;
-
-static HRESULT CALLBACK enumDevice( char *desc,char *name,D3DDEVICEDESC7 *devDesc,void *context ){
-	gxGraphics *g=(gxGraphics*)context;
-	int t=0;
-	GUID guid=devDesc->deviceGUID;
-	if( guid==IID_IDirect3DRGBDevice ) t=1;
-	else if( guid==IID_IDirect3DHALDevice ) t=2;
-	else if( guid==IID_IDirect3DTnLHalDevice ) t=3;
-	if( t>maxDevType ){
-		g->dir3dDevDesc=*devDesc;
-		maxDevType=t;
-	}
-	return D3DENUMRET_OK;
-}
-
-static HRESULT CALLBACK enumZbuffFormat( LPDDPIXELFORMAT format,void *context ){
-	gxGraphics *g=(gxGraphics*)context;
-	if( format->dwZBufferBitDepth==g->primFmt.dwRGBBitCount ){
-		g->zbuffFmt=*format;
-		return D3DENUMRET_CANCEL;
-	}
-	if( format->dwZBufferBitDepth>g->zbuffFmt.dwZBufferBitDepth ){
-		if( format->dwZBufferBitDepth<g->primFmt.dwRGBBitCount ){
-			g->zbuffFmt=*format;
-		}
-	}
-	return D3DENUMRET_OK;
-}
-
-struct TexFmt{
-	DDPIXELFORMAT fmt;
-	int bits,a_bits,rgb_bits;
-};
-
-static int cntBits( int mask ){
-	int n=0;
-	for( int k=0;k<32;++k ){
-		if( mask & (1<<k) ) ++n;
-	}
-	return n;
-}
-
-static vector<TexFmt> tex_fmts;
-
-static HRESULT CALLBACK enumTextureFormat( DDPIXELFORMAT *fmt,void *p ){
-	TexFmt t;
-	t.fmt=*fmt;
-	t.bits=fmt->dwRGBBitCount;
-	t.a_bits=(fmt->dwFlags & DDPF_ALPHAPIXELS) ? cntBits(fmt->dwRGBAlphaBitMask) : 0;
-	t.rgb_bits=(fmt->dwFlags & DDPF_RGB) ? cntBits(fmt->dwRBitMask|fmt->dwGBitMask|fmt->dwBBitMask) : 0;
-
-	tex_fmts.push_back( t );
-
-	return D3DENUMRET_OK;
-}
-
-static string itobin( int n ){
-	string t;
-	for( int k=0;k<32;n<<=1,++k ){
-		t+=(n&0x80000000) ? '1' : '0';
-	}
-	return t;
-}
-
-static void debugPF( const DDPIXELFORMAT &pf ){
-	string t;
-	t="Bits:"+itoa( pf.dwRGBBitCount );
-	_bbDebugLog( t.c_str() );
-	t="R Mask:"+itobin( pf.dwRBitMask );
-	_bbDebugLog( t.c_str() );
-	t="G Mask:"+itobin( pf.dwGBitMask );
-	_bbDebugLog( t.c_str() );
-	t="B Mask:"+itobin( pf.dwBBitMask );
-	_bbDebugLog( t.c_str() );
-	t="A Mask:"+itobin( pf.dwRGBAlphaBitMask );
-	_bbDebugLog( t.c_str() );
-}
-
-static void pickTexFmts( gxGraphics *g,int hi ){
-	//texRGBFmt.
-	{
-		int pick=-1,max=0,bits=0;
-		for( int d=g->primFmt.dwRGBBitCount;d<=32;d+=8 ){
-			for( int k=0;k<tex_fmts.size();++k ){
-				const TexFmt &t=tex_fmts[k];
-				if( t.bits>d || !t.rgb_bits || t.rgb_bits<max ) continue;
-				if( t.rgb_bits==max && t.bits>=bits ) continue;
-				pick=k;max=t.rgb_bits;bits=t.bits;
-			}
-			if( !hi && pick>=0 ) break;
-		}
-		if( pick<0 ) g->texRGBFmt[hi]=g->primFmt;
-		else g->texRGBFmt[hi]=tex_fmts[pick].fmt;
-	}
-	//texAlphaFmt
-	{
-		int pick=-1,max=0,bits=0;
-		for( int d=g->primFmt.dwRGBBitCount;d<=32;d+=8 ){
-			for( int k=0;k<tex_fmts.size();++k ){
-				const TexFmt &t=tex_fmts[k];
-				if( t.bits>d || !t.a_bits || t.a_bits<max ) continue;
-				if( t.a_bits==max && t.bits>=bits ) continue;
-				pick=k;max=t.a_bits;bits=t.bits;
-			}
-			if( !hi && pick>=0 ) break;
-		}
-		if( pick<0 ) g->texAlphaFmt[hi]=g->primFmt;
-		else g->texAlphaFmt[hi]=tex_fmts[pick].fmt;
-	}
-	//texRGBAlphaFmt
-	{
-		int pick=-1,a8rgb8=-1,max=0,bits=0;
-		for( int d=g->primFmt.dwRGBBitCount;d<=32;d+=8 ){
-			for( int k=0;k<tex_fmts.size();++k ){
-				const TexFmt &t=tex_fmts[k];
-				if( t.a_bits==8 && t.bits==16 ){ a8rgb8=k;continue; }
-				if( t.bits>d || !t.a_bits || !t.rgb_bits || t.a_bits<max ) continue;
-				if( t.a_bits==max && t.bits>=bits ) continue;
-				pick=k;max=t.a_bits;bits=t.bits;
-			}
-			if( !hi && pick>=0 ) break;
-		}
-		if( pick<0 ) pick=a8rgb8;
-		if( pick<0 ) g->texRGBAlphaFmt[hi]=g->primFmt;
-		else g->texRGBAlphaFmt[hi]=tex_fmts[pick].fmt;
-	}
-	//texRGBMaskFmt...
-	{
-		int pick=-1,max=0,bits=0;
-		for( int d=g->primFmt.dwRGBBitCount;d<=32;d+=8 ){
-			for( int k=0;k<tex_fmts.size();++k ){
-				const TexFmt &t=tex_fmts[k];
-				if( !t.a_bits || !t.rgb_bits || t.rgb_bits<max ) continue;
-				if( t.rgb_bits==max && t.bits>=bits ) continue;
-				pick=k;max=t.rgb_bits;bits=t.bits;
-			}
-			if( !hi && pick>=0 ) break;
-		}
-		if( pick<0 ) g->texRGBMaskFmt[hi]=g->primFmt;
-		else g->texRGBMaskFmt[hi]=tex_fmts[pick].fmt;
-	}
-}
-
-BBScene *gxGraphics::createScene( int w,int h,float d,int flags ){
-	if( scene_set.size() ) return 0;
-
-	//get d3d
-	if( dirDraw->QueryInterface( IID_IDirect3D7,(void**)&dir3d )>=0 ){
-		//enum devices
-		maxDevType=0;
-		if( dir3d->EnumDevices( enumDevice,this )>=0 && maxDevType>1 ){
-			//enum zbuffer formats
-			zbuffFmt.dwZBufferBitDepth=0;
-			if( dir3d->EnumZBufferFormats( dir3dDevDesc.deviceGUID,enumZbuffFormat,this )>=0 ){
-				//create zbuff for back buffer
-				if( D3D7CANVAS(back_canvas)->attachZBuffer( zbuffFmt ) ){
-					//create 3d device
-					if( dir3d->CreateDevice( dir3dDevDesc.deviceGUID,D3D7CANVAS(back_canvas)->getSurface(),&dir3dDev )>=0 ){
-						//enum texture formats
-						tex_fmts.clear();
-						if( dir3dDev->EnumTextureFormats( enumTextureFormat,this )>=0 ){
-							pickTexFmts( this,0 );
-							pickTexFmts( this,1 );
-							tex_fmts.clear();
-#ifdef BETA
-							// _bbDebugLog( "Texture RGB format:" );
-							// debugPF( texRGBFmt );
-							// _bbDebugLog( "Texture Alpha format:" );
-							// debugPF( texAlphaFmt );
-							// _bbDebugLog( "Texture RGB Alpha format:" );
-							// debugPF( texRGBAlphaFmt );
-							// _bbDebugLog( "Texture RGB Mask format:" );
-							// debugPF( texRGBMaskFmt );
-							// _bbDebugLog( "Texture Primary format:" );
-							// debugPF( primFmt );
-							// string ts="ZBuffer Bit Depth:"+itoa( zbuffFmt.dwZBufferBitDepth );
-							// _bbDebugLog( ts.c_str() );
-#endif
-							gxScene *scene=d_new gxScene( dir3d,dir3dDev,(gxCanvas*)back_canvas );
-							scene_set.insert( scene );
-
-							dummy_mesh=(gxMesh*)scene->createMesh( 8,12,0 );
-							return scene;
-						}
-						dir3dDev->Release();
-						dir3dDev=0;
-					}
-					D3D7CANVAS(back_canvas)->releaseZBuffer();
-				}
-			}
-		}
-		dir3d->Release();
-		dir3d=0;
-	}
-	return 0;
-}
-
-BBScene *gxGraphics::verifyScene( BBScene *s ){
-	return scene_set.count( (gxScene*)s ) ? s : 0;
-}
-
-void gxGraphics::freeScene( BBScene *scene ){
-	if( !scene_set.erase( (gxScene*)scene ) ) return;
-	dummy_mesh=0;
-	delete scene;
-	D3D7CANVAS(back_canvas)->releaseZBuffer();
-	if( dir3dDev ){ dir3dDev->Release();dir3dDev=0; }
-	if( dir3d ){ dir3d->Release();dir3d=0; }
-}
-
-#endif

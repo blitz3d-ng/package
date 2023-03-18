@@ -6,24 +6,14 @@
 #include <string>
 #include <d3d.h>
 
-#include <bb/blitz3d/graphics.h>
 #include <bb/blitz2d/graphics.h>
 #include <bb/graphics.d3d7/canvas.h>
-#include <bb/blitz3d.d3d7/scene.h>
-#include <bb/blitz3d.d3d7/mesh.h>
-#include "gxmovie.h"
+#include <bb/blitz3d.d3d7/blitz3d.d3d7.h>
 
-class gxGraphics : public B3DGraphics, public B2DGraphics{
+class gxGraphics : public D3D7B3DGraphics, public B2DGraphics{
 public:
 	IDirectDraw7 *dirDraw;
 	IDirectDraw *ds_dirDraw;
-
-	IDirect3D7 *dir3d;
-	IDirect3DDevice7 *dir3dDev;
-	D3DDEVICEDESC7 dir3dDevDesc;
-	DDPIXELFORMAT primFmt,zbuffFmt;
-
-	DDPIXELFORMAT texRGBFmt[2],texAlphaFmt[2],texRGBAlphaFmt[2],texRGBMaskFmt[2];
 
 	gxGraphics( IDirectDraw7 *dirDraw,IDirectDrawSurface7 *front,IDirectDrawSurface7 *back,bool d3d );
 	~gxGraphics();
@@ -37,15 +27,11 @@ private:
 
 	BBFont *def_font;
 	bool gfx_lost;
-	gxMesh *dummy_mesh;
 
 	DDSURFACEDESC2 initDesc( int w,int h,int flags );
 	ddSurf *createSurface( int width,int height,int flags );
 	ddSurf *loadSurface( const std::string &f,int flags );
 
-	std::set<BBFont*> font_set;
-	std::set<gxScene*> scene_set;
-	std::set<gxMovie*> movie_set;
 	std::set<std::string> font_res;
 
 	DDGAMMARAMP _gammaRamp;
@@ -84,16 +70,12 @@ public:
 	BBCanvas *loadCanvas( const std::string &file,int flags );
 
 	BBMovie *openMovie( const std::string &file,int flags );
-	BBMovie *verifyMovie( BBMovie *movie );
-	void closeMovie( BBMovie *movie );
 
 	BBFont *loadFont( const std::string &font,int height,int flags );
-	BBFont *verifyFont( BBFont *font );
-	void freeFont( BBFont *font );
 
-	BBScene *createScene( int w,int h,float d,int flags );
-	BBScene *verifyScene( BBScene *scene );
-	void freeScene( BBScene *scene );
+	// b3dgraphics
+	IDirectDraw7 *getDirDraw(){ return dirDraw; }
+	D3D7Canvas *backCanvas(){ return (D3D7Canvas*)back_canvas; }
 };
 
 #endif

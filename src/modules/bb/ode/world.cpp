@@ -2,18 +2,18 @@
 #include "ode.h"
 #include <ode/ode.h>
 
-bb_ptr_t BBCALL _odeWorldCreate(){
+BBLIB bb_ptr_t BBCALL _odeWorldCreate(){
   return (bb_ptr_t)dWorldCreate();
 }
 
-void BBCALL _odeWorldDestroy( bb_ptr_t w ){
+BBLIB void BBCALL _odeWorldDestroy( bb_ptr_t w ){
   dWorldDestroy( (dWorldID)w );
 }
 
 // ODE_API void dWorldSetData (dWorldID world, void* data);
 // ODE_API void* dWorldGetData (dWorldID world);
 
-void BBCALL _odeWorldSetGravity( bb_ptr_t w,float x,float y,float z){
+BBLIB void BBCALL _odeWorldSetGravity( bb_ptr_t w,bb_float_t x,bb_float_t y,bb_float_t z){
   dWorldSetGravity( (dWorldID)w,x,y,z );
 }
 // ODE_API void dWorldGetGravity (dWorldID, dVector3 gravity);
@@ -30,7 +30,7 @@ void BBCALL _odeWorldSetGravity( bb_ptr_t w,float x,float y,float z){
 // ODE_API void dWorldSetStepThreadingImplementation(dWorldID w, const dThreadingFunctionsInfo *functions_info, dThreadingImplementationID threading_impl);
 // ODE_API int dWorldStep (dWorldID w, dReal stepsize);
 
-int BBCALL _odeWorldQuickStep( bb_ptr_t w,float stepsize ){
+BBLIB bb_int_t BBCALL _odeWorldQuickStep( bb_ptr_t w,bb_float_t stepsize ){
   return dWorldQuickStep( (dWorldID)w,stepsize );
 }
 
@@ -54,7 +54,7 @@ int BBCALL _odeWorldQuickStep( bb_ptr_t w,float stepsize ){
 // ODE_API void dWorldSetAutoDisableTime (dWorldID, dReal time);
 // ODE_API int dWorldGetAutoDisableFlag (dWorldID);
 
-void BBCALL _odeWorldSetAutoDisableFlag( bb_ptr_t w,int do_auto_disable){
+BBLIB void BBCALL _odeWorldSetAutoDisableFlag( bb_ptr_t w,bb_int_t do_auto_disable){
   dWorldSetAutoDisableFlag( (dWorldID)w,do_auto_disable );
 }
 

@@ -80,7 +80,7 @@ void BBCALL _odeContactSetSlip2( bb_float_t slip );
 bb_float_t BBCALL _odeContactGetSlip2(  );
 
 //Blitz3D Helpers
-void BBCALL _odeGeomSyncEntity( bb_int_t geom,bb_int_t entity );
+void BBCALL _odeGeomSyncEntity( bb_int_t geom,Entity *entity );
 
 //JV-ODE Compatibility
 void BBCALL _odeRegisterODE( bb_int_t key1,bb_int_t key2,bb_int_t key3,bb_int_t key4 );

@@ -1,12 +1,6 @@
 IF(BB_WINDOWS)
   bb_start_module(runtime.windows)
   set(DEPENDS_ON bb.blitz3d.d3d7 bb.frame)
-  set(SOURCES gxgraphics.cpp gxgraphics.h gxmovie.cpp gxmovie.h gxruntime.cpp gxruntime.h module.cpp std.h)
-
-  if(BB_WIN32 OR BB_WIN64)
-    set(LIBS ${LIBS} amstrmid)
-  else()
-    set(LIBS ${LIBS} strmiids)
-  endif()
+  set(SOURCES gxgraphics.cpp gxgraphics.h gxruntime.cpp gxruntime.h module.cpp std.h)
   bb_end_module()
 ENDIF()

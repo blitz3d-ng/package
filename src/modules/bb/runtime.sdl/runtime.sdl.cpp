@@ -37,9 +37,6 @@ BBRuntime *bbCreateOpenGLRuntime(){
 	return d_new SDLRuntime( window );
 }
 
-void bbCloseRuntime( BBRuntime *rt ){
-	delete rt;
-}
 
 SDLRuntime::SDLRuntime( SDL_Window *wnd ):wnd(wnd),graphics(0){
 	bbContextDriver=this;
@@ -203,17 +200,11 @@ public:
 
 	// b2dgraphics
 	BBMovie *openMovie( const std::string &file,int flags ){ return 0; }
-	BBMovie *verifyMovie( BBMovie *movie ){ return 0; }
-	void closeMovie( BBMovie *movie ){}
 
 	BBFont *loadFont( const std::string &font,int height,int flags ){
-		return BBImageFont::load( font,height,flags );
-	}
-	BBFont *verifyFont( BBFont *font ){
-		return font;
-	}
-	void freeFont( BBFont *font ){
-		delete font;
+		BBFont *f=BBImageFont::load( font,height,flags );
+		font_set.insert( f );
+		return f;
 	}
 
 	void moveMouse( int x,int y ){

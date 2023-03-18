@@ -1,6 +1,6 @@
 IF(BB_WINDOWS)
   bb_start_module(blitz3d.d3d7)
   set(DEPENDS_ON bb.blitz3d bb.blitz2d.d3d7 bb.graphics.d3d7)
-  set(SOURCES blitz3d.d3d7.cpp light.cpp light.h mesh.cpp mesh.h scene.cpp scene.h)
+  set(SOURCES blitz3d.d3d7.cpp light.cpp light.h mesh.cpp mesh.h scene.cpp scene.h graphics.cpp graphics.cpp)
   bb_end_module()
 ENDIF()

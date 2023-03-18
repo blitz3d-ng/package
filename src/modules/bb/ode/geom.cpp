@@ -8,7 +8,7 @@
 // ODE_API void dGeomSetData (dGeomID geom, void* data);
 // ODE_API void *dGeomGetData (dGeomID geom);
 
-void BBCALL _odeGeomSetBody( bb_ptr_t g,bb_ptr_t b ){
+BBLIB void BBCALL _odeGeomSetBody( bb_ptr_t g,bb_ptr_t b ){
   dGeomSetBody( (dGeomID)g,(dBodyID)b );
 }
 
@@ -17,15 +17,15 @@ void BBCALL _odeGeomSetBody( bb_ptr_t g,bb_ptr_t b ){
 // ODE_API void dGeomSetRotation (dGeomID geom, const dMatrix3 R);
 // ODE_API void dGeomSetQuaternion (dGeomID geom, const dQuaternion Q);
 
-bb_float_t BBCALL _odeGeomGetPositionX( bb_ptr_t g ){
+BBLIB bb_float_t BBCALL _odeGeomGetPositionX( bb_ptr_t g ){
   return dGeomGetPosition( (dGeomID)g )[0];
 }
 
-bb_float_t BBCALL _odeGeomGetPositionY( bb_ptr_t g ){
+BBLIB bb_float_t BBCALL _odeGeomGetPositionY( bb_ptr_t g ){
   return dGeomGetPosition( (dGeomID)g )[1];
 }
 
-bb_float_t BBCALL _odeGeomGetPositionZ( bb_ptr_t g ){
+BBLIB bb_float_t BBCALL _odeGeomGetPositionZ( bb_ptr_t g ){
   return dGeomGetPosition( (dGeomID)g )[2];
 }
 
@@ -50,7 +50,7 @@ else
 }
 
 
-bb_float_t BBCALL _odeGeomGetPitch( bb_ptr_t g ){
+BBLIB bb_float_t BBCALL _odeGeomGetPitch( bb_ptr_t g ){
   float p,y,r;
   const dReal *m=dGeomGetRotation( (dGeomID)g );
   get_euler( m,p,y,r );
@@ -62,7 +62,7 @@ bb_float_t BBCALL _odeGeomGetPitch( bb_ptr_t g ){
 	// return quatPitch( q ) * rtod;
 }
 
-bb_float_t BBCALL _odeGeomGetYaw( bb_ptr_t g ){
+BBLIB bb_float_t BBCALL _odeGeomGetYaw( bb_ptr_t g ){
   float p,y,r;
   const dReal *m=dGeomGetRotation( (dGeomID)g );
   get_euler( m,p,y,r );
@@ -74,7 +74,7 @@ bb_float_t BBCALL _odeGeomGetYaw( bb_ptr_t g ){
 	// return quatYaw( q ) * rtod;
 }
 
-bb_float_t BBCALL _odeGeomGetRoll( bb_ptr_t g ){
+BBLIB bb_float_t BBCALL _odeGeomGetRoll( bb_ptr_t g ){
   float p,y,r;
   const dReal *m=dGeomGetRotation( (dGeomID)g );
   get_euler( m,p,y,r );
@@ -118,7 +118,7 @@ bb_float_t BBCALL _odeGeomGetRoll( bb_ptr_t g ){
 // ODE_API void dGeomCopyOffsetRotation (dGeomID geom, dMatrix3 R);
 // ODE_API void dGeomGetOffsetQuaternion (dGeomID geom, dQuaternion result);
 
-bb_ptr_t BBCALL _odeCreateBox( bb_ptr_t s,float lx,float ly,float lz ){
+BBLIB bb_ptr_t BBCALL _odeCreateBox( bb_ptr_t s,bb_float_t lx,bb_float_t ly,bb_float_t lz ){
   return (bb_ptr_t)dCreateBox( (dSpaceID)s,lx,ly,lz );
 }
 
@@ -126,7 +126,7 @@ bb_ptr_t BBCALL _odeCreateBox( bb_ptr_t s,float lx,float ly,float lz ){
 // ODE_API void dGeomBoxGetLengths (dGeomID box, dVector3 result);
 // ODE_API dReal dGeomBoxPointDepth (dGeomID box, dReal x, dReal y, dReal z);
 
-bb_ptr_t BBCALL _odeCreatePlane( bb_ptr_t s,float a,float b,float c,float d ){
+BBLIB bb_ptr_t BBCALL _odeCreatePlane( bb_ptr_t s,bb_float_t a,bb_float_t b,bb_float_t c,bb_float_t d ){
   return (bb_ptr_t)dCreatePlane( (dSpaceID)s,a,b,c,d );
 }
 

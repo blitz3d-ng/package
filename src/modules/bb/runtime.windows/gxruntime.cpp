@@ -1,5 +1,4 @@
 
-#include "std.h"
 #include "gxruntime.h"
 #include <bb/blitz/app.h>
 #include <bb/runtime/runtime.h>
@@ -7,8 +6,6 @@
 #include <bb/event/event.h>
 #include "gxgraphics.h"
 #include "zmouse.h"
-
-gxRuntime *gx_runtime;
 
 #undef SPI_SETMOUSESPEED
 #define SPI_SETMOUSESPEED	113
@@ -60,14 +57,6 @@ gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst ){
 	runtime=d_new gxRuntime( hinst,hwnd );
 	bbContextDriver=runtime;
 	return runtime;
-}
-
-void gxRuntime::closeRuntime( gxRuntime *r ){
-	if( !runtime || runtime!=r ) return;
-
-	delete runtime;
-	runtime=0;
-
 }
 
 //////////////////////////

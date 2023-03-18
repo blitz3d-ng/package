@@ -1,37 +1,27 @@
-if(NOT BB_DESKTOP AND NOT BB_MOBILE AND NOT BB_OVR AND NOT BB_EMSCRIPTEN AND NOT BB_NX)
-  return()
-endif()
-
 bb_start_runtime(test Test bbCreateConsoleRuntime)
 
-bb_addmodule(stub)
-bb_addmodule(blitz)
-bb_addmodule(hook)
-bb_addmodule(event)
-bb_addmodule(math)
-bb_addmodule(string)
-bb_addmodule(bank)
-bb_addmodule(stdio)
-bb_addmodule(stream)
-bb_addmodule(sockets)
-bb_addmodule(enet)
-bb_addmodule(system.windows)
-bb_addmodule(system.macos)
-bb_addmodule(system.linux)
-bb_addmodule(system.android)
-bb_addmodule(system.ios)
-bb_addmodule(filesystem.windows)
-bb_addmodule(filesystem.posix)
-bb_addmodule(timer.windows)
-bb_addmodule(timer.noop)
-# bb_addmodule(input.directinput8)
-bb_addmodule(audio.fmod)
-bb_addmodule(audio.openal)
-# bb_addmodule(blitz3d)
-# bb_addmodule(graphics)
-bb_addmodule(userlibs)
-bb_addmodule(runtime.console)
-# bb_addmodule(runtime.html)
-bb_addmodule(unit-test)
+set(EXCLUDED_MODULES
+  blitz3d.d3d7
+  blitz3d.gl
+  blitz3d
+  blitz2d.d3d7
+  blitz2d.gl
+  blitz2d
+  graphics.d3d7
+  graphics.gl
+  graphics
+  ode
+  runtime.sdl
+  runtime.windows
+)
+
+# add all modules to test env
+set(MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../modules)
+file(GLOB modules RELATIVE ${MODULES_DIR}/bb ${MODULES_DIR}/bb/*)
+foreach(module ${modules})
+  if(EXISTS ${MODULES_DIR}/bb/${module}/CMakeLists.txt AND NOT ${module} IN_LIST EXCLUDED_MODULES)
+    bb_addmodule(${module})
+  endif()
+endforeach()
 
 bb_end_runtime()

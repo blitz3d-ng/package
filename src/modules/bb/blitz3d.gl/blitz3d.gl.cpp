@@ -615,14 +615,11 @@ public:
 static GLScene *scene=0; // TODO: I don't like this...consider a better approach...
 
 BBScene *GLB3DGraphics::createScene( int w,int h,float d,int flags ){
-  return (scene=d_new GLScene( w,h,d ));
-}
+	if( scene_set.size() ) return 0;
 
-BBScene *GLB3DGraphics::verifyScene( BBScene *scene ){
-  return scene;
-}
-
-void GLB3DGraphics::freeScene( BBScene *scene ){
+	scene=d_new GLScene( w,h,d );
+	scene_set.insert( scene );
+	return scene;
 }
 
 void GLB3DGraphics::resize( int w,int h,float dpi ){

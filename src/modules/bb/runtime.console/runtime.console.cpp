@@ -22,10 +22,6 @@ BBRuntime *bbCreateConsoleRuntime(){
 	return d_new ConsoleRuntime();
 }
 
-void bbCloseRuntime( BBRuntime *rt ){
-	delete rt;
-}
-
 BBMODULE_CREATE( runtime_console ){
 	return true;
 }
