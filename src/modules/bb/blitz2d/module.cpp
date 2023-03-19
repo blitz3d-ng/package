@@ -39,15 +39,15 @@ private:
 };
 
 extern FT_Library ft;
-static bool filter;
-static bool auto_dirty;
-static bool auto_midhandle;
+static bool filter=true;
+static bool auto_dirty=true;
+static bool auto_midhandle=false;
 static set<bbImage*> image_set;
-/*static*/ int curs_x,curs_y;
-static BBCanvas *p_canvas;
-/*static*/ BBFont *curr_font;
-/*static*/ unsigned curr_color;
-/*static*/ unsigned curr_clsColor;
+/*static*/ int curs_x=0,curs_y=0;
+static BBCanvas *p_canvas=0;
+/*static*/ BBFont *curr_font=0;
+/*static*/ unsigned curr_color=0;
+/*static*/ unsigned curr_clsColor=0;
 
 static inline void debugImage( bbImage *i,int frame=0 ){
 	if( bb_env.debug ){
@@ -831,6 +831,7 @@ void blitz2d_open(){
 }
 
 void blitz2d_reset(){
+	curs_x=curs_y=0;
 	gx_canvas->setOrigin( 0,0 );
 	gx_canvas->setViewport( 0,0,gx_canvas->getWidth(),gx_canvas->getHeight() );
 	gx_canvas->setColor( curr_color );

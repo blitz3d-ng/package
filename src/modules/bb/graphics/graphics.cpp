@@ -18,20 +18,15 @@ void blitz2d_close();
 void blitz3d_open( int w,int h,float d );
 void blitz3d_close();
 
-BBContextDriver *bbContextDriver;
-BBGraphics *gx_graphics;
-BBCanvas *gx_canvas;
+BBContextDriver *bbContextDriver=0;
+BBGraphics *gx_graphics=0;
+BBCanvas *gx_canvas=0;
 
 struct GfxMode{
 	int w,h,d,caps;
 };
 
-static int gx_driver;	//current graphics driver
-
-extern int curs_x,curs_y;
-extern BBFont *curr_font;
-extern unsigned curr_color;
-extern unsigned curr_clsColor;
+static int gx_driver=0;	//current graphics driver
 
 static vector<GfxMode> gfx_modes;
 
@@ -83,7 +78,10 @@ static void freeGraphics(){
 	blitz3d_close();
 	blitz2d_close();
 	gx_canvas=0;
-	bbContextDriver->closeGraphics( gx_graphics );
+	if( gx_graphics ){
+		bbContextDriver->closeGraphics( gx_graphics );
+		gx_graphics=0;
+	}
 }
 
 BBContextDriver::BBContextDriver():graphics(0){
@@ -201,7 +199,6 @@ void BBCALL bbSetBuffer( BBCanvas *buff ){
 	debugCanvas( buff );
 	if( gx_canvas ) gx_canvas->unset();
 	gx_canvas=buff;
-	curs_x=curs_y=0;
 	blitz2d_reset();
 }
 
@@ -398,6 +395,7 @@ void BBCALL bbCopyRect( bb_int_t sx,bb_int_t sy,bb_int_t w,bb_int_t h,bb_int_t d
 
 BBMODULE_CREATE( graphics ){
 	gx_driver=0;
+	gx_graphics=0;
 
 	return true;
 }
@@ -405,9 +403,5 @@ BBMODULE_CREATE( graphics ){
 BBMODULE_DESTROY( graphics ){
 	freeGraphics();
 	gfx_modes.clear();
-	if( gx_graphics ){
-		bbContextDriver->closeGraphics( gx_graphics );
-		gx_graphics=0;
-	}
 	return true;
 }

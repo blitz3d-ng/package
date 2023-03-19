@@ -27,7 +27,8 @@ jobs:
           Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
-      - shell: pwsh
+      - name: Test suite
+        shell: pwsh
         run: |
           $env:blitzpath='_release'
           .\test\suite.bat
