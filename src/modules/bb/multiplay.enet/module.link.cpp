@@ -2,9 +2,9 @@
 // RUN `make` TO UPDATE.
 
 #include <bb/blitz/module.h>
-#include <bb/enet/enet.h>
+#include <bb/multiplay.enet/multiplay.enet.h>
 
-BBMODULE_LINK( enet ){
+BBMODULE_LINK( multiplay_enet ){
 	rtSym( "%HostNetGame$game_name",bbHostNetGame );
 	rtSym( "%JoinNetGame$game_name$ip_address",bbJoinNetGame );
 	rtSym( "%CreateNetPlayer$name",bbCreateNetPlayer );

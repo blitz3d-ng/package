@@ -1,3 +1,7 @@
+if(NOT BB_DESKTOP)
+  return()
+endif()
+
 # patch to make it more friendly
 file(READ tree/CMakeLists.txt FILE_CONTENTS)
 string(REPLACE "add_custom_target(uninstall" "# add_custom_target(uninstall" FILE_CONTENTS ${FILE_CONTENTS})

@@ -1,12 +1,11 @@
 bb_start_runtime(test Test bbCreateConsoleRuntime)
 
 set(EXCLUDED_MODULES
-  runtime.sdl
-
   blitz3d.d3d7
   blitz2d.d3d7
   graphics.d3d7
   runtime.windows
+  multiplay.directplay
 )
 
 # add all modules to test env

@@ -1,15 +1,16 @@
 
 Context "Audio"
 
-boom = LoadSound( "_release/samples/mak/castle/sounds/boom.wav" )
+boom = LoadSound( "../_release/samples/mak/castle/sounds/boom.wav" )
 Expect boom <> 0, "Boom sound was loaded"
 
-channel = PlaySound( boom )
-Expect channel <> 0, "Boom channel created"
-Expect ChannelPlaying( channel ) = 1, "Boom channel playing"
+sound = PlaySound( boom )
+Expect sound <> 0, "Boom channel created"
+Expect ChannelPlaying( sound ) = 1, "Boom channel playing"
 
+music = PlayMusic( "../_release/samples/mak/castle/sounds/shoot.wav" )
+Expect music <> 0, "Streaming shoot sound"
 
-channel = PlayMusic( "_release/samples/mak/castle/sounds/shoot.wav" )
-Expect channel <> 0, "Streaming shoot sound"
-
-Delay 1000
+While ChannelPlaying( sound ) Or ChannelPlaying( music )
+	Delay 100
+Wend

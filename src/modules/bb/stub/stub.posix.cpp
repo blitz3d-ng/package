@@ -8,7 +8,7 @@
 #include <cstring>
 using namespace std;
 
-#ifndef BB_ANDROID
+#ifndef BB_NDK
 #ifdef BB_DEBUG
 #define BB_BACKTRACE
 #endif

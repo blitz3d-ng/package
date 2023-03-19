@@ -1,7 +1,7 @@
 IF(TARGET enet)
-  bb_start_module(enet)
+  bb_start_module(multiplay.enet)
   set(DEPENDS_ON bb.blitz bb.hook)
-  set(SOURCES commands.h enet.cpp enet.h)
+  set(SOURCES commands.h multiplay.enet.cpp multiplay.enet.h)
   set(LIBS enet crossguid)
 
   IF(BB_WINDOWS)

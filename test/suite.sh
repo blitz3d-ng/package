@@ -136,6 +136,10 @@ then
     fail=1
   fi
 
+  # run the old win32 codegen just because we can
+  blitzcc_stream test/all.bb -llvm=off -c -a -r test test/all.bb
+  blitzcc_stream test/all.bb -d -llvm=off -c -a -r test test/all.bb
+
   echo "Verifying samples can compile"
 
   compile _release/samples/AGore/BirdDemo/BirdDemo.bb
@@ -252,7 +256,9 @@ ENV=$($BLITZCC -e)
 if [ "$ENV" = "test" ]; then
   echo "Generating coverage report..."
   mkdir -p coverage
-  gcovr -e '.*stdin.*' --html --html-details -o ./coverage/coverage.html build/
+  gcovr \
+    -e '.*stdin.*' -e '/.*/build/' -e '/.*/deps/' -e '/.*/llvm/' \
+    --html --html-details -o ./coverage/coverage.html build/
   cleanup
 fi
 

@@ -1,3 +1,7 @@
+if (BB_EMSCRIPTEN OR BB_NX)
+  return()
+endif()
+
 set(CMAKE_UNITY_BUILD ${ENABLE_UNITY_BUILD})
 
 add_subdirectory(src)

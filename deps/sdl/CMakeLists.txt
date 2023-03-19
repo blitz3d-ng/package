@@ -1,3 +1,7 @@
+if(BB_NX)
+  return()
+endif()
+
 add_definitions(-DGL_SILENCE_DEPRECATION -DGLES_SILENCE_DEPRECATION)
 
 set(SDL_SHARED OFF CACHE STRING "" FORCE)

@@ -90,12 +90,13 @@ public:
 		}
 
 		if( alGetError()!=AL_NO_ERROR ){
-			return;
+			goto end;
 		}
 
 		alSourcePlay( channel->source );
 		if( alGetError()!=AL_NO_ERROR ){
-			return;
+			channel->playbackRunning=false;
+			goto end;
 		}
 
 		while( channel->streaming() ){
@@ -110,7 +111,7 @@ public:
 				channel->queue( buffer );
 				if( alGetError()!=AL_NO_ERROR ){
 					fprintf( stderr,"Error buffering :(\n" );
-					return;
+					goto end;
 				}
 			}
 
@@ -124,6 +125,9 @@ public:
 		do{
 			alGetSourcei( channel->source,AL_SOURCE_STATE,&val );
 		}while( val==AL_PLAYING );
+
+end:
+		channel->playbackRunning=false;
 	}
 
 	void stop(){

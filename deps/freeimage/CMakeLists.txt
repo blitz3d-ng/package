@@ -1,3 +1,7 @@
+if(NOT BB_DESKTOP AND NOT BB_NDK)
+  return()
+endif()
+
 set(CMAKE_CXX_STANDARD 14)
 
 optimize_for_size()

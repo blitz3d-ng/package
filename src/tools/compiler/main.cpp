@@ -342,6 +342,8 @@ int main( int argc,char *argv[] ){
 			dumpkeys=dumphelp=true;
 		}else if( t=="-llvm" ){
 			usellvm=true;
+		}else if( t=="-llvm=off" ){
+			usellvm=false;
 		}else if( t=="-v" ){
 			versinfo=true;
 		}else if( t=="-e" ){

@@ -1,5 +1,5 @@
 
-#include "enet.h"
+#include "multiplay.enet.h"
 #include <bb/blitz/blitz.h>
 #include <enet/enet.h>
 
@@ -49,7 +49,7 @@ static map<string,BBPlayer> bbPlayers;
 
 struct BBNetMsg{
 	union Peer{
-		unsigned char id[16];
+		char id[16];
 		BBPlayer *ptr;
 	};
 
@@ -63,24 +63,23 @@ struct BBNetMsg{
 BBNetMsg bbLastNetMsg;
 
 static int sendNetMsg( unsigned char type,string from,string to,string data,bool reliable ){
-	static BBNetMsg *msg;
-	static int msg_size;
+	static BBNetMsg *msg=0;
+	static int msg_size=0;
 
-	int new_size=sizeof(BBNetMsg)+data.length();
+	int new_size=sizeof(BBNetMsg)+data.length()+1;
 	if( !msg || msg_size<new_size ){
 		msg_size=new_size;
 		msg=(BBNetMsg*)(msg?realloc( msg,msg_size ):malloc( msg_size ));
 	}
-
 	memset( msg,0,msg_size );
 
 	msg->type=type;
-	if( from.length()>0 ) memcpy( msg->from.id,from.c_str(),16 );
-	if( to.length()>0 ) memcpy( msg->to.id,to.c_str(),16 );
+	if( from.length()>0 ) strncpy( msg->from.id,from.c_str(),16 );
+	if( to.length()>0 ) strncpy( msg->to.id,to.c_str(),16 );
 	msg->length=data.length();
-	// memcpy( msg+1,data.c_str(),data.length() );
+	// strncpy( (char*)(msg+sizeof(BBNetMsg)-sizeof(msg->data)),data.c_str(),data.length() );
 
-	ENetPacket *pk=enet_packet_create( &msg,msg_size,reliable?ENET_PACKET_FLAG_RELIABLE:0 );
+	ENetPacket *pk=enet_packet_create( msg,msg_size,reliable?ENET_PACKET_FLAG_RELIABLE:0 );
 
 	if( peer ){
 		enet_peer_send( peer,0,pk );
@@ -93,7 +92,7 @@ static int sendNetMsg( unsigned char type,string from,string to,string data,bool
 	return 1;
 }
 
-bb_int_t	BBCALL bbSendNetMsg( bb_int_t type,BBStr *data,BBPlayer *from,BBPlayer *to,bb_int_t reliable ){
+bb_int_t BBCALL bbSendNetMsg( bb_int_t type,BBStr *data,BBPlayer *from,BBPlayer *to,bb_int_t reliable ){
 	if( bb_env.debug && type<1||type>99 ) RTEX( "Message type must be between 1 and 99." );
 
 	string d=*data;delete data;
@@ -211,11 +210,11 @@ BBPlayer * BBCALL bbNetMsgTo(){
 	return bbLastNetMsg.to.ptr;
 }
 
-BBMODULE_CREATE( enet ){
+BBMODULE_CREATE( multiplay_enet ){
 	memset( &bbLastNetMsg,0,sizeof(BBNetMsg) );
 	return true;
 }
 
-BBMODULE_DESTROY( enet ){
+BBMODULE_DESTROY( multiplay_enet ){
 	return true;
 }

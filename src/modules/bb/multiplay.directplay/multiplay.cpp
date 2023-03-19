@@ -103,7 +103,7 @@ BBMODULE_LINK( multiplay ) {
 	rtSym( "$NetMsgData",bbNetMsgData );
 }
 
-BBMODULE_CREATE( multiplay ){
+BBMODULE_CREATE( multiplay_directplay ){
 	recv_buff_sz=send_buff_sz=1024;
 	recv_buff=d_new char[recv_buff_sz];
 	send_buff=d_new char[send_buff_sz];
@@ -113,7 +113,7 @@ BBMODULE_CREATE( multiplay ){
 	return true;
 }
 
-BBMODULE_DESTROY( multiplay ){
+BBMODULE_DESTROY( multiplay_directplay ){
 	bbStopNetGame();
 
 	multiplay_setup_destroy();

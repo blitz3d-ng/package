@@ -1,8 +1,8 @@
-#ifndef BB_ENET_COMMANDS_H
-#define BB_ENET_COMMANDS_H
+#ifndef BB_MULTIPLAY_ENET_COMMANDS_H
+#define BB_MULTIPLAY_ENET_COMMANDS_H
 
 #include <bb/blitz/module.h>
-#include <bb/enet/enet.h>
+#include <bb/multiplay.enet/multiplay.enet.h>
 
 #ifdef __cplusplus
 extern "C" {
