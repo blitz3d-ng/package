@@ -296,7 +296,10 @@ BBGraphics *SDLRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 
 	static bool inited=false;
 	if( !inited ){
-		SDL_GL_CreateContext( wnd );
+		if( !SDL_GL_CreateContext( wnd ) ){
+			_bbLog( "%s",SDL_GetError() );
+			return 0;
+		}
 
 		int screen_w,screen_h;
 		int drawableW,drawableH;
