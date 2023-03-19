@@ -12,6 +12,10 @@ using namespace std;
 static const float dtor=0.0174532925199432957692369076848861f;
 static const float rtod=1/dtor;
 
+#if defined(BB_MOBILE) || defined(BB_OVR)
+#define GLES
+#endif
+
 class GLLight : public BBLightRep{
 public:
 	int type;
@@ -98,13 +102,20 @@ public:
 	}
 
 	void unlock(){
+#ifndef GLES
 		GL( glBindBuffer( GL_ARRAY_BUFFER,vertex_buffer ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,max_verts*sizeof(GLVertex),verts,GL_STATIC_DRAW ) );
+#endif
 	}
 
 	void offsetIndices( int offset ){
 		GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,index_buffer ) );
 		GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER,(max_tris-offset)*3*sizeof(unsigned int),tris+offset*3,GL_STATIC_DRAW ) );
+	}
+
+	void offsetArrays( int offset ){
+		GL( glBindBuffer( GL_ARRAY_BUFFER,vertex_buffer ) );
+		GL( glBufferData( GL_ARRAY_BUFFER,(max_verts-offset)*sizeof(GLVertex),verts+offset,GL_STATIC_DRAW ) );
 	}
 
 	void setVertex( int n,const void *_v ){
@@ -585,7 +596,12 @@ public:
 		mesh->offsetIndices( first_tri );
 
 		GL( glBindVertexArray( mesh->vertex_array ) );
+#ifdef GLES
+		mesh->offsetArrays( first_vert );
+		GL( glDrawElements( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,0 ) );
+#else
 		GL( glDrawElementsBaseVertex( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,0,first_vert ) );
+#endif
 		GL( glBindVertexArray( 0 ) );
 	}
 

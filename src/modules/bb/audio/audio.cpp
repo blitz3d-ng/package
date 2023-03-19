@@ -1,4 +1,5 @@
 
+#include "../../../stdutil/stdutil.h"
 #include <bb/runtime/runtime.h>
 #include "audio.h"
 
@@ -12,12 +13,12 @@ static inline void debugSound( BBSound *s ){
 }
 
 static BBSound *loadSound( BBStr *f,bool use_3d ){
-	string t=*f;delete f;
+	string t=canonicalpath(*f);delete f;
 	return gx_audio ? gx_audio->loadSound( t,use_3d ) : 0;
 }
 
 static BBChannel *playMusic( BBStr *f,bool use_3d ){
-	string t=*f;delete f;
+	string t=canonicalpath(*f);delete f;
 	return gx_audio ? gx_audio->playFile( t,use_3d ) : 0;
 }
 

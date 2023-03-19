@@ -1,11 +1,8 @@
-if(BB_MACOS)
+find_package(OpenAL)
+if(OPENAL_FOUND)
   bb_start_module(audio.openal)
   set(DEPENDS_ON bb.audio)
   set(SOURCES audio.openal.h audio.openal.cpp commands.h)
-
-  if(BB_MACOS)
-    set(SYSTEM_LIBS "-framework OpenAL")
-  endif()
-
+  set(SYSTEM_LIBS ${OPENAL_LIBRARY})
   bb_end_module()
 endif()

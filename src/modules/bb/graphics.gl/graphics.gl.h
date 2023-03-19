@@ -21,7 +21,7 @@
 		#include <OpenGLES/ES3/gl.h>
 	#endif
 
-	#if defined(__BIONIC__) || defined(BB_NX)
+	#if defined(BB_NDK) || defined(BB_NX)
 		#include <GLES3/gl3.h>
 	#endif
 #endif
