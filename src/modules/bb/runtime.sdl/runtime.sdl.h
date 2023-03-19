@@ -23,6 +23,8 @@ public:
 	SDLRuntime( SDL_Window *wnd );
 	~SDLRuntime();
 
+	void afterCreate();
+
 	// context driver
 	int numGraphicsDrivers();
 	void graphicsDriverInfo( int driver,std::string *name,int *c );

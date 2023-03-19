@@ -22,10 +22,4 @@ BBRuntime *bbCreateConsoleRuntime(){
 	return d_new ConsoleRuntime();
 }
 
-BBMODULE_CREATE( runtime_console ){
-	return true;
-}
-
-BBMODULE_DESTROY( runtime_console ){
-	return true;
-}
+BBMODULE_EMPTY( runtime_console );

@@ -77,6 +77,7 @@ bool D3D7ContextDriver::setDisplayMode( int w,int h,int d,bool d3d,IDirectDraw7 
 }
 
 gxGraphics *D3D7ContextDriver::openWindowedGraphics( int w,int h,int d,bool d3d ){
+	gxGraphics::wipeSystemProperties();
 
 	IDirectDraw7 *dd=createDD();
 	if( !dd ) return 0;
@@ -113,7 +114,10 @@ gxGraphics *D3D7ContextDriver::openWindowedGraphics( int w,int h,int d,bool d3d 
 								mod_cnt=0;
 								exclusive=false;
 								fs->AddRef();
-								return d_new gxGraphics( dd,fs,fs,d3d );
+
+								gxGraphics *graphics=d_new gxGraphics( dd,fs,fs,d3d );
+								graphics->setSystemProperties();
+								return graphics;
 							}
 							fs->Release();
 						}
@@ -129,6 +133,7 @@ gxGraphics *D3D7ContextDriver::openWindowedGraphics( int w,int h,int d,bool d3d 
 }
 
 gxGraphics *D3D7ContextDriver::openExclusiveGraphics( int w,int h,int d,bool d3d ){
+	gxGraphics::wipeSystemProperties();
 
 	IDirectDraw7 *dd=createDD();
 	if( !dd ) return 0;
@@ -153,7 +158,9 @@ gxGraphics *D3D7ContextDriver::openExclusiveGraphics( int w,int h,int d,bool d3d
 				caps.dwCaps=DDSCAPS_BACKBUFFER;
 				if( ps->GetAttachedSurface( &caps,&bs )>=0 ){
 					exclusive=true;
-					return d_new gxGraphics( dd,ps,bs,d3d );
+					gxGraphics *graphics=d_new gxGraphics( dd,ps,bs,d3d );
+					graphics->setSystemProperties();
+					return graphics;
 				}
 				ps->Release();
 			}

@@ -3,7 +3,6 @@
 #define GXCANVAS_H
 
 #include <bb/graphics/canvas.h>
-#include <bb/blitz2d/font.h>
 #include <bb/blitz2d.d3d7/font.h>
 #include "ddutil.h"
 

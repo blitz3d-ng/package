@@ -18,7 +18,6 @@ void sue( const char *t ){
 	string p=string( "Startup Error: " )+t;
 	_bbDebugInfo( p.c_str() );
 	cerr<<t<<endl;
-
 }
 #else
 void sue( const char *t ){

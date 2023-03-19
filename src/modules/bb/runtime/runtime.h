@@ -8,6 +8,8 @@ class BBRuntime{
 public:
   virtual ~BBRuntime();
 
+  virtual void afterCreate(){}
+
   virtual void asyncStop()=0;
   virtual void asyncRun()=0;
   virtual void asyncEnd()=0;

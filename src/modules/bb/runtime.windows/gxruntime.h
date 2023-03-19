@@ -23,6 +23,8 @@ private:
 	gxRuntime( HINSTANCE hinst,HWND hwnd );
 	~gxRuntime();
 
+	void afterCreate();
+
 	void refreshSystemProperties();
 
 	void suspend();

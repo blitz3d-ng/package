@@ -96,4 +96,6 @@ extern BBCanvas *gx_canvas;
 
 extern BBContextDriver *bbContextDriver;
 
+bool BBCALL bbDefaultGraphics();
+
 #endif

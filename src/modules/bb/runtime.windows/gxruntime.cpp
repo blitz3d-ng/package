@@ -4,7 +4,6 @@
 #include <bb/runtime/runtime.h>
 #include <bb/system/system.h>
 #include <bb/event/event.h>
-#include "gxgraphics.h"
 #include "zmouse.h"
 
 #undef SPI_SETMOUSESPEED
@@ -84,6 +83,10 @@ gxRuntime::~gxRuntime(){
 	UnregisterClass( "Blitz Runtime Class",hinst );
 
 	CoUninitialize();
+}
+
+void gxRuntime::afterCreate(){
+	bbDefaultGraphics();
 }
 
 void gxRuntime::backupGraphics(){
@@ -453,10 +456,7 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	}
 
 	if( !graphics ){
-		gxGraphics::wipeSystemProperties();
 		curr_driver=0;
-	}else{
-		((gxGraphics*)graphics)->setSystemProperties();
 	}
 
 	gfx_lost=false;

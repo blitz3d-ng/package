@@ -174,10 +174,4 @@ BBRuntime *bbCreateOpenGLRuntime() {
 	return bbCreateHTMLRuntime();
 }
 
-BBMODULE_CREATE( runtime_html ){
-	return true;
-}
-
-BBMODULE_DESTROY( runtime_html ){
-	return true;
-}
+BBMODULE_EMPTY( runtime_html );

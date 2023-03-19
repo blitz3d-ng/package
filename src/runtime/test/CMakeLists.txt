@@ -1,17 +1,11 @@
 bb_start_runtime(test Test bbCreateConsoleRuntime)
 
 set(EXCLUDED_MODULES
-  blitz3d.d3d7
-  blitz3d.gl
-  blitz3d
-  blitz2d.d3d7
-  blitz2d.gl
-  blitz2d
-  graphics.d3d7
-  graphics.gl
-  graphics
-  ode
   runtime.sdl
+
+  blitz3d.d3d7
+  blitz2d.d3d7
+  graphics.d3d7
   runtime.windows
 )
 

@@ -1,4 +1,5 @@
 
+
 #include "../stdutil/stdutil.h"
 #include "runtime.sdl.h"
 #include <bb/pixmap/pixmap.h>
@@ -13,6 +14,50 @@
 using namespace std;
 
 #include "scancodes.cpp"
+
+#include <bb/input/input.h>
+
+class SDLInputDriver : public BBInputDriver{
+public:
+	~SDLInputDriver(){}
+
+	BBDevice *getJoystick( int port )const{ return 0; }
+	int getJoystickType( int port )const{ return 0; }
+	int numJoysticks()const{ return 0; }
+
+	int toAscii( int key )const{
+		// cout<<key<<endl;
+		if( key==28 ) return '\n';
+		return 65;
+	}
+};
+
+class SDLJoystick : public BBDevice{
+private:
+	SDL_Joystick *js;
+public:
+	SDLJoystick( SDL_Joystick *js ):js(js){
+		memset( axis_states,0,sizeof(axis_states) );
+		memset( down_state,0,sizeof(down_state) );
+
+		SDL_JoystickGetGUIDString( SDL_JoystickGetGUID(js),id,sizeof(id) );
+		snprintf( name,sizeof(name),"%s",SDL_JoystickName( js ) );
+	}
+
+	void update(){
+		int ax_count=SDL_JoystickNumAxes( js );
+		if( ax_count>32 ) ax_count=32;
+
+		for( int i=0;i<ax_count;i++ ){
+			axis_states[i]=(float)SDL_JoystickGetAxis( js,i )/SHRT_MAX;
+		}
+
+		int btn_count=SDL_JoystickNumButtons( js );
+		for( int i=0;i<32;i++ ){
+			setDownState( i,SDL_JoystickGetButton( js,i ) );
+		}
+	}
+};
 
 map<SDL_Window*,SDLRuntime*> runtimes;
 
@@ -50,6 +95,20 @@ SDLRuntime::SDLRuntime( SDL_Window *wnd ):wnd(wnd),graphics(0){
 SDLRuntime::~SDLRuntime(){
 	// bbAppOnChange.del( _refreshTitle,this );
 	SDL_Quit();
+}
+
+void SDLRuntime::afterCreate(){
+	SDL_InitSubSystem( SDL_INIT_JOYSTICK );
+
+	gx_input=d_new SDLInputDriver();
+
+	for( int i=0;i<SDL_NumJoysticks();i++ ){
+		SDL_Joystick *js=SDL_JoystickOpen( i );
+		if( js ){
+			SDLJoystick *j=d_new SDLJoystick( js );
+			bbJoysticks.push_back( j );
+		}
+	}
 }
 
 int SDLRuntime::numGraphicsDrivers(){
@@ -380,66 +439,4 @@ void SDLRuntime::resize(){
 	}
 }
 
-#include <bb/input/input.h>
-
-class SDLInputDriver : public BBInputDriver{
-public:
-	~SDLInputDriver(){}
-
-	BBDevice *getJoystick( int port )const{ return 0; }
-	int getJoystickType( int port )const{ return 0; }
-	int numJoysticks()const{ return 0; }
-
-	int toAscii( int key )const{
-		// cout<<key<<endl;
-		if( key==28 ) return '\n';
-		return 65;
-	}
-};
-
-class SDLJoystick : public BBDevice{
-private:
-	SDL_Joystick *js;
-public:
-	SDLJoystick( SDL_Joystick *js ):js(js){
-		memset( axis_states,0,sizeof(axis_states) );
-		memset( down_state,0,sizeof(down_state) );
-
-		SDL_JoystickGetGUIDString( SDL_JoystickGetGUID(js),id,sizeof(id) );
-		snprintf( name,sizeof(name),"%s",SDL_JoystickName( js ) );
-	}
-
-	void update(){
-		int ax_count=SDL_JoystickNumAxes( js );
-		if( ax_count>32 ) ax_count=32;
-
-		for( int i=0;i<ax_count;i++ ){
-			axis_states[i]=(float)SDL_JoystickGetAxis( js,i )/SHRT_MAX;
-		}
-
-		int btn_count=SDL_JoystickNumButtons( js );
-		for( int i=0;i<32;i++ ){
-			setDownState( i,SDL_JoystickGetButton( js,i ) );
-		}
-	}
-};
-
-BBMODULE_CREATE( runtime_sdl ){
-	SDL_InitSubSystem( SDL_INIT_JOYSTICK );
-
-	gx_input=d_new SDLInputDriver();
-
-	for( int i=0;i<SDL_NumJoysticks();i++ ){
-		SDL_Joystick *js=SDL_JoystickOpen( i );
-		if( js ){
-			SDLJoystick *j=d_new SDLJoystick( js );
-			bbJoysticks.push_back( j );
-		}
-	}
-
-	return true;
-}
-
-BBMODULE_DESTROY( runtime_sdl ){
-	return true;
-}
+BBMODULE_EMPTY( runtime_sdl );
