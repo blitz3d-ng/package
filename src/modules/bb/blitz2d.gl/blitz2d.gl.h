@@ -22,7 +22,7 @@ protected:
 
 	void quad( int x,int y,int w,int h,bool solid,bool tex,float tx,float ty,float color[3] );
 public:
-	GLB2DCanvas( int f ):width(0),height(0),pixels(0),handle_x(0),handle_y(0){
+	GLB2DCanvas( int f ):width(0),height(0),dpi(1.0),pixels(0),handle_x(0),handle_y(0){
 		flags=f;
 	}
 
@@ -126,14 +126,18 @@ public:
 		GL( glGenerateMipmap( GL_TEXTURE_2D ) );
 	}
 
+	void uploadData( void *data ){
+		if( !texture ) GL( glGenTextures( 1,&texture ) );
+		GL( glActiveTexture( GL_TEXTURE0 ) );
+		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
+		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data ) );
+		GL( glGenerateMipmap( GL_TEXTURE_2D ) );
+	}
+
 	unsigned int textureId(){
 		if( texture ) return texture;
 
-		GL( glGenTextures( 1,&texture ) );
-		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,0 ) );
-		GL( glGenerateMipmap( GL_TEXTURE_2D ) );
-
+		uploadData(0);
 		return texture;
 	}
 
@@ -150,7 +154,10 @@ public:
 		GL( glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textureId(),0 ) );
 		GL( glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer ) );
 
-		GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
+		GLenum status=GL( glCheckFramebufferStatus( GL_FRAMEBUFFER ) );
+		if( status!=GL_FRAMEBUFFER_COMPLETE ){
+			_bbLog( "fb error: %s\n",bbGLFramebufferStatusString( status ) );
+		}
 
 		return framebuffer;
 	}
@@ -166,13 +173,7 @@ public:
 
 		width=pm->width;
 		height=pm->height;
-
-		if( !texture ) GL( glGenTextures( 1,&texture ) );
-		GL( glActiveTexture( GL_TEXTURE0 ) );
-		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,pm->bits ) );
-		GL( glGenerateMipmap( GL_TEXTURE_2D ) );
-
+		uploadData( pm->bits );
 		GL( glBindTexture( GL_TEXTURE_2D,0 ) );
 	}
 

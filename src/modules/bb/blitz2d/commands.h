@@ -44,6 +44,46 @@ bb_int_t BBCALL bbMovieHeight( BBMovie *movie );
 bb_int_t BBCALL bbMoviePlaying( BBMovie *movie );
 void BBCALL bbCloseMovie( BBMovie *movie );
 
+//images
+bbImage * BBCALL bbLoadImage( BBStr *bmpfile );
+bbImage * BBCALL bbLoadAnimImage( BBStr *bmpfile,bb_int_t cellwidth,bb_int_t cellheight,bb_int_t first,bb_int_t count );
+bbImage * BBCALL bbCopyImage( bbImage *image );
+bbImage * BBCALL bbCreateImage( bb_int_t width,bb_int_t height,bb_int_t frames );
+void BBCALL bbFreeImage( bbImage *image );
+bb_int_t BBCALL bbSaveImage( bbImage *image,BBStr *bmpfile,bb_int_t frame );
+void BBCALL bbGrabImage( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t frame );
+BBCanvas * BBCALL bbImageBuffer( bbImage *image,bb_int_t frame );
+void BBCALL bbDrawImage( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t frame );
+void BBCALL bbDrawBlock( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t frame );
+void BBCALL bbTileImage( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t frame );
+void BBCALL bbTileBlock( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t frame );
+void BBCALL bbDrawImageRect( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t rect_x,bb_int_t rect_y,bb_int_t rect_width,bb_int_t rect_height,bb_int_t frame );
+void BBCALL bbDrawBlockRect( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t rect_x,bb_int_t rect_y,bb_int_t rect_width,bb_int_t rect_height,bb_int_t frame );
+void BBCALL bbMaskImage( bbImage *image,bb_int_t red,bb_int_t green,bb_int_t blue );
+void BBCALL bbHandleImage( bbImage *image,bb_int_t x,bb_int_t y );
+void BBCALL bbMidHandle( bbImage *image );
+void BBCALL bbAutoMidHandle( bb_int_t enable );
+bb_int_t BBCALL bbImageWidth( bbImage *image );
+bb_int_t BBCALL bbImageHeight( bbImage *image );
+bb_int_t BBCALL bbImageXHandle( bbImage *image );
+bb_int_t BBCALL bbImageYHandle( bbImage *image );
+void BBCALL bbScaleImage( bbImage *image,bb_float_t xscale,bb_float_t yscale );
+void BBCALL bbResizeImage( bbImage *image,bb_float_t width,bb_float_t height );
+void BBCALL bbRotateImage( bbImage *image,bb_float_t angle );
+void BBCALL bbTFormImage( bbImage *image,bb_float_t a,bb_float_t b,bb_float_t c,bb_float_t d );
+void BBCALL bbTFormFilter( bb_int_t enable );
+bb_int_t BBCALL bbImagesOverlap( bbImage *image1,bb_int_t x1,bb_int_t y1,bbImage *image2,bb_int_t x2,bb_int_t y2 );
+bb_int_t BBCALL bbImagesCollide( bbImage *image1,bb_int_t x1,bb_int_t y1,bb_int_t frame1,bbImage *image2,bb_int_t x2,bb_int_t y2,bb_int_t frame2 );
+bb_int_t BBCALL bbRectsOverlap( bb_int_t x1,bb_int_t y1,bb_int_t width1,bb_int_t height1,bb_int_t x2,bb_int_t y2,bb_int_t width2,bb_int_t height2 );
+bb_int_t BBCALL bbImageRectOverlap( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t rect_x,bb_int_t rect_y,bb_int_t rect_width,bb_int_t rect_height );
+bb_int_t BBCALL bbImageRectCollide( bbImage *image,bb_int_t x,bb_int_t y,bb_int_t frame,bb_int_t rect_x,bb_int_t rect_y,bb_int_t rect_width,bb_int_t rect_height );
+
+//console emu
+void BBCALL bbWrite( BBStr *string );
+void BBCALL bbPrint( BBStr *string );
+BBStr * BBCALL bbInput( BBStr *prompt );
+void BBCALL bbLocate( bb_int_t x,bb_int_t y );
+
 #ifdef __cplusplus
 }
 #endif

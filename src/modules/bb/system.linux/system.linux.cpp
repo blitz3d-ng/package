@@ -18,7 +18,10 @@ bool LinuxSystemDriver::execute( const std::string &cmd ){
 }
 
 int LinuxSystemDriver::getMilliSecs(){
-	return 0;
+	struct timespec ts;
+	clock_gettime( CLOCK_UPTIME_RAW,&ts );
+
+	return ts.tv_sec*1000+(ts.tv_nsec/1.0e6);
 }
 
 int LinuxSystemDriver::getScreenWidth( int i ){

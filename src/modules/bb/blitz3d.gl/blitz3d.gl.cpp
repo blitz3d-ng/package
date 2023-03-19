@@ -100,9 +100,11 @@ public:
 	void unlock(){
 		GL( glBindBuffer( GL_ARRAY_BUFFER,vertex_buffer ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,max_verts*sizeof(GLVertex),verts,GL_STATIC_DRAW ) );
+	}
 
+	void offsetIndices( int offset ){
 		GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,index_buffer ) );
-		GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER,max_tris*3*sizeof(unsigned int),tris,GL_STATIC_DRAW ) );
+		GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER,(max_tris-offset)*3*sizeof(unsigned int),tris+offset*3,GL_STATIC_DRAW ) );
 	}
 
 	void setVertex( int n,const void *_v ){
@@ -579,8 +581,11 @@ public:
 	void render( BBMesh *m,int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
 		GLMesh *mesh=(GLMesh*)m;
 
+		// TODO: there's probably more performance to be found here...
+		mesh->offsetIndices( first_tri );
+
 		GL( glBindVertexArray( mesh->vertex_array ) );
-		GL( glDrawRangeElements( GL_TRIANGLES,first_tri,tri_cnt*3,tri_cnt*3,GL_UNSIGNED_INT,0 ) );
+		GL( glDrawElementsBaseVertex( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,0,first_vert ) );
 		GL( glBindVertexArray( 0 ) );
 	}
 

@@ -346,7 +346,7 @@ void GLB2DCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,in
 
 	GL( glBindFramebuffer( GL_READ_FRAMEBUFFER,rfb ) );
 	GL( glBindFramebuffer( GL_DRAW_FRAMEBUFFER,dfb ) );
-	GL( glBlitFramebuffer( src_x,src_y,src_w,src_h,x,y,src_w,src_h,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
+	GL( glBlitFramebuffer( src_x,src_y,src_w,src_h,x,src_h,src_w,y,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
 
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
 }

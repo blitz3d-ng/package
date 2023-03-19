@@ -87,8 +87,6 @@ public:
   virtual void flip( bool vwait )=0;
 };
 
-class bbImage;
-
 #include "commands.h"
 
 extern BBGraphics *gx_graphics;

@@ -46,7 +46,7 @@ void main() {
 #ifdef FRAGMENT
 
 in BBPerVertex v;
-out vec4 bbFragColor;
+layout(location = 0) out vec4 bbFragColor;
 
 void main() {
   if( RS.texenabled==1 ){

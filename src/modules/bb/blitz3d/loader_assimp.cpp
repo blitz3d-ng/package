@@ -1,4 +1,5 @@
 
+#include <bb/blitz/blitz.h>
 #include "loader_assimp.h"
 #include "meshmodel.h"
 #include "meshutil.h"
@@ -9,14 +10,16 @@ static Transform conv_tform;
 
 MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 	MeshModel *node=d_new MeshModel();
+	node->setName( nd->mName.C_Str() );
+	// _bbLog( "node: %s\n",nd->mName.C_Str() );
 
 	aiVector3D pos, scl;
 	aiQuaternion rot;
 	nd->mTransformation.Decompose( scl,rot,pos );
 
-	node->setLocalPosition( Vector( pos[0],pos[1],pos[2] ) );
-	node->setLocalScale( Vector( scl[0],scl[1],scl[2] )*Vector(1,1,-1) );
-	node->setLocalRotation( Quat( rot.w,Vector( rot.x,rot.y,rot.z ) ) );
+	node->setLocalPosition( Vector( pos[0],pos[1],-pos[2] ) );
+	node->setLocalScale( Vector( scl[0],scl[1],scl[2] ) );
+	node->setLocalRotation( Quat( rot.w,Vector( rot.x,rot.y,-rot.z ) ) );
 
 	for( int n=0;n<nd->mNumMeshes;++n ){
 		const struct aiMesh* mesh=scene->mMeshes[nd->mMeshes[n]];
@@ -24,18 +27,20 @@ MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 
 		Brush b;
 
-		for( int ti=0;ti<mtl->GetTextureCount( aiTextureType_DIFFUSE );ti++ ){
-			aiString path;
-			if( mtl->GetTexture( aiTextureType_DIFFUSE,ti,&path )==AI_SUCCESS ){
-				Texture tex( path.C_Str(),0 );
-				b.setTexture( ti,tex,0 );
-			}
-		}
-
 		aiColor4D diffuse;
 		if( aiGetMaterialColor( mtl,AI_MATKEY_COLOR_DIFFUSE,&diffuse )==AI_SUCCESS ){
 			b.setColor( Vector(diffuse.r,diffuse.g,diffuse.b) );
 			if( diffuse.a ) b.setAlpha( diffuse.a );
+		}
+
+		for( int ti=0;ti<mtl->GetTextureCount( aiTextureType_DIFFUSE );ti++ ){
+			aiString path;
+
+			if( mtl->GetTexture( aiTextureType_DIFFUSE,ti,&path )==AI_SUCCESS ){
+				Texture tex( path.C_Str(),0 );
+				b.setTexture( ti,tex,0 );
+				b.setColor( Vector( 1,1,1 ) ); // TODO: this is what the existing loaders do...seems limiting...
+			}
 		}
 
 		MeshLoader::beginMesh();
@@ -43,11 +48,15 @@ MeshModel *Loader_Assimp::parseNode( const struct aiNode* nd ){
 		for( int i=0;i<mesh->mNumVertices;++i ){
 			Surface::Vertex v;
 
-			v.coords=Vector(&mesh->mVertices[i].x)*Vector(1,1,-1);
+			v.coords=Vector(&mesh->mVertices[i].x);
+			v.coords.z*=-1;
 			if( mesh->mColors[0] ) {
 				// v.color=Vector(&mesh->mColors[0][i]);
 			}
-			if( mesh->mNormals ) v.normal=Vector(&mesh->mNormals[i].x);
+			if( mesh->mNormals ){
+				v.normal=Vector(&mesh->mNormals[i].x);
+				v.normal.z*=-1;
+			}
 			if( mesh->HasTextureCoords(0) ){
 				v.tex_coords[0][0]=mesh->mTextureCoords[0][i].x;
 				v.tex_coords[0][1]=mesh->mTextureCoords[0][i].y;
