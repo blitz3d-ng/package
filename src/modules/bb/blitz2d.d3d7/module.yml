@@ -1,8 +1,0 @@
-name: Direct3D 7 Blitz2D
-description: Provides Direct3D 7 Blitz2D.
-
-platforms:
-  - windows
-
-dependencies:
-  - blitz2d

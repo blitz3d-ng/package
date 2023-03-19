@@ -1,8 +1,0 @@
-name: Windows Timer Driver
-description: Provides timer functions in Windows.
-
-platforms:
-  - windows
-
-dependencies:
-  - timer

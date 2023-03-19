@@ -1,8 +1,0 @@
-name: Linux System
-description: Provides access to various Linux operating system functions.
-
-platforms:
-  - linux
-
-dependencies:
-  - system

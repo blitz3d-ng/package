@@ -1,9 +1,0 @@
-name: Standard IO
-description: Provides access to stdin/stderr/stdout.
-
-dependencies:
-  - blitz
-
-commands:
-  - WriteStdout( str$ ):"bbWriteStdout"
-  - WriteStderr( str$ ):"bbWriteStderr"

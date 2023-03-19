@@ -136,19 +136,9 @@ public:
 	BBMovie *openMovie( const std::string &file,int flags ){
 		return 0;
 	}
-	BBMovie *verifyMovie( BBMovie *movie ){
-		return 0;
-	}
-	void closeMovie( BBMovie *movie ){
-	}
 
 	BBFont *loadFont( const std::string &font,int height,int flags ){
 		return 0;
-	}
-	BBFont *verifyFont( BBFont *font ){
-		return 0;
-	}
-	void freeFont( BBFont *font ){
 	}
 
 	// runtime

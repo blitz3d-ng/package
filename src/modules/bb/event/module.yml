@@ -1,6 +1,0 @@
-name: Event
-description: Provides event functions.
-
-dependencies:
-  - blitz
-  - hook

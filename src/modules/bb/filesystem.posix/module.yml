@@ -1,9 +1,0 @@
-name: POSIX Filesystem
-description: Provides filesystem functions for macOS & Linux.
-
-platforms:
-  - macos
-  - linux
-
-dependencies:
-  - filesystem

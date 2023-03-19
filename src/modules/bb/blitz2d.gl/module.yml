@@ -1,9 +1,0 @@
-name: OpenGL Blitz2D
-description: Provides OpenGL driver for Blitz2D.
-
-platforms:
-  - mobile
-
-dependencies:
-  - blitz2d
-  - graphics.gl

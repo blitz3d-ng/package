@@ -1,8 +1,0 @@
-name: DirectPlay
-description: Provides multiplayer commands.
-
-platforms:
-  - windows
-
-dependencies:
-  - runtime

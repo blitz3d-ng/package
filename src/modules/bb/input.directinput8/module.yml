@@ -1,8 +1,0 @@
-name: DirectInput8 Input Driver
-description: Provides keyboard/mouse/jotstick data.
-
-platforms:
-  - windows
-
-dependencies:
-  - input

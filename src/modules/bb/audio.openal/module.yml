@@ -1,8 +1,0 @@
-name: OpenAL Audio Driver
-description: Provides audio via OpenAL.
-
-platforms:
-  - macos
-
-dependencies:
-  - audio

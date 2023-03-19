@@ -1,8 +1,0 @@
-name: Windows Filesystem
-description: Provides filesystem functions on Windows.
-
-platforms:
-  - windows
-
-dependencies:
-  - filesystem

@@ -1,9 +1,0 @@
-name: D3D7 Graphics
-description: Provides infrastructure for Direct3D7 renderers.
-
-dependencies:
-  - blitz
-  - graphics
-
-platforms:
-  - windows

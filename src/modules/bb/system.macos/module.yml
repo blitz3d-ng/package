@@ -1,8 +1,0 @@
-name: macOS System
-description: Provides access to various macOS operating system functions.
-
-platforms:
-  - macos
-
-dependencies:
-  - system

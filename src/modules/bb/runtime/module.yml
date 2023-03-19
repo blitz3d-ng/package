@@ -1,8 +1,0 @@
-name: Runtime
-description: Provides runtime.
-
-commands:
-  - ShowPointer():"bbShowPointer"
-  - HidePointer():"bbHidePointer"
-  - RuntimeError( message$ ):"bbRuntimeError"
-  - MoveMouse( x%,y% ):"bbMoveMouse"
