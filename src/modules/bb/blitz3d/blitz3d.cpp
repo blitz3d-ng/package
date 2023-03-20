@@ -1960,8 +1960,8 @@ BBLIB bb_int_t BBCALL bbActiveTextures(){
 	return active_texs;
 }
 
-void blitz3d_open( int w,int h,float d ){
-	bbScene=bbSceneDriver->createScene( w,h,d,0 );
+void blitz3d_open( BBGraphics *graphics ){
+	bbScene=bbSceneDriver->createScene( graphics->getLogicalWidth(),graphics->getLogicalHeight(),graphics->getDensity(),0 );
 	if( !bbScene ) RTEX( "Unable to create 3D Scene" );
 	world=d_new World();
 	projected=Vector();

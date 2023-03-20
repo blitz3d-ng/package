@@ -281,17 +281,17 @@ BBGraphics *SDLRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	bool windowed=flags & BBGraphics::GRAPHICS_WINDOWED ? true : false;
 	bool scaled=windowed && (flags & BBGraphics::GRAPHICS_SCALED ? true : false);
 
-#ifdef BB_MOBILE
+#ifndef BB_DESKTOP
 	// no point in 'windowed' on mobile, right?
 	windowed=false;
 	scaled=false;
-#endif
-
+#else
 	SDL_DisplayMode mode;
 	SDL_GetCurrentDisplayMode( 0,&mode );
 	SDL_SetWindowPosition( wnd,(mode.w-w)/2.0f,(mode.h-h)/2.0f );
 	SDL_SetWindowSize( wnd,w,h );
 	SDL_SetWindowResizable( wnd,scaled?SDL_TRUE:SDL_FALSE );
+#endif
 	SDL_ShowWindow( wnd );
 
 	static bool inited=false;

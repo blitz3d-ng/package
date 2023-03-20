@@ -15,7 +15,7 @@ using namespace std;
 void blitz2d_open();
 void blitz2d_reset();
 void blitz2d_close();
-void blitz3d_open( int w,int h,float d );
+void blitz3d_open( BBGraphics *graphics );
 void blitz3d_close();
 
 BBContextDriver *bbContextDriver=0;
@@ -252,7 +252,7 @@ void BBCALL bbGraphics3D( bb_int_t w,bb_int_t h,bb_int_t d,bb_int_t mode ){
 	default:RTEX( "Illegal Graphics3D mode" );
 	}
 	graphics( w,h,d,flags );
-	blitz3d_open( w,h,gx_graphics->getDensity() );
+	blitz3d_open( gx_graphics );
 }
 #endif
 
