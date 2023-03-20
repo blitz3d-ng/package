@@ -2,12 +2,12 @@
 #ifndef GXMOVIE_H
 #define GXMOVIE_H
 
+#include "canvas.h"
+#include <bb/graphics/movie.h>
+
 #include <mmstream.h>    // multimedia stream interfaces
 #include <amstream.h>    // DirectShow multimedia stream interfaces
 #include <ddstream.h>    // DirectDraw multimedia stream interfaces
-
-#include <bb/graphics.d3d7/canvas.h>
-#include <bb/blitz2d/movie.h>
 
 class gxGraphics;
 

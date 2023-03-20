@@ -2,13 +2,12 @@
 #ifndef GXGRAPHICS_H
 #define GXGRAPHICS_H
 
+#include <bb/graphics.d3d7/graphics.d3d7.h>
+#include <bb/blitz3d.d3d7/blitz3d.d3d7.h>
+
 #include <set>
 #include <string>
 #include <d3d.h>
-
-#include <bb/blitz2d/graphics.h>
-#include <bb/graphics.d3d7/canvas.h>
-#include <bb/blitz3d.d3d7/blitz3d.d3d7.h>
 
 class gxGraphics : public D3D7B3DGraphics, public B2DGraphics{
 public:

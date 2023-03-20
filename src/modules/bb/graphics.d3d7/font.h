@@ -1,7 +1,7 @@
 #ifndef BB_BLITZ2D_D3D7_FONT_H
 #define BB_BLITZ2D_D3D7_FONT_H
 
-#include <bb/blitz2d/blitz2d.h>
+#include <bb/graphics/graphics.h>
 
 class BBCanvas;
 class BBGraphics;

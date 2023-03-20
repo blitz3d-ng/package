@@ -3,7 +3,7 @@
 #define GXCANVAS_H
 
 #include <bb/graphics/canvas.h>
-#include <bb/blitz2d.d3d7/font.h>
+#include "font.h"
 #include "ddutil.h"
 
 typedef IDirectDrawSurface7 ddSurf;
