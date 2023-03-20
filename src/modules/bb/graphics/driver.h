@@ -17,7 +17,7 @@ public:
   BBMovie *verifyMovie( BBMovie *movie );
   void closeMovie( BBMovie *movie );
 
-  virtual BBFont *loadFont( const std::string &font,int height,int flags )=0;
+  virtual BBFont *loadFont( const std::string &font,int height,int flags );
   BBFont *verifyFont( BBFont *font );
   void freeFont( BBFont *font );
 };

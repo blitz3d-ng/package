@@ -2,14 +2,14 @@
 #define BB_RUNTIME_SDL_H
 
 #include <bb/runtime/runtime.h>
-#include <bb/graphics.gl/graphics.gl.h>
+#include <bb/graphics.sdl/graphics.sdl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 
 #include <SDL.h>
 
 class SDLGraphics;
 
-class SDLRuntime : public GLB3DGraphics, public BBRuntime, public BBContextDriver{
+class SDLRuntime : public GLB3DGraphics, public BBRuntime, public SDLContextDriver{
 private:
 	SDL_Window* wnd;
 	SDLGraphics *graphics;
@@ -25,12 +25,6 @@ public:
 	void afterCreate();
 
 	// context driver
-	int numGraphicsDrivers();
-	void graphicsDriverInfo( int driver,std::string *name,int *c );
-	int numGraphicsModes( int driver );
-	void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c );
-	void windowedModeInfo( int *c );
-
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
 	void closeGraphics( BBGraphics *graphics );
 	bool graphicsLost();

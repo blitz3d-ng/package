@@ -107,31 +107,8 @@ void SDLRuntime::afterCreate(){
 			bbJoysticks.push_back( j );
 		}
 	}
-}
 
-int SDLRuntime::numGraphicsDrivers(){
-	return SDL_GetNumVideoDisplays();
-}
-
-void SDLRuntime::graphicsDriverInfo( int driver,std::string *name,int *c ){
-}
-
-int SDLRuntime::numGraphicsModes( int driver ){
-	return SDL_GetNumDisplayModes( driver );
-}
-
-void SDLRuntime::graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c ){
-	SDL_DisplayMode dm;
-	SDL_GetDisplayMode( driver,mode,&dm );
-
-	*w=dm.w;
-	*h=dm.h;
-	*d=32; // TODO: https://wiki.libsdl.org/SDL_PixelFormatEnum
-	*c=GFXMODECAPS_3D;
-}
-
-void SDLRuntime::windowedModeInfo( int *c ){
-	*c=GFXMODECAPS_3D;
+	bbDefaultGraphics();
 }
 
 class SDLDefaultCanvas : public GLDefaultCanvas{
@@ -258,18 +235,8 @@ public:
 	// b2dgraphics
 	BBMovie *openMovie( const std::string &file,int flags ){ return 0; }
 
-	BBFont *loadFont( const std::string &font,int height,int flags ){
-		BBFont *f=BBImageFont::load( font,height,flags );
-		font_set.insert( f );
-		return f;
-	}
-
 	void moveMouse( int x,int y ){
 		SDL_WarpMouseInWindow( wnd,x,y );
-	}
-
-	void setPointerVisible( bool vis ){
-		SDL_ShowCursor( vis?SDL_ENABLE:SDL_DISABLE );
 	}
 };
 
@@ -422,7 +389,7 @@ void SDLRuntime::moveMouse( int x,int y ){
 }
 
 void SDLRuntime::setPointerVisible( bool vis ){
-	graphics->setPointerVisible( vis );
+	SDL_ShowCursor( vis?SDL_ENABLE:SDL_DISABLE );
 }
 
 void SDLRuntime::_refreshTitle( void *data,void *context ){

@@ -13,6 +13,12 @@ void B2DGraphics::closeMovie( BBMovie *m ){
 	if( movie_set.erase( m ) ) delete m;
 }
 
+BBFont *B2DGraphics::loadFont( const std::string &font,int height,int flags ){
+	BBFont *f=BBImageFont::load( font,height,flags );
+	font_set.insert( f );
+	return f;
+}
+
 BBFont *B2DGraphics::verifyFont( BBFont *f ){
 	return font_set.count( f ) ? f : 0;
 }
