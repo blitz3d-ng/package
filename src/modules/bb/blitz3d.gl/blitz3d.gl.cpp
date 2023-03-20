@@ -12,7 +12,7 @@ using namespace std;
 static const float dtor=0.0174532925199432957692369076848861f;
 static const float rtod=1/dtor;
 
-#if defined(BB_MOBILE) || defined(BB_OVR)
+#if defined(BB_MOBILE) || defined(BB_OVR) || defined(BB_NX)
 #define GLES
 #endif
 
