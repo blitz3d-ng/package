@@ -1,7 +1,7 @@
 
 #include "gxgraphics.h"
 #include <bb/system.windows/system.windows.h>
-#include <bb/graphics.d3d7/gxmovie.h>
+#include "gxmovie.h"
 
 // ugly hack to avoid conflicts with GLFW
 #include <initguid.h>

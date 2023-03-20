@@ -1,12 +1,6 @@
 bb_start_runtime(test Test bbCreateConsoleRuntime)
 
-set(EXCLUDED_MODULES
-  blitz3d.d3d7
-  blitz2d.d3d7
-  graphics.d3d7
-  runtime.windows
-  multiplay.directplay
-)
+set(EXCLUDED_MODULES multiplay.directplay)
 
 # add all modules to test env
 set(MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../modules)

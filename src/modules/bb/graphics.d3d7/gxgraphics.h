@@ -2,7 +2,7 @@
 #ifndef GXGRAPHICS_H
 #define GXGRAPHICS_H
 
-#include <bb/graphics.d3d7/graphics.d3d7.h>
+#include "graphics.d3d7.h"
 #include <bb/blitz3d.d3d7/blitz3d.d3d7.h>
 
 #include <set>

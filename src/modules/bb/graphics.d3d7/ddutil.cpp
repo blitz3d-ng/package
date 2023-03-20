@@ -1,7 +1,7 @@
 
 #include "ddutil.h"
 #include "asmcoder.h"
-#include <bb/runtime.windows/gxgraphics.h>
+#include "gxgraphics.h"
 
 #include <FreeImage.h>
 using namespace std;
