@@ -1,6 +1,6 @@
 
 #include "../stdutil/stdutil.h"
-#include <bb/blitz2d.gl/blitz2d.gl.h>
+#include <bb/graphics.gl/graphics.gl.h>
 #include <bb/system/system.h>
 #include "blitz3d.gl.h"
 #include "default.glsl.h"
@@ -428,7 +428,7 @@ public:
 			const RenderState::TexState &ts=rs.tex_states[i];
 			GL( glActiveTexture( GL_TEXTURE0+i ) );
 
-			GLB2DTextureCanvas *canvas=(GLB2DTextureCanvas*)ts.canvas;
+			GLTextureCanvas *canvas=(GLTextureCanvas*)ts.canvas;
 
 			if( !canvas ){
 				GL( glBindTexture( GL_TEXTURE_2D,0 ) );

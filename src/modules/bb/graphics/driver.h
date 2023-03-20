@@ -1,7 +1,7 @@
 #ifndef B2DGRAPHICS_H
 #define B2DGRAPHICS_H
 
-#include <bb/graphics/graphics.h>
+#include "graphics.h"
 #include "movie.h"
 #include "font.h"
 

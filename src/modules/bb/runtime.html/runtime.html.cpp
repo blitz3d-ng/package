@@ -5,9 +5,9 @@
 #include <bb/blitz2d.gl/blitz2d.gl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 
-class Canvas : public GLB2DDefaultCanvas{
+class Canvas : public GLDefaultCanvas{
 public:
-	Canvas( int mode,int flags ):GLB2DDefaultCanvas(0,mode,flags){
+	Canvas( int mode,int flags ):GLDefaultCanvas(0,mode,flags){
 	}
 
 	int getWidth()const{

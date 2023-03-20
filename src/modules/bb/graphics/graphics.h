@@ -2,6 +2,8 @@
 #define BBGRAPHICS_H
 
 #include <bb/blitz/blitz.h>
+#include "movie.h"
+#include "font.h"
 #include "canvas.h"
 #include <set>
 
@@ -86,6 +88,10 @@ public:
 
   virtual void flip( bool vwait )=0;
 };
+
+#include "driver.h"
+
+class bbImage;
 
 #include "commands.h"
 

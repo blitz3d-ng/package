@@ -1,6 +1,6 @@
 
 #include <bb/runtime/runtime.h>
-#include "blitz2d.h"
+#include "graphics.h"
 
 extern BBGraphics *gx_graphics;
 #define b2d_graphics ((B2DGraphics*)gx_graphics)

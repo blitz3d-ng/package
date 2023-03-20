@@ -1,5 +1,3 @@
-
-
 #include "../stdutil/stdutil.h"
 #include "runtime.sdl.h"
 #include <bb/pixmap/pixmap.h>
@@ -136,11 +134,11 @@ void SDLRuntime::windowedModeInfo( int *c ){
 	*c=GFXMODECAPS_3D;
 }
 
-class SDLDefaultCanvas : public GLB2DDefaultCanvas{
+class SDLDefaultCanvas : public GLDefaultCanvas{
 protected:
 	SDL_Window *wnd;
 public:
-	SDLDefaultCanvas( SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLB2DDefaultCanvas(framebuffer,mode,flags),wnd(wnd){}
+	SDLDefaultCanvas( SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLDefaultCanvas(framebuffer,mode,flags),wnd(wnd){}
 
 	// int getWidth()const{
 	//   // int width,height;
@@ -199,8 +197,8 @@ public:
 		SDL_GetWindowSize( wnd,&window_width,&window_height );
 		SDL_GL_GetDrawableSize( wnd,&drawable_width,&drawable_height );
 
-		((GLB2DCanvas*)front_canvas)->resize( window_width,window_height,getDensity() );
-		((GLB2DCanvas*)back_canvas)->resize( window_width,window_height,getDensity() );
+		((GLCanvas*)front_canvas)->resize( window_width,window_height,getDensity() );
+		((GLCanvas*)back_canvas)->resize( window_width,window_height,getDensity() );
 	}
 
 	// graphics
@@ -242,7 +240,7 @@ public:
 
 	//OBJECTS
 	BBCanvas *createCanvas( int width,int height,int flags ){
-		BBCanvas *canvas=d_new GLB2DTextureCanvas( width,height,flags );
+		BBCanvas *canvas=d_new GLTextureCanvas( width,height,flags );
 		canvas_set.insert( canvas );
 		return canvas;
 	}
@@ -251,7 +249,7 @@ public:
 		BBPixmap *pixmap=bbLoadPixmap( file );
 		if( !pixmap ) return 0;
 
-		BBCanvas *canvas=d_new GLB2DTextureCanvas( pixmap,flags );
+		BBCanvas *canvas=d_new GLTextureCanvas( pixmap,flags );
 		canvas_set.insert( canvas );
 		delete pixmap;
 		return canvas;

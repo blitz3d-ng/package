@@ -37,4 +37,6 @@ const char * bbGLFramebufferStatusString( GLenum status );
 #define GL( func ) func; bbGLGraphicsCheckErrors( __FILE__,__LINE__ );
 // #endif
 
+#include "canvas.h"
+
 #endif

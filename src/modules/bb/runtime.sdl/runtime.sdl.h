@@ -2,8 +2,7 @@
 #define BB_RUNTIME_SDL_H
 
 #include <bb/runtime/runtime.h>
-#include <bb/graphics/graphics.h>
-#include <bb/blitz2d.gl/blitz2d.gl.h>
+#include <bb/graphics.gl/graphics.gl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 
 #include <SDL.h>
