@@ -24,7 +24,7 @@ public:
 };
 
 
-class HtmlRuntime : public BBRuntime, public BBContextDriver, public GLB3DGraphics, public B2DGraphics{
+class HtmlRuntime : public BBRuntime, public BBContextDriver, public GLB3DGraphics, public BBGraphics{
 public:
 	HtmlRuntime(){
 		front_canvas=d_new Canvas( 0,0 );

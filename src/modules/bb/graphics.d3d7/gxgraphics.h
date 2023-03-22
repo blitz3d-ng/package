@@ -9,7 +9,7 @@
 #include <string>
 #include <d3d.h>
 
-class gxGraphics : public D3D7B3DGraphics, public B2DGraphics{
+class gxGraphics : public D3D7B3DGraphics, public BBGraphics{
 public:
 	IDirectDraw7 *dirDraw;
 	IDirectDraw *ds_dirDraw;

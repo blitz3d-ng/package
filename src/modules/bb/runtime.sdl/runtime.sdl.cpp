@@ -134,7 +134,7 @@ public:
 	}
 };
 
-class SDLGraphics : public B2DGraphics{
+class SDLGraphics : public BBGraphics{
 protected:
 	SDL_Window *wnd;
 	int window_width,window_height,drawable_width,drawable_height;

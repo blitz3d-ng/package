@@ -21,8 +21,6 @@ using namespace std;
 //degrees to radians
 static const float dtor=0.0174532925199432957692369076848861f;
 
-#define b2d_graphics ((B2DGraphics*)gx_graphics)
-
 class bbImage{
 public:
 	bbImage( const vector<BBCanvas*> &f ):frames(f){
@@ -63,7 +61,7 @@ static inline void debugImage( bbImage *i,int frame=0 ){
 
 static inline void debugFont( BBFont *f ){
 	if( bb_env.debug ){
-		if( !b2d_graphics->verifyFont( f ) ) RTEX( "Font does not exist" );
+		if( !gx_graphics->verifyFont( f ) ) RTEX( "Font does not exist" );
 	}
 }
 
@@ -95,6 +93,8 @@ BBGraphics::BBGraphics():front_canvas(0),back_canvas(0){
 }
 
 BBGraphics::~BBGraphics(){
+	while( movie_set.size() ) closeMovie( *movie_set.begin() );
+	while( font_set.size() ) freeFont( *font_set.begin() );
 }
 
 BBCanvas *BBGraphics::getFrontCanvas()const{
@@ -665,7 +665,7 @@ BBFont * BBCALL bbLoadFont( BBStr *name,bb_int_t height,bb_int_t bold,bb_int_t i
 		(bold ? BBFont::FONT_BOLD : 0 ) |
 		(italic ? BBFont::FONT_ITALIC : 0 ) |
 		(underline ? BBFont::FONT_UNDERLINE : 0 );
-	BBFont *font=b2d_graphics->loadFont( *name,height,flags );
+	BBFont *font=gx_graphics->loadFont( *name,height,flags );
 	delete name;
 	return font;
 }
@@ -673,7 +673,7 @@ BBFont * BBCALL bbLoadFont( BBStr *name,bb_int_t height,bb_int_t bold,bb_int_t i
 void BBCALL bbFreeFont( BBFont *f ){
 	debugFont( f );
 	if( f==curr_font ) bbSetFont( gx_graphics->getDefaultFont() );
-	b2d_graphics->freeFont( f );
+	gx_graphics->freeFont( f );
 }
 
 void BBCALL bbSetFont( BBFont *f ){
