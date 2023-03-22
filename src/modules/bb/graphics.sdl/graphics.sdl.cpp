@@ -1,4 +1,135 @@
+#include "../../../stdutil/stdutil.h"
 #include "graphics.sdl.h"
+
+class SDLDefaultCanvas : public GLDefaultCanvas{
+protected:
+	SDL_Window *wnd;
+public:
+	SDLDefaultCanvas( SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLDefaultCanvas(framebuffer,mode,flags),wnd(wnd){}
+
+	// int getWidth()const{
+	//   // int width,height;
+	//   // glfwGetWindowSize( wnd,&width,&height );
+	//   // return width;
+	// }
+	//
+	// int getHeight()const{
+	//   // int width,height;
+	//   // glfwGetWindowSize( wnd,&width,&height );
+	//   // return height;
+	// }
+
+	void getViewport( int *x,int *y,int *w,int *h )const{
+		*x=0;*y=0;*w=getWidth();*h=getHeight();
+	}
+};
+
+SDLGraphics::SDLGraphics( SDL_Window *wnd ):wnd(wnd){
+	unsigned framebuffer=0;
+#ifdef BB_IOS
+	// ios doesn't supply a default framebuffer
+	GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,(int*)&framebuffer ) );
+	_bbLog( "framebuffer: %i\n", framebuffer );
+#endif
+
+	front_canvas=d_new SDLDefaultCanvas( wnd,framebuffer,GL_FRONT,0 );
+	back_canvas=d_new SDLDefaultCanvas( wnd,framebuffer,GL_BACK,0 );
+
+	def_font=(BBImageFont*)loadFont( "courier",12,0 );
+	if( def_font==0 ){
+		def_font=(BBImageFont*)loadFont( "courier new",12,0 );
+	}
+
+	for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
+
+	resize();
+}
+
+SDLGraphics::~SDLGraphics(){
+	if( front_canvas ) delete front_canvas;
+	if( back_canvas ) delete back_canvas;
+	front_canvas=back_canvas=0;
+
+	SDL_DestroyWindow( wnd );wnd=0;
+}
+
+void SDLGraphics::resize(){
+	SDL_GetWindowSize( wnd,&window_width,&window_height );
+	SDL_GL_GetDrawableSize( wnd,&drawable_width,&drawable_height );
+
+	((GLCanvas*)front_canvas)->resize( window_width,window_height,getDensity() );
+	((GLCanvas*)back_canvas)->resize( window_width,window_height,getDensity() );
+}
+
+void SDLGraphics::backup(){
+}
+
+bool SDLGraphics::restore(){
+	return true;
+}
+
+void SDLGraphics::vwait(){}
+
+void SDLGraphics::copy( BBCanvas *dest,int dx,int dy,int dw,int dh,BBCanvas *src,int sx,int sy,int sw,int sh ){
+}
+
+void SDLGraphics::setGamma( int r,int g,int b,float dr,float dg,float db ){
+	gamma_red[r&255]=dr*257.0f;
+	gamma_red[g&255]=dg*257.0f;
+	gamma_red[b&255]=db*257.0f;
+}
+
+void SDLGraphics::getGamma( int r,int g,int b,float *dr,float *dg,float *db ){
+	*dr=gamma_red[r&255];*dg=gamma_green[g&255];*db=gamma_blue[b&255];
+}
+
+void SDLGraphics::updateGamma( bool calibrate ){
+	SDL_SetWindowGammaRamp( wnd,gamma_red,gamma_green,gamma_blue );
+}
+
+//ACCESSORS
+int SDLGraphics::getWidth()const{ return drawable_width; }
+int SDLGraphics::getHeight()const{ return drawable_height; }
+int SDLGraphics::getLogicalWidth()const{ return window_width; };
+int SDLGraphics::getLogicalHeight()const{ return window_height; };
+int SDLGraphics::getDepth()const{ return 0; }
+float SDLGraphics::getDensity()const{ return (float)drawable_width/window_width; };
+int SDLGraphics::getScanLine()const{ return 0; }
+int SDLGraphics::getAvailVidmem()const{ return 0; }
+int SDLGraphics::getTotalVidmem()const{ return 0; }
+
+BBFont *SDLGraphics::getDefaultFont()const{ return def_font; }
+
+//OBJECTS
+BBCanvas *SDLGraphics::createCanvas( int width,int height,int flags ){
+	BBCanvas *canvas=d_new GLTextureCanvas( width,height,flags );
+	canvas_set.insert( canvas );
+	return canvas;
+}
+
+BBCanvas *SDLGraphics::loadCanvas( const std::string &file,int flags ){
+	BBPixmap *pixmap=bbLoadPixmap( file );
+	if( !pixmap ) return 0;
+
+	BBCanvas *canvas=d_new GLTextureCanvas( pixmap,flags );
+	canvas_set.insert( canvas );
+	delete pixmap;
+	return canvas;
+}
+
+BBMovie *SDLGraphics::openMovie( const std::string &file,int flags ){
+	return 0;
+}
+
+void SDLGraphics::moveMouse( int x,int y ){
+	SDL_WarpMouseInWindow( wnd,x,y );
+}
+
+/////////
+
+SDLContextDriver::SDLContextDriver(){
+	bbSceneDriver=this;
+}
 
 int SDLContextDriver::numGraphicsDrivers(){
 	return SDL_GetNumVideoDisplays();
@@ -25,4 +156,116 @@ void SDLContextDriver::windowedModeInfo( int *c ){
 	*c=GFXMODECAPS_3D;
 }
 
-BBMODULE_EMPTY( graphics_sdl )
+BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int flags ){
+	if( graphics ) return 0;
+
+	if( SDL_Init(SDL_INIT_VIDEO)<0 ){
+		_bbLog( "failed to init sdl\n" );
+		return 0;
+	}
+
+#ifdef BB_DESKTOP
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,4 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
+#else
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,3 );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
+#endif
+
+	SDL_Window* wnd=SDL_CreateWindow( "",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,1,1,SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI );
+	if( wnd==NULL ){
+		_bbLog( "failed to create window\n" );
+		return 0;
+	}
+
+	bool windowed=flags & BBGraphics::GRAPHICS_WINDOWED ? true : false;
+	bool scaled=windowed && (flags & BBGraphics::GRAPHICS_SCALED ? true : false);
+
+#ifndef BB_DESKTOP
+	// no point in 'windowed' on mobile, right?
+	windowed=false;
+	scaled=false;
+#else
+	SDL_DisplayMode mode;
+	SDL_GetCurrentDisplayMode( 0,&mode );
+	SDL_SetWindowPosition( wnd,(mode.w-w)/2.0f,(mode.h-h)/2.0f );
+	SDL_SetWindowSize( wnd,w,h );
+	SDL_SetWindowResizable( wnd,scaled?SDL_TRUE:SDL_FALSE );
+#endif
+	SDL_ShowWindow( wnd );
+
+	if( !SDL_GL_CreateContext( wnd ) ){
+		_bbLog( "%s",SDL_GetError() );
+		return 0;
+	}
+
+	int screen_w,screen_h;
+	int drawableW,drawableH;
+
+	SDL_GetWindowSize( wnd,&screen_w,&screen_h );
+	SDL_GL_GetDrawableSize( wnd,&drawableW,&drawableH );
+
+	_bbLog( "GL Version:  %s\n",glGetString( GL_VERSION ) );
+	_bbLog( "GL Vendor:   %s\n",glGetString( GL_VENDOR ) );
+	_bbLog( "GL window:   %ix%i\n",screen_w,screen_h );
+	_bbLog( "GL drawable: %ix%i\n",drawableW,drawableH );
+
+	GL( glViewport( 0.0,0.0,drawableW,drawableH ) );
+	GL( glScissor( 0.0,0.0,drawableW,drawableH ) );
+	GL( glClearColor( 0.0,0.0,0.0,1.0 ) );
+	GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
+
+#ifdef BB_DESKTOP
+	static bool glewOk=false;
+	if( !glewOk ) {
+		glewInit();
+		glewOk=true;
+	}
+#endif
+
+	if( windowed ){
+		SDL_SetWindowFullscreen( wnd,0 );
+	} else {
+		SDL_SetWindowFullscreen( wnd,SDL_WINDOW_FULLSCREEN );
+	}
+
+	if( (graphics=d_new SDLGraphics( wnd )) ){
+		SDL_RaiseWindow( wnd );
+		return graphics;
+	}
+	return 0;
+}
+
+void SDLContextDriver::closeGraphics( BBGraphics *g ){
+	if( graphics!=g || !g ) return;
+	delete graphics;graphics=0;
+	// SDL_HideWindow( wnd );
+}
+
+bool SDLContextDriver::graphicsLost(){
+	return false;
+}
+
+void SDLContextDriver::flip( bool vwait ){
+	// SDL_GL_SetSwapInterval( vwait ? 1 : 0 );
+	SDL_GL_SwapWindow( ((SDLGraphics*)graphics)->wnd );
+}
+
+static BBContextDriver *createSDLContext( const std::string &name ){
+	if( name.find("gl")!=std::string::npos&&name.find("sdl")!=std::string::npos ){
+		return 0;
+	}
+
+	return d_new SDLContextDriver();
+}
+
+BBMODULE_CREATE( graphics_sdl ){
+	bbContextDrivers.push_back( createSDLContext );
+
+	return true;
+}
+
+BBMODULE_DESTROY( graphics_sdl ){
+	return true;
+}

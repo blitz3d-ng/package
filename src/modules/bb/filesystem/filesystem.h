@@ -40,7 +40,7 @@ public:
 
 extern BBFileSystem *gx_filesys;
 
-struct bbFile;
+struct BBFile;
 
 #include "commands.h"
 

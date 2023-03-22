@@ -18,7 +18,7 @@ protected:
   /***** GX INTERFACE *****/
 public:
   BBGraphics();
-  ~BBGraphics();
+  virtual ~BBGraphics();
 
   enum{
     GRAPHICS_WINDOWED=1,	//windowed mode
@@ -80,9 +80,11 @@ protected:
 	BBGraphics *graphics;
 
 public:
-  enum{
-    GFXMODECAPS_3D=1
-  };
+	static int change( const std::string &name );
+
+	enum{
+		GFXMODECAPS_3D=1
+	};
 
 	bool graphicsOpened();
 
@@ -99,13 +101,15 @@ public:
   virtual void flip( bool vwait )=0;
 };
 
-class bbImage;
+class BBImage;
 
 #include "commands.h"
 
 extern BBGraphics *gx_graphics;
 extern BBCanvas *gx_canvas;
 
+typedef BBContextDriver *(BBCreateContextDriver)( const std::string& );
+extern std::vector<BBCreateContextDriver*> bbContextDrivers;
 extern BBContextDriver *bbContextDriver;
 
 bool BBCALL bbDefaultGraphics();

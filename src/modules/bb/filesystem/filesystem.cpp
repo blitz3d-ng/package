@@ -15,11 +15,11 @@ BBDir::~BBDir(){
 BBFileSystem::~BBFileSystem(){
 }
 
-struct bbFile : public bbStream{
+struct BBFile : public BBStream{
 	filebuf *buf;
-	bbFile( filebuf *f ):buf(f){
+	BBFile( filebuf *f ):buf(f){
 	}
-	~bbFile(){
+	~BBFile(){
 		delete buf;
 	}
 	int read( char *buff,int size ){
@@ -36,7 +36,7 @@ struct bbFile : public bbStream{
 	}
 };
 
-static set<bbFile*> file_set;
+static set<BBFile*> file_set;
 
 static inline void debugFileSys(){
 	if( bb_env.debug ){
@@ -44,7 +44,7 @@ static inline void debugFileSys(){
 	}
 }
 
-static inline void debugFile( bbFile *f ){
+static inline void debugFile( BBFile *f ){
 	if( bb_env.debug ){
 		if( !file_set.count( f ) ) RTEX( "File does not exist" );
 	}
@@ -56,11 +56,11 @@ static inline void debugDir( BBDir *d ){
 	}
 }
 
-static bbFile *open( BBStr *f,ios_base::openmode n ){
+static BBFile *open( BBStr *f,ios_base::openmode n ){
 	string t=*f;
 	filebuf *buf=d_new filebuf();
 	if( buf->open( t.c_str(),n|ios_base::binary ) ){
-		bbFile *f=d_new bbFile( buf );
+		BBFile *f=d_new BBFile( buf );
 		file_set.insert( f );
 		return f;
 	}
@@ -68,29 +68,29 @@ static bbFile *open( BBStr *f,ios_base::openmode n ){
 	return 0;
 }
 
-bbFile* BBCALL bbReadFile( BBStr *f ){
+BBFile* BBCALL bbReadFile( BBStr *f ){
 	return open( f,ios_base::in );
 }
 
-bbFile* BBCALL bbWriteFile( BBStr *f ){
+BBFile* BBCALL bbWriteFile( BBStr *f ){
 	return open( f,ios_base::out|ios_base::trunc );
 }
 
-bbFile* BBCALL bbOpenFile( BBStr *f ){
+BBFile* BBCALL bbOpenFile( BBStr *f ){
 	return open( f,ios_base::in|ios_base::out );
 }
 
-void BBCALL bbCloseFile( bbFile *f ){
+void BBCALL bbCloseFile( BBFile *f ){
 	debugFile( f );
 	file_set.erase( f );
 	delete f;
 }
 
-bb_int_t BBCALL bbFilePos( bbFile *f ){
+bb_int_t BBCALL bbFilePos( BBFile *f ){
 	return f->buf->pubseekoff( 0,ios_base::cur );
 }
 
-bb_int_t BBCALL bbSeekFile( bbFile *f,bb_int_t pos ){
+bb_int_t BBCALL bbSeekFile( BBFile *f,bb_int_t pos ){
 	return f->buf->pubseekoff( pos,ios_base::beg );
 }
 

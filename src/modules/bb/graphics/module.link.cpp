@@ -5,6 +5,9 @@
 #include <bb/graphics/graphics.h>
 
 BBMODULE_LINK( graphics ){
+	rtSym( "%CountRenderers",bbCountRenderers );
+	rtSym( "$RendererName%renderer",bbRendererName );
+	rtSym( "%SetRenderer$name",bbSetRenderer );
 	rtSym( "%CountGfxDrivers",bbCountGfxDrivers );
 	rtSym( "$GfxDriverName%driver",bbGfxDriverName );
 	rtSym( "SetGfxDriver%driver",bbSetGfxDriver );

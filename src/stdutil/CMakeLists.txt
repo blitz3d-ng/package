@@ -1,6 +1,6 @@
 set(SOURCES stdutil.h stdutil.cpp)
 
-if(BB_ANDROID OR BB_NX OR BB_OVR)
+if(BB_NDK OR BB_NX)
   set(SOURCES ${SOURCES} ecvt.c gcvt.c)
 endif()
 

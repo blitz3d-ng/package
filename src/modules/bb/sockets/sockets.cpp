@@ -53,7 +53,7 @@ static set<UDPStream*> udp_set;
 static set<TCPStream*> tcp_set;
 static set<TCPServer*> server_set;
 
-class UDPStream : public bbStream{
+class UDPStream : public BBStream{
 public:
 	UDPStream( SOCKET s );
 	~UDPStream();
@@ -189,7 +189,7 @@ int UDPStream::getMsgPort(){
 #endif
 }
 
-class TCPStream : public bbStream{
+class TCPStream : public BBStream{
 public:
 	TCPStream( SOCKET s,TCPServer *t );
 	~TCPStream();

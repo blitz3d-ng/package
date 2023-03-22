@@ -39,6 +39,7 @@ GLuint _bbGLCompileShader( GLenum type,const string &name,const string &source )
 			free( log );
 		}
 		GL( glDeleteShader(shader) );
+
 		shader=0;
 	}
 	return shader;

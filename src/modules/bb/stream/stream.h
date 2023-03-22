@@ -4,14 +4,14 @@
 
 #include <bb/blitz/blitz.h>
 
-class bbStream{
+class BBStream{
 public:
 	enum{
 		EOF_ERROR=-1,EOF_NOT=0,EOF_OK=1
 	};
 
-	bbStream();
-	virtual ~bbStream();
+	BBStream();
+	virtual ~BBStream();
 
 	//returns chars read
 	virtual int read( char *buff,int size )=0;
@@ -26,7 +26,7 @@ public:
 	virtual int eof()=0;
 };
 
-void debugStream( bbStream *s );
+void debugStream( BBStream *s );
 
 #include "commands.h"
 
