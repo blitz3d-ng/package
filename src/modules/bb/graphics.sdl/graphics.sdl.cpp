@@ -146,8 +146,8 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 
 #ifdef BB_DESKTOP
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,4 );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
+		// SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,4 );
+		// SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
 #else
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );

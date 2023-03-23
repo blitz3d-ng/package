@@ -27,6 +27,13 @@ jobs:
           Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
+      - name: Install virtual sound device
+        shell: powershell
+        run: |
+          Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/3.8/Scream3.8.zip -OutFile Scream3.8.zip
+          Expand-Archive -Path Scream3.8.zip -DestinationPath Scream
+          Import-Certificate -FilePath Scream\Install\driver\x64\Scream.cat -CertStoreLocation Cert:\LocalMachine\TrustedPublisher
+          Scream\Install\helpers\devcon-x64.exe install Scream\Install\driver\x64\Scream.inf *Scream
       - name: Test suite
         shell: pwsh
         run: |

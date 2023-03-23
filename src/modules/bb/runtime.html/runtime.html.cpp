@@ -2,12 +2,12 @@
 #include "../stdutil/stdutil.h"
 #include "runtime.html.h"
 
-#include <bb/blitz2d.gl/blitz2d.gl.h>
+#include <bb/graphics.gl/graphics.gl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 
 class Canvas : public GLDefaultCanvas{
 public:
-	Canvas( int mode,int flags ):GLDefaultCanvas(0,mode,flags){
+	Canvas( ContextResources *res,int mode,int flags ):GLDefaultCanvas( res,0,mode,flags){
 	}
 
 	int getWidth()const{
@@ -24,11 +24,11 @@ public:
 };
 
 
-class HtmlRuntime : public BBRuntime, public BBContextDriver, public GLB3DGraphics, public BBGraphics{
+class HtmlRuntime : public BBRuntime, public BBContextDriver, public GLB3DGraphics, public GLGraphics{
 public:
 	HtmlRuntime(){
-		front_canvas=d_new Canvas( 0,0 );
-		back_canvas=d_new Canvas( 0,0 );
+		front_canvas=d_new Canvas( &res,0,0 );
+		back_canvas=d_new Canvas( &res,0,0 );
 
 		bbContextDriver=this;
 		bbSceneDriver=this;

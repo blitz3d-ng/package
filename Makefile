@@ -37,7 +37,7 @@ endif
 
 ifeq ($(PLATFORM), emscripten)
 ARCH=asmjs
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=$(EMSDK)/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
 endif
 
 ifeq ($(PLATFORM), mingw32)
