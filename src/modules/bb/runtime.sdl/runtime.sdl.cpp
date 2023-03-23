@@ -143,10 +143,11 @@ bool SDLRuntime::idle(){
 }
 
 void *SDLRuntime::window(){
+	if( !graphics ) return 0;
 #ifdef WIN32
 	SDL_SysWMinfo info;
 	SDL_VERSION( &info.version );
-	SDL_GetWindowWMInfo( wnd,&info );
+	SDL_GetWindowWMInfo( graphics->wnd,&info );
 	return info.info.win.window;
 #else
 	return 0;
