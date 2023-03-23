@@ -127,6 +127,32 @@ void bbGLGraphicsCheckErrors( const char *file, int line ){
 	}
 }
 
+BBFont *GLGraphics::getDefaultFont()const{
+	return def_font;
+}
+
+//OBJECTS
+BBCanvas *GLGraphics::createCanvas( int width,int height,int flags ){
+	BBCanvas *canvas=d_new GLTextureCanvas( &res,width,height,flags );
+	canvas_set.insert( canvas );
+	return canvas;
+}
+
+BBCanvas *GLGraphics::loadCanvas( const std::string &file,int flags ){
+	BBPixmap *pixmap=bbLoadPixmap( file );
+	if( !pixmap ) return 0;
+
+	BBCanvas *canvas=d_new GLTextureCanvas( &res,pixmap,flags );
+	canvas_set.insert( canvas );
+	delete pixmap;
+	return canvas;
+}
+
+BBMovie *GLGraphics::openMovie( const std::string &file,int flags ){
+	return 0;
+}
+
+
 BBMODULE_CREATE( graphics_gl ){
 	return true;
 }

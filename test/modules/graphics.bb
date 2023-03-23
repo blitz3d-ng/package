@@ -6,10 +6,14 @@ Graphics 800,600,32,2
 
 Expect GraphicsWidth()=800,"800px"
 Expect GraphicsHeight()=600,"600px"
+Expect GraphicsLost()=false,"graphics not lost"
 
 ; now for some drawing...
-Rect 10,10,100,100
+Rect 10,10,100,100,True
+Rect 10,10,100,100,False
 Oval 10,10,100,100
+Text 0,0,"hello, world"
+Plot 123,321
 
 logo=LoadImage( "../_release/samples/mak/b3dlogo.jpg" )
 Expect logo<>0, "Can load a file"

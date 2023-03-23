@@ -141,9 +141,16 @@ end:
 	void setPan( float pan ){
 	}
 	void set3d( const float pos[3],const float vel[3] ){
+		float p[3]={ pos[0],pos[1],-pos[2] };
+		float v[3]={ vel[0],vel[1],-vel[2] };
+
+		// get these from set3dOptions...
+		alSourcef( source,AL_ROLLOFF_FACTOR,0.1 );
+		alSourcef( source,AL_REFERENCE_DISTANCE,0.2 );
+
 		alDistanceModel( AL_INVERSE_DISTANCE_CLAMPED );
-		alSourcefv( source,AL_POSITION,pos );
-		alSourcefv( source,AL_VELOCITY,vel );
+		alSourcefv( source,AL_POSITION,p );
+		alSourcefv( source,AL_VELOCITY,v );
 		alSourcei( source,AL_SOURCE_RELATIVE,false );
 		// alSourcef( source,AL_MIN_GAIN,0.0 );
 		// alSourcef( source,AL_MAX_GAIN,100.0f );
@@ -286,10 +293,11 @@ public:
 	}
 
 	void set3dListener( const float pos[3],const float vel[3],const float forward[3],const float up[3] ){
-		float orientation[6]={ forward[0],forward[1],forward[2],up[0],up[1],up[2] };
+		float p[3]={ pos[0],pos[1],-pos[2] };
+		float v[3]={ vel[0],vel[1],-vel[2] };
 
-		alListenerfv( AL_POSITION,pos );
-		alListenerfv( AL_VELOCITY,vel );
+		alListenerfv( AL_POSITION,p );
+		alListenerfv( AL_VELOCITY,v );
 		alListenerfv( AL_ORIENTATION,up );
 	}
 

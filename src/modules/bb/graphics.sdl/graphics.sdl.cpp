@@ -5,7 +5,7 @@ class SDLDefaultCanvas : public GLDefaultCanvas{
 protected:
 	SDL_Window *wnd;
 public:
-	SDLDefaultCanvas( SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLDefaultCanvas(framebuffer,mode,flags),wnd(wnd){}
+	SDLDefaultCanvas( ContextResources *res,SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLDefaultCanvas(res,framebuffer,mode,flags),wnd(wnd){}
 
 	// int getWidth()const{
 	//   // int width,height;
@@ -24,7 +24,7 @@ public:
 	}
 };
 
-SDLGraphics::SDLGraphics( SDL_Window *wnd ):wnd(wnd){
+SDLGraphics::SDLGraphics( SDL_Window *wnd,SDL_GLContext ctx ):wnd(wnd),context(ctx){
 	unsigned framebuffer=0;
 #ifdef BB_IOS
 	// ios doesn't supply a default framebuffer
@@ -32,8 +32,8 @@ SDLGraphics::SDLGraphics( SDL_Window *wnd ):wnd(wnd){
 	_bbLog( "framebuffer: %i\n", framebuffer );
 #endif
 
-	front_canvas=d_new SDLDefaultCanvas( wnd,framebuffer,GL_FRONT,0 );
-	back_canvas=d_new SDLDefaultCanvas( wnd,framebuffer,GL_BACK,0 );
+	front_canvas=d_new SDLDefaultCanvas( &res,wnd,framebuffer,GL_FRONT,0 );
+	back_canvas=d_new SDLDefaultCanvas( &res,wnd,framebuffer,GL_BACK,0 );
 
 	def_font=(BBImageFont*)loadFont( "courier",12,0 );
 	if( def_font==0 ){
@@ -50,6 +50,7 @@ SDLGraphics::~SDLGraphics(){
 	if( back_canvas ) delete back_canvas;
 	front_canvas=back_canvas=0;
 
+	SDL_GL_DeleteContext( context );
 	SDL_DestroyWindow( wnd );wnd=0;
 }
 
@@ -98,29 +99,6 @@ int SDLGraphics::getScanLine()const{ return 0; }
 int SDLGraphics::getAvailVidmem()const{ return 0; }
 int SDLGraphics::getTotalVidmem()const{ return 0; }
 
-BBFont *SDLGraphics::getDefaultFont()const{ return def_font; }
-
-//OBJECTS
-BBCanvas *SDLGraphics::createCanvas( int width,int height,int flags ){
-	BBCanvas *canvas=d_new GLTextureCanvas( width,height,flags );
-	canvas_set.insert( canvas );
-	return canvas;
-}
-
-BBCanvas *SDLGraphics::loadCanvas( const std::string &file,int flags ){
-	BBPixmap *pixmap=bbLoadPixmap( file );
-	if( !pixmap ) return 0;
-
-	BBCanvas *canvas=d_new GLTextureCanvas( pixmap,flags );
-	canvas_set.insert( canvas );
-	delete pixmap;
-	return canvas;
-}
-
-BBMovie *SDLGraphics::openMovie( const std::string &file,int flags ){
-	return 0;
-}
-
 void SDLGraphics::moveMouse( int x,int y ){
 	SDL_WarpMouseInWindow( wnd,x,y );
 }
@@ -159,19 +137,23 @@ void SDLContextDriver::windowedModeInfo( int *c ){
 BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int flags ){
 	if( graphics ) return 0;
 
-	if( SDL_Init(SDL_INIT_VIDEO)<0 ){
-		_bbLog( "failed to init sdl\n" );
-		return 0;
-	}
+	bool inited=false;
+	if( !inited ){
+		if( SDL_Init(SDL_INIT_VIDEO)<0 ){
+			_bbLog( "failed to init sdl\n" );
+			return 0;
+		}
 
 #ifdef BB_DESKTOP
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,4 );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,4 );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
 #else
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,3 );
-	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION,3 );
+		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION,0 );
 #endif
+		inited=true;
+	}
 
 	SDL_Window* wnd=SDL_CreateWindow( "",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,1,1,SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI );
 	if( wnd==NULL ){
@@ -195,10 +177,13 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 #endif
 	SDL_ShowWindow( wnd );
 
-	if( !SDL_GL_CreateContext( wnd ) ){
+	SDL_GLContext context;
+	if( !(context=SDL_GL_CreateContext( wnd )) ){
 		_bbLog( "%s",SDL_GetError() );
 		return 0;
 	}
+
+	SDL_GL_MakeCurrent( wnd,context );
 
 	int screen_w,screen_h;
 	int drawableW,drawableH;
@@ -217,10 +202,9 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 	GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
 
 #ifdef BB_DESKTOP
-	static bool glewOk=false;
-	if( !glewOk ) {
-		glewInit();
-		glewOk=true;
+	if( glewInit()!=GLEW_OK ){
+		_bbLog( "failed to init glew\n" );
+		return 0;
 	}
 #endif
 
@@ -230,7 +214,7 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 		SDL_SetWindowFullscreen( wnd,SDL_WINDOW_FULLSCREEN );
 	}
 
-	if( (graphics=d_new SDLGraphics( wnd )) ){
+	if( (graphics=d_new SDLGraphics( wnd,context )) ){
 		SDL_RaiseWindow( wnd );
 		return graphics;
 	}

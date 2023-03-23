@@ -22,17 +22,16 @@ public:
 	void flip( bool vwait );
 };
 
-class SDLGraphics : public BBGraphics{
+class SDLGraphics : public GLGraphics{
 protected:
 	int window_width,window_height,drawable_width,drawable_height;
 
 	unsigned short gamma_red[256], gamma_green[256], gamma_blue[256];
-
-	BBImageFont *def_font;
 public:
 	SDL_Window *wnd;
+	SDL_GLContext context;
 
-	SDLGraphics( SDL_Window *wnd );
+	SDLGraphics( SDL_Window *wnd,SDL_GLContext ctx );
 	~SDLGraphics();
 
 	void resize();
@@ -63,14 +62,6 @@ public:
 	int getAvailVidmem()const;
 	int getTotalVidmem()const;
 
-	BBFont *getDefaultFont()const;
-
-	//OBJECTS
-	BBCanvas *createCanvas( int width,int height,int flags );
-	BBCanvas *loadCanvas( const std::string &file,int flags );
-
-	// b2dgraphics
-	BBMovie *openMovie( const std::string &file,int flags );
 	void moveMouse( int x,int y );
 };
 

@@ -9,8 +9,6 @@ using namespace std;
 
 #include "default.glsl.h"
 
-map<BBImageFont*,unsigned int> font_textures;
-
 struct UniformState{
 	float xywh[4];
 	float res[2];
@@ -25,29 +23,27 @@ struct Vertex{
 	float u,v;
 };
 
-static GLuint defaultProgram=0;
-
 static
-bool makeProgram( float dpi,float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
-	if( !glIsProgram( defaultProgram ) ){
+bool makeProgram( ContextResources *res,float dpi,float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
+	if( !glIsProgram( res->default_program ) ){
 		// _bbLog( "rebuilding 2d shader...\n" );
 
 		string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
-		defaultProgram=GL( _bbGLCompileProgram( "default.glsl",src ) );
-		if( !defaultProgram ){
+		res->default_program=GL( _bbGLCompileProgram( "default.glsl",src ) );
+		if( !res->default_program ){
 			return false;
 		}
 
-		GL( glUseProgram( defaultProgram ) );
+		GL( glUseProgram( res->default_program ) );
 
-		GLint texLocation=GL( glGetUniformLocation( defaultProgram,"u_tex" ) );
+		GLint texLocation=GL( glGetUniformLocation( res->default_program,"u_tex" ) );
 		GL( glUniform1i( texLocation,0 ) );
 
-		GLint idx=GL( glGetUniformBlockIndex( defaultProgram,"BBRenderState" ) );
-		GL( glUniformBlockBinding( defaultProgram,idx,0 ) );
+		GLint idx=GL( glGetUniformBlockIndex( res->default_program,"BBRenderState" ) );
+		GL( glUniformBlockBinding( res->default_program,idx,0 ) );
 	}
 
-	GL( glUseProgram( defaultProgram ) );
+	GL( glUseProgram( res->default_program ) );
 
 	UniformState us={ 0 };
 	us.texscale[0]=tx;us.texscale[1]=ty;
@@ -57,13 +53,12 @@ bool makeProgram( float dpi,float tx,float ty,bool tex_enabled,float resx,float 
 	us.color[0]=color[0];us.color[1]=color[1];us.color[2]=color[2];
 	us.scale=dpi;
 
-	static unsigned int ubo=0;
-	if( !ubo ){
-		GL( glGenBuffers( 1,&ubo ) );
-		GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
-		GL( glBindBufferRange( GL_UNIFORM_BUFFER,0,ubo,0,sizeof(us) ) );
+	if( res->ubo ){
+		GL( glBindBuffer( GL_UNIFORM_BUFFER,res->ubo ) );
 	}else{
-		GL( glBindBuffer( GL_UNIFORM_BUFFER,ubo ) );
+		GL( glGenBuffers( 1,&res->ubo ) );
+		GL( glBindBuffer( GL_UNIFORM_BUFFER,res->ubo ) );
+		GL( glBindBufferRange( GL_UNIFORM_BUFFER,0,res->ubo,0,sizeof(us) ) );
 	}
 
 	GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(us),&us,GL_DYNAMIC_DRAW ) );
@@ -136,22 +131,21 @@ void GLCanvas::cls(){
 }
 
 void GLCanvas::plot( int x,int y ){
-	static GLuint buffer=0,array=0;
-	if( buffer==0 ){
+	if( res->plot_buffer==0 ){
 		const Vertex vertices[1] = {
 			{ 0.0,0.0,0.0,0.0 }
 		};
 
-		initArrays( 1,&buffer,&array );
-		GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
+		initArrays( 1,&res->plot_buffer,&res->plot_array );
+		GL( glBindBuffer( GL_ARRAY_BUFFER,res->plot_buffer ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW ) );
 	}
 
 	// GL( glEnable(GL_PROGRAM_POINT_SIZE) );
 
-	makeProgram( dpi,1.0,1.0,false,width,height,x,y,1.0,1.0,color );
+	makeProgram( res,dpi,1.0,1.0,false,width,height,x,y,1.0,1.0,color );
 
-	GL( glBindVertexArray( array ) );
+	GL( glBindVertexArray( res->plot_array ) );
 	GL( glDrawArrays( GL_POINTS,0,1 ) );
 	GL( glBindVertexArray( 0 ) );
 }
@@ -162,15 +156,14 @@ void GLCanvas::line( int x,int y,int x2,int y2 ){
 		{ (float)x2,(float)y2,0.0,0.0 }
 	};
 
-	static GLuint buffer=0,array=0;
-	initArrays( 1,&buffer,&array );
+	initArrays( 1,&res->line_buffer,&res->line_array );
 
-	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
+	GL( glBindBuffer( GL_ARRAY_BUFFER,res->line_buffer ) );
 	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_DYNAMIC_DRAW ) );
 
-	makeProgram( dpi,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( res,dpi,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
 
-	GL( glBindVertexArray( array ) );
+	GL( glBindVertexArray( res->line_array ) );
 	GL( glDrawArrays( GL_LINES,0,2 ) );
 	GL( glBindVertexArray( 0 ) );
 }
@@ -195,23 +188,22 @@ void GLCanvas::quad( int x,int y,int w,int h,bool solid,bool texenabled,float tx
 		}
 	};
 
-	static GLuint buffer[2]={ 0,0 },array[2]={ 0,0 };
-	if( buffer[0]==0 ){
-		initArrays( 2,buffer,array );
+	if( res->quad_buffer[0]==0 ){
+		initArrays( 2,res->quad_buffer,res->quad_array );
 
-		GL( glBindBuffer( GL_ARRAY_BUFFER,buffer[0] ) );
+		GL( glBindBuffer( GL_ARRAY_BUFFER,res->quad_buffer[0] ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices[0]),vertices[0],GL_STATIC_DRAW ) );
 
-		GL( glBindBuffer( GL_ARRAY_BUFFER,buffer[1] ) );
+		GL( glBindBuffer( GL_ARRAY_BUFFER,res->quad_buffer[1] ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices[1]),vertices[1],GL_STATIC_DRAW ) );
 
 		GL( glBindBuffer( GL_ARRAY_BUFFER,0 ) );
 	}
 
-	makeProgram( dpi,tx,ty,texenabled,width,height,x,y,w,h,color );
+	makeProgram( res,dpi,tx,ty,texenabled,width,height,x,y,w,h,color );
 
 	int i=solid?0:1;
-	GL( glBindVertexArray( array[i] ) );
+	GL( glBindVertexArray( res->quad_array[i] ) );
 	GL( glDrawArrays( solid?GL_TRIANGLE_STRIP:GL_LINE_LOOP,0,4 ) );
 	GL( glBindVertexArray( 0 ) );
 }
@@ -237,17 +229,16 @@ void GLCanvas::oval( int x,int y,int w,int h,bool solid ){
 	}
 	std::reverse( verts.begin(),verts.end() );
 
-	static GLuint buffer=0,array=0;
-	if( buffer==0 ){
-		initArrays( 1,&buffer,&array );
+	if( res->oval_buffer==0 ){
+		initArrays( 1,&res->oval_buffer,&res->oval_array );
 	}
 
-	makeProgram( dpi,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( res,dpi,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
 
-	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
+	GL( glBindBuffer( GL_ARRAY_BUFFER,res->oval_buffer ) );
 	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_DYNAMIC_DRAW ) );
 
-	GL( glBindVertexArray( array ) );
+	GL( glBindVertexArray( res->oval_array ) );
 	GL( glDrawArrays( solid?GL_TRIANGLE_FAN:GL_LINE_LOOP,0,verts.size() ) );
 	GL( glBindVertexArray( 0 ) );
 }
@@ -256,11 +247,11 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 	if( !font ) return;
 
 	unsigned int texture;
-	if( font_textures.count(font)==0 ){
+	if( res->font_textures.count(font)==0 ){
 		GL( glGenTextures( 1,&texture ) );
-		font_textures[font]=texture;
+		res->font_textures[font]=texture;
 	}else{
-		texture=font_textures[font];
+		texture=res->font_textures[font];
 	}
 
 	GL( glActiveTexture( GL_TEXTURE0 ) );
@@ -318,18 +309,17 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 	GL( glEnable( GL_BLEND ) );
 	GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA ) );
 
-	static GLuint buffer=0,array=0;
-	if( buffer==0 ){
-		initArrays( 1,&buffer,&array );
+	if( res->text_buffer==0 ){
+		initArrays( 1,&res->text_buffer,&res->text_array );
 	}
 
-	makeProgram( dpi,1.0,1.0,true,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( res,dpi,1.0,1.0,true,width,height,0.0,0.0,1.0,1.0,color );
 
-	GL( glBindBuffer( GL_ARRAY_BUFFER,buffer ) );
+	GL( glBindBuffer( GL_ARRAY_BUFFER,res->text_buffer ) );
 	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_DYNAMIC_DRAW ) );
 	GL( glBindBuffer( GL_ARRAY_BUFFER,0 ) );
 
-	GL( glBindVertexArray( array ) );
+	GL( glBindVertexArray( res->text_array ) );
 	GL( glDrawArrays( GL_TRIANGLES,0,verts.size() ) );
 	GL( glBindVertexArray( 0 ) );
 
@@ -384,7 +374,7 @@ void GLCanvas::setPixelFast( int x,int y,unsigned argb ){
 void GLDefaultCanvas::bind()const{
 }
 
-GLDefaultCanvas::GLDefaultCanvas( unsigned int fb,int m,int f ):GLCanvas(f),framebuffer(fb),mode(m){
+GLDefaultCanvas::GLDefaultCanvas( ContextResources *res,unsigned int fb,int m,int f ):GLCanvas(res,f),framebuffer(fb),mode(m){
 	set();
 	GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
 }

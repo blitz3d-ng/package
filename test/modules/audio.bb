@@ -14,3 +14,5 @@ Expect music <> 0, "Streaming shoot sound"
 While ChannelPlaying( sound ) Or ChannelPlaying( music )
 	Delay 100
 Wend
+
+FreeSound boom

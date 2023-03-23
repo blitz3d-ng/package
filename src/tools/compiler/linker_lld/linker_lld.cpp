@@ -203,7 +203,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		libs.push_back( "c++" );
 
 		libs.push_back( "System" );
-		// libs.push_back("System_asan");
+		// libs.push_back( "System_asan" );
 
 		args.push_back("-arch");
 		args.push_back( target.arch );
@@ -220,6 +220,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 
 		args.push_back("-rpath");args.push_back(CLANG_LIBS);
 		args.push_back(CLANG_LIBS "/libclang_rt.asan_osx_dynamic.dylib");
+		args.push_back(CLANG_LIBS "/libclang_rt.profile_osx.a");
 		args.push_back(CLANG_LIBS "/libclang_rt.osx.a");
 	}
 #endif

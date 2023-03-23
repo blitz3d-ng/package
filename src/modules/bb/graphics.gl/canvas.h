@@ -8,6 +8,8 @@ class GLCanvas : public BBCanvas{
 protected:
 	void backup()const{}
 
+	ContextResources *res;
+
 	int width,height;
 	float dpi;
 	mutable unsigned char *pixels;
@@ -21,7 +23,7 @@ protected:
 
 	void quad( int x,int y,int w,int h,bool solid,bool tex,float tx,float ty,float color[3] );
 public:
-	GLCanvas( int f ):width(0),height(0),dpi(1.0),pixels(0),handle_x(0),handle_y(0){
+	GLCanvas( ContextResources *res,int f ):res(res),width(0),height(0),dpi(1.0),pixels(0),handle_x(0),handle_y(0){
 		flags=f;
 	}
 
@@ -100,15 +102,15 @@ protected:
 	unsigned int texture,framebuffer,depthbuffer;
 	int twidth,theight;
 public:
-	GLTextureCanvas( int f ):GLCanvas( f ),texture(0),framebuffer(0),depthbuffer(0),twidth(0),theight(0){
+	GLTextureCanvas( ContextResources *res,int f ):GLCanvas( res,f ),texture(0),framebuffer(0),depthbuffer(0),twidth(0),theight(0){
 	}
 
-	GLTextureCanvas( int w,int h,int f ):GLTextureCanvas(f){
+	GLTextureCanvas( ContextResources *res,int w,int h,int f ):GLTextureCanvas(res,f){
 		width=w;
 		height=h;
 	}
 
-	GLTextureCanvas( BBPixmap *pixmap,int f ):GLTextureCanvas(f){
+	GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f ):GLTextureCanvas(res,f){
 		if( pixmap ) setPixmap( pixmap );
 	}
 
@@ -188,7 +190,7 @@ protected:
 
 	void bind()const;
 public:
-	GLDefaultCanvas( unsigned int fb,int m,int f );
+	GLDefaultCanvas( ContextResources *res,unsigned int fb,int m,int f );
 
 	void unset();
 	void set();

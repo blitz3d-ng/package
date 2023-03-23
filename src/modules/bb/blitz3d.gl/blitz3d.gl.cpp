@@ -633,19 +633,17 @@ public:
   int getTrianglesDrawn()const{ return 0; }
 };
 
-static GLScene *scene=0; // TODO: I don't like this...consider a better approach...
-
 BBScene *GLB3DGraphics::createScene( int w,int h,float d,int flags ){
 	if( scene_set.size() ) return 0;
 
-	scene=d_new GLScene( w,h,d );
+	GLScene *scene=d_new GLScene( w,h,d );
 	scene_set.insert( scene );
 	return scene;
 }
 
 void GLB3DGraphics::resize( int w,int h,float dpi ){
-	if( scene ){
-		scene->resize( w,h,dpi );
+	for( auto scene:scene_set ){
+		((GLScene*)scene)->resize( w,h,dpi );
 	}
 }
 
