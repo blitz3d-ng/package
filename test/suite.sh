@@ -129,16 +129,14 @@ then
   blitzcc_stream test/all.bb -r test test/all.bb
   RESULT=$?
   if [ $RESULT -eq 101 ]; then
-    echo "Test suite failed because of a memory related error. Fix it and then run the coverage generation again."
     fail=1
   elif [ $RESULT -ne 0 ]; then
-    echo "Test suite failed. Fix it and then run the coverage generation again."
     fail=1
   fi
 
   # run the old win32 codegen just because we can
-  blitzcc_stream test/all.bb -llvm=off -c -a -r test test/all.bb
-  blitzcc_stream test/all.bb -d -llvm=off -c -a -r test test/all.bb
+  blitzcc test/all.bb -llvm=off -c -a -r test test/all.bb
+  blitzcc test/all.bb -d -llvm=off -c -a -r test test/all.bb
 
   echo "Verifying samples can compile"
 
@@ -260,6 +258,10 @@ if [ "$ENV" = "test" ]; then
     -e '.*stdin.*' -e '/.*/build/' -e '/.*/deps/' -e '/.*/llvm/' \
     --html --html-details -o ./coverage/coverage.html build/
   cleanup
+fi
+
+if [ "$fail" = "1" ]; then
+  echo "Test suite failed"
 fi
 
 exit $fail

@@ -143,7 +143,6 @@ private:
 	FMUSIC_MODULE *module;
 };
 
-static set<FMODSound*> sound_set;
 static vector<BBChannel*> channels;
 static map<string,StaticChannel*> songs;
 static CDChannel *cdChannel;
@@ -185,7 +184,6 @@ FMODAudioDriver::~FMODAudioDriver(){
 	//free all channels
 	for( ;channels.size();channels.pop_back() ) delete channels.back();
 	//free all sound_set
-	while( sound_set.size() ) freeSound( *sound_set.begin() );
 	soundChannels.clear();
 	songs.clear();
 
@@ -237,14 +235,6 @@ BBSound *FMODAudioDriver::loadSound( const string &f,bool use3d ){
 	FMODSound *sound=d_new FMODSound( this,sample );
 	sound_set.insert( sound );
 	return sound;
-}
-
-BBSound *FMODAudioDriver::verifySound( BBSound *s ){
-	return sound_set.count( (FMODSound*)s )  ? s : 0;
-}
-
-void FMODAudioDriver::freeSound( BBSound *s ){
-	if( sound_set.erase( (FMODSound*)s ) ) delete s;
 }
 
 void FMODAudioDriver::setPaused( bool paused ){

@@ -53,7 +53,7 @@ AudioStream::~AudioStream(){
 }
 
 bool AudioStream::init( const char *url ){
-	in.open( url,ios::binary );
+	in.open( url,ios_base::in|ios::binary );
 	if( !readHeader() ) return false;
 	start=pos();
 	return true;

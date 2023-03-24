@@ -9,14 +9,16 @@ using namespace std;
 
 size_t OGGAudioStream::oread( void *ptr, size_t size, size_t nmemb, void *datasource ){
 	OGGAudioStream *stream=(OGGAudioStream*)datasource;
-	return stream->in.read( (char*)ptr,size*nmemb ).gcount();
+	size_t start=stream->in.tellg();
+	stream->in.read( (char*)ptr,size*nmemb );
+	size_t s=stream->in.gcount();
+	stream->in.clear(); // needed because reading past eof causing failbit!?
+	return s;
 }
 
 int OGGAudioStream::oseek( void *datasource, ogg_int64_t offset, int whence ){
 	OGGAudioStream *stream=(OGGAudioStream*)datasource;
-
 	ios_base::seekdir way=whence==SEEK_SET?(ios_base::beg):(whence==SEEK_CUR?(ios_base::cur):ios_base::end);
-
 	return stream->in.seekg( offset,way ).gcount();
 }
 
@@ -62,6 +64,9 @@ size_t OGGAudioStream::decode(){
 	int res,bs,bytes=0;
 	while( bytes<buf_size ){
 		res=ov_read( &vfile,(char *)buf+bytes,buf_size-bytes,ENDIAN,bits/8,SIGN,&bs );
+		if( res==0 ) break; // eof
+		if( res<0 ) continue;
+
 		bytes+=res;
 	}
 	return bytes;

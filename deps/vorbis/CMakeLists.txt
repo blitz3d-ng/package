@@ -1,6 +1,6 @@
 IF(NOT BB_WINDOWS)
-  add_library(vorbis STATIC src/lib/analysis.c src/lib/envelope.c src/lib/lpc.c src/lib/psy.c src/lib/smallft.c src/lib/window.c src/lib/floor0.c src/lib/lsp.c src/lib/synthesis.c src/lib/bitrate.c src/lib/floor1.c src/lib/mapping0.c src/lib/registry.c src/lib/block.c src/lib/info.c src/lib/mdct.c src/lib/res0.c src/lib/codebook.c src/lib/lookup.c src/lib/misc.c src/lib/sharedbook.c src/lib/vorbisfile.c src/lib/backends.h src/lib/envelope.h src/lib/lpc.h src/lib/misc.h src/lib/scales.h src/lib/bitrate.h src/lib/highlevel.h src/lib/lsp.h src/lib/os.h src/lib/smallft.h src/lib/codebook.h src/lib/lookup.h src/lib/masking.h src/lib/psy.h src/lib/window.h src/lib/codec_internal.h src/lib/lookup_data.h src/lib/mdct.h src/lib/registry.h)
+  add_library(vorbis STATIC tree/lib/analysis.c tree/lib/envelope.c tree/lib/lpc.c tree/lib/psy.c tree/lib/smallft.c tree/lib/window.c tree/lib/floor0.c tree/lib/lsp.c tree/lib/synthesis.c tree/lib/bitrate.c tree/lib/floor1.c tree/lib/mapping0.c tree/lib/registry.c tree/lib/block.c tree/lib/info.c tree/lib/mdct.c tree/lib/res0.c tree/lib/codebook.c tree/lib/lookup.c tree/lib/misc.c tree/lib/sharedbook.c tree/lib/vorbisfile.c tree/lib/backends.h tree/lib/envelope.h tree/lib/lpc.h tree/lib/misc.h tree/lib/scales.h tree/lib/bitrate.h tree/lib/highlevel.h tree/lib/lsp.h tree/lib/os.h tree/lib/smallft.h tree/lib/codebook.h tree/lib/lookup.h tree/lib/masking.h tree/lib/psy.h tree/lib/window.h tree/lib/codec_internal.h tree/lib/lookup_data.h tree/lib/mdct.h tree/lib/registry.h)
   target_link_libraries(vorbis PRIVATE ogg)
   target_output_to_toolchain(vorbis)
-  target_include_directories(vorbis PUBLIC src/include)
+  target_include_directories(vorbis PUBLIC tree/include)
 ENDIF()

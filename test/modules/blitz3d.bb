@@ -16,6 +16,9 @@ Expect light <> 0, "Can create a light"
 pivot = CreatePivot()
 Expect pivot <> 0, "Can create a pivot"
 
+pivot2 = CreatePivot()
+Expect CopyEntity( pivot2 )<>0, "Can copy a pivot"
+
 camera = CreateCamera()
 Expect camera <> 0, "Can create a camera"
 PositionEntity camera,0,5,-100
@@ -85,6 +88,9 @@ EntityType cube,2
 
 UpdateWorld
 RenderWorld
+
+MoveEntity cube,0,-2,0
+UpdateWorld
 
 TrisRendered()
 

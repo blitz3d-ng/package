@@ -62,6 +62,7 @@ _release/**/*.manifest
 /coverage/
 /innosetup/installs
 
+/emsdk
 /llvm*
 /ovr-sdk
 

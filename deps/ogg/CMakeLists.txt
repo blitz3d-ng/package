@@ -1,5 +1,5 @@
 IF(NOT BB_WINDOWS)
-  add_library(ogg STATIC src/src/bitwise.c src/src/framing.c)
+  add_library(ogg STATIC tree/src/bitwise.c tree/src/framing.c)
   target_output_to_toolchain(ogg)
-  target_include_directories(ogg SYSTEM PUBLIC include src/include)
+  target_include_directories(ogg SYSTEM PUBLIC include tree/include)
 ENDIF()

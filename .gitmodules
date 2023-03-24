@@ -14,10 +14,10 @@
 	path = deps/freetype2/tree
 	url = https://github.com/blitz3d-ng/freetype2.git
 [submodule "vorbis"]
-	path = deps/vorbis/src
+	path = deps/vorbis/tree
 	url = https://github.com/xiph/vorbis.git
 [submodule "ogg"]
-	path = deps/ogg/src
+	path = deps/ogg/tree
 	url = https://github.com/xiph/ogg.git
 [submodule "crossguid"]
 	path = deps/crossguid/src

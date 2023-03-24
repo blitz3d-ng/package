@@ -540,7 +540,7 @@ public:
 			string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
 			defaultProgram=_bbGLCompileProgram( "default.glsl",src );
 			if( !defaultProgram ){
-				abort();
+				RTEX( "Failed to compile shader" );
 			}
 
 			GL( glUseProgram( defaultProgram ) );

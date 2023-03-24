@@ -13,6 +13,7 @@
 #endif
 
 #include <thread>
+#include <mutex>
 #include <string.h>
 using namespace std;
 
@@ -43,6 +44,7 @@ public:
 
 		unsigned int bits=stream->getBits(),channels=stream->getChannels();
 
+		format=0;
 		if( bits==8 ){
 			if( channels==1 )
 				format=AL_FORMAT_MONO8;
@@ -53,6 +55,10 @@ public:
 				format=AL_FORMAT_MONO16;
 			else if( channels==2 )
 				format=AL_FORMAT_STEREO16;
+		}
+		if( format==0 ){
+			RTEX( "unsupport format" );
+			return false;
 		}
 
 		alGenBuffers( NUM_BUFFERS,buffers );
@@ -108,9 +114,10 @@ public:
 
 			while( val-- ){
 				alSourceUnqueueBuffers(channel->source, 1, &buffer);
-				channel->queue( buffer );
-				if( alGetError()!=AL_NO_ERROR ){
-					fprintf( stderr,"Error buffering :(\n" );
+				if( channel->queue( buffer )==false ){
+					goto end;
+				}else if( alGetError()!=AL_NO_ERROR ){
+					_bbLog( "%s","error buffering..." );
 					goto end;
 				}
 			}
@@ -268,9 +275,12 @@ public:
 
 		OpenALSound *sound=new OpenALSound();
 		if( !sound->setStream( stream ) ){
+			delete sound;
+			delete stream;
 			return 0;
 		}
 
+		sound_set.insert( sound );
 		return sound;
 	}
 
@@ -313,6 +323,8 @@ public:
 
 		OpenALChannel *channel=new OpenALChannel();
 		if( !channel->setStream( stream ) ){
+			delete stream;
+			delete channel;
 			return 0;
 		}
 
