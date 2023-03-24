@@ -130,8 +130,10 @@ int recvServerMsg( const ENetEvent &e ){
 		break;
 
 	case ENET_EVENT_TYPE_DISCONNECT:
-		printf( "%s disconnected.\n",e.peer->data );
+		// _bbLog( "%s disconnected.\n",(char*)e.peer->data );
 		e.peer->data=NULL;
+	case ENET_EVENT_TYPE_NONE:
+		break;
 	}
 
 	return 0;

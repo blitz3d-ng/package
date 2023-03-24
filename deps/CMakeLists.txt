@@ -1,3 +1,6 @@
+# suppress warnings for 3rd-party code to help focus on 1st-party warnings
+add_definitions(-w)
+
 add_subdirectory(zlib)
 add_subdirectory(android_native_app_glue)
 add_subdirectory(vrapi)
