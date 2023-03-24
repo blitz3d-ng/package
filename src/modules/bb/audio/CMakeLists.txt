@@ -4,7 +4,7 @@ set(SOURCES channel.cpp channel.h sound.cpp sound.h driver.cpp driver.h audio.cp
 
 IF(TARGET ogg AND TARGET vorbis)
  set (SOURCES ${SOURCES} ogg_stream.cpp ogg_stream.h wav_stream.cpp wav_stream.h)
- set (LIBS ${LIBS} vorbis ogg)
+ set (LIBS ${LIBS} vorbisfile vorbis ogg)
 ENDIF()
 
 bb_end_module()
