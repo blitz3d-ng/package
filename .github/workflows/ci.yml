@@ -113,7 +113,7 @@ jobs:
           - ubuntu-20.04
           - ubuntu-22.04
     steps:
-      - run: sudo apt-get install -y linux-sound-base alsa-utils
+      - run: sudo apt-get install -y linux-sound-base linux-modules-extra-azure alsa-utils
       - run: sudo modprobe snd-dummy
       - run: aplay --list-devices
       - uses: actions/checkout@v3
