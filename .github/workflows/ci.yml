@@ -28,9 +28,7 @@ jobs:
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
 
-      - name: Print device
-        run: Get-CimInstance Win32_SoundDevice | fl *
-      - name: Install Scream
+      - name: Install dummy sound card
         shell: powershell
         run: |
           Start-Service audio*
@@ -43,8 +41,6 @@ jobs:
           $store.Close()
           cd C:\Scream\Install\driver
           C:\Scream\Install\helpers\devcon install Scream.inf *Scream
-      - name: Print Audio Device
-        run: Get-CimInstance Win32_SoundDevice | fl *
 
       - name: Test suite
         shell: pwsh
@@ -113,13 +109,16 @@ jobs:
           - ubuntu-20.04
           - ubuntu-22.04
     steps:
-      - run: sudo apt-get install -y linux-sound-base linux-modules-extra-azure alsa-utils
-      - run: sudo modprobe snd-dummy
-      - run: aplay --list-devices
       - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
+
+      - name: Install dummy sound card
+        run: |
+          sudo apt-get install -y linux-sound-base linux-modules-extra-`uname -r`
+          sudo modprobe snd-dummy
+
       - run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
 
   ios:

@@ -36,6 +36,7 @@ if(BB_ANDROID)
     ${JAVA_SRC}/SDLActivity.java
     ${JAVA_SRC}/SDLAudioManager.java
     ${JAVA_SRC}/SDLControllerManager.java
+    ${JAVA_SRC}/SDLSurface.java
     INCLUDE_JARS ${ANDROID_JAR}
     OUTPUT_NAME SDL
     OUTPUT_DIR ${TOOLCHAIN_PATH}/lib
