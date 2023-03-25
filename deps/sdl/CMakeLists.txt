@@ -2,7 +2,9 @@ if(BB_NX)
   return()
 endif()
 
-add_definitions(-DGL_SILENCE_DEPRECATION -DGLES_SILENCE_DEPRECATION)
+add_compile_definitions(SDL_LEAN_AND_MEAN)
+
+add_compile_definitions(GL_SILENCE_DEPRECATION GLES_SILENCE_DEPRECATION)
 
 set(SDL_SHARED OFF CACHE STRING "" FORCE)
 set(SDL_STATIC ON CACHE STRING "" FORCE)

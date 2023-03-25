@@ -98,6 +98,10 @@ ovr-sdk:
 	cd ovr-sdk && unzip ../ovr-sdk.zip
 	rm ovr-sdk.zip
 
+emscripten:
+	make compiler
+	make PLATFORM=emscripten
+
 llvm:
 	./deps/env/build-llvm.sh build/llvm llvm
 
@@ -124,4 +128,4 @@ clean:
 	rm -rf coverage
 	rm -rf tmp
 
-.PHONY: build llvm install-unit-test help clean
+.PHONY: build llvm install-unit-test help clean emscripten

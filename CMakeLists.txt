@@ -349,10 +349,8 @@ function(file_write_changes path src)
   endif()
 endfunction()
 
+enable_language(OBJC) # TODO: needed after adding SDL...seems like a deep root cmake bug
 add_subdirectory(deps)
-if(APPLE)
-  enable_language(OBJC) # TODO: needed after adding SDL...seems like a deep root cmake bug
-endif()
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")

@@ -1,5 +1,6 @@
 
 #include "wav_stream.h"
+#include <string.h>
 
 WAVAudioStream::WAVAudioStream( int buf_size):AudioStream( buf_size){
 }

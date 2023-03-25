@@ -179,11 +179,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - run: ./env.sh emscripten make compiler
-      # TODO: find out why the first time always fails...
-      - run: ./env.sh emscripten make ENV=release PLATFORM=emscripten
-        continue-on-error: true
-      - run: ./env.sh emscripten make ENV=release PLATFORM=emscripten
+      - run: ./env.sh emscripten make emscripten
 
   nx:
     name: Switch

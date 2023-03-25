@@ -170,6 +170,10 @@ macro(bb_end_runtime )
     set_property(TARGET ${name}.static APPEND_STRING PROPERTY COMPILE_FLAGS " ${BB_COVERAGE}")
   endif()
 
+  if(BB_EMSCRIPTEN OR BB_NX)
+    return()
+  endif()
+
   # shared
   set(SOURCES ${LINK_CPP})
   foreach(dep IN LISTS DEPENDS_ON)
