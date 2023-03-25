@@ -27,13 +27,25 @@ jobs:
           Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
-      - name: Install virtual sound device
-        shell: powershell
-        run: |
-          Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/3.8/Scream3.8.zip -OutFile Scream3.8.zip
-          Expand-Archive -Path Scream3.8.zip -DestinationPath Scream
-          Import-Certificate -FilePath Scream\Install\driver\x64\Scream.cat -CertStoreLocation Cert:\LocalMachine\TrustedPublisher
-          Scream\Install\helpers\devcon-x64.exe install Scream\Install\driver\x64\Scream.inf *Scream
+
+    - name: Print device
+      run: Get-CimInstance Win32_SoundDevice | fl *
+    - name: Install Scream
+      shell: powershell
+      run: |
+        Start-Service audio*
+        Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/3.6/Scream3.6.zip -OutFile C:\Scream3.6.zip
+        Extract-7Zip -Path C:\Scream3.6.zip -DestinationPath C:\Scream
+        $cert = (Get-AuthenticodeSignature C:\Scream\Install\driver\Scream.sys).SignerCertificate
+        $store = [System.Security.Cryptography.X509Certificates.X509Store]::new("TrustedPublisher", "LocalMachine")
+        $store.Open("ReadWrite")
+        $store.Add($cert)
+        $store.Close()
+        cd C:\Scream\Install\driver
+        C:\Scream\Install\helpers\devcon install Scream.inf *Scream
+    - name: Print Audio Device
+      run: Get-CimInstance Win32_SoundDevice | fl *
+
       - name: Test suite
         shell: pwsh
         run: |
@@ -101,6 +113,7 @@ jobs:
           - ubuntu-20.04
           - ubuntu-22.04
     steps:
+      - run: apt-get install -y alsa-base
       - uses: actions/checkout@v3
         with:
           submodules: recursive
