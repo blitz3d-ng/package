@@ -14,19 +14,19 @@ jobs:
           - win32
           - win64
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-      - uses: seanmiddleditch/gha-setup-ninja@master
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: ${{ matrix.arch }}
-      - if: matrix.arch == 'win64'
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
-          Expand-Archive llvm.zip -DestinationPath .\
-      - run: .\make.bat release
+      # - uses: actions/checkout@v3
+      #   with:
+      #     submodules: recursive
+      # - uses: seanmiddleditch/gha-setup-ninja@master
+      # - uses: ilammy/msvc-dev-cmd@v1
+      #   with:
+      #     arch: ${{ matrix.arch }}
+      # - if: matrix.arch == 'win64'
+      #   shell: pwsh
+      #   run: |
+      #     Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
+      #     Expand-Archive llvm.zip -DestinationPath .\
+      # - run: .\make.bat release
 
       - name: Print device
         run: Get-CimInstance Win32_SoundDevice | fl *
@@ -113,10 +113,12 @@ jobs:
           - ubuntu-20.04
           - ubuntu-22.04
     steps:
-      - run: apt-get install -y alsa-base
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
+      - run: sudo apt-get install -y alsa-utils
+      - run: aplay --list-devices
+
+      # - uses: actions/checkout@v3
+      #   with:
+      #     submodules: recursive
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
       - run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
 
