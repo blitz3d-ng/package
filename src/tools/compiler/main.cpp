@@ -612,7 +612,7 @@ int main( int argc,char *argv[] ){
 
 		if( !veryquiet ) cout<<"Executing..."<<endl;
 
-		runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
+		ret=runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
 
 #ifdef WIN32
 		if( dbgHandle ) FreeLibrary( dbgHandle );

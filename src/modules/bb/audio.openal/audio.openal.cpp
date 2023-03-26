@@ -251,6 +251,7 @@ public:
 	}
 
 	~OpenALAudioDriver(){
+		while( sound_set.size() ) freeSound( *sound_set.begin() );
 		while( channel_set.size() ) {
 			BBChannel *c=*channel_set.begin();
 			if( channel_set.erase( c ) ) delete c;

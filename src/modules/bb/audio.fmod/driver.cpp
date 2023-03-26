@@ -181,6 +181,7 @@ FMODAudioDriver::FMODAudioDriver(){
 }
 
 FMODAudioDriver::~FMODAudioDriver(){
+	while( sound_set.size() ) freeSound( *sound_set.begin() );
 	//free all channels
 	for( ;channels.size();channels.pop_back() ) delete channels.back();
 	//free all sound_set

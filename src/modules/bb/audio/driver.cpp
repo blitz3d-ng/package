@@ -4,7 +4,6 @@
 BBAudioDriver *gx_audio;
 
 BBAudioDriver::~BBAudioDriver(){
-  while( sound_set.size() ) freeSound( *sound_set.begin() );
 }
 
 BBSound *BBAudioDriver::verifySound( BBSound *s ){
