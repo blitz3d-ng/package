@@ -21,6 +21,12 @@ then
   fi
 fi
 
+# appears it only required for debian-10, but this is a quick fix
+if [ "$(uname)" = "Linux" ]
+then
+  XVFBRUN="xvfb-run"
+fi
+
 RED='\033[0;31m'
 GRN='\033[0;32m'
 GRY='\033[0;90m'
@@ -99,7 +105,7 @@ check_flag() {
   blitzcc $1 $1
 }
 
-BLITZCC="$VALGRIND _release/bin/blitzcc -target $TARGET"
+BLITZCC="$VALGRIND $XVFBRUN _release/bin/blitzcc -target $TARGET"
 
 echo "Running test suite for $TARGET"
 

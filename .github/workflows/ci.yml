@@ -28,8 +28,18 @@ jobs:
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
 
+      # we're gonna upload this now so it's not contiminated with the mesa
+      # files
+      - name: Upload toolchain and package
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.arch }}
+          path: |
+            _release/bin
+            _release/*.exe
+
       - name: Install dummy sound card
-        shell: powershell
+        shell: pwsh
         run: |
           Start-Service audio*
           Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/3.6/Scream3.6.zip -OutFile C:\Scream3.6.zip
@@ -42,18 +52,19 @@ jobs:
           cd C:\Scream\Install\driver
           C:\Scream\Install\helpers\devcon install Scream.inf *Scream
 
+      - name: Install mesa
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://github.com/pal1000/mesa-dist-win/releases/download/23.0.0/mesa3d-23.0.0-release-msvc.7z -OutFile mesa3d.7z
+          Extract-7Zip -Path mesa3d.7z -DestinationPath mesa
+          cp mesa\$env:platform\*.dll _release\bin\
+          ls _release\bin
+
       - name: Test suite
         shell: pwsh
         run: |
           $env:blitzpath='_release'
           .\test\suite.bat
-      - name: Upload toolchain and package
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.arch }}
-          path: |
-            _release/bin
-            _release/*.exe
 
   # mingw:
   #   name: MinGW
