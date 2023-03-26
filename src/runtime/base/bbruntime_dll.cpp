@@ -99,8 +99,6 @@ int Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 	_set_se_translator( old_trans );
 #endif
 
-	fprintf(stderr,"t: %p, ret=%i\n", t, t!=0);
-
 	return t!=0;
 }
 
