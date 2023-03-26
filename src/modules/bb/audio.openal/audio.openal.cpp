@@ -35,6 +35,7 @@ public:
 	OpenALChannel():stream(0),source(0),frequency(0),playbackRunning(false){}
 
 	~OpenALChannel(){
+		playbackThread.join(); // TODO: this may not be the best idea...
 		alDeleteSources( 1,&source );
 		alDeleteBuffers( NUM_BUFFERS,buffers );
 	}

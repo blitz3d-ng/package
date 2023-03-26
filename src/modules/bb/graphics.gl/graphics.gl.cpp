@@ -6,7 +6,7 @@ using namespace std;
 
 GLuint _bbGLCompileShader( GLenum type,const string &name,const string &source ){
 #ifdef BB_DESKTOP
-	static char version[]         = "#version 410    \n";
+	static char version[]         = "#version 330    \n";
 #else
 	static char version[]         = "#version 300 es \n";
 #endif
