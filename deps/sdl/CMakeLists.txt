@@ -7,7 +7,7 @@ add_compile_definitions(GL_SILENCE_DEPRECATION GLES_SILENCE_DEPRECATION)
 
 # no need...
 file(READ tree/CMakeLists.txt FILE_CONTENTS)
-string(REPLACE "\"SDL2-static\"" "\"SDL2\"" FILE_CONTENTS ${FILE_CONTENTS})
+string(REPLACE "\"SDL2-static\"" "\"SDL2\"" FILE_CONTENTS "${FILE_CONTENTS}")
 file_write_changes(tree/CMakeLists.txt "${FILE_CONTENTS}")
 
 set(SDL_SHARED OFF CACHE STRING "" FORCE)
