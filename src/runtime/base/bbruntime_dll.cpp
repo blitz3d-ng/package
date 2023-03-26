@@ -37,8 +37,18 @@ static void killer(){
 #endif
 
 #include <StackWalker.h>
+
+class MyStackWalker:public StackWalker{
+public:
+	MyStackWalker():StackWalker(){}
+protected:
+	virtual void OnOutput( LPCSTR szText ){
+		fprintf( stderr,"%s",szText );StackWalker::OnOutput( szText );
+	}
+};
+
 static long WINAPI exceptionFilter( EXCEPTION_POINTERS *e ){
-	StackWalker sw; sw.ShowCallstack();
+	MyStackWalker sw; sw.ShowCallstack( GetCurrentThread(),e->ContextRecord );
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
