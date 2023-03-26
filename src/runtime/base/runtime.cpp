@@ -49,7 +49,8 @@ void Runtime::shutdown(){
 }
 
 #ifndef BB_WINDOWS
-void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
+int Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
+	return 0;
 }
 #endif
 
