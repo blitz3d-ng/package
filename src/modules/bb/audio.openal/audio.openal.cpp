@@ -20,6 +20,8 @@ using namespace std;
 #define NUM_BUFFERS 6
 #define BUFFER_SIZE 4096
 
+static std::set<BBChannel*> channel_set;
+
 class OpenALChannel : public BBChannel{
 public:
 	AudioStream::Ref *stream;
@@ -191,6 +193,7 @@ public:
 		}
 		alDistanceModel( AL_NONE );
 		channel->play();
+		channel_set.insert( channel );
 		return channel;
 	}
 
@@ -201,6 +204,7 @@ public:
 		}
 		channel->set3d( pos,vel );
 		channel->play();
+		channel_set.insert( channel );
 		return channel;
 	}
 
@@ -221,7 +225,6 @@ class OpenALAudioDriver : public BBAudioDriver{
 protected:
 	ALCdevice *dev;
 	ALCcontext *ctx;
-	AudioStream *stream;
 
 	AudioStream *loadStream( const string &filename,bool preload ){
 		AudioStream *stream=0;
@@ -244,14 +247,17 @@ protected:
 	}
 
 public:
-	OpenALAudioDriver():dev(0),ctx(0),stream(0){
+	OpenALAudioDriver():dev(0),ctx(0){
 	}
 
 	~OpenALAudioDriver(){
+		while( channel_set.size() ) {
+			BBChannel *c=*channel_set.begin();
+			if( channel_set.erase( c ) ) delete c;
+		}
 		alcMakeContextCurrent( NULL );
-		if( ctx ) alcDestroyContext( ctx );
-		if( dev ) alcCloseDevice( dev );
-		delete stream;
+		if( ctx ){ alcDestroyContext( ctx );ctx=0; }
+		if( dev ){ alcCloseDevice( dev );dev=0; }
 	}
 
 	bool init(){
@@ -330,6 +336,7 @@ public:
 		}
 
 		channel->play();
+		channel_set.insert( channel );
 		return channel;
 	}
 };

@@ -24,7 +24,7 @@ fi
 # appears it only required for debian-10, but this is a quick fix
 if [ "$(uname)" = "Linux" ]
 then
-  XVFBRUN="xvfb-run"
+  XVFBRUN="xvfb-run -a"
 fi
 
 RED='\033[0;31m'
