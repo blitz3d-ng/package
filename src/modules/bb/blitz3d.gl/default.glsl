@@ -10,25 +10,29 @@ uniform sampler2D bbTexture[8];
 #define FOG_NONE   0
 #define FOG_LINEAR 1
 
+struct BBLightData {
+  mat4 TForm;
+  vec4 Color;
+} ;
+
 layout(std140) uniform BBLightState {
-  struct BBLightData {
-    mat4 TForm;
-    vec4 Color;
-  } Light[8];
+  BBLightData Light[8];
 
   int LightsUsed;
 } LS;
 
 // must be mindful of alignment when ordering...
+struct BBTextureState {
+  mat4 TForm;
+  int Blend,_0,_1,_2;
+} ;
+
 layout(std140) uniform BBRenderState {
   vec4 Ambient;
   vec4 BrushColor;
   vec4 FogColor;
 
-  struct BBTextureState {
-    mat4 TForm;
-    int Blend,_0,_1,_2;
-  } Texture[8];
+  BBTextureState Texture[8];
 
   vec2 FogRange;
 

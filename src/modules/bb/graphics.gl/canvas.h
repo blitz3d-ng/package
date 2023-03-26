@@ -23,14 +23,9 @@ protected:
 
 	void quad( int x,int y,int w,int h,bool solid,bool tex,float tx,float ty,float color[3] );
 public:
-	GLCanvas( ContextResources *res,int f ):res(res),width(0),height(0),dpi(1.0),pixels(0),handle_x(0),handle_y(0){
-		flags=f;
-	}
+	GLCanvas( ContextResources *res,int f );
 
-	void resize( int w,int h,float d ){
-		width=w;height=h;
-		dpi=d;
-	}
+	void resize( int w,int h,float d );
 
 	virtual unsigned int framebufferId()=0;
 
@@ -52,49 +47,31 @@ public:
 	void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
 	void image( BBCanvas *c,int x,int y,bool solid );
 
-  bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{ return false; }
-  bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const{ return false; }
+	bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const;
+	bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const;
 
-  bool lock()const{
-		if( pixels ) return false;
-
-		pixels=new unsigned char[width*height*4];
-
-		bind();
-#ifdef BB_DESKTOP
-		GL( glGetTexImage( GL_TEXTURE_2D,0,GL_RGBA,GL_UNSIGNED_BYTE,pixels ) );
-#endif
-		return true;
-	}
+	bool lock()const;
 	void setPixel( int x,int y,unsigned argb );
 	void setPixelFast( int x,int y,unsigned argb );
-	void copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y ){}
-	void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y ){}
-	unsigned getPixel( int x,int y )const{ return 0; }
-	unsigned getPixelFast( int x,int y )const{
-		y=height-y;
-		return pixels[(y*width+x)*4];
-	}
-	void unlock()const{
-		delete[] pixels;pixels=0;
-	}
+	void copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y );
+	void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y );
+	unsigned getPixel( int x,int y )const;
+	unsigned getPixelFast( int x,int y )const;
+	void unlock()const;
 
-	void setCubeMode( int mode ){}
-	void setCubeFace( int face ){}
+	void setCubeMode( int mode );
+	void setCubeFace( int face );
 
 	//ACCESSORS
-	int getWidth()const{ return width; }
-	int getHeight()const{ return height; }
-	int cubeMode()const{ return 0; }
-	void getOrigin( int *x,int *y )const{}
-	void getHandle( int *x,int *y )const{}
-	void getViewport( int *x,int *y,int *w,int *h )const{
-		*x=0;*y=0;*w=getWidth();*h=getHeight();
-	}
-	unsigned getMask()const{ return 0; }
-	unsigned getColor()const{ return 0; }
-	unsigned getClsColor()const{ return 0; }
-
+	int getWidth()const;
+	int getHeight()const;
+	int cubeMode()const;
+	void getOrigin( int *x,int *y )const;
+	void getHandle( int *x,int *y )const;
+	void getViewport( int *x,int *y,int *w,int *h )const;
+	unsigned getMask()const;
+	unsigned getColor()const;
+	unsigned getClsColor()const;
 };
 
 class GLTextureCanvas : public GLCanvas{
@@ -102,85 +79,24 @@ protected:
 	unsigned int texture,framebuffer,depthbuffer;
 	int twidth,theight;
 public:
-	GLTextureCanvas( ContextResources *res,int f ):GLCanvas( res,f ),texture(0),framebuffer(0),depthbuffer(0),twidth(0),theight(0){
-	}
+	GLTextureCanvas( ContextResources *res,int f );
+	GLTextureCanvas( ContextResources *res,int w,int h,int f );
+	GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f );
 
-	GLTextureCanvas( ContextResources *res,int w,int h,int f ):GLTextureCanvas(res,f){
-		width=w;
-		height=h;
-	}
+	int getDepth()const;
 
-	GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f ):GLTextureCanvas(res,f){
-		if( pixmap ) setPixmap( pixmap );
-	}
+	void set();
 
-	int getDepth()const{ return 8; }
+	void unset();
 
-	void set(){
-		GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
-	}
+	void uploadData( void *data );
 
-	void unset(){
-		GL( glFlush() );
+	unsigned int textureId();
+	unsigned int framebufferId();
 
-		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-		GL( glGenerateMipmap( GL_TEXTURE_2D ) );
-	}
+	void setPixmap( BBPixmap *pm );
 
-	void uploadData( void *data ){
-		if( !texture ) GL( glGenTextures( 1,&texture ) );
-		GL( glActiveTexture( GL_TEXTURE0 ) );
-		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data ) );
-		GL( glGenerateMipmap( GL_TEXTURE_2D ) );
-	}
-
-	unsigned int textureId(){
-		if( texture ) return texture;
-
-		uploadData(0);
-		return texture;
-	}
-
-	unsigned int framebufferId(){
-		if( framebuffer ) return framebuffer;
-
-		GL( glGenRenderbuffers( 1,&depthbuffer ) );
-		GL( glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer ) );
-		GL( glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height ) );
-		GL( glBindRenderbuffer( GL_RENDERBUFFER,0 ) );
-
-		GL( glGenFramebuffers( 1,&framebuffer ) );
-		GL( glBindFramebuffer( GL_FRAMEBUFFER,framebuffer ) );
-		GL( glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textureId(),0 ) );
-		GL( glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer ) );
-
-		GLenum status=GL( glCheckFramebufferStatus( GL_FRAMEBUFFER ) );
-		if( status!=GL_FRAMEBUFFER_COMPLETE ){
-			_bbLog( "fb error: %s\n",bbGLFramebufferStatusString( status ) );
-		}
-
-		return framebuffer;
-	}
-
-	void setPixmap( BBPixmap *pm ){
-		if( flags&CANVAS_TEX_ALPHA ){
-			if( flags&CANVAS_TEX_MASK ){
-				pm->mask( 0,0,0 );
-			}else{
-				pm->buildAlpha( false );
-			}
-		}
-
-		width=pm->width;
-		height=pm->height;
-		uploadData( pm->bits );
-		GL( glBindTexture( GL_TEXTURE_2D,0 ) );
-	}
-
-	void bind()const{
-		GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-	}
+	void bind()const;
 };
 
 class GLDefaultCanvas : public GLCanvas{

@@ -86,6 +86,17 @@ void initArrays( int size,GLuint* buffer,GLuint *array ){
 	}
 }
 
+// --- GLCanvas ---
+
+GLCanvas::GLCanvas( ContextResources *res,int f ):res(res),width(0),height(0),dpi(1.0),pixels(0),handle_x(0),handle_y(0){
+	flags=f;
+}
+
+void GLCanvas::resize( int w,int h,float d ){
+	width=w;height=h;
+	dpi=d;
+}
+
 void GLCanvas::setFont( BBFont *f ){
 	font=reinterpret_cast<BBImageFont*>(f);
 }
@@ -355,6 +366,26 @@ void GLCanvas::image( BBCanvas *c,int x,int y,bool solid ){
 	quad( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true,true,1.0,1.0,white );
 }
 
+bool GLCanvas::collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{
+	return false;
+}
+
+bool GLCanvas::rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const{
+	return false;
+}
+
+bool GLCanvas::lock()const{
+	if( pixels ) return false;
+
+	pixels=new unsigned char[width*height*4];
+
+	bind();
+#ifdef BB_DESKTOP
+	GL( glGetTexImage( GL_TEXTURE_2D,0,GL_RGBA,GL_UNSIGNED_BYTE,pixels ) );
+#endif
+	return true;
+}
+
 void GLCanvas::setPixel( int x,int y,unsigned argb ){
 	setPixelFast( x,y,argb );
 }
@@ -368,6 +399,148 @@ void GLCanvas::setPixelFast( int x,int y,unsigned argb ){
 	// glRasterPos2f( x,y+1 );
 	// glDrawPixels( 1,1,GL_RGBA,GL_UNSIGNED_BYTE,rgba );
 }
+
+void GLCanvas::copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y ){
+}
+
+void GLCanvas::copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y ){
+}
+
+unsigned GLCanvas::getPixel( int x,int y )const{
+	return 0;
+}
+
+unsigned GLCanvas::getPixelFast( int x,int y )const{
+	y=height-y;
+	return pixels[(y*width+x)*4];
+}
+
+void GLCanvas::unlock()const{
+	delete[] pixels;pixels=0;
+}
+
+void GLCanvas::setCubeMode( int mode ){
+}
+
+void GLCanvas::setCubeFace( int face ){
+}
+
+int GLCanvas::getWidth()const{
+	return width;
+}
+
+int GLCanvas::getHeight()const{
+	return height;
+}
+
+int GLCanvas::cubeMode()const{
+	return 0;
+}
+
+void GLCanvas::getOrigin( int *x,int *y )const{
+}
+
+void GLCanvas::getHandle( int *x,int *y )const{
+}
+
+void GLCanvas::getViewport( int *x,int *y,int *w,int *h )const{
+	*x=0;*y=0;*w=getWidth();*h=getHeight();
+}
+
+unsigned GLCanvas::getMask()const{
+	return 0;
+}
+
+unsigned GLCanvas::getColor()const{
+	return 0;
+}
+
+unsigned GLCanvas::getClsColor()const{
+	return 0;
+}
+
+// --- GLTextureCanvas ---
+
+GLTextureCanvas::GLTextureCanvas( ContextResources *res,int f ):GLCanvas( res,f ),texture(0),framebuffer(0),depthbuffer(0),twidth(0),theight(0){
+}
+
+GLTextureCanvas::GLTextureCanvas( ContextResources *res,int w,int h,int f ):GLTextureCanvas(res,f){
+	width=w;
+	height=h;
+}
+
+GLTextureCanvas::GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f ):GLTextureCanvas(res,f){
+	if( pixmap ) setPixmap( pixmap );
+}
+
+int GLTextureCanvas::getDepth()const{ return 8; }
+
+void GLTextureCanvas::set(){
+	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
+}
+
+void GLTextureCanvas:: unset(){
+	GL( glFlush() );
+
+	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
+	GL( glGenerateMipmap( GL_TEXTURE_2D ) );
+}
+
+void GLTextureCanvas::uploadData( void *data ){
+	if( !texture ) GL( glGenTextures( 1,&texture ) );
+	GL( glActiveTexture( GL_TEXTURE0 ) );
+	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
+	GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data ) );
+	GL( glGenerateMipmap( GL_TEXTURE_2D ) );
+}
+
+unsigned int GLTextureCanvas::textureId(){
+	if( texture ) return texture;
+
+	uploadData(0);
+	return texture;
+}
+
+unsigned int GLTextureCanvas::framebufferId(){
+	if( framebuffer ) return framebuffer;
+
+	GL( glGenRenderbuffers( 1,&depthbuffer ) );
+	GL( glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer ) );
+	GL( glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height ) );
+	GL( glBindRenderbuffer( GL_RENDERBUFFER,0 ) );
+
+	GL( glGenFramebuffers( 1,&framebuffer ) );
+	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebuffer ) );
+	GL( glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textureId(),0 ) );
+	GL( glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer ) );
+
+	GLenum status=GL( glCheckFramebufferStatus( GL_FRAMEBUFFER ) );
+	if( status!=GL_FRAMEBUFFER_COMPLETE ){
+		_bbLog( "fb error: %s\n",bbGLFramebufferStatusString( status ) );
+	}
+
+	return framebuffer;
+}
+
+void GLTextureCanvas::setPixmap( BBPixmap *pm ){
+	if( flags&CANVAS_TEX_ALPHA ){
+		if( flags&CANVAS_TEX_MASK ){
+			pm->mask( 0,0,0 );
+		}else{
+			pm->buildAlpha( false );
+		}
+	}
+
+	width=pm->width;
+	height=pm->height;
+	uploadData( pm->bits );
+	GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+}
+
+void GLTextureCanvas::bind()const{
+	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
+}
+
 
 // --- GLDefaultCanvas ---
 
