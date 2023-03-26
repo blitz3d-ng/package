@@ -613,16 +613,19 @@ int main( int argc,char *argv[] ){
 		if( !veryquiet ) cout<<"Executing..."<<endl;
 
 		ret=runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
-
+		fprintf(stderr, "ret=%i\n", ret);
 #ifdef WIN32
 		if( dbgHandle ) FreeLibrary( dbgHandle );
 #endif
 	}
+	fprintf(stderr, "ret=%i\n", ret);
 
 	delete module;
 	delete env;
+	fprintf(stderr, "ret=%i\n", ret);
 
 	closeLibs();
+	fprintf(stderr, "ret=%i\n", ret);
 
 	return ret;
 }
