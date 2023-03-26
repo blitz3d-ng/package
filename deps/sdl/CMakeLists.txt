@@ -3,8 +3,12 @@ if(BB_NX)
 endif()
 
 add_compile_definitions(SDL_LEAN_AND_MEAN)
-
 add_compile_definitions(GL_SILENCE_DEPRECATION GLES_SILENCE_DEPRECATION)
+
+# no need...
+file(READ tree/CMakeLists.txt FILE_CONTENTS)
+string(REPLACE "\"SDL2-static\"" "\"SDL2\"" FILE_CONTENTS ${FILE_CONTENTS})
+file_write_changes(tree/CMakeLists.txt "${FILE_CONTENTS}")
 
 set(SDL_SHARED OFF CACHE STRING "" FORCE)
 set(SDL_STATIC ON CACHE STRING "" FORCE)

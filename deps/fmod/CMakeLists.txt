@@ -11,3 +11,10 @@ file(COPY
   bin/fmod64.dll
   DESTINATION ${TOOLCHAIN_BIN_PATH}
 )
+
+if(BB_WIN64)
+  file(COPY
+    lib/fmod64vc.lib
+    DESTINATION ${TOOLCHAIN_PATH}/lib
+  )
+endif()

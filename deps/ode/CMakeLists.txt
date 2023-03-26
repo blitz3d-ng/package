@@ -14,4 +14,16 @@ set(ODE_DOUBLE_PRECISION OFF CACHE STRING "" FORCE)
 
 add_subdirectory(tree)
 
+if(WIN32)
+  set_target_properties(
+    ODE
+    PROPERTIES
+    OUTPUT_NAME ODE
+    DEBUG_POSTFIX ""
+    MINSIZEREL_POSTFIX ""
+    RELEASE_POSTFIX ""
+    RELWITHDEBINFO_POSTFIX ""
+  )
+endif()
+
 target_output_to_toolchain(ODE)
