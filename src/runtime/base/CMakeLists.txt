@@ -7,3 +7,6 @@ add_library(bbruntime_dll OBJECT ${SOURCES})
 target_include_directories (bbruntime_dll PRIVATE ../../modules)
 
 target_link_libraries(bbruntime_dll bb.stub)
+if(BB_WINDOWS)
+  target_link_libraries(bbruntime_dll StackWalker)
+endif()

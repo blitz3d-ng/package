@@ -36,6 +36,12 @@ static void killer(){
 }
 #endif
 
+#include <StackWalker.h>
+static long WINAPI exceptionFilter( EXCEPTION_POINTERS *e ){
+	StackWalker sw; sw.ShowCallstack();
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
 static void __cdecl seTranslator( unsigned int u,EXCEPTION_POINTERS* pExp ){
 	switch( u ){
 	case EXCEPTION_INT_DIVIDE_BY_ZERO:
@@ -59,6 +65,8 @@ int Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 	if( !dbg ) dbg=&dummydebug;
 
 	trackmem( true );
+
+	SetUnhandledExceptionFilter( exceptionFilter );
 
 #ifndef __MINGW32__
 	_se_translator_function old_trans=_set_se_translator( seTranslator );

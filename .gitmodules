@@ -40,3 +40,6 @@
 [submodule "deps/env"]
 	path = deps/env
 	url = https://github.com/blitz3d-ng/env
+[submodule "deps/stackwalker/tree"]
+	path = deps/stackwalker/tree
+	url = https://github.com/JochenKalmbach/StackWalker
