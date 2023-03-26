@@ -37,9 +37,8 @@ public:
 	OpenALChannel():stream(0),source(0),frequency(0),playbackRunning(false){}
 
 	~OpenALChannel(){
+		playbackRunning=false;
 		playbackThread.join(); // TODO: this may not be the best idea...
-		alDeleteSources( 1,&source );
-		alDeleteBuffers( NUM_BUFFERS,buffers );
 	}
 
 	bool setStream( AudioStream *s ){
@@ -81,7 +80,7 @@ public:
 	}
 
 	bool streaming(){
-		return !stream->eof();
+		return playbackRunning && !stream->eof();
 	}
 
 	void play(){
@@ -138,6 +137,9 @@ public:
 
 end:
 		channel->playbackRunning=false;
+
+		alDeleteSources( 1,&channel->source );
+		alDeleteBuffers( NUM_BUFFERS,channel->buffers );
 	}
 
 	void stop(){
@@ -251,11 +253,11 @@ public:
 	}
 
 	~OpenALAudioDriver(){
-		while( sound_set.size() ) freeSound( *sound_set.begin() );
 		while( channel_set.size() ) {
 			BBChannel *c=*channel_set.begin();
 			if( channel_set.erase( c ) ) delete c;
 		}
+		while( sound_set.size() ) freeSound( *sound_set.begin() );
 		alcMakeContextCurrent( NULL );
 		if( ctx ){ alcDestroyContext( ctx );ctx=0; }
 		if( dev ){ alcCloseDevice( dev );dev=0; }
@@ -290,13 +292,6 @@ public:
 
 		sound_set.insert( sound );
 		return sound;
-	}
-
-	BBSound *verifySound( BBSound *sound ){
-		return sound;
-	}
-
-	void freeSound( BBSound *sound ){
 	}
 
 	void setPaused( bool paused ){

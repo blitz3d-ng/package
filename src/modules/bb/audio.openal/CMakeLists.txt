@@ -9,4 +9,8 @@ if(OPENAL_FOUND)
     set(SYSTEM_LIBS openal)
   endif()
   bb_end_module()
+
+  if(APPLE)
+    target_compile_options(bb.audio.openal PRIVATE -Wno-deprecated-declarations)
+  endif()
 endif()
