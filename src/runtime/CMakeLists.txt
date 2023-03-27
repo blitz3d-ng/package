@@ -197,6 +197,7 @@ macro(bb_end_runtime )
 
     if(BB_MSVC)
       target_link_options(${name}.shared PRIVATE /NOIMPLIB /NOEXP)
+      target_sources(${name}.shared PUBLIC ../base/dpi.manifest)
 
       if(BB_WIN32)
         set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " /include:_runtimeGetRuntime")

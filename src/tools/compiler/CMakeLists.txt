@@ -185,4 +185,5 @@ endif()
 
 if(BB_MSVC)
   target_link_libraries(blitzcc StackWalker)
+  target_sources(blitzcc PUBLIC ../bblaunch/dpi.manifest)
 endif()
