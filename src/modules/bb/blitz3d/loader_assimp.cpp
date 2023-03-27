@@ -115,7 +115,7 @@ Object *Loader_Assimp::parseNode( const struct aiNode* nd,Object *parent ){
 
 					// TODO: what to do here?
 					if( face->mNumIndices!=3 ){
-						// _bbLog( "[loader.assimp] encountered face with %i indices\n",face->mNumIndices );
+						// LOGD( "[loader.assimp] encountered face with %i indices\n",face->mNumIndices );
 						continue;
 					}
 
@@ -210,7 +210,7 @@ MeshModel *Loader_Assimp::load( const std::string &f,const Transform &t,int hint
 		for( int i=0;i<scene->mNumAnimations;i++ ){
 			aiAnimation *a=scene->mAnimations[i];
 
-			if( a->mNumMeshChannels ) _bbLog( "vertex-based animations are not support in loader\n" );
+			if( a->mNumMeshChannels ) LOGD( "%s","vertex-based animations are not support in loader" );
 
 			std::map<Object*,Animation> anim;
 			for( int j=0;j<a->mNumChannels;j++ ){

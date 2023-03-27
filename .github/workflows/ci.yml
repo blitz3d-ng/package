@@ -28,7 +28,7 @@ jobs:
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
 
-      # we're gonna upload this now so it's not contiminated with the mesa
+      # we're gonna upload this now so it's not contaminated with the mesa
       # files
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2

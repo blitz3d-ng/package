@@ -19,7 +19,6 @@ private:
 	/***** GX INTERFACE *****/
 public:
 	bool init();
-	void deinit();
 
 	BBSound *loadSound( const std::string &filename,bool use_3d );
 

@@ -29,7 +29,7 @@ SDLGraphics::SDLGraphics( SDL_Window *wnd,SDL_GLContext ctx ):wnd(wnd),context(c
 #ifdef BB_IOS
 	// ios doesn't supply a default framebuffer
 	GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,(int*)&framebuffer ) );
-	_bbLog( "framebuffer: %i\n", framebuffer );
+	LOGD( "framebuffer: %i\n", framebuffer );
 #endif
 
 	front_canvas=d_new SDLDefaultCanvas( &res,wnd,framebuffer,GL_FRONT,0 );
@@ -140,7 +140,7 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 	bool inited=false;
 	if( !inited ){
 		if( SDL_Init(SDL_INIT_VIDEO)<0 ){
-			_bbLog( "failed to init sdl\n" );
+			LOGD( "%s","failed to init sdl" );
 			return 0;
 		}
 
@@ -157,7 +157,7 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 
 	SDL_Window* wnd=SDL_CreateWindow( "",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,1,1,SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI );
 	if( wnd==NULL ){
-		_bbLog( "failed to create window\n" );
+		LOGD( "%s","failed to create window" );
 		return 0;
 	}
 
@@ -179,7 +179,7 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 
 	SDL_GLContext context;
 	if( !(context=SDL_GL_CreateContext( wnd )) ){
-		_bbLog( "%s",SDL_GetError() );
+		LOGD( "%s",SDL_GetError() );
 		return 0;
 	}
 
@@ -191,10 +191,10 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 	SDL_GetWindowSize( wnd,&screen_w,&screen_h );
 	SDL_GL_GetDrawableSize( wnd,&drawableW,&drawableH );
 
-	_bbLog( "GL Version:  %s\n",glGetString( GL_VERSION ) );
-	_bbLog( "GL Vendor:   %s\n",glGetString( GL_VENDOR ) );
-	_bbLog( "GL window:   %ix%i\n",screen_w,screen_h );
-	_bbLog( "GL drawable: %ix%i\n",drawableW,drawableH );
+	LOGD( "GL Version:  %s",glGetString( GL_VERSION ) );
+	LOGD( "GL Vendor:   %s",glGetString( GL_VENDOR ) );
+	LOGD( "GL window:   %ix%i",screen_w,screen_h );
+	LOGD( "GL drawable: %ix%i",drawableW,drawableH );
 
 	GL( glViewport( 0.0,0.0,drawableW,drawableH ) );
 	GL( glScissor( 0.0,0.0,drawableW,drawableH ) );
@@ -203,7 +203,7 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 
 #ifdef BB_DESKTOP
 	if( glewInit()!=GLEW_OK ){
-		_bbLog( "failed to init glew\n" );
+		LOGD( "%s","failed to init glew" );
 		return 0;
 	}
 #endif

@@ -42,7 +42,7 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 	}
 
 #ifdef BB_IOS
-	_bbLog( "load: %s\n", f.c_str() );
+	LOGD( "load: %s", f.c_str() );
 	return bbLoadPixmapWithUIKit( f.c_str() );
 #else
 	return bbLoadPixmapWithFreeImage( f );

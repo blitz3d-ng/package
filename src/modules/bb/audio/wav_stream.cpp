@@ -8,7 +8,7 @@ WAVAudioStream::WAVAudioStream( int buf_size):AudioStream( buf_size){
 bool WAVAudioStream::readHeader(){
 	read( buf, 4 );
 	if( buf[0]!='R' || buf[1]!='I' || buf[2]!='F' || buf[3]!='F' ){
-		_bbLog( "missing RIFF\n" );
+		LOGD( "%s","missing RIFF" );
 		return false;
 	}
 
@@ -16,14 +16,14 @@ bool WAVAudioStream::readHeader(){
 
 	read( buf, 4 );
 	if( buf[0]!='W' || buf[1]!='A' || buf[2]!='V' || buf[3]!='E' ){
-		_bbLog( "missing WAVE\n" );
+		LOGD( "%s","missing WAVE" );
 		return false;
 	}
 
 	// format tag
 	read( buf,4 );
 	if( buf[0]!='f' || buf[1]!='m' || buf[2]!='t' || buf[3]!=' ' ){
-		_bbLog( "missing 'fmt '\n" );
+		LOGD( "%s","missing 'fmt '" );
 		return false;
 	}
 
@@ -33,7 +33,7 @@ bool WAVAudioStream::readHeader(){
 	// format
 	read( buf,2 );
 	if( buf[1]!=0 || buf[0]!=1 ){
-		_bbLog( "unsupported format type %i %i\n",buf[0],buf[1] );
+		LOGD( "unsupported format type %i %i",buf[0],buf[1] );
 		return false;
 	}
 
@@ -70,7 +70,7 @@ bool WAVAudioStream::readHeader(){
 	}
 
 	if( buf[0]!='d' || buf[1]!='a' || buf[2]!='t' || buf[3]!='a' ){
-		_bbLog( "missing 'data' %c%c%c%c\n",buf[0],buf[1],buf[2],buf[3] );
+		LOGD( "missing 'data' %c%c%c%c",buf[0],buf[1],buf[2],buf[3] );
 		return false;
 	}
 

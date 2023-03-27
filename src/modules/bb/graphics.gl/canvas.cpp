@@ -26,7 +26,7 @@ struct Vertex{
 static
 bool makeProgram( ContextResources *res,float dpi,float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
 	if( !glIsProgram( res->default_program ) ){
-		// _bbLog( "rebuilding 2d shader...\n" );
+		// LOGD( "rebuilding 2d shader...\n" );
 
 		string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
 		res->default_program=GL( _bbGLCompileProgram( "default.glsl",src ) );
@@ -516,7 +516,7 @@ unsigned int GLTextureCanvas::framebufferId(){
 
 	GLenum status=GL( glCheckFramebufferStatus( GL_FRAMEBUFFER ) );
 	if( status!=GL_FRAMEBUFFER_COMPLETE ){
-		_bbLog( "fb error: %s\n",bbGLFramebufferStatusString( status ) );
+		LOGD( "fb error: %s\n",bbGLFramebufferStatusString( status ) );
 	}
 
 	return framebuffer;

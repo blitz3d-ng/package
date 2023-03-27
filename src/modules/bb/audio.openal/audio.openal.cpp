@@ -119,7 +119,7 @@ public:
 				if( channel->queue( buffer )==false ){
 					goto end;
 				}else if( alGetError()!=AL_NO_ERROR ){
-					_bbLog( "%s","error buffering..." );
+					LOGD( "%s","error buffering..." );
 					goto end;
 				}
 			}

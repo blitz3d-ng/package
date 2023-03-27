@@ -17,9 +17,9 @@ BBApp BBCALL bbApp();
 
 #ifdef BB_IOS
 #include <syslog.h>
-#define _bbLog( ... ) syslog( LOG_WARNING, __VA_ARGS__ )
+#define LOGD( fmt,... ) syslog( LOG_WARNING,fmt,__VA_ARGS__ )
 #else
-#define _bbLog( ... ) fprintf( stderr, __VA_ARGS__ )
+#define LOGD( fmt,... ) fprintf( stderr,fmt"\n",__VA_ARGS__ )
 #endif
 
 #endif
