@@ -45,6 +45,24 @@ using namespace std;
 #define DEBUGGER "debugger.console"
 #endif
 
+#ifdef WIN32
+#include <StackWalker.h>
+
+class MyStackWalker:public StackWalker{
+public:
+	MyStackWalker():StackWalker(){}
+protected:
+	virtual void OnOutput( LPCSTR szText ){
+		fprintf( stderr,"%s",szText );StackWalker::OnOutput( szText );
+	}
+};
+
+static long WINAPI exceptionFilter( EXCEPTION_POINTERS *e ){
+	MyStackWalker sw; sw.ShowCallstack( GetCurrentThread(),e->ContextRecord );
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+#endif
+
 #ifdef BB_POSIX
 #include <unistd.h>
 #include <execinfo.h>
@@ -303,6 +321,10 @@ int main( int argc,char *argv[] ){
 #if defined(BB_POSIX) && !defined(BB_ASAN)
 	signal(SIGABRT, handle_abort);
 	signal(SIGSEGV, handle_segfault);
+#endif
+
+#ifdef WIN32
+	SetUnhandledExceptionFilter( exceptionFilter );
 #endif
 
 	string in_file,out_file,rt,args,targetid,signerId,teamId;
