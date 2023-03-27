@@ -36,7 +36,7 @@ static void near_callback( void *data,dGeomID o1,dGeomID o2 ){
   }
 }
 
-void BBCALL _odeSpaceCollide( bb_ptr_t s,bb_ptr_t w,bb_ptr_t g ){
+BBLIB void BBCALL _odeSpaceCollide( bb_ptr_t s,bb_ptr_t w,bb_ptr_t g ){
   CollideEnv env;
   env.world=(dWorldID)w;
   env.group=(dJointGroupID)g;
@@ -44,110 +44,110 @@ void BBCALL _odeSpaceCollide( bb_ptr_t s,bb_ptr_t w,bb_ptr_t g ){
   dSpaceCollide( (dSpaceID)s,&env,near_callback );
 }
 
-void BBCALL _odeContactSetMaxContacts( int max_contacts ){
+BBLIB void BBCALL _odeContactSetMaxContacts( bb_int_t max_contacts ){
   _odeMaxContacts=max_contacts < MAX_CONTACTS ? max_contacts : MAX_CONTACTS;
 }
 
-bb_int_t BBCALL _odeContactGetMaxContacts(){
+BBLIB bb_int_t BBCALL _odeContactGetMaxContacts(){
   return _odeMaxContacts;
 }
 
-void BBCALL _odeContactSetMode( bb_int_t mode ){
+BBLIB void BBCALL _odeContactSetMode( bb_int_t mode ){
   _odeSurfaceParams.mode=mode;
 }
 
-bb_int_t BBCALL _odeContactGetMode(){
+BBLIB bb_int_t BBCALL _odeContactGetMode(){
   return _odeSurfaceParams.mode;
 }
 
-void BBCALL _odeContactSetMu( float mu ){
+BBLIB void BBCALL _odeContactSetMu( bb_float_t mu ){
   _odeSurfaceParams.mu=mu;
 }
 
-bb_float_t BBCALL _odeContactGetMu(){
+BBLIB bb_float_t BBCALL _odeContactGetMu(){
   return _odeSurfaceParams.mu;
 }
 
-void BBCALL _odeContactSetMu2( float mu ){
+BBLIB void BBCALL _odeContactSetMu2( bb_float_t mu ){
   _odeSurfaceParams.mu2=mu;
 }
 
-bb_float_t BBCALL _odeContactGetMu2(){
+BBLIB bb_float_t BBCALL _odeContactGetMu2(){
   return _odeSurfaceParams.mu2;
 }
 
-void BBCALL _odeContactSetFDir1( float fdir1x,float fdir1y,float fdir1z ){
+BBLIB void BBCALL _odeContactSetFDir1( bb_float_t fdir1x,bb_float_t fdir1y,bb_float_t fdir1z ){
   _odeFDir[0]=fdir1x;
   _odeFDir[1]=fdir1y;
   _odeFDir[2]=fdir1z;
 }
 
-void BBCALL _odeContactGetFDir1(){
+BBLIB void BBCALL _odeContactGetFDir1(){
   _odeVector[0]=_odeFDir[0];
   _odeVector[1]=_odeFDir[1];
   _odeVector[2]=_odeFDir[2];
 }
 
-void BBCALL _odeContactSetBounce( float bounce ){
+BBLIB void BBCALL _odeContactSetBounce( bb_float_t bounce ){
   _odeSurfaceParams.bounce=bounce;
 }
 
-bb_float_t BBCALL _odeContactGetBounce(){
+BBLIB bb_float_t BBCALL _odeContactGetBounce(){
   return _odeSurfaceParams.bounce;
 }
 
-void BBCALL _odeContactSetBounceVel( float vel ){
+BBLIB void BBCALL _odeContactSetBounceVel( bb_float_t vel ){
   _odeSurfaceParams.bounce_vel=vel;
 }
 
-bb_float_t BBCALL _odeContactGetBounceVel(){
+BBLIB bb_float_t BBCALL _odeContactGetBounceVel(){
   return _odeSurfaceParams.bounce_vel;
 }
 
-void BBCALL _odeContactSetSoftERP( float erp ){
+BBLIB void BBCALL _odeContactSetSoftERP( bb_float_t erp ){
   _odeSurfaceParams.soft_erp=erp;
 }
 
-bb_float_t BBCALL _odeContactGetSoftERP(){
+BBLIB bb_float_t BBCALL _odeContactGetSoftERP(){
   return _odeSurfaceParams.soft_erp;
 }
 
-void BBCALL _odeContactSetSoftCFM( float cfm ){
+BBLIB void BBCALL _odeContactSetSoftCFM( bb_float_t cfm ){
   _odeSurfaceParams.soft_cfm=cfm;
 }
 
-bb_float_t BBCALL _odeContactGetSoftCFM(){
+BBLIB bb_float_t BBCALL _odeContactGetSoftCFM(){
   return _odeSurfaceParams.soft_cfm;
 }
 
-void BBCALL _odeContactSetMotion1( float motion ){
+BBLIB void BBCALL _odeContactSetMotion1( bb_float_t motion ){
   _odeSurfaceParams.motion1=motion;
 }
 
-bb_float_t BBCALL _odeContactGetMotion1(){
+BBLIB bb_float_t BBCALL _odeContactGetMotion1(){
   return _odeSurfaceParams.motion1;
 }
 
-void BBCALL _odeContactSetMotion2( bb_float_t motion ){
+BBLIB void BBCALL _odeContactSetMotion2( bb_float_t motion ){
   _odeSurfaceParams.motion2=motion;
 }
 
-bb_float_t BBCALL _odeContactGetMotion2(){
+BBLIB bb_float_t BBCALL _odeContactGetMotion2(){
   return _odeSurfaceParams.slip2;
 }
 
-void BBCALL _odeContactSetSlip1( bb_float_t slip ){
+BBLIB void BBCALL _odeContactSetSlip1( bb_float_t slip ){
   _odeSurfaceParams.slip1=slip;
 }
 
-bb_float_t BBCALL _odeContactGetSlip1(){
+BBLIB bb_float_t BBCALL _odeContactGetSlip1(){
   return _odeSurfaceParams.slip1;
 }
 
-void BBCALL _odeContactSetSlip2( bb_float_t slip ){
+BBLIB void BBCALL _odeContactSetSlip2( bb_float_t slip ){
   _odeSurfaceParams.slip2=slip;
 }
 
-bb_float_t BBCALL _odeContactGetSlip2(){
+BBLIB bb_float_t BBCALL _odeContactGetSlip2(){
   return _odeSurfaceParams.slip2;
 }

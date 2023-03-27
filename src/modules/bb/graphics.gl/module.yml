@@ -1,9 +1,0 @@
-name: GL Graphics
-description: Provides common GL code for desktop.
-
-platforms:
-  - desktop
-  - mobile
-
-dependencies:
-  - graphics

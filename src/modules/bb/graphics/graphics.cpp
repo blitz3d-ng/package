@@ -1,11 +1,15 @@
 
 #include "../stdutil/stdutil.h"
 #include "graphics.h"
-#include <bb/input/input.h>
-#include <bb/system/system.h>
 #include <bb/runtime/runtime.h>
+#include <bb/system/system.h>
+#include <bb/input/input.h>
 #include <bb/graphics/graphics.h>
-#include <bb/blitz2d/blitz2d.h>
+
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 
 #include <fstream>
 #include <vector>
@@ -14,19 +18,14 @@ using namespace std;
 
 #include <math.h>
 
-BBContextDriver *bbContextDriver;
-BBGraphics *gx_graphics;
-BBCanvas *gx_canvas;
+//degrees to radians
+static const float dtor=0.0174532925199432957692369076848861f;
 
-struct GfxMode{
-	int w,h,d,caps;
-};
-
-class bbImage{
+class BBImage{
 public:
-	bbImage( const vector<BBCanvas*> &f ):frames(f){
+	BBImage( const vector<BBCanvas*> &f ):frames(f){
 	}
-	~bbImage(){
+	~BBImage(){
 		for( int k=0;k<frames.size();++k ){
 			gx_graphics->freeCanvas( frames[k] );
 		}
@@ -42,21 +41,52 @@ private:
 	vector<BBCanvas*> frames;
 };
 
-//degrees to radians
-static const float dtor=0.0174532925199432957692369076848861f;
+extern FT_Library ft;
+static bool filter=true;
+static bool auto_dirty=true;
+static bool auto_midhandle=false;
+static set<BBImage*> image_set;
+/*static*/ int curs_x=0,curs_y=0;
+static BBCanvas *p_canvas=0;
+/*static*/ BBFont *curr_font=0;
+/*static*/ unsigned curr_color=0;
+/*static*/ unsigned curr_clsColor=0;
 
-static int gx_driver;	//current graphics driver
+static inline void debugImage( BBImage *i,int frame=0 ){
+	if( bb_env.debug ){
+		if( !image_set.count(i) ) RTEX( "Image does not exist" );
+		if( frame>=i->getFrames().size() ) RTEX( "Image frame out of range" );
+	}
+}
 
-static bool filter;
-static bool auto_dirty;
-static bool auto_midhandle;
-static set<bbImage*> image_set;
-static int curs_x,curs_y;
-static BBCanvas *p_canvas;
+static inline void debugFont( BBFont *f ){
+	if( bb_env.debug ){
+		if( !gx_graphics->verifyFont( f ) ) RTEX( "Font does not exist" );
+	}
+}
 
-extern BBFont *curr_font;
-extern unsigned curr_color;
-extern unsigned curr_clsColor;
+static inline void debugCanvas( BBCanvas *c ){
+	if( bb_env.debug ){
+		if( !gx_graphics->verifyCanvas( c ) ) RTEX( "Buffer does not exist" );
+	}
+}
+
+void blitz2d_open();
+void blitz2d_reset();
+void blitz2d_close();
+void blitz3d_open( BBGraphics *graphics );
+void blitz3d_close();
+
+std::vector<BBCreateContextDriver*> bbContextDrivers;
+BBContextDriver *bbContextDriver=0;
+BBGraphics *gx_graphics=0;
+BBCanvas *gx_canvas=0;
+
+struct GfxMode{
+	int w,h,d,caps;
+};
+
+static int gx_driver=0;	//current graphics driver
 
 static vector<GfxMode> gfx_modes;
 
@@ -64,6 +94,8 @@ BBGraphics::BBGraphics():front_canvas(0),back_canvas(0){
 }
 
 BBGraphics::~BBGraphics(){
+	while( movie_set.size() ) closeMovie( *movie_set.begin() );
+	while( font_set.size() ) freeFont( *font_set.begin() );
 }
 
 BBCanvas *BBGraphics::getFrontCanvas()const{
@@ -82,19 +114,6 @@ void BBGraphics::freeCanvas( BBCanvas *c ){
 	if( canvas_set.erase( c ) ) delete c;
 }
 
-static inline void debugImage( bbImage *i,int frame=0 ){
-	if( bb_env.debug ){
-		if( !image_set.count(i) ) RTEX( "Image does not exist" );
-		if( frame>=i->getFrames().size() ) RTEX( "Image frame out of range" );
-	}
-}
-
-static inline void debugCanvas( BBCanvas *c ){
-	if( bb_env.debug ){
-		if( !gx_graphics->verifyCanvas( c ) ) RTEX( "Buffer does not exist" );
-	}
-}
-
 static inline void debugDriver( int n ){
 	if( bb_env.debug ){
 		if( n<1 || n>bbContextDriver->numGraphicsDrivers() ){
@@ -111,146 +130,14 @@ static inline void debugMode( int n ){
 	}
 }
 
-void BBCALL bbFreeImage( bbImage *i );
-
 static void freeGraphics(){
-#ifdef PRO
-	extern void blitz3d_close();
 	blitz3d_close();
-#endif
-	while( image_set.size() ) bbFreeImage( *image_set.begin() );
-	if( p_canvas ){
-		gx_graphics->freeCanvas( p_canvas );
-		p_canvas=0;
+	blitz2d_close();
+	gx_canvas=0;
+	if( gx_graphics ){
+		bbContextDriver->closeGraphics( gx_graphics );
+		gx_graphics=0;
 	}
-}
-
-#define RED(_X_) ( ((_X_)>>16) & 0xff )
-#define GRN(_X_) ( ((_X_)>>8) & 0xff )
-#define BLU(_X_) ( (_X_) & 0xff )
-
-static int getPixel( BBCanvas *c,float x,float y ){
-	debugCanvas( c );
-
-	x-=.5f;y-=.5f;
-	float fx=floor(x),fy=floor(y);
-	int ix=fx,iy=fy;fx=x-fx;fy=y-fy;
-
-	int tl=c->getPixel( ix,iy );
-	int tr=c->getPixel( ix+1,iy );
-	int br=c->getPixel( ix+1,iy+1 );
-	int bl=c->getPixel( ix,iy+1 );
-
-	float w1=(1-fx)*(1-fy),w2=fx*(1-fy),w3=(1-fx)*fy,w4=fx*fy;
-
-	float r=RED(tl)*w1+RED(tr)*w2+RED(bl)*w3+RED(br)*w4;
-	float g=GRN(tl)*w1+GRN(tr)*w2+GRN(bl)*w3+GRN(br)*w4;
-	float b=BLU(tl)*w1+BLU(tr)*w2+BLU(bl)*w3+BLU(br)*w4;
-
-	return (int(r+.5f)<<16)|(int(g+.5f)<<8)|int(b+.5f);
-}
-
-struct vec2{ float x,y; };
-
-static vec2 vrot( float m[2][2],const vec2 &v ){
-	vec2 t;t.x=m[0][0]*v.x+m[0][1]*v.y;t.y=m[1][0]*v.x+m[1][1]*v.y;
-	return t;
-}
-
-static float vmin( float a,float b,float c,float d ){
-	float t=a;if( b<t ) t=b;if( c<t ) t=c;if( d<t ) t=d;return t;
-}
-
-static float vmax( float a,float b,float c,float d ){
-	float t=a;if( b>t ) t=b;if( c>t ) t=c;if( d>t ) t=d;return t;
-}
-
-static BBCanvas *tformCanvas( BBCanvas *c,float m[2][2],int x_handle,int y_handle ){
-
-	vec2 v,v0,v1,v2,v3;
-	float i[2][2];
-	float dt=1.0f/(m[0][0]*m[1][1]-m[1][0]*m[0][1]);
-	i[0][0]=dt*m[1][1];i[1][0]=-dt*m[1][0];
-	i[0][1]=-dt*m[0][1];i[1][1]=dt*m[0][0];
-
-	float ox=x_handle,oy=y_handle;
-	v0.x=-ox;v0.y=-oy;	//tl
-	v1.x=c->getWidth()-ox;v1.y=-oy;	//tr
-	v2.x=c->getWidth()-ox;v2.y=c->getHeight()-oy;	//br
-	v3.x=-ox;v3.y=c->getHeight()-oy;	//bl
-	v0=vrot(m,v0);v1=vrot(m,v1);v2=vrot(m,v2);v3=vrot(m,v3);
-	float minx=floor( vmin( v0.x,v1.x,v2.x,v3.x ) );
-	float miny=floor( vmin( v0.y,v1.y,v2.y,v3.y ) );
-	float maxx=ceil( vmax( v0.x,v1.x,v2.x,v3.x ) );
-	float maxy=ceil( vmax( v0.y,v1.y,v2.y,v3.y ) );
-	int iw=maxx-minx,ih=maxy-miny;
-
-	BBCanvas *t=gx_graphics->createCanvas( iw,ih,0 );
-	t->setHandle( -minx,-miny );
-	t->setMask( c->getMask() );
-
-	c->lock();
-	t->lock();
-
-	v.y=miny+.5f;
-	for( int y=0;y<ih;++v.y,++y ){
-		v.x=minx+.5f;
-		for( int x=0;x<iw;++v.x,++x ){
-			vec2 q=vrot(i,v);
-			unsigned rgb=filter ? getPixel( c,q.x+ox,q.y+oy ) : c->getPixel( floor(q.x+ox),floor(q.y+oy) );
-			t->setPixel( x,y,rgb );
-		}
-	}
-
-	t->unlock();
-	c->unlock();
-
-	return t;
-}
-
-static bool saveCanvas( BBCanvas *c,const string &f ){
-#ifndef WIN32 // FIXME: port to posix
-	return false;
-#else
-	ofstream out( f.c_str(),ios::binary );
-	if( !out.good() ) return false;
-
-	int tempsize=(c->getWidth()*3+3)&~3;
-
-	BITMAPFILEHEADER bf;
-	memset( &bf,0,sizeof(bf) );
-	bf.bfType='MB';
-	bf.bfSize=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+tempsize*c->getHeight();
-	bf.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
-	BITMAPINFOHEADER bi;memset( &bi,0,sizeof(bi) );
-	bi.biSize=sizeof(bi);
-	bi.biWidth=c->getWidth();
-	bi.biHeight=c->getHeight();
-	bi.biPlanes=1;
-	bi.biBitCount=24;
-	out.write( (char*)&bf,sizeof(bf) );
-	out.write( (char*)&bi,sizeof(bi) );
-
-	unsigned char *temp=d_new unsigned char[ tempsize ];
-	memset( temp,0,tempsize );
-
-	c->lock();
-	for( int y=c->getHeight()-1;y>=0;--y ){
-		unsigned char *dest=temp;
-		for( int x=0;x<c->getWidth();++x ){
-			unsigned rgb=c->getPixelFast( x,y );
-			*dest++=rgb&0xff;
-			*dest++=(rgb>>8)&0xff;
-			*dest++=(rgb>>16)&0xff;
-		}
-		out.write( (char*)temp,tempsize );
-	}
-	c->unlock();
-
-	delete [] temp;
-
-	return out.good();
-#endif
 }
 
 BBContextDriver::BBContextDriver():graphics(0){
@@ -262,6 +149,33 @@ BBContextDriver::~BBContextDriver(){
 bool BBContextDriver::graphicsOpened(){
 	return !!graphics;
 }
+
+int BBContextDriver::change( const string &name ){
+	// TODO: not supporting switching right now
+	if( bbContextDriver ) return 0;
+
+	bbContextDriver=0;
+	for( auto fn:bbContextDrivers ){
+		bbContextDriver=fn( name );
+		if( bbContextDriver ) return 1;
+	}
+
+	return 0;
+}
+
+BBLIB bb_int_t BBCALL bbCountRenderers(){
+	return bbContextDrivers.size();
+}
+
+BBLIB BBStr * BBCALL bbRendererName( bb_int_t renderer ){
+	return d_new BBStr( "<not implemented>" );
+}
+
+BBLIB bb_int_t BBCALL bbSetRenderer( BBStr *name ){
+	string s=*name;delete name;
+	return BBContextDriver::change( s );
+}
+
 
 bb_int_t BBCALL bbCountGfxDrivers(){
 	return bbContextDriver->numGraphicsDrivers();
@@ -368,41 +282,11 @@ void BBCALL bbSetBuffer( BBCanvas *buff ){
 	debugCanvas( buff );
 	if( gx_canvas ) gx_canvas->unset();
 	gx_canvas=buff;
-	curs_x=curs_y=0;
-	gx_canvas->setOrigin( 0,0 );
-	gx_canvas->setViewport( 0,0,gx_canvas->getWidth(),gx_canvas->getHeight() );
-	gx_canvas->setColor( curr_color );
-	gx_canvas->setClsColor( curr_clsColor );
-	gx_canvas->setFont( curr_font );
-	gx_canvas->set();
+	blitz2d_reset();
 }
 
 BBCanvas * BBCALL bbGraphicsBuffer(){
 	return gx_canvas;
-}
-
-bb_int_t BBCALL bbLoadBuffer( BBCanvas *c,BBStr *str ){
-	debugCanvas( c );
-	string s=*str;delete str;
-	BBCanvas *t=gx_graphics->loadCanvas( s,0 );
-	if( !t ) return 0;
-	float m[2][2];
-	m[0][0]=(float)c->getWidth()/(float)t->getWidth();
-	m[1][1]=(float)c->getHeight()/(float)t->getHeight();
-	m[1][0]=m[0][1]=0;
-	BBCanvas *p=tformCanvas( t,m,0,0 );
-	gx_graphics->freeCanvas( t );
-	int ox,oy;
-	c->getOrigin( &ox,&oy );c->setOrigin( 0,0 );
-	c->blit( 0,0,p,0,0,p->getWidth(),p->getHeight(),true );
-	gx_graphics->freeCanvas( p );
-	return 1;
-}
-
-bb_int_t BBCALL bbSaveBuffer( BBCanvas *c,BBStr *str ){
-	debugCanvas( c );
-	string t=*str;delete str;
-	return saveCanvas( c,t ) ? 1 : 0;
 }
 
 void BBCALL bbBufferDirty( BBCanvas *c ){
@@ -412,16 +296,12 @@ void BBCALL bbBufferDirty( BBCanvas *c ){
 
 static void graphics( int w,int h,int d,int flags ){
 	freeGraphics();
-	bbContextDriver->closeGraphics( gx_graphics );
-	gx_canvas=0;
 	gx_graphics=bbContextDriver->openGraphics( w,h,d,gx_driver,flags );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( !gx_graphics ){
 		RTEX( "Unable to set graphics mode" );
 	}
-	curr_clsColor=0;
-	curr_color=0xffffffff;
-	curr_font=gx_graphics->getDefaultFont();
+	blitz2d_open();
 	BBCanvas *buff=(flags & BBGraphics::GRAPHICS_3D) ?
 		gx_graphics->getBackCanvas() : gx_graphics->getFrontCanvas();
 	bbSetBuffer( buff );
@@ -455,25 +335,27 @@ void BBCALL bbGraphics3D( bb_int_t w,bb_int_t h,bb_int_t d,bb_int_t mode ){
 	default:RTEX( "Illegal Graphics3D mode" );
 	}
 	graphics( w,h,d,flags );
-	extern void blitz3d_open( int w,int h,float d );
-	blitz3d_open( w,h,gx_graphics->getDensity() );
+	blitz3d_open( gx_graphics );
 }
 #endif
 
-void BBCALL bbEndGraphics(){
+bool BBCALL bbDefaultGraphics(){
 	freeGraphics();
-	bbContextDriver->closeGraphics( gx_graphics );
-	gx_canvas=0;
 	gx_graphics=bbContextDriver->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	if( gx_graphics ){
-		curr_clsColor=0;
-		curr_color=0xffffffff;
-		curr_font=gx_graphics->getDefaultFont();
-		bbSetBuffer( gx_graphics->getFrontCanvas() );
-		return;
+		blitz2d_open();
+		bbSetBuffer( bbFrontBuffer() );
+		return true;
 	}
-	RTEX( "Unable to set graphics mode" );
+	return false;
+}
+
+void BBCALL bbEndGraphics(){
+	bbContextDriver->closeGraphics( gx_graphics );
+	if( !bbDefaultGraphics() ){
+		RTEX( "Unable to set graphics mode" );
+	}
 }
 
 bb_int_t BBCALL bbGraphicsLost(){
@@ -594,7 +476,262 @@ void BBCALL bbCopyRect( bb_int_t sx,bb_int_t sy,bb_int_t w,bb_int_t h,bb_int_t d
 	dest->blit( dx,dy,src,sx,sy,w,h,true );
 }
 
-bbImage * BBCALL bbLoadImage( BBStr *s ){
+#define RED(_X_) ( ((_X_)>>16) & 0xff )
+#define GRN(_X_) ( ((_X_)>>8) & 0xff )
+#define BLU(_X_) ( (_X_) & 0xff )
+
+static int getPixel( BBCanvas *c,float x,float y ){
+	debugCanvas( c );
+
+	x-=.5f;y-=.5f;
+	float fx=floor(x),fy=floor(y);
+	int ix=fx,iy=fy;fx=x-fx;fy=y-fy;
+
+	int tl=c->getPixel( ix,iy );
+	int tr=c->getPixel( ix+1,iy );
+	int br=c->getPixel( ix+1,iy+1 );
+	int bl=c->getPixel( ix,iy+1 );
+
+	float w1=(1-fx)*(1-fy),w2=fx*(1-fy),w3=(1-fx)*fy,w4=fx*fy;
+
+	float r=RED(tl)*w1+RED(tr)*w2+RED(bl)*w3+RED(br)*w4;
+	float g=GRN(tl)*w1+GRN(tr)*w2+GRN(bl)*w3+GRN(br)*w4;
+	float b=BLU(tl)*w1+BLU(tr)*w2+BLU(bl)*w3+BLU(br)*w4;
+
+	return (int(r+.5f)<<16)|(int(g+.5f)<<8)|int(b+.5f);
+}
+
+struct vec2{ float x,y; };
+
+static vec2 vrot( float m[2][2],const vec2 &v ){
+	vec2 t;t.x=m[0][0]*v.x+m[0][1]*v.y;t.y=m[1][0]*v.x+m[1][1]*v.y;
+	return t;
+}
+
+static float vmin( float a,float b,float c,float d ){
+	float t=a;if( b<t ) t=b;if( c<t ) t=c;if( d<t ) t=d;return t;
+}
+
+static float vmax( float a,float b,float c,float d ){
+	float t=a;if( b>t ) t=b;if( c>t ) t=c;if( d>t ) t=d;return t;
+}
+
+static BBCanvas *tformCanvas( BBCanvas *c,float m[2][2],int x_handle,int y_handle ){
+
+	vec2 v,v0,v1,v2,v3;
+	float i[2][2];
+	float dt=1.0f/(m[0][0]*m[1][1]-m[1][0]*m[0][1]);
+	i[0][0]=dt*m[1][1];i[1][0]=-dt*m[1][0];
+	i[0][1]=-dt*m[0][1];i[1][1]=dt*m[0][0];
+
+	float ox=x_handle,oy=y_handle;
+	v0.x=-ox;v0.y=-oy;	//tl
+	v1.x=c->getWidth()-ox;v1.y=-oy;	//tr
+	v2.x=c->getWidth()-ox;v2.y=c->getHeight()-oy;	//br
+	v3.x=-ox;v3.y=c->getHeight()-oy;	//bl
+	v0=vrot(m,v0);v1=vrot(m,v1);v2=vrot(m,v2);v3=vrot(m,v3);
+	float minx=floor( vmin( v0.x,v1.x,v2.x,v3.x ) );
+	float miny=floor( vmin( v0.y,v1.y,v2.y,v3.y ) );
+	float maxx=ceil( vmax( v0.x,v1.x,v2.x,v3.x ) );
+	float maxy=ceil( vmax( v0.y,v1.y,v2.y,v3.y ) );
+	int iw=maxx-minx,ih=maxy-miny;
+
+	BBCanvas *t=gx_graphics->createCanvas( iw,ih,0 );
+	t->setHandle( -minx,-miny );
+	t->setMask( c->getMask() );
+
+	c->lock();
+	t->lock();
+
+	v.y=miny+.5f;
+	for( int y=0;y<ih;++v.y,++y ){
+		v.x=minx+.5f;
+		for( int x=0;x<iw;++v.x,++x ){
+			vec2 q=vrot(i,v);
+			unsigned rgb=filter ? getPixel( c,q.x+ox,q.y+oy ) : c->getPixel( floor(q.x+ox),floor(q.y+oy) );
+			t->setPixel( x,y,rgb );
+		}
+	}
+
+	t->unlock();
+	c->unlock();
+
+	return t;
+}
+
+static bool saveCanvas( BBCanvas *c,const string &f ){
+#ifndef WIN32 // FIXME: port to posix
+	return false;
+#else
+	std::ofstream out( f.c_str(),std::ios::binary );
+	if( !out.good() ) return false;
+
+	int tempsize=(c->getWidth()*3+3)&~3;
+
+	BITMAPFILEHEADER bf;
+	memset( &bf,0,sizeof(bf) );
+	bf.bfType='MB';
+	bf.bfSize=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+tempsize*c->getHeight();
+	bf.bfOffBits=sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
+	BITMAPINFOHEADER bi;memset( &bi,0,sizeof(bi) );
+	bi.biSize=sizeof(bi);
+	bi.biWidth=c->getWidth();
+	bi.biHeight=c->getHeight();
+	bi.biPlanes=1;
+	bi.biBitCount=24;
+	out.write( (char*)&bf,sizeof(bf) );
+	out.write( (char*)&bi,sizeof(bi) );
+
+	unsigned char *temp=d_new unsigned char[ tempsize ];
+	memset( temp,0,tempsize );
+
+	c->lock();
+	for( int y=c->getHeight()-1;y>=0;--y ){
+		unsigned char *dest=temp;
+		for( int x=0;x<c->getWidth();++x ){
+			unsigned rgb=c->getPixelFast( x,y );
+			*dest++=rgb&0xff;
+			*dest++=(rgb>>8)&0xff;
+			*dest++=(rgb>>16)&0xff;
+		}
+		out.write( (char*)temp,tempsize );
+	}
+	c->unlock();
+
+	delete [] temp;
+
+	return out.good();
+#endif
+}
+
+bb_int_t BBCALL bbLoadBuffer( BBCanvas *c,BBStr *str ){
+	debugCanvas( c );
+	string s=*str;delete str;
+	BBCanvas *t=gx_graphics->loadCanvas( s,0 );
+	if( !t ) return 0;
+	float m[2][2];
+	m[0][0]=(float)c->getWidth()/(float)t->getWidth();
+	m[1][1]=(float)c->getHeight()/(float)t->getHeight();
+	m[1][0]=m[0][1]=0;
+	BBCanvas *p=tformCanvas( t,m,0,0 );
+	gx_graphics->freeCanvas( t );
+	int ox,oy;
+	c->getOrigin( &ox,&oy );c->setOrigin( 0,0 );
+	c->blit( 0,0,p,0,0,p->getWidth(),p->getHeight(),true );
+	gx_graphics->freeCanvas( p );
+	return 1;
+}
+
+bb_int_t BBCALL bbSaveBuffer( BBCanvas *c,BBStr *str ){
+	debugCanvas( c );
+	string t=*str;delete str;
+	return saveCanvas( c,t ) ? 1 : 0;
+}
+
+void BBCALL bbOrigin( bb_int_t x,bb_int_t y ){
+	gx_canvas->setOrigin( x,y );
+}
+
+void BBCALL bbViewport( bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h ){
+	gx_canvas->setViewport( x,y,w,h );
+}
+
+void BBCALL bbColor( bb_int_t r,bb_int_t g,bb_int_t b ){
+	gx_canvas->setColor( curr_color=(r<<16)|(g<<8)|b );
+}
+
+void BBCALL bbGetColor( bb_int_t x,bb_int_t y ){
+	gx_canvas->setColor( curr_color=gx_canvas->getPixel( x,y ) );
+}
+
+bb_int_t BBCALL bbColorRed(){
+	return (gx_canvas->getColor()>>16)&0xff;
+}
+
+bb_int_t BBCALL bbColorGreen(){
+	return (gx_canvas->getColor()>>8)&0xff;
+}
+
+bb_int_t BBCALL bbColorBlue(){
+	return gx_canvas->getColor()&0xff;
+}
+
+void BBCALL bbClsColor( bb_int_t r,bb_int_t g,bb_int_t b ){
+	gx_canvas->setClsColor( curr_clsColor=(r<<16)|(g<<8)|b );
+}
+
+void BBCALL bbCls(){
+	gx_canvas->cls();
+}
+
+void BBCALL bbPlot( bb_int_t x,bb_int_t y ){
+	gx_canvas->plot( x,y );
+}
+
+void BBCALL bbLine( bb_int_t x1,bb_int_t y1,bb_int_t x2,bb_int_t y2 ){
+	gx_canvas->line( x1,y1,x2,y2 );
+}
+
+void BBCALL bbRect( bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h,bb_int_t solid ){
+	gx_canvas->rect( x,y,w,h,solid ? true : false );
+}
+
+void BBCALL bbOval( bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h,bb_int_t solid ){
+	gx_canvas->oval( x,y,w,h,solid ? true : false );
+}
+
+void BBCALL bbText( bb_int_t x,bb_int_t y,BBStr *str,bb_int_t centre_x,bb_int_t centre_y ){
+	debugFont( curr_font );
+	if( centre_x ) x-=curr_font->getWidth( *str )/2;
+	if( centre_y ) y-=curr_font->getHeight()/2;
+	gx_canvas->text( x,y,*str );
+	delete str;
+}
+
+BBFont * BBCALL bbLoadFont( BBStr *name,bb_int_t height,bb_int_t bold,bb_int_t italic,bb_int_t underline ){
+	int flags=
+		(bold ? BBFont::FONT_BOLD : 0 ) |
+		(italic ? BBFont::FONT_ITALIC : 0 ) |
+		(underline ? BBFont::FONT_UNDERLINE : 0 );
+	BBFont *font=gx_graphics->loadFont( *name,height,flags );
+	delete name;
+	return font;
+}
+
+void BBCALL bbFreeFont( BBFont *f ){
+	debugFont( f );
+	if( f==curr_font ) bbSetFont( gx_graphics->getDefaultFont() );
+	gx_graphics->freeFont( f );
+}
+
+void BBCALL bbSetFont( BBFont *f ){
+	debugFont( f );
+	gx_canvas->setFont( curr_font=f );
+}
+
+bb_int_t BBCALL bbFontWidth(){
+	debugFont( curr_font );
+	return curr_font->getWidth();
+}
+
+bb_int_t BBCALL bbFontHeight(){
+	debugFont( curr_font );
+	return curr_font->getHeight();
+}
+
+bb_int_t BBCALL bbStringWidth( BBStr *str ){
+	debugFont( curr_font );
+	string t=*str;delete str;
+	return curr_font->getWidth( t );
+}
+
+bb_int_t BBCALL bbStringHeight( BBStr *str ){
+	debugFont( curr_font );
+	delete str;
+	return curr_font->getHeight();
+}
+
+BBImage * BBCALL bbLoadImage( BBStr *s ){
 	string t=*s;delete s;
 	BBCanvas *c=gx_graphics->loadCanvas( t,0 );
 	if( !c ) return 0;
@@ -602,12 +739,12 @@ bbImage * BBCALL bbLoadImage( BBStr *s ){
 	if( auto_midhandle ) c->setHandle( c->getWidth()/2,c->getHeight()/2 );
 	vector<BBCanvas*> frames;
 	frames.push_back( c );
-	bbImage *i=d_new bbImage( frames );
+	BBImage *i=d_new BBImage( frames );
 	image_set.insert( i );
 	return i;
 }
 
-bbImage * BBCALL bbLoadAnimImage( BBStr *s,bb_int_t w,bb_int_t h,bb_int_t first,bb_int_t cnt ){
+BBImage * BBCALL bbLoadAnimImage( BBStr *s,bb_int_t w,bb_int_t h,bb_int_t first,bb_int_t cnt ){
 
 	string t=*s;delete s;
 
@@ -642,12 +779,12 @@ bbImage * BBCALL bbLoadAnimImage( BBStr *s,bb_int_t w,bb_int_t h,bb_int_t first,
 		src_x+=w;if( src_x+w>pic->getWidth() ){ src_x=0;src_y+=h; }
 	}
 	gx_graphics->freeCanvas( pic );
-	bbImage *i=d_new bbImage( frames );
+	BBImage *i=d_new BBImage( frames );
 	image_set.insert( i );
 	return i;
 }
 
-bbImage * BBCALL bbCopyImage( bbImage *i ){
+BBImage * BBCALL bbCopyImage( BBImage *i ){
 	debugImage( i );
 	vector<BBCanvas*> frames;
 	const vector<BBCanvas*> &f=i->getFrames();
@@ -668,12 +805,12 @@ bbImage * BBCALL bbCopyImage( bbImage *i ){
 		c->setMask( t->getMask() );
 		frames.push_back( c );
 	}
-	bbImage *t=d_new bbImage( frames );
+	BBImage *t=d_new BBImage( frames );
 	image_set.insert( t );
 	return t;
 }
 
-bbImage * BBCALL bbCreateImage( bb_int_t w,bb_int_t h,bb_int_t n ){
+BBImage * BBCALL bbCreateImage( bb_int_t w,bb_int_t h,bb_int_t n ){
 	vector<BBCanvas*> frames;
 	for( int k=0;k<n;++k ){
 		BBCanvas *c=gx_graphics->createCanvas( w,h,0 );
@@ -685,12 +822,12 @@ bbImage * BBCALL bbCreateImage( bb_int_t w,bb_int_t h,bb_int_t n ){
 		if( auto_midhandle ) c->setHandle( c->getWidth()/2,c->getHeight()/2 );
 		frames.push_back( c );
 	}
-	bbImage *i=d_new bbImage( frames );
+	BBImage *i=d_new BBImage( frames );
 	image_set.insert( i );
 	return i;
 }
 
-void BBCALL bbFreeImage( bbImage *i ){
+void BBCALL bbFreeImage( BBImage *i ){
 	if( !image_set.erase(i) ) return;
 	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ){
@@ -702,14 +839,14 @@ void BBCALL bbFreeImage( bbImage *i ){
 	delete i;
 }
 
-bb_int_t BBCALL bbSaveImage( bbImage *i,BBStr *str,bb_int_t n ){
+bb_int_t BBCALL bbSaveImage( BBImage *i,BBStr *str,bb_int_t n ){
 	debugImage( i,n );
 	string t=*str;delete str;
 	BBCanvas *c=i->getFrames()[n];
 	return saveCanvas( c,t ) ? 1 : 0;
 }
 
-void BBCALL bbGrabImage( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t n ){
+void BBCALL bbGrabImage( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t n ){
 	debugImage( i,n );
 	BBCanvas *c=i->getFrames()[n];
 	int src_ox,src_oy,dst_hx,dst_hy;
@@ -721,24 +858,24 @@ void BBCALL bbGrabImage( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t n ){
 	if( auto_dirty ) c->backup();
 }
 
-BBCanvas * BBCALL bbImageBuffer( bbImage *i,bb_int_t n ){
+BBCanvas * BBCALL bbImageBuffer( BBImage *i,bb_int_t n ){
 	debugImage( i,n );
 	return i->getFrames()[n];
 }
 
-void BBCALL bbDrawImage( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
+void BBCALL bbDrawImage( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->image( c,x,y,false );
 }
 
-void BBCALL bbDrawBlock( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
+void BBCALL bbDrawBlock( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->image( c,x,y,true );
 }
 
-static void tile( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame,bool solid ){
+static void tile( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t frame,bool solid ){
 	BBCanvas *c=i->getFrames()[frame];
 
 	int hx,hy;
@@ -762,42 +899,42 @@ static void tile( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame,bool solid ){
 	}
 }
 
-void BBCALL bbTileImage( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
+void BBCALL bbTileImage( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
 	debugImage( i,frame );
 	tile( i,x,y,frame,false );
 }
 
-void BBCALL bbTileBlock( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
+void BBCALL bbTileBlock( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t frame ){
 	debugImage( i,frame );
 	tile( i,x,y,frame,true );
 }
 
-void BBCALL bbDrawImageRect( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t r_x,bb_int_t r_y,bb_int_t r_w,bb_int_t r_h,bb_int_t frame ){
+void BBCALL bbDrawImageRect( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t r_x,bb_int_t r_y,bb_int_t r_w,bb_int_t r_h,bb_int_t frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->blit( x,y,c,r_x,r_y,r_w,r_h,false );
 }
 
-void BBCALL bbDrawBlockRect( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t r_x,bb_int_t r_y,bb_int_t r_w,bb_int_t r_h,bb_int_t frame ){
+void BBCALL bbDrawBlockRect( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t r_x,bb_int_t r_y,bb_int_t r_w,bb_int_t r_h,bb_int_t frame ){
 	debugImage( i,frame );
 	BBCanvas *c=i->getFrames()[frame];
 	gx_canvas->blit( x,y,c,r_x,r_y,r_w,r_h,true );
 }
 
-void BBCALL bbMaskImage( bbImage *i,bb_int_t r,bb_int_t g,bb_int_t b ){
+void BBCALL bbMaskImage( BBImage *i,bb_int_t r,bb_int_t g,bb_int_t b ){
 	debugImage( i );
 	unsigned argb=(r<<16)|(g<<8)|b;
 	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setMask( argb );
 }
 
-void BBCALL bbHandleImage( bbImage *i,bb_int_t x,bb_int_t y ){
+void BBCALL bbHandleImage( BBImage *i,bb_int_t x,bb_int_t y ){
 	debugImage( i );
 	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setHandle( x,y );
 }
 
-void BBCALL bbMidHandle( bbImage *i ){
+void BBCALL bbMidHandle( BBImage *i ){
 	debugImage( i );
 	const vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setHandle( f[k]->getWidth()/2,f[k]->getHeight()/2 );
@@ -807,31 +944,31 @@ void BBCALL bbAutoMidHandle( bb_int_t enable ){
 	auto_midhandle=enable ? true : false;
 }
 
-bb_int_t BBCALL bbImageWidth( bbImage *i ){
+bb_int_t BBCALL bbImageWidth( BBImage *i ){
 	debugImage( i );
 	return i->getFrames()[0]->getWidth();
 }
 
-bb_int_t BBCALL bbImageHeight( bbImage *i ){
+bb_int_t BBCALL bbImageHeight( BBImage *i ){
 	debugImage( i );
 	return i->getFrames()[0]->getHeight();
 }
 
-bb_int_t BBCALL bbImageXHandle( bbImage *i ){
+bb_int_t BBCALL bbImageXHandle( BBImage *i ){
 	debugImage( i );
 	int x,y;
 	i->getFrames()[0]->getHandle( &x,&y );
 	return x;
 }
 
-bb_int_t BBCALL bbImageYHandle( bbImage *i ){
+bb_int_t BBCALL bbImageYHandle( BBImage *i ){
 	debugImage( i );
 	int x,y;
 	i->getFrames()[0]->getHandle( &x,&y );
 	return y;
 }
 
-bb_int_t BBCALL bbImagesOverlap( bbImage *i1,bb_int_t x1,bb_int_t y1,bbImage *i2,bb_int_t x2,bb_int_t y2 ){
+bb_int_t BBCALL bbImagesOverlap( BBImage *i1,bb_int_t x1,bb_int_t y1,BBImage *i2,bb_int_t x2,bb_int_t y2 ){
 	debugImage( i1 );
 	debugImage( i2 );
 	BBCanvas *c1=i1->getFrames()[0];
@@ -839,7 +976,7 @@ bb_int_t BBCALL bbImagesOverlap( bbImage *i1,bb_int_t x1,bb_int_t y1,bbImage *i2
 	return c1->collide( x1,y1,c2,x2,y2,true );
 }
 
-bb_int_t BBCALL bbImagesCollide( bbImage *i1,bb_int_t x1,bb_int_t y1,bb_int_t f1,bbImage *i2,bb_int_t x2,bb_int_t y2,bb_int_t f2 ){
+bb_int_t BBCALL bbImagesCollide( BBImage *i1,bb_int_t x1,bb_int_t y1,bb_int_t f1,BBImage *i2,bb_int_t x2,bb_int_t y2,bb_int_t f2 ){
 	debugImage( i1,f1 );
 	debugImage( i2,f2 );
 	BBCanvas *c1=i1->getFrames()[f1];
@@ -852,19 +989,19 @@ bb_int_t BBCALL bbRectsOverlap( bb_int_t x1,bb_int_t y1,bb_int_t w1,bb_int_t h1,
 	return 1;
 }
 
-bb_int_t BBCALL bbImageRectOverlap( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t x2,bb_int_t y2,bb_int_t w2,bb_int_t h2 ){
+bb_int_t BBCALL bbImageRectOverlap( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t x2,bb_int_t y2,bb_int_t w2,bb_int_t h2 ){
 	debugImage( i );
 	BBCanvas *c=i->getFrames()[0];
 	return c->rect_collide( x,y,x2,y2,w2,h2,true );
 }
 
-bb_int_t BBCALL bbImageRectCollide( bbImage *i,bb_int_t x,bb_int_t y,bb_int_t f,bb_int_t x2,bb_int_t y2,bb_int_t w2,bb_int_t h2 ){
+bb_int_t BBCALL bbImageRectCollide( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t f,bb_int_t x2,bb_int_t y2,bb_int_t w2,bb_int_t h2 ){
 	debugImage( i,f );
 	BBCanvas *c=i->getFrames()[f];
 	return c->rect_collide( x,y,x2,y2,w2,h2,false );
 }
 
-void BBCALL bbTFormImage( bbImage *i,bb_float_t a,bb_float_t b,bb_float_t c,bb_float_t d ){
+void BBCALL bbTFormImage( BBImage *i,bb_float_t a,bb_float_t b,bb_float_t c,bb_float_t d ){
 	debugImage( i );
 	const vector<BBCanvas*> &f=i->getFrames();
 	int k;
@@ -885,18 +1022,18 @@ void BBCALL bbTFormImage( bbImage *i,bb_float_t a,bb_float_t b,bb_float_t c,bb_f
 	}
 }
 
-void BBCALL bbScaleImage( bbImage *i,bb_float_t w,bb_float_t h ){
+void BBCALL bbScaleImage( BBImage *i,bb_float_t w,bb_float_t h ){
 	debugImage( i );
 	bbTFormImage( i,w,0,0,h );
 }
 
-void BBCALL bbResizeImage( bbImage *i,bb_float_t w,bb_float_t h ){
+void BBCALL bbResizeImage( BBImage *i,bb_float_t w,bb_float_t h ){
 	debugImage( i );
 	BBCanvas *c=i->getFrames()[0];
 	bbTFormImage( i,w/(float)c->getWidth(),0,0,h/(float)c->getHeight() );
 }
 
-void BBCALL bbRotateImage( bbImage *i,bb_float_t d ){
+void BBCALL bbRotateImage( BBImage *i,bb_float_t d ){
 	debugImage( i );
 	d*=-dtor;
 	bbTFormImage( i,cos(d),-sin(d),sin(d),cos(d) );
@@ -1095,34 +1232,45 @@ void BBCALL bbLocate( bb_int_t x,bb_int_t y ){
 	curs_y=y<0 ? 0 : (y > c->getHeight() ? c->getHeight() : y);
 }
 
-BBMODULE_CREATE( graphics ){
-	if( !bbContextDriver ) return false;
+void blitz2d_open(){
+	curr_clsColor=0;
+	curr_color=0xffffffff;
+	curr_font=gx_graphics->getDefaultFont();
+}
 
-	// bbContextDriver=0; // FIXME: bbContextDriver is currently being set in gxRuntime.
-	p_canvas=0;
+void blitz2d_reset(){
+	curs_x=curs_y=0;
+	gx_canvas->setOrigin( 0,0 );
+	gx_canvas->setViewport( 0,0,gx_canvas->getWidth(),gx_canvas->getHeight() );
+	gx_canvas->setColor( curr_color );
+	gx_canvas->setClsColor( curr_clsColor );
+	gx_canvas->setFont( curr_font );
+	gx_canvas->set();
+}
+
+void blitz2d_close(){
+	while( image_set.size() ) bbFreeImage( *image_set.begin() );
+	if( p_canvas ){
+		gx_graphics->freeCanvas( p_canvas );
+		p_canvas=0;
+	}
+}
+
+BBMODULE_CREATE( graphics ){
+	if( FT_Init_FreeType(&ft) ) return false;
+
 	filter=true;
-	gx_driver=0;
-	freeGraphics();
 	auto_dirty=true;
 	auto_midhandle=false;
-	gx_graphics=bbContextDriver->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
-	if( gx_graphics ){
-		curr_clsColor=0;
-		curr_color=0xffffffff;
-		curr_font=gx_graphics->getDefaultFont();
-		bbSetBuffer( bbFrontBuffer() );
-		return true;
-	}
-	return false;
+	p_canvas=0;
+	gx_driver=0;
+	gx_graphics=0;
+
+	return true;
 }
 
 BBMODULE_DESTROY( graphics ){
 	freeGraphics();
 	gfx_modes.clear();
-	if( gx_graphics ){
-		bbContextDriver->closeGraphics( gx_graphics );
-		gx_canvas=0;
-		gx_graphics=0;
-	}
 	return true;
 }

@@ -16,14 +16,14 @@
 // ODE_API void  dBodySetAutoDisableTime (dBodyID, dReal time);
 // ODE_API int dBodyGetAutoDisableFlag (dBodyID);
 
-void BBCALL _odeBodySetAutoDisableFlag( bb_ptr_t b,int do_auto_disable ){
+BBLIB void BBCALL _odeBodySetAutoDisableFlag( bb_ptr_t b,bb_int_t do_auto_disable ){
   dBodySetAutoDisableFlag( (dBodyID)b,do_auto_disable );
 }
 
 // ODE_API void  dBodySetAutoDisableDefaults (dBodyID);
 // ODE_API dWorldID dBodyGetWorld (dBodyID);
 
-bb_ptr_t BBCALL _odeBodyCreate( bb_ptr_t w ){
+BBLIB bb_ptr_t BBCALL _odeBodyCreate( bb_ptr_t w ){
   return (bb_ptr_t)dBodyCreate( (dWorldID)w );
 }
 
@@ -31,11 +31,11 @@ bb_ptr_t BBCALL _odeBodyCreate( bb_ptr_t w ){
 // ODE_API void  dBodySetData (dBodyID, void *data);
 // ODE_API void *dBodyGetData (dBodyID);
 
-void BBCALL _odeBodySetPosition( bb_ptr_t b,float x,float y,float z ){
+BBLIB void BBCALL _odeBodySetPosition( bb_ptr_t b,bb_float_t x,bb_float_t y,bb_float_t z ){
   dBodySetPosition( (dBodyID)b,x,y,-z );
 }
 
-void BBCALL _odeBodySetRotation( bb_ptr_t b,float p,float y,float r ){
+BBLIB void BBCALL _odeBodySetRotation( bb_ptr_t b,bb_float_t p,bb_float_t y,bb_float_t r ){
   Matrix mat=rotationMatrix( p*dtor,y*dtor,r*dtor );
 
   dMatrix3 m;

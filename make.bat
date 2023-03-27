@@ -1,6 +1,12 @@
 REM A quick script.
 @echo off
 
+IF "%1" == "clean" (
+  RMDIR /s /q build\
+  RMDIR /s /q _release\bin
+  EXIT /B
+)
+
 set BBENV=%1
 
 IF "%Platform%" == "x86" (

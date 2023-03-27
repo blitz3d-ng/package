@@ -1,11 +1,16 @@
-if(BB_MACOS)
+find_package(OpenAL)
+if(OPENAL_FOUND)
   bb_start_module(audio.openal)
   set(DEPENDS_ON bb.audio)
   set(SOURCES audio.openal.h audio.openal.cpp commands.h)
-
-  if(BB_MACOS)
+  if(APPLE)
     set(SYSTEM_LIBS "-framework OpenAL")
+  else()
+    set(SYSTEM_LIBS openal)
   endif()
-
   bb_end_module()
+
+  if(APPLE)
+    target_compile_options(bb.audio.openal PRIVATE -Wno-deprecated-declarations)
+  endif()
 endif()

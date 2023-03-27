@@ -8,6 +8,8 @@ class BBRuntime{
 public:
   virtual ~BBRuntime();
 
+  virtual void afterCreate(){}
+
   virtual void asyncStop()=0;
   virtual void asyncRun()=0;
   virtual void asyncEnd()=0;
@@ -26,8 +28,6 @@ bool bbRuntimeIdle();
 extern BBRuntime *bbRuntime;
 extern BBHook *bbRuntimeOnSuspend;
 extern BBHook *bbRuntimeOnResume;
-
-void bbCloseRuntime( BBRuntime *rt );
 
 #include "commands.h"
 

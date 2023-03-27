@@ -203,7 +203,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		libs.push_back( "c++" );
 
 		libs.push_back( "System" );
-		// libs.push_back("System_asan");
+		// libs.push_back( "System_asan" );
 
 		args.push_back("-arch");
 		args.push_back( target.arch );
@@ -216,10 +216,11 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #if defined(BB_MACOS) && defined(BB_ASAN)
 	if( target.host ){
 		// TODO: fix this hardcoding
-		#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/lib/darwin"
+		#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/lib/darwin"
 
 		args.push_back("-rpath");args.push_back(CLANG_LIBS);
 		args.push_back(CLANG_LIBS "/libclang_rt.asan_osx_dynamic.dylib");
+		args.push_back(CLANG_LIBS "/libclang_rt.profile_osx.a");
 		args.push_back(CLANG_LIBS "/libclang_rt.osx.a");
 	}
 #endif

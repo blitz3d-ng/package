@@ -21,6 +21,12 @@ then
   fi
 fi
 
+# appears it only required for debian-10, but this is a quick fix
+if [ "$(uname)" = "Linux" ]
+then
+  XVFBRUN="xvfb-run -a"
+fi
+
 RED='\033[0;31m'
 GRN='\033[0;32m'
 GRY='\033[0;90m'
@@ -99,7 +105,7 @@ check_flag() {
   blitzcc $1 $1
 }
 
-BLITZCC="$VALGRIND _release/bin/blitzcc -target $TARGET"
+BLITZCC="$VALGRIND $XVFBRUN _release/bin/blitzcc -target $TARGET"
 
 echo "Running test suite for $TARGET"
 
@@ -129,12 +135,14 @@ then
   blitzcc_stream test/all.bb -r test test/all.bb
   RESULT=$?
   if [ $RESULT -eq 101 ]; then
-    echo "Test suite failed because of a memory related error. Fix it and then run the coverage generation again."
     fail=1
   elif [ $RESULT -ne 0 ]; then
-    echo "Test suite failed. Fix it and then run the coverage generation again."
     fail=1
   fi
+
+  # run the old win32 codegen just because we can
+  blitzcc test/all.bb -llvm=off -c -a -r test test/all.bb
+  blitzcc test/all.bb -d -llvm=off -c -a -r test test/all.bb
 
   echo "Verifying samples can compile"
 
@@ -252,8 +260,14 @@ ENV=$($BLITZCC -e)
 if [ "$ENV" = "test" ]; then
   echo "Generating coverage report..."
   mkdir -p coverage
-  gcovr -e '.*stdin.*' --html --html-details -o ./coverage/coverage.html build/
+  gcovr \
+    -e '.*stdin.*' -e '/.*/build/' -e '/.*/deps/' -e '/.*/llvm/' \
+    --html --html-details -o ./coverage/coverage.html build/
   cleanup
+fi
+
+if [ "$fail" = "1" ]; then
+  echo "Test suite failed"
 fi
 
 exit $fail

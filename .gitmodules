@@ -2,7 +2,7 @@
 	path = deps/freeimage/src
 	url = https://github.com/blitz3d-ng/freeimage
 [submodule "assimp"]
-	path = deps/assimp/src
+	path = deps/assimp/tree
 	url = https://github.com/assimp/assimp.git
 [submodule "enet"]
 	path = deps/enet/src
@@ -14,10 +14,10 @@
 	path = deps/freetype2/tree
 	url = https://github.com/blitz3d-ng/freetype2.git
 [submodule "vorbis"]
-	path = deps/vorbis/src
+	path = deps/vorbis/tree
 	url = https://github.com/xiph/vorbis.git
 [submodule "ogg"]
-	path = deps/ogg/src
+	path = deps/ogg/tree
 	url = https://github.com/xiph/ogg.git
 [submodule "crossguid"]
 	path = deps/crossguid/src
@@ -40,3 +40,6 @@
 [submodule "deps/env"]
 	path = deps/env
 	url = https://github.com/blitz3d-ng/env
+[submodule "deps/stackwalker/tree"]
+	path = deps/stackwalker/tree
+	url = https://github.com/JochenKalmbach/StackWalker

@@ -50,7 +50,7 @@ static void __cdecl seTranslator( unsigned int u,EXCEPTION_POINTERS* pExp ){
 	bbruntime_panic( "Unknown runtime exception" );
 }
 
-void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
+int Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 
 	bool debug=!!dbg;
 
@@ -72,14 +72,16 @@ void Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 	while( params.size() && params[0]==' ' ) params=params.substr( 1 );
 	while( params.size() && params[params.size()-1]==' ' ) params=params.substr( 0,params.size()-1 );
 
-	bbStartup( 0,params.c_str() );
+	bbStartup( "a",params.c_str() );
 
-	bbruntime_run( pc,debug );
+	const char *t=bbruntime_run( pc,debug );
 
 #ifndef __MINGW32__
 	_control87( _CW_DEFAULT,0xfffff );
 	_set_se_translator( old_trans );
 #endif
+
+	return t!=0;
 }
 
 /********************** BUTT UGLY DLL->EXE HOOK! *************************/

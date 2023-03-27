@@ -5,12 +5,15 @@
 #include "scene.h"
 
 class B3DGraphics{
+protected:
+  std::set<BBScene*> scene_set;
+
 public:
-  virtual ~B3DGraphics(){}
+  ~B3DGraphics();
 
   virtual BBScene *createScene( int w,int h,float d,int flags )=0;
-  virtual BBScene *verifyScene( BBScene *scene )=0;
-  virtual void freeScene( BBScene *scene )=0;
+  BBScene *verifyScene( BBScene *scene );
+  void freeScene( BBScene *scene );
 };
 
 extern B3DGraphics *bbSceneDriver;

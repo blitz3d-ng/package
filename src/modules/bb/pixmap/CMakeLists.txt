@@ -7,7 +7,7 @@ IF(TARGET freeimage)
   set(LIBS freeimage ${ZLIB})
 ELSEIF(BB_IOS)
   set(SOURCES ${SOURCES} uikit.loader.m)
-  set(SYSTEM_LIBS "-framework UIKit")
+  set(SYSTEM_LIBS "-framework UIKit" "-framework Foundation")
 ENDIF()
 
 bb_end_module()

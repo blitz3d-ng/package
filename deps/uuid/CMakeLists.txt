@@ -1,3 +1,7 @@
+if(NOT BB_LINUX)
+  return()
+endif()
+
 include(ExternalProject)
 
 set(UUID_ROOT ${CMAKE_CURRENT_BINARY_DIR}/root)

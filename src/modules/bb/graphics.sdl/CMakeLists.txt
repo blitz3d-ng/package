@@ -1,0 +1,7 @@
+if(TARGET SDL2)
+  bb_start_module(graphics.sdl)
+  set(DEPENDS_ON bb.graphics.gl)
+  set(SOURCES graphics.sdl.cpp graphics.sdl.h)
+  set(LIBS SDL2)
+  bb_end_module()
+endif()

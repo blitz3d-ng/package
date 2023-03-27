@@ -13,11 +13,14 @@
 #endif
 
 #include <thread>
+#include <mutex>
 #include <string.h>
 using namespace std;
 
 #define NUM_BUFFERS 6
 #define BUFFER_SIZE 4096
+
+static std::set<BBChannel*> channel_set;
 
 class OpenALChannel : public BBChannel{
 public:
@@ -34,8 +37,8 @@ public:
 	OpenALChannel():stream(0),source(0),frequency(0),playbackRunning(false){}
 
 	~OpenALChannel(){
-		alDeleteSources( 1,&source );
-		alDeleteBuffers( NUM_BUFFERS,buffers );
+		playbackRunning=false;
+		playbackThread.join(); // TODO: this may not be the best idea...
 	}
 
 	bool setStream( AudioStream *s ){
@@ -43,6 +46,7 @@ public:
 
 		unsigned int bits=stream->getBits(),channels=stream->getChannels();
 
+		format=0;
 		if( bits==8 ){
 			if( channels==1 )
 				format=AL_FORMAT_MONO8;
@@ -53,6 +57,10 @@ public:
 				format=AL_FORMAT_MONO16;
 			else if( channels==2 )
 				format=AL_FORMAT_STEREO16;
+		}
+		if( format==0 ){
+			RTEX( "unsupport format" );
+			return false;
 		}
 
 		alGenBuffers( NUM_BUFFERS,buffers );
@@ -72,7 +80,7 @@ public:
 	}
 
 	bool streaming(){
-		return !stream->eof();
+		return playbackRunning && !stream->eof();
 	}
 
 	void play(){
@@ -90,12 +98,13 @@ public:
 		}
 
 		if( alGetError()!=AL_NO_ERROR ){
-			return;
+			goto end;
 		}
 
 		alSourcePlay( channel->source );
 		if( alGetError()!=AL_NO_ERROR ){
-			return;
+			channel->playbackRunning=false;
+			goto end;
 		}
 
 		while( channel->streaming() ){
@@ -107,10 +116,11 @@ public:
 
 			while( val-- ){
 				alSourceUnqueueBuffers(channel->source, 1, &buffer);
-				channel->queue( buffer );
-				if( alGetError()!=AL_NO_ERROR ){
-					fprintf( stderr,"Error buffering :(\n" );
-					return;
+				if( channel->queue( buffer )==false ){
+					goto end;
+				}else if( alGetError()!=AL_NO_ERROR ){
+					LOGD( "%s","error buffering..." );
+					goto end;
 				}
 			}
 
@@ -124,6 +134,12 @@ public:
 		do{
 			alGetSourcei( channel->source,AL_SOURCE_STATE,&val );
 		}while( val==AL_PLAYING );
+
+end:
+		channel->playbackRunning=false;
+
+		alDeleteSources( 1,&channel->source );
+		alDeleteBuffers( NUM_BUFFERS,channel->buffers );
 	}
 
 	void stop(){
@@ -137,9 +153,16 @@ public:
 	void setPan( float pan ){
 	}
 	void set3d( const float pos[3],const float vel[3] ){
+		float p[3]={ pos[0],pos[1],-pos[2] };
+		float v[3]={ vel[0],vel[1],-vel[2] };
+
+		// get these from set3dOptions...
+		alSourcef( source,AL_ROLLOFF_FACTOR,0.1 );
+		alSourcef( source,AL_REFERENCE_DISTANCE,0.2 );
+
 		alDistanceModel( AL_INVERSE_DISTANCE_CLAMPED );
-		alSourcefv( source,AL_POSITION,pos );
-		alSourcefv( source,AL_VELOCITY,vel );
+		alSourcefv( source,AL_POSITION,p );
+		alSourcefv( source,AL_VELOCITY,v );
 		alSourcei( source,AL_SOURCE_RELATIVE,false );
 		// alSourcef( source,AL_MIN_GAIN,0.0 );
 		// alSourcef( source,AL_MAX_GAIN,100.0f );
@@ -172,6 +195,7 @@ public:
 		}
 		alDistanceModel( AL_NONE );
 		channel->play();
+		channel_set.insert( channel );
 		return channel;
 	}
 
@@ -182,6 +206,7 @@ public:
 		}
 		channel->set3d( pos,vel );
 		channel->play();
+		channel_set.insert( channel );
 		return channel;
 	}
 
@@ -202,7 +227,6 @@ class OpenALAudioDriver : public BBAudioDriver{
 protected:
 	ALCdevice *dev;
 	ALCcontext *ctx;
-	AudioStream *stream;
 
 	AudioStream *loadStream( const string &filename,bool preload ){
 		AudioStream *stream=0;
@@ -225,14 +249,18 @@ protected:
 	}
 
 public:
-	OpenALAudioDriver():dev(0),ctx(0),stream(0){
+	OpenALAudioDriver():dev(0),ctx(0){
 	}
 
 	~OpenALAudioDriver(){
+		while( channel_set.size() ) {
+			BBChannel *c=*channel_set.begin();
+			if( channel_set.erase( c ) ) delete c;
+		}
+		while( sound_set.size() ) freeSound( *sound_set.begin() );
 		alcMakeContextCurrent( NULL );
-		if( ctx ) alcDestroyContext( ctx );
-		if( dev ) alcCloseDevice( dev );
-		delete stream;
+		if( ctx ){ alcDestroyContext( ctx );ctx=0; }
+		if( dev ){ alcCloseDevice( dev );dev=0; }
 	}
 
 	bool init(){
@@ -257,17 +285,13 @@ public:
 
 		OpenALSound *sound=new OpenALSound();
 		if( !sound->setStream( stream ) ){
+			delete sound;
+			delete stream;
 			return 0;
 		}
 
+		sound_set.insert( sound );
 		return sound;
-	}
-
-	BBSound *verifySound( BBSound *sound ){
-		return sound;
-	}
-
-	void freeSound( BBSound *sound ){
 	}
 
 	void setPaused( bool paused ){
@@ -282,10 +306,11 @@ public:
 	}
 
 	void set3dListener( const float pos[3],const float vel[3],const float forward[3],const float up[3] ){
-		float orientation[6]={ forward[0],forward[1],forward[2],up[0],up[1],up[2] };
+		float p[3]={ pos[0],pos[1],-pos[2] };
+		float v[3]={ vel[0],vel[1],-vel[2] };
 
-		alListenerfv( AL_POSITION,pos );
-		alListenerfv( AL_VELOCITY,vel );
+		alListenerfv( AL_POSITION,p );
+		alListenerfv( AL_VELOCITY,v );
 		alListenerfv( AL_ORIENTATION,up );
 	}
 
@@ -301,10 +326,13 @@ public:
 
 		OpenALChannel *channel=new OpenALChannel();
 		if( !channel->setStream( stream ) ){
+			delete stream;
+			delete channel;
 			return 0;
 		}
 
 		channel->play();
+		channel_set.insert( channel );
 		return channel;
 	}
 };

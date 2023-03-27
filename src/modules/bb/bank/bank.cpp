@@ -113,7 +113,7 @@ void BBCALL bbPokeFloat( bbBank *b,bb_int_t offset,bb_float_t value ){
 	*(float*)(b->data+offset)=value;
 }
 
-bb_int_t BBCALL  bbReadBytes( bbBank *b,bbStream *s,bb_int_t offset,bb_int_t count ){
+bb_int_t BBCALL  bbReadBytes( bbBank *b,BBStream *s,bb_int_t offset,bb_int_t count ){
 	if( bb_env.debug ){
 		debugBank( b,offset+count-1 );
 		debugStream( s );
@@ -121,7 +121,7 @@ bb_int_t BBCALL  bbReadBytes( bbBank *b,bbStream *s,bb_int_t offset,bb_int_t cou
 	return s->read( b->data+offset,count );
 }
 
-bb_int_t BBCALL  bbWriteBytes( bbBank *b,bbStream *s,bb_int_t offset,bb_int_t count ){
+bb_int_t BBCALL  bbWriteBytes( bbBank *b,BBStream *s,bb_int_t offset,bb_int_t count ){
 	if( bb_env.debug ){
 		debugBank( b,offset+count-1 );
 		debugStream( s );

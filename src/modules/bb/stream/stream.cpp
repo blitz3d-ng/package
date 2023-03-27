@@ -7,60 +7,60 @@
 
 using namespace std;
 
-static set<bbStream*> stream_set;
+static set<BBStream*> stream_set;
 
-void debugStream( bbStream *s ){
+void debugStream( BBStream *s ){
 	if( stream_set.count(s) ) return;
 	RTEX( "Stream does not exist" );
 }
 
-bbStream::bbStream(){
+BBStream::BBStream(){
 	stream_set.insert( this );
 }
 
-bbStream::~bbStream(){
+BBStream::~BBStream(){
 	stream_set.erase( this );
 }
 
-bb_int_t BBCALL bbEof( bbStream *s ){
+bb_int_t BBCALL bbEof( BBStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	return s->eof();
 }
 
-bb_int_t BBCALL bbReadAvail( bbStream *s ){
+bb_int_t BBCALL bbReadAvail( BBStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	return s->avail();
 }
 
-bb_int_t BBCALL bbReadByte( bbStream *s ){
+bb_int_t BBCALL bbReadByte( BBStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,1 );
 	return n;
 }
 
-bb_int_t BBCALL bbReadShort( bbStream *s ){
+bb_int_t BBCALL bbReadShort( BBStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,2 );
 	return n;
 }
 
-bb_int_t BBCALL bbReadInt( bbStream *s ){
+bb_int_t BBCALL bbReadInt( BBStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	int n=0;
 	s->read( (char*)&n,4 );
 	return n;
 }
 
-bb_float_t BBCALL bbReadFloat( bbStream *s ){
+bb_float_t BBCALL bbReadFloat( BBStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	float n=0;
 	s->read( (char*)&n,4 );
 	return n;
 }
 
-BBStr * BBCALL bbReadString( bbStream *s ){
+BBStr * BBCALL bbReadString( BBStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	int len;
 	BBStr *str=d_new BBStr();
@@ -74,7 +74,7 @@ BBStr * BBCALL bbReadString( bbStream *s ){
 	return str;
 }
 
-BBStr * BBCALL bbReadLine( bbStream *s ){
+BBStr * BBCALL bbReadLine( BBStream *s ){
 	if( bb_env.debug ) debugStream( s );
 	unsigned char c;
 	BBStr *str=d_new BBStr();
@@ -86,27 +86,27 @@ BBStr * BBCALL bbReadLine( bbStream *s ){
 	return str;
 }
 
-void BBCALL bbWriteByte( bbStream *s,bb_int_t n ){
+void BBCALL bbWriteByte( BBStream *s,bb_int_t n ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,1 );
 }
 
-void BBCALL bbWriteShort( bbStream *s,bb_int_t n ){
+void BBCALL bbWriteShort( BBStream *s,bb_int_t n ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,2 );
 }
 
-void BBCALL bbWriteInt( bbStream *s,bb_int_t n ){
+void BBCALL bbWriteInt( BBStream *s,bb_int_t n ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,4 );
 }
 
-void BBCALL bbWriteFloat( bbStream *s,bb_float_t n ){
+void BBCALL bbWriteFloat( BBStream *s,bb_float_t n ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( (char*)&n,4 );
 }
 
-void BBCALL bbWriteString( bbStream *s,BBStr *t ){
+void BBCALL bbWriteString( BBStream *s,BBStr *t ){
 	if( bb_env.debug ) debugStream( s );
 	int n=t->size();
 	s->write( (char*)&n,4 );
@@ -114,14 +114,14 @@ void BBCALL bbWriteString( bbStream *s,BBStr *t ){
 	delete t;
 }
 
-void BBCALL bbWriteLine( bbStream *s,BBStr *t ){
+void BBCALL bbWriteLine( BBStream *s,BBStr *t ){
 	if( bb_env.debug ) debugStream( s );
 	s->write( t->data(),t->size() );
 	s->write( "\r\n",2 );
 	delete t;
 }
 
-void BBCALL bbCopyStream( bbStream *s,bbStream *d,bb_int_t buff_size ){
+void BBCALL bbCopyStream( BBStream *s,BBStream *d,bb_int_t buff_size ){
 	if( bb_env.debug ){
 		debugStream( s );debugStream( d );
 		if( buff_size<1 || buff_size>1024*1024 ) RTEX( "Illegal buffer size" );

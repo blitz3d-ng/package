@@ -2,17 +2,15 @@
 #define BB_RUNTIME_SDL_H
 
 #include <bb/runtime/runtime.h>
-#include <bb/graphics/graphics.h>
-#include <bb/blitz2d.gl/blitz2d.gl.h>
+#include <bb/graphics.sdl/graphics.sdl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 
 #include <SDL.h>
 
 class SDLGraphics;
 
-class SDLRuntime : public GLB3DGraphics, public BBRuntime, public BBContextDriver{
+class SDLRuntime :public BBRuntime{
 private:
-	SDL_Window* wnd;
 	SDLGraphics *graphics;
 
 	static void _refreshTitle( void *data,void *context );
@@ -20,23 +18,11 @@ private:
 
 	void resize();
 public:
-	SDLRuntime( SDL_Window *wnd );
+	SDLRuntime();
 	~SDLRuntime();
 
-	// context driver
-	int numGraphicsDrivers();
-	void graphicsDriverInfo( int driver,std::string *name,int *c );
-	int numGraphicsModes( int driver );
-	void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c );
-	void windowedModeInfo( int *c );
+	void afterCreate();
 
-	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags );
-	void closeGraphics( BBGraphics *graphics );
-	bool graphicsLost();
-
-	void flip( bool vwait );
-
-	// runtime
 	void asyncStop();
 	void asyncRun();
 	void asyncEnd();

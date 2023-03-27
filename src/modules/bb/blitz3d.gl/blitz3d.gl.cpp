@@ -1,6 +1,6 @@
 
 #include "../stdutil/stdutil.h"
-#include <bb/blitz2d.gl/blitz2d.gl.h>
+#include <bb/graphics.gl/graphics.gl.h>
 #include <bb/system/system.h>
 #include "blitz3d.gl.h"
 #include "default.glsl.h"
@@ -11,6 +11,10 @@ using namespace std;
 //degrees to radians and back
 static const float dtor=0.0174532925199432957692369076848861f;
 static const float rtod=1/dtor;
+
+#if defined(BB_MOBILE) || defined(BB_OVR) || defined(BB_NX)
+#define GLES
+#endif
 
 class GLLight : public BBLightRep{
 public:
@@ -98,11 +102,20 @@ public:
 	}
 
 	void unlock(){
+#ifndef GLES
 		GL( glBindBuffer( GL_ARRAY_BUFFER,vertex_buffer ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,max_verts*sizeof(GLVertex),verts,GL_STATIC_DRAW ) );
+#endif
+	}
 
+	void offsetIndices( int offset ){
 		GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,index_buffer ) );
-		GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER,max_tris*3*sizeof(unsigned int),tris,GL_STATIC_DRAW ) );
+		GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER,(max_tris-offset)*3*sizeof(unsigned int),tris+offset*3,GL_STATIC_DRAW ) );
+	}
+
+	void offsetArrays( int offset ){
+		GL( glBindBuffer( GL_ARRAY_BUFFER,vertex_buffer ) );
+		GL( glBufferData( GL_ARRAY_BUFFER,(max_verts-offset)*sizeof(GLVertex),verts+offset,GL_STATIC_DRAW ) );
 	}
 
 	void setVertex( int n,const void *_v ){
@@ -415,7 +428,7 @@ public:
 			const RenderState::TexState &ts=rs.tex_states[i];
 			GL( glActiveTexture( GL_TEXTURE0+i ) );
 
-			GLB2DTextureCanvas *canvas=(GLB2DTextureCanvas*)ts.canvas;
+			GLTextureCanvas *canvas=(GLTextureCanvas*)ts.canvas;
 
 			if( !canvas ){
 				GL( glBindTexture( GL_TEXTURE_2D,0 ) );
@@ -522,12 +535,12 @@ public:
 		if( !glIsProgram( defaultProgram ) ){
 			GL( glUseProgram( 0 ) );
 
-			// _bbLog( "rebuilding shader...\n" );
+			// LOGD( "rebuilding shader...\n" );
 
 			string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
 			defaultProgram=_bbGLCompileProgram( "default.glsl",src );
 			if( !defaultProgram ){
-				abort();
+				RTEX( "Failed to compile shader" );
 			}
 
 			GL( glUseProgram( defaultProgram ) );
@@ -579,8 +592,16 @@ public:
 	void render( BBMesh *m,int first_vert,int vert_cnt,int first_tri,int tri_cnt ){
 		GLMesh *mesh=(GLMesh*)m;
 
+		// TODO: there's probably more performance to be found here...
+		mesh->offsetIndices( first_tri );
+
 		GL( glBindVertexArray( mesh->vertex_array ) );
-		GL( glDrawRangeElements( GL_TRIANGLES,first_tri,tri_cnt*3,tri_cnt*3,GL_UNSIGNED_INT,0 ) );
+#ifdef GLES
+		mesh->offsetArrays( first_vert );
+		GL( glDrawElements( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,0 ) );
+#else
+		GL( glDrawElementsBaseVertex( GL_TRIANGLES,tri_cnt*3,GL_UNSIGNED_INT,0,first_vert ) );
+#endif
 		GL( glBindVertexArray( 0 ) );
 	}
 
@@ -612,22 +633,17 @@ public:
   int getTrianglesDrawn()const{ return 0; }
 };
 
-static GLScene *scene=0; // TODO: I don't like this...consider a better approach...
-
 BBScene *GLB3DGraphics::createScene( int w,int h,float d,int flags ){
-  return (scene=d_new GLScene( w,h,d ));
-}
+	if( scene_set.size() ) return 0;
 
-BBScene *GLB3DGraphics::verifyScene( BBScene *scene ){
-  return scene;
-}
-
-void GLB3DGraphics::freeScene( BBScene *scene ){
+	GLScene *scene=d_new GLScene( w,h,d );
+	scene_set.insert( scene );
+	return scene;
 }
 
 void GLB3DGraphics::resize( int w,int h,float dpi ){
-	if( scene ){
-		scene->resize( w,h,dpi );
+	for( auto scene:scene_set ){
+		((GLScene*)scene)->resize( w,h,dpi );
 	}
 }
 

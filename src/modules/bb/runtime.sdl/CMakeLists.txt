@@ -1,6 +1,6 @@
 if(TARGET SDL2)
   bb_start_module(runtime.sdl)
-  set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz2d bb.graphics bb.blitz3d.gl bb.timer)
+  set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.graphics.sdl bb.blitz3d.gl bb.timer)
   set(SOURCES runtime.sdl.cpp runtime.sdl.h)
 
   set(LIBS SDL2)

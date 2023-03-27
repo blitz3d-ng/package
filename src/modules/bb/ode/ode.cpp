@@ -7,31 +7,31 @@ float _odeVector[4];
 
 extern dSurfaceParameters _odeSurfaceParams;
 
-void BBCALL _odeInitODE(){
+BBLIB void BBCALL _odeInitODE(){
   dInitODE();
 }
 
-void BBCALL _odeCloseODE(){
+BBLIB void BBCALL _odeCloseODE(){
   dCloseODE();
 }
 
-float BBCALL _odeVectorX(){
+BBLIB float BBCALL _odeVectorX(){
   return _odeVector[0];
 }
 
-float BBCALL _odeVectorY(){
+BBLIB float BBCALL _odeVectorY(){
   return _odeVector[1];
 }
 
-float BBCALL _odeVectorZ(){
+BBLIB float BBCALL _odeVectorZ(){
   return _odeVector[2];
 }
 
-float BBCALL _odeVectorW(){
+BBLIB float BBCALL _odeVectorW(){
   return _odeVector[3];
 }
 
-void BBCALL _odeGeomSyncEntity( bb_ptr_t g,Entity *e ){
+BBLIB void BBCALL _odeGeomSyncEntity( bb_ptr_t g,Entity *e ){
 	dQuaternion dq;
 	dGeomGetQuaternion( (dGeomID)g,dq );
 	Quat q;

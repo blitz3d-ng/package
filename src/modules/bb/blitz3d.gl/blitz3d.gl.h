@@ -7,8 +7,6 @@
 class GLB3DGraphics : public B3DGraphics{
 public:
 	BBScene *createScene( int w,int h,float d,int flags );
-	BBScene *verifyScene( BBScene *scene );
-	void freeScene( BBScene *scene );
 
 	void resize( int w,int h,float dpi );
 };

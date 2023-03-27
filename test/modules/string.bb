@@ -1,0 +1,22 @@
+
+Context "String"
+
+Expect String( "Kevin",2 )="KevinKevin", "Expects a twice-repeated string"
+Expect Left( "Kevin",3 )="Kev", "Expects first three characters"
+Expect Right( "Kevin",2 )="in", "Expects last two characters"
+Expect Replace( "Kevin","vin","lsey" )="Kelsey", "Expects characters to be replaced"
+Expect Instr( "Kevin","v" )=3, "Expects to find a 'v'"
+Expect Mid( "Kevin",2,3 )="evi", "Expects three characters"
+Expect Upper( "Kevin" )="KEVIN", "Expects all uppercase characters"
+Expect Lower( "Kevin" )="kevin", "Expects all lowercase characters"
+Expect Trim( "  Kevin   " )="Kevin", "Expects no leading or trailing whitespace"
+Expect LSet( "Kevin",8 )="Kevin   ", "Expects padding on right"
+Expect RSet( "Kevin",8 )="   Kevin", "Expects padding on left"
+Expect Chr( 65 )="A", "Expects 65 to be 'A'"
+Expect Asc( "A" )=65, "Expects 'A' to be 65"
+Expect Len( "Kevin" )=5, "Expects 5 characters"
+Expect Hex( 255 )="000000FF", "Expects a hex string"
+Expect Right( Bin(14),5 )="01110", "Expects a binary string"
+
+Expect CurrentDate$()<>"", "Gets the current date"
+Expect CurrentTime$()<>"", "Gets the current time"

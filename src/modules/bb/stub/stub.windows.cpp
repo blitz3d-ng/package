@@ -6,6 +6,11 @@
 using namespace std;
 
 extern "C" int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
+	string cmd_line;
+	for( int i=1;i<argc;i++ ){
+		cmd_line+=argv[i];
+	}
+	bbStartup( argv[0],cmd_line.c_str() );
 	const char *t=bbruntime_run( bbMain,true );
 	return t!=0;
 };

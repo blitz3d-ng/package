@@ -1,3 +1,7 @@
+if(BB_IOS)
+  return()
+endif()
+
 if (BB_MINGW32)
   set(MINGW true)
 endif()

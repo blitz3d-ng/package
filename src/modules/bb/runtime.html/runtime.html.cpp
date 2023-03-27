@@ -2,12 +2,12 @@
 #include "../stdutil/stdutil.h"
 #include "runtime.html.h"
 
-#include <bb/blitz2d.gl/blitz2d.gl.h>
+#include <bb/graphics.gl/graphics.gl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 
-class Canvas : public GLB2DDefaultCanvas{
+class Canvas : public GLDefaultCanvas{
 public:
-	Canvas( int mode,int flags ):GLB2DDefaultCanvas(0,mode,flags){
+	Canvas( ContextResources *res,int mode,int flags ):GLDefaultCanvas( res,0,mode,flags){
 	}
 
 	int getWidth()const{
@@ -24,11 +24,11 @@ public:
 };
 
 
-class HtmlRuntime : public BBRuntime, public BBContextDriver, public GLB3DGraphics, public B2DGraphics{
+class HtmlRuntime : public BBRuntime, public BBContextDriver, public GLB3DGraphics, public GLGraphics{
 public:
 	HtmlRuntime(){
-		front_canvas=d_new Canvas( 0,0 );
-		back_canvas=d_new Canvas( 0,0 );
+		front_canvas=d_new Canvas( &res,0,0 );
+		back_canvas=d_new Canvas( &res,0,0 );
 
 		bbContextDriver=this;
 		bbSceneDriver=this;
@@ -136,19 +136,9 @@ public:
 	BBMovie *openMovie( const std::string &file,int flags ){
 		return 0;
 	}
-	BBMovie *verifyMovie( BBMovie *movie ){
-		return 0;
-	}
-	void closeMovie( BBMovie *movie ){
-	}
 
 	BBFont *loadFont( const std::string &font,int height,int flags ){
 		return 0;
-	}
-	BBFont *verifyFont( BBFont *font ){
-		return 0;
-	}
-	void freeFont( BBFont *font ){
 	}
 
 	// runtime
@@ -174,10 +164,4 @@ BBRuntime *bbCreateOpenGLRuntime() {
 	return bbCreateHTMLRuntime();
 }
 
-BBMODULE_CREATE( runtime_html ){
-	return true;
-}
-
-BBMODULE_DESTROY( runtime_html ){
-	return true;
-}
+BBMODULE_EMPTY( runtime_html );

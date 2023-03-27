@@ -1,94 +1,94 @@
 # set(CMAKE_UNITY_BUILD ${ENABLE_UNITY_BUILD})
 
-set (SOURCE src/code/Assimp.cpp
-  src/code/BaseImporter.h
-  src/code/BaseImporter.cpp
-  src/code/BaseProcess.h
-  src/code/BaseProcess.cpp
-  src/code/CalcTangentsProcess.cpp
-  src/code/CalcTangentsProcess.h
-  src/code/ConvertToLHProcess.h
-  src/code/ConvertToLHProcess.cpp
-  src/code/ComputeUVMappingProcess.cpp
-  src/code/ComputeUVMappingProcess.h
-  src/code/DeboneProcess.cpp
-  src/code/DeboneProcess.h
-  src/code/DefaultIOStream.h
-  src/code/DefaultIOStream.cpp
-  src/code/DefaultIOSystem.h
-  src/code/DefaultIOSystem.cpp
-  src/code/DefaultLogger.cpp
-  src/code/FindDegenerates.cpp
-  src/code/FindDegenerates.h
-  src/code/FindInstancesProcess.cpp
-  src/code/FindInstancesProcess.h
-  src/code/FindInvalidDataProcess.cpp
-  src/code/FindInvalidDataProcess.h
-  src/code/FixNormalsStep.cpp
-  src/code/FixNormalsStep.h
-  src/code/GenFaceNormalsProcess.cpp
-  src/code/GenFaceNormalsProcess.h
-  src/code/GenVertexNormalsProcess.cpp
-  src/code/GenVertexNormalsProcess.h
-  src/code/Importer.h
-  src/code/Importer.cpp
-  src/code/ImporterRegistry.cpp
-  src/code/ImproveCacheLocality.cpp
-  src/code/ImproveCacheLocality.h
-  src/code/JoinVerticesProcess.cpp
-  src/code/JoinVerticesProcess.h
-  src/code/LimitBoneWeightsProcess.cpp
-  src/code/LimitBoneWeightsProcess.h
-  src/code/MaterialSystem.h
-  src/code/MaterialSystem.cpp
-  src/code/OptimizeGraph.cpp
-  src/code/OptimizeGraph.h
-  src/code/OptimizeMeshes.cpp
-  src/code/OptimizeMeshes.h
-  src/code/PostStepRegistry.cpp
-  src/code/PretransformVertices.cpp
-  src/code/PretransformVertices.h
-  src/code/ProcessHelper.h
-  src/code/ProcessHelper.cpp
-  src/code/RemoveVCProcess.cpp
-  src/code/RemoveVCProcess.h
-  src/code/RemoveRedundantMaterials.cpp
-  src/code/RemoveRedundantMaterials.h
-  src/code/SceneCombiner.h
-  src/code/SceneCombiner.cpp
-  src/code/ScenePreprocessor.h
-  src/code/ScenePreprocessor.cpp
-  src/code/SortByPTypeProcess.cpp
-  src/code/SortByPTypeProcess.h
-  src/code/SpatialSort.h
-  src/code/SpatialSort.cpp
-  src/code/SplitByBoneCountProcess.cpp
-  src/code/SplitByBoneCountProcess.h
-  src/code/SplitLargeMeshes.cpp
-  src/code/SplitLargeMeshes.h
-  src/code/TextureTransform.cpp
-  src/code/TextureTransform.h
-  src/code/TriangulateProcess.cpp
-  src/code/TriangulateProcess.h
-  src/code/ValidateDataStructure.h
-  src/code/ValidateDataStructure.cpp
-  src/code/Version.cpp
-  src/code/VertexTriangleAdjacency.h
-  src/code/VertexTriangleAdjacency.cpp
+set (SOURCE tree/code/Assimp.cpp
+  tree/code/BaseImporter.h
+  tree/code/BaseImporter.cpp
+  tree/code/BaseProcess.h
+  tree/code/BaseProcess.cpp
+  tree/code/CalcTangentsProcess.cpp
+  tree/code/CalcTangentsProcess.h
+  tree/code/ConvertToLHProcess.h
+  tree/code/ConvertToLHProcess.cpp
+  tree/code/ComputeUVMappingProcess.cpp
+  tree/code/ComputeUVMappingProcess.h
+  tree/code/DeboneProcess.cpp
+  tree/code/DeboneProcess.h
+  tree/code/DefaultIOStream.h
+  tree/code/DefaultIOStream.cpp
+  tree/code/DefaultIOSystem.h
+  tree/code/DefaultIOSystem.cpp
+  tree/code/DefaultLogger.cpp
+  tree/code/FindDegenerates.cpp
+  tree/code/FindDegenerates.h
+  tree/code/FindInstancesProcess.cpp
+  tree/code/FindInstancesProcess.h
+  tree/code/FindInvalidDataProcess.cpp
+  tree/code/FindInvalidDataProcess.h
+  tree/code/FixNormalsStep.cpp
+  tree/code/FixNormalsStep.h
+  tree/code/GenFaceNormalsProcess.cpp
+  tree/code/GenFaceNormalsProcess.h
+  tree/code/GenVertexNormalsProcess.cpp
+  tree/code/GenVertexNormalsProcess.h
+  tree/code/Importer.h
+  tree/code/Importer.cpp
+  tree/code/ImporterRegistry.cpp
+  tree/code/ImproveCacheLocality.cpp
+  tree/code/ImproveCacheLocality.h
+  tree/code/JoinVerticesProcess.cpp
+  tree/code/JoinVerticesProcess.h
+  tree/code/LimitBoneWeightsProcess.cpp
+  tree/code/LimitBoneWeightsProcess.h
+  tree/code/MaterialSystem.h
+  tree/code/MaterialSystem.cpp
+  tree/code/OptimizeGraph.cpp
+  tree/code/OptimizeGraph.h
+  tree/code/OptimizeMeshes.cpp
+  tree/code/OptimizeMeshes.h
+  tree/code/PostStepRegistry.cpp
+  tree/code/PretransformVertices.cpp
+  tree/code/PretransformVertices.h
+  tree/code/ProcessHelper.h
+  tree/code/ProcessHelper.cpp
+  tree/code/RemoveVCProcess.cpp
+  tree/code/RemoveVCProcess.h
+  tree/code/RemoveRedundantMaterials.cpp
+  tree/code/RemoveRedundantMaterials.h
+  tree/code/SceneCombiner.h
+  tree/code/SceneCombiner.cpp
+  tree/code/ScenePreprocessor.h
+  tree/code/ScenePreprocessor.cpp
+  tree/code/SortByPTypeProcess.cpp
+  tree/code/SortByPTypeProcess.h
+  tree/code/SpatialSort.h
+  tree/code/SpatialSort.cpp
+  tree/code/SplitByBoneCountProcess.cpp
+  tree/code/SplitByBoneCountProcess.h
+  tree/code/SplitLargeMeshes.cpp
+  tree/code/SplitLargeMeshes.h
+  tree/code/TextureTransform.cpp
+  tree/code/TextureTransform.h
+  tree/code/TriangulateProcess.cpp
+  tree/code/TriangulateProcess.h
+  tree/code/ValidateDataStructure.h
+  tree/code/ValidateDataStructure.cpp
+  tree/code/Version.cpp
+  tree/code/VertexTriangleAdjacency.h
+  tree/code/VertexTriangleAdjacency.cpp
 
-  src/code/XFileHelper.h
-  src/code/XFileImporter.cpp
-  src/code/XFileImporter.h
-  src/code/XFileParser.cpp
-  src/code/XFileParser.h
+  tree/code/XFileHelper.h
+  tree/code/XFileImporter.cpp
+  tree/code/XFileImporter.h
+  tree/code/XFileParser.cpp
+  tree/code/XFileParser.h
 )
 
-set (SOURCE ${SOURCE} src/contrib/ConvertUTF/ConvertUTF.c src/contrib/ConvertUTF/ConvertUTF.h)
+set (SOURCE ${SOURCE} tree/contrib/ConvertUTF/ConvertUTF.c tree/contrib/ConvertUTF/ConvertUTF.h)
 
 add_library (assimp STATIC ${SOURCE})
 target_output_to_toolchain(assimp)
 
-target_include_directories(assimp SYSTEM PUBLIC src/include include)
+target_include_directories(assimp SYSTEM PUBLIC tree/include include)
 target_link_libraries(assimp ${ZLIB})
 
 target_compile_definitions(assimp PRIVATE

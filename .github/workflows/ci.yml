@@ -27,10 +27,9 @@ jobs:
           Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
-      - shell: pwsh
-        run: |
-          $env:blitzpath='_release'
-          .\test\suite.bat
+
+      # we're gonna upload this now so it's not contaminated with the mesa
+      # files
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
         with:
@@ -38,6 +37,34 @@ jobs:
           path: |
             _release/bin
             _release/*.exe
+
+      - name: Install dummy sound card
+        shell: pwsh
+        run: |
+          Start-Service audio*
+          Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/3.6/Scream3.6.zip -OutFile C:\Scream3.6.zip
+          Extract-7Zip -Path C:\Scream3.6.zip -DestinationPath C:\Scream
+          $cert = (Get-AuthenticodeSignature C:\Scream\Install\driver\Scream.sys).SignerCertificate
+          $store = [System.Security.Cryptography.X509Certificates.X509Store]::new("TrustedPublisher", "LocalMachine")
+          $store.Open("ReadWrite")
+          $store.Add($cert)
+          $store.Close()
+          cd C:\Scream\Install\driver
+          C:\Scream\Install\helpers\devcon install Scream.inf *Scream
+
+      - name: Install mesa
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://github.com/pal1000/mesa-dist-win/releases/download/23.0.0/mesa3d-23.0.0-release-msvc.7z -OutFile mesa3d.7z
+          Extract-7Zip -Path mesa3d.7z -DestinationPath mesa
+          cp mesa\$env:platform\*.dll _release\bin\
+          ls _release\bin
+
+      - name: Test suite
+        shell: pwsh
+        run: |
+          $env:blitzpath='_release'
+          .\test\suite.bat
 
   # mingw:
   #   name: MinGW
@@ -97,6 +124,12 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
+
+      - name: Install dummy sound card
+        run: |
+          sudo apt-get install -y linux-sound-base linux-modules-extra-`uname -r`
+          sudo modprobe snd-dummy
+
       - run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
 
   ios:
@@ -171,11 +204,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - run: ./env.sh emscripten make compiler
-      # TODO: find out why the first time always fails...
-      - run: ./env.sh emscripten make ENV=release PLATFORM=emscripten
-        continue-on-error: true
-      - run: ./env.sh emscripten make ENV=release PLATFORM=emscripten
+      - run: ./env.sh emscripten make emscripten
 
   nx:
     name: Switch

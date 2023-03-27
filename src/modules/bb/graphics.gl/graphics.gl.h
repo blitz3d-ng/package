@@ -2,6 +2,7 @@
 #define BB_GRAPHICS_GL_H
 
 #include <bb/graphics/graphics.h>
+#include <map>
 
 #ifdef BB_DESKTOP
 #include <GL/glew.h>
@@ -21,7 +22,7 @@
 		#include <OpenGLES/ES3/gl.h>
 	#endif
 
-	#if defined(__BIONIC__) || defined(BB_NX)
+	#if defined(BB_NDK) || defined(BB_NX)
 		#include <GLES3/gl3.h>
 	#endif
 #endif
@@ -36,5 +37,34 @@ void bbGLGraphicsCheckErrors( const char *file, int line );
 const char * bbGLFramebufferStatusString( GLenum status );
 #define GL( func ) func; bbGLGraphicsCheckErrors( __FILE__,__LINE__ );
 // #endif
+
+struct ContextResources{
+	unsigned int ubo;
+	GLuint default_program;
+	GLuint plot_buffer,plot_array;
+	GLuint line_buffer,line_array;
+	GLuint quad_buffer[2],quad_array[2];
+	GLuint oval_buffer,oval_array;
+	GLuint text_buffer,text_array;
+	std::map<BBImageFont*,unsigned int> font_textures;
+};
+
+class GLGraphics:public BBGraphics{
+protected:
+	BBImageFont *def_font;
+	ContextResources res={ 0 };
+
+public:
+	BBFont *getDefaultFont()const;
+
+	//OBJECTS
+	BBCanvas *createCanvas( int width,int height,int flags );
+	BBCanvas *loadCanvas( const std::string &file,int flags );
+
+	// b2dgraphics
+	BBMovie *openMovie( const std::string &file,int flags );
+};
+
+#include "canvas.h"
 
 #endif

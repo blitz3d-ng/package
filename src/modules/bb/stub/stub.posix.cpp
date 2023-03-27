@@ -8,7 +8,7 @@
 #include <cstring>
 using namespace std;
 
-#ifndef BB_ANDROID
+#ifndef BB_NDK
 #ifdef BB_DEBUG
 #define BB_BACKTRACE
 #endif
@@ -74,7 +74,7 @@ void dump_backtrace(int sig) {
 extern "C"
 int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 #ifdef BB_BACKTRACE
-	signal(SIGSEGV, dump_backtrace);
+	// signal(SIGSEGV, dump_backtrace);
 #endif
 
 #ifdef BB_DEBUG
@@ -118,8 +118,8 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 			}else{
 				cerr<<ex.err<<endl;
 			}
+			retcode=1;
 		}
-		retcode=1;
 	}
 	bbruntime_destroy();
 

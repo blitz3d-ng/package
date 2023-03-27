@@ -45,6 +45,24 @@ using namespace std;
 #define DEBUGGER "debugger.console"
 #endif
 
+#ifdef WIN32
+#include <StackWalker.h>
+
+class MyStackWalker:public StackWalker{
+public:
+	MyStackWalker():StackWalker(){}
+protected:
+	virtual void OnOutput( LPCSTR szText ){
+		fprintf( stderr,"%s",szText );StackWalker::OnOutput( szText );
+	}
+};
+
+static long WINAPI exceptionFilter( EXCEPTION_POINTERS *e ){
+	MyStackWalker sw; sw.ShowCallstack( GetCurrentThread(),e->ContextRecord );
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+#endif
+
 #ifdef BB_POSIX
 #include <unistd.h>
 #include <execinfo.h>
@@ -305,6 +323,10 @@ int main( int argc,char *argv[] ){
 	signal(SIGSEGV, handle_segfault);
 #endif
 
+#ifdef WIN32
+	SetUnhandledExceptionFilter( exceptionFilter );
+#endif
+
 	string in_file,out_file,rt,args,targetid,signerId,teamId;
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
@@ -342,6 +364,8 @@ int main( int argc,char *argv[] ){
 			dumpkeys=dumphelp=true;
 		}else if( t=="-llvm" ){
 			usellvm=true;
+		}else if( t=="-llvm=off" ){
+			usellvm=false;
 		}else if( t=="-v" ){
 			versinfo=true;
 		}else if( t=="-e" ){
@@ -610,8 +634,7 @@ int main( int argc,char *argv[] ){
 
 		if( !veryquiet ) cout<<"Executing..."<<endl;
 
-		runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
-
+		ret=runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
 #ifdef WIN32
 		if( dbgHandle ) FreeLibrary( dbgHandle );
 #endif

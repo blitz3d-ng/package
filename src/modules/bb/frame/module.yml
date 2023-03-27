@@ -1,5 +1,0 @@
-name: Frame
-description: Provides window handling.
-
-platforms:
-  - windows

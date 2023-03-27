@@ -23,6 +23,8 @@ private:
 	gxRuntime( HINSTANCE hinst,HWND hwnd );
 	~gxRuntime();
 
+	void afterCreate();
+
 	void refreshSystemProperties();
 
 	void suspend();
@@ -38,7 +40,6 @@ private:
 	/***** APP INTERFACE *****/
 public:
 	static gxRuntime *openRuntime( HINSTANCE hinst );
-	static void closeRuntime( gxRuntime *runtime );
 
 	void asyncStop();
 	void asyncRun();

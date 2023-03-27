@@ -1,8 +1,0 @@
-name: iOS System
-description: Provides access to various iOS operating system functions.
-
-platforms:
-  - ios
-
-dependencies:
-  - system

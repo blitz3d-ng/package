@@ -12,7 +12,7 @@ class Loader_Assimp final : public MeshLoader{
 protected:
 	const aiScene* scene;
 
-	MeshModel *parseNode( const struct aiNode* nd );
+	Object *parseNode( const struct aiNode* nd,Object *parent );
 public:
 	MeshModel *load( const std::string &f,const Transform &conv,int hint );
 };

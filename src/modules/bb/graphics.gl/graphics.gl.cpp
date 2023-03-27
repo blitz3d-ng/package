@@ -6,7 +6,7 @@ using namespace std;
 
 GLuint _bbGLCompileShader( GLenum type,const string &name,const string &source ){
 #ifdef BB_DESKTOP
-	static char version[]         = "#version 410    \n";
+	static char version[]         = "#version 330    \n";
 #else
 	static char version[]         = "#version 300 es \n";
 #endif
@@ -27,18 +27,19 @@ GLuint _bbGLCompileShader( GLenum type,const string &name,const string &source )
 	GLint status;
 	GL( glGetShaderiv(shader, GL_COMPILE_STATUS, &status) );
 	if( status==0 ){
-		_bbLog( "Couldn't compile shader: %s\n",name.c_str() );
+		LOGD( "Couldn't compile shader: %s\n",name.c_str() );
 		GLint logLength;
 		GL( glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength) );
 		if( logLength>0 ){
 			GLchar *log = (GLchar*)malloc(logLength);
 			GL( glGetShaderInfoLog(shader, logLength, &logLength, log) );
 			if( log[0]!=0 ){
-				_bbLog( "Shader log: %s\n",log );
+				LOGD( "Shader log: %s\n",log );
 			}
 			free( log );
 		}
 		GL( glDeleteShader(shader) );
+
 		shader=0;
 	}
 	return shader;
@@ -49,7 +50,7 @@ GLuint _bbGLCompileProgram( const string &name,const string &src ){
 	GLuint frag=_bbGLCompileShader( GL_FRAGMENT_SHADER,name,src );
 
 	if( vert==0||frag==0 ){
-		_bbLog( "Failed to compile.\n" );
+		LOGD( "%s","Failed to compile shader" );
 		exit(1);
 	}
 	GLuint program=GL( glCreateProgram() );
@@ -61,7 +62,7 @@ GLuint _bbGLCompileProgram( const string &name,const string &src ){
 	GL( glLinkProgram( program ) );
 	GL( glGetProgramiv( program,GL_LINK_STATUS,&link_status ) );
 	if( !link_status ){
-		_bbLog( "Failed to link.\n" );
+		LOGD( "%s","Failed to link linker" );
 
 		GLint maxLength = 0;
 		GL( glGetProgramiv( program,GL_INFO_LOG_LENGTH,&maxLength ) );
@@ -69,7 +70,7 @@ GLuint _bbGLCompileProgram( const string &name,const string &src ){
 		GLchar *log=(GLchar*)malloc( maxLength );
 		GL( glGetProgramInfoLog( program,maxLength,&maxLength,&log[0] ) );
 		if( log[0]!=0 ){
-			_bbLog( "%s\n",log );
+			LOGD( "%s",log );
 		}
 		free( log );
 
@@ -122,9 +123,35 @@ void bbGLGraphicsCheckErrors( const char *file, int line ){
 		if( error==GL_NO_ERROR ){
 			break;
 		}
-		_bbLog( "GL error on %s:%d: %s\n", file, line, GlErrorString( error ) );
+		LOGD( "GL error on %s:%d: %s", file, line, GlErrorString( error ) );
 	}
 }
+
+BBFont *GLGraphics::getDefaultFont()const{
+	return def_font;
+}
+
+//OBJECTS
+BBCanvas *GLGraphics::createCanvas( int width,int height,int flags ){
+	BBCanvas *canvas=d_new GLTextureCanvas( &res,width,height,flags );
+	canvas_set.insert( canvas );
+	return canvas;
+}
+
+BBCanvas *GLGraphics::loadCanvas( const std::string &file,int flags ){
+	BBPixmap *pixmap=bbLoadPixmap( file );
+	if( !pixmap ) return 0;
+
+	BBCanvas *canvas=d_new GLTextureCanvas( &res,pixmap,flags );
+	canvas_set.insert( canvas );
+	delete pixmap;
+	return canvas;
+}
+
+BBMovie *GLGraphics::openMovie( const std::string &file,int flags ){
+	return 0;
+}
+
 
 BBMODULE_CREATE( graphics_gl ){
 	return true;

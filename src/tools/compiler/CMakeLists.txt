@@ -182,3 +182,8 @@ if(BB_COVERAGE)
   set_target_properties(blitzcc PROPERTIES COMPILE_FLAGS ${BB_COVERAGE})
   set_target_properties(blitzcc PROPERTIES LINK_FLAGS ${BB_COVERAGE})
 endif()
+
+if(BB_MSVC)
+  target_link_libraries(blitzcc StackWalker)
+  target_sources(blitzcc PUBLIC ../bblaunch/dpi.manifest)
+endif()

@@ -2,12 +2,16 @@
 #define BBGRAPHICS_H
 
 #include <bb/blitz/blitz.h>
+#include "movie.h"
+#include "font.h"
 #include "canvas.h"
 #include <set>
 
 class BBGraphics{
 protected:
   std::set<BBCanvas*> canvas_set;
+	std::set<BBMovie*> movie_set;
+  std::set<BBFont*> font_set;
 
   BBCanvas *front_canvas,*back_canvas;
 
@@ -58,6 +62,14 @@ public:
   virtual BBCanvas *loadCanvas( const std::string &file,int flags )=0;
   BBCanvas *verifyCanvas( BBCanvas *canvas );
   void freeCanvas( BBCanvas *canvas );
+
+	virtual BBMovie *openMovie( const std::string &file,int flags )=0;
+	BBMovie *verifyMovie( BBMovie *movie );
+	void closeMovie( BBMovie *movie );
+
+	virtual BBFont *loadFont( const std::string &font,int height,int flags );
+	BBFont *verifyFont( BBFont *font );
+	void freeFont( BBFont *font );
 };
 
 class BBContextDriver{
@@ -68,9 +80,11 @@ protected:
 	BBGraphics *graphics;
 
 public:
-  enum{
-    GFXMODECAPS_3D=1
-  };
+	static int change( const std::string &name );
+
+	enum{
+		GFXMODECAPS_3D=1
+	};
 
 	bool graphicsOpened();
 
@@ -87,13 +101,17 @@ public:
   virtual void flip( bool vwait )=0;
 };
 
-class bbImage;
+class BBImage;
 
 #include "commands.h"
 
 extern BBGraphics *gx_graphics;
 extern BBCanvas *gx_canvas;
 
+typedef BBContextDriver *(BBCreateContextDriver)( const std::string& );
+extern std::vector<BBCreateContextDriver*> bbContextDrivers;
 extern BBContextDriver *bbContextDriver;
+
+bool BBCALL bbDefaultGraphics();
 
 #endif

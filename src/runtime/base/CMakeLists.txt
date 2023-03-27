@@ -1,6 +1,6 @@
 set(SOURCES bbruntime_dll.h runtime.cpp)
 if(BB_WINDOWS)
-  set(SOURCES ${SOURCES} bbruntime_dll.cpp bbruntime_dll.rc resource.h)
+  set(SOURCES ${SOURCES} bbruntime_dll.cpp bbruntime_dll.rc resource.h dpi.manifest)
 endif()
 
 add_library(bbruntime_dll OBJECT ${SOURCES})

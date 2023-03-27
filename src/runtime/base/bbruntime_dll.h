@@ -22,7 +22,7 @@ public:
 	virtual void shutdown();
 	virtual void checkmem( std::streambuf *buf );
 
-	virtual void execute( void (*pc)(),const char *args,Debugger *dbg );
+	virtual int execute( void (*pc)(),const char *args,Debugger *dbg );
 };
 
 struct BBSymbol{

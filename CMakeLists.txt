@@ -4,6 +4,9 @@ project (Blitz3D)
 cmake_policy(SET CMP0069 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
 
+cmake_policy(SET CMP0072 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0072 NEW)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
@@ -349,10 +352,10 @@ function(file_write_changes path src)
   endif()
 endfunction()
 
-add_subdirectory(deps)
 if(APPLE)
   enable_language(OBJC) # TODO: needed after adding SDL...seems like a deep root cmake bug
 endif()
+add_subdirectory(deps)
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")

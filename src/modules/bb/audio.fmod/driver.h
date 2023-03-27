@@ -21,8 +21,6 @@ public:
 	bool init();
 
 	BBSound *loadSound( const std::string &filename,bool use_3d );
-	BBSound *verifySound( BBSound *sound );
-	void freeSound( BBSound *sound );
 
 	void setPaused( bool paused );	//master pause
 	void setVolume( float volume );	//master volume

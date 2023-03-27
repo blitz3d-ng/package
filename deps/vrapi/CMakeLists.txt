@@ -1,3 +1,7 @@
+if(BB_OVR)
+  return()
+endif()
+
 set(VRAPI_SRC_DIR ${OVR_HOME}/VrApi/Libs/Android/${ANDROID_ABI}/${CMAKE_BUILD_TYPE})
 set(VRAPI_DEST_DIR ${PROJECT_BINARY_DIR})
 

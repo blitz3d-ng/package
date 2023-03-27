@@ -5,6 +5,9 @@
 #include <bb/graphics/graphics.h>
 
 BBMODULE_LINK( graphics ){
+	rtSym( "%CountRenderers",bbCountRenderers );
+	rtSym( "$RendererName%renderer",bbRendererName );
+	rtSym( "%SetRenderer$name",bbSetRenderer );
 	rtSym( "%CountGfxDrivers",bbCountGfxDrivers );
 	rtSym( "$GfxDriverName%driver",bbGfxDriverName );
 	rtSym( "SetGfxDriver%driver",bbSetGfxDriver );
@@ -52,6 +55,33 @@ BBMODULE_LINK( graphics ){
 	rtSym( "CopyPixel%src_x%src_y%src_buffer%dest_x%dest_y%dest_buffer=0",bbCopyPixel );
 	rtSym( "CopyPixelFast%src_x%src_y%src_buffer%dest_x%dest_y%dest_buffer=0",bbCopyPixelFast );
 	rtSym( "CopyRect%source_x%source_y%width%height%dest_x%dest_y%src_buffer=0%dest_buffer=0",bbCopyRect );
+	rtSym( "Origin%x%y",bbOrigin );
+	rtSym( "Viewport%x%y%width%height",bbViewport );
+	rtSym( "Color%red%green%blue",bbColor );
+	rtSym( "GetColor%x%y",bbGetColor );
+	rtSym( "%ColorRed",bbColorRed );
+	rtSym( "%ColorGreen",bbColorGreen );
+	rtSym( "%ColorBlue",bbColorBlue );
+	rtSym( "ClsColor%red%green%blue",bbClsColor );
+	rtSym( "Cls",bbCls );
+	rtSym( "Plot%x%y",bbPlot );
+	rtSym( "Rect%x%y%width%height%solid=1",bbRect );
+	rtSym( "Oval%x%y%width%height%solid=1",bbOval );
+	rtSym( "Line%x1%y1%x2%y2",bbLine );
+	rtSym( "Text%x%y$text%centre_x=0%centre_y=0",bbText );
+	rtSym( "%LoadFont$fontname%height=12%bold=0%italic=0%underline=0",bbLoadFont );
+	rtSym( "FreeFont%font",bbFreeFont );
+	rtSym( "SetFont%font",bbSetFont );
+	rtSym( "%FontWidth",bbFontWidth );
+	rtSym( "%FontHeight",bbFontHeight );
+	rtSym( "%StringWidth$string",bbStringWidth );
+	rtSym( "%StringHeight$string",bbStringHeight );
+	rtSym( "%OpenMovie$file",bbOpenMovie );
+	rtSym( "%DrawMovie%movie%x=0%y=0%w=-1%h=-1",bbDrawMovie );
+	rtSym( "%MovieWidth%movie",bbMovieWidth );
+	rtSym( "%MovieHeight%movie",bbMovieHeight );
+	rtSym( "%MoviePlaying%movie",bbMoviePlaying );
+	rtSym( "CloseMovie%movie",bbCloseMovie );
 	rtSym( "%LoadImage$bmpfile",bbLoadImage );
 	rtSym( "%LoadAnimImage$bmpfile%cellwidth%cellheight%first%count",bbLoadAnimImage );
 	rtSym( "%CopyImage%image",bbCopyImage );

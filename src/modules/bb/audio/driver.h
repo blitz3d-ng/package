@@ -2,6 +2,7 @@
 #define BBAUDIODRIVER_H
 
 #include <string>
+#include <set>
 
 #include "channel.h"
 #include "sound.h"
@@ -10,6 +11,8 @@ class BBAudioDriver{
 public:
   virtual ~BBAudioDriver();
   /***** GX INTERFACE *****/
+
+  std::set<BBSound*> sound_set;
 public:
   enum{
     CD_MODE_ONCE=1,CD_MODE_LOOP,CD_MODE_ALL
@@ -18,8 +21,8 @@ public:
   virtual bool init()=0;
 
   virtual BBSound *loadSound( const std::string &filename,bool use_3d )=0;
-  virtual BBSound *verifySound( BBSound *sound )=0;
-  virtual void freeSound( BBSound *sound )=0;
+  BBSound *verifySound( BBSound *sound );
+  void freeSound( BBSound *sound );
 
   virtual void setPaused( bool paused )=0;	//master pause
   virtual void setVolume( float volume )=0;	//master volume

@@ -5,7 +5,6 @@
 #include <bb/blitz/module.h>
 #include <bb/input/input.h>
 
-#define DIRECTINPUT_VERSION 0x800
 #include <dinput.h>
 
 class gxRuntime;

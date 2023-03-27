@@ -23,8 +23,8 @@ void BBCALL bbPokeByte( bbBank *bank,bb_int_t offset,bb_int_t value );
 void BBCALL bbPokeShort( bbBank *bank,bb_int_t offset,bb_int_t value );
 void BBCALL bbPokeInt( bbBank *bank,bb_int_t offset,bb_int_t value );
 void BBCALL bbPokeFloat( bbBank *bank,bb_int_t offset,bb_float_t value );
-bb_int_t BBCALL bbReadBytes( bbBank *bank,bbStream *file,bb_int_t offset,bb_int_t count );
-bb_int_t BBCALL bbWriteBytes( bbBank *bank,bbStream *file,bb_int_t offset,bb_int_t count );
+bb_int_t BBCALL bbReadBytes( bbBank *bank,BBStream *file,bb_int_t offset,bb_int_t count );
+bb_int_t BBCALL bbWriteBytes( bbBank *bank,BBStream *file,bb_int_t offset,bb_int_t count );
 
 #ifdef __cplusplus
 }

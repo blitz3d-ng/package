@@ -1,14 +1,10 @@
 
-#include "std.h"
 #include "gxruntime.h"
 #include <bb/blitz/app.h>
 #include <bb/runtime/runtime.h>
 #include <bb/system/system.h>
 #include <bb/event/event.h>
-#include "gxgraphics.h"
 #include "zmouse.h"
-
-gxRuntime *gx_runtime;
 
 #undef SPI_SETMOUSESPEED
 #define SPI_SETMOUSESPEED	113
@@ -62,14 +58,6 @@ gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst ){
 	return runtime;
 }
 
-void gxRuntime::closeRuntime( gxRuntime *r ){
-	if( !runtime || runtime!=r ) return;
-
-	delete runtime;
-	runtime=0;
-
-}
-
 //////////////////////////
 // RUNTIME CONSTRUCTION //
 //////////////////////////
@@ -95,6 +83,10 @@ gxRuntime::~gxRuntime(){
 	UnregisterClass( "Blitz Runtime Class",hinst );
 
 	CoUninitialize();
+}
+
+void gxRuntime::afterCreate(){
+	bbDefaultGraphics();
 }
 
 void gxRuntime::backupGraphics(){
@@ -464,10 +456,7 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 	}
 
 	if( !graphics ){
-		gxGraphics::wipeSystemProperties();
 		curr_driver=0;
-	}else{
-		((gxGraphics*)graphics)->setSystemProperties();
 	}
 
 	gfx_lost=false;
