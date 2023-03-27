@@ -10,7 +10,6 @@ IF "%Platform%" == "x64" (
 echo Running suite for %Platform%...
 
 _release\bin\%BLITZCC% -r test test\all.bb
-echo %ERRORLEVEL%
 IF %ERRORLEVEL% NEQ 0 (
   EXIT /B %ERRORLEVEL%
 )
