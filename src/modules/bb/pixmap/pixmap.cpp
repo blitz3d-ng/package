@@ -42,7 +42,7 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 	}
 
 #ifdef BB_IOS
-	LOGD( "load: %s", f.c_str() );
+	LOGD( "load: %s\n", f.c_str() );
 	return bbLoadPixmapWithUIKit( f.c_str() );
 #else
 	return bbLoadPixmapWithFreeImage( f );
@@ -52,7 +52,7 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 void BBPixmap::mask( int r,int g,int b ){
 	for( int i=0;i<width*height;i++ ){
 		unsigned char *p=&bits[bpp*i];
-		if( p[0]==r && p[1]==g && p[2]==b ) p[3]=0;
+		if( p[0]==0 && p[1]==0 && p[2]==0 ) p[3]=0.0f;
 	}
 }
 

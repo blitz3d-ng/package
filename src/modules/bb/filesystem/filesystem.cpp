@@ -3,6 +3,7 @@
 #include "filesystem.h"
 #include <bb/stream/stream.h>
 #include <fstream>
+#include <streambuf>
 #include <string>
 #include <set>
 using namespace std;
@@ -15,9 +16,18 @@ BBDir::~BBDir(){
 BBFileSystem::~BBFileSystem(){
 }
 
+std::streambuf *BBFileSystem::openFile( const std::string &file,ios_base::openmode n ){
+	filebuf *buf=d_new filebuf();
+	if( buf->open( file.c_str(),n|ios_base::binary ) ){
+		return buf;
+	}
+	delete buf;
+	return 0;
+}
+
 struct BBFile : public BBStream{
-	filebuf *buf;
-	BBFile( filebuf *f ):buf(f){
+	streambuf *buf;
+	BBFile( streambuf *f ):buf(f){
 	}
 	~BBFile(){
 		delete buf;
@@ -58,13 +68,12 @@ static inline void debugDir( BBDir *d ){
 
 static BBFile *open( BBStr *f,ios_base::openmode n ){
 	string t=*f;
-	filebuf *buf=d_new filebuf();
-	if( buf->open( t.c_str(),n|ios_base::binary ) ){
+	streambuf *buf=gx_filesys->openFile( t,n );
+	if( buf ){
 		BBFile *f=d_new BBFile( buf );
 		file_set.insert( f );
 		return f;
 	}
-	delete buf;
 	return 0;
 }
 

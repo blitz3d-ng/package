@@ -24,6 +24,11 @@ public:
 	}
 };
 
+void SDLGraphics::onAppChange( void *data,void *context ){
+	SDLGraphics *graphics=(SDLGraphics*)context;
+	SDL_SetWindowTitle( graphics->wnd,bbApp().title.c_str() );
+}
+
 SDLGraphics::SDLGraphics( SDL_Window *wnd,SDL_GLContext ctx ):wnd(wnd),context(ctx){
 	unsigned framebuffer=0;
 #ifdef BB_IOS
@@ -42,6 +47,8 @@ SDLGraphics::SDLGraphics( SDL_Window *wnd,SDL_GLContext ctx ):wnd(wnd),context(c
 
 	for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
 
+	bbAppOnChange.add( onAppChange,this );
+
 	resize();
 }
 
@@ -49,6 +56,8 @@ SDLGraphics::~SDLGraphics(){
 	if( front_canvas ) delete front_canvas;
 	if( back_canvas ) delete back_canvas;
 	front_canvas=back_canvas=0;
+
+	bbAppOnChange.remove( onAppChange,this );
 
 	SDL_GL_DeleteContext( context );
 	SDL_DestroyWindow( wnd );wnd=0;
@@ -155,7 +164,7 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 		inited=true;
 	}
 
-	SDL_Window* wnd=SDL_CreateWindow( "",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,1,1,SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI );
+	SDL_Window* wnd=SDL_CreateWindow( bbApp().title.c_str(),SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,1,1,SDL_WINDOW_OPENGL|SDL_WINDOW_ALLOW_HIGHDPI );
 	if( wnd==NULL ){
 		LOGD( "%s","failed to create window" );
 		return 0;
@@ -232,7 +241,9 @@ bool SDLContextDriver::graphicsLost(){
 }
 
 void SDLContextDriver::flip( bool vwait ){
-	// SDL_GL_SetSwapInterval( vwait ? 1 : 0 );
+	if( SDL_GL_SetSwapInterval( vwait ? -1 : 0 )==-1 ){
+		SDL_GL_SetSwapInterval( 1 );
+	}
 	SDL_GL_SwapWindow( ((SDLGraphics*)graphics)->wnd );
 }
 

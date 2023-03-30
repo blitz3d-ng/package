@@ -27,6 +27,8 @@ protected:
 	int window_width,window_height,drawable_width,drawable_height;
 
 	unsigned short gamma_red[256], gamma_green[256], gamma_blue[256];
+
+	static void onAppChange( void *data,void *context );
 public:
 	SDL_Window *wnd;
 	SDL_GLContext context;

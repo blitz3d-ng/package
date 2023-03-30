@@ -1,4 +1,4 @@
-if(BB_NX)
+if(BB_OVR OR BB_NX)
   return()
 endif()
 

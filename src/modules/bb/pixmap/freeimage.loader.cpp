@@ -1,5 +1,6 @@
 
 #include <bb/blitz/blitz.h>
+#include <bb/filesystem/filesystem.h>
 #include "../stdutil/stdutil.h"
 #include "pixmap.h"
 using namespace std;
@@ -7,23 +8,49 @@ using namespace std;
 #include <FreeImage.h>
 #include <string.h>
 
-BBPixmap *bbLoadPixmapWithFreeImage( const std::string &file ){
+unsigned DLL_CALLCONV readProc(void *buffer, unsigned size, unsigned count, fi_handle handle) {
+	return ((streambuf*)handle)->sgetn( (char*)buffer,size*count );
+}
+
+unsigned DLL_CALLCONV writeProc(void *buffer, unsigned size, unsigned count, fi_handle handle) {
+	return ((streambuf*)handle)->sputn( (char*)buffer,size*count );
+}
+
+int DLL_CALLCONV seekProc(fi_handle handle, long offset, int origin) {
+	return ((streambuf*)handle)->pubseekoff( offset,(origin==SEEK_SET?ios_base::beg:(origin==SEEK_CUR?ios_base::cur:ios_base::end)) );
+}
+
+long DLL_CALLCONV tellProc(fi_handle handle) {
+	return ((streambuf*)handle)->pubseekoff( 0,ios_base::cur );
+}
+
+BBPixmap *bbLoadPixmapWithFreeImage( const std::string &path ){
 	static bool inited=false;
 	if( !inited ){
 		FreeImage_Initialise();
 		inited=true;
 	}
 
-	string f=file;
-	FREE_IMAGE_FORMAT fmt=FreeImage_GetFileType( f.c_str(),f.size() );
-	if( fmt==FIF_UNKNOWN ) return 0;
-	// if( fmt==FIF_UNKNOWN ){
-	// 	int n=f.find( "." );if( n==string::npos ) return 0;
-	// 	fmt=FreeImage_GetFileTypeFromExt( f.substr(n+1).c_str() );
-	// 	if( fmt==FIF_UNKNOWN ) return 0;
-	// }
+	FreeImageIO io;
+	io.read_proc  = readProc;
+	io.write_proc = writeProc;
+	io.seek_proc  = seekProc;
+	io.tell_proc  = tellProc;
 
-	FIBITMAP *t_dib=FreeImage_Load( fmt,f.c_str(),0 );
+	string f=path;
+	std::streambuf *buf=gx_filesys->openFile( f,std::ios_base::in );
+	if( !buf ){
+		return 0;
+	}
+
+	FREE_IMAGE_FORMAT fmt = FreeImage_GetFileTypeFromHandle( &io,(fi_handle)buf,0 );
+	if( fmt==FIF_UNKNOWN ){
+		int n=f.find( "." );if( n==string::npos ) return 0;
+		fmt=FreeImage_GetFIFFromFilename( f.substr(n+1).c_str() );
+		if( fmt==FIF_UNKNOWN ) return 0;
+	}
+
+	FIBITMAP *t_dib=FreeImage_LoadFromHandle( fmt,&io,(fi_handle)buf,0 );
 	if( !t_dib ) return 0;
 
 	bool trans=FreeImage_GetBPP( t_dib )==32 ||	FreeImage_IsTransparent( t_dib );
