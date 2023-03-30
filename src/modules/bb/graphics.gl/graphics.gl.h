@@ -52,9 +52,10 @@ struct ContextResources{
 class GLGraphics:public BBGraphics{
 protected:
 	BBImageFont *def_font;
-	ContextResources res={ 0 };
 
 public:
+	ContextResources res={ 0 }; // TODO: will make protected again
+
 	BBFont *getDefaultFont()const;
 
 	//OBJECTS

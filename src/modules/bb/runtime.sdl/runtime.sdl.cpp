@@ -5,6 +5,9 @@
 #include <bb/system/system.h>
 #include <bb/input/input.h>
 #include <bb/hook/hook.h>
+#ifdef BB_NDK
+#include <bb/system.ndk/system.ndk.h>
+#endif
 
 #include <SDL_syswm.h>
 
@@ -85,6 +88,11 @@ void SDLRuntime::afterCreate(){
 			bbJoysticks.push_back( j );
 		}
 	}
+
+#ifdef BB_NDK
+	NDKSystemDriver *sysdriver=(NDKSystemDriver*)bbSystemDriver;
+	sysdriver->setJNI( (jobject)SDL_AndroidGetActivity(),(JNIEnv*)SDL_AndroidGetJNIEnv() );
+#endif
 
 	BBContextDriver::change( "gl" );
 	bbDefaultGraphics();

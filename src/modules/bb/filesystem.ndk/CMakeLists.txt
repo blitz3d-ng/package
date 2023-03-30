@@ -1,0 +1,7 @@
+if(BB_NDK)
+  bb_start_module(filesystem.ndk)
+  set(DEPENDS_ON bb.stream bb.filesystem)
+  set(SOURCES filesystem.ndk.cpp filesystem.ndk.h)
+  set(SYSTEM_LIBS android)
+  bb_end_module()
+endif()

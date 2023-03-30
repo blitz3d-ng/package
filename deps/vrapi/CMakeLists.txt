@@ -1,4 +1,4 @@
-if(BB_OVR)
+if(NOT BB_OVR)
   return()
 endif()
 

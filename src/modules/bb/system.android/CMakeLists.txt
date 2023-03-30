@@ -1,6 +1,0 @@
-if(BB_NDK)
-  bb_start_module(system.android)
-  set(DEPENDS_ON bb.system)
-  set(SOURCES system.android.cpp system.android.h)
-  bb_end_module()
-endif()
