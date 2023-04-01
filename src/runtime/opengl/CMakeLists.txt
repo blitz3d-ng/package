@@ -1,7 +1,3 @@
-if(NOT BB_DESKTOP AND NOT BB_MOBILE AND NOT BB_EMSCRIPTEN AND NOT BB_NX)
-  return()
-endif()
-
 bb_start_runtime(opengl OpenGL bbCreateOpenGLRuntime)
 
 bb_addmodule(stub)
@@ -34,5 +30,6 @@ bb_addmodule(blitz3d.gl)
 bb_addmodule(userlibs)
 bb_addmodule(runtime.sdl)
 bb_addmodule(runtime.html)
+bb_addmodule(runtime.vrapi)
 
 bb_end_runtime()

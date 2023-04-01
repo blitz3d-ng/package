@@ -477,6 +477,8 @@ int GLTextureCanvas::getDepth()const{ return 8; }
 
 void GLTextureCanvas::set(){
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
+	GLenum bufs[]={ GL_COLOR_ATTACHMENT0 };
+	GL( glDrawBuffers( 1,bufs ) );
 }
 
 void GLTextureCanvas:: unset(){
@@ -506,7 +508,7 @@ unsigned int GLTextureCanvas::framebufferId(){
 
 	GL( glGenRenderbuffers( 1,&depthbuffer ) );
 	GL( glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer ) );
-	GL( glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height ) );
+	GL( glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height ) );
 	GL( glBindRenderbuffer( GL_RENDERBUFFER,0 ) );
 
 	GL( glGenFramebuffers( 1,&framebuffer ) );

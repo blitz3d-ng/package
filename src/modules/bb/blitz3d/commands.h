@@ -118,10 +118,12 @@ bb_int_t BBCALL bbTriangleVertex( Surface *surface,bb_int_t index,bb_int_t verte
 Entity * BBCALL bbCreateCamera( Entity *parent );
 void BBCALL bbCameraZoom( Camera *camera,bb_float_t zoom );
 void BBCALL bbCameraRange( Camera *camera,bb_float_t near,bb_float_t far );
+void BBCALL bbCameraFOV( Camera *camera,bb_float_t left,bb_float_t right,bb_float_t up,bb_float_t down );
 void BBCALL bbCameraClsColor( Camera *camera,bb_float_t red,bb_float_t green,bb_float_t blue );
 void BBCALL bbCameraClsMode( Camera *camera,bb_int_t cls_color,bb_int_t cls_zbuffer );
 void BBCALL bbCameraProjMode( Camera *camera,bb_int_t mode );
 void BBCALL bbCameraViewport( Camera *camera,bb_int_t x,bb_int_t y,bb_int_t width,bb_int_t height );
+void BBCALL bbCameraBuffer( Camera *camera,BBCanvas *buffer );
 void BBCALL bbCameraFogColor( Camera *camera,bb_float_t red,bb_float_t green,bb_float_t blue );
 void BBCALL bbCameraFogRange( Camera *camera,bb_float_t near,bb_float_t far );
 void BBCALL bbCameraFogMode( Camera *camera,bb_int_t mode );

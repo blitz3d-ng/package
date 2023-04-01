@@ -6,7 +6,9 @@
 Camera::Camera(){
 	setZoom( 1 );
 	setRange( 1,1000 );
+	setFOV( 0,0,0,0 );
 	setViewport( 0,0,0,0 );
+	setCanvas( 0 );
 	setClsColor( Vector() );
 	setClsMode( true,true );
 	setProjMode( PROJ_PERSP );
@@ -25,9 +27,18 @@ void Camera::setRange( float n,float f ){
 	local_valid=false;
 }
 
+void Camera::setFOV( float left,float right,float up,float down ){
+	frustum_left=left;frustum_right=right;frustum_up=up;frustum_down=down;
+	local_valid=false;
+}
+
 void Camera::setViewport( int x,int y,int w,int h ){
 	vp_x=x;vp_y=y;vp_w=w;vp_h=h;
 	local_valid=false;
+}
+
+void Camera::setCanvas( BBCanvas *c ){
+	canvas=c;
 }
 
 void Camera::setClsColor( const Vector &v ){
@@ -56,6 +67,10 @@ void Camera::setFogMode( int mode ){
 
 void Camera::getViewport( int &x,int &y,int &w,int &h ){
 	x=vp_x;y=vp_y;w=vp_w;h=vp_h;
+}
+
+BBCanvas *Camera::getCanvas(){
+	return canvas;
 }
 
 const Vector &Camera::getClsColor(){
@@ -88,10 +103,14 @@ int Camera::getFogMode(){
 
 const Frustum &Camera::getFrustum()const{
 	if( !local_valid ){
-		float ar=(float)vp_h/vp_w;
-		frustum_w=frustum_nr*2/zoom;
-		frustum_h=frustum_nr*2/zoom*ar;
-		new( &local_frustum ) Frustum( frustum_nr,frustum_fr,frustum_w,frustum_h );
+		if( frustum_left ){
+			new( &local_frustum ) Frustum( frustum_nr,frustum_fr,frustum_left,frustum_right,frustum_up,frustum_down );
+		}else{
+			float ar=(float)vp_h/vp_w;
+			frustum_w=frustum_nr*2/zoom;
+			frustum_h=frustum_nr*2/zoom*ar;
+			new( &local_frustum ) Frustum( frustum_nr,frustum_fr,frustum_w,frustum_h );
+		}
 		local_valid=true;
 	}
 	return local_frustum;

@@ -113,6 +113,10 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	// just the name?
 	args.push_back( "linker" );
 
+	if( target.type=="ovr" ){
+		args.push_back( "-u" );args.push_back( "ANativeActivity_onCreate" );
+	}
+
 #ifdef BB_POSIX
 	args.push_back("--error-limit=0");
 	// args.push_back("--lto-O0");

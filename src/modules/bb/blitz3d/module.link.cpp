@@ -113,10 +113,12 @@ BBMODULE_LINK( blitz3d ){
 	rtSym( "%CreateCamera%parent=0",bbCreateCamera );
 	rtSym( "CameraZoom%camera#zoom",bbCameraZoom );
 	rtSym( "CameraRange%camera#near#far",bbCameraRange );
+	rtSym( "CameraFOV%camera#left#right#up#down",bbCameraFOV );
 	rtSym( "CameraClsColor%camera#red#green#blue",bbCameraClsColor );
 	rtSym( "CameraClsMode%camera%cls_color%cls_zbuffer",bbCameraClsMode );
 	rtSym( "CameraProjMode%camera%mode",bbCameraProjMode );
 	rtSym( "CameraViewport%camera%x%y%width%height",bbCameraViewport );
+	rtSym( "CameraBuffer%camera%buffer",bbCameraBuffer );
 	rtSym( "CameraFogColor%camera#red#green#blue",bbCameraFogColor );
 	rtSym( "CameraFogRange%camera#near#far",bbCameraFogRange );
 	rtSym( "CameraFogMode%camera%mode",bbCameraFogMode );

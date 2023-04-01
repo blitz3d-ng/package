@@ -41,6 +41,7 @@ layout(std140) uniform BBRenderState {
   float BrushShininess;
   int FullBright;
   int FogMode;
+  int AlphaTest;
 } RS;
 
 #ifdef VERTEX
@@ -128,6 +129,7 @@ void main() {
                      Diffuse    * bbMaterialColor +
                      Specular   * vec4( 1.0 );
     bbVertex_Color = clamp( bbVertex_Color, 0.0, 1.0 );
+    bbVertex_Color.a = bbMaterialColor.a; // TODO: is this right?
   }else{
     bbVertex_Color = bbMaterialColor;
   }
@@ -174,6 +176,10 @@ void main() {
 
   if( RS.FogMode>0 ){
     bbFragColor=mix( bbFragColor,RS.FogColor,bbVertex_FogFactor );
+  }
+
+  if( RS.AlphaTest==1 && bbFragColor.a==0.0 ){
+    discard;
   }
 }
 #endif

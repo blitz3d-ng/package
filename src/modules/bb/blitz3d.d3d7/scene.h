@@ -42,8 +42,8 @@ public:
 	void setFogMode( int mode );
 	void setZMode( int mode );
 	void setViewport( int x,int y,int w,int h );
-	void setOrthoProj( float nr,float fr,float nr_w,float nr_h );
-	void setPerspProj( float nr,float fr,float nr_w,float nr_h );
+	void setOrthoProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b );
+	void setPerspProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b );
 	void setViewMatrix( const Matrix *matrix );
 	void setWorldMatrix( const Matrix *matrix );
 	void setRenderState( const RenderState &state );

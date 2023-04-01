@@ -252,6 +252,8 @@ void Codegen_LLVM::injectMain(){
 	// TODO: not the cleanest, but works for now...
 	if( target=="ios"||target=="ios-sim"||target=="android" ){
 		mainsym="SDL_main";
+	}else if( target=="ovr" ){
+		mainsym="vr_main";
 	}
 
 	llvm::Type *int_ty=llvm::Type::getInt32Ty( *context );

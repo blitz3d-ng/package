@@ -67,8 +67,8 @@ void SDLGraphics::resize(){
 	SDL_GetWindowSize( wnd,&window_width,&window_height );
 	SDL_GL_GetDrawableSize( wnd,&drawable_width,&drawable_height );
 
-	((GLCanvas*)front_canvas)->resize( window_width,window_height,getDensity() );
-	((GLCanvas*)back_canvas)->resize( window_width,window_height,getDensity() );
+	((GLCanvas*)front_canvas)->resize( drawable_width,drawable_height,1.0 );
+	((GLCanvas*)back_canvas)->resize( drawable_width,drawable_height,1.0 );
 }
 
 void SDLGraphics::backup(){

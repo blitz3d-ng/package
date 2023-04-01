@@ -911,6 +911,11 @@ BBLIB void BBCALL bbCameraRange( Camera *c,bb_float_t nr,bb_float_t fr ){
 	c->setRange( nr,fr );
 }
 
+BBLIB void BBCALL bbCameraFOV( Camera *c,bb_float_t left,bb_float_t right,bb_float_t up,bb_float_t down ){
+	debugCamera(c);
+	c->setFOV( left*dtor,right*dtor,up*dtor,down*dtor );
+}
+
 BBLIB void BBCALL bbCameraClsColor( Camera *c,bb_float_t r,bb_float_t g,bb_float_t b ){
 	debugCamera(c);
 	c->setClsColor( Vector( r*ctof,g*ctof,b*ctof ) );
@@ -929,6 +934,11 @@ BBLIB void BBCALL bbCameraProjMode( Camera *c,bb_int_t mode ){
 BBLIB void BBCALL bbCameraViewport( Camera *c,bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h ){
 	debugCamera(c);
 	c->setViewport( x,y,w,h );
+}
+
+BBLIB void BBCALL bbCameraBuffer( Camera *c,BBCanvas *canvas ){
+	debugCamera(c);
+	c->setCanvas( canvas );
 }
 
 BBLIB void BBCALL bbCameraFogRange( Camera *c,bb_float_t nr,bb_float_t fr ){

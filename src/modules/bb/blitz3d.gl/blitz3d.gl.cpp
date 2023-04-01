@@ -171,12 +171,12 @@ struct UniformState{
 	float brush_shininess;
 	int fullbright;
 	int fog_mode;
+	int alpha_test;
 };
 
 class GLScene : public BBScene{
 private:
 	int context_width,context_height;
-	float dpi;
 	bool wireframe;
 	UniformState us={ 0 };
 	GLuint defaultProgram=0;
@@ -243,16 +243,11 @@ private:
 	}
 
 public:
-	GLScene( int w,int h,float d ):context_width(w),context_height(h),dpi(d),wireframe(false){
+	GLScene():wireframe(false){
 		memset( &us,0,sizeof(UniformState) );
 
 		const float MIDLEVEL[]={ 0.5f,0.5f,0.5f,1.0f };
 		setAmbient( MIDLEVEL );
-	}
-
-	void resize( int w,int h,float d ){
-		context_width=w;context_height=h;
-		dpi=d;
 	}
 
 	int  hwTexUnits(){ return 8; }
@@ -301,46 +296,66 @@ public:
 			break;
 		}
 	}
+
+	void setCanvas( int w,int h ){
+		context_width=w;
+		context_height=h;
+	}
+
 	void setViewport( int x,int y,int w,int h ){
 		y=context_height-(h+y);
-
-		x*=dpi;y*=dpi;
-		w*=dpi;h*=dpi;
 
 		GL( glViewport( x,y,w,h ) );
 		GL( glScissor( x,y,w,h ) );
 	}
-	void setOrthoProj( float nr,float fr,float w,float h ){}
 
-	// lifted from Mesa3D
-	void _math_matrix_frustum( float *mat,
-		      GLfloat left, GLfloat right,
-		      GLfloat bottom, GLfloat top,
-		      GLfloat nearval, GLfloat farval )
-	{
-	   GLfloat x, y, a, b, c, d;
-
-	   x = (2.0F*nearval) / (right-left);
-	   y = (2.0F*nearval) / (top-bottom);
-	   a = (right+left) / (right-left);
-	   b = (top+bottom) / (top-bottom);
-	   c = -(farval+nearval) / ( farval-nearval);
-	   d = -(2.0F*farval*nearval) / (farval-nearval);  /* error? */
-
-	#define M(row,col)  mat[col*4+row]
-	   M(0,0) = x;     M(0,1) = 0.0F;  M(0,2) = a;      M(0,3) = 0.0F;
-	   M(1,0) = 0.0F;  M(1,1) = y;     M(1,2) = b;      M(1,3) = 0.0F;
-	   M(2,0) = 0.0F;  M(2,1) = 0.0F;  M(2,2) = c;      M(2,3) = d;
-	   M(3,0) = 0.0F;  M(3,1) = 0.0F;  M(3,2) = -1.0F;  M(3,3) = 0.0F;
-	#undef M
+	void setProj( const float matrix[16] ){
+		GLint projLocation=GL( glGetUniformLocation( defaultProgram,"bbProjMatrix" ) );
+		GL( glUniformMatrix4fv( projLocation,1,GL_FALSE,matrix ) );
 	}
 
-	void setPerspProj( float nr,float fr,float w,float h ){
-		float projmatrix[16];
-		_math_matrix_frustum( projmatrix,-w/2.0,w/2.0,-h/2.0,h/2.0,nr,fr );
+	void setOrthoProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b ){
+		float mat[16]={
+			1.0,0.0,0.0,0.0,
+			0.0,1.0,0.0,0.0,
+			0.0,0.0,1.0,0.0,
+			0.0,0.0,0.0,1.0
+		};
 
-		GLint projLocation=GL( glGetUniformLocation( defaultProgram,"bbProjMatrix" ) );
-		GL( glUniformMatrix4fv( projLocation,1,GL_FALSE,projmatrix ) );
+		float w=nr_r-nr_l;
+		float h=nr_b-nr_t;
+
+		float W=2/w;
+		float H=2/h;
+		float Q=1/(fr-nr);
+		mat[0]=W;
+		mat[5]=H;
+		mat[10]=Q;
+		mat[11]=0;
+		mat[14]=-Q*nr;
+		mat[15]=1;
+
+		setProj( mat );
+	}
+
+	void setPerspProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b ){
+		float mat[16]={
+			1.0,0.0,0.0,0.0,
+			0.0,1.0,0.0,0.0,
+			0.0,0.0,1.0,0.0,
+			0.0,0.0,0.0,1.0
+		};
+
+		mat[0] = (2.0f*nr) / (nr_r-nr_l);
+		mat[5] = (2.0f*nr) / (nr_t-nr_b);
+		mat[8] = (nr_r+nr_l) / (nr_r-nr_l);
+		mat[9] = (nr_t+nr_b) / (nr_t-nr_b);
+		mat[10] = -(fr+nr) / (fr-nr);
+		mat[11] = -1.0f;
+		mat[14] = -(2.0f*fr*nr) / (fr-nr);
+		mat[15] = 0.0f;
+
+		setProj( mat );
 	}
 
 	void setViewMatrix( const Matrix *matrix ){
@@ -385,9 +400,9 @@ public:
 
 	void setRenderState( const RenderState &rs ){
 		if( rs.fx&FX_ALPHATEST && !(rs.fx&FX_VERTEXALPHA) ){
-			// glEnable( GL_ALPHA_TEST );
+			us.alpha_test = 1;
 		} else {
-			// glDisable( GL_ALPHA_TEST );
+			us.alpha_test = 0;
 		}
 
 		if( rs.blend==BLEND_REPLACE ){
@@ -636,15 +651,9 @@ public:
 BBScene *GLB3DGraphics::createScene( int w,int h,float d,int flags ){
 	if( scene_set.size() ) return 0;
 
-	GLScene *scene=d_new GLScene( w,h,d );
+	GLScene *scene=d_new GLScene();
 	scene_set.insert( scene );
 	return scene;
-}
-
-void GLB3DGraphics::resize( int w,int h,float dpi ){
-	for( auto scene:scene_set ){
-		((GLScene*)scene)->resize( w,h,dpi );
-	}
 }
 
 BBMODULE_CREATE( blitz3d_gl ){

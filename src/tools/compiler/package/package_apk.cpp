@@ -134,6 +134,15 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 		RUN( dex+" --dex --output="+tmpdir+"/classes.dex "+jars );
 	}
 
+	for( std::string mod:rti.modules ){
+		const Target::Module &m=target.modules.at( mod );
+		for( string lib:m.extra_files ){
+			if( lib.substr( max( 3,(int)lib.size() )-3 )==".so" ){
+				RUN( "cp "+libdir+"/"+lib+" "+tmpdir+"/lib/"+target.arch+"/" );
+			}
+		}
+	}
+
 	RUN( aapt2+" compile -v --dir "+resdir+" -o "+tmpdir+"/resources.zip" );
 	RUN( aapt2+" link -v -o "+tmpdir+"/unaligned.apk -I "+androidjar+" --manifest "+manifest+" -A "+tmpdir+"/assets "+tmpdir+"/resources.zip" );
 
