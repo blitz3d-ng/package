@@ -61,7 +61,7 @@ bool Frustum::cull( const Box &b )const{
 }
 
 float Frustum::getLeft()const{
-	return getVertex( Frustum::VERT_TLNEAR ).x;;
+	return getVertex( Frustum::VERT_TLNEAR ).x;
 }
 
 float Frustum::getRight()const{

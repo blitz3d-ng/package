@@ -175,6 +175,9 @@ void gxCanvas::setOrigin( int x,int y ){
 	origin_x=x;origin_y=y;
 }
 
+void gxCanvas::setScale( float x,float y ){
+}
+
 void gxCanvas::setHandle( int x,int y ){
 	handle_x=x;handle_y=y;
 }
@@ -403,6 +406,10 @@ int gxCanvas::getDepth()const{
 
 void gxCanvas::getOrigin( int *x,int *y )const{
 	*x=origin_x;*y=origin_y;
+}
+
+void gxCanvas::getScale( float *x,float *y )const{
+	*x=1.0;*y=1.0;
 }
 
 void gxCanvas::getHandle( int *x,int *y )const{

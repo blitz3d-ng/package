@@ -339,7 +339,7 @@ void gxScene::setViewport( int x,int y,int w,int h ){
 
 void gxScene::setOrthoProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b ){
 	float w=nr_r-nr_l;
-	float h=nr_b-nr_t;
+	float h=nr_t-nr_b;
 	if( ortho_proj && nr==frustum_nr && fr==frustum_fr && w==frustum_w && h==frustum_h ) return;
 	frustum_nr=nr;frustum_fr=fr;frustum_w=w;frustum_h=h;ortho_proj=true;
 	float W=2/w;
@@ -356,7 +356,7 @@ void gxScene::setOrthoProj( float nr,float fr,float nr_l,float nr_r,float nr_t,f
 
 void gxScene::setPerspProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b ){
 	float w=nr_r-nr_l;
-	float h=nr_b-nr_t;
+	float h=nr_t-nr_b;
 	if( !ortho_proj && nr==frustum_nr && fr==frustum_fr && w==frustum_w && h==frustum_h ) return;
 	frustum_nr=nr;frustum_fr=fr;frustum_w=w;frustum_h=h;ortho_proj=false;
 	float W=2*nr/w;
