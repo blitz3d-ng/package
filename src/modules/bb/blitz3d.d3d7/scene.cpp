@@ -116,7 +116,7 @@ target(t),dir3d(d),dir3dDev(dd),n_texs(0),tris_drawn(0){
 	fogmode=FOG_LINEAR;setFogMode( FOG_NONE );
 	zmode=-1;setZMode( ZMODE_NORMAL );
 	memset(&projmatrix,0,sizeof(projmatrix));
-	ortho_proj=true;frustum_nr=frustum_fr=frustum_w=frustum_h=0;setPerspProj( 1,1000,1,1 );
+	ortho_proj=true;frustum_nr=frustum_fr=frustum_w=frustum_h=0;setPerspProj( 1,1000,1,2,1,2 );
 	memset(&viewport,0,sizeof(viewport));viewport.dvMaxZ=1;setViewport( 0,0,target->getWidth(),target->getHeight() );
 	viewmatrix=nullmatrix;setViewMatrix( 0 );
 	worldmatrix=nullmatrix;setWorldMatrix( 0 );
