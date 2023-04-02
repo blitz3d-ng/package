@@ -1,0 +1,5 @@
+HMDPivot%():"bbHMDPivot"
+HMDHead%():"bbHMDHead"
+HMDLeftEye%():"bbHMDLeftEye"
+HMDRightEye%():"bbHMDRightEye"
+UpdateHMD():"bbUpdateHMD"

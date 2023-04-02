@@ -3,6 +3,7 @@
 #define BBFILESYSTEM_H
 
 #include <bb/blitz/blitz.h>
+#include <streambuf>
 
 class BBDir{
   /***** GX INTERFACE *****/
@@ -20,6 +21,8 @@ public:
   enum{
     FILE_TYPE_NONE=0,FILE_TYPE_FILE=1,FILE_TYPE_DIR=2
   };
+
+	virtual std::streambuf *openFile( const std::string &file,std::ios_base::openmode n );
 
   virtual bool createDir( const std::string &dir )=0;
   virtual bool deleteDir( const std::string &dir )=0;

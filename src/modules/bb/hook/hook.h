@@ -17,7 +17,9 @@ public:
   BBHook();
 
   void add( BBHookFunc func,void *context );
+  void remove( BBHookFunc func,void *context );
   void run( void *data );
 };
+
 
 #endif

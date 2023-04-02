@@ -570,11 +570,22 @@ void World::render( float tween ){
 
 	if( !bbScene->begin( _lights ) ) return;
 
+	BBCanvas *org_canvas=gx_canvas;
 	for( ;cam_que.size();cam_que.pop() ){
 
 		Camera *cam=cam_que.top();
 
-		if( !bbScene->setCamera(cam) ) continue;
+		BBCanvas *canvas=cam->getCanvas();
+		if( canvas==0 ) canvas=org_canvas;
+		// debugCanvas( canvas );
+
+		if( gx_canvas!=canvas ){
+			if( gx_canvas ) gx_canvas->unset();
+			gx_canvas=canvas;
+			gx_canvas->set();
+		}
+
+		if( !bbScene->setCamera( cam,gx_canvas ) ) continue;
 
 		vector<Mirror*>::const_iterator mir_it;
 		for( mir_it=_mirrors.begin();mir_it!=_mirrors.end();++mir_it ){
@@ -582,6 +593,12 @@ void World::render( float tween ){
 		}
 
 		render( cam,0 );
+	}
+
+	if( gx_canvas!=org_canvas ){
+		if( gx_canvas ) gx_canvas->unset();
+		gx_canvas=org_canvas;
+		gx_canvas->set();
 	}
 
 	bbScene->end();

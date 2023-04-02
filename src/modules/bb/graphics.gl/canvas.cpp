@@ -15,7 +15,7 @@ struct UniformState{
 	float texscale[2];
 	float color[3];
 	int texenabled;
-	float scale;
+	float scale[2];
 };
 
 struct Vertex{
@@ -24,7 +24,7 @@ struct Vertex{
 };
 
 static
-bool makeProgram( ContextResources *res,float dpi,float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
+bool makeProgram( ContextResources *res,float sx,float sy,float tx,float ty,bool tex_enabled,float resx,float resy,float x,float y,float width,float height,float color[3] ){
 	if( !glIsProgram( res->default_program ) ){
 		// LOGD( "rebuilding 2d shader...\n" );
 
@@ -48,10 +48,10 @@ bool makeProgram( ContextResources *res,float dpi,float tx,float ty,bool tex_ena
 	UniformState us={ 0 };
 	us.texscale[0]=tx;us.texscale[1]=ty;
 	us.texenabled=tex_enabled;
-	us.res[0]=resx*dpi;us.res[1]=resy*dpi;
+	us.res[0]=resx;us.res[1]=resy;
 	us.xywh[0]=x;us.xywh[1]=y;us.xywh[2]=width;us.xywh[3]=height;
 	us.color[0]=color[0];us.color[1]=color[1];us.color[2]=color[2];
-	us.scale=dpi;
+	us.scale[0]=sx;us.scale[1]=sy;
 
 	if( res->ubo ){
 		GL( glBindBuffer( GL_UNIFORM_BUFFER,res->ubo ) );
@@ -88,13 +88,12 @@ void initArrays( int size,GLuint* buffer,GLuint *array ){
 
 // --- GLCanvas ---
 
-GLCanvas::GLCanvas( ContextResources *res,int f ):res(res),width(0),height(0),dpi(1.0),pixels(0),handle_x(0),handle_y(0){
+GLCanvas::GLCanvas( ContextResources *res,int f ):res(res),width(0),height(0),pixels(0),scale_x(1.0),scale_y(1.0),origin_x(0.0),origin_y(0.0),handle_x(0),handle_y(0){
 	flags=f;
 }
 
 void GLCanvas::resize( int w,int h,float d ){
 	width=w;height=h;
-	dpi=d;
 }
 
 void GLCanvas::setFont( BBFont *f ){
@@ -123,15 +122,17 @@ void GLCanvas::setOrigin( int x,int y ){
 	origin_y=y;
 }
 
+void GLCanvas::setScale( float x,float y ){
+	scale_x=x;
+	scale_y=y;
+}
+
 void GLCanvas::setHandle( int x,int y ){
 	handle_x=x;
 	handle_y=y;
 }
 
 void GLCanvas::setViewport( int x,int y,int w,int h ){
-	x*=dpi;y*=dpi;
-	w*=dpi;h*=dpi;
-
 	GL( glEnable( GL_SCISSOR_TEST ) );
 	GL( glViewport( x,y,w,h ) );
 	GL( glScissor( x,y,w,h ) );
@@ -150,15 +151,17 @@ void GLCanvas::plot( int x,int y ){
 		initArrays( 1,&res->plot_buffer,&res->plot_array );
 		GL( glBindBuffer( GL_ARRAY_BUFFER,res->plot_buffer ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW ) );
+		GL( glFlush() );
 	}
 
 	// GL( glEnable(GL_PROGRAM_POINT_SIZE) );
 
-	makeProgram( res,dpi,1.0,1.0,false,width,height,x,y,1.0,1.0,color );
+	makeProgram( res,scale_x,scale_y,1.0,1.0,false,width,height,x,y,1.0,1.0,color );
 
 	GL( glBindVertexArray( res->plot_array ) );
 	GL( glDrawArrays( GL_POINTS,0,1 ) );
 	GL( glBindVertexArray( 0 ) );
+	GL( glFlush() );
 }
 
 void GLCanvas::line( int x,int y,int x2,int y2 ){
@@ -172,11 +175,12 @@ void GLCanvas::line( int x,int y,int x2,int y2 ){
 	GL( glBindBuffer( GL_ARRAY_BUFFER,res->line_buffer ) );
 	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_DYNAMIC_DRAW ) );
 
-	makeProgram( res,dpi,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( res,scale_x,scale_y,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
 
 	GL( glBindVertexArray( res->line_array ) );
 	GL( glDrawArrays( GL_LINES,0,2 ) );
 	GL( glBindVertexArray( 0 ) );
+	GL( glFlush() );
 }
 
 void GLCanvas::rect( int x,int y,int w,int h,bool solid ){
@@ -211,12 +215,13 @@ void GLCanvas::quad( int x,int y,int w,int h,bool solid,bool texenabled,float tx
 		GL( glBindBuffer( GL_ARRAY_BUFFER,0 ) );
 	}
 
-	makeProgram( res,dpi,tx,ty,texenabled,width,height,x,y,w,h,color );
+	makeProgram( res,scale_x,scale_y,tx,ty,texenabled,width,height,x,y,w,h,color );
 
 	int i=solid?0:1;
 	GL( glBindVertexArray( res->quad_array[i] ) );
 	GL( glDrawArrays( solid?GL_TRIANGLE_STRIP:GL_LINE_LOOP,0,4 ) );
 	GL( glBindVertexArray( 0 ) );
+	GL( glFlush() );
 }
 
 void GLCanvas::oval( int x,int y,int w,int h,bool solid ){
@@ -244,7 +249,7 @@ void GLCanvas::oval( int x,int y,int w,int h,bool solid ){
 		initArrays( 1,&res->oval_buffer,&res->oval_array );
 	}
 
-	makeProgram( res,dpi,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( res,scale_x,scale_y,1.0,1.0,false,width,height,0.0,0.0,1.0,1.0,color );
 
 	GL( glBindBuffer( GL_ARRAY_BUFFER,res->oval_buffer ) );
 	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_DYNAMIC_DRAW ) );
@@ -252,6 +257,7 @@ void GLCanvas::oval( int x,int y,int w,int h,bool solid ){
 	GL( glBindVertexArray( res->oval_array ) );
 	GL( glDrawArrays( solid?GL_TRIANGLE_FAN:GL_LINE_LOOP,0,verts.size() ) );
 	GL( glBindVertexArray( 0 ) );
+	GL( glFlush() );
 }
 
 void GLCanvas::text( int x,int y,const std::string &t ){
@@ -324,7 +330,7 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 		initArrays( 1,&res->text_buffer,&res->text_array );
 	}
 
-	makeProgram( res,dpi,1.0,1.0,true,width,height,0.0,0.0,1.0,1.0,color );
+	makeProgram( res,scale_x,scale_y,1.0,1.0,true,width,height,0.0,0.0,1.0,1.0,color );
 
 	GL( glBindBuffer( GL_ARRAY_BUFFER,res->text_buffer ) );
 	GL( glBufferData( GL_ARRAY_BUFFER,sizeof(Vertex)*verts.size(),verts.data(),GL_DYNAMIC_DRAW ) );
@@ -335,6 +341,7 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 	GL( glBindVertexArray( 0 ) );
 
 	GL( glDisable( GL_BLEND ) );
+	GL( glFlush() );
 }
 
 void GLCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid ){
@@ -350,6 +357,7 @@ void GLCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int s
 	GL( glBlitFramebuffer( src_x,src_y,src_w,src_h,x,src_h,src_w,y,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
 
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
+	GL( glFlush() );
 }
 
 void GLCanvas::image( BBCanvas *c,int x,int y,bool solid ){
@@ -361,6 +369,7 @@ void GLCanvas::image( BBCanvas *c,int x,int y,bool solid ){
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR ) );
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
+
 
 	float white[3]={ 1.0,1.0,1.0 };
 	quad( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true,true,1.0,1.0,white );
@@ -438,9 +447,15 @@ int GLCanvas::cubeMode()const{
 }
 
 void GLCanvas::getOrigin( int *x,int *y )const{
+	*x=origin_x;*y=origin_y;
+}
+
+void GLCanvas::getScale( float *x,float *y )const{
+	*x=scale_x;*y=scale_y;
 }
 
 void GLCanvas::getHandle( int *x,int *y )const{
+	*x=handle_x;*y=handle_y;
 }
 
 void GLCanvas::getViewport( int *x,int *y,int *w,int *h )const{
@@ -477,9 +492,11 @@ int GLTextureCanvas::getDepth()const{ return 8; }
 
 void GLTextureCanvas::set(){
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
+	GLenum bufs[]={ GL_COLOR_ATTACHMENT0 };
+	GL( glDrawBuffers( 1,bufs ) );
 }
 
-void GLTextureCanvas:: unset(){
+void GLTextureCanvas::unset(){
 	GL( glFlush() );
 
 	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
@@ -506,7 +523,7 @@ unsigned int GLTextureCanvas::framebufferId(){
 
 	GL( glGenRenderbuffers( 1,&depthbuffer ) );
 	GL( glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer ) );
-	GL( glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT,width,height ) );
+	GL( glRenderbufferStorage( GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height ) );
 	GL( glBindRenderbuffer( GL_RENDERBUFFER,0 ) );
 
 	GL( glGenFramebuffers( 1,&framebuffer ) );

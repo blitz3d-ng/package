@@ -1,5 +1,5 @@
 set(CMAKE_MFC_FLAG 0)
-add_executable(bblaunch WIN32 bblaunch.cpp checkdx.cpp checkdx.h checkie.cpp checkie.h bblaunch.rc resource.h dpi.manifest)
+add_executable(bblaunch WIN32 bblaunch.cpp checkdx.cpp checkdx.h checkie.cpp checkie.h bblaunch.rc resource.h ../../stdutil/dpi.manifest)
 target_compile_definitions(bblaunch PRIVATE UNICODE _UNICODE _WIN32_WINNT=_WIN32_WINNT_WINXP)
 target_link_libraries(bblaunch dxguid kernel32 user32 gdi32 winspool comdlg32 advapi32 shell32 ole32 oleaut32 uuid odbc32 odbccp32)
 target_output_directory(bblaunch ${RELEASE_PATH})

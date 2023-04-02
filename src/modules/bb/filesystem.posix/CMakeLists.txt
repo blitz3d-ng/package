@@ -1,6 +1,6 @@
-if(NOT BB_WINDOWS)
+if(NOT BB_WINDOWS AND NOT BB_NDK)
   bb_start_module(filesystem.posix)
   set(DEPENDS_ON bb.stream bb.filesystem)
-  set(SOURCES filesystem.posix.cpp filesystem.posix.h commands.h)
+  set(SOURCES filesystem.posix.cpp filesystem.posix.h)
   bb_end_module()
 endif()

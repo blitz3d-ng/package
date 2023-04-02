@@ -324,7 +324,7 @@ IF(BB_EMSCRIPTEN)
   add_compile_options(-pthread)
 ENDIF()
 
-IF(BB_DEBUG AND BB_CLANG)
+IF(BB_DEBUG AND BB_CLANG AND NOT BB_NDK)
   add_compile_definitions(BB_ASAN)
   add_compile_options(-fno-omit-frame-pointer -fsanitize=address)
   add_link_options(-fno-omit-frame-pointer -fsanitize=address)

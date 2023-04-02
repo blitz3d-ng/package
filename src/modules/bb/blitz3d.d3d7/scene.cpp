@@ -116,7 +116,7 @@ target(t),dir3d(d),dir3dDev(dd),n_texs(0),tris_drawn(0){
 	fogmode=FOG_LINEAR;setFogMode( FOG_NONE );
 	zmode=-1;setZMode( ZMODE_NORMAL );
 	memset(&projmatrix,0,sizeof(projmatrix));
-	ortho_proj=true;frustum_nr=frustum_fr=frustum_w=frustum_h=0;setPerspProj( 1,1000,1,1 );
+	ortho_proj=true;frustum_nr=frustum_fr=frustum_w=frustum_h=0;setPerspProj( 1,1000,1,2,1,2 );
 	memset(&viewport,0,sizeof(viewport));viewport.dvMaxZ=1;setViewport( 0,0,target->getWidth(),target->getHeight() );
 	viewmatrix=nullmatrix;setViewMatrix( 0 );
 	worldmatrix=nullmatrix;setWorldMatrix( 0 );
@@ -328,13 +328,18 @@ void gxScene::setAmbient2( const float rgb[] ){
 	ambient2=n;setAmbient();
 }
 
+void gxScene::setCanvas( int w,int h ){
+}
+
 void gxScene::setViewport( int x,int y,int w,int h ){
 	if( x==viewport.dwX && y==viewport.dwY && w==viewport.dwWidth && h==viewport.dwHeight ) return;
 	viewport.dwX=x;viewport.dwY=y;viewport.dwWidth=w;viewport.dwHeight=h;
 	dir3dDev->SetViewport( &viewport );
 }
 
-void gxScene::setOrthoProj( float nr,float fr,float w,float h ){
+void gxScene::setOrthoProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b ){
+	float w=nr_r-nr_l;
+	float h=nr_t-nr_b;
 	if( ortho_proj && nr==frustum_nr && fr==frustum_fr && w==frustum_w && h==frustum_h ) return;
 	frustum_nr=nr;frustum_fr=fr;frustum_w=w;frustum_h=h;ortho_proj=true;
 	float W=2/w;
@@ -349,7 +354,9 @@ void gxScene::setOrthoProj( float nr,float fr,float w,float h ){
 	dir3dDev->SetTransform( D3DTRANSFORMSTATE_PROJECTION,&projmatrix );
 }
 
-void gxScene::setPerspProj( float nr,float fr,float w,float h ){
+void gxScene::setPerspProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b ){
+	float w=nr_r-nr_l;
+	float h=nr_t-nr_b;
 	if( !ortho_proj && nr==frustum_nr && fr==frustum_fr && w==frustum_w && h==frustum_h ) return;
 	frustum_nr=nr;frustum_fr=fr;frustum_w=w;frustum_h=h;ortho_proj=false;
 	float W=2*nr/w;

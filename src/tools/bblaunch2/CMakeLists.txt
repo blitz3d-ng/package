@@ -16,6 +16,7 @@ set_target_properties(bblaunch2 PROPERTIES OUTPUT_NAME "BlitzNG")
 
 if(BB_MSVC)
   target_link_options(bblaunch2 PUBLIC /subsystem:windows)
+  target_sources(bblaunch2 PUBLIC ../../stdutil/dpi.manifest)
 elseif(BB_MACOS)
   set_target_properties(bblaunch2 PROPERTIES OUTPUT_NAME "Blitz3D")
 

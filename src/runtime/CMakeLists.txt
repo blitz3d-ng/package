@@ -197,7 +197,7 @@ macro(bb_end_runtime )
 
     if(BB_MSVC)
       target_link_options(${name}.shared PRIVATE /NOIMPLIB /NOEXP)
-      target_sources(${name}.shared PUBLIC ../base/dpi.manifest)
+      target_sources(${name}.shared PUBLIC ../../stdutil/dpi.manifest)
 
       if(BB_WIN32)
         set_property(TARGET ${name}.shared APPEND_STRING PROPERTY LINK_FLAGS " /include:_runtimeGetRuntime")
@@ -213,6 +213,12 @@ macro(bb_end_runtime )
     endif()
   else()
     target_output_to_toolchain(${name}.shared)
+  endif()
+
+  if(BB_OVR)
+    set(STUB_CPP ${CMAKE_CURRENT_LIST_DIR}/rt.${platform}.stub.cpp)
+    file_write_changes(${STUB_CPP} "extern \"C\" void vr_main(){}")
+    target_sources(${name}.shared PUBLIC ${STUB_CPP})
   endif()
 
   if(BB_COVERAGE)

@@ -320,6 +320,11 @@ string toupper( const string &s ){
 }
 
 string fullfilename( const string &t ){
+#ifdef BB_NDK
+	// TODO: this may not be the correct thing...
+	return t;
+#endif
+
 #ifdef WIN32
 	char buff[MAX_PATH+1],*p;
 	GetFullPathName( t.c_str(),MAX_PATH,buff,&p );

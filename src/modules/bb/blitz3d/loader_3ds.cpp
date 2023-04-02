@@ -3,6 +3,7 @@
 #include "loader_3ds.h"
 #include "meshmodel.h"
 #include "animation.h"
+#include <bb/filesystem/filesystem.h>
 
 #ifdef BETA
 #include <bb/blitz/blitz.h>
@@ -11,7 +12,7 @@
 #define _bbDebugLog( X )
 #endif
 
-static filebuf in;
+static streambuf *in=0;
 static int chunk_end;
 static vector<int> parent_end;
 static unsigned short anim_len;
@@ -33,18 +34,18 @@ static map<string,MeshModel*> name_map;
 static map<int,MeshModel*> id_map;
 
 static int nextChunk(){
-	in.pubseekoff( chunk_end,ios_base::beg );
+	in->pubseekoff( chunk_end,ios_base::beg );
 	if( chunk_end==parent_end.back() ) return 0;
 	unsigned short id;int len;
-	in.sgetn( (char*)&id,2 );
-	in.sgetn( (char*)&len,4 );
-	chunk_end=(int)in.pubseekoff( 0,ios_base::cur )+len-6;
+	in->sgetn( (char*)&id,2 );
+	in->sgetn( (char*)&len,4 );
+	chunk_end=(int)in->pubseekoff( 0,ios_base::cur )+len-6;
 	return id;
 }
 
 static void enterChunk(){
 	parent_end.push_back( chunk_end );
-	chunk_end=(int)in.pubseekoff( 0,ios_base::cur );
+	chunk_end=(int)in->pubseekoff( 0,ios_base::cur );
 }
 
 static void leaveChunk(){
@@ -54,7 +55,7 @@ static void leaveChunk(){
 
 static string parseString(){
 	string t;
-	while( int c=in.sbumpc() ) t+=char(c);
+	while( int c=in->sbumpc() ) t+=char(c);
 	return t;
 }
 
@@ -99,10 +100,10 @@ static Vector parseColor(){
 	while( int id=nextChunk() ){
 		switch( id ){
 		case CHUNK_RGBF:
-			in.sgetn( (char*)&v,12 );
+			in->sgetn( (char*)&v,12 );
 			break;
 		case CHUNK_RGBB:
-			in.sgetn( (char*)rgb,3 );
+			in->sgetn( (char*)rgb,3 );
 			v=Vector( rgb[0]/255.0f,rgb[1]/255.0f,rgb[2]/255.0f );
 		}
 	}
@@ -112,11 +113,11 @@ static Vector parseColor(){
 
 static void parseVertList(){
 	unsigned short cnt;
-	in.sgetn( (char*)&cnt,2 );
+	in->sgetn( (char*)&cnt,2 );
 	_bbDebugLog( "VertList cnt="+itoa(cnt) );
 	while( cnt-- ){
 		Surface::Vertex v;
-		in.sgetn( (char*)&v.coords,12 );
+		in->sgetn( (char*)&v.coords,12 );
 		if( conv ) v.coords=conv_tform * v.coords;
 		MeshLoader::addVertex( v );
 	}
@@ -127,21 +128,21 @@ static void parseFaceMat(){
 	_bbDebugLog( "FaceMat: "+name );
 	Brush mat=materials_map[name];
 	unsigned short cnt;
-	in.sgetn( (char*)&cnt,2 );
+	in->sgetn( (char*)&cnt,2 );
 	while( cnt-- ){
 		unsigned short face;
-		in.sgetn( (char*)&face,2 );
+		in->sgetn( (char*)&face,2 );
 		faces[face].brush=mat;
 	}
 }
 
 static void parseFaceList(){
 	unsigned short cnt;
-	in.sgetn( (char*)&cnt,2 );
+	in->sgetn( (char*)&cnt,2 );
 	_bbDebugLog( "FaceList cnt="+itoa(cnt) );
 	while( cnt-- ){
 		unsigned short v[4];
-		in.sgetn( (char*)v,8 );
+		in->sgetn( (char*)v,8 );
 		Face3DS face;
 		face.verts[0]=v[0];
 		face.verts[1]=v[1];
@@ -163,10 +164,10 @@ static void parseFaceList(){
 static void parseMapList(){
 	_bbDebugLog( "MapList" );
 	unsigned short cnt;
-	in.sgetn( (char*)&cnt,2 );
+	in->sgetn( (char*)&cnt,2 );
 	for( int k=0;k<cnt;++k ){
 		float uv[2];
-		in.sgetn( (char*)uv,8 );
+		in->sgetn( (char*)uv,8 );
 		Surface::Vertex &v=MeshLoader::refVertex( k );
 		v.tex_coords[0][0]=v.tex_coords[1][0]=uv[0];
 		v.tex_coords[0][1]=v.tex_coords[1][1]=1-uv[1];
@@ -195,7 +196,7 @@ static void parseTriMesh( MeshModel *mesh ){
 			if( !animonly ) parseFaceList();
 			break;
 		case CHUNK_TRMATRIX:
-			in.sgetn( (char*)&tform,48 );
+			in->sgetn( (char*)&tform,48 );
 			if( conv ) tform=conv_tform * tform * -conv_tform;
 			break;
 		}
@@ -310,10 +311,10 @@ static void parseAnimKeys( Animation *anim,int type ){
 
 	int cnt=0;
 	short t_flags;
-	in.sgetn( (char*)&t_flags,2 );
-	in.pubseekoff( 8,ios_base::cur );
-	in.sgetn( (char*)&cnt,2 );
-	in.pubseekoff( 2,ios_base::cur );
+	in->sgetn( (char*)&t_flags,2 );
+	in->pubseekoff( 8,ios_base::cur );
+	in->sgetn( (char*)&cnt,2 );
+	in->pubseekoff( 2,ios_base::cur );
 	_bbDebugLog( "ANIM_TRACK: frames="+itoa( cnt ) );
 	Vector pos,axis,scale;
 	float angle;
@@ -321,24 +322,24 @@ static void parseAnimKeys( Animation *anim,int type ){
 	for( int k=0;k<cnt;++k ){
 		int time;
 		short flags;
-		in.sgetn( (char*)&time,4 );
-		in.sgetn( (char*)&flags,2 );
+		in->sgetn( (char*)&time,4 );
+		in->sgetn( (char*)&flags,2 );
 		float tens=0,cont=0,bias=0,ease_to=0,ease_from=0;
-		if( flags & 1 ) in.sgetn( (char*)&tens,4 );
-		if( flags & 2 ) in.sgetn( (char*)&cont,4 );
-		if( flags & 4 ) in.sgetn( (char*)&bias,4 );
-		if( flags & 8 ) in.sgetn( (char*)&ease_to,4 );
-		if( flags & 16 ) in.sgetn( (char*)&ease_from,4 );
+		if( flags & 1 ) in->sgetn( (char*)&tens,4 );
+		if( flags & 2 ) in->sgetn( (char*)&cont,4 );
+		if( flags & 4 ) in->sgetn( (char*)&bias,4 );
+		if( flags & 8 ) in->sgetn( (char*)&ease_to,4 );
+		if( flags & 16 ) in->sgetn( (char*)&ease_from,4 );
 		switch( type ){
 		case 0xb020:	//POS_TRACK_TAG
-			in.sgetn( (char*)&pos,12 );
+			in->sgetn( (char*)&pos,12 );
 			if( conv ) pos=conv_tform*pos;
 //			_bbDebugLog( "POS_KEY: time="+itoa(time)+" pos="+ftoa( pos.x )+","+ftoa( pos.y )+","+ftoa( pos.z ) );
 			if( time<=anim_len ) anim->setPositionKey( time,pos );
 			break;
 		case 0xb021:	//ROT_TRACK_TAG
-			in.sgetn( (char*)&angle,4 );
-			in.sgetn( (char*)&axis,12 );
+			in->sgetn( (char*)&angle,4 );
+			in->sgetn( (char*)&axis,12 );
 //			_bbDebugLog( "ROT_KEY: time="+itoa(time)+" angle="+ftoa(angle)+" axis="+ftoa(axis.x)+","+ftoa(axis.y)+","+ftoa(axis.z) );
 			if( axis.length()>EPSILON ){
 				if( flip_tris ) angle=-angle;
@@ -349,7 +350,7 @@ static void parseAnimKeys( Animation *anim,int type ){
 			if( time<=anim_len ) anim->setRotationKey( time,quat );
 			break;
 		case 0xb022:	//SCL_TRACK_TAG
-			in.sgetn( (char*)&scale,12 );
+			in->sgetn( (char*)&scale,12 );
 			if( conv ) scale=conv_tform.m*scale;
 //			scale.x=fabs(scale.x);scale.y=fabs(scale.y);scale.z=fabs(scale.z);
 			_bbDebugLog( "SCL_KEY: time="+itoa(time)+" scale="+ftoa( scale.x )+","+ftoa( scale.y )+","+ftoa( scale.z ) );
@@ -371,14 +372,14 @@ static void parseMeshInfo( MeshModel *root,float curr_time ){
 	while( int chunk_id=nextChunk() ){
 		switch( chunk_id ){
 		case 0xb030:	//NODE_ID
-			in.sgetn( (char*)&id,2 );
+			in->sgetn( (char*)&id,2 );
 			_bbDebugLog( "NODE_ID: "+itoa(id) );
 			break;
 		case 0xb010:	//NODE_HDR
 			name=parseString();
-			in.sgetn( (char*)&flags1,2 );
-			in.sgetn( (char*)&flags2,2 );
-			in.sgetn( (char*)&parent,2 );
+			in->sgetn( (char*)&flags1,2 );
+			in->sgetn( (char*)&flags2,2 );
+			in->sgetn( (char*)&parent,2 );
 			_bbDebugLog( "NODE_HDR: name="+name+" parent="+itoa(parent) );
 			break;
 		case 0xb011:	//INSTANCE NAME
@@ -386,13 +387,13 @@ static void parseMeshInfo( MeshModel *root,float curr_time ){
 			_bbDebugLog( "INSTANCE_NAME: "+inst );
 			break;
 		case 0xb013:	//PIVOT
-			in.sgetn( (char*)&pivot,12 );
+			in->sgetn( (char*)&pivot,12 );
 			if( conv ) pivot=conv_tform * pivot;
 			_bbDebugLog( "PIVOT: "+ftoa(pivot.x)+","+ftoa(pivot.y)+","+ftoa(pivot.z) );
 			break;
 		case 0xb014:	//BOUNDBOX
-			in.sgetn( (char*)&box.a,12 );
-			in.sgetn( (char*)&box.b,12 );
+			in->sgetn( (char*)&box.a,12 );
+			in->sgetn( (char*)&box.b,12 );
 			box_centre=box.centre();
 			if( conv ) box_centre=conv_tform * box_centre;
 			_bbDebugLog( "BOUNDBOX: min="+ftoa(box.a.x)+","+ftoa(box.a.y)+","+ftoa(box.a.z)+" max="+ftoa(box.b.x)+","+ftoa(box.b.y)+","+ftoa(box.b.z) );
@@ -444,13 +445,13 @@ static void parseKeyFramer( MeshModel *root ){
 	while( int id=nextChunk() ){
 		switch( id ){
 		case 0xb009:	//CURR_TIME
-			in.sgetn( (char*)&curr_time,2 );
+			in->sgetn( (char*)&curr_time,2 );
 			_bbDebugLog( "CURR_TIME: "+itoa(curr_time) );
 			break;
 		case 0xb00a:	//KFHDR
-			in.sgetn( (char*)&rev,2 );
+			in->sgetn( (char*)&rev,2 );
 			file_3ds=parseString();
-			in.sgetn( (char*)&anim_len,2 );
+			in->sgetn( (char*)&anim_len,2 );
 			_bbDebugLog( "KFHDR: revision="+itoa(rev)+" 3dsfile="+file_3ds+" anim_len="+itoa(anim_len) );
 			break;
 		case 0xb002:	//object keyframer data...
@@ -468,10 +469,10 @@ static void parseKeyFramer( MeshModel *root ){
 
 static MeshModel *parseFile(){
 	unsigned short id;int len;
-	in.sgetn( (char*)&id,2 );
-	in.sgetn( (char*)&len,4 );
+	in->sgetn( (char*)&id,2 );
+	in->sgetn( (char*)&len,4 );
 	if( id!=CHUNK_MAIN ) return 0;
-	chunk_end=(int)in.pubseekoff( 0,ios_base::cur )+len-6;
+	chunk_end=(int)in->pubseekoff( 0,ios_base::cur )+len-6;
 
 	enterChunk();
 	MeshModel *root=d_new MeshModel();
@@ -501,12 +502,12 @@ MeshModel *Loader_3DS::load( const string &filename,const Transform &t,int hint 
 	collapse=!!(hint&MeshLoader::HINT_COLLAPSE);
 	animonly=!!(hint&MeshLoader::HINT_ANIMONLY);
 
-	if( !in.open( filename.c_str(),ios_base::in|ios_base::binary ) ){
+	if( !(in=gx_filesys->openFile( filename.c_str(),ios_base::in )) ){
 		return 0;
 	}
 
 	MeshModel *root=parseFile();
-	in.close();
+	delete in;
 
 	materials_map.clear();
 	name_map.clear();

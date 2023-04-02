@@ -1,4 +1,4 @@
-
+#include <bb/filesystem/filesystem.h>
 #include "std.h"
 #include "md2rep.h"
 #include "md2norms.h"
@@ -57,11 +57,13 @@ struct t_tri{
 MD2Rep::MD2Rep( const string &f ):
 mesh(0),n_verts(0),n_tris(0),n_frames(0){
 
-	filebuf in;
+	streambuf *in;
 	md2_header header;
 
-	if( !in.open( f.c_str(),ios_base::in|ios_base::binary ) ) return;
-	if( in.sgetn( (char*)&header,sizeof(header) )!=sizeof(header) ) return;
+	in=gx_filesys->openFile( f,ios_base::in );
+	if( !in ) return;
+
+	if( in->sgetn( (char*)&header,sizeof(header) )!=sizeof(header) ) return;
 	if( header.magic!='2PDI' || header.version!=8 ) return;
 
 	n_frames=header.numFrames;
@@ -70,14 +72,14 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 	//read in tex coords
 	vector<md2_uv> md2_uvs;
 	md2_uvs.resize( header.numTexCoords );
-	in.pubseekpos( header.offsetTexCoords );
-	in.sgetn( (char*)&md2_uvs[0],header.numTexCoords*sizeof(md2_uv) );
+	in->pubseekpos( header.offsetTexCoords );
+	in->sgetn( (char*)&md2_uvs[0],header.numTexCoords*sizeof(md2_uv) );
 
 	//read in triangles
 	vector<md2_tri> md2_tris;
 	md2_tris.resize( n_tris );
-	in.pubseekpos( header.offsetTriangles );
-	in.sgetn( (char*)&md2_tris[0],n_tris*sizeof(md2_tri) );
+	in->pubseekpos( header.offsetTriangles );
+	in->sgetn( (char*)&md2_tris[0],n_tris*sizeof(md2_tri) );
 
 	vector<t_tri> t_tris;
 	vector<t_vert> t_verts;
@@ -110,7 +112,7 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 	n_verts=t_verts.size();
 
 	frames.resize( n_frames );
-	in.pubseekpos( header.offsetFrames );
+	in->pubseekpos( header.offsetFrames );
 
 	vector<md2_vert> md2_verts;
 	md2_verts.resize( header.numVertices );
@@ -119,15 +121,15 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 	for( k=0;k<n_frames;++k ){
 		char t_buff[16];
 		Frame *fr=&frames[k];
-		in.sgetn( (char*)&fr->scale,12 );
-		in.sgetn( (char*)&fr->trans,12 );
-		in.sgetn( t_buff,16 );
+		in->sgetn( (char*)&fr->scale,12 );
+		in->sgetn( (char*)&fr->trans,12 );
+		in->sgetn( t_buff,16 );
 
 		fr->scale=Vector( fr->scale.y,fr->scale.z,fr->scale.x );
 		fr->trans=Vector( fr->trans.y,fr->trans.z,fr->trans.x );
 
 		//read vertices
-		in.sgetn( (char*)&md2_verts[0],header.numVertices*sizeof(md2_vert) );
+		in->sgetn( (char*)&md2_verts[0],header.numVertices*sizeof(md2_vert) );
 
 		fr->verts.resize( n_verts );
 		for( int j=0;j<n_verts;++j ){
@@ -141,6 +143,8 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 			box.update( Vector( v->x,v->y,v->z ) * fr->scale + fr->trans );
 		}
 	}
+
+	delete in;
 
 	//create mesh and setup tris
 	mesh=bbScene->createMesh( n_verts,n_tris,0 );

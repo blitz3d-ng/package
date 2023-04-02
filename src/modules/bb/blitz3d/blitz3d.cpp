@@ -895,7 +895,7 @@ BBLIB bb_int_t BBCALL bbTriangleVertex( Surface *s,bb_int_t n,bb_int_t v ){
 BBLIB Entity * BBCALL bbCreateCamera( Entity *p ){
 	debugParent(p);
 	int x,y,w,h;
-	gx_canvas->getViewport( &x,&y,&w,&h );
+	gx_canvas->getLogicalViewport( &x,&y,&w,&h );
 	Camera *c=d_new Camera();
 	c->setViewport( x,y,w,h );
 	return insertEntity( c,p );
@@ -909,6 +909,11 @@ BBLIB void BBCALL bbCameraZoom( Camera *c,bb_float_t zoom ){
 BBLIB void BBCALL bbCameraRange( Camera *c,bb_float_t nr,bb_float_t fr ){
 	debugCamera(c);
 	c->setRange( nr,fr );
+}
+
+BBLIB void BBCALL bbCameraFOV( Camera *c,bb_float_t left,bb_float_t right,bb_float_t up,bb_float_t down ){
+	debugCamera(c);
+	c->setFOV( left*dtor,right*dtor,up*dtor,down*dtor );
 }
 
 BBLIB void BBCALL bbCameraClsColor( Camera *c,bb_float_t r,bb_float_t g,bb_float_t b ){
@@ -929,6 +934,11 @@ BBLIB void BBCALL bbCameraProjMode( Camera *c,bb_int_t mode ){
 BBLIB void BBCALL bbCameraViewport( Camera *c,bb_int_t x,bb_int_t y,bb_int_t w,bb_int_t h ){
 	debugCamera(c);
 	c->setViewport( x,y,w,h );
+}
+
+BBLIB void BBCALL bbCameraBuffer( Camera *c,BBCanvas *canvas ){
+	debugCamera(c);
+	c->setCanvas( canvas );
 }
 
 BBLIB void BBCALL bbCameraFogRange( Camera *c,bb_float_t nr,bb_float_t fr ){
@@ -1291,6 +1301,7 @@ BBLIB Entity * BBCALL bbCreateTerrain( bb_int_t n,Entity *p ){
 BBLIB Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
 	debugParent(p);
 	BBPixmap *m=bbLoadPixmap( *file );
+	if( !m ) RTEX( "Unable to load heightmap image" );
 	int w=m->getWidth(),h=m->getHeight();
 	if( w!=h ) RTEX( "Terrain must be square" );
 	int shift=0;

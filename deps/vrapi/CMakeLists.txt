@@ -1,9 +1,9 @@
-if(BB_OVR)
+if(NOT BB_OVR)
   return()
 endif()
 
 set(VRAPI_SRC_DIR ${OVR_HOME}/VrApi/Libs/Android/${ANDROID_ABI}/${CMAKE_BUILD_TYPE})
-set(VRAPI_DEST_DIR ${PROJECT_BINARY_DIR})
+set(VRAPI_DEST_DIR ${TOOLCHAIN_PATH}/lib)
 
 if (EXISTS ${VRAPI_SRC_DIR}/libvrapi.so)
   file(COPY ${VRAPI_SRC_DIR}/libvrapi.so DESTINATION ${VRAPI_DEST_DIR})

@@ -1,5 +1,5 @@
 bb_start_module(pixmap)
-set(DEPENDS_ON bb.blitz)
+set(DEPENDS_ON bb.filesystem)
 set(SOURCES pixmap.cpp pixmap.h)
 
 IF(TARGET freeimage)
@@ -7,7 +7,7 @@ IF(TARGET freeimage)
   set(LIBS freeimage ${ZLIB})
 ELSEIF(BB_IOS)
   set(SOURCES ${SOURCES} uikit.loader.m)
-  set(SYSTEM_LIBS "-framework UIKit" "-framework Foundation")
+  set(SYSTEM_LIBS "-framework UIKit")
 ENDIF()
 
 bb_end_module()

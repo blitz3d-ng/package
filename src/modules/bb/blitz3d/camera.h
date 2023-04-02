@@ -17,7 +17,9 @@ public:
 	//called by user
 	void setZoom( float z );
 	void setRange( float nr,float fr );
+	void setFOV( float left,float right,float up,float down );
 	void setViewport( int x,int y,int w,int h );
+	void setCanvas( BBCanvas *canvas );
 	void setClsColor( const Vector &v );
 	void setClsMode( bool cls_argb,bool cls_z );
 	void setProjMode( int mode );
@@ -26,6 +28,7 @@ public:
 	void setFogMode( int mode );
 
 	void  getViewport( int &x,int &y,int &w,int &h );
+	BBCanvas *getCanvas();
 	const Vector &getClsColor();
 	void  getClsMode( bool &c,bool &z );
 	int   getProjMode();
@@ -53,6 +56,8 @@ private:
 	float fog_nr,fog_fr;
 	int fog_mode;
 	float frustum_nr,frustum_fr;
+	float frustum_left,frustum_right,frustum_up,frustum_down;
+	BBCanvas *canvas;
 	mutable float frustum_w,frustum_h;
 	mutable Frustum local_frustum;
 	mutable bool local_valid;

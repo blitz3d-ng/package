@@ -19,6 +19,25 @@ Frustum::Frustum( float nr,float fr,float w,float h ){
 	makePlanes();
 }
 
+Frustum::Frustum( float nr,float fr,float l,float r,float u,float d ){
+	float nlx=-tan(l) * nr;
+	float nrx=tan(r) * nr;
+	float nuy=tan(u) * nr;
+	float ndy=-tan(d) * nr;
+
+	verts[VERT_TLNEAR]=Vector( nlx,nuy,nr );
+	verts[VERT_TRNEAR]=Vector( nrx,nuy,nr );
+	verts[VERT_BRNEAR]=Vector( nrx,ndy,nr );
+	verts[VERT_BLNEAR]=Vector( nlx,ndy,nr );
+	float t=fr/nr;
+	verts[VERT_TLFAR]=verts[VERT_TLNEAR] * t;
+	verts[VERT_TRFAR]=verts[VERT_TRNEAR] * t;
+	verts[VERT_BRFAR]=verts[VERT_BRNEAR] * t;
+	verts[VERT_BLFAR]=verts[VERT_BLNEAR] * t;
+	verts[VERT_EYE]=Vector();
+	makePlanes();
+}
+
 Frustum::Frustum( const Frustum &f,const Transform &t ){
 	for( int k=0;k<9;++k ){
 		verts[k]=t*f.verts[k];
@@ -39,6 +58,30 @@ bool Frustum::cull( const Box &b )const{
 	Vector v[8];
 	for( int k=0;k<8;++k ) v[k]=b.corner(k);
 	return cull( v,8 );
+}
+
+float Frustum::getLeft()const{
+	return getVertex( Frustum::VERT_TLNEAR ).x;
+}
+
+float Frustum::getRight()const{
+	return getVertex( Frustum::VERT_TRNEAR ).x;
+}
+
+float Frustum::getTop()const{
+	return getVertex( Frustum::VERT_TLNEAR ).y;
+}
+
+float Frustum::getBottom()const{
+	return getVertex( Frustum::VERT_BLNEAR ).y;
+}
+
+float Frustum::getNear()const{
+	return getVertex( Frustum::VERT_TLNEAR ).z;
+}
+
+float Frustum::getFar()const{
+	return getVertex( Frustum::VERT_TLFAR ).z;
 }
 
 void Frustum::makePlanes(){

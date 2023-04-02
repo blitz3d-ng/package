@@ -1,0 +1,35 @@
+<uses-feature android:name="android.hardware.vr.headtracking" android:required="true" />
+<uses-feature android:name="oculus.software.handtracking" android:required="true" />
+<uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
+
+<!-- Network access needed for OVRMonitor -->
+<uses-permission android:name="android.permission.INTERNET" />
+<!-- Volume Control -->
+<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+<application android:allowBackup="false" android:label="@string/app_name">
+  <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+  <meta-data android:name="com.oculus.supportedDevices" android:value="all" />
+
+  <!-- The activity is the built-in NativeActivity framework class. -->
+  <!-- launchMode is set to singleTask because there should never be multiple copies of the app running. -->
+  <!-- Theme.Black.NoTitleBar.Fullscreen gives solid black instead of a (bad stereoscopic) gradient on app transition. -->
+      <!-- If targeting API level 24+, configChanges should additionally include 'density'. -->
+      <!-- If targeting API level 24+, android:resizeableActivity="false" should be added. -->
+	<activity
+    android:name="blitz3d.runtimevrapi.Game"
+    android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+    android:launchMode="singleTask"
+    android:screenOrientation="landscape"
+    android:excludeFromRecents="false"
+    android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|uiMode">
+    <!-- Tell NativeActivity the name of the .so -->
+    <meta-data android:name="android.app.lib_name" android:value="main" />
+    <!-- This filter lets the apk show up as a launchable icon. -->
+    <intent-filter>
+      <action android:name="android.intent.action.MAIN" />
+      <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+	</activity>
+</application>

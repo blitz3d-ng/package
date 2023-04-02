@@ -80,13 +80,14 @@ public:
   virtual void setFogRange( float nr,float fr )=0;
   virtual void setFogMode( int mode )=0;
   virtual void setZMode( int mode )=0;
+  virtual void setCanvas( int w,int h )=0;
   virtual void setViewport( int x,int y,int w,int h )=0;
-  virtual void setOrthoProj( float nr,float fr,float nr_w,float nr_h )=0;
-  virtual void setPerspProj( float nr,float fr,float nr_w,float nr_h )=0;
+  virtual void setOrthoProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b )=0;
+  virtual void setPerspProj( float nr,float fr,float nr_l,float nr_r,float nr_t,float nr_b )=0;
   virtual void setViewMatrix( const Matrix *matrix )=0;
   virtual void setWorldMatrix( const Matrix *matrix )=0;
   virtual void setRenderState( const RenderState &state )=0;
-	bool setCamera( Camera *cam );
+	bool setCamera( Camera *cam,BBCanvas *canvas );
 
   //rendering
   virtual bool begin( const std::vector<BBLightRep*> &lights )=0;
