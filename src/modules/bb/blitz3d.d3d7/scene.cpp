@@ -328,6 +328,9 @@ void gxScene::setAmbient2( const float rgb[] ){
 	ambient2=n;setAmbient();
 }
 
+void gxScene::setCanvas( int w,int h ){
+}
+
 void gxScene::setViewport( int x,int y,int w,int h ){
 	if( x==viewport.dwX && y==viewport.dwY && w==viewport.dwWidth && h==viewport.dwHeight ) return;
 	viewport.dwX=x;viewport.dwY=y;viewport.dwWidth=w;viewport.dwHeight=h;
