@@ -87,7 +87,7 @@ public:
   virtual void setViewMatrix( const Matrix *matrix )=0;
   virtual void setWorldMatrix( const Matrix *matrix )=0;
   virtual void setRenderState( const RenderState &state )=0;
-	bool setCamera( Camera *cam,int cw,int ch );
+	bool setCamera( Camera *cam,BBCanvas *canvas );
 
   //rendering
   virtual bool begin( const std::vector<BBLightRep*> &lights )=0;

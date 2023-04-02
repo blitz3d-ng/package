@@ -53,6 +53,7 @@ public:
 	virtual void setColor( unsigned argb )=0;
 	virtual void setClsColor( unsigned argb )=0;
 	virtual void setOrigin( int x,int y )=0;
+	virtual void setScale( float x,float y )=0;
 	virtual void setHandle( int x,int y )=0;
 	virtual void setViewport( int x,int y,int w,int h )=0;
 
@@ -87,8 +88,10 @@ public:
   int getFlags()const{ return flags; }
   virtual int cubeMode()const=0;
   virtual void getOrigin( int *x,int *y )const=0;
+  virtual void getScale( float *x,float *y )const=0;
   virtual void getHandle( int *x,int *y )const=0;
   virtual void getViewport( int *x,int *y,int *w,int *h )const=0;
+  void getLogicalViewport( int *x,int *y,int *w,int *h )const;
   virtual unsigned getMask()const=0;
   virtual unsigned getColor()const=0;
   virtual unsigned getClsColor()const=0;

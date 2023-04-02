@@ -6,22 +6,6 @@ protected:
 	SDL_Window *wnd;
 public:
 	SDLDefaultCanvas( ContextResources *res,SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLDefaultCanvas(res,framebuffer,mode,flags),wnd(wnd){}
-
-	// int getWidth()const{
-	//   // int width,height;
-	//   // glfwGetWindowSize( wnd,&width,&height );
-	//   // return width;
-	// }
-	//
-	// int getHeight()const{
-	//   // int width,height;
-	//   // glfwGetWindowSize( wnd,&width,&height );
-	//   // return height;
-	// }
-
-	void getViewport( int *x,int *y,int *w,int *h )const{
-		*x=0;*y=0;*w=getWidth();*h=getHeight();
-	}
 };
 
 void SDLGraphics::onAppChange( void *data,void *context ){
@@ -39,11 +23,6 @@ SDLGraphics::SDLGraphics( SDL_Window *wnd,SDL_GLContext ctx ):wnd(wnd),context(c
 
 	front_canvas=d_new SDLDefaultCanvas( &res,wnd,framebuffer,GL_FRONT,0 );
 	back_canvas=d_new SDLDefaultCanvas( &res,wnd,framebuffer,GL_BACK,0 );
-
-	def_font=(BBImageFont*)loadFont( "courier",12,0 );
-	if( def_font==0 ){
-		def_font=(BBImageFont*)loadFont( "courier new",12,0 );
-	}
 
 	for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
 
@@ -67,8 +46,13 @@ void SDLGraphics::resize(){
 	SDL_GetWindowSize( wnd,&window_width,&window_height );
 	SDL_GL_GetDrawableSize( wnd,&drawable_width,&drawable_height );
 
-	((GLCanvas*)front_canvas)->resize( drawable_width,drawable_height,1.0 );
-	((GLCanvas*)back_canvas)->resize( drawable_width,drawable_height,1.0 );
+	float sx=(float)drawable_width/window_width;
+	float sy=(float)drawable_height/window_height;
+	((GLCanvas*)front_canvas)->setScale( sx,sy );
+	((GLCanvas*)back_canvas)->setScale( sx,sy );
+
+	((GLCanvas*)front_canvas)->resize( drawable_width,drawable_height,getDensity() );
+	((GLCanvas*)back_canvas)->resize( drawable_width,drawable_height,getDensity() );
 }
 
 void SDLGraphics::backup(){

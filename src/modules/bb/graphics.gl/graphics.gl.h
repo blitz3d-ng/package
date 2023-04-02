@@ -56,6 +56,8 @@ protected:
 public:
 	ContextResources res={ 0 }; // TODO: will make protected again
 
+	GLGraphics();
+
 	BBFont *getDefaultFont()const;
 
 	//OBJECTS

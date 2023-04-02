@@ -9,7 +9,7 @@ using namespace std;
 #include <string.h>
 
 unsigned DLL_CALLCONV readProc(void *buffer, unsigned size, unsigned count, fi_handle handle) {
-	return ((streambuf*)handle)->sgetn( (char*)buffer,size*count );
+	return ((streambuf*)handle)->sgetn( (char*)buffer,size*count ) / size;
 }
 
 unsigned DLL_CALLCONV writeProc(void *buffer, unsigned size, unsigned count, fi_handle handle) {
@@ -17,7 +17,7 @@ unsigned DLL_CALLCONV writeProc(void *buffer, unsigned size, unsigned count, fi_
 }
 
 int DLL_CALLCONV seekProc(fi_handle handle, long offset, int origin) {
-	return ((streambuf*)handle)->pubseekoff( offset,(origin==SEEK_SET?ios_base::beg:(origin==SEEK_CUR?ios_base::cur:ios_base::end)) );
+	return ((streambuf*)handle)->pubseekoff( offset,(origin==SEEK_SET?ios_base::beg:(origin==SEEK_CUR?ios_base::cur:ios_base::end)) )==-1;
 }
 
 long DLL_CALLCONV tellProc(fi_handle handle) {
@@ -45,13 +45,13 @@ BBPixmap *bbLoadPixmapWithFreeImage( const std::string &path ){
 
 	FREE_IMAGE_FORMAT fmt = FreeImage_GetFileTypeFromHandle( &io,(fi_handle)buf,0 );
 	if( fmt==FIF_UNKNOWN ){
-		int n=f.find( "." );if( n==string::npos ) return 0;
+		int n=f.find( "." );if( n==string::npos ){ delete buf;return 0; }
 		fmt=FreeImage_GetFIFFromFilename( f.substr(n+1).c_str() );
-		if( fmt==FIF_UNKNOWN ) return 0;
+		if( fmt==FIF_UNKNOWN ){ delete buf;return 0; }
 	}
 
 	FIBITMAP *t_dib=FreeImage_LoadFromHandle( fmt,&io,(fi_handle)buf,0 );
-	if( !t_dib ) return 0;
+	if( !t_dib ){ delete buf;return 0; }
 
 	bool trans=FreeImage_GetBPP( t_dib )==32 ||	FreeImage_IsTransparent( t_dib );
 

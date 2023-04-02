@@ -895,7 +895,7 @@ BBLIB bb_int_t BBCALL bbTriangleVertex( Surface *s,bb_int_t n,bb_int_t v ){
 BBLIB Entity * BBCALL bbCreateCamera( Entity *p ){
 	debugParent(p);
 	int x,y,w,h;
-	gx_canvas->getViewport( &x,&y,&w,&h );
+	gx_canvas->getLogicalViewport( &x,&y,&w,&h );
 	Camera *c=d_new Camera();
 	c->setViewport( x,y,w,h );
 	return insertEntity( c,p );
@@ -1301,6 +1301,7 @@ BBLIB Entity * BBCALL bbCreateTerrain( bb_int_t n,Entity *p ){
 BBLIB Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
 	debugParent(p);
 	BBPixmap *m=bbLoadPixmap( *file );
+	if( !m ) RTEX( "Unable to load heightmap image" );
 	int w=m->getWidth(),h=m->getHeight();
 	if( w!=h ) RTEX( "Terrain must be square" );
 	int shift=0;

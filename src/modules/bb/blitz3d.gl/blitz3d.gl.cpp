@@ -161,7 +161,7 @@ struct UniformState{
 
 	struct GLTexState{
 		float mat[16];
-		int blend, _0, _1, _2;
+		int blend, sphere_map, _1, _2;
 	} texs[8];
 
 	float fog_range[2];
@@ -488,13 +488,7 @@ public:
 				}
 
 				if( flags&BBCanvas::CANVAS_TEX_SPHERE ){
-					// glEnable( GL_TEXTURE_GEN_S );
-					// glEnable( GL_TEXTURE_GEN_T );
-					// glTexGeni( GL_S,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP );
-					// glTexGeni( GL_T,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP );
-				}else{
-					// glDisable( GL_TEXTURE_GEN_S );
-					// glDisable( GL_TEXTURE_GEN_T );
+					us.texs[us.texs_used].sphere_map=1;
 				}
 
 				us.texs[us.texs_used].blend=ts.blend;

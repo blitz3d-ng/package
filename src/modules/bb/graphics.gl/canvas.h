@@ -11,10 +11,10 @@ protected:
 	ContextResources *res;
 
 	int width,height;
-	float dpi;
 	mutable unsigned char *pixels;
 	BBImageFont *font;
 
+	float scale_x,scale_y;
 	int origin_x,origin_y;
 	int handle_x,handle_y;
 	float color[3];
@@ -35,6 +35,7 @@ public:
 	void setColor( unsigned argb );
 	void setClsColor( unsigned argb );
 	void setOrigin( int x,int y );
+	void setScale( float x,float y );
 	void setHandle( int x,int y );
 	void setViewport( int x,int y,int w,int h );
 
@@ -67,6 +68,7 @@ public:
 	int getHeight()const;
 	int cubeMode()const;
 	void getOrigin( int *x,int *y )const;
+	void getScale( float *x,float *y )const;
 	void getHandle( int *x,int *y )const;
 	void getViewport( int *x,int *y,int *w,int *h )const;
 	unsigned getMask()const;

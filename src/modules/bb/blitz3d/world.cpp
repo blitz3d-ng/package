@@ -585,7 +585,7 @@ void World::render( float tween ){
 			gx_canvas->set();
 		}
 
-		if( !bbScene->setCamera( cam,canvas->getWidth(),canvas->getHeight() ) ) continue;
+		if( !bbScene->setCamera( cam,gx_canvas ) ) continue;
 
 		vector<Mirror*>::const_iterator mir_it;
 		for( mir_it=_mirrors.begin();mir_it!=_mirrors.end();++mir_it ){

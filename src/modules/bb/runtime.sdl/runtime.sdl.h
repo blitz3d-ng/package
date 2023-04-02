@@ -15,8 +15,6 @@ private:
 
 	static void _refreshTitle( void *data,void *context );
 	void setTitle( const char *title );
-
-	void resize();
 public:
 	SDLRuntime();
 	~SDLRuntime();

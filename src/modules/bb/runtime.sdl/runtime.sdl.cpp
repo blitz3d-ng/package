@@ -27,9 +27,14 @@ public:
 	int numJoysticks()const{ return 0; }
 
 	int toAscii( int key )const{
-		// cout<<key<<endl;
 		if( key==28 ) return '\n';
-		return 65;
+		switch( key ){
+		case 21: return 'y';
+		case 37: return 'K';
+		default:
+			LOGD( "unmapped key: %i", key );
+			return 0;
+		}
 	}
 };
 
@@ -114,7 +119,6 @@ bool SDLRuntime::idle(){
 			RTEX( 0 );
 		}else if( event.type==SDL_WINDOWEVENT ){
 			if( event.window.event==SDL_WINDOWEVENT_RESIZED ) {
-				resize();
 			}
 		}else if( event.type==SDL_MOUSEMOTION ){
 			BBEvent ev( BBEVENT_MOUSEMOVE,0,event.motion.x,event.motion.y );
@@ -177,14 +181,6 @@ void SDLRuntime::_refreshTitle( void *data,void *context ){
 void SDLRuntime::setTitle( const char *title ){
 	// SDL_SetWindowTitle( wnd,title );
 }
-
-void SDLRuntime::resize(){
-	if( graphics ) {
-		graphics->resize();
-		// GLB3DGraphics::resize( graphics->getLogicalWidth(),graphics->getLogicalHeight(),graphics->getDensity() );
-	}
-}
-
 
 BBMODULE_CREATE( runtime_sdl ){
 	return true;

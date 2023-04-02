@@ -9,7 +9,7 @@ layout(std140) uniform BBRenderState {
   uniform vec2 texscale;
   uniform vec3 color;
   uniform int texenabled;
-  uniform float scale;
+  uniform vec2 scale;
 } RS;
 
 struct BBPerVertex{

@@ -24,7 +24,7 @@ layout(std140) uniform BBLightState {
 // must be mindful of alignment when ordering...
 struct BBTextureState {
   mat4 TForm;
-  int Blend,_0,_1,_2;
+  int Blend,SphereMap,_1,_2;
 } ;
 
 layout(std140) uniform BBRenderState {
@@ -76,6 +76,16 @@ float fogFactorLinear(
   return 1.0 - clamp((end - dist) / (end - start), 0.0, 1.0);
 }
 
+vec2 sphereMap(in vec3 normal, in vec3 ecPosition3){
+  float m;
+  vec3 r, u;
+  u = normalize(ecPosition3);
+  r = reflect(u, normal);
+  m = 2.0 * sqrt(r.x * r.x + r.y * r.y + (r.z + 1.0) * (r.z + 1.0));
+  return vec2 (r.x / m + 0.5, r.y / m + 0.5);
+}
+
+
 
 
 #ifdef VERTEX
@@ -94,9 +104,20 @@ void main() {
   mat4 bbModelViewProjectionMatrix=bbProjMatrix * bbModelViewMatrix;
   mat3 bbNormalMatrix=transpose(inverse(mat3(bbModelViewMatrix)));
 
+  gl_Position = bbModelViewProjectionMatrix * vec4(bbPosition, 1.0);
+
+  vec3 EyeNormal = bbNormalMatrix * bbNormal;
+
   for( int i=0;i<RS.TexturesUsed;i++ ){
-    bbVertex_TexCoord[i] = (RS.Texture[i].TForm * vec4(bbTexCoord0, 0.0, 1.0)).xy;
+    vec2 coord=bbTexCoord0;
+    if( RS.Texture[i].SphereMap==1 ) {
+      coord=sphereMap( EyeNormal,gl_Position.xyz/gl_Position.w );
+    }else {
+      coord=bbTexCoord0;
+    }
+    bbVertex_TexCoord[i] = (RS.Texture[i].TForm * vec4(coord, 0.0, 1.0)).xy;
   }
+
 
   vec4 bbMaterialColor;
   if( RS.UseVertexColor>0 ){
@@ -106,8 +127,7 @@ void main() {
   }
 
   if( RS.FullBright==0 ){
-    // bbVertex_Position = vec3( bbModelViewMatrix*vec4( bbPosition,1.0 ) );
-    bbVertex_Normal = normalize( bbNormalMatrix*bbNormal );
+    bbVertex_Normal = normalize( EyeNormal );
 
     vec4 Diffuse=vec4( 0.0 ),Specular=vec4( 0.0 );
 
@@ -133,8 +153,6 @@ void main() {
   }else{
     bbVertex_Color = bbMaterialColor;
   }
-
-  gl_Position = bbModelViewProjectionMatrix * vec4(bbPosition, 1.0);
 
   switch( RS.FogMode ){
   case FOG_NONE: break;

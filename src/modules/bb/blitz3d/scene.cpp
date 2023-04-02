@@ -14,14 +14,19 @@ void BBScene::freeMesh( BBMesh *mesh ){
 	if( mesh_set.erase( mesh ) ) delete mesh;
 }
 
-bool BBScene::setCamera( Camera *cam,int cw,int ch ){
+bool BBScene::setCamera( Camera *cam,BBCanvas *canvas ){
 	if( !cam->getProjMode() ) return false;
+
+	float sx,sy;
+	canvas->getScale( &sx,&sy );
+	int cw=canvas->getWidth();
+	int ch=canvas->getHeight();
 
 	setCanvas( cw,ch );
 
 	int x,y,w,h;
 	cam->getViewport( x,y,w,h );
-	setViewport( x,y,w,h );
+	setViewport( x*sx,y*sy,w*sx,h*sy );
 
 	bool cls_argb,cls_z;
 	cam->getClsMode( cls_argb,cls_z );
