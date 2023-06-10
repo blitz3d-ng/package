@@ -54,8 +54,8 @@ BEGIN_MESSAGE_MAP( Editor,CWnd )
 END_MESSAGE_MAP()
 
 static int blink;
-static set<string> keyWordSet;
-static map<string,string> keyWordMap;
+static std::set<std::string> keyWordSet;
+static std::map<std::string,std::string> keyWordMap;
 
 static bool isid( int c ){
 	return isalnum(c)||c=='_';
@@ -65,7 +65,7 @@ static bool isfmt( int ch,int nxt ){
 	return ch==';' || ch=='\"' || isalpha(ch) || isdigit(ch) || (ch=='$' && isxdigit(nxt));
 }
 
-static string rtfbgr( int bgr ){
+static std::string rtfbgr( int bgr ){
 	return "\\red"+itoa(bgr&0xff)+"\\green"+itoa((bgr>>8)&0xff)+"\\blue"+itoa((bgr>>16)&0xff)+';';
 }
 
@@ -100,7 +100,7 @@ DWORD CALLBACK Editor::streamIn( DWORD_PTR cookie,LPBYTE buff,LONG cnt,LONG *don
 }
 
 DWORD CALLBACK Editor::streamOut( DWORD_PTR cookie,LPBYTE buff,LONG cnt,LONG *done ){
-	ostream *out=(ostream*)cookie;
+	std::ostream *out=(std::ostream*)cookie;
 	out->write( (char*)buff,cnt );
 	*done=cnt;return 0;
 }
@@ -271,11 +271,11 @@ int Editor::OnCreate( LPCREATESTRUCT cs ){
 
 /************************************************* PUBLIC ***********************************************/
 
-void Editor::setName( const string &n ){
+void Editor::setName( const std::string &n ){
 	name=n;
 }
 
-bool Editor::setText( istream &in ){
+bool Editor::setText( std::istream &in ){
 //	editCtrl.HideCaret();
 	fmtBusy=true;
 	EDITSTREAM es;
@@ -309,11 +309,11 @@ void Editor::setCursor( int n ){
 	editCtrl.SetSel( pos,pos );
 }
 
-string Editor::getName()const{
+std::string Editor::getName()const{
 	return name;
 }
 
-bool Editor::getText( ostream &out ){
+bool Editor::getText( std::ostream &out ){
 	fixFmt(true);
 	EDITSTREAM es;
 	es.dwCookie=(DWORD_PTR)&out;
@@ -455,7 +455,7 @@ bool Editor::findNext( bool wrap ){
 		editCtrl.SetSel( t.chrgText.cpMin,t.chrgText.cpMax );
 		return true;
 	}
-	string s( "Can't find \"" );s+=findBuff;s+='\"';
+	std::string s( "Can't find \"" );s+=findBuff;s+='\"';
 	MessageBox( s.c_str(),"Text not found" );
 	if( finder ) finder->SetFocus();
 	return false;
@@ -493,19 +493,19 @@ void Editor::unlock(){
 	locked=false;
 }
 
-string Editor::getKeyword(){
+std::string Editor::getKeyword(){
 	fixFmt(true);
 	getSel();
 	int ln=editCtrl.LineFromChar(selStart);
 	int pos=selStart-editCtrl.LineIndex( ln );
-	string line=getLine( ln );if( pos>line.size() ) return "";
+	std::string line=getLine( ln );if( pos>line.size() ) return "";
 
 	//ok, scan back until we have an isapha char preceded by a nonalnum/non '_' char
 	for(;;){
 		while( pos>0 && ( !isalpha(line[pos]) || isid(line[pos-1]) ) ) --pos;
 		if( !isalpha(line[pos]) ) return "";
 		int end=pos;while( end<line.size() && isid(line[end]) ) ++end;
-		string t=line.substr( pos,end-pos );
+		std::string t=line.substr( pos,end-pos );
 		if( keyWordSet.find( t )!=keyWordSet.end() ) return t;
 		if( !pos ) return "";
 		--pos;
@@ -532,9 +532,9 @@ void Editor::getCursor( int *row,int *col ){
 	*col=end-editCtrl.LineIndex( *row );
 }
 
-void Editor::addKeyword( const string &s ){
+void Editor::addKeyword( const std::string &s ){
 	keyWordSet.insert( s );
-	string t=s;
+	std::string t=s;
 	for( int k=0;k<t.size();++k ) t[k]=tolower(t[k]);
 	keyWordMap[t]=s;
 }
@@ -572,7 +572,7 @@ LRESULT Editor::onFind( WPARAM w,LPARAM l ){
 		}
 		endFind();
 		char buff[32];itoa( cnt,buff,10 );
-		string s( buff );s+=" occurances replaced";
+		std::string s( buff );s+=" occurances replaced";
 		MessageBox( s.c_str(),"Replace All Done" );
 		editCtrl.HideSelection( false,false );
 	}
@@ -603,7 +603,7 @@ void Editor::OnKillFocus( CWnd *wnd ){
 	fixFmt(true);
 }
 
-string Editor::getLine( int line ){
+std::string Editor::getLine( int line ){
 	int idx1=editCtrl.LineIndex( line );
 	int idx2=editCtrl.LineIndex( line+1 );if( idx2==-1 ) idx2=editCtrl.GetTextLength();
 	int len=idx2-idx1;
@@ -611,7 +611,7 @@ string Editor::getLine( int line ){
 	*(int*)buff=len;
 	int out=editCtrl.GetLine( line,buff );
 	buff[len]=0;
-	string t=string( buff );
+	std::string t=std::string( buff );
 	delete [] buff;
 	return t;
 }
@@ -685,7 +685,7 @@ void Editor::en_msgfilter( NMHDR *nmhdr,LRESULT *result ){
 			int k;
 			int ln=editCtrl.LineFromChar( selStart )-1;
 			int pos=selStart-editCtrl.LineIndex( ln );
-			string line=getLine( ln );if( pos>line.size() ) return;
+			std::string line=getLine( ln );if( pos>line.size() ) return;
 			for( k=0;k<pos && line[k]=='\t';++k ){}
 			line=line.substr( 0,k )+'\0';
 			editCtrl.ReplaceSel( line.data(),true );
@@ -749,12 +749,12 @@ void Editor::en_change(){
 	cursorMoved();
 }
 
-void Editor::setFormat( int from,int to,int color,const string &s ){
+void Editor::setFormat( int from,int to,int color,const std::string &s ){
 	editCtrl.SetSel( from,to );
 	if( s.size() ){
 		char buff[256];
 		editCtrl.GetSelText( buff );buff[to-from]=0;
-		if( string(buff)!=s ){
+		if( std::string(buff)!=s ){
 			editCtrl.ReplaceSel( s.c_str() );
 			editCtrl.SetSel( from,to );
 		}
@@ -770,7 +770,7 @@ void Editor::setFormat( int from,int to,int color,const string &s ){
 }
 
 void Editor::formatStreamLine(){
-	string out;
+	std::string out;
 	char cf='0';
 	for( int k=0;k<is_line.size(); ){
 		int from=k;
@@ -850,11 +850,11 @@ void Editor::formatLine( int ln ){
 
 	lineToFmt=-1;
 	int pos=editCtrl.LineIndex( ln );
-	string tline=getLine( ln );
-	string line=tolower( tline );
+	std::string tline=getLine( ln );
+	std::string line=tolower( tline );
 
 	int *cf=0;
-	string rep;
+	std::string rep;
 	for( int k=0;k<line.size(); ){
 		rep.resize(0);
 		int *pf=cf;
@@ -875,7 +875,7 @@ void Editor::formatLine( int ln ){
 			for( ++k;k<sz && isid(line[k]);++k ){}
 			cf=&prefs.rgb_ident;pf=0;
 			if( selStart<=pos+from || selStart>pos+k ){
-				map<string,string>::iterator it=keyWordMap.find( line.substr( from,k-from ) );
+				std::map<std::string,std::string>::iterator it=keyWordMap.find( line.substr( from,k-from ) );
 				if( it!=keyWordMap.end() ){
 					rep=it->second;cf=&prefs.rgb_keyword;
 				}

@@ -16,8 +16,8 @@ class MainFrame : public CFrameWnd,public Debugger{
 	ConstsTree consts_tree;
 	GlobalsTree globals_tree;
 	LocalsTree locals_tree;
-	map<const char*,int> file_tabs;
-	map<const char*,SourceFile*> files;
+	std::map<const char*,int> file_tabs;
+	std::map<const char*,SourceFile*> files;
 
 	int state,step_level,cur_pos;
 	const char *cur_file;

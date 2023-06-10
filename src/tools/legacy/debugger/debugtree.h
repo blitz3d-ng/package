@@ -9,7 +9,7 @@ class DebugTree : public CTreeCtrl{
 	int st_nest;
 protected:
 
-	HTREEITEM insertVar( void *var,Decl *d,const string &name,HTREEITEM it,HTREEITEM parent );
+	HTREEITEM insertVar( void *var,Decl *d,const std::string &name,HTREEITEM it,HTREEITEM parent );
 
 public:
 	DebugTree();
@@ -49,7 +49,7 @@ class LocalsTree : public DebugTree{
 		HTREEITEM item;
 		Frame( void *f,Environ *e,const char *fn ):frame(f),env(e),func(fn),item(0){}
 	};
-	vector<Frame> frames;
+	std::vector<Frame> frames;
 
 	void refreshFrame( const Frame &f );
 

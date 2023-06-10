@@ -26,9 +26,9 @@ public:
 	Editor( EditorListener *l );
 	~Editor();
 
-	void setName( const string &f );
+	void setName( const std::string &f );
 	void setModified( bool n );
-	bool setText( istream &in );
+	bool setText( std::istream &in );
 	void setCursor( int pos );
 
 	void cut();
@@ -46,15 +46,15 @@ public:
 	static void unlock();
 
 	int  getCursor();
-	string getName()const;
-	string getKeyword();
+	std::string getName()const;
+	std::string getKeyword();
 	bool getModified();
-	bool getText( ostream &out );
+	bool getText( std::ostream &out );
 	void getCursor( int *row,int *col );
 	bool canCutCopy();
 	bool canPaste();
 
-	static void addKeyword( const string &s );
+	static void addKeyword( const std::string &s );
 
 DECLARE_DYNAMIC( Editor )
 DECLARE_MESSAGE_MAP()
@@ -77,7 +77,7 @@ DECLARE_MESSAGE_MAP()
 private:
 	EditorListener *listener;
 
-	string name;
+	std::string name;
 	bool findOnly,found;
 	CFindReplaceDialog *finder;
 	char findBuff[256],replaceBuff[256];
@@ -89,8 +89,8 @@ private:
 	int  lineToFmt,fmtLineCount;
 
 	//streaming
-	string is_line;
-	istream *is_stream;
+	std::string is_line;
+	std::istream *is_stream;
 	int is_curs,is_linenum;
 
 	//sizing
@@ -111,11 +111,11 @@ private:
 	void getSel(){ editCtrl.GetSel( selStart,selEnd ); }
 	void setSel(){ editCtrl.SetSel( selStart,selEnd ); }
 	void endFind();
-	void setFormat( int from,int to,int color,const string &s="" );
+	void setFormat( int from,int to,int color,const std::string &s="" );
 	void formatLine( int line );
 	void caret();
 	void cursorMoved();
-	string getLine( int line );
+	std::string getLine( int line );
 
 	void formatStreamLine();
 

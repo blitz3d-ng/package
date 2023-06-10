@@ -40,7 +40,7 @@ void FuncList::clear(){
 	DeleteAllItems();
 }
 
-void FuncList::insert( int line,const string &func ){
+void FuncList::insert( int line,const std::string &func ){
 	int n=0;
 	Funcs::iterator it;
 	for( it=funcs.begin();it!=funcs.end() && line>*it;++n,++it ){

@@ -90,7 +90,7 @@ void Tabber::tcn_selChange( NMHDR *p,LRESULT *result ){
 	setCurrent( GetCurSel() );
 }
 
-void Tabber::insert( int index,CWnd *w,const string &t ){
+void Tabber::insert( int index,CWnd *w,const std::string &t ){
 	if( index<0 || index>tabs.size() ) return;
 
 	Tabs::iterator it=tabs.begin();
@@ -135,10 +135,10 @@ void Tabber::setCurrent( int index ){
 	if( listener ) listener->currentSet( this,curr );
 }
 
-void Tabber::setTabText( int index,const string &t ){
+void Tabber::setTabText( int index,const std::string &t ){
 	if( index<0 || index>=tabs.size() ) return;
 
-	string s=t+'\0';
+	std::string s=t+'\0';
 	TCITEM tc={ TCIF_TEXT };
 	tc.pszText=(char*)s.data();
 	SetItem( index,&tc );
@@ -157,7 +157,7 @@ CWnd *Tabber::getTabWnd( int index )const{
 	return t ? t->wnd : 0;
 }
 
-string Tabber::getTabText( int index )const{
+std::string Tabber::getTabText( int index )const{
 	Tab *t=getTab( index );
 	return t ? t->text : "";
 }

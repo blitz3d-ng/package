@@ -12,7 +12,7 @@ public:
 	MainFrame();
 
 	Editor *getEditor();
-	void setTitle( const string &s );
+	void setTitle( const std::string &s );
 
 	DECLARE_DYNAMIC( MainFrame )
 	DECLARE_MESSAGE_MAP()
@@ -77,10 +77,10 @@ private:
 	CToolBar toolBar;
 	CStatusBar statusBar;
 
-	map<CWnd*,Editor*> editors;
-	map<CWnd*,HelpView*> helps;
+	std::map<CWnd*,Editor*> editors;
+	std::map<CWnd*,HelpView*> helps;
 
-	string last_quick_help;
+	std::string last_quick_help;
 
 	Runtime rt;
 
@@ -92,14 +92,14 @@ private:
 
 	bool exit_flag;
 
-	void insertRecent( const string &f );
-	void newed( const string &t );
-	bool load( const string &t,const string &f );
-	bool open( const string &f );
+	void insertRecent( const std::string &f );
+	void newed( const std::string &t );
+	bool load( const std::string &t,const std::string &f );
+	bool open( const std::string &f );
 	bool close( int n );
 	bool save( int n );
 
-	void compile( const string &cmd );
+	void compile( const std::string &cmd );
 	void build( bool exec,bool publish );
 	void switchRuntime( int i );
 
@@ -110,8 +110,8 @@ private:
 	void currentSet( Tabber *tabber,int index );
 
 	//htmlhelplistener
-	void helpOpen( HelpView *help,const string &file,bool dir );
-	void helpTitleChange( HelpView *help,const string &title );
+	void helpOpen( HelpView *help,const std::string &file,bool dir );
+	void helpTitleChange( HelpView *help,const std::string &title );
 };
 
 #endif

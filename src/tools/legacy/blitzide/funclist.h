@@ -17,7 +17,7 @@ public:
 
 	void clear();
 
-	void insert( int line,const string &func );
+	void insert( int line,const std::string &func );
 	void remove( int begin,int end );
 	void relocate( int begin,int offset );
 
@@ -29,7 +29,7 @@ DECLARE_MESSAGE_MAP()
 
 private:
 
-	typedef list<int> Funcs;
+	typedef std::list<int> Funcs;
 
 	Funcs funcs;
 

@@ -26,13 +26,13 @@ int DebugTree::OnCreate( LPCREATESTRUCT lpCreateStruct ){
 	return 0;
 }
 
-static string typeTag( Type *t ){
+static std::string typeTag( Type *t ){
 	if( t->intType() ) return "";
 	if( t->floatType() ) return "#";
 	if( t->stringType() ) return "$";
 	if( StructType *s=t->structType() ) return "."+s->ident;
 	if( VectorType *v=t->vectorType() ){
-		string s=typeTag( v->elementType )+"[";
+		std::string s=typeTag( v->elementType )+"[";
 		for( int k=0;k<v->sizes.size();++k ){
 			if( k ) s+=",";
 			s+=itoa( v->sizes[k]-1 );
@@ -42,9 +42,9 @@ static string typeTag( Type *t ){
 	return "";
 }
 
-HTREEITEM DebugTree::insertVar( void *var,Decl *d,const string &name,HTREEITEM it,HTREEITEM parent ){
+HTREEITEM DebugTree::insertVar( void *var,Decl *d,const std::string &name,HTREEITEM it,HTREEITEM parent ){
 
-	string s=name;
+	std::string s=name;
 
 	ConstType *ct=d->type->constType();
 	StructType *st=d->type->structType();
@@ -159,7 +159,7 @@ void GlobalsTree::refresh(){
 			d->getName( name );
 
 			void *var=0;
-			module->findSymbol( ("_v"+string(name)).c_str(),(int*)&var );
+			module->findSymbol( ("_v"+std::string(name)).c_str(),(int*)&var );
 			it=insertVar( var,d,name,it,TVI_ROOT );
 		}
 	}

@@ -3,6 +3,8 @@
 #include <bb/system/system.h>
 #include "font.h"
 
+#undef max
+
 FT_Library ft;
 std::map<std::string,BBFontData> bbFontCache;
 

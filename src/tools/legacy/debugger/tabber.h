@@ -16,15 +16,15 @@ public:
 
 	void setListener( TabberListener *l );
 
-	void insert( int index,CWnd *wnd,const string &text );
+	void insert( int index,CWnd *wnd,const std::string &text );
 	void remove( int index );
 	void setCurrent( int index );
-	void setTabText( int index,const string &t );
+	void setTabText( int index,const std::string &t );
 
 	int size()const;
 	int getCurrent()const;
 	CWnd *getTabWnd( int index )const;
-	string getTabText( int index )const;
+	std::string getTabText( int index )const;
 
 	DECLARE_DYNAMIC( Tabber )
 	DECLARE_MESSAGE_MAP()
@@ -38,12 +38,12 @@ private:
 
 	struct Tab{
 		CWnd *wnd;
-		string text;
-		Tab( CWnd *w,const string &t ):wnd(w),text(t){
+		std::string text;
+		Tab( CWnd *w,const std::string &t ):wnd(w),text(t){
 		}
 	};
 
-	typedef list<Tab*> Tabs;
+	typedef std::list<Tab*> Tabs;
 
 	Tabs tabs;
 	int curr;

@@ -26,11 +26,11 @@ void Prefs::open(){
 
 	bool prg_windowed;
 
-	ifstream in( (homeDir+"/cfg/blitzide.prefs").c_str() );
+	std::ifstream in( (homeDir+"/cfg/blitzide.prefs").c_str() );
 	if( !in.good() ) return;
 
 	while( !in.eof() ){
-		string t;in>>t;
+		std::string t;in>>t;
 		if( !t.size() ) continue;
 		while( in.peek()=='\t' ) in.ignore();
 		if( t=="prg_debug" ) in>>prg_debug;
@@ -42,7 +42,7 @@ void Prefs::open(){
 			in>>win_rect.left;in>>win_rect.top;
 			in>>win_rect.right;in>>win_rect.bottom;
 		}else if( t.substr( 0,5 )=="font_" ){
-			string s;int h;in>>s;in>>h;
+			std::string s;int h;in>>s;in>>h;
 			t=t.substr( 5 );
 			if( t=="editor" ){
 				font_editor=s;font_editor_height=h;
@@ -53,7 +53,7 @@ void Prefs::open(){
 			}
 		}else if( t.substr( 0,4 )=="rgb_" ){
 			t=t.substr(4);
-			string s;in>>s;int rgb=0;
+			std::string s;in>>s;int rgb=0;
 			for( int k=0;k<s.size();++k ){
 				int n=s[k];rgb=(rgb<<4)|(n<='9'?n-'0':(n&31)+9);
 			}
@@ -77,10 +77,10 @@ void Prefs::open(){
 		}else if( t=="cmd_line" ){
 			getline( in,cmd_line );
 		}else if( t=="file_recent" ){
-			string l;getline( in,l );
+			std::string l;getline( in,l );
 			if( recentFiles.size()<10 ) recentFiles.push_back( l );
 		}else{
-			string s="Unrecognized option '"+t+"' in blitzide.prefs";
+			std::string s="Unrecognized option '"+t+"' in blitzide.prefs";
 			AfxMessageBox( "Error in preferences file" );
 			setDefault();
 			return;
@@ -91,34 +91,34 @@ void Prefs::open(){
 
 void Prefs::close(){
 
-	ofstream out( (homeDir+"/cfg/blitzide.prefs").c_str() );
+	std::ofstream out( (homeDir+"/cfg/blitzide.prefs").c_str() );
 	if( !out.good() ) return;
 
-	out<<"prg_debug\t"<<prg_debug<<endl;
-	out<<"prg_lastbuild\t"<<prg_lastbuild<<endl;
-	out<<"win_maximized\t"<<win_maximized<<endl;
-	out<<"win_notoolbar\t"<<win_notoolbar<<endl;
-	out<<"win_rect\t"<<win_rect.left<<' '<<win_rect.top<<' '<<win_rect.right<<' '<<win_rect.bottom<<endl;
-	out<<"font_editor\t"<<font_editor<<' '<<font_editor_height<<endl;
-	out<<"font_tabs\t"<<font_tabs<<' '<<font_tabs_height<<endl;
-	out<<"font_debug\t"<<font_debug<<' '<<font_debug_height<<endl;
-	out<<hex;
-	out<<"rgb_bkgrnd\t"<<SWAPRB(rgb_bkgrnd)<<endl;
-	out<<"rgb_string\t"<<SWAPRB(rgb_string)<<endl;
-	out<<"rgb_ident\t"<<SWAPRB(rgb_ident)<<endl;
-	out<<"rgb_keyword\t"<<SWAPRB(rgb_keyword)<<endl;
-	out<<"rgb_comment\t"<<SWAPRB(rgb_comment)<<endl;
-	out<<"rgb_digit\t"<<SWAPRB(rgb_digit)<<endl;
-	out<<"rgb_default\t"<<SWAPRB(rgb_default)<<endl;
-	out<<"edit_tabs\t"<<edit_tabs<<endl;
-	out<<"edit_blkcursor\t"<<edit_blkcursor<<endl;
-	out<<"edit_backup\t"<<edit_backup<<endl;
-	out<<"img_toolbar\t"<<img_toolbar<<endl;
-	out<<"cmd_line\t"<<cmd_line<<endl;
+	out<<"prg_debug\t"<<prg_debug<<std::endl;
+	out<<"prg_lastbuild\t"<<prg_lastbuild<<std::endl;
+	out<<"win_maximized\t"<<win_maximized<<std::endl;
+	out<<"win_notoolbar\t"<<win_notoolbar<<std::endl;
+	out<<"win_rect\t"<<win_rect.left<<' '<<win_rect.top<<' '<<win_rect.right<<' '<<win_rect.bottom<<std::endl;
+	out<<"font_editor\t"<<font_editor<<' '<<font_editor_height<<std::endl;
+	out<<"font_tabs\t"<<font_tabs<<' '<<font_tabs_height<<std::endl;
+	out<<"font_debug\t"<<font_debug<<' '<<font_debug_height<<std::endl;
+	out<<std::hex;
+	out<<"rgb_bkgrnd\t"<<SWAPRB(rgb_bkgrnd)<<std::endl;
+	out<<"rgb_string\t"<<SWAPRB(rgb_string)<<std::endl;
+	out<<"rgb_ident\t"<<SWAPRB(rgb_ident)<<std::endl;
+	out<<"rgb_keyword\t"<<SWAPRB(rgb_keyword)<<std::endl;
+	out<<"rgb_comment\t"<<SWAPRB(rgb_comment)<<std::endl;
+	out<<"rgb_digit\t"<<SWAPRB(rgb_digit)<<std::endl;
+	out<<"rgb_default\t"<<SWAPRB(rgb_default)<<std::endl;
+	out<<"edit_tabs\t"<<edit_tabs<<std::endl;
+	out<<"edit_blkcursor\t"<<edit_blkcursor<<std::endl;
+	out<<"edit_backup\t"<<edit_backup<<std::endl;
+	out<<"img_toolbar\t"<<img_toolbar<<std::endl;
+	out<<"cmd_line\t"<<cmd_line<<std::endl;
 	for( int k=0;k<recentFiles.size();++k ){
-		out<<"file_recent\t"<<recentFiles[k]<<endl;
+		out<<"file_recent\t"<<recentFiles[k]<<std::endl;
 	}
-	out<<dec;
+	out<<std::dec;
 
 	RemoveFontResource( (homeDir+"/cfg/blitz.fon").c_str() );
 }

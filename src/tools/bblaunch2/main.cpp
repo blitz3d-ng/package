@@ -5,12 +5,12 @@
 #include <cstdlib>
 
 #ifdef BB_WINDOWS
-static string getAppDir(){
+static std::string getAppDir(){
 	char buff[MAX_PATH];
 	if( GetModuleFileName( 0,buff,MAX_PATH ) ){
-		string t=buff;
+		std::string t=buff;
 		size_t n=t.find_last_of( '\\' );
-		if( n!=string::npos ) t=t.substr( 0,n );
+		if( n!=std::string::npos ) t=t.substr( 0,n );
 		return t;
 	}
 	return "";
@@ -24,10 +24,10 @@ int main( int argc,char **argv )
 #endif
 {
 #ifdef BB_WINDOWS
-	string t=getAppDir();
+	std::string t=getAppDir();
 	putenv( ("blitzpath="+t).c_str() );
 	SetCurrentDirectory( t.c_str() );
-	t=t+"\\bin\\ide2.exe "+string(cmd);
+	t=t+"\\bin\\ide2.exe "+std::string(cmd);
 
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
