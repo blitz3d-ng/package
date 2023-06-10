@@ -9,9 +9,9 @@ WindowsDir::~WindowsDir(){
 	if( handle!=INVALID_HANDLE_VALUE ) FindClose( handle );
 }
 
-string WindowsDir::getNextFile(){
+std::string WindowsDir::getNextFile(){
 	if( handle==INVALID_HANDLE_VALUE ) return "";
-	string t=findData.cFileName;
+	std::string t=findData.cFileName;
 	if( !FindNextFile( handle,&findData ) ){
 		FindClose( handle );
 		handle=INVALID_HANDLE_VALUE;

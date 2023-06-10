@@ -5,7 +5,7 @@
 #include "driver.h"
 #include "dir.h"
 
-static set<WindowsDir*> dir_set;
+static std::set<WindowsDir*> dir_set;
 
 WindowsFileSystem::WindowsFileSystem(){
 	dir_set.clear();
@@ -31,7 +31,7 @@ bool WindowsFileSystem::deleteFile( const std::string &file ){
 	return DeleteFile( file.c_str() ) ? true : false;
 }
 
-bool WindowsFileSystem::copyFile( const std::string &src,const string &dest ){
+bool WindowsFileSystem::copyFile( const std::string &src,const std::string &dest ){
 	return CopyFile( src.c_str(),dest.c_str(),false ) ? true : false;
 }
 
@@ -43,10 +43,10 @@ bool WindowsFileSystem::setCurrentDir( const std::string &dir ){
 	return SetCurrentDirectory( dir.c_str()) ? true : false;
 }
 
-string WindowsFileSystem::getCurrentDir()const{
+std::string WindowsFileSystem::getCurrentDir()const{
 	char buff[MAX_PATH];
 	if( !GetCurrentDirectory( MAX_PATH,buff ) ) return "";
-	string t=buff;if( t.size() && t[t.size()-1]!='\\' ) t+='\\';
+	std::string t=buff;if( t.size() && t[t.size()-1]!='\\' ) t+='\\';
 	return t;
 }
 
@@ -65,7 +65,7 @@ int WindowsFileSystem::getFileType( const std::string &name )const{
 }
 
 BBDir *WindowsFileSystem::openDir( const std::string &name,int flags ){
-	string t=name;
+	std::string t=name;
 	if( t[t.size()-1]=='\\' ) t+="*";
 	else t+="\\*";
 	WIN32_FIND_DATA f;

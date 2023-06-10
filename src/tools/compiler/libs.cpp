@@ -277,7 +277,7 @@ const char *openLibs( const Target &t,const std::string &rt ){
 #ifdef WIN32
 	char buff[MAX_PATH];
 	GetFullPathName( p,MAX_PATH,buff,NULL );
-	home=string(buff);
+	home=std::string(buff);
 #else
 	char buff[PATH_MAX];
 	home=realpath( p,buff );

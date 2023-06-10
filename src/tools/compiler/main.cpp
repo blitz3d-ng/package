@@ -43,7 +43,7 @@
 #define DEBUGGER "debugger.console"
 #endif
 
-#ifdef WIN32
+#ifdef BB_MSVC
 #include <StackWalker.h>
 
 class MyStackWalker:public StackWalker{
@@ -233,14 +233,14 @@ void enumToolchainFiles( const std::string &binpath,std::vector<std::string> &pa
 	closedir( bindir );
 }
 #else
-void enumToolchainFiles( const std::string &binpath,vector<string> &paths ){
+void enumToolchainFiles( const std::string &binpath,std::vector<std::string> &paths ){
 	WIN32_FIND_DATA bindata;
 	HANDLE bindir;
 	bindir=FindFirstFile( (binpath+"/*").c_str(),&bindata );
 	do{
-		string toolname( bindata.cFileName );
+		std::string toolname( bindata.cFileName );
 		if( (bindata.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) && toolname.length()>0 ){
-			string toolpath=canonicalpath( binpath+"/"+toolname+"/toolchain.toml" );
+			std::string toolpath=canonicalpath( binpath+"/"+toolname+"/toolchain.toml" );
 			if( !(GetFileAttributes( toolpath.c_str() )&FILE_ATTRIBUTE_DIRECTORY) ){
 				paths.push_back( toolpath );
 			}
@@ -292,16 +292,16 @@ const char *enumTargets( std::vector<Target> &targets ){
 }
 
 #ifdef WIN32
-static const char *enumRuntimes( vector<string> &rts ){
+static const char *enumRuntimes( std::vector<std::string> &rts ){
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
-	string home=string(p);
+	std::string home=std::string(p);
 
 	WIN32_FIND_DATA ffd;
 	HANDLE find;
 	find=FindFirstFile( (home+"/bin/" RUNTIMENAME ".*.dll").c_str(),&ffd );
 	do{
-		string fname(ffd.cFileName);
+		std::string fname(ffd.cFileName);
 		if( !(ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) && fname.length()>0 ){
 			fname=fname.substr( strlen(RUNTIMENAME)+1 );
 			fname=fname.substr( 0,fname.length()-4 );
@@ -321,7 +321,7 @@ int main( int argc,char *argv[] ){
 	signal(SIGSEGV, handle_segfault);
 #endif
 
-#ifdef WIN32
+#ifdef BB_MSVC
 	SetUnhandledExceptionFilter( exceptionFilter );
 #endif
 
@@ -406,7 +406,7 @@ int main( int argc,char *argv[] ){
 	if( const char *er=enumRuntimes( rts ) ) err( er );
 
 	if( rtinfo ){
-		if( !quiet ) cout<<"Found "<<rts.size()<<" runtimes:"<<std::endl;
+		if( !quiet ) std::cout<<"Found "<<rts.size()<<" runtimes:"<<std::endl;
 		for ( unsigned i=0;i<rts.size();i++ ){
 			std::cout<<rts[i]<<std::endl;
 		}
@@ -457,7 +457,7 @@ int main( int argc,char *argv[] ){
 
 #ifndef USE_LLVM
 	if( usellvm ) {
-		cerr<<"not compiled with llvm support"<<std::endl;
+		std::cerr<<"not compiled with llvm support"<<std::endl;
 		return 0;
 	}
 #endif
@@ -582,7 +582,7 @@ int main( int argc,char *argv[] ){
 			Linker_LLD linker( home );
 			linker.createExe( rt,target,obj_code,bundle,out_file );
 #else
-			cerr<<"llvm support was not compiled in"<<std::endl;
+			std::cerr<<"llvm support was not compiled in"<<std::endl;
 			abort();
 #endif
 		}else{

@@ -66,7 +66,7 @@ int Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 	bbAttachDebugger( dbg );
 
 	//strip spaces from ends of args...
-	string params=args;
+	std::string params=args;
 	while( params.size() && params[0]==' ' ) params=params.substr( 1 );
 	while( params.size() && params[params.size()-1]==' ' ) params=params.substr( 0,params.size()-1 );
 
@@ -85,8 +85,8 @@ int Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 /********************** BUTT UGLY DLL->EXE HOOK! *************************/
 
 static void *module_pc;
-static map<string,int> module_syms;
-static map<string,int> runtime_syms;
+static std::map<std::string,int> module_syms;
+static std::map<std::string,int> runtime_syms;
 static Runtime *runtime;
 
 static void fail(){
@@ -95,7 +95,7 @@ static void fail(){
 }
 
 struct Sym{
-	string name;
+	std::string name;
 	int value;
 };
 
@@ -107,15 +107,15 @@ static Sym getSym( void **p ){
 	*p=t+4;return sym;
 }
 
-static int findSym( const string &t ){
-	map<string,int>::iterator it;
+static int findSym( const std::string &t ){
+	std::map<std::string,int>::iterator it;
 
 	it=module_syms.find( t );
 	if( it!=module_syms.end() ) return it->second;
 	it=runtime_syms.find( t );
 	if( it!=runtime_syms.end() ) return it->second;
 
-	string err="Can't find symbol: "+t;
+	std::string err="Can't find symbol: "+t;
 	MessageBox( 0,err.c_str(),0,0 );
 	ExitProcess(0);
 	return 0;
@@ -125,7 +125,7 @@ static void link(){
 
 	while( const char *sc=runtime->nextSym() ){
 
-		string t(sc);
+		std::string t(sc);
 
 		if( t[0]=='_' ){
 			runtime_syms["_"+t]=runtime->symValue(sc);
@@ -208,7 +208,7 @@ int __stdcall BBWINMAIN(){
 
 #ifdef BETA
 	int ver=VERSION & 0x7fff;
-	string t="Created with Blitz3D Beta V"+itoa( ver/100 )+"."+itoa( ver%100 );
+	std::string t="Created with Blitz3D Beta V"+itoa( ver/100 )+"."+itoa( ver%100 );
 	MessageBox( GetDesktopWindow(),t.c_str(),"Blitz3D Message",MB_OK );
 #endif
 
@@ -222,17 +222,17 @@ int __stdcall BBWINMAIN(){
 	link();
 
 	//get cmd_line and params
-	string cmd=GetCommandLine(),params;
+	std::string cmd=GetCommandLine(),params;
 	while( cmd.size() && cmd[0]==' ' ) cmd=cmd.substr( 1 );
 	if( cmd.find( '\"' )==0 ){
 		int n=cmd.find( '\"',1 );
-		if( n!=string::npos ){
+		if( n!=std::string::npos ){
 			params=cmd.substr( n+1 );
 			cmd=cmd.substr( 1,n-1 );
 		}
 	}else{
 		int n=cmd.find( ' ' );
-		if( n!=string::npos ){
+		if( n!=std::string::npos ){
 			params=cmd.substr( n+1 );
 			cmd=cmd.substr( 0,n );
 		}

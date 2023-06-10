@@ -443,7 +443,7 @@ BBStr * BBCALL bbDottedIP( bb_int_t ip ){
 }
 
 #ifndef FIXME
-static int findHostIP( const string &t ){
+static int findHostIP( const std::string &t ){
 	int ip=inet_addr( t.c_str() );
 	if( ip!=INADDR_NONE ) return ip;
 	HOSTENT *h=gethostbyname( t.c_str() );

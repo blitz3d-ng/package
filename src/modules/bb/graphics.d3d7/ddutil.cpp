@@ -460,7 +460,7 @@ IDirectDrawSurface7 *loadDXTC(const char* filename,gxGraphics *gfx)
 ddSurf *ddUtil::loadSurface( const std::string &f,int flags,gxGraphics *gfx ){
 
 	int i=f.find( ".dds" );
-	if( i!=string::npos && i+4==f.size() ){
+	if( i!=std::string::npos && i+4==f.size() ){
 		//dds file!
 		ddSurf *surf=loadDXTC( f.c_str(),gfx );
 		return surf;

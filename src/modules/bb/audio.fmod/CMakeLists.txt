@@ -1,4 +1,4 @@
-IF(BB_WIN32 OR BB_WIN64)
+IF(BB_WINDOWS)
   bb_start_module(audio.fmod)
   set(DEPENDS_ON bb.audio bb.runtime)
   set(SOURCES audio.fmod.h sound.cpp sound.h driver.cpp driver.h)

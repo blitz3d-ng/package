@@ -47,7 +47,7 @@ static int cntBits( int mask ){
 	return n;
 }
 
-static vector<TexFmt> tex_fmts;
+static std::vector<TexFmt> tex_fmts;
 
 static HRESULT CALLBACK enumTextureFormat( DDPIXELFORMAT *fmt,void *p ){
 	TexFmt t;
@@ -61,8 +61,8 @@ static HRESULT CALLBACK enumTextureFormat( DDPIXELFORMAT *fmt,void *p ){
 	return D3DENUMRET_OK;
 }
 
-static string itobin( int n ){
-	string t;
+static std::string itobin( int n ){
+	std::string t;
 	for( int k=0;k<32;n<<=1,++k ){
 		t+=(n&0x80000000) ? '1' : '0';
 	}
@@ -70,7 +70,7 @@ static string itobin( int n ){
 }
 
 static void debugPF( const DDPIXELFORMAT &pf ){
-	string t;
+	std::string t;
 	t="Bits:"+itoa( pf.dwRGBBitCount );
 	_bbDebugLog( t.c_str() );
 	t="R Mask:"+itobin( pf.dwRBitMask );

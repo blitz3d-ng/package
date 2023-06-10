@@ -2,6 +2,7 @@
 #define BB_BLITZ3D_D3D7_GRAPHICS_H
 
 #include <bb/blitz3d/graphics.h>
+#include "blitz3d.d3d7.h"
 #include <d3d.h>
 
 class D3D7B3DGraphics : public B3DGraphics{

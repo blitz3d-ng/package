@@ -130,8 +130,8 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 
 		args.push_back( "/nodefaultlib" );
 		args.push_back( "oldnames.lib" );
-		std:string winsdk="C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.22621.0";
-		std:string msvc="C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.32.31326";
+		std::string winsdk="C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.22621.0";
+		std::string msvc="C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.32.31326";
 		args.push_back( "/libpath:"+winsdk+"\\ucrt\\x64" );
 		args.push_back( "/libpath:"+winsdk+"\\um\\x64" );
 		args.push_back( "/libpath:"+msvc+"\\lib\\x64" );
@@ -242,7 +242,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #endif
 
 #ifdef BB_WINDOWS
-	string libPath="/libpath:"+libdir;
+	std::string libPath="/libpath:"+libdir;
 	args.push_back( libPath );
 #else
 	args.push_back( "-L" );args.push_back( libdir );

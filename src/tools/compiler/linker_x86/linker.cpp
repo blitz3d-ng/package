@@ -70,7 +70,7 @@ void *X86Module::link( Module *libs ){
 	if( linked ) return data;
 
 	int dest;
-	map<int,string>::iterator it;
+	std::map<int,std::string>::iterator it;
 
 	char *p=(char*)VirtualAlloc( 0,pc,MEM_COMMIT|MEM_RESERVE,PAGE_EXECUTE_READWRITE );
 	memcpy( p,data,pc );
@@ -183,10 +183,10 @@ bool X86Module::createExe( const char *exe_file,const char *dll_file ){
 	//num_abss:  name,val...
 	//
 	qstreambuf buf;
-	iostream out( &buf );
+	std::iostream out( &buf );
 
-	map<string,int>::iterator it;
-	map<int,string>::iterator rit;
+	std::map<std::string,int>::iterator it;
+	std::map<int,std::string>::iterator rit;
 
 	//write the code
 	int sz=pc;out.write( (char*)&sz,4 );out.write( data,pc );
@@ -194,7 +194,7 @@ bool X86Module::createExe( const char *exe_file,const char *dll_file ){
 	//write symbols
 	sz=symbols.size();out.write( (char*)&sz,4 );
 	for( it=symbols.begin();it!=symbols.end();++it ){
-		string t=it->first+'\0';
+		std::string t=it->first+'\0';
 		out.write( t.data(),t.size() );
 		sz=it->second;out.write( (char*)&sz,4 );
 	}
@@ -202,7 +202,7 @@ bool X86Module::createExe( const char *exe_file,const char *dll_file ){
 	//write relative relocs
 	sz=rel_relocs.size();out.write( (char*)&sz,4 );
 	for( rit=rel_relocs.begin();rit!=rel_relocs.end();++rit ){
-		string t=rit->second+'\0';
+		std::string t=rit->second+'\0';
 		out.write( t.data(),t.size() );
 		sz=rit->first;out.write( (char*)&sz,4 );
 	}
@@ -210,7 +210,7 @@ bool X86Module::createExe( const char *exe_file,const char *dll_file ){
 	//write absolute relocs
 	sz=abs_relocs.size();out.write( (char*)&sz,4 );
 	for( rit=abs_relocs.begin();rit!=abs_relocs.end();++rit ){
-		string t=rit->second+'\0';
+		std::string t=rit->second+'\0';
 		out.write( t.data(),t.size() );
 		sz=rit->first;out.write( (char*)&sz,4 );
 	}

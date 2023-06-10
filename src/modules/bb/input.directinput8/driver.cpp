@@ -95,7 +95,7 @@ public:
 	}
 };
 
-static vector<Joystick*> joysticks;
+static std::vector<Joystick*> joysticks;
 
 static Joystick *createJoystick( DirectInput8Driver *input,LPCDIDEVICEINSTANCE devinst ){
 	IDirectInputDevice8 *dev;

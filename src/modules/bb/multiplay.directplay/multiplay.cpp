@@ -15,11 +15,11 @@ struct Player;
 
 static bool host;
 
-static map<DPID,Player*> player_map;
-static list<Player*> players,new_players;
+static std::map<DPID,Player*> player_map;
+static std::list<Player*> players,new_players;
 
 static int msg_type;
-static string msg_data;
+static std::string msg_data;
 static DPID msg_from,msg_to;
 
 static char *recv_buff;
@@ -37,10 +37,10 @@ struct bbMsg{
 
 struct Player{
 	DPID id;
-	string name;
+	std::string name;
 	bool remote;
 
-	Player( DPID i,const string &n,bool r ):id(i),name(n),remote(r){
+	Player( DPID i,const std::string &n,bool r ):id(i),name(n),remote(r){
 		players.push_back( this );
 		if( remote ) new_players.push_back( this );
 		player_map.clear();
@@ -67,18 +67,18 @@ static void clearPlayers(){
 
 static Player *findPlayer( DPID id ){
 	if( !player_map.size() ){
-		list<Player*>::iterator it;
+		std::list<Player*>::iterator it;
 		for( it=players.begin();it!=players.end();++it ){
-			player_map.insert( pair<DPID,Player*>( (*it)->id,(*it) ) );
+			player_map.insert( std::pair<DPID,Player*>( (*it)->id,(*it) ) );
 		}
 	}
-	map<DPID,Player*>::iterator it=player_map.find( id );
+	std::map<DPID,Player*>::iterator it=player_map.find( id );
 	return it==player_map.end() ? 0 : it->second;
 }
 
 static BOOL FAR PASCAL enumPlayer( DPID id,DWORD type,LPCDPNAME name,DWORD flags,LPVOID context ){
 	Player *p=findPlayer( id );if( p ) return TRUE;
-	p=d_new Player( id,string( name->lpszShortNameA ),true );
+	p=d_new Player( id,std::string( name->lpszShortNameA ),true );
 	return TRUE;
 }
 
@@ -145,7 +145,7 @@ int BBCALL bbHostNetGame( BBStr *name ){
 	if( dirPlay ){
 		RTEX( "Multiplayer game already started" );
 	}
-	string n=*name;delete name;
+	std::string n=*name;delete name;
 	return startGame( multiplay_setup_host( n ) );
 }
 
@@ -153,7 +153,7 @@ int BBCALL bbJoinNetGame( BBStr *name,BBStr *address ){
 	if( dirPlay ){
 		RTEX( "Multiplayer game already started" );
 	}
-	string n=*name,a=*address;delete name;delete address;
+	std::string n=*name,a=*address;delete name;delete address;
 	return startGame( multiplay_setup_join( n,a ) );
 }
 
@@ -165,8 +165,8 @@ void BBCALL bbStopNetGame(){
 DPID BBCALL bbCreateNetPlayer( BBStr *nm ){
 	chk();
 
-	string t=*nm;
-	string t0=t+'\0';
+	std::string t=*nm;
+	std::string t0=t+'\0';
 	delete nm;
 
 	DPID id;
@@ -241,7 +241,7 @@ int BBCALL bbRecvNetMsg(){
 			case DPSYS_CREATEPLAYERORGROUP:
 				if( DPMSG_CREATEPLAYERORGROUP *msg=(DPMSG_CREATEPLAYERORGROUP*)recv_buff ){
 					if( findPlayer( from=msg->dpId ) ) continue;
-					d_new Player( from,string( msg->dpnName.lpszShortNameA ),true );
+					d_new Player( from,std::string( msg->dpnName.lpszShortNameA ),true );
 					continue;
 				}
 				break;
@@ -264,7 +264,7 @@ int BBCALL bbRecvNetMsg(){
 			bbMsg *m=(bbMsg*)recv_buff;
 			Player *p=findPlayer( m->from );
 			if( p && !p->remote ) continue;
-			msg_data=string( (char*)(m+1),sz-sizeof(bbMsg) );
+			msg_data=std::string( (char*)(m+1),sz-sizeof(bbMsg) );
 			msg_from=m->from;msg_to=m->to;
 			msg_type=m->type;
 		}

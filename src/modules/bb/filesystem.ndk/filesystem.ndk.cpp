@@ -36,7 +36,7 @@ NDKFileSystem::NDKFileSystem(){
 NDKFileSystem::~NDKFileSystem(){
 }
 
-std::streambuf *NDKFileSystem::openFile( const std::string &file,ios_base::openmode n ){
+std::streambuf *NDKFileSystem::openFile( const std::string &file,std::ios_base::openmode n ){
 	LOGD( "openFile %s",file.c_str() );
 
 	NDKSystemDriver *sys=(NDKSystemDriver*)bbSystemDriver;

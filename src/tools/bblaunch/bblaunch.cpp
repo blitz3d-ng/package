@@ -28,12 +28,12 @@ static const wchar_t *md_err=
 L"Your desktop must be in high-colour mode to use Blitz Basic.\n\n"
 "You can change your display settings from the control panel.";
 
-static wstring getAppDir(){
+static std::wstring getAppDir(){
 	wchar_t buff[MAX_PATH];
 	if( GetModuleFileName( 0,buff,MAX_PATH ) ){
-		wstring t=buff;
+		std::wstring t=buff;
 		size_t n=t.find_last_of( '\\' );
-		if( n!=string::npos ) t=t.substr( 0,n );
+		if( n!=std::string::npos ) t=t.substr( 0,n );
 		return t;
 	}
 	return L"";
@@ -60,10 +60,10 @@ int __stdcall wWinMain( HINSTANCE inst,HINSTANCE prev,wchar_t *cmd,int show ){
 	if( getIEVersion()<4 ) fail( ie_err );
 
 	//Ugly hack to get application dir...
-	wstring t=getAppDir();
+	std::wstring t=getAppDir();
 	_wputenv( (L"blitzpath="+t).c_str() );
 	SetCurrentDirectory( t.c_str() );
-	t=t+L"\\bin\\ide" TARGETSUFFIX ".exe "+wstring(cmd);
+	t=t+L"\\bin\\ide" TARGETSUFFIX ".exe "+std::wstring(cmd);
 
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;

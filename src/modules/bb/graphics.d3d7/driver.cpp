@@ -224,7 +224,7 @@ static BOOL WINAPI enumDriver( GUID FAR *guid,LPSTR desc,LPSTR name,LPVOID conte
 		dir3d->Release();
 	}
 #endif
-	vector<D3D7ContextDriver::GfxDriver*> *drivers=(vector<D3D7ContextDriver::GfxDriver*>*)context;
+	std::vector<D3D7ContextDriver::GfxDriver*> *drivers=(std::vector<D3D7ContextDriver::GfxDriver*>*)context;
 	drivers->push_back( d );
 	dd->EnumDisplayModes( 0,0,d,enumMode );
 	dd->Release();
@@ -289,7 +289,7 @@ int D3D7ContextDriver::numGraphicsDrivers(){
 	return drivers.size();
 }
 
-void D3D7ContextDriver::graphicsDriverInfo( int driver,string *name,int *c ){
+void D3D7ContextDriver::graphicsDriverInfo( int driver,std::string *name,int *c ){
 	GfxDriver *g=drivers[driver];
 	int caps=0;
 #ifdef PRO
@@ -379,7 +379,7 @@ void D3D7ContextDriver::flip( bool vwait ){
 			n=f->getSurface()->Flip( 0,DDFLIP_NOVSYNC|DDFLIP_WAIT );
 		}
 		if( n>=0 ) return;
-		string t="Flip Failed! Return code:"+itoa(n&0x7fff);
+		std::string t="Flip Failed! Return code:"+itoa(n&0x7fff);
 		_bbDebugLog( t.c_str() );
 	}
 }

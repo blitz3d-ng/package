@@ -334,7 +334,7 @@ std::string fullfilename( const std::string &t ){
 }
 
 #ifdef WIN32 // FIXME: port these to POSIX envs.
-string filenamepath( const std::string &t ){
+std::string filenamepath( const std::string &t ){
 	char buff[MAX_PATH+1],*p;
 	GetFullPathName( t.c_str(),MAX_PATH,buff,&p );
 	if( !p ) return "";

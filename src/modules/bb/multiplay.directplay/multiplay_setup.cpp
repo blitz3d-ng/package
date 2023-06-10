@@ -10,10 +10,10 @@ IDirectPlay4 *dirPlay;
 
 struct Connection{
 	GUID guid;
-	string name;
+	std::string name;
 	void *data;
 
-	Connection( const GUID &g,const string &n,void *d,int sz ):guid(g),name(n){
+	Connection( const GUID &g,const std::string &n,void *d,int sz ):guid(g),name(n){
 		data=d_new char[sz];memcpy( data,d,sz );
 	}
 
@@ -24,12 +24,12 @@ struct Connection{
 
 struct Session{
 	GUID guid;
-	string name;
+	std::string name;
 	int max_players,curr_players,data1,data2;
 
 	Session( const DPSESSIONDESC2 *desc ){
 		guid=desc->guidInstance;
-		name=string( desc->lpszSessionNameA );
+		name=std::string( desc->lpszSessionNameA );
 		max_players=desc->dwMaxPlayers;
 		curr_players=desc->dwCurrentPlayers;
 		data1=desc->dwUser1;data2=desc->dwUser2;
@@ -37,8 +37,8 @@ struct Session{
 };
 
 static int timer;
-static vector<Connection*> connections;
-static vector<Session*> sessions;
+static std::vector<Connection*> connections;
+static std::vector<Session*> sessions;
 
 static void clearSessions(){
 	for( ;sessions.size();sessions.pop_back() ) delete sessions.back();
@@ -69,7 +69,7 @@ static BOOL FAR PASCAL enumConnection( LPCGUID guid,LPVOID conn,DWORD size,LPCDP
 	int n=dp->InitializeConnection( conn,0 );
 	dp->Release();if( n<0 ) return TRUE;
 
-	Connection *c=d_new Connection( *guid,string( _strdup( name->lpszShortNameA ) ),conn,size );
+	Connection *c=d_new Connection( *guid,std::string( _strdup( name->lpszShortNameA ) ),conn,size );
 	connections.push_back( c );
 
 	return TRUE;
@@ -92,7 +92,7 @@ static bool startGame( HWND hwnd ){
 		return false;
 	}
 
-	string name=string( buff )+'\0';
+	std::string name=std::string( buff )+'\0';
 
 	DPSESSIONDESC2 desc;
 	memset(&desc,0,sizeof(desc));
@@ -172,7 +172,7 @@ static bool connect( HWND hwnd ){
 			if( enumSessions( hwnd ) ) return true;
 		}else{
 			if( n!=DPERR_USERCANCEL ){
-				string t="Unable to open "+connections[con]->name;
+				std::string t="Unable to open "+connections[con]->name;
 				MessageBox( hwnd,t.c_str(),"DirPlay Error",MB_ICONWARNING );
 			}
 		}
@@ -206,7 +206,7 @@ static INT_PTR CALLBACK dialogProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lpar
 			closeDirPlay( hwnd );
 		}
 		for( k=0;k<connections.size();++k ){
-			string t=connections[k]->name;
+			std::string t=connections[k]->name;
 			SendDlgItemMessage( hwnd,IDC_CONNECTIONS,CB_ADDSTRING,0,(LPARAM)t.c_str() );
 		}
 		timer=0;
@@ -312,7 +312,7 @@ void multiplay_setup_close(){
 	closeDirPlay( 0 );
 }
 
-int multiplay_setup_host( const string &game_name ){
+int multiplay_setup_host( const std::string &game_name ){
 	if( !lobbyCreate ) return 0;
 
 	int ret=0;
@@ -322,11 +322,11 @@ int multiplay_setup_host( const string &game_name ){
 		if( lobbyCreate( 0,&lobby,0,0,0 )>=0 ){
 			if( lobby->QueryInterface( IID_IDirectPlayLobby3,(void**)&lobby3 )>=0 ){
 				//ok, create an address for initializeconnection
-				string ip( "\0" );
+				std::string ip( "\0" );
 				char address[256];DWORD sz=256;
 				if( lobby3->CreateAddress( DPSPGUID_TCPIP,DPAID_INet,ip.data(),ip.size(),address,&sz )>=0 ){
 					if( dirPlay->InitializeConnection( address,0 )>=0 ){
-						string name=game_name+'\0';
+						std::string name=game_name+'\0';
 						DPSESSIONDESC2 desc;
 						memset(&desc,0,sizeof(desc));
 						desc.dwSize=sizeof(desc);
@@ -355,7 +355,7 @@ int multiplay_setup_host( const string &game_name ){
 	return ret;
 }
 
-int multiplay_setup_join( const string &game_name,const string &ip_add ){
+int multiplay_setup_join( const std::string &game_name,const std::string &ip_add ){
 	if( !lobbyCreate ) return 0;
 
 	int ret=0;
@@ -365,7 +365,7 @@ int multiplay_setup_join( const string &game_name,const string &ip_add ){
 		if( lobbyCreate( 0,&lobby,0,0,0 )>=0 ){
 			if( lobby->QueryInterface( IID_IDirectPlayLobby3,(void**)&lobby3 )>=0 ){
 				//ok, create an address for initializeconnection
-				string ip=ip_add+'\0';
+				std::string ip=ip_add+'\0';
 				char address[256];DWORD sz=256;
 				if( lobby3->CreateAddress( DPSPGUID_TCPIP,DPAID_INet,ip.data(),ip.size(),address,&sz )>=0 ){
 					if( dirPlay->InitializeConnection( address,0 )>=0 ){

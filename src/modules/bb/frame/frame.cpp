@@ -13,7 +13,7 @@ void Frame::_refreshTitle( void *data,void *context ){
 	((Frame*)context)->setTitle( ((BBApp*)data)->title );
 }
 
-void Frame::setTitle( const string &t ){
+void Frame::setTitle( const std::string &t ){
 	SetWindowText( hwnd,t.c_str() );
 }
 
