@@ -24,8 +24,6 @@
 #include <unistd.h>
 #endif
 
-using namespace std;
-
 #include "target.h"
 #include "assem_x86/assem_x86.h"
 #include "codegen_x86/codegen_x86.h"
@@ -103,33 +101,33 @@ static void handle_segfault(int sig) {
 
 static void showInfo(){
 	const int major=(VERSION&0xffff)/100,minor=(VERSION&0xffff)%100;
-	cout<<"Blitz3D-NG V"<<major<<"."<<setfill('0')<<setw(2)<<minor<<endl;
+	std::cout<<"Blitz3D-NG V"<<major<<"."<<std::setfill('0')<<std::setw(2)<<minor<<std::endl;
 }
 
 static void showUsage(){
-	cout<<"Usage: blitzcc [-h|-q|+q|-c|-d|-k|+k|-v|-o exefile] [sourcefile.bb]"<<endl;
+	std::cout<<"Usage: blitzcc [-h|-q|+q|-c|-d|-k|+k|-v|-o exefile] [sourcefile.bb]"<<std::endl;
 }
 
 static void showHelp(){
 	showUsage();
-	cout<<"-a         : dump asm"<<endl;
-	cout<<"-h         : show this help"<<endl;
-	cout<<"-q         : quiet mode"<<endl;
-	cout<<"+q         : very quiet mode"<<endl;
-	cout<<"-c         : compile only"<<endl;
-	cout<<"-d         : debug compile"<<endl;
-	cout<<"-j         : dump json ast"<<endl;
-	cout<<"-k         : dump keywords"<<endl;
-	cout<<"+k         : dump keywords and syntax"<<endl;
-	cout<<"-llvm      : use llvm"<<endl;
-	cout<<"-r         : list available runtimes"<<endl;
-	cout<<"-v         : version info"<<endl;
-	cout<<"-o exefile : generate executable"<<endl;
+	std::cout<<"-a         : dump asm"<<std::endl;
+	std::cout<<"-h         : show this help"<<std::endl;
+	std::cout<<"-q         : quiet mode"<<std::endl;
+	std::cout<<"+q         : very quiet mode"<<std::endl;
+	std::cout<<"-c         : compile only"<<std::endl;
+	std::cout<<"-d         : debug compile"<<std::endl;
+	std::cout<<"-j         : dump json ast"<<std::endl;
+	std::cout<<"-k         : dump keywords"<<std::endl;
+	std::cout<<"+k         : dump keywords and syntax"<<std::endl;
+	std::cout<<"-llvm      : use llvm"<<std::endl;
+	std::cout<<"-r         : list available runtimes"<<std::endl;
+	std::cout<<"-v         : version info"<<std::endl;
+	std::cout<<"-o exefile : generate executable"<<std::endl;
 
 }
 
-static void err( const string &t ){
-	cout<<t<<endl;
+static void err( const std::string &t ){
+	std::cout<<t<<std::endl;
 	exit(-1);
 }
 
@@ -137,12 +135,12 @@ static void usageErr(){
 	err( "Usage error" );
 }
 
-static string quickHelp( const string &kw ){
+static std::string quickHelp( const std::string &kw ){
 
 	Environ *e=runtimeEnviron;
 	Decl *d=e->funcDecls->findDecl( tolower( kw ) );
 	if( !d || d->type->funcType()==0 ) return "No quick help available for "+kw;
-	string t=kw;
+	std::string t=kw;
 	FuncType *f=d->type->funcType();
 	if( f->returnType==Type::float_type ) t+='#';
 	else if( f->returnType==Type::string_type ) t+='$';
@@ -152,7 +150,7 @@ static string quickHelp( const string &kw ){
 	if( f->returnType!=Type::void_type ) t+="( ";
 
 	for( int k=0;k<f->params->size();++k ){
-		string s;
+		std::string s;
 		if( k ) s+=',';
 		Decl *p=f->params->decls[k];s+=p->name;
 		if( p->type==Type::float_type ) s+='#';
@@ -171,18 +169,18 @@ static string quickHelp( const string &kw ){
 static void dumpKeys( bool lang,bool mod,bool help ){
 
 	if( lang ){
-		map<string,int>::iterator it;
-		map<string,int> &keywords=Toker::getKeywords();
+		std::map<std::string,int>::iterator it;
+		std::map<std::string,int> &keywords=Toker::getKeywords();
 		for( it=keywords.begin();it!=keywords.end();++it ){
-			if( it->first.find(' ')!=string::npos ) continue;
-			cout<<it->first<<endl;
+			if( it->first.find(' ')!=std::string::npos ) continue;
+			std::cout<<it->first<<std::endl;
 		}
 	}
 
 	if( !mod ) return;
 
 	for( int k=0;k<keyWords.size();++k ){
-		string t=keyWords[k];
+		std::string t=keyWords[k];
 
 		if( t[0]=='_' )	continue;
 		if( !isalpha( t[0] ) ) t=t.substr( 1 );
@@ -193,38 +191,38 @@ static void dumpKeys( bool lang,bool mod,bool help ){
 			}
 		}
 		if( help ) t=quickHelp(t);
-		cout<<t<<endl;
+		std::cout<<t<<std::endl;
 	}
 }
 
-static string verstr( int ver ){
+static std::string verstr( int ver ){
 	return itoa((ver&65535)/100)+"."+itoa((ver&65535)%100);
 }
 
 static void versInfo(){
-	cout<<"Compiler version:"<<verstr(bcc_ver)<<endl;
-	cout<<"Runtime version:"<<verstr(run_ver)<<endl;
-	cout<<"Debugger version:"<<verstr(dbg_ver)<<endl;
-	cout<<"Linker version:"<<verstr(lnk_ver)<<endl;
+	std::cout<<"Compiler version:"<<verstr(bcc_ver)<<std::endl;
+	std::cout<<"Runtime version:"<<verstr(run_ver)<<std::endl;
+	std::cout<<"Debugger version:"<<verstr(dbg_ver)<<std::endl;
+	std::cout<<"Linker version:"<<verstr(lnk_ver)<<std::endl;
 }
 
 static void demoError(){
-	cout<<"Compiler can not be used standalone in demo version."<<endl;
+	std::cout<<"Compiler can not be used standalone in demo version."<<std::endl;
 	exit(0);
 }
 
 #ifndef WIN32
-void enumToolchainFiles( const string &binpath,vector<string> &paths ){
+void enumToolchainFiles( const std::string &binpath,std::vector<std::string> &paths ){
 	DIR *bindir=opendir( binpath.c_str() );
 	if( !bindir ) return;
 
 	struct dirent *ent;
 	while( (ent=readdir( bindir ))!=NULL ){
-		if( ent->d_type==DT_DIR && string(ent->d_name)!=string(".") && string(ent->d_name)!=string("..") ){
-			string toolpath=binpath+"/"+ent->d_name;
+		if( ent->d_type==DT_DIR && std::string(ent->d_name)!=std::string(".") && std::string(ent->d_name)!=std::string("..") ){
+			std::string toolpath=binpath+"/"+ent->d_name;
 			DIR *tooldir=opendir( toolpath.c_str() );
 			while( (ent=readdir( tooldir ))!=NULL ){
-				if( ent->d_type==DT_REG && string(ent->d_name)=="toolchain.toml" ){
+				if( ent->d_type==DT_REG && std::string(ent->d_name)=="toolchain.toml" ){
 					paths.push_back( toolpath+"/"+ent->d_name );
 				}
 			}
@@ -235,7 +233,7 @@ void enumToolchainFiles( const string &binpath,vector<string> &paths ){
 	closedir( bindir );
 }
 #else
-void enumToolchainFiles( const string &binpath,vector<string> &paths ){
+void enumToolchainFiles( const std::string &binpath,vector<string> &paths ){
 	WIN32_FIND_DATA bindata;
 	HANDLE bindir;
 	bindir=FindFirstFile( (binpath+"/*").c_str(),&bindata );
@@ -252,20 +250,20 @@ void enumToolchainFiles( const string &binpath,vector<string> &paths ){
 }
 #endif
 
-const char *enumTargets( vector<Target> &targets ){
+const char *enumTargets( std::vector<Target> &targets ){
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
-	string home=string( p );
+	std::string home=p;
 
-	vector<string> paths;
+	std::vector<std::string> paths;
 	enumToolchainFiles( home+"/bin",paths );
 
-	for( const string &toolpath:paths ){
+	for( const std::string &toolpath:paths ){
 		auto data=toml::parse( toolpath );
-		const string triple=toml::find<std::string>( data,"id" );
-		const string platform=toml::find<std::string>( data,"platform" );
-		const string platform_version=toml::find<std::string>( data,"platform_version" );
-		const string arch=toml::find<std::string>( data,"arch" );
+		const std::string triple=toml::find<std::string>( data,"id" );
+		const std::string platform=toml::find<std::string>( data,"platform" );
+		const std::string platform_version=toml::find<std::string>( data,"platform_version" );
+		const std::string arch=toml::find<std::string>( data,"arch" );
 
 		Target t=Target( triple,platform,arch,platform_version );
 
@@ -273,18 +271,18 @@ const char *enumTargets( vector<Target> &targets ){
 			Target::Runtime rt;
 			rt.id=ent.first;
 			rt.entry=toml::find<std::string>( ent.second,"entry" );;
-			rt.modules=toml::find<vector<string>>( ent.second,"deps" );
-			t.runtimes.insert( pair<string,Target::Runtime>( ent.first,rt ) );
+			rt.modules=toml::find<std::vector<std::string>>( ent.second,"deps" );
+			t.runtimes.insert( std::pair<std::string,Target::Runtime>( ent.first,rt ) );
 		}
 
 		for( const auto &ent:toml::find( data,"module" ).as_table() ){
 			Target::Module mod;
 			mod.id=ent.first;
-			if( ent.second.contains("libs") ) mod.libs=toml::find<vector<string>>( ent.second,"libs" );
-			if( ent.second.contains("system_libs") ) mod.system_libs=toml::find<vector<string>>( ent.second,"system_libs" );
-			if( ent.second.contains("extra_files") ) mod.extra_files=toml::find<vector<string>>( ent.second,"extra_files" );
-			if( ent.second.contains("symbols") ) mod.symbols=toml::find<vector<string>>( ent.second,"symbols" );
-			t.modules.insert( pair<string,Target::Module>( ent.first,mod ) );
+			if( ent.second.contains("libs") ) mod.libs=toml::find<std::vector<std::string>>( ent.second,"libs" );
+			if( ent.second.contains("system_libs") ) mod.system_libs=toml::find<std::vector<std::string>>( ent.second,"system_libs" );
+			if( ent.second.contains("extra_files") ) mod.extra_files=toml::find<std::vector<std::string>>( ent.second,"extra_files" );
+			if( ent.second.contains("symbols") ) mod.symbols=toml::find<std::vector<std::string>>( ent.second,"symbols" );
+			t.modules.insert( std::pair<std::string,Target::Module>( ent.first,mod ) );
 		}
 
 		targets.push_back( t );
@@ -327,7 +325,7 @@ int main( int argc,char *argv[] ){
 	SetUnhandledExceptionFilter( exceptionFilter );
 #endif
 
-	string in_file,out_file,rt,args,targetid,signerId,teamId;
+	std::string in_file,out_file,rt,args,targetid,signerId,teamId;
 
 	bool debug=false,quiet=false,veryquiet=false,compileonly=false;
 	bool dumpkeys=false,dumphelp=false,showhelp=false,dumpasm=false,dumptree=false;
@@ -340,7 +338,7 @@ int main( int argc,char *argv[] ){
 
 	for( int k=1;k<argc;++k ){
 
-		string t=argv[k];
+		std::string t=argv[k];
 
 		t=tolower(t);
 
@@ -369,7 +367,7 @@ int main( int argc,char *argv[] ){
 		}else if( t=="-v" ){
 			versinfo=true;
 		}else if( t=="-e" ){
-			cout<<BB_ENV<<endl;
+			std::cout<<BB_ENV<<std::endl;
 			return 0;
 		}else if( t=="-l" ){
 			rtinfo=true;
@@ -392,25 +390,25 @@ int main( int argc,char *argv[] ){
 			if( in_file.size() || t[0]=='-' || t[0]=='+' ) usageErr();
 			in_file=argv[k];
 			for( ++k;k<argc;++k ){
-				string t=argv[k];
-				if( t.find(' ')!=string::npos ) t='\"'+t+'\"';
+				std::string t=argv[k];
+				if( t.find(' ')!=std::string::npos ) t='\"'+t+'\"';
 				if( args.size() ) args+=' ';
 				args+=t;
 			}
 		}
 	}
 
-	vector<Target> targets;
+	std::vector<Target> targets;
 	if( const char *er=enumTargets( targets ) ) err( er );
 
-	vector<string> rts;
+	std::vector<std::string> rts;
 #ifdef WIN32
 	if( const char *er=enumRuntimes( rts ) ) err( er );
 
 	if( rtinfo ){
-		if( !quiet ) cout<<"Found "<<rts.size()<<" runtimes:"<<endl;
+		if( !quiet ) cout<<"Found "<<rts.size()<<" runtimes:"<<std::endl;
 		for ( unsigned i=0;i<rts.size();i++ ){
-			cout<<rts[i]<<endl;
+			std::cout<<rts[i]<<std::endl;
 		}
 		return 0;
 	}
@@ -459,7 +457,7 @@ int main( int argc,char *argv[] ){
 
 #ifndef USE_LLVM
 	if( usellvm ) {
-		cerr<<"not compiled with llvm support"<<endl;
+		cerr<<"not compiled with llvm support"<<std::endl;
 		return 0;
 	}
 #endif
@@ -473,16 +471,16 @@ int main( int argc,char *argv[] ){
 		in_file=in_file.substr( 1,in_file.size()-2 );
 	}
 
-	ifstream in( in_file.c_str() );
+	std::ifstream in( in_file.c_str() );
 	if( !in ) err( "Unable to open input file" );
 	if( !quiet ){
 		showInfo();
-		cout<<"Compiling \""<<in_file<<"\""<<endl;
+		std::cout<<"Compiling \""<<in_file<<"\""<<std::endl;
 	}
 
 	int n=in_file.rfind( '/' );
-	if( n==string::npos ) n=in_file.rfind( '\\' );
-	if( n!=string::npos ){
+	if( n==std::string::npos ) n=in_file.rfind( '\\' );
+	if( n!=std::string::npos ){
 		if( !n || in_file[n-1]==':' ) ++n;
 		chdir( in_file.substr(0,n).c_str() );
 	}
@@ -493,12 +491,12 @@ int main( int argc,char *argv[] ){
 	BundleInfo bundle;
 
 #ifdef USE_LLVM
-	string obj_code;
+	std::string obj_code;
 #endif
 
 	try{
 		//parse
-		if( !veryquiet ) cout<<"Parsing..."<<endl;
+		if( !veryquiet ) std::cout<<"Parsing..."<<std::endl;
 		Toker toker( in );
 		Parser parser( toker );
 		prog=parser.parse( in_file );
@@ -508,19 +506,19 @@ int main( int argc,char *argv[] ){
 		bundle.teamId = teamId;
 
 		//semant
-		if( !veryquiet ) cout<<"Generating..."<<endl;
+		if( !veryquiet ) std::cout<<"Generating..."<<std::endl;
 		env=prog->semant( runtimeEnviron );
 
 		if( dumptree ){
-			cout<<prog->toJSON( debug ).dump(2)<<endl;
+			std::cout<<prog->toJSON( debug ).dump(2)<<std::endl;
 			return 0;
 		}
 
 		//translate
-		if( !veryquiet ) cout<<"Translating..."<<endl;
+		if( !veryquiet ) std::cout<<"Translating..."<<std::endl;
 
 		qstreambuf qbuf;
-		iostream asmcode( &qbuf );
+		std::iostream asmcode( &qbuf );
 		Codegen_x86 codegen( asmcode,debug );
 #ifdef USE_LLVM
 		Codegen_LLVM codegen2( debug );
@@ -544,7 +542,7 @@ int main( int argc,char *argv[] ){
 			prog->translate( &codegen,userFuncs );
 
 			if( dumpasm ){
-				cout<<endl<<string( qbuf.data(),qbuf.size() )<<endl;
+				std::cout<<std::endl<<std::string( qbuf.data(),qbuf.size() )<<std::endl;
 			}
 		}
 
@@ -555,7 +553,7 @@ int main( int argc,char *argv[] ){
 		}
 
 		//assemble
-		if( !veryquiet ) cout<<"Assembling..."<<endl;
+		if( !veryquiet ) std::cout<<"Assembling..."<<std::endl;
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
@@ -567,9 +565,9 @@ int main( int argc,char *argv[] ){
 			assem.assemble();
 		}
 	}catch( Ex &x ){
-		string file='\"'+x.file+'\"';
+		std::string file='\"'+x.file+'\"';
 		int row=((x.pos>>16)&65535)+1,col=(x.pos&65535)+1;
-		cout<<file<<":"<<row<<":"<<col<<":"<<row<<":"<<col<<":"<<x.ex<<endl;
+		std::cout<<file<<":"<<row<<":"<<col<<":"<<row<<":"<<col<<":"<<x.ex<<std::endl;
 		exit(-1);
 	}
 
@@ -578,13 +576,13 @@ int main( int argc,char *argv[] ){
 	int ret=0;
 
 	if( out_file.size() ){
-		if( !veryquiet ) cout<<"Creating "+string(bundle.enabled?"bundle":"executable")+" \""<<out_file<<"\"..."<<endl;
+		if( !veryquiet ) std::cout<<"Creating "+std::string(bundle.enabled?"bundle":"executable")+" \""<<out_file<<"\"..."<<std::endl;
 		if( usellvm ) {
 #ifdef USE_LLVM
 			Linker_LLD linker( home );
 			linker.createExe( rt,target,obj_code,bundle,out_file );
 #else
-			cerr<<"llvm support was not compiled in"<<endl;
+			cerr<<"llvm support was not compiled in"<<std::endl;
 			abort();
 #endif
 		}else{
@@ -595,7 +593,7 @@ int main( int argc,char *argv[] ){
 				err( "Error creating executable" );
 			}
 #else
-			cerr<<"you must use llvm on non-Windows platforms"<<endl;
+			std::cerr<<"you must use llvm on non-Windows platforms"<<std::endl;
 			abort();
 #endif
 		}
@@ -605,11 +603,11 @@ int main( int argc,char *argv[] ){
 
 		if ( usellvm ) {
 #ifdef USE_LLVM
-			if( !veryquiet ) cout<<"Executing..."<<endl;
+			if( !veryquiet ) std::cout<<"Executing..."<<std::endl;
 
 			ret=JIT_ORC::run( runtimeLib,obj_code,home,rt );
 #else
-			cerr<<"llvm support was not compiled in"<<endl;
+			std::cerr<<"llvm support was not compiled in"<<std::endl;
 			abort();
 #endif
 		} else {
@@ -632,7 +630,7 @@ int main( int argc,char *argv[] ){
 		}
 #endif
 
-		if( !veryquiet ) cout<<"Executing..."<<endl;
+		if( !veryquiet ) std::cout<<"Executing..."<<std::endl;
 
 		ret=runtimeLib->execute( (void(*)())entry,args.c_str(),debugger );
 #ifdef WIN32

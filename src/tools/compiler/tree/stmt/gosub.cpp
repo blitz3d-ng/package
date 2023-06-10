@@ -19,7 +19,7 @@ void GosubNode::translate2( Codegen_LLVM *g ){
 
 	auto func=g->builder->GetInsertBlock()->getParent();
 
-	string label_cont=ident+"_"+string(itoa((bb_int_t)this))+"_cont";
+	std::string label_cont=ident+"_"+std::string(itoa((bb_int_t)this))+"_cont";
 	auto cont=g->getLabel( label_cont );
 	func->insert( func->end(),cont );
 

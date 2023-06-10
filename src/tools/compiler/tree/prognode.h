@@ -12,12 +12,12 @@
 
 #include <vector>
 
-extern vector<string> modules;
+extern std::vector<std::string> modules;
 
 struct UserFunc{
-	string ident,proc,lib;
+	std::string ident,proc,lib;
 	UserFunc( const UserFunc &t ):ident(t.ident),proc(t.proc),lib(t.lib){}
-	UserFunc( const string &id,const string &pr,const string &lb ):ident(id),proc(pr),lib(lb){}
+	UserFunc( const std::string &id,const std::string &pr,const std::string &lb ):ident(id),proc(pr),lib(lb){}
 };
 
 struct ProgNode : public Node{
@@ -32,7 +32,7 @@ struct ProgNode : public Node{
 
 	bool debug;
 
-	string file_lab;
+	std::string file_lab;
 
 	ProgNode( DeclSeqNode *c,DeclSeqNode *s,DeclSeqNode *f,DeclSeqNode *d,StmtSeqNode *ss ):consts(c),structs(s),funcs(f),datas(d),stmts(ss),debug(false){}
 	~ProgNode(){
@@ -44,13 +44,13 @@ struct ProgNode : public Node{
 	}
 
 	Environ *semant( Environ *e );
-	void translate( Codegen *g,const vector<UserFunc> &userfuncs );
+	void translate( Codegen *g,const std::vector<UserFunc> &userfuncs );
 
 	json toJSON( Environ *e );
 	json toJSON( bool dbg );
 
 #ifdef USE_LLVM
-	void translate2( Codegen_LLVM *g,const vector<UserFunc> &userfuncs );
+	void translate2( Codegen_LLVM *g,const std::vector<UserFunc> &userfuncs );
 #endif
 };
 

@@ -1,8 +1,6 @@
 
 #include "ogg_stream.h"
 
-using namespace std;
-
 #define BITS 16
 #define SIGN 1
 #define ENDIAN 0
@@ -18,7 +16,7 @@ size_t OGGAudioStream::oread( void *ptr, size_t size, size_t nmemb, void *dataso
 
 int OGGAudioStream::oseek( void *datasource, ogg_int64_t offset, int whence ){
 	OGGAudioStream *stream=(OGGAudioStream*)datasource;
-	ios_base::seekdir way=whence==SEEK_SET?(ios_base::beg):(whence==SEEK_CUR?(ios_base::cur):ios_base::end);
+	std::ios_base::seekdir way=whence==SEEK_SET?(std::ios_base::beg):(whence==SEEK_CUR?(std::ios_base::cur):std::ios_base::end);
 	return stream->in.seekg( offset,way ).gcount();
 }
 

@@ -1,7 +1,6 @@
 
 #include "frame.h"
 #include <bb/blitz/app.h>
-using namespace std;
 
 static const int static_ws=WS_VISIBLE|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX;
 static const int scaled_ws=WS_VISIBLE|WS_CAPTION|WS_SYSMENU|WS_SIZEBOX|WS_MINIMIZEBOX|WS_MAXIMIZEBOX;

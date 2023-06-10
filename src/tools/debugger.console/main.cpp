@@ -1,7 +1,6 @@
 
 #include "../stdutil/stdutil.h"
 #include <bb/blitz/debug.h>
-using namespace std;
 
 class ConsoleDebugger : public Debugger{
 protected:

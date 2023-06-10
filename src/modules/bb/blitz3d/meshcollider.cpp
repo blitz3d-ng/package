@@ -3,7 +3,7 @@
 #include "meshcollider.h"
 
 static const int MAX_COLL_TRIS=16;
-static vector<Vector> tri_centres;
+static std::vector<Vector> tri_centres;
 
 extern float stats3d[10];
 
@@ -30,9 +30,9 @@ static bool trisIntersect( const Vector a[3],const Vector b[3] ){
 	return triTest( a,b ) || triTest( b,a );
 }
 
-MeshCollider::MeshCollider( const vector<Vertex> &verts,const vector<Triangle> &tris ):
+MeshCollider::MeshCollider( const std::vector<Vertex> &verts,const std::vector<Triangle> &tris ):
 vertices(verts),triangles(tris){
-	vector<int> ts;
+	std::vector<int> ts;
 	tri_centres.clear();
 	for( unsigned int k=0;k<triangles.size();++k ){
 		const MeshCollider::Triangle &t=triangles[k];
@@ -98,7 +98,7 @@ bool MeshCollider::collide( const Box &line_box,const Line &line,float radius,co
 	return hit;
 }
 
-Box MeshCollider::nodeBox( const vector<int> &tris ){
+Box MeshCollider::nodeBox( const std::vector<int> &tris ){
 	Box box;
 	for( unsigned int k=0;k<tris.size();++k ){
 		const Triangle &t=triangles[ tris[k] ];
@@ -107,7 +107,7 @@ Box MeshCollider::nodeBox( const vector<int> &tris ){
 	return box;
 }
 
-MeshCollider::Node *MeshCollider::createLeaf( const vector<int> &tris ){
+MeshCollider::Node *MeshCollider::createLeaf( const std::vector<int> &tris ){
 
 	Node *c=d_new Node;
 	c->box=nodeBox( tris );
@@ -116,7 +116,7 @@ MeshCollider::Node *MeshCollider::createLeaf( const vector<int> &tris ){
 	return c;
 }
 
-MeshCollider::Node *MeshCollider::createNode( const vector<int> &tris ){
+MeshCollider::Node *MeshCollider::createNode( const std::vector<int> &tris ){
 
 	if( tris.size()<=MAX_COLL_TRIS ) return createLeaf( tris );
 
@@ -135,16 +135,16 @@ MeshCollider::Node *MeshCollider::createNode( const vector<int> &tris ){
 	//sort by axis
 	//
 	unsigned int k;
-	multimap<float,int> axis_map;
+	std::multimap<float,int> axis_map;
 	for( k=0;k<tris.size();++k ){
-		pair<float,int> p( tri_centres[tris[k]][axis],tris[k] );
+		std::pair<float,int> p( tri_centres[tris[k]][axis],tris[k] );
 		axis_map.insert( p );
 	}
 
 	//generate left node
 	//
-	vector<int> new_tris;
-	multimap<float,int>::iterator it=axis_map.begin();
+	std::vector<int> new_tris;
+	std::multimap<float,int>::iterator it=axis_map.begin();
 	for( k=axis_map.size()/2;k--;++it ){
 		new_tris.push_back( it->second );
 	}

@@ -5,7 +5,6 @@
 
 #include <sys/stat.h>
 #include <unistd.h>
-using namespace std;
 
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>

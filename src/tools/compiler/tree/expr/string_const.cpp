@@ -3,18 +3,18 @@
 /////////////////////
 // String constant //
 /////////////////////
-StringConstNode::StringConstNode( const string &s ):value(s){
+StringConstNode::StringConstNode( const std::string &s ):value(s){
 	sem_type=Type::string_type;
 }
 
 TNode *StringConstNode::translate( Codegen *g ){
-	string lab=genLabel();
+	std::string lab=genLabel();
 	g->s_data( value,lab );
 	return call( "__bbStrConst",global( lab ) );
 }
 
 #ifdef USE_LLVM
-map<string,llvm::Value*> ptrs;
+std::map<std::string,llvm::Value*> ptrs;
 
 llvm::Value *StringConstNode::translate2( Codegen_LLVM *g ){
 	auto t=g->constantString( value );
@@ -30,7 +30,7 @@ float StringConstNode::floatValue(){
 	return (float)atof( value );
 }
 
-string StringConstNode::stringValue(){
+std::string StringConstNode::stringValue(){
 	return value;
 }
 

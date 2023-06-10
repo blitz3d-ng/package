@@ -35,8 +35,8 @@ void SelectNode::translate( Codegen *g ){
 
 	g->code( sem_temp->store( g,expr->translate( g ) ) );
 
-	vector<string> labs;
-	string brk=genLabel();
+	std::vector<std::string> labs;
+	std::string brk=genLabel();
 
 	for( int k=0;k<cases.size();++k ){
 		CaseNode *c=cases[k];
@@ -65,8 +65,8 @@ void SelectNode::translate2( Codegen_LLVM *g ){
 
 	auto *func = g->builder->GetInsertBlock()->getParent();
 
-	vector<llvm::BasicBlock*> blocks;
-	vector<int> block_idx;
+	std::vector<llvm::BasicBlock*> blocks;
+	std::vector<int> block_idx;
 	llvm::BasicBlock *cont=0,*def=0;
 	cont=llvm::BasicBlock::Create( *g->context,"case_cont" );
 
@@ -89,7 +89,7 @@ void SelectNode::translate2( Codegen_LLVM *g ){
 	for( int k=0;k<cases.size();++k ){
 		CaseNode *c=cases[k];
 
-		vector<llvm::BasicBlock*> conds;
+		std::vector<llvm::BasicBlock*> conds;
 		conds.push_back( blocks[k] );
 		for( int j=1;j<c->exprs->size();++j ){
 			auto b=llvm::BasicBlock::Create( *g->context,"case_cond" );

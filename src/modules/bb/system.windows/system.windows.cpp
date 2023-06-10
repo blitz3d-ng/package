@@ -6,7 +6,6 @@
 
 #include <windows.h>
 #include <map>
-using namespace std;
 
 // // https://stackoverflow.com/questions/11387564/get-a-font-filepath-from-name-and-style-in-c-windows
 // #include <sstream>

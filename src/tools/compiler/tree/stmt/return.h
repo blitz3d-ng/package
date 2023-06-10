@@ -6,7 +6,7 @@
 
 struct ReturnNode : public StmtNode{
 	ExprNode *expr;
-	string returnLabel;
+	std::string returnLabel;
 	ReturnNode( ExprNode *e ):expr( e ){}
 	~ReturnNode(){ delete expr; }
 	void semant( Environ *e );

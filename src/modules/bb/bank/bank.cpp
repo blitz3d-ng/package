@@ -6,7 +6,6 @@
 
 #include <cstring>
 #include <set>
-using namespace std;
 
 bbBank::bbBank( int sz ):size(sz){
 	capacity=(size+15)&~15;
@@ -33,7 +32,7 @@ void bbBank::resize( int n ){
 	size=n;
 }
 
-static set<bbBank*> bank_set;
+static std::set<bbBank*> bank_set;
 
 void debugBank( bbBank *b ){
 	if( bb_env.debug ){

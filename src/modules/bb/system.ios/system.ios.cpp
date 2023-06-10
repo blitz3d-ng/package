@@ -6,7 +6,6 @@
 #include <unistd.h>
 
 #include <fstream>
-using namespace std;
 
 extern "C" {
 	int iosScreenWidth();

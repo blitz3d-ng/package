@@ -17,7 +17,7 @@ void InsertNode::translate( Codegen *g ){
 	if( g->debug ) t1=jumpf( t1,"__bbNullObjEx" );
 	TNode *t2=expr2->translate( g );
 	if( g->debug ) t2=jumpf( t2,"__bbNullObjEx" );
-	string s=before ? "__bbObjInsBefore" : "__bbObjInsAfter";
+	std::string s=before ? "__bbObjInsBefore" : "__bbObjInsAfter";
 	g->code( call( s,t1,t2 ) );
 }
 
@@ -25,7 +25,7 @@ void InsertNode::translate( Codegen *g ){
 void InsertNode::translate2( Codegen_LLVM *g ){
 	auto t1=g->CastToObjPtr( expr1->translate2( g ) );
 	auto t2=g->CastToObjPtr( expr2->translate2( g ) );
-	string s=before ? "_bbObjInsBefore" : "_bbObjInsAfter";
+	std::string s=before ? "_bbObjInsBefore" : "_bbObjInsAfter";
 	g->CallIntrinsic( s,Type::void_type->llvmType( g->context.get() ),2,t1,t2 );
 }
 #endif

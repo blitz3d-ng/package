@@ -60,13 +60,13 @@ void DimNode::translate2( Codegen_LLVM *g ){
 	auto glob=g->getArray( ident,sem_type->arrayType()->dims );
 	auto data_ty=g->arrayTypes[ident];
 
-	vector<llvm::Constant*> fields;
+	std::vector<llvm::Constant*> fields;
 	fields.push_back( llvm::ConstantPointerNull::get( g->voidPtr ) );
 	fields.push_back( g->constantInt( et ) );
 	fields.push_back( g->constantInt( exprs->size() ) );
 	auto ary=llvm::ConstantStruct::get( g->bbArray,fields );
 
-	vector<llvm::Constant*> afields;
+	std::vector<llvm::Constant*> afields;
 	afields.push_back( ary );
 	for( int k=0;k<exprs->size();++k ) {
 		afields.push_back( g->constantInt( 0 ) );
@@ -79,7 +79,7 @@ void DimNode::translate2( Codegen_LLVM *g ){
 
 	g->CallIntrinsic( "_bbUndimArray",g->voidTy,1,g->CastToArrayPtr( glob ) );
 	for( int k=0;k<exprs->size();++k ){
-		vector<llvm::Value*> idx;
+		std::vector<llvm::Value*> idx;
 		idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
 		idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 1+k) ) );
 		auto t=g->builder->CreateGEP( data_ty,glob,idx );

@@ -4,7 +4,7 @@
 #include "node.h"
 
 struct ExprSeqNode : public Node{
-	vector<ExprNode*> exprs;
+	std::vector<ExprNode*> exprs;
 	~ExprSeqNode(){ for( ;exprs.size();exprs.pop_back() ) delete exprs.back(); }
 	void push_back( ExprNode *e ){ exprs.push_back( e ); }
 	int  size(){ return exprs.size(); }

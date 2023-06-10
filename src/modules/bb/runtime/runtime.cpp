@@ -10,7 +10,6 @@ BBHook *bbRuntimeOnResume;
 
 #include <cstdlib>
 #include <iostream>
-using namespace std;
 
 //start up error
 #ifdef WIN32
@@ -21,7 +20,7 @@ void sue( const char *t ){
 }
 #else
 void sue( const char *t ){
-  cerr<<t<<endl;
+  std::cerr<<t<<std::endl;
   exit(1);
 }
 #endif

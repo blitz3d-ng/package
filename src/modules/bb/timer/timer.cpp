@@ -1,9 +1,8 @@
 #include "timer.h"
 #include <bb/runtime/runtime.h>
 #include <set>
-using namespace std;
 
-static set<BBTimer*> timers;
+static std::set<BBTimer*> timers;
 
 BBTimer::~BBTimer(){
 }

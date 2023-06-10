@@ -1,8 +1,8 @@
 #include "stmt_seq.h"
 #include "include.h"
 
-static string fileLabel;
-static map<string,string> fileMap;
+static std::string fileLabel;
+static std::map<std::string,std::string> fileMap;
 
 void StmtNode::debug( int pos,Codegen *g ){
 	if( g->debug ){
@@ -12,7 +12,7 @@ void StmtNode::debug( int pos,Codegen *g ){
 }
 
 #ifdef USE_LLVM
-static map<string,llvm::Value*> fileMap2;
+static std::map<std::string,llvm::Value*> fileMap2;
 
 void StmtNode::debug2( int pos,Codegen_LLVM *g ){
 	if( g->debug ){
@@ -28,7 +28,7 @@ void StmtNode::debug2( int pos,Codegen_LLVM *g ){
 }
 #endif
 
-void StmtSeqNode::reset( const string &file,const string &lab ){
+void StmtSeqNode::reset( const std::string &file,const std::string &lab ){
 	fileLabel="";
 	fileMap.clear();
 
@@ -51,7 +51,7 @@ void StmtSeqNode::semant( Environ *e ){
 
 void StmtSeqNode::translate( Codegen *g ){
 
-	string t=fileLabel;
+	std::string t=fileLabel;
 	fileLabel=file.size() ? fileMap[file] : "";
 	for( int k=0;k<stmts.size();++k ){
 		StmtNode *stmt=stmts[k];
@@ -70,7 +70,7 @@ void StmtSeqNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void StmtSeqNode::translate2( Codegen_LLVM *g ) {
-	string t=fileLabel;
+	std::string t=fileLabel;
 	fileLabel=file.size() ? file : "";
 	for( int k=0;k<stmts.size();++k ){
 		StmtNode *stmt=stmts[k];

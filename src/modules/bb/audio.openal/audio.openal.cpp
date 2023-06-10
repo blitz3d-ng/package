@@ -15,7 +15,6 @@
 #include <thread>
 #include <mutex>
 #include <string.h>
-using namespace std;
 
 #define NUM_BUFFERS 6
 #define BUFFER_SIZE 4096
@@ -30,8 +29,8 @@ public:
 	ALuint frequency;
 	ALenum format;
 
-	thread playbackThread;
-	mutex playbackMutex;
+	std::thread playbackThread;
+	std::mutex playbackMutex;
 	bool playbackRunning;
 
 	OpenALChannel():stream(0),source(0),frequency(0),playbackRunning(false){}
@@ -86,7 +85,7 @@ public:
 	void play(){
 		if( !playbackRunning ){
 			playbackRunning=true;
-			playbackThread=thread( &playback,this );
+			playbackThread=std::thread( &playback,this );
 		}
 	}
 
@@ -228,7 +227,7 @@ protected:
 	ALCdevice *dev;
 	ALCcontext *ctx;
 
-	AudioStream *loadStream( const string &filename,bool preload ){
+	AudioStream *loadStream( const std::string &filename,bool preload ){
 		AudioStream *stream=0;
 
 		const char *ext = strrchr( filename.c_str(),'.' );

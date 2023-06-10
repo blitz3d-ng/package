@@ -6,7 +6,7 @@ struct Animation::Rep{
 
 	int ref_cnt;
 
-	typedef map<int,Quat> KeyList;
+	typedef std::map<int,Quat> KeyList;
 
 	KeyList scale_anim,rot_anim,pos_anim;
 
@@ -32,7 +32,7 @@ struct Animation::Rep{
 		float delta=( time-curr->first )/( next->first-curr->first );
 		return ( next->second.v-curr->second.v )*delta+curr->second.v;
 	}
-	
+
 	Quat getSlerpValue( const KeyList &keys,float time )const{
 		KeyList::const_iterator next,curr;
 

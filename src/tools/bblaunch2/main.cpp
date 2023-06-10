@@ -3,7 +3,6 @@
 #endif
 #include <string>
 #include <cstdlib>
-using namespace std;
 
 #ifdef BB_WINDOWS
 static string getAppDir(){
@@ -45,8 +44,8 @@ int main( int argc,char **argv )
 	CloseHandle( pi.hProcess );
 	CloseHandle( pi.hThread );
 #else
-	string blitzpath;
-	blitzpath=string( dirname( argv[0] ) )+"/../../../";
+	std::string blitzpath;
+	blitzpath=std::string( dirname( argv[0] ) )+"/../../../";
 
 	setenv( "blitzpath",blitzpath.c_str(),1 );
 	system( (blitzpath+"/bin/ide2").c_str() );

@@ -4,8 +4,8 @@
 #include "decl_var.h"
 
 struct IdentVarNode : public DeclVarNode{
-	string ident,tag;
-	IdentVarNode( const string &i,const string &t ):ident(i),tag(t){}
+	std::string ident,tag;
+	IdentVarNode( const std::string &i,const std::string &t ):ident(i),tag(t){}
 	void semant( Environ *e );
 
 	json toJSON( Environ *e );

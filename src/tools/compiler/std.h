@@ -14,8 +14,6 @@
 #include <iostream>
 #include <iomanip>
 
-using namespace std;
-
 #ifdef _WIN32
 #include <windows.h>
 #endif

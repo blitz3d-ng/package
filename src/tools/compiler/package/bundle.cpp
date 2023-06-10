@@ -1,7 +1,6 @@
 #include "../bundle.h"
 
 #include <iostream>
-using namespace std;
 
 #ifdef BB_WINDOWS
 #include <direct.h>
@@ -12,10 +11,10 @@ using namespace std;
 #endif
 #include <sys/stat.h>
 
-void bundleFiles( const BundleInfo &bundle,const string &path ){
+void bundleFiles( const BundleInfo &bundle,const std::string &path ){
 	for( auto &file:bundle.files ){
-		string from=file.absolutePath;
-		string to=file.relativePath;
+		std::string from=file.absolutePath;
+		std::string to=file.relativePath;
 
 		// TODO: not perfect...
 		size_t pos=0;
@@ -23,7 +22,7 @@ void bundleFiles( const BundleInfo &bundle,const string &path ){
 			to.replace( pos,3,"" );
 		}
 
-		string dir=path;
+		std::string dir=path;
 		size_t start=0,end=0;
 		while( (end=to.find( "/",start ))!=std::string::npos ){
 			dir+="/"+to.substr( start,end );
@@ -31,7 +30,7 @@ void bundleFiles( const BundleInfo &bundle,const string &path ){
 			start=end+1;
 		}
 
-		cout<<"Copying "+file.relativePath+"..."<<endl;
+		std::cout<<"Copying "+file.relativePath+"..."<<std::endl;
 		if( system( ("cp "+from+" "+path+"/"+to).c_str() ) ){
 			exit( 1 );
 		}

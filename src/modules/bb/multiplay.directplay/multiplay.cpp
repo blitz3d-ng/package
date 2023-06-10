@@ -10,7 +10,6 @@
 #include "multiplay_setup.h"
 #include <map>
 #include <list>
-using namespace std;
 
 struct Player;
 

@@ -4,13 +4,12 @@
 #include <bb/runtime/runtime.h>
 #include "system.h"
 #include <cstring>
-using namespace std;
 
-map<string,string> bbSystemProperties;
+std::map<std::string,std::string> bbSystemProperties;
 BBSystemDriver *bbSystemDriver=0;
 
 void BBCALL bbRuntimeError( BBStr *str ){
-	string t=*str;delete str;
+	std::string t=*str;delete str;
 	if( t.size()>255 ) t[255]=0;
 	static char err[256];
 	strcpy( err,t.c_str() );
@@ -18,7 +17,7 @@ void BBCALL bbRuntimeError( BBStr *str ){
 }
 
 bb_int_t BBCALL bbExecFile( BBStr *f ){
-	string t=*f;delete f;
+	std::string t=*f;delete f;
 	int n=bbSystemDriver->execute( t );
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	return n;
@@ -33,7 +32,7 @@ bb_int_t BBCALL bbMilliSecs(){
 }
 
 BBStr * BBCALL bbSystemProperty( BBStr *p ){
-	string t=tolower(*p);
+	std::string t=tolower(*p);
 	delete p;return d_new BBStr( bbSystemProperties[t] );
 }
 

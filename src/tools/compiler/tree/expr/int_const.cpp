@@ -25,7 +25,7 @@ float IntConstNode::floatValue(){
 	return value;
 }
 
-string IntConstNode::stringValue(){
+std::string IntConstNode::stringValue(){
 	return itoa( value );
 }
 

@@ -11,7 +11,6 @@
 #include <istream>
 #include <map>
 #include <vector>
-using namespace std;
 
 enum{
 	DIM=0x8000,GOTO,GOSUB,EXIT,RETURN,
@@ -41,26 +40,26 @@ enum{
 
 class Toker{
 public:
-	Toker( istream &in );
+	Toker( std::istream &in );
 
 	int pos();
 	int curr();
 	int next();
-	string text();
+	std::string text();
 	int lookAhead( int n );
 
 	static int chars_toked;
 
-	static map<string,int> &getKeywords();
+	static std::map<std::string,int> &getKeywords();
 
 private:
 	struct Toke{
 		int n,from,to;
 		Toke( int n,int f,int t ):n(n),from(f),to(t){}
 	};
-	istream &in;
-	string line;
-	vector<Toke> tokes;
+	std::istream &in;
+	std::string line;
+	std::vector<Toke> tokes;
 	void nextline();
 	int curr_row,curr_toke;
 };

@@ -14,7 +14,7 @@ static float tex_coords3[2][2]={ {0,1},{0,1} };
 
 static BBMesh *mesh;
 static int mesh_size;
-static vector<int> mesh_indices;
+static std::vector<int> mesh_indices;
 
 static int allocIndex(){
 	if( !mesh_indices.size() ){

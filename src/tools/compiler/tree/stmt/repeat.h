@@ -9,7 +9,7 @@ struct RepeatNode : public StmtNode{
 	int untilPos;
 	StmtSeqNode *stmts;
 	ExprNode *expr;
-	string sem_brk;
+	std::string sem_brk;
 	RepeatNode( StmtSeqNode *s,ExprNode *e,int up ):stmts(s),expr(e),untilPos(up){}
 	~RepeatNode(){ delete stmts;delete expr; }
 	void semant( Environ *e );

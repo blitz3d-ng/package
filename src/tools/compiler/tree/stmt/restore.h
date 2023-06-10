@@ -4,9 +4,9 @@
 #include "node.h"
 
 struct RestoreNode : public StmtNode{
-	string ident;
+	std::string ident;
 	Label *sem_label;
-	RestoreNode( const string &i ):ident(i){}
+	RestoreNode( const std::string &i ):ident(i){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
 #ifdef USE_LLVM

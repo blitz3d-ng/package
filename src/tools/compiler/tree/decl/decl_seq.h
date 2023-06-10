@@ -4,7 +4,7 @@
 #include "node.h"
 
 struct DeclSeqNode : public Node{
-	vector<DeclNode*> decls;
+	std::vector<DeclNode*> decls;
 	DeclSeqNode(){}
 	~DeclSeqNode(){ for(;decls.size();decls.pop_back())delete decls.back(); }
 	void proto( DeclSeq *d,Environ *e );

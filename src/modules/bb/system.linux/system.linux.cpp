@@ -6,7 +6,6 @@
 #include <fontconfig/fontconfig.h>
 
 #include <fstream>
-using namespace std;
 
 bool LinuxSystemDriver::delay( int ms ){
   usleep( ms * 1000 );

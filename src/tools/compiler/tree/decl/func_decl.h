@@ -5,12 +5,12 @@
 #include "../stmt/stmt_seq.h"
 
 struct FuncDeclNode : public DeclNode{
-	string ident,tag;
+	std::string ident,tag;
 	DeclSeqNode *params;
 	StmtSeqNode *stmts;
 	FuncType *sem_type;
 	Environ *sem_env;
-	FuncDeclNode( const string &i,const string &t,DeclSeqNode *p,StmtSeqNode *ss ):ident(i),tag(t),params(p),stmts(ss){}
+	FuncDeclNode( const std::string &i,const std::string &t,DeclSeqNode *p,StmtSeqNode *ss ):ident(i),tag(t),params(p),stmts(ss){}
 	~FuncDeclNode(){ delete params;delete stmts; }
 	void proto( DeclSeq *d,Environ *e );
 	void semant( Environ *e );

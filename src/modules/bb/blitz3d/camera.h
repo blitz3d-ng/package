@@ -2,6 +2,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <bb/graphics/canvas.h>
 #include "object.h"
 #include "frustum.h"
 

@@ -35,22 +35,22 @@ Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 
 void Linker_LLD::createExe( const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
 	// string tmpdir=string( tmpnam(0) );
-	string tmpdir="tmp/apk";
+	std::string tmpdir="tmp/apk";
 
 	std::string toolchain=home+"/bin/"+target.triple;
 	std::string libdir=toolchain+"/lib";
 
 	bool android=(target.type=="android"||target.type=="ovr");
-	string androidsdk,ndkroot,sysroot,ndktriple,ndkarch;
+	std::string androidsdk,ndkroot,sysroot,ndktriple,ndkarch;
 	if( android ){
 		char *androidhome=getenv("ANDROID_HOME");
 		// TODO: verify environment at the start...
 		if( androidhome==0 ){
-			cerr<<"ANDROID_HOME is not set"<<endl;
+			std::cerr<<"ANDROID_HOME is not set"<<std::endl;
 			exit( 1 );
 		}
 
-		androidsdk=string( androidhome );
+		androidsdk=std::string( androidhome );
 		ndkroot=androidsdk+"/ndk-bundle/toolchains/llvm/prebuilt/" UNAME "-x86_64";
 		sysroot=ndkroot+"/sysroot";
 
@@ -70,9 +70,9 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	}
 
 	// TODO: sort out all the lazy strdup business below...
-	std::vector<string> args,libs,systemlibs;
+	std::vector<std::string> args,libs,systemlibs;
 
-	string binaryPath=exeFile;
+	std::string binaryPath=exeFile;
 
 	bool apk=false,app=false,ios=false;
 
@@ -102,7 +102,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #ifdef BB_MACOS
 	if( app ){
 		binaryPath=binaryPath.substr( 0,binaryPath.size()-4 ); // remove .app
-		string appid=basename( (char*)binaryPath.c_str() );
+		std::string appid=basename( (char*)binaryPath.c_str() );
 		binaryPath=exeFile+"/"+appid;
 
 		system( ("mkdir -p "+exeFile).c_str() );
@@ -130,8 +130,8 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 
 		args.push_back( "/nodefaultlib" );
 		args.push_back( "oldnames.lib" );
-		string winsdk="C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.22621.0";
-		string msvc="C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.32.31326";
+		std:string winsdk="C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.22621.0";
+		std:string msvc="C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.32.31326";
 		args.push_back( "/libpath:"+winsdk+"\\ucrt\\x64" );
 		args.push_back( "/libpath:"+winsdk+"\\um\\x64" );
 		args.push_back( "/libpath:"+msvc+"\\lib\\x64" );
@@ -232,10 +232,10 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #ifdef BB_WINDOWS
 	args.push_back( "/lldignoreenv" );
 
-	string machine="/machine:X64";
+	std::string machine="/machine:X64";
 	args.push_back( machine );
 
-	string outArg="/out:"+binaryPath;
+	std::string outArg="/out:"+binaryPath;
 	args.push_back( outArg );
 #else
 	args.push_back("-o");args.push_back( binaryPath );
@@ -258,15 +258,15 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	for( std::string mod:rti.modules ){
 		const Target::Module &m=target.modules.at( mod );
 		libs.push_back( "bb."+mod );
-		for( string lib:m.libs ) libs.push_back( lib );
-		for( string lib:m.system_libs ) systemlibs.push_back( lib );
+		for( std::string lib:m.libs ) libs.push_back( lib );
+		for( std::string lib:m.system_libs ) systemlibs.push_back( lib );
 	}
 
 #ifdef BB_LINUX
 	args.push_back("--end-group");
 #endif
 
-	string mainPath=string(tmpnam(0))+".o";
+	std::string mainPath=std::string(tmpnam(0))+".o";
 	std::ofstream mainFile( mainPath,std::ios_base::binary );
 	mainFile.write( mainObj.c_str(),mainObj.size() );
 	mainFile.flush();
@@ -275,11 +275,11 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	//*------------------------
 
 	for( auto lib:libs ){
-		string arg;
+		std::string arg;
 #ifdef BB_WINDOWS
-		arg=lib+string(".lib");
+		arg=lib+std::string(".lib");
 #else
-		arg="-l"+string(lib);
+		arg="-l"+std::string(lib);
 #endif
 		args.push_back( arg );
 	}
@@ -303,7 +303,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #ifdef BB_WINDOWS
 		args.push_back( lib+".lib" );
 #else
-		string fw="-framework";
+		std::string fw="-framework";
 		if( lib.find( fw )==0 ) {
 			args.push_back( fw );
 			args.push_back( lib.substr( fw.size()+1 ) );
@@ -350,7 +350,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	}
 
 	if( !success ){
-		cerr<<"failed to link"<<endl;
+		std::cerr<<"failed to link"<<std::endl;
 		exit( 1 );
 	}
 

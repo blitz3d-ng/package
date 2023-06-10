@@ -6,8 +6,6 @@
 #include <bb/blitz/blitz.h>
 #include <bb/runtime/runtime.h>
 
-using namespace std;
-
 #include <map>
 #include <eh.h>
 #include <float.h>

@@ -102,7 +102,7 @@ void Entity::setParent( Entity *p ){
 	invalidateWorld();
 }
 
-void Entity::setName( const string &t ){
+void Entity::setName( const std::string &t ){
 	_name=t;
 }
 
@@ -114,7 +114,7 @@ void Entity::setEnabled( bool enabled ){
 	_enabled=enabled;
 }
 
-void Entity::enumVisible( vector<Object*> &out ){
+void Entity::enumVisible( std::vector<Object*> &out ){
 	if( !_visible ) return;
 	if( Object *o=getObject() ) out.push_back(o);
 	for( Entity *e=_children;e;e=e->_succ ){
@@ -122,7 +122,7 @@ void Entity::enumVisible( vector<Object*> &out ){
 	}
 }
 
-void Entity::enumEnabled( vector<Object*> &out ){
+void Entity::enumEnabled( std::vector<Object*> &out ){
 	if( !_enabled ) return;
 	if( Object *o=getObject() ) out.push_back(o);
 	for( Entity *e=_children;e;e=e->_succ ){

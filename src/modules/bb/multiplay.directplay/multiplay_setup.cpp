@@ -5,7 +5,6 @@
 #include "multiplay_setup.h"
 #include <string>
 #include <vector>
-using namespace std;
 
 IDirectPlay4 *dirPlay;
 

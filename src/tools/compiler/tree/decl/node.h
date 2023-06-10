@@ -5,7 +5,7 @@
 
 struct DeclNode : public Node{
 	int pos;
-	string file;
+	std::string file;
 	DeclNode():pos(-1){}
 	virtual void proto( DeclSeq *d,Environ *e ){}
 	virtual void semant( Environ *e ){}

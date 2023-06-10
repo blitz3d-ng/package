@@ -4,9 +4,9 @@
 #include "node.h"
 
 struct DeleteEachNode : public StmtNode{
-	string typeIdent;
+	std::string typeIdent;
 	Type *type;
-	DeleteEachNode( const string &t ):typeIdent(t){}
+	DeleteEachNode( const std::string &t ):typeIdent(t){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
 #ifdef USE_LLVM

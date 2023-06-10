@@ -6,9 +6,9 @@
 
 struct FieldVarNode : public VarNode{
 	ExprNode *expr;
-	string ident,tag;
+	std::string ident,tag;
 	Decl *sem_field;
-	FieldVarNode( ExprNode *e,const string &i,const string &t ):expr(e),ident(i),tag(t){}
+	FieldVarNode( ExprNode *e,const std::string &i,const std::string &t ):expr(e),ident(i),tag(t){}
 	~FieldVarNode(){ delete expr; }
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );

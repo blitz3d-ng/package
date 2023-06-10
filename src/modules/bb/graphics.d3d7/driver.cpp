@@ -4,7 +4,6 @@
 #include "graphics.d3d7.h"
 #include <windows.h>
 #include <d3d.h>
-using namespace std;
 
 static DDSURFACEDESC2 desktop_desc;
 

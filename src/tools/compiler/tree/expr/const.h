@@ -8,7 +8,7 @@ struct ConstNode : public ExprNode{
 	ConstNode *constNode(){ return this; }
 	virtual int intValue()=0;
 	virtual float floatValue()=0;
-	virtual string stringValue()=0;
+	virtual std::string stringValue()=0;
 
 	DEFAULT_NODE_JSON( ConstNode );
 };

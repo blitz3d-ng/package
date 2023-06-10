@@ -7,8 +7,6 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 #include "environ.h"
 #include "tree/parser.h"
 #include "linker_x86/linker.h"
@@ -21,7 +19,7 @@ extern int run_ver;
 extern int dbg_ver;
 
 //openLibs
-extern string home;
+extern std::string home;
 extern Linker *linkerLib;
 extern Runtime *runtimeLib;
 
@@ -30,13 +28,13 @@ extern BBRuntimeDylib rtdl;
 //linkLibs
 extern Module *runtimeModule;
 extern Environ *runtimeEnviron;
-extern vector<string> modules;
-extern vector<string> keyWords;
-extern vector<UserFunc> userFuncs;
+extern std::vector<std::string> modules;
+extern std::vector<std::string> keyWords;
+extern std::vector<UserFunc> userFuncs;
 
-const char *openLibs( const Target &t,const string &rt );
+const char *openLibs( const Target &t,const std::string &rt );
 
-const char *linkLibs( const Target &t,const string &rt );
+const char *linkLibs( const Target &t,const std::string &rt );
 
 void closeLibs();
 

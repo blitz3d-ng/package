@@ -6,7 +6,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
-using namespace std;
 
 #ifndef BB_NDK
 #ifdef BB_DEBUG
@@ -27,7 +26,7 @@ using namespace std;
 class StdioDebugger : public Debugger{
 private:
 	bool trace;
-	string file;
+	std::string file;
 	int row,col;
 public:
 	StdioDebugger( bool t ):trace(t){
@@ -38,17 +37,17 @@ public:
 	void debugStop(){
 	}
 	void debugStmt( int srcpos,const char *f ){
-		file=string(f);
+		file=std::string(f);
 		row=(srcpos>>16)&0xffff;
 		col=srcpos&0xffff;
-		if( trace ) cout<<file<<":"<<"["<<row+1<<":"<<col<<"]"<<endl;
+		if( trace ) std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"]"<<std::endl;
 	}
 	void debugEnter( void *frame,void *env,const char *func ){
 	}
 	void debugLeave(){
 	}
 	void debugLog( const char *msg ){
-    cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<endl;
+    std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<std::endl;
 	}
 	void debugMsg( const char *msg,bool serious ){
 	}
@@ -88,14 +87,14 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 	char path[PATH_MAX];
 	uint32_t path_len=sizeof( path );
 	_NSGetExecutablePath( path,&path_len );
-	string dir=dirname( path );
+	std::string dir=dirname( path );
 	if( dir.substr( dir.length()-4 )==".app" ){
 		chdir( dir.c_str() );
 	}
 #endif
 
 	bool trace=false;
-	string cmd_line;
+	std::string cmd_line;
 	for( int i=1;i<argc;i++ ){
 		if( strncmp( "--trace",argv[i],strlen("--trace")+1 )==0 ){
 			trace=true;
@@ -116,7 +115,7 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 			if( bb_env.debug ){
 				debugger.debugLog( ex.err );
 			}else{
-				cerr<<ex.err<<endl;
+				std::cerr<<ex.err<<std::endl;
 			}
 			retcode=1;
 		}

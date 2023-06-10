@@ -23,13 +23,13 @@ public:
 
 	Parser( Toker &t );
 
-	ProgNode *parse( const string &main );
+	ProgNode *parse( const std::string &main );
 	BundleInfo bundle;
 private:
-	string incfile;
-	set<string> included;
+	std::string incfile;
+	std::set<std::string> included;
 	Toker *toker,*main_toker;
-	map<string,DimNode*> arrayDecls;
+	std::map<std::string,DimNode*> arrayDecls;
 
 	DeclSeqNode *consts;
 	DeclSeqNode *structs;
@@ -39,16 +39,16 @@ private:
 	StmtSeqNode *parseStmtSeq( int scope );
 	void parseStmtSeq( StmtSeqNode *stmts,int scope );
 
-	void ex( const string &s );
-	void exp( const string &s );
+	void ex( const std::string &s );
+	void exp( const std::string &s );
 
-	string parseIdent();
+	std::string parseIdent();
 	void parseChar( int c );
-	string parseTypeTag();
+	std::string parseTypeTag();
 
 	VarNode *parseVar();
-	VarNode *parseVar( const string &ident,const string &tag );
-	CallNode *parseCall( const string &ident,const string &tag );
+	VarNode *parseVar( const std::string &ident,const std::string &tag );
+	CallNode *parseCall( const std::string &ident,const std::string &tag );
 	IfNode *parseIf();
 
 	DeclNode *parseVarDecl( int kind,bool constant );

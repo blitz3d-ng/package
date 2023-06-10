@@ -5,19 +5,19 @@
 #include "cachedtexture.h"
 
 struct Filter{
-	string t;
+	std::string t;
 	int flags;
-	Filter( const string &t,int flags ):t(t),flags(flags){
+	Filter( const std::string &t,int flags ):t(t),flags(flags){
 	}
 };
 
-static vector<Filter> filters;
+static std::vector<Filter> filters;
 
-static int filterFile( const string &t,int flags ){
+static int filterFile( const std::string &t,int flags ){
 	//check filters...
-	string l=tolower(t);
+	std::string l=tolower(t);
 	for( unsigned int k=0;k<filters.size();++k ){
-		if( l.find( filters[k].t )!=string::npos ){
+		if( l.find( filters[k].t )!=std::string::npos ){
 			flags|=filters[k].flags;
 		}
 	}
@@ -28,7 +28,7 @@ struct Texture::Rep{
 
 	int ref_cnt;
 	CachedTexture cached_tex;
-	vector<BBCanvas*> tex_frames;
+	std::vector<BBCanvas*> tex_frames;
 
 	int tex_blend,tex_flags;
 	bool transparent;
@@ -48,7 +48,7 @@ struct Texture::Rep{
 		memset( &matrix,0,sizeof( matrix ) );
 	}
 
-	Rep( const string &f,int flags,int w,int h,int first,int cnt ):
+	Rep( const std::string &f,int flags,int w,int h,int first,int cnt ):
 	ref_cnt(1),cached_tex( f,flags,w,h,first,cnt ),
 	tex_blend(BBScene::BLEND_MULTIPLY),tex_flags(0),
 	sx(1),sy(1),tx(0),ty(0),rot(0),mat_used(false){
@@ -71,13 +71,13 @@ struct Texture::Rep{
 Texture::Texture():rep(0){
 }
 
-Texture::Texture( const string &f,int flags ){
+Texture::Texture( const std::string &f,int flags ){
 	flags=filterFile( f,flags )|BBCanvas::CANVAS_TEXTURE;
 	if( flags & BBCanvas::CANVAS_TEX_MASK ) flags|=BBCanvas::CANVAS_TEX_RGB|BBCanvas::CANVAS_TEX_ALPHA;
 	rep=d_new Rep( f,flags,0,0,0,1 );
 }
 
-Texture::Texture( const string &f,int flags,int w,int h,int first,int cnt ){
+Texture::Texture( const std::string &f,int flags,int w,int h,int first,int cnt ){
 	flags=filterFile( f,flags )|BBCanvas::CANVAS_TEXTURE;
 	if( flags & BBCanvas::CANVAS_TEX_MASK ) flags|=BBCanvas::CANVAS_TEX_RGB|BBCanvas::CANVAS_TEX_ALPHA;
 	rep=d_new Rep( f,flags,w,h,first,cnt );
@@ -185,6 +185,6 @@ void Texture::clearFilters(){
 	filters.clear();
 }
 
-void Texture::addFilter( const string &t,int flags ){
+void Texture::addFilter( const std::string &t,int flags ){
 	filters.push_back( Filter( tolower(t),flags ) );
 }

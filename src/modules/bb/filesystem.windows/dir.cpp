@@ -1,7 +1,6 @@
 
 #include <windows.h>
 #include "dir.h"
-using namespace std;
 
 WindowsDir::WindowsDir( HANDLE h,const WIN32_FIND_DATA &f ):handle(h),findData(f){
 }

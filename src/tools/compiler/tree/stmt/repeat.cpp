@@ -6,7 +6,7 @@
 ////////////////////////////
 void RepeatNode::semant( Environ *e ){
 	sem_brk=genLabel();
-	string brk=e->setBreak( sem_brk );
+	std::string brk=e->setBreak( sem_brk );
 	stmts->semant( e );
 	e->setBreak( brk );
 	if( expr ){
@@ -17,7 +17,7 @@ void RepeatNode::semant( Environ *e ){
 
 void RepeatNode::translate( Codegen *g ){
 
-	string loop=genLabel();
+	std::string loop=genLabel();
 	g->label( loop );
 	stmts->translate( g );
 	debug( untilPos,g );

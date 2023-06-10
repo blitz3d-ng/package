@@ -2,9 +2,8 @@
 #include "graphics.gl.h"
 
 #include <vector>
-using namespace std;
 
-GLuint _bbGLCompileShader( GLenum type,const string &name,const string &source ){
+GLuint _bbGLCompileShader( GLenum type,const std::string &name,const std::string &source ){
 #ifdef BB_DESKTOP
 	static char version[]         = "#version 330    \n";
 #else
@@ -45,7 +44,7 @@ GLuint _bbGLCompileShader( GLenum type,const string &name,const string &source )
 	return shader;
 }
 
-GLuint _bbGLCompileProgram( const string &name,const string &src ){
+GLuint _bbGLCompileProgram( const std::string &name,const std::string &src ){
 	GLuint vert=_bbGLCompileShader( GL_VERTEX_SHADER,name,src );
 	GLuint frag=_bbGLCompileShader( GL_FRAGMENT_SHADER,name,src );
 

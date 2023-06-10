@@ -101,13 +101,13 @@ struct TriComp{
 	bool operator()( TerrainRep::Tri *a,TerrainRep::Tri *b )const{ return a->proj_err<b->proj_err; }
 };
 
-struct TriQue : public priority_queue<TerrainRep::Tri*,vector<TerrainRep::Tri*>,TriComp>{
-	vector<TerrainRep::Tri*> &getVector(){ return c; }
-	const vector<TerrainRep::Tri*> &getVector()const{ return c; }
+struct TriQue : public std::priority_queue<TerrainRep::Tri*,std::vector<TerrainRep::Tri*>,TriComp>{
+	std::vector<TerrainRep::Tri*> &getVector(){ return c; }
+	const std::vector<TerrainRep::Tri*> &getVector()const{ return c; }
 };
 
 static TriQue tri_que;
-static vector<TerrainRep::Tri*> tris;
+static std::vector<TerrainRep::Tri*> tris;
 
 static bool clip( const Line &l,const Box &box ){
 	static const Vector normals[]={
@@ -437,7 +437,7 @@ void TerrainRep::render( Model *model,const RenderContext &rc ){
 	}
 
 	int k;
-	const vector<Tri*> &q_tris=tri_que.getVector();
+	const std::vector<Tri*> &q_tris=tri_que.getVector();
 
 	if( !mesh ) out_cnt=0;
 

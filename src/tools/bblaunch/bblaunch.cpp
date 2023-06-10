@@ -5,8 +5,6 @@
 #include "checkdx.h"
 #include "checkie.h"
 
-using namespace std;
-
 #ifdef BB_WIN64
 #define TARGETSUFFIX "64"
 #else

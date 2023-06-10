@@ -16,11 +16,11 @@ void IfNode::translate( Codegen *g ){
 		if( c->intValue() ) stmts->translate( g );
 		else if( elseOpt ) elseOpt->translate( g );
 	}else{
-		string _else=genLabel();
+		std::string _else=genLabel();
 		g->code( jumpf( expr->translate( g ),_else ) );
 		stmts->translate( g );
 		if( elseOpt ){
-			string _else2=genLabel();
+			std::string _else2=genLabel();
 			g->code( jump( _else2 ) );
 			g->label( _else );
 			elseOpt->translate( g );

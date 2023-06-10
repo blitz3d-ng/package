@@ -4,7 +4,6 @@
 #include "canvas.h"
 #include "asmcoder.h"
 #include <cmath>
-using namespace std;
 
 #define DEBUG_BITMASK
 

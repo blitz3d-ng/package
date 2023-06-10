@@ -6,12 +6,12 @@
 struct Q3BSPModel::Rep : public Q3BSPRep{
 	int ref_cnt;
 
-	Rep( const string &f,float gam ):Q3BSPRep( f,gam ),
+	Rep( const std::string &f,float gam ):Q3BSPRep( f,gam ),
 	ref_cnt(1){
 	}
 };
 
-Q3BSPModel::Q3BSPModel( const string &f,float gam ):
+Q3BSPModel::Q3BSPModel( const std::string &f,float gam ):
 rep( d_new Rep( f,gam ) ){
 }
 

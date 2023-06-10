@@ -3,8 +3,6 @@
 #include "stream.h"
 
 #include <cstdlib>
-using namespace std;
-
 
 
 AudioStream::Ref::Ref( AudioStream *s ):stream(s){
@@ -53,7 +51,7 @@ AudioStream::~AudioStream(){
 }
 
 bool AudioStream::init( const char *url ){
-	in.open( url,ios_base::in|ios::binary );
+	in.open( url,std::ios_base::in|std::ios::binary );
 	if( !readHeader() ) return false;
 	start=pos();
 	return true;

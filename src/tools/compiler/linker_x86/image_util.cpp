@@ -63,7 +63,7 @@ struct Rsrc{
 	int id;
 	void *data;
 	int data_sz;
-	vector<Rsrc*> kids;
+	std::vector<Rsrc*> kids;
 
 	Rsrc( int id,Rsrc *p ):id(id),data(0),data_sz(0){
 		if( p ) p->kids.push_back( this );
@@ -96,7 +96,7 @@ static int opts_sz;
 static DDir *ddir;
 static int ddir_sz;
 
-static vector<Section*> sections;
+static std::vector<Section*> sections;
 
 static Rsrc *rsrc_root;
 
@@ -238,7 +238,7 @@ static Rsrc *findRsrc( int type,int id,int lang ){
 	return findRsrc( lang,r );
 }
 
-static void loadImage( istream &in ){
+static void loadImage( std::istream &in ){
 
 	int k;
 
@@ -281,7 +281,7 @@ static void loadImage( istream &in ){
 	}
 }
 
-static void saveImage( ostream &out ){
+static void saveImage( std::ostream &out ){
 
 	int k;
 
@@ -310,7 +310,7 @@ static void saveImage( ostream &out ){
 bool openImage( const char *img ){
 	img_file=img;
 
-	fstream in( img_file,ios_base::binary|ios_base::in );
+	std::fstream in( img_file,std::ios_base::binary|std::ios_base::in );
 	loadImage( in );
 	in.close();
 	return true;
@@ -350,7 +350,7 @@ bool replaceRsrc( int type,int id,int lang,void *data,int data_sz ){
 void closeImage(){
 	if( !img_file ) return;
 
-	fstream out( img_file,ios_base::binary|ios_base::out|ios_base::trunc );
+	std::fstream out( img_file,std::ios_base::binary|std::ios_base::out|std::ios_base::trunc );
 	saveImage( out );
 	out.close();
 

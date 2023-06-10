@@ -6,7 +6,6 @@
 #include <streambuf>
 #include <string>
 #include <set>
-using namespace std;
 
 BBFileSystem *gx_filesys;
 
@@ -16,9 +15,9 @@ BBDir::~BBDir(){
 BBFileSystem::~BBFileSystem(){
 }
 
-std::streambuf *BBFileSystem::openFile( const std::string &file,ios_base::openmode n ){
-	filebuf *buf=d_new filebuf();
-	if( buf->open( file.c_str(),n|ios_base::binary ) ){
+std::streambuf *BBFileSystem::openFile( const std::string &file,std::ios_base::openmode n ){
+	std::filebuf *buf=d_new std::filebuf();
+	if( buf->open( file.c_str(),n|std::ios_base::binary ) ){
 		return buf;
 	}
 	delete buf;
@@ -26,8 +25,8 @@ std::streambuf *BBFileSystem::openFile( const std::string &file,ios_base::openmo
 }
 
 struct BBFile : public BBStream{
-	streambuf *buf;
-	BBFile( streambuf *f ):buf(f){
+	std::streambuf *buf;
+	BBFile( std::streambuf *f ):buf(f){
 	}
 	~BBFile(){
 		delete buf;
@@ -46,7 +45,7 @@ struct BBFile : public BBStream{
 	}
 };
 
-static set<BBFile*> file_set;
+static std::set<BBFile*> file_set;
 
 static inline void debugFileSys(){
 	if( bb_env.debug ){
@@ -66,9 +65,9 @@ static inline void debugDir( BBDir *d ){
 	}
 }
 
-static BBFile *open( BBStr *f,ios_base::openmode n ){
-	string t=*f;
-	streambuf *buf=gx_filesys->openFile( t,n );
+static BBFile *open( BBStr *f,std::ios_base::openmode n ){
+	std::string t=*f;
+	std::streambuf *buf=gx_filesys->openFile( t,n );
 	if( buf ){
 		BBFile *f=d_new BBFile( buf );
 		file_set.insert( f );
@@ -78,15 +77,15 @@ static BBFile *open( BBStr *f,ios_base::openmode n ){
 }
 
 BBFile* BBCALL bbReadFile( BBStr *f ){
-	return open( f,ios_base::in );
+	return open( f,std::ios_base::in );
 }
 
 BBFile* BBCALL bbWriteFile( BBStr *f ){
-	return open( f,ios_base::out|ios_base::trunc );
+	return open( f,std::ios_base::out|std::ios_base::trunc );
 }
 
 BBFile* BBCALL bbOpenFile( BBStr *f ){
-	return open( f,ios_base::in|ios_base::out );
+	return open( f,std::ios_base::in|std::ios_base::out );
 }
 
 void BBCALL bbCloseFile( BBFile *f ){
@@ -96,15 +95,15 @@ void BBCALL bbCloseFile( BBFile *f ){
 }
 
 bb_int_t BBCALL bbFilePos( BBFile *f ){
-	return f->buf->pubseekoff( 0,ios_base::cur );
+	return f->buf->pubseekoff( 0,std::ios_base::cur );
 }
 
 bb_int_t BBCALL bbSeekFile( BBFile *f,bb_int_t pos ){
-	return f->buf->pubseekoff( pos,ios_base::beg );
+	return f->buf->pubseekoff( pos,std::ios_base::beg );
 }
 
 BBDir* BBCALL bbReadDir( BBStr *d ){
-	string t=*d;delete d;
+	std::string t=*d;delete d;
 	return gx_filesys->openDir( t,0 );
 }
 
@@ -141,20 +140,20 @@ void BBCALL bbDeleteDir( BBStr *d ){
 }
 
 bb_int_t BBCALL bbFileType( BBStr *f ){
-	string t=*f;delete f;
+	std::string t=*f;delete f;
 	debugFileSys();
 	int n=gx_filesys->getFileType( t );
 	return n==BBFileSystem::FILE_TYPE_FILE ? 1 : (n==BBFileSystem::FILE_TYPE_DIR ? 2 : 0);
 }
 
 bb_int_t BBCALL bbFileSize( BBStr *f ){
-	string t=*f;delete f;
+	std::string t=*f;delete f;
 	debugFileSys();
 	return gx_filesys->getFileSize( t );
 }
 
 void BBCALL bbCopyFile( BBStr *f,BBStr *to ){
-	string src=*f,dest=*to;
+	std::string src=*f,dest=*to;
 	delete f;delete to;
 	debugFileSys();
 	gx_filesys->copyFile( src,dest );

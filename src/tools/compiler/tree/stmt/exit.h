@@ -4,7 +4,7 @@
 #include "node.h"
 
 struct ExitNode : public StmtNode{
-	string sem_brk;
+	std::string sem_brk;
 	void semant( Environ *e );
 	void translate( Codegen *g );
 	json toJSON( Environ *e );

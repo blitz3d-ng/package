@@ -8,7 +8,6 @@
 #include <mach-o/dyld.h>
 
 #include <fstream>
-using namespace std;
 
 bool MacOSSystemDriver::delay( int ms ){
   usleep( ms * 1000 );
@@ -50,9 +49,9 @@ bool MacOSSystemDriver::lookupFontData( const std::string &fontName,BBFontData &
 	const char *fontPath=lookupFontFile( fontName.c_str() );
 	if( !fontPath ) return false;
 
-	ifstream file( fontPath,ios::binary|ios::ate );
+	std::ifstream file( fontPath,std::ios::binary|std::ios::ate );
 	font.size=file.tellg();
-	file.seekg( 0,ios::beg );
+	file.seekg( 0,std::ios::beg );
 
 	font.data=new unsigned char[font.size];
 	if( file.read( (char*)font.data,font.size ) ){

@@ -3,7 +3,6 @@
 
 #include <windows.h>
 #include <vector>
-using namespace std;
 
 static vector<HMODULE> _mods;
 

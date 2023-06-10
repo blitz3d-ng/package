@@ -13,7 +13,7 @@ public:
 		void *surface;
 		int verts[3],index;
 	};
-	MeshCollider( const vector<Vertex> &verts,const vector<Triangle> &tris );
+	MeshCollider( const std::vector<Vertex> &verts,const std::vector<Triangle> &tris );
 	~MeshCollider();
 
 	//sphere collision
@@ -22,23 +22,23 @@ public:
 	bool intersects( const MeshCollider &c,const Transform &t )const;
 
 private:
-	vector<Vertex> vertices;
-	vector<Triangle> triangles;
+	std::vector<Vertex> vertices;
+	std::vector<Triangle> triangles;
 
 	struct Node{
 		Box box;
 		Node *left,*right;
-		vector<int> triangles;
+		std::vector<int> triangles;
 		Node():left(0),right(0){}
 		~Node(){ delete left;delete right; }
 	};
 
 	Node *tree;
-	vector<Node*> leaves;
+	std::vector<Node*> leaves;
 
-	Box nodeBox( const vector<int> &tris );
-	Node *createLeaf( const vector<int> &tris );
-	Node *createNode( const vector<int> &tris );
+	Box nodeBox( const std::vector<int> &tris );
+	Node *createLeaf( const std::vector<int> &tris );
+	Node *createNode( const std::vector<int> &tris );
 	bool collide( const Box &box,const Line &line,float radius,const Transform &tform,Collision *curr_coll,Node *node );
 };
 

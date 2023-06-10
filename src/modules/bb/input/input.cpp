@@ -8,12 +8,11 @@
 
 #include <vector>
 #include <string.h>
-using namespace std;
 
 BBInputDriver *gx_input;
 BBDevice bbMouse;
 BBDevice bbKeyboard;
-vector<BBDevice*> bbJoysticks;
+std::vector<BBDevice*> bbJoysticks;
 
 static int mouse_x,mouse_y,mouse_z;
 static const float JLT=-1.0f/3.0f;
@@ -157,7 +156,7 @@ bb_int_t BBCALL bbCountJoys(){
 }
 
 bb_int_t BBCALL bbFindJoy( BBStr *id ){
-	string i=*id;delete id;
+	std::string i=*id;delete id;
 	for( int k=0;k<bbJoysticks.size();++k ){
 		if( strcmp( i.c_str(),bbJoysticks[k]->getId() )==0 ) return k;
 	}

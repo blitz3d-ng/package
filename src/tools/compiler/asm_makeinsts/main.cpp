@@ -12,8 +12,6 @@
 #include <fstream>
 #include <iostream>
 
-using namespace std;
-
 static const char *optype( const string &s ){
 
 	if( s=="AL" ) return "AL";
