@@ -20,6 +20,7 @@ static struct v_type : public Type{
 		abort();
 	}
 #endif
+	std::string name(){ return "void"; }
 	json toJSON(){
 		json tree;tree["@class"]="VoidType";
 		return tree;
@@ -45,6 +46,7 @@ static struct i_type : public Type{
 		return llvm::ConstantInt::getSigned( llvmType( c ),0 );
 	}
 #endif
+	std::string name(){ return "int"; }
 	json toJSON(){
 		json tree;tree["@class"]="IntType";
 		return tree;
@@ -67,7 +69,7 @@ static struct f_type : public Type{
 		return llvm::ConstantFP::get( *c,llvm::APFloat(0.0) );
 	}
 #endif
-
+	std::string name(){ return "float"; }
 	json toJSON(){
 		json tree;tree["@class"]="FloatType";
 		return tree;
@@ -92,7 +94,7 @@ static struct s_type : public Type{
 		return llvm::ConstantPointerNull::get( (llvm::PointerType*)llvmType( c ) );
 	}
 #endif
-
+	std::string name(){ return "string"; }
 	json toJSON(){
 		json tree;tree["@class"]="StringType";
 		return tree;

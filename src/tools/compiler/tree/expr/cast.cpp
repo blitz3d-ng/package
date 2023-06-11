@@ -8,6 +8,11 @@ ExprNode *CastNode::semant( Environ *e ){
 		expr=expr->semant( e );
 	}
 
+	// TODO: relax this for "lossless" casts, e.g. int->float
+	if( type!=expr->sem_type && e->strict && implicit ){
+		ex( "Cannot automatically cast "+expr->sem_type->name()+" to "+type->name() );
+	}
+
 	if( ConstNode *c=expr->constNode() ){
 		ExprNode *e;
 		if( type==Type::int_type ) e=d_new IntConstNode( c->intValue() );

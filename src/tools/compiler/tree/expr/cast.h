@@ -6,7 +6,8 @@
 struct CastNode : public ExprNode{
 	ExprNode *expr;
 	Type *type;
-	CastNode( ExprNode *ex,Type *ty ):expr( ex ),type( ty ){}
+	bool implicit;
+	CastNode( ExprNode *ex,Type *ty,bool im ):expr( ex ),type( ty ),implicit( im ){}
 	~CastNode(){ delete expr; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );

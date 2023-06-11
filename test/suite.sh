@@ -125,6 +125,8 @@ $BLITZCC -c -r test -j test/all.bb > /dev/null 2>&1
 # test for syntax errors
 $BLITZCC -c -r test -j test/syntax-errors/arithmetic-on-type.bb > /dev/null 2>&1
 $BLITZCC -c -r test -j test/syntax-errors/division-by-zero.bb > /dev/null 2>&1
+$BLITZCC -c -r test -j test/syntax-errors/strict-cast.bb > /dev/null 2>&1
+$BLITZCC -c -r test -j test/syntax-errors/strict-declaration.bb > /dev/null 2>&1
 
 # invalid runtime
 $BLITZCC -r d3d1 test/all.bb > /dev/null 2>&1

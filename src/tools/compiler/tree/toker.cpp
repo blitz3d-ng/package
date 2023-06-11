@@ -83,6 +83,8 @@ static void makeKeywords(){
 	alphaTokes["BundleAppName"]=BUNDLEAPPNAME;
 	alphaTokes["BundleFile"]=BUNDLEFILE;
 
+	alphaTokes["Strict"]=STRICT;
+
 	std::map<std::string,int>::const_iterator it;
 	for( it=alphaTokes.begin();it!=alphaTokes.end();++it ){
 		lowerTokes[tolower(it->first)]=it->second;

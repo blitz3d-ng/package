@@ -30,6 +30,7 @@ public:
 	Type *returnType;
 	std::string funcLabel,breakLabel;
 	std::list<Environ*> children;		//for delete!
+	bool strict;
 
 	Environ( const std::string &f,Type *r,int l,Environ *gs );
 	~Environ();

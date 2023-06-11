@@ -37,6 +37,8 @@ struct Type{
 	//built in types
 	static Type *void_type,*int_type,*float_type,*string_type,*null_type;
 
+	virtual std::string name()=0;
+
 	virtual json toJSON(){ return json(); }
 	virtual json toFullJSON(){ return toJSON(); }
 
@@ -60,6 +62,8 @@ struct FuncType : public Type{
 	llvm::Function *llvmFunction( std::string &ident, Codegen_LLVM *g );
 #endif
 
+	std::string name(){ return "function"; }
+
 	json toJSON(){
 		json tree;tree["@class"]="FuncType";
 		tree["return_type"]=returnType->toJSON();
@@ -75,6 +79,8 @@ struct ArrayType : public Type{
 	Type *elementType;int dims;
 	ArrayType( Type *t,int n ):elementType(t),dims(n){}
 	ArrayType *arrayType(){ return this; }
+
+	std::string name(){ return elementType->name()+" array"; }
 
 	json toJSON(){
 		json tree;tree["@class"]="ArrayType";
@@ -108,6 +114,8 @@ struct StructType : public Type{
 	virtual llvm::Constant *llvmZero( llvm::LLVMContext *c );
 #endif
 
+	std::string name(){ return "type"; }
+
 	json toJSON(){
 		json tree;tree["@class"]="StructType";
 		tree["ident"]=ident;
@@ -137,6 +145,8 @@ struct ConstType : public Type{
 	llvm::Constant *llvmZero( llvm::LLVMContext *c );
 #endif
 
+	std::string name(){ return "constant "+valueType->name(); }
+
 	json toJSON(){
 		json tree;tree["@class"]="ConstType";
 		tree["valueType"]=valueType->toJSON();
@@ -155,6 +165,8 @@ struct VectorType : public Type{
 	VectorType *vectorType(){ return this; }
 	virtual bool canCastTo( Type *t );
 	json toJSON();
+
+	std::string name(){ return elementType->name()+" vector"; }
 
 #ifdef USE_LLVM
 	llvm::ArrayType *ty=0;

@@ -14,6 +14,7 @@ void IdentVarNode::semant( Environ *e ){
 		if( ty->constType() ) ty=ty->constType()->valueType;
 		if( tag.size() && t!=ty ) ex( "Variable type mismatch" );
 	}else{
+		if( e->strict ) ex( "Undeclared variable '"+ident+"'" );
 		//ugly auto decl!
 		sem_decl=e->decls->insertDecl( ident,t,DECL_LOCAL );
 	}

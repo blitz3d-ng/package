@@ -9,6 +9,7 @@ Environ *ProgNode::semant( Environ *e ){
 	file_lab=genLabel();
 
 	StmtSeqNode::reset( stmts->file,file_lab );
+	e->strict=stmts->strict;
 
 	a_ptr<Environ> env( d_new Environ( genLabel(),Type::int_type,0,e ) );
 

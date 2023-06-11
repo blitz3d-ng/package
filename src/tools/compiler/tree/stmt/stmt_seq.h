@@ -6,7 +6,8 @@
 struct StmtSeqNode : public Node{
 	std::string file;
 	std::vector<StmtNode*> stmts;
-	StmtSeqNode( const std::string &f ):file(f){}
+	bool strict;
+	StmtSeqNode( const std::string &f ):file(f),strict(false){}
 	~StmtSeqNode(){ for( ;stmts.size();stmts.pop_back() ) delete stmts.back(); }
 	void semant( Environ *e );
 	void translate( Codegen *g );

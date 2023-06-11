@@ -175,8 +175,17 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 				incfile=t_inc;
 			}
 			break;
+		case STRICT:
+			{
+				if( stmts->stmts.size()>0 ) ex( "Strict must be specified at the top of the file" );
+				toker->next();
+
+				stmts->strict=true;
+			}
+			break;
 		case BUNDLEIDENTIFIER:
 			{
+				if( stmts->stmts.size()>0 ) ex( "Bundle information must be specified at the top of the file" );
 				if( toker->next()!=STRINGCONST ) exp( "App ID must be a string" );
 				std::string name=toker->text();toker->next();
 				name=name.substr( 1,name.size()-2 );
@@ -187,6 +196,7 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 			break;
 		case BUNDLEAPPNAME:
 			{
+				if( stmts->stmts.size()>0 ) ex( "Bundle information must be specified at the top of the file" );
 				if( toker->next()!=STRINGCONST ) exp( "App name must be a string" );
 				std::string name=toker->text();toker->next();
 				name=name.substr( 1,name.size()-2 );
@@ -197,6 +207,7 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 			break;
 		case BUNDLEFILE:
 			{
+				if( stmts->stmts.size()>0 ) ex( "Bundle information must be specified at the top of the file" );
 				if( toker->next()!=STRINGCONST ) exp( "File must be a string" );
 				std::string path=toker->text();toker->next();
 				path=path.substr( 1,path.size()-2 );
@@ -714,17 +725,17 @@ ExprNode *Parser::parseUniExpr( bool opt ){
 	case BBINT:
 		if( toker->next()=='%' ) toker->next();
 		result=parseUniExpr( false );
-		result=d_new CastNode( result,Type::int_type );
+		result=d_new CastNode( result,Type::int_type,false );
 		break;
 	case BBFLOAT:
 		if( toker->next()=='#' ) toker->next();
 		result=parseUniExpr( false );
-		result=d_new CastNode( result,Type::float_type );
+		result=d_new CastNode( result,Type::float_type,false );
 		break;
 	case BBSTR:
 		if( toker->next()=='$' ) toker->next();
 		result=parseUniExpr( false );
-		result=d_new CastNode( result,Type::string_type );
+		result=d_new CastNode( result,Type::string_type,false );
 		break;
 	case OBJECT:
 		if( toker->next()=='.' ) toker->next();

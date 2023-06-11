@@ -3,11 +3,14 @@
 #include "environ.h"
 
 Environ::Environ( const std::string &f,Type *r,int l,Environ *gs )
-:funcLabel(f),returnType(r),level(l),globals(gs){
+:funcLabel(f),returnType(r),level(l),globals(gs),strict(false){
 	decls=d_new DeclSeq();
 	typeDecls=d_new DeclSeq();
 	funcDecls=d_new DeclSeq();
-	if( globals ) globals->children.push_back( this );
+	if( globals ) {
+		globals->children.push_back( this );
+		strict=globals->strict;
+	}
 }
 
 Environ::~Environ(){

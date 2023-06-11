@@ -8,7 +8,7 @@ ExprNode *ExprNode::castTo( Type *ty,Environ *e ){
 		ex( "Illegal type conversion" );
 	}
 
-	ExprNode *cast=d_new CastNode( this,ty );
+	ExprNode *cast=d_new CastNode( this,ty,true );
 	return cast->semant( e );
 }
 
