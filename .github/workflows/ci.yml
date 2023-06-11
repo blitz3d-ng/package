@@ -342,8 +342,7 @@ jobs:
     needs:
       - help
       - package_windows
-      - package_macos_11
-      - package_macos_12
+      - package_macos
       - linux
       - android
       - ovr
