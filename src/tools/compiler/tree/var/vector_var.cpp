@@ -59,7 +59,7 @@ llvm::Value *VectorVarNode::translate2( Codegen_LLVM *g ){
 	}
 
 
-	vector<llvm::Value*> indices;
+	std::vector<llvm::Value*> indices;
 	indices.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt(32, 0) ) );
 	indices.push_back( t );
 

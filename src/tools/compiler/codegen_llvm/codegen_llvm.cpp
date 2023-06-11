@@ -18,19 +18,18 @@
 #include <llvm/Transforms/InstCombine/InstCombine.h>
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/Transforms/IPO.h>
-using namespace llvm;
 
 #include <cstdarg>
 #include <iostream>
 Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
-	InitializeNativeTarget();
-	InitializeNativeTargetAsmPrinter();
-	InitializeNativeTargetAsmParser();
+	llvm::InitializeNativeTarget();
+	llvm::InitializeNativeTargetAsmPrinter();
+	llvm::InitializeNativeTargetAsmParser();
 
 	context=std::make_unique<llvm::LLVMContext>();
 	module=std::make_unique<llvm::Module>( "",*context );
 
-	builder=new IRBuilder<>( *context );
+	builder=new llvm::IRBuilder<>( *context );
 
 	context->setOpaquePointers(true);
 
@@ -77,8 +76,8 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	bbVecType->setBody( vecels );
 
 	if( debug ){
-		dbgBuilder=new DIBuilder( *module );
-		dbgFloatTy=dbgBuilder->createBasicType( "double",64,dwarf::DW_ATE_float );
+		dbgBuilder=new llvm::DIBuilder( *module );
+		dbgFloatTy=dbgBuilder->createBasicType( "double",64,llvm::dwarf::DW_ATE_float );
 	}
 }
 
@@ -86,11 +85,11 @@ void Codegen_LLVM::SetTarget( const ::Target &t ){
 	target=t.type;
 
 	if( !t.host ){
-		InitializeAllTargetInfos();
-		InitializeAllTargets();
-		InitializeAllTargetMCs();
-		InitializeAllAsmParsers();
-		InitializeAllAsmPrinters();
+		llvm::InitializeAllTargetInfos();
+		llvm::InitializeAllTargets();
+		llvm::InitializeAllTargetMCs();
+		llvm::InitializeAllAsmParsers();
+		llvm::InitializeAllAsmPrinters();
 	}
 
 	// TODO: remove this bad hack
@@ -102,57 +101,57 @@ void Codegen_LLVM::SetTarget( const ::Target &t ){
 	}
 
 	std::string err;
-	auto targ = TargetRegistry::lookupTarget( tt,err );
+	auto targ = llvm::TargetRegistry::lookupTarget( tt,err );
 	if( !targ ){
-		errs()<<err<<'\n';
-		for( auto tt:TargetRegistry::targets() ){
+		llvm::errs()<<err<<'\n';
+		for( auto tt:llvm::TargetRegistry::targets() ){
 			std::cout<<"  "<<tt.getName()<<" - "<<tt.getShortDescription()<<std::endl;
 		}
 		exit( 1 );
 	}
 
 	auto cpu="generic",features="";
-	TargetOptions opt;
-	auto rm=std::optional<Reloc::Model>( llvm::Reloc::PIC_ );
-	auto cm=std::optional<CodeModel::Model>( CodeModel::Model::Small );
+	llvm::TargetOptions opt;
+	auto rm=std::optional<llvm::Reloc::Model>( llvm::Reloc::PIC_ );
+	auto cm=std::optional<llvm::CodeModel::Model>( llvm::CodeModel::Model::Small );
 	targetMachine=targ->createTargetMachine( t.triple,cpu,features,opt,rm,cm );
 
 	module->setTargetTriple( t.triple );
 	module->setDataLayout( targetMachine->createDataLayout() );
 }
 
-Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,int n,... ){
-	Function *func=module->getFunction( symbol );
+llvm::Value *Codegen_LLVM::CallIntrinsic( const std::string &symbol,llvm::Type *typ,int n,... ){
+	llvm::Function *func=module->getFunction( symbol );
 
-	std::vector<Value *> args;
+	std::vector<llvm::Value *> args;
 	va_list vl;
 	va_start( vl,n );
 	for( int k=0;k<n;k++ ){
-		args.push_back( va_arg( vl,Value* ) );
+		args.push_back( va_arg( vl,llvm::Value* ) );
 	}
 	va_end(vl);
 
 	if( !func ){
-		std::vector<Type*> decls( args.size() );
+		std::vector<llvm::Type*> decls( args.size() );
 
 		for( int k=0;k<args.size();k++ ){
 			decls[k]=args[k]->getType();
 		}
 
-		auto ft = FunctionType::get( typ,decls,false );
-		func=Function::Create( ft,GlobalValue::ExternalLinkage,symbol,module.get() );
-		func->setCallingConv( CallingConv::C );
+		auto ft = llvm::FunctionType::get( typ,decls,false );
+		func=llvm::Function::Create( ft,llvm::GlobalValue::ExternalLinkage,symbol,module.get() );
+		func->setCallingConv( llvm::CallingConv::C );
 	}
 
 	return builder->CreateCall(func, args);
 }
 
-Value *Codegen_LLVM::CastToObjPtr( llvm::Value *v ){
+llvm::Value *Codegen_LLVM::CastToObjPtr( llvm::Value *v ){
 	auto objty=llvm::PointerType::get( bbObj,0 );
 	return builder->CreateBitOrPointerCast( v,objty );
 }
 
-Value *Codegen_LLVM::CastToArrayPtr( llvm::Value *v ){
+llvm::Value *Codegen_LLVM::CastToArrayPtr( llvm::Value *v ){
 	auto aryty=llvm::PointerType::get( bbArray,0 );
 	return builder->CreateBitOrPointerCast( v,aryty );
 }
@@ -203,18 +202,18 @@ void Codegen_LLVM::optimize(){
 	// until the gosub implementation is improved, we have to relax optimization
 	// to avoid long build times...
 	if( gosubUsed ){
-		targetMachine->setOptLevel( CodeGenOpt::Level::None );
+		targetMachine->setOptLevel( llvm::CodeGenOpt::Level::None );
 		targetMachine->setFastISel( false );
 		targetMachine->setGlobalISel( false );
 		return;
 	}
 
-	LoopAnalysisManager LAM;
-	FunctionAnalysisManager FAM;
-	CGSCCAnalysisManager CGAM;
-	ModuleAnalysisManager MAM;
+	llvm::LoopAnalysisManager LAM;
+	llvm::FunctionAnalysisManager FAM;
+	llvm::CGSCCAnalysisManager CGAM;
+	llvm::ModuleAnalysisManager MAM;
 
-	PassBuilder PB( targetMachine );
+	llvm::PassBuilder PB( targetMachine );
 
 	PB.registerModuleAnalyses( MAM );
 	PB.registerCGSCCAnalyses( CGAM );
@@ -222,23 +221,23 @@ void Codegen_LLVM::optimize(){
 	PB.registerLoopAnalyses( LAM );
 	PB.crossRegisterProxies( LAM,FAM,CGAM,MAM );
 
-	ModulePassManager MPM = PB.buildPerModuleDefaultPipeline( OptimizationLevel::O3 );
+	llvm::ModulePassManager MPM = PB.buildPerModuleDefaultPipeline( llvm::OptimizationLevel::O3 );
 
 	MPM.run( *module,MAM );
 }
 
 bool Codegen_LLVM::verify(){
 	std::string err;
-	raw_string_ostream os( err );
+	llvm::raw_string_ostream os( err );
 
 	if( llvm::verifyModule( *module,&os ) ){
 		dumpToStderr();
 #ifdef BB_POSIX
-		errs()<<"\033[21;31m";
+		llvm::errs()<<"\033[21;31m";
 #endif
-		errs()<<err;
+		llvm::errs()<<err;
 #ifdef BB_POSIX
-		errs()<<"\033[0m\n";
+		llvm::errs()<<"\033[0m\n";
 #endif
 
 		exit( 1 );
@@ -275,12 +274,12 @@ void Codegen_LLVM::injectMain(){
 }
 
 int Codegen_LLVM::dumpToObj( std::string &out ) {
-	raw_string_ostream sstr( out );
-	buffer_ostream dest( sstr );
+	llvm::raw_string_ostream sstr( out );
+	llvm::buffer_ostream dest( sstr );
 
-	legacy::PassManager pass;
-	if( targetMachine->addPassesToEmitFile( pass,dest,0,CGFT_ObjectFile ) ){
-		errs()<<"target can't emit a file of this type\n";
+	llvm::legacy::PassManager pass;
+	if( targetMachine->addPassesToEmitFile( pass,dest,0,llvm::CGFT_ObjectFile ) ){
+		llvm::errs()<<"target can't emit a file of this type\n";
 		return 1;
 	}
 
@@ -293,10 +292,10 @@ int Codegen_LLVM::dumpToObj( std::string &out ) {
 
 void Codegen_LLVM::dumpToStderr() {
 #ifdef BB_POSIX
-	errs()<<"\033[21;90m";
+	llvm::errs()<<"\033[21;90m";
 #endif
-	module->print( errs(),nullptr );
+	module->print( llvm::errs(),nullptr );
 #ifdef BB_POSIX
-	errs()<<"\033[0m\n";
+	llvm::errs()<<"\033[0m\n";
 #endif
 }

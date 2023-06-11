@@ -8,10 +8,10 @@
 struct ForEachNode : public StmtNode{
 	int nextPos;
 	VarNode *var;
-	string typeIdent;
+	std::string typeIdent;
 	StmtSeqNode *stmts;
-	string sem_brk;
-	ForEachNode( VarNode *v,const string &t,StmtSeqNode *s,int np):var(v),typeIdent(t),stmts(s),nextPos(np){}
+	std::string sem_brk;
+	ForEachNode( VarNode *v,const std::string &t,StmtSeqNode *s,int np):var(v),typeIdent(t),stmts(s),nextPos(np){}
 	~ForEachNode(){ delete var;delete stmts; }
 	void semant( Environ *e );
 	void translate( Codegen *g );

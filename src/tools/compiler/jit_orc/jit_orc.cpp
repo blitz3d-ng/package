@@ -5,12 +5,12 @@
 int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &home, const std::string &rt ) {
 	auto J=llvm::cantFail( llvm::orc::LLJITBuilder().create() );
 
-	map<const char*,void*> syms;
+	std::map<const char*,void*> syms;
 	runtime->loadSyms( syms );
 
 	llvm::orc::SymbolMap symmap;
 	for( auto sym:syms ){
-		string ident=sym.first;
+		std::string ident=sym.first;
 		if( !isalnum(ident[0]) && ident[0]!='_' ){
 			ident=ident.substr(1);
 		}
@@ -20,7 +20,7 @@ int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &ho
 		if( ident[0]!='_' ) ident="bb"+ident;
 
 		symmap.insert(
-			pair< llvm::orc::SymbolStringPtr,llvm::JITEvaluatedSymbol >(
+			std::pair< llvm::orc::SymbolStringPtr,llvm::JITEvaluatedSymbol >(
 				J->mangleAndIntern( ident ),
 				llvm::JITEvaluatedSymbol::fromPointer( sym.second,llvm::JITSymbolFlags::Absolute|llvm::JITSymbolFlags::Exported )
 			)

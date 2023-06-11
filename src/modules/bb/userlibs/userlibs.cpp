@@ -3,9 +3,8 @@
 
 #include <windows.h>
 #include <vector>
-using namespace std;
 
-static vector<HMODULE> _mods;
+static std::vector<HMODULE> _mods;
 
 struct Str{
 	char *p;
@@ -25,7 +24,7 @@ static void procNotFound(){
 
 void BBCALL _bbLoadLibs( char *p ){
 
-	string home;
+	std::string home;
 
 	if( const char *t=getenv( "blitzpath" ) ) home=t;
 

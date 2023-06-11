@@ -6,7 +6,6 @@
 #include <fontconfig/fontconfig.h>
 
 #include <fstream>
-using namespace std;
 
 bool LinuxSystemDriver::delay( int ms ){
   usleep( ms * 1000 );
@@ -56,9 +55,9 @@ bool LinuxSystemDriver::lookupFontData( const std::string &fontName,BBFontData &
 
 	if( !fontPath ) return false;
 
-	ifstream file( fontPath,ios::binary|ios::ate );
+	std::ifstream file( fontPath,std::ios::binary|std::ios::ate );
 	font.size=file.tellg();
-	file.seekg( 0,ios::beg );
+	file.seekg( 0,std::ios::beg );
 
 	font.data=new unsigned char[font.size];
 	if( file.read( (char*)font.data,font.size ) ){

@@ -6,7 +6,7 @@
 
 struct DataDeclNode : public DeclNode{
 	ExprNode *expr;
-	string str_label;
+	std::string str_label;
 	DataDeclNode( ExprNode *e ):expr(e){}
 	~DataDeclNode(){ delete expr; }
 	void proto( DeclSeq *d,Environ *e );

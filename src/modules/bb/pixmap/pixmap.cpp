@@ -2,8 +2,6 @@
 #include <bb/blitz/blitz.h>
 #include "pixmap.h"
 
-using namespace std;
-
 #ifndef WIN32
   #define WRONG_DIV '\\'
   #define RIGHT_DIV '/'
@@ -36,7 +34,7 @@ BBPixmap *bbLoadPixmapWithFreeImage( const std::string &file );
 extern "C" BBPixmap *bbLoadPixmapWithUIKit( const char *file );
 
 BBPixmap *bbLoadPixmap( const std::string &file ){
-	string f;
+	std::string f;
 	for( int i=0;i<file.size();i++ ){
 		f+=file[i] == WRONG_DIV ? RIGHT_DIV : file[i];
 	}

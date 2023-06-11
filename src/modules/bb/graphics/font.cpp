@@ -2,10 +2,11 @@
 #include "../stdutil/stdutil.h"
 #include <bb/system/system.h>
 #include "font.h"
-using namespace std;
+
+#undef max
 
 FT_Library ft;
-map<string,BBFontData> bbFontCache;
+std::map<std::string,BBFontData> bbFontCache;
 
 BBFont::~BBFont(){
 }
@@ -16,7 +17,7 @@ BBImageFont::BBImageFont( FT_Face f,int height ):face(f),atlas(0){
 	baseline=height;
 }
 
-BBImageFont *BBImageFont::load( const string &name,int height,int flags ){
+BBImageFont *BBImageFont::load( const std::string &name,int height,int flags ){
 	BBFontData font;
 
 	if( bbFontCache.count( name )==0 ){
@@ -36,7 +37,7 @@ BBImageFont *BBImageFont::load( const string &name,int height,int flags ){
 	return d_new BBImageFont( face,height );
 }
 
-bool BBImageFont::loadChars( const string &t )const{
+bool BBImageFont::loadChars( const std::string &t )const{
 	for( int i=0;i<t.length();i++ ){
 		if( !characters.count(t[i]) ){
 			Char chr;
@@ -49,7 +50,7 @@ bool BBImageFont::loadChars( const string &t )const{
 			chr.bearing_y=face->glyph->bitmap_top;
 			chr.advance=face->glyph->advance.x>>6;
 
-			characters.insert( make_pair( t[i],chr ) );
+			characters.insert( std::make_pair( t[i],chr ) );
 
 			dirty=true;
 		}
@@ -68,7 +69,7 @@ void BBImageFont::rebuildAtlas(){
 	memset( atlas->bits,0,atlas->width*atlas->height );
 
 	int ox=0,oy=0,my=0;
-	for( map<char,Char>::iterator it=characters.begin();it!=characters.end();++it ){
+	for( std::map<char,Char>::iterator it=characters.begin();it!=characters.end();++it ){
 		Char &c=it->second;
 
 		FT_Load_Glyph( face,c.index,FT_LOAD_RENDER );
@@ -82,7 +83,7 @@ void BBImageFont::rebuildAtlas(){
 
 		int width=face->glyph->bitmap.width;
 
-		my=max( c.height,my );
+		my=std::max( c.height,my );
 
 		for( int y=0;y<face->glyph->bitmap.rows;y++ ){
 			memcpy( atlas->bits+(atlas->width*(oy+y))+ox,face->glyph->bitmap.buffer+y*width,width );
@@ -95,7 +96,7 @@ void BBImageFont::rebuildAtlas(){
 }
 
 BBImageFont::Char &BBImageFont::getChar( char c ){
-	loadChars( string( 1,c ) );
+	loadChars( std::string( 1,c ) );
 	return characters[c];
 }
 

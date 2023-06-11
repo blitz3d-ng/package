@@ -5,10 +5,10 @@
 #include "expr_seq.h"
 
 struct CallNode : public ExprNode{
-	string ident,tag;
+	std::string ident,tag;
 	ExprSeqNode *exprs;
 	Decl *sem_decl;
-	CallNode( const string &i,const string &t,ExprSeqNode *e ):ident(i),tag(t),exprs(e){}
+	CallNode( const std::string &i,const std::string &t,ExprSeqNode *e ):ident(i),tag(t),exprs(e){}
 	~CallNode(){ delete exprs; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );

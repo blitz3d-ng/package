@@ -4,17 +4,15 @@
 #include "../stdutil/stdutil.h"
 #include "unit-test.h"
 
-using namespace std;
-
 static int _bbPasses, _bbFails;
 
-static string GREEN="\033[1;32m",RED="\033[1;31m",CLEAR="\033[0m";
+static std::string GREEN="\033[1;32m",RED="\033[1;31m",CLEAR="\033[0m";
 
-#define FAIL(mesg) cout << RED << "FAIL: " << CLEAR << mesg << ". [" << file << ":" << line << "]" << endl;_bbFails++
-#define PASS(mesg) cout << GREEN << "PASS: " << CLEAR << mesg << ". [" << file << ":" << line << "]" << endl;_bbPasses++
+#define FAIL(mesg) std::cout << RED << "FAIL: " << CLEAR << mesg << ". [" << file << ":" << line << "]" << std::endl;_bbFails++
+#define PASS(mesg) std::cout << GREEN << "PASS: " << CLEAR << mesg << ". [" << file << ":" << line << "]" << std::endl;_bbPasses++
 
 void BBCALL __bbContext( const char *mesg, const char *file,int line ){
-	cout << mesg << " [" << file << ":" << line << "]" << endl;
+	std::cout << mesg << " [" << file << ":" << line << "]" << std::endl;
 }
 
 void BBCALL __bbExpect( int condition, const char *mesg, const char *file,int line ){
@@ -44,22 +42,22 @@ void BBCALL __bbExpectFloatEq( float a,float b,const char *mesg, const char *fil
 }
 
 void BBCALL _bbContext( BBStr *m, const char *file,int line ){
-	string mesg=*m;delete m;
+	std::string mesg=*m;delete m;
 	__bbContext( mesg.c_str(),file,line );
 }
 
 void BBCALL _bbExpect( int condition,BBStr *m, const char *file,int line ){
-	string mesg=*m;delete m;
+	std::string mesg=*m;delete m;
 	__bbExpect( condition,mesg.c_str(),file,line );
 }
 
 void BBCALL _bbExpectIntEq( int a,int b,BBStr *m, const char *file,int line ){
-	string mesg=*m;delete m;
+	std::string mesg=*m;delete m;
 	__bbExpectFloatEq( a,b,mesg.c_str(),file,line );
 }
 
 void BBCALL _bbExpectFloatEq( float a,float b,BBStr *m, const char *file,int line ){
-	string mesg=*m;delete m;
+	std::string mesg=*m;delete m;
 	__bbExpectFloatEq( a,b,mesg.c_str(),file,line );
 }
 
@@ -128,15 +126,15 @@ BBMODULE_CREATE( unit_test ){
 	}
 
 	printf("%s\n", "Hello, world!");
-	cout << "Hello, world!" << endl;
+	std::cout << "Hello, world!" << std::endl;
 #endif
 
 	return true;
 }
 
 BBMODULE_DESTROY( unit_test ){
-	cout << endl << "==== Results ====" << endl;
-	cout << "Pass: " << GREEN << _bbPasses << CLEAR << ". Fail: " << RED << _bbFails << CLEAR << endl;
+	std::cout << std::endl << "==== Results ====" << std::endl;
+	std::cout << "Pass: " << GREEN << _bbPasses << CLEAR << ". Fail: " << RED << _bbFails << CLEAR << std::endl;
 
 	if (_bbFails > 0) {
 		exit(1);

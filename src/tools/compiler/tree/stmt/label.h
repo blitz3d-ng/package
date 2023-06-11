@@ -4,9 +4,9 @@
 #include "node.h"
 
 struct LabelNode : public StmtNode{
-	string ident;
+	std::string ident;
 	int data_sz;
-	LabelNode( const string &s,int sz ):ident(s),data_sz(sz){}
+	LabelNode( const std::string &s,int sz ):ident(s),data_sz(sz){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
 #ifdef USE_LLVM

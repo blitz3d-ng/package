@@ -5,14 +5,13 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
-using namespace std;
 
 #include <emscripten.h>
 
 class StdioDebugger : public Debugger{
 private:
 	bool trace;
-	string file;
+	std::string file;
 	int row,col;
 public:
 	StdioDebugger( bool t ):trace(t){
@@ -23,17 +22,17 @@ public:
 	void debugStop(){
 	}
 	void debugStmt( int srcpos,const char *f ){
-		file=string(f);
+		file=std::string(f);
 		row=(srcpos>>16)&0xffff;
 		col=srcpos&0xffff;
-		if( trace ) cout<<file<<":"<<"["<<row+1<<":"<<col<<"]"<<endl;
+		if( trace ) std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"]"<<std::endl;
 	}
 	void debugEnter( void *frame,void *env,const char *func ){
 	}
 	void debugLeave(){
 	}
 	void debugLog( const char *msg ){
-    cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<endl;
+		std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<std::endl;
 	}
 	void debugMsg( const char *msg,bool serious ){
 	}
@@ -61,7 +60,7 @@ extern "C" int EMSCRIPTEN_KEEPALIVE main(){
 			if( bb_env.debug ){
 				debugger.debugLog( ex.err );
 			}else{
-				cerr<<ex.err<<endl;
+				std::cerr<<ex.err<<std::endl;
 			}
 		}
 		retcode=1;

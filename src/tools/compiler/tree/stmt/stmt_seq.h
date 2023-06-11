@@ -4,16 +4,16 @@
 #include "node.h"
 
 struct StmtSeqNode : public Node{
-	string file;
-	vector<StmtNode*> stmts;
-	StmtSeqNode( const string &f ):file(f){}
+	std::string file;
+	std::vector<StmtNode*> stmts;
+	StmtSeqNode( const std::string &f ):file(f){}
 	~StmtSeqNode(){ for( ;stmts.size();stmts.pop_back() ) delete stmts.back(); }
 	void semant( Environ *e );
 	void translate( Codegen *g );
 	void push_back( StmtNode *s ){ stmts.push_back( s ); }
 	int  size(){ return stmts.size(); }
 
-	static void reset( const string &file,const string &lab );
+	static void reset( const std::string &file,const std::string &lab );
 
 	json toJSON( Environ *e );
 

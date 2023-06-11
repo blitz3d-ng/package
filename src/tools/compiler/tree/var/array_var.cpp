@@ -43,7 +43,7 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 
 	auto glob=g->getArray( ident,sem_decl->type->arrayType()->dims );
 
-	vector<llvm::Value*> di;
+	std::vector<llvm::Value*> di;
 	di.push_back( zero );
 	di.push_back( zero );
 	auto dataptr=g->builder->CreateLoad( g->voidPtr,g->builder->CreateGEP( g->bbArray,glob,di ) );
@@ -55,7 +55,7 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 	for( int k=0;k<exprs->size();++k ){
 		auto e=exprs->exprs[k]->translate2( g );
 		if( k ){
-			vector<llvm::Value*> idx;
+			std::vector<llvm::Value*> idx;
 			idx.push_back( zero );
 			if( k==0 ) idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,0 ) ) );
 			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,k==0?2:k ) ) );
@@ -63,7 +63,7 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 			e=g->builder->CreateAdd( t,g->builder->CreateMul( e,s ) );
 		}
 		if( g->debug ){
-			vector<llvm::Value*> idx;
+			std::vector<llvm::Value*> idx;
 			idx.push_back( zero );
 			idx.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 32,1+k ) ) );
 			auto s=g->builder->CreateLoad( int_ty,g->builder->CreateGEP( elty,glob,idx ) );
@@ -82,7 +82,7 @@ llvm::Value *ArrayVarNode::translate2( Codegen_LLVM *g ){
 		t=e;
 	}
 
-	vector<llvm::Value*> idx;
+	std::vector<llvm::Value*> idx;
 	idx.push_back( t );
 	auto el=g->builder->CreateGEP( ty,data,idx );
 	return el;

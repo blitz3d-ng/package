@@ -8,8 +8,8 @@ struct Tile{
 
 	int want_l,want_r,hits,argFrame;
 
-	Tile( const string &a,Tile *l=0,Tile *r=0 );
-	Tile( const string &a,const string &a2,Tile *l=0,Tile *r=0 );
+	Tile( const std::string &a,Tile *l=0,Tile *r=0 );
+	Tile( const std::string &a,const std::string &a2,Tile *l=0,Tile *r=0 );
 	~Tile();
 
 	void label();
@@ -18,7 +18,7 @@ struct Tile{
 private:
 	int  need;
 	Tile *l,*r;
-	string assem,assem2;
+	std::string assem,assem2;
 
 };
 

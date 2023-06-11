@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-using namespace std;
 
 #ifdef BB_WINDOWS
 #include <io.h>
@@ -22,27 +21,27 @@ using namespace std;
 #endif
 #include <limits.h>
 
-#define RUN( args ) if( system( string(args).c_str() )!=0 ) { cerr<<"error on "<<__FILE__<<":"<<__LINE__<<endl;abort(); }
+#define RUN( args ) if( system( std::string(args).c_str() )!=0 ) { std::cerr<<"error on "<<__FILE__<<":"<<__LINE__<<std::endl;abort(); }
 
-void createApk( const string &out,const string &tmpdir,const string &home,const string &toolchain,const BundleInfo &bundle,const Target &target,const string &rt,const string &androidsdk ){
-	string libdir=toolchain+"/lib";
+void createApk( const std::string &out,const std::string &tmpdir,const std::string &home,const std::string &toolchain,const BundleInfo &bundle,const Target &target,const std::string &rt,const std::string &androidsdk ){
+	std::string libdir=toolchain+"/lib";
 
-	string btversion="30.0.2";
-	string buildtools=androidsdk+"/build-tools/"+btversion;
-	string aapt=buildtools+"/aapt";
-	string aapt2=buildtools+"/aapt2";
-	string dex=buildtools+"/dx";
-	string apksigner=buildtools+"/apksigner";
-	string zipalign=buildtools+"/zipalign";
-	string androidjar=androidsdk+"/platforms/android-"+target.version+"/android.jar";
+	std::string btversion="30.0.2";
+	std::string buildtools=androidsdk+"/build-tools/"+btversion;
+	std::string aapt=buildtools+"/aapt";
+	std::string aapt2=buildtools+"/aapt2";
+	std::string dex=buildtools+"/dx";
+	std::string apksigner=buildtools+"/apksigner";
+	std::string zipalign=buildtools+"/zipalign";
+	std::string androidjar=androidsdk+"/platforms/android-"+target.version+"/android.jar";
 
 	// TODO: support release keys...
-	string keystore=home+"/cfg/debug.keystore";
-	string keystorepass="pass:android";
+	std::string keystore=home+"/cfg/debug.keystore";
+	std::string keystorepass="pass:android";
 
-	string manifest=tmpdir+"/AndroidManifest.xml";
+	std::string manifest=tmpdir+"/AndroidManifest.xml";
 
-	string resdir=tmpdir+"/res";
+	std::string resdir=tmpdir+"/res";
 
 	RUN( "mkdir -p "+resdir );
 
@@ -62,7 +61,7 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	// values...
 	RUN( "mkdir -p "+resdir+"/values" );
 
-	ofstream colors;
+	std::ofstream colors;
 	colors.open( resdir+"/values/colors.xml" );
 	colors<<"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 	colors<<"<resources>\n";
@@ -72,7 +71,7 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	colors<<"</resources>\n";
 	colors.close();
 
-	ofstream strings;
+	std::ofstream strings;
 	strings.open( resdir+"/values/strings.xml" );
 	strings<<"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 	strings<<"<resources>\n";
@@ -80,7 +79,7 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	strings<<"</resources>\n";
 	strings.close();
 
-	ofstream styles;
+	std::ofstream styles;
 	styles.open( resdir+"/values/styles.xml" );
 	styles<<"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 	styles<<"<resources>\n";
@@ -90,7 +89,7 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	styles.close();
 
 	// manifest...
-	ofstream m;
+	std::ofstream m;
 	m.open( manifest );
 	m<<"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 	m<<"<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n";
@@ -102,9 +101,9 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	m<<"  <uses-sdk android:minSdkVersion=\""+target.version+"\"\n";
 	m<<"            android:targetSdkVersion=\""+target.version+"\" />\n";
 	m<<"\n";
-	ifstream content( toolchain+"/manifest.template.xml" );
+	std::ifstream content( toolchain+"/manifest.template.xml" );
 	if( content.is_open() ){
-		string line;
+		std::string line;
 		while( getline( content,line ) ){
 			m<<"  "<<line<<'\n';
 		}
@@ -118,13 +117,13 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	bundleFiles( bundle,tmpdir+"/assets" );
 
 	// build the apk...
-	string jars="";
+	std::string jars="";
 
 	const Target::Runtime &rti=target.runtimes.at( rt );
 	for( std::string mod:rti.modules ){
 		const Target::Module &m=target.modules.at( mod );
-		for( string lib:m.extra_files ){
-			if( lib.substr( max( 4,(int)lib.size() )-4 )==".jar" ){
+		for( std::string lib:m.extra_files ){
+			if( lib.substr( std::max( 4,(int)lib.size() )-4 )==".jar" ){
 				jars=jars+" "+libdir+"/"+lib;
 			}
 		}
@@ -136,8 +135,8 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 
 	for( std::string mod:rti.modules ){
 		const Target::Module &m=target.modules.at( mod );
-		for( string lib:m.extra_files ){
-			if( lib.substr( max( 3,(int)lib.size() )-3 )==".so" ){
+		for( std::string lib:m.extra_files ){
+			if( lib.substr( std::max( 3,(int)lib.size() )-3 )==".so" ){
 				RUN( "cp "+libdir+"/"+lib+" "+tmpdir+"/lib/"+target.arch+"/" );
 			}
 		}
@@ -149,7 +148,7 @@ void createApk( const string &out,const string &tmpdir,const string &home,const 
 	// since relative paths create issues...
 	char dir[PATH_MAX];
 	getwd( dir );
-	string currdir=string( dir );
+	std::string currdir=dir;
 	chdir( tmpdir.c_str() );
 	RUN( "zip -u unaligned.apk *.dex lib/**/*.so" );
 	chdir( currdir.c_str() );

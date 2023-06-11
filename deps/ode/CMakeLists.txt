@@ -7,6 +7,11 @@ file(READ tree/CMakeLists.txt FILE_CONTENTS)
 string(REPLACE "add_custom_target(uninstall" "# add_custom_target(uninstall" FILE_CONTENTS "${FILE_CONTENTS}")
 file_write_changes(tree/CMakeLists.txt "${FILE_CONTENTS}")
 
+# for mingw
+file(READ tree/ode/src/threading_pool_win.cpp FILE_CONTENTS)
+string(REPLACE "#include <Windows.h>" "#include <windows.h>" FILE_CONTENTS "${FILE_CONTENTS}")
+file_write_changes(tree/ode/src/threading_pool_win.cpp "${FILE_CONTENTS}")
+
 set(BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
 set(ODE_WITH_DEMOS OFF CACHE STRING "" FORCE)
 set(ODE_WITH_TESTS OFF CACHE STRING "" FORCE)

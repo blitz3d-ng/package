@@ -6,7 +6,6 @@
 #include "default.glsl.h"
 
 #include <iostream>
-using namespace std;
 
 //degrees to radians and back
 static const float dtor=0.0174532925199432957692369076848861f;
@@ -546,7 +545,7 @@ public:
 
 			// LOGD( "rebuilding shader...\n" );
 
-			string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
+			std::string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
 			defaultProgram=_bbGLCompileProgram( "default.glsl",src );
 			if( !defaultProgram ){
 				RTEX( "Failed to compile shader" );

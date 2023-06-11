@@ -5,13 +5,13 @@
 class Prefs{
 public:
 	bool prg_debug;
-	string prg_lastbuild;
+	std::string prg_lastbuild;
 
 	RECT win_rect;
 	bool win_maximized;
 	bool win_notoolbar;
 
-	string font_editor,font_tabs,font_debug;
+	std::string font_editor,font_tabs,font_debug;
 	int font_editor_height,font_tabs_height,font_debug_height;
 
 	int rgb_bkgrnd;		//0
@@ -28,14 +28,14 @@ public:
 	bool edit_blkcursor;
 	int edit_backup;
 
-	string img_toolbar;
+	std::string img_toolbar;
 
-	string homeDir;
+	std::string homeDir;
 	CFont conFont,editFont,tabsFont,debugFont;
 
-	vector<string> recentFiles;
+	std::vector<std::string> recentFiles;
 
-	string cmd_line;
+	std::string cmd_line;
 
 	void open();
 	void close();

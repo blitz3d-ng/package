@@ -6,7 +6,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
-using namespace std;
 
 extern "C" {
 	#include <luajit.h>

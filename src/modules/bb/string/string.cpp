@@ -2,7 +2,6 @@
 #include "string.h"
 #include "../stdutil/stdutil.h"
 #include <string>
-using namespace std;
 
 #include <time.h>
 
@@ -28,7 +27,7 @@ BBStr * BBCALL bbRight( BBStr *s,bb_int_t n ){
 
 BBStr * BBCALL bbReplace( BBStr *s,BBStr *from,BBStr *to ){
 	int n=0,from_sz=from->size(),to_sz=to->size();
-	while( n<s->size() && (n=s->find( *from,n ))!=string::npos ){
+	while( n<s->size() && (n=s->find( *from,n ))!=std::string::npos ){
 		s->replace( n,from_sz,*to );
 		n+=to_sz;
 	}
@@ -39,7 +38,7 @@ bb_int_t BBCALL bbInstr( BBStr *s,BBStr *t,bb_int_t from ){
 	CHKOFF( from );--from;
 	int n=s->find( *t,from );
 	delete s;delete t;
-	return n==string::npos ? 0 : n+1;
+	return n==std::string::npos ? 0 : n+1;
 }
 
 BBStr * BBCALL bbMid( BBStr *s,bb_int_t o,bb_int_t n ){

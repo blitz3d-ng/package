@@ -32,7 +32,7 @@ float FloatConstNode::floatValue(){
 	return value;
 }
 
-string FloatConstNode::stringValue(){
+std::string FloatConstNode::stringValue(){
 	return ftoa( value );
 }
 

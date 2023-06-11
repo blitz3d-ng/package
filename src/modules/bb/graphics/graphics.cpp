@@ -14,7 +14,6 @@
 #include <fstream>
 #include <vector>
 #include <set>
-using namespace std;
 
 #include <math.h>
 
@@ -23,14 +22,14 @@ static const float dtor=0.0174532925199432957692369076848861f;
 
 class BBImage{
 public:
-	BBImage( const vector<BBCanvas*> &f ):frames(f){
+	BBImage( const std::vector<BBCanvas*> &f ):frames(f){
 	}
 	~BBImage(){
 		for( int k=0;k<frames.size();++k ){
 			gx_graphics->freeCanvas( frames[k] );
 		}
 	}
-	const vector<BBCanvas*> &getFrames()const{
+	const std::vector<BBCanvas*> &getFrames()const{
 		return frames;
 	}
 	void replaceFrame( int n,BBCanvas *c ){
@@ -38,14 +37,14 @@ public:
 		frames[n]=c;
 	}
 private:
-	vector<BBCanvas*> frames;
+	std::vector<BBCanvas*> frames;
 };
 
 extern FT_Library ft;
 static bool filter=true;
 static bool auto_dirty=true;
 static bool auto_midhandle=false;
-static set<BBImage*> image_set;
+static std::set<BBImage*> image_set;
 /*static*/ int curs_x=0,curs_y=0;
 static BBCanvas *p_canvas=0;
 /*static*/ BBFont *curr_font=0;
@@ -88,7 +87,7 @@ struct GfxMode{
 
 static int gx_driver=0;	//current graphics driver
 
-static vector<GfxMode> gfx_modes;
+static std::vector<GfxMode> gfx_modes;
 
 BBGraphics::BBGraphics():front_canvas(0),back_canvas(0){
 }
@@ -150,7 +149,7 @@ bool BBContextDriver::graphicsOpened(){
 	return !!graphics;
 }
 
-int BBContextDriver::change( const string &name ){
+int BBContextDriver::change( const std::string &name ){
 	// TODO: not supporting switching right now
 	if( bbContextDriver ) return 0;
 
@@ -172,7 +171,7 @@ BBLIB BBStr * BBCALL bbRendererName( bb_int_t renderer ){
 }
 
 BBLIB bb_int_t BBCALL bbSetRenderer( BBStr *name ){
-	string s=*name;delete name;
+	std::string s=*name;delete name;
 	return BBContextDriver::change( s );
 }
 
@@ -183,7 +182,7 @@ bb_int_t BBCALL bbCountGfxDrivers(){
 
 BBStr *	BBCALL bbGfxDriverName( bb_int_t n ){
 	debugDriver( n );
-	string t;int caps;
+	std::string t;int caps;
 	bbContextDriver->graphicsDriverInfo( n-1,&t,&caps );
 	return d_new BBStr( t );
 }
@@ -238,7 +237,7 @@ bb_int_t BBCALL bbGfxModeExists( bb_int_t w,bb_int_t h,bb_int_t d ){
 #ifdef PRO
 bb_int_t BBCALL bbGfxDriver3D( bb_int_t n ){
 	debugDriver( n );
-	string t;int caps;
+	std::string t;int caps;
 	bbContextDriver->graphicsDriverInfo( n-1,&t,&caps );
 	return (caps & BBContextDriver::GFXMODECAPS_3D) ? 1 : 0;
 }
@@ -559,7 +558,7 @@ static BBCanvas *tformCanvas( BBCanvas *c,float m[2][2],int x_handle,int y_handl
 	return t;
 }
 
-static bool saveCanvas( BBCanvas *c,const string &f ){
+static bool saveCanvas( BBCanvas *c,const std::string &f ){
 #ifndef WIN32 // FIXME: port to posix
 	return false;
 #else
@@ -606,7 +605,7 @@ static bool saveCanvas( BBCanvas *c,const string &f ){
 
 bb_int_t BBCALL bbLoadBuffer( BBCanvas *c,BBStr *str ){
 	debugCanvas( c );
-	string s=*str;delete str;
+	std::string s=*str;delete str;
 	BBCanvas *t=gx_graphics->loadCanvas( s,0 );
 	if( !t ) return 0;
 	float m[2][2];
@@ -624,7 +623,7 @@ bb_int_t BBCALL bbLoadBuffer( BBCanvas *c,BBStr *str ){
 
 bb_int_t BBCALL bbSaveBuffer( BBCanvas *c,BBStr *str ){
 	debugCanvas( c );
-	string t=*str;delete str;
+	std::string t=*str;delete str;
 	return saveCanvas( c,t ) ? 1 : 0;
 }
 
@@ -721,7 +720,7 @@ bb_int_t BBCALL bbFontHeight(){
 
 bb_int_t BBCALL bbStringWidth( BBStr *str ){
 	debugFont( curr_font );
-	string t=*str;delete str;
+	std::string t=*str;delete str;
 	return curr_font->getWidth( t );
 }
 
@@ -732,12 +731,12 @@ bb_int_t BBCALL bbStringHeight( BBStr *str ){
 }
 
 BBImage * BBCALL bbLoadImage( BBStr *s ){
-	string t=*s;delete s;
+	std::string t=*s;delete s;
 	BBCanvas *c=gx_graphics->loadCanvas( t,0 );
 	if( !c ) return 0;
 	if( auto_dirty ) c->backup();
 	if( auto_midhandle ) c->setHandle( c->getWidth()/2,c->getHeight()/2 );
-	vector<BBCanvas*> frames;
+	std::vector<BBCanvas*> frames;
 	frames.push_back( c );
 	BBImage *i=d_new BBImage( frames );
 	image_set.insert( i );
@@ -746,7 +745,7 @@ BBImage * BBCALL bbLoadImage( BBStr *s ){
 
 BBImage * BBCALL bbLoadAnimImage( BBStr *s,bb_int_t w,bb_int_t h,bb_int_t first,bb_int_t cnt ){
 
-	string t=*s;delete s;
+	std::string t=*s;delete s;
 
 	if( cnt<1 ) RTEX( "Illegal frame count" );
 	if( first<0 ) RTEX( "Illegal first frame" );
@@ -763,7 +762,7 @@ BBImage * BBCALL bbLoadAnimImage( BBStr *s,bb_int_t w,bb_int_t h,bb_int_t first,
 	}
 
 	//x,y of first frame...
-	vector<BBCanvas*> frames;
+	std::vector<BBCanvas*> frames;
 	int src_x=first%fpr*w,src_y=first/fpr*h;
 
 	for( int k=0;k<cnt;++k ){
@@ -786,8 +785,8 @@ BBImage * BBCALL bbLoadAnimImage( BBStr *s,bb_int_t w,bb_int_t h,bb_int_t first,
 
 BBImage * BBCALL bbCopyImage( BBImage *i ){
 	debugImage( i );
-	vector<BBCanvas*> frames;
-	const vector<BBCanvas*> &f=i->getFrames();
+	std::vector<BBCanvas*> frames;
+	const std::vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ){
 		BBCanvas *t=f[k];
 		BBCanvas *c=gx_graphics->createCanvas( t->getWidth(),t->getHeight(),0 );
@@ -811,7 +810,7 @@ BBImage * BBCALL bbCopyImage( BBImage *i ){
 }
 
 BBImage * BBCALL bbCreateImage( bb_int_t w,bb_int_t h,bb_int_t n ){
-	vector<BBCanvas*> frames;
+	std::vector<BBCanvas*> frames;
 	for( int k=0;k<n;++k ){
 		BBCanvas *c=gx_graphics->createCanvas( w,h,0 );
 		if( !c ){
@@ -829,7 +828,7 @@ BBImage * BBCALL bbCreateImage( bb_int_t w,bb_int_t h,bb_int_t n ){
 
 void BBCALL bbFreeImage( BBImage *i ){
 	if( !image_set.erase(i) ) return;
-	const vector<BBCanvas*> &f=i->getFrames();
+	const std::vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ){
 		if( f[k]==gx_canvas ){
 			bbSetBuffer( gx_graphics->getFrontCanvas() );
@@ -841,7 +840,7 @@ void BBCALL bbFreeImage( BBImage *i ){
 
 bb_int_t BBCALL bbSaveImage( BBImage *i,BBStr *str,bb_int_t n ){
 	debugImage( i,n );
-	string t=*str;delete str;
+	std::string t=*str;delete str;
 	BBCanvas *c=i->getFrames()[n];
 	return saveCanvas( c,t ) ? 1 : 0;
 }
@@ -924,19 +923,19 @@ void BBCALL bbDrawBlockRect( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t r_x,bb_in
 void BBCALL bbMaskImage( BBImage *i,bb_int_t r,bb_int_t g,bb_int_t b ){
 	debugImage( i );
 	unsigned argb=(r<<16)|(g<<8)|b;
-	const vector<BBCanvas*> &f=i->getFrames();
+	const std::vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setMask( argb );
 }
 
 void BBCALL bbHandleImage( BBImage *i,bb_int_t x,bb_int_t y ){
 	debugImage( i );
-	const vector<BBCanvas*> &f=i->getFrames();
+	const std::vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setHandle( x,y );
 }
 
 void BBCALL bbMidHandle( BBImage *i ){
 	debugImage( i );
-	const vector<BBCanvas*> &f=i->getFrames();
+	const std::vector<BBCanvas*> &f=i->getFrames();
 	for( int k=0;k<f.size();++k ) f[k]->setHandle( f[k]->getWidth()/2,f[k]->getHeight()/2 );
 }
 
@@ -1003,7 +1002,7 @@ bb_int_t BBCALL bbImageRectCollide( BBImage *i,bb_int_t x,bb_int_t y,bb_int_t f,
 
 void BBCALL bbTFormImage( BBImage *i,bb_float_t a,bb_float_t b,bb_float_t c,bb_float_t d ){
 	debugImage( i );
-	const vector<BBCanvas*> &f=i->getFrames();
+	const std::vector<BBCanvas*> &f=i->getFrames();
 	int k;
 	for( k=0;k<f.size();++k ){
 		if( f[k]==gx_canvas ){
@@ -1105,7 +1104,7 @@ void BBCALL bbPrint( BBStr *str ){
 BBStr * BBCALL bbInput( BBStr *prompt ){
 	if( !curr_font ) return d_new BBStr( "" );
 	BBCanvas *c=startPrinting();
-	string t=*prompt;delete prompt;
+	std::string t=*prompt;delete prompt;
 
 	//get temp canvas
 	if( !p_canvas || p_canvas->getWidth()<c->getWidth() || p_canvas->getHeight()<curr_font->getHeight()*2 ){
@@ -1124,7 +1123,7 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 	p_canvas->setColor( curr_color );
 	p_canvas->blit( 0,0,c,0,curs_y,c->getWidth(),curr_font->getHeight(),true );
 
-	string str;
+	std::string str;
 	bool go=true;
 	int curs=0,last_key=0,last_time,rep_delay;
 

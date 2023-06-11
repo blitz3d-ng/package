@@ -1,15 +1,14 @@
 #include "Preferences.h"
 #include <toml.hpp>
-using namespace std;
 
 void Preferences::Load( const wxString &blitzpath ){
 	path=blitzpath+"/cfg/blitzide.toml";
 
-	ifstream ifs( path.ToStdString(),ios_base::binary );
+	std::ifstream ifs( path.ToStdString(),std::ios_base::binary );
 	if( ifs.good() ){
 		const toml::value data=toml::parse( ifs,path.ToStdString() );
-		signId=wxString( toml::find<string>(data,"signId") );
-		teamId=wxString( toml::find<string>(data,"teamId") );
+		signId=wxString( toml::find<std::string>(data,"signId") );
+		teamId=wxString( toml::find<std::string>(data,"teamId") );
 	}else{
 		ResetToDefaults();
 	}
@@ -21,7 +20,7 @@ void Preferences::Save(){
 		{ "teamId",teamId.ToStdString() }
 	};
 
-	ofstream out;
+	std::ofstream out;
 	out.open( path.ToStdString() );
 	out<<table;
 	out.close();

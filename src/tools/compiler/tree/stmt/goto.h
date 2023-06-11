@@ -4,8 +4,8 @@
 #include "node.h"
 
 struct GotoNode : public StmtNode{
-	string ident;
-	GotoNode( const string &s ):ident(s){}
+	std::string ident;
+	GotoNode( const std::string &s ):ident(s){}
 	void semant( Environ *e );
 	void translate( Codegen *g );
 #ifdef USE_LLVM

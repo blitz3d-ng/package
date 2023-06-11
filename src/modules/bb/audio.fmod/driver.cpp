@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <set>
-using namespace std;
 
 #include <fmod.h>
 #include "driver.h"
@@ -143,12 +142,12 @@ private:
 	FMUSIC_MODULE *module;
 };
 
-static vector<BBChannel*> channels;
-static map<string,StaticChannel*> songs;
+static std::vector<BBChannel*> channels;
+static std::map<std::string,StaticChannel*> songs;
 static CDChannel *cdChannel;
 
 static int next_chan;
-static vector<SoundChannel*> soundChannels;
+static std::vector<SoundChannel*> soundChannels;
 
 static BBChannel *allocSoundChannel( int n ){
 
@@ -226,7 +225,7 @@ BBChannel *FMODAudioDriver::play3d( FSOUND_SAMPLE *sample,const float pos[3],con
 	return allocSoundChannel( n );
 }
 
-BBSound *FMODAudioDriver::loadSound( const string &f,bool use3d ){
+BBSound *FMODAudioDriver::loadSound( const std::string &f,bool use3d ){
 
 	int flags=FSOUND_NORMAL | (use3d ? FSOUND_FORCEMONO : FSOUND_2D);
 
@@ -256,22 +255,22 @@ void FMODAudioDriver::set3dListener( const float pos[3],const float vel[3],const
 	FSOUND_Update();
 }
 
-BBChannel *FMODAudioDriver::playFile( const string &t,bool use_3d ){
-	string f=tolower( t );
+BBChannel *FMODAudioDriver::playFile( const std::string &t,bool use_3d ){
+	std::string f=tolower( t );
 	StaticChannel *chan=0;
-	map<string,StaticChannel*>::iterator it=songs.find(f);
+	std::map<std::string,StaticChannel*>::iterator it=songs.find(f);
 	if( it!=songs.end() ){
 		chan=it->second;
 		chan->play();
 		return chan;
 	}else if(
-		f.find( ".raw" )!=string::npos ||
-		f.find( ".wav" )!=string::npos ||
-		f.find( ".mp2" )!=string::npos ||
-		f.find( ".mp3" )!=string::npos ||
-		f.find( ".ogg" )!=string::npos ||
-		f.find( ".wma" )!=string::npos ||
-		f.find( ".asf" )!=string::npos ){
+		f.find( ".raw" )!=std::string::npos ||
+		f.find( ".wav" )!=std::string::npos ||
+		f.find( ".mp2" )!=std::string::npos ||
+		f.find( ".mp3" )!=std::string::npos ||
+		f.find( ".ogg" )!=std::string::npos ||
+		f.find( ".wma" )!=std::string::npos ||
+		f.find( ".asf" )!=std::string::npos ){
 		FSOUND_STREAM *stream=FSOUND_Stream_Open( f.c_str(),use_3d,0,0 );
 		if( !stream ) return 0;
 		chan=d_new StreamChannel( stream );

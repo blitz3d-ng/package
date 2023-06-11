@@ -3,21 +3,20 @@
 #include <fstream>
 #include <string>
 #include <vector>
-using namespace std;
 
 #include <unistd.h>
 #include <libgen.h>
 #include <sys/stat.h>
 
-#define RUN( args ) if( system( string(args).c_str() )!=0 ) { cerr<<"error on "<<__FILE__<<":"<<__LINE__<<endl;abort(); }
+#define RUN( args ) if( system( std::string(args).c_str() )!=0 ) { cerr<<"error on "<<__FILE__<<":"<<__LINE__<<endl;abort(); }
 
-void createApp( const string &bundlePath,const string &home,const BundleInfo &bundle,const Target &target ){
+void createApp( const std::string &bundlePath,const std::string &home,const BundleInfo &bundle,const Target &target ){
 	const bool ios=target.type=="ios"||target.type=="ios-sim";
 
-	string binaryPath=bundlePath.substr( 0,bundlePath.size()-4 ); // remove .app
-	string bundleid=bundle.identifier;
-	string appid=basename( (char*)binaryPath.c_str() );
-	string apptitle=bundle.appName;
+	std::string binaryPath=bundlePath.substr( 0,bundlePath.size()-4 ); // remove .app
+	std::string bundleid=bundle.identifier;
+	std::string appid=basename( (char*)binaryPath.c_str() );
+	std::string apptitle=bundle.appName;
 	binaryPath=bundlePath+"/"+appid;
 	if( apptitle=="" ){
 		apptitle[0]=toupper(apptitle[0]);
@@ -25,7 +24,7 @@ void createApp( const string &bundlePath,const string &home,const BundleInfo &bu
 
 	mkdir( bundlePath.c_str(),0755 );
 
-	string iconPath=home+"/cfg/bbexe.icns";
+	std::string iconPath=home+"/cfg/bbexe.icns";
 	if( target.type=="ios"||target.type=="ios-sim" ){
 		iconPath=home+"/cfg/bbios.icns";
 	}
@@ -38,16 +37,16 @@ void createApp( const string &bundlePath,const string &home,const BundleInfo &bu
 	bundleFiles( bundle,bundlePath );
 
 	if( ios ){
-		cout<<"Copying b3dlogo.png..."<<endl;
+		std::cout<<"Copying b3dlogo.png..."<<std::endl;
 		if( system( ("cp "+home+"/cfg/b3dlogo.png "+bundlePath+"/launch-logo.png").c_str() ) ){
 			exit( 1 );
 		}
 
-		cout<<"Generating launch storyboard..."<<endl;
+		std::cout<<"Generating launch storyboard..."<<std::endl;
 		system( ("ibtool --compile '"+bundlePath+"/launch.storyboardc' '"+home+"/cfg/b3dsplash.storyboard'").c_str() );
 	}
 
-	ofstream plist;
+	std::ofstream plist;
 	plist.open( bundlePath+"/Info.plist");
 	plist << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	plist << "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
@@ -98,19 +97,19 @@ void createApp( const string &bundlePath,const string &home,const BundleInfo &bu
 
 	plist.close();
 
-	ofstream pkginfo;
+	std::ofstream pkginfo;
 	pkginfo.open( bundlePath+"/PkgInfo");
 	pkginfo << "APPL????";
 	pkginfo.close();
 
 	if( bundle.signerId.size()>0 ){
-		cout<<"Signing "+bundle.identifier+"..."<<endl;
+		std::cout<<"Signing "+bundle.identifier+"..."<<std::endl;
 
-		string options="--force --timestamp=none --sign '"+bundle.signerId+"'";
+		std::string options="--force --timestamp=none --sign '"+bundle.signerId+"'";
 		if( bundle.teamId.size()>0 ){
-			string xcentPath=string( tmpnam(0) )+".xcent";
+			std::string xcentPath=std::string( tmpnam(0) )+".xcent";
 
-			ofstream xcent;
+			std::ofstream xcent;
 			xcent.open( xcentPath );
 			xcent<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 			xcent<<"<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";

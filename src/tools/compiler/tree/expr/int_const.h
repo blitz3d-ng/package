@@ -9,7 +9,7 @@ struct IntConstNode : public ConstNode{
 	TNode *translate( Codegen *g );
 	int intValue();
 	float floatValue();
-	string stringValue();
+	std::string stringValue();
 	json toJSON( Environ *e );
 #ifdef USE_LLVM
 	llvm::Value *translate2( Codegen_LLVM *g );

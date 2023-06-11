@@ -3,10 +3,9 @@
 #include <bb/stub/stub.h>
 
 #include <map>
-using namespace std;
 
-static map<const char*,void*> syms;
-map<const char*,void*>::iterator sym_it;
+static std::map<const char*,void*> syms;
+std::map<const char*,void*>::iterator sym_it;
 
 static void linkSym( const char *sym,void *pc ){
 	syms[sym]=pc;
@@ -28,12 +27,12 @@ const char *Runtime::nextSym(){
 }
 
 bb_int_t Runtime::symValue( const char *sym ){
-	map<const char*,void*>::iterator it=syms.find( sym );
+	std::map<const char*,void*>::iterator it=syms.find( sym );
 	if( it!=syms.end() ) return (bb_int_t)it->second;
 	return -1;
 }
 
-void Runtime::loadSyms( map<const char*,void*> &_syms ){
+void Runtime::loadSyms( std::map<const char*,void*> &_syms ){
 	bbruntime_link( linkSym );
 
 	std::copy( syms.begin(),syms.end(), std::inserter( _syms,_syms.end() ) );
@@ -54,8 +53,8 @@ int Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 }
 #endif
 
-void Runtime::checkmem( streambuf *buf ){
-	ostream out( buf );
+void Runtime::checkmem( std::streambuf *buf ){
+	std::ostream out( buf );
 	::checkmem( out );
 }
 

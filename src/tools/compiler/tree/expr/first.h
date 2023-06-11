@@ -4,8 +4,8 @@
 #include "node.h"
 
 struct FirstNode : public ExprNode{
-	string ident;
-	FirstNode( const string &i ):ident(i){}
+	std::string ident;
+	FirstNode( const std::string &i ):ident(i){}
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );
 #ifdef USE_LLVM

@@ -6,7 +6,7 @@
 #include "expr/string_const.h"
 #include "var/decl_var.h"
 
-set<string> Node::usedfuncs;
+std::set<std::string> Node::usedfuncs;
 
 ///////////////////////////////
 // generic exception thrower //
@@ -15,15 +15,15 @@ void Node::ex(){
 	ex( "INTERNAL COMPILER ERROR" );
 }
 
-void Node::ex( const string &e ){
+void Node::ex( const std::string &e ){
 	throw Ex( e,-1,"" );
 }
 
-void Node::ex( const string &e,int pos ){
+void Node::ex( const std::string &e,int pos ){
 	throw Ex( e,pos,"" );
 }
 
-void Node::ex( const string &e,int pos,const string &f ){
+void Node::ex( const std::string &e,int pos,const std::string &f ){
 	throw Ex( e,pos,f );
 }
 
@@ -31,7 +31,7 @@ void Node::ex( const string &e,int pos,const string &f ){
 // Generate a local variable //
 ///////////////////////////////
 VarNode *Node::genLocal( Environ *e,Type *ty ){
-	string t=genLabel();
+	std::string t=genLabel();
 	Decl *d=e->decls->insertDecl( t,ty,DECL_LOCAL );
 	return d_new DeclVarNode( d );
 }
@@ -132,7 +132,7 @@ TNode *Node::deleteVars( Environ *e ){
 	for( int k=0;k<e->decls->size();++k ){
 		Decl *d=e->decls->decls[k];
 		Type *type=d->type;
-		string func;
+		std::string func;
 		if( type==Type::string_type ){
 			if( d->kind==DECL_LOCAL || d->kind==DECL_PARAM ){
 				func="__bbStrRelease";
@@ -237,7 +237,7 @@ llvm::Value *Node::compare2( int op,llvm::Value *l,llvm::Value *r,Type *ty,Codeg
 /////////////////////////////////
 // calculate the type of a tag //
 /////////////////////////////////
-Type *Node::tagType( const string &tag,Environ *e ){
+Type *Node::tagType( const std::string &tag,Environ *e ){
 	Type *t;
 	if( tag.size() ){
 		t=e->findType( tag );
@@ -249,7 +249,7 @@ Type *Node::tagType( const string &tag,Environ *e ){
 ////////////////////////////////
 // Generate a fresh ASM label //
 ////////////////////////////////
-string Node::genLabel(){
+std::string Node::genLabel(){
 	static int cnt;
 	return "_"+itoa( ++cnt & 0x7fffffff );
 }
@@ -257,7 +257,7 @@ string Node::genLabel(){
 //////////////////////////////////////////////////////
 // create a stmt-type function call with int result //
 //////////////////////////////////////////////////////
-TNode *Node::call( const string &func,TNode *a0,TNode *a1,TNode *a2 ){
+TNode *Node::call( const std::string &func,TNode *a0,TNode *a1,TNode *a2 ){
 	int size=0;
 	TNode *t=0;
 	if( a0 ){
@@ -279,7 +279,7 @@ TNode *Node::call( const string &func,TNode *a0,TNode *a1,TNode *a2 ){
 ////////////////////////////////////////////////////////
 // create a stmt-type function call with float result //
 ////////////////////////////////////////////////////////
-TNode *Node::fcall( const string &func,TNode *a0,TNode *a1,TNode *a2 ){
+TNode *Node::fcall( const std::string &func,TNode *a0,TNode *a1,TNode *a2 ){
 	int size=0;
 	TNode *t=0;
 	if( a0 ){
@@ -306,7 +306,7 @@ TNode *Node::move( TNode *src,TNode *dest ){
 	return d_new TNode( IR_MOVE,src,dest );
 }
 
-TNode *Node::global( const string &s ){
+TNode *Node::global( const std::string &s ){
 	return d_new TNode( IR_GLOBAL,0,0,s );
 }
 
@@ -338,22 +338,22 @@ TNode *Node::ret(){
 	return d_new TNode( IR_RET,0,0 );
 }
 
-TNode *Node::jsr( const string &s ){
+TNode *Node::jsr( const std::string &s ){
 	return d_new TNode( IR_JSR,0,0,s );
 }
 
-TNode *Node::jump( const string &s ){
+TNode *Node::jump( const std::string &s ){
 	return d_new TNode( IR_JUMP,0,0,s );
 }
 
-TNode *Node::jumpt( TNode *expr,const string &s ){
+TNode *Node::jumpt( TNode *expr,const std::string &s ){
 	return d_new TNode( IR_JUMPT,expr,0,s );
 }
 
-TNode *Node::jumpf( TNode *expr,const string &s ){
+TNode *Node::jumpf( TNode *expr,const std::string &s ){
 	return d_new TNode( IR_JUMPF,expr,0,s );
 }
 
-TNode *Node::jumpge( TNode *l,TNode *r,const string &s ){
+TNode *Node::jumpge( TNode *l,TNode *r,const std::string &s ){
 	return d_new TNode( IR_JUMPGE,l,r,s );
 }

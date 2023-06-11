@@ -1,4 +1,5 @@
 #include "PreferencesDialog.h"
+#include <wx/dir.h>
 
 wxBEGIN_EVENT_TABLE(PreferencesDialog, wxDialog)
 wxEND_EVENT_TABLE()

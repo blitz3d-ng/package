@@ -11,7 +11,7 @@ struct MeshModel::Rep : public Surface::Monitor{
 	mutable int box_valid,coll_valid,norms_valid;
 
 	SurfaceList surfaces;
-	vector<Transform> bone_tforms;
+	std::vector<Transform> bone_tforms;
 
 	Rep():
 	ref_cnt(1),collider(0),box_valid(-1),coll_valid(-1),norms_valid(-1){
@@ -131,8 +131,8 @@ struct MeshModel::Rep : public Surface::Monitor{
 	MeshCollider *getCollider()const{
 		if( coll_valid!=geom_changes ){
 			delete collider;
-			vector<MeshCollider::Vertex> verts;
-			vector<MeshCollider::Triangle> tris;
+			std::vector<MeshCollider::Vertex> verts;
+			std::vector<MeshCollider::Triangle> tris;
 			for( unsigned int k=0;k<surfaces.size();++k ){
 				Surface *s=surfaces[k];
 				for( int j=0;j<s->numTriangles();++j ){
@@ -194,7 +194,7 @@ void MeshModel::setRenderBrush( const Brush &b ){
 
 void MeshModel::createBones(){
 	setRenderSpace( RENDER_SPACE_WORLD );
-	const vector<Object*> &bones=getAnimator()->getObjects();
+	const std::vector<Object*> &bones=getAnimator()->getObjects();
 
 	surf_bones.resize( bones.size() );
 
@@ -234,7 +234,7 @@ bool MeshModel::render( const RenderContext &rc ){
 	}
 
 	//OK, its boned!
-	const vector<Object*> &bones=getAnimator()->getObjects();
+	const std::vector<Object*> &bones=getAnimator()->getObjects();
 
 	for( unsigned int k=0;k<bones.size();++k ){
 		Transform t=

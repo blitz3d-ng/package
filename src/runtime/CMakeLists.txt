@@ -32,7 +32,7 @@ macro(bb_end_runtime )
     return()
   endif()
 
-  if(BB_LINUX OR BB_NDK)
+  if(BB_LINUX OR BB_NDK OR BB_MINGW)
     set(START_GROUP "-Wl,--start-group")
     set(END_GROUP "-Wl,--end-group")
   endif()

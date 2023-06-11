@@ -12,7 +12,6 @@
 #include <SDL_syswm.h>
 
 #include <map>
-using namespace std;
 
 #include "scancodes.cpp"
 
@@ -65,7 +64,7 @@ public:
 	}
 };
 
-map<SDL_Window*,SDLRuntime*> runtimes;
+std::map<SDL_Window*,SDLRuntime*> runtimes;
 
 BBRuntime *bbCreateOpenGLRuntime(){
 	return d_new SDLRuntime();
@@ -132,7 +131,7 @@ bool SDLRuntime::idle(){
 
 			int key=SDL_SCANCODE_MAP[code];
 			if( !key ){
-				cout<<"unmapped key code: "<<code<<endl;
+				std::cout<<"unmapped key code: "<<code<<std::endl;
 				continue;
 			}
 

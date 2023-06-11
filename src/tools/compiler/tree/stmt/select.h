@@ -18,7 +18,7 @@ struct CaseNode : public Node{
 struct SelectNode : public StmtNode{
 	ExprNode *expr;
 	StmtSeqNode *defStmts;
-	vector<CaseNode*> cases;
+	std::vector<CaseNode*> cases;
 	VarNode *sem_temp;
 	SelectNode( ExprNode *e ):expr(e),defStmts(0),sem_temp(0){}
 	~SelectNode(){ delete expr;delete defStmts;delete sem_temp;for( ;cases.size();cases.pop_back() ) delete cases.back(); }

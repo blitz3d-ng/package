@@ -40,7 +40,7 @@ void FuncDeclNode::translate( Codegen *g ){
 	TNode *t=createVars( sem_env );
 	if( t ) g->code( t );
 	if( g->debug ){
-		string t=genLabel();
+		std::string t=genLabel();
 		g->s_data( ident,t );
 		g->code( call( "__bbDebugEnter",local(0),iconst((bb_int_t)sem_env),global(t) ) );
 	}

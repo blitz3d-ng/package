@@ -15,6 +15,4 @@
 
 #include "../../../stdutil/stdutil.h"
 
-using namespace std;
-
 #endif

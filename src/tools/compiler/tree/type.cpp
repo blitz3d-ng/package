@@ -16,7 +16,7 @@ static struct v_type : public Type{
 		return llvm::Type::getVoidTy(*c);
 	}
 	llvm::Constant *llvmZero( llvm::LLVMContext *c ){
-		cerr<<"not implemented"<<endl;
+		std::cerr<<"not implemented"<<std::endl;
 		abort();
 	}
 #endif
@@ -101,24 +101,24 @@ static struct s_type : public Type{
 
 #ifdef USE_LLVM
 llvm::Type *FuncType::llvmType( llvm::LLVMContext *c ){
-	cerr<<"not implemented"<<endl;
+	std::cerr<<"not implemented"<<std::endl;
 	abort();
 }
 
 llvm::Constant *FuncType::llvmZero( llvm::LLVMContext *c ){
-	cerr<<"not implemented"<<endl;
+	std::cerr<<"not implemented"<<std::endl;
 	abort();
 }
 
-llvm::Function *FuncType::llvmFunction( string &ident, Codegen_LLVM *g ){
-	string sym=symbol;
+llvm::Function *FuncType::llvmFunction( std::string &ident, Codegen_LLVM *g ){
+	std::string sym=symbol;
 	if( sym=="" ){
 		sym="f"+ident;
 	}
 
 	llvm::Function *func = g->module->getFunction( sym );
 	if( !func ){
-		vector<llvm::Type*> decls;
+		std::vector<llvm::Type*> decls;
 		for( int k=0;k<params->size();k++ ){
 			decls.push_back( params->decls[k]->type->llvmType( g->context.get() ) );
 		}
@@ -139,7 +139,7 @@ llvm::Function *FuncType::llvmFunction( string &ident, Codegen_LLVM *g ){
 llvm::Type *ArrayType::llvmType( llvm::LLVMContext *c ){
 	static llvm::StructType *ty=0;
 	if( !ty ) {
-		vector<llvm::Type*> els;
+		std::vector<llvm::Type*> els;
 		els.push_back( llvm::PointerType::get( llvm::Type::getVoidTy( *c ),0 ) );
 		ty=llvm::StructType::create( *c,els,"BBArray" );
 	}
@@ -147,7 +147,7 @@ llvm::Type *ArrayType::llvmType( llvm::LLVMContext *c ){
 }
 
 llvm::Constant *ArrayType::llvmZero( llvm::LLVMContext *c ){
-	cout<<"not implemented!!!"<<endl;
+	std::cout<<"not implemented!!!"<<std::endl;
 	abort();
 }
 #endif
@@ -218,7 +218,7 @@ llvm::GlobalVariable *VectorType::llvmDef( Codegen_LLVM *g ){
 		for( int k=0;k<sizes.size();++k ) sz*=sizes[k];
 
 		llvm::GlobalVariable* gt=0;
-		string t;
+		std::string t;
 		Type *type=elementType;
 		if( type==Type::int_type ) t="_bbIntType";
 		else if( type==Type::float_type ) t="_bbFltType";
@@ -230,7 +230,7 @@ llvm::GlobalVariable *VectorType::llvmDef( Codegen_LLVM *g ){
 			gt=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( t,g->bbType );
 		}
 
-		vector<llvm::Constant*> els;
+		std::vector<llvm::Constant*> els;
 		els.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,6  ) ) ); // type
 		els.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,sz ) ) ); // size
 		els.push_back( gt );                                                         // elementType
@@ -244,7 +244,7 @@ llvm::GlobalVariable *VectorType::llvmDef( Codegen_LLVM *g ){
 }
 
 llvm::Constant *VectorType::llvmZero( llvm::LLVMContext *c ){
-	cerr<<"not implemented"<<endl;
+	std::cerr<<"not implemented"<<std::endl;
 	abort();
 }
 #endif

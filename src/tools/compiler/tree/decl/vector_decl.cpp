@@ -8,7 +8,7 @@ void VectorDeclNode::proto( DeclSeq *d,Environ *env ){
 
 	Type *ty=tagType( tag,env );if( !ty ) ty=Type::int_type;
 
-	vector<int> sizes;
+	std::vector<int> sizes;
 	for( int k=0;k<exprs->size();++k ){
 		ExprNode *e=exprs->exprs[k]=exprs->exprs[k]->semant( env );
 		ConstNode *c=e->constNode();
@@ -17,7 +17,7 @@ void VectorDeclNode::proto( DeclSeq *d,Environ *env ){
 		if( n<0 ) ex( "Blitz array sizes must not be negative" );
 		sizes.push_back( n+1 );
 	}
-	string label=genLabel();
+	std::string label=genLabel();
 	sem_type=d_new VectorType( label,ty,sizes );
 	if( !d->insertDecl( ident,sem_type,kind ) ){
 		delete sem_type;ex( "Duplicate identifier" );
@@ -33,7 +33,7 @@ void VectorDeclNode::translate( Codegen *g ){
 	int sz=1;
 	for( int k=0;k<v->sizes.size();++k ) sz*=v->sizes[k];
 	g->i_data( sz );
-	string t;
+	std::string t;
 	Type *type=v->elementType;
 	if( type==Type::int_type ) t="__bbIntType";
 	else if( type==Type::float_type ) t="__bbFltType";

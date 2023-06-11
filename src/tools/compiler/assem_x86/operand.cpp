@@ -22,7 +22,7 @@ Operand::Operand()
 :mode(NONE),reg(-1),imm(0),offset(0),baseReg(-1),indexReg(-1),shift(0){
 }
 
-Operand::Operand( const string &s )
+Operand::Operand( const std::string &s )
 :mode(NONE),reg(-1),imm(0),offset(0),baseReg(-1),indexReg(-1),shift(0),s(s){
 }
 
@@ -49,7 +49,7 @@ bool Operand::parseReg( int *reg ){
 	int i;
 	for( i=0;i<s.size() && isalpha( s[i] );++i ){}
 	if( !i ) return false;
-	string t=s.substr(0,i);
+	std::string t=s.substr(0,i);
 	for( int j=0;j<24;++j ){
 		if( t==regs[j] ){ *reg=j;s=s.substr( i );return true; }
 	}
@@ -65,7 +65,7 @@ bool Operand::parseFPReg( int *reg ){
 	*reg=s[3]-'0';s=s.substr( 5 );return true;
 }
 
-bool Operand::parseLabel( string *label ){
+bool Operand::parseLabel( std::string *label ){
 	if( !s.size() || (!isalpha( s[0] ) && s[0]!='_') ) return false;
 	int i;
 	for( i=1;i<s.size() && (isalnum( s[i] ) || s[i]=='_');++i ){}
@@ -130,7 +130,7 @@ void Operand::parse(){
 	else mode|=MEM32|R_M32;
 
 	for(;;){
-		int n;string l;
+		int n;std::string l;
 		if( parseReg( &n ) ){
 			if( n<16 ) throw Ex( "register must be 32 bit" );
 			n&=7;

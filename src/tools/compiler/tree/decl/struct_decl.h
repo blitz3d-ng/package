@@ -5,10 +5,10 @@
 #include "decl_seq.h"
 
 struct StructDeclNode : public DeclNode{
-	string ident;
+	std::string ident;
 	DeclSeqNode *fields;
 	StructType *sem_type;
-	StructDeclNode( const string &i,DeclSeqNode *f ):ident(i),fields(f){}
+	StructDeclNode( const std::string &i,DeclSeqNode *f ):ident(i),fields(f){}
 	~StructDeclNode(){ delete fields; }
 	void proto( DeclSeq *d,Environ *e );
 	void semant( Environ *e );

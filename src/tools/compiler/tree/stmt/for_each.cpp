@@ -12,16 +12,16 @@ void ForEachNode::semant( Environ *e ){
 	if( !t ) ex( "Type name not found" );
 	if( t!=ty ) ex( "Type mismatch" );
 
-	string brk=e->setBreak( sem_brk=genLabel() );
+	std::string brk=e->setBreak( sem_brk=genLabel() );
 	stmts->semant( e );
 	e->setBreak( brk );
 }
 
 void ForEachNode::translate( Codegen *g ){
 	TNode *t,*l,*r;
-	string _loop=genLabel();
+	std::string _loop=genLabel();
 
-	string objFirst,objNext;
+	std::string objFirst,objNext;
 
 	if( var->isObjParam() ){
 		objFirst="__bbObjEachFirst2";
@@ -49,7 +49,7 @@ void ForEachNode::translate( Codegen *g ){
 #ifdef USE_LLVM
 void ForEachNode::translate2( Codegen_LLVM *g ){
 	llvm::Value *t,*l,*r;
-	string objFirst,objNext;
+	std::string objFirst,objNext;
 
 	if( var->isObjParam() ){
 		objFirst="_bbObjEachFirst2";

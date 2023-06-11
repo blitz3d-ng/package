@@ -4,12 +4,12 @@
 #include "const.h"
 
 struct StringConstNode : public ConstNode{
-	string value;
-	StringConstNode( const string &s );
+	std::string value;
+	StringConstNode( const std::string &s );
 	TNode *translate( Codegen *g );
 	int intValue();
 	float floatValue();
-	string stringValue();
+	std::string stringValue();
 	json toJSON( Environ *e );
 #ifdef USE_LLVM
 	llvm::Value *translate2( Codegen_LLVM *g );

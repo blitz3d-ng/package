@@ -8,11 +8,11 @@
 //'kind' shouldn't really be in Parser...
 //should probably be LocalDeclNode,GlobalDeclNode,ParamDeclNode
 struct VarDeclNode : public DeclNode{
-	string ident,tag;
+	std::string ident,tag;
 	int kind;bool constant;
 	ExprNode *expr;
 	DeclVarNode *sem_var;
-	VarDeclNode( const string &i,const string &t,int k,bool c,ExprNode *e ):ident(i),tag(t),kind(k),constant(c),expr(e),sem_var(0){}
+	VarDeclNode( const std::string &i,const std::string &t,int k,bool c,ExprNode *e ):ident(i),tag(t),kind(k),constant(c),expr(e),sem_var(0){}
 	~VarDeclNode(){ delete expr;delete sem_var; }
 	void proto( DeclSeq *d,Environ *e );
 	void semant( Environ *e );

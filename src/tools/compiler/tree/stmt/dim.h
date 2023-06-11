@@ -5,11 +5,11 @@
 #include "../expr/expr_seq.h"
 
 struct DimNode : public StmtNode{
-	string ident,tag;
+	std::string ident,tag;
 	ExprSeqNode *exprs;
 	ArrayType *sem_type;
 	Decl *sem_decl;
-	DimNode( const string &i,const string &t,ExprSeqNode *e ):ident(i),tag(t),exprs(e){}
+	DimNode( const std::string &i,const std::string &t,ExprSeqNode *e ):ident(i),tag(t),exprs(e){}
 	~DimNode(){ delete exprs; }
 	void semant( Environ *e );
 	void translate( Codegen *g );

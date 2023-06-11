@@ -10,18 +10,17 @@ BBHook *bbRuntimeOnResume;
 
 #include <cstdlib>
 #include <iostream>
-using namespace std;
 
 //start up error
 #ifdef WIN32
 void sue( const char *t ){
-	string p=string( "Startup Error: " )+t;
+	std::string p=std::string( "Startup Error: " )+t;
 	_bbDebugInfo( p.c_str() );
-	cerr<<t<<endl;
+	std::cerr<<t<<std::endl;
 }
 #else
 void sue( const char *t ){
-  cerr<<t<<endl;
+  std::cerr<<t<<std::endl;
   exit(1);
 }
 #endif

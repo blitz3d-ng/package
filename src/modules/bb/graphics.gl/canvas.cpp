@@ -5,7 +5,6 @@
 #include <cmath>
 #include <map>
 #include <algorithm>
-using namespace std;
 
 #include "default.glsl.h"
 
@@ -28,7 +27,7 @@ bool makeProgram( ContextResources *res,float sx,float sy,float tx,float ty,bool
 	if( !glIsProgram( res->default_program ) ){
 		// LOGD( "rebuilding 2d shader...\n" );
 
-		string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
+		std::string src( DEFAULT_GLSL,DEFAULT_GLSL+DEFAULT_GLSL_SIZE );
 		res->default_program=GL( _bbGLCompileProgram( "default.glsl",src ) );
 		if( !res->default_program ){
 			return false;
@@ -235,7 +234,7 @@ void GLCanvas::oval( int x,int y,int w,int h,bool solid ){
 
 	float vx=1.0f,vy=0.0f;
 
-	vector<Vertex> verts;
+	std::vector<Vertex> verts;
 	for( int i=0;i<segs;i++ ){
 		verts.push_back( { vx*rx+x,vy*ry+y,0.0,0.0 } );
 
@@ -278,7 +277,7 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 		font->rebuildAtlas();
 
 		int size=font->atlas->width*font->atlas->height;
-		vector<char> bmp( size*4 );
+		std::vector<char> bmp( size*4 );
 		for( int i=0;i<font->atlas->width*font->atlas->height;i++ ){
 			bmp[i*4+0]=font->atlas->bits[i];
 			bmp[i*4+1]=font->atlas->bits[i];
@@ -294,7 +293,7 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR ) );
 	}
 
-	vector<Vertex> verts;
+	std::vector<Vertex> verts;
 
 	y+=font->baseline;
 

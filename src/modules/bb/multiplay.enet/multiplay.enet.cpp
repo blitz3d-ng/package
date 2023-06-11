@@ -8,7 +8,6 @@
 #include <cstring>
 #include <iostream>
 #include <map>
-using namespace std;
 
 // - StartNetGame%():"bbStartNetGame"
 // - HostNetGame%( game_name$ ):"bbHostNetGame"
@@ -34,7 +33,7 @@ BBPlayer::BBPlayer(){
 	id=generator.newGuid();
 }
 
-const string BBPlayer::getId(){
+const std::string BBPlayer::getId(){
 	auto myGuid = generator.newGuid();
 	std::stringstream stream;
 	stream << myGuid;
@@ -45,7 +44,7 @@ static ENetAddress address;
 static ENetHost *host;
 static ENetPeer *peer;
 
-static map<string,BBPlayer> bbPlayers;
+static std::map<std::string,BBPlayer> bbPlayers;
 
 struct BBNetMsg{
 	union Peer{
@@ -62,7 +61,7 @@ struct BBNetMsg{
 
 BBNetMsg bbLastNetMsg;
 
-static int sendNetMsg( unsigned char type,string from,string to,string data,bool reliable ){
+static int sendNetMsg( unsigned char type,std::string from,std::string to,std::string data,bool reliable ){
 	static BBNetMsg *msg=0;
 	static int msg_size=0;
 
@@ -95,9 +94,9 @@ static int sendNetMsg( unsigned char type,string from,string to,string data,bool
 bb_int_t BBCALL bbSendNetMsg( bb_int_t type,BBStr *data,BBPlayer *from,BBPlayer *to,bb_int_t reliable ){
 	if( bb_env.debug && type<1||type>99 ) RTEX( "Message type must be between 1 and 99." );
 
-	string d=*data;delete data;
-	string from_id;//=string( from->id,16 );
-	string to_id;//=to?string( to->id,16 ):"";
+	std::string d=*data;delete data;
+	std::string from_id;//=string( from->id,16 );
+	std::string to_id;//=to?string( to->id,16 ):"";
 	return sendNetMsg( type,from_id,to_id,d,reliable );
 }
 
@@ -113,11 +112,11 @@ int recvServerMsg( const ENetEvent &e ){
 		break;
 	case ENET_EVENT_TYPE_RECEIVE:
 		memcpy( &msg,e.packet->data,sizeof(BBNetMsg) );
-		cout<<"new message: type="<<msg.type<<endl;
+		std::cout<<"new message: type="<<msg.type<<std::endl;
 
 		switch( msg.type ){
 		case 100:
-			cout<<"new player!!!"<<endl;
+			std::cout<<"new player!!!"<<std::endl;
 			break;
 		}
 
@@ -178,7 +177,7 @@ bb_int_t BBCALL bbJoinNetGame( BBStr *game_name,BBStr *ip_address ){
 }
 
 BBPlayer * BBCALL bbCreateNetPlayer( BBStr *name ){
-	string n=*name;delete name;
+	std::string n=*name;delete name;
 
 	BBPlayer p;
 	p.name=n;

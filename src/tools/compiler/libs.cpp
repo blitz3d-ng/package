@@ -23,16 +23,16 @@ int lnk_ver;
 int run_ver;
 int dbg_ver;
 
-string home;
+std::string home;
 Linker *linkerLib;
 Runtime *runtimeLib;
 BBRuntimeDylib rtdl;
 
 Module *runtimeModule;
 Environ *runtimeEnviron;
-vector<string> modules;
-vector<string> keyWords;
-vector<UserFunc> userFuncs;
+std::vector<std::string> modules;
+std::vector<std::string> keyWords;
+std::vector<UserFunc> userFuncs;
 
 static HMODULE runtimeHMOD;
 
@@ -46,9 +46,9 @@ static Type *_typeof( int c ){
 }
 
 static int curr;
-static string text;
+static std::string text;
 
-static int next( istream &in ){
+static int next( std::istream &in ){
 
 	text="";
 
@@ -75,10 +75,10 @@ static int next( istream &in ){
 	return curr=t;
 }
 
-static const char *linkRuntime(string rt){
+static const char *linkRuntime(std::string rt){
 	while( const char *sym=runtimeLib->nextSym() ){
 
-		string s( sym );
+		std::string s( sym );
 
 		int pc=runtimeLib->symValue(sym);
 
@@ -107,18 +107,18 @@ static const char *linkRuntime(string rt){
 		}
 		end=k;
 		DeclSeq *params=d_new DeclSeq();
-		string n=s.substr( start,end-start );
+		std::string n=s.substr( start,end-start );
 		while( k<s.size() ){
 			Type *t=_typeof(s[k++]);
 			int from=k;
 			for( ;isalnum(s[k])||s[k]=='_';++k ){}
-			string str=s.substr( from,k-from );
+			std::string str=s.substr( from,k-from );
 			ConstType *defType=0;
 			if( s[k]=='=' ){
 				int from=++k;
 				if( s[k]=='\"' ){
 					for( ++k;s[k]!='\"';++k ){}
-					string t=s.substr( from+1,k-from-1 );
+					std::string t=s.substr( from+1,k-from-1 );
 					defType=d_new ConstType( t );++k;
 				}else{
 					if( s[k]=='-' ) ++k;
@@ -144,14 +144,14 @@ static const char *linkRuntime(string rt){
 	return 0;
 }
 
-static set<string> _ulibkws;
+static std::set<std::string> _ulibkws;
 
-static const char *loadUserLib( const string &userlib ){
+static const char *loadUserLib( const std::string &userlib ){
 
-	string t=home+"/userlibs/"+userlib;
+	std::string t=home+"/userlibs/"+userlib;
 
-	string lib="";
-	ifstream in(t.c_str());
+	std::string lib="";
+	std::ifstream in(t.c_str());
 
 	next(in);
 	while( curr ){
@@ -173,8 +173,8 @@ static const char *loadUserLib( const string &userlib ){
 
 			if( !lib.size() ) return "function decl without lib directive";
 
-			string id=text;
-			string lower_id=tolower(id);
+			std::string id=text;
+			std::string lower_id=tolower(id);
 
 			if( _ulibkws.count( lower_id ) ) return "duplicate identifier";
 			_ulibkws.insert( lower_id );
@@ -195,7 +195,7 @@ static const char *loadUserLib( const string &userlib ){
 			if( curr!=')' ){
 				for(;;){
 					if( curr!=-1 ) break;
-					string arg=text;
+					std::string arg=text;
 
 					Type *ty=0;
 					switch( next(in) ){
@@ -270,14 +270,14 @@ static const char *linkUserLibs(){
 
 static char err[255];
 
-const char *openLibs( const Target &t,const string &rt ){
+const char *openLibs( const Target &t,const std::string &rt ){
 
 	char *p=getenv( "blitzpath" );
 	if( !p ) return "Can't find blitzpath environment variable";
 #ifdef WIN32
 	char buff[MAX_PATH];
 	GetFullPathName( p,MAX_PATH,buff,NULL );
-	home=string(buff);
+	home=std::string(buff);
 #else
 	char buff[PATH_MAX];
 	home=realpath( p,buff );
@@ -288,7 +288,7 @@ const char *openLibs( const Target &t,const string &rt ){
 
 		runtimeHMOD=OPENLIB( (home+LIBPATH).c_str() );
 		if( !runtimeHMOD ){
-			string msg("Unable to open " RUNTIMENAME "."+rt+".");
+			std::string msg("Unable to open " RUNTIMENAME "."+rt+".");
 			strcpy( err,msg.c_str() );
 			return err;
 		}
@@ -296,7 +296,7 @@ const char *openLibs( const Target &t,const string &rt ){
 		typedef Runtime *(CDECL*GetRuntime)();
 		GetRuntime gr=(GetRuntime)LIBSYM( runtimeHMOD,"runtimeGetRuntime" );
 		if( !gr ){
-			string msg("Error in " RUNTIMENAME "."+rt+"." LIBSUFFIX);
+			std::string msg("Error in " RUNTIMENAME "."+rt+"." LIBSUFFIX);
 			strcpy( err,msg.c_str() );
 			return err;
 		}
@@ -326,7 +326,7 @@ const char *openLibs( const Target &t,const string &rt ){
 void parseSymbols( const Target &t ){
 	for( auto mod:t.modules ){
 		for( auto sym:mod.second.symbols ){
-			string s( sym );
+			std::string s( sym );
 
 			int pc=0;
 
@@ -355,18 +355,18 @@ void parseSymbols( const Target &t ){
 			}
 			end=k;
 			DeclSeq *params=d_new DeclSeq();
-			string n=s.substr( start,end-start );
+			std::string n=s.substr( start,end-start );
 			while( k<s.size() && s[k]!=':' ){
 				Type *t=_typeof(s[k++]);
 				int from=k;
 				for( ;isalnum(s[k])||s[k]=='_';++k ){}
-				string str=s.substr( from,k-from );
+				std::string str=s.substr( from,k-from );
 				ConstType *defType=0;
 				if( s[k]=='=' ){
 					int from=++k;
 					if( s[k]=='\"' ){
 						for( ++k;s[k]!='\"';++k ){}
-						string t=s.substr( from+1,k-from-1 );
+						std::string t=s.substr( from+1,k-from-1 );
 						defType=d_new ConstType( t );++k;
 					}else{
 						if( s[k]=='-' ) ++k;
@@ -383,7 +383,7 @@ void parseSymbols( const Target &t ){
 				Decl *d=params->insertDecl( str,t,DECL_PARAM,defType );
 			}
 
-			string symbol=s.substr( k+1 );
+			std::string symbol=s.substr( k+1 );
 
 			FuncType *f=d_new FuncType( t,params,false,cfunc );
 			f->symbol=symbol;
@@ -394,7 +394,7 @@ void parseSymbols( const Target &t ){
 	}
 }
 
-const char *linkLibs( const Target &t,const string &rt ){
+const char *linkLibs( const Target &t,const std::string &rt ){
 	if( t.host ){
 		if( const char *p=linkRuntime( rt ) ) return p;
 

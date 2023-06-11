@@ -5,10 +5,10 @@
 #include "../expr/expr_seq.h"
 
 struct ArrayVarNode : public VarNode{
-	string ident,tag;
+	std::string ident,tag;
 	ExprSeqNode *exprs;
 	Decl *sem_decl;
-	ArrayVarNode( const string &i,const string &t,ExprSeqNode *e ):ident(i),tag(t),exprs(e){}
+	ArrayVarNode( const std::string &i,const std::string &t,ExprSeqNode *e ):ident(i),tag(t),exprs(e){}
 	~ArrayVarNode(){ delete exprs; }
 	void semant( Environ *e );
 	TNode *translate( Codegen *g );

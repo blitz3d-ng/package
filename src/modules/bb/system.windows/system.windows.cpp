@@ -6,7 +6,6 @@
 
 #include <windows.h>
 #include <map>
-using namespace std;
 
 // // https://stackoverflow.com/questions/11387564/get-a-font-filepath-from-name-and-style-in-c-windows
 // #include <sstream>
@@ -90,10 +89,10 @@ typedef int (__stdcall *LibFunc)( const void *in,int in_sz,void *out,int out_sz 
 
 struct gxDll{
 	HINSTANCE hinst;
-	map<string,LibFunc> funcs;
+	std::map<std::string,LibFunc> funcs;
 };
 
-static map<string,gxDll*> libs;
+static std::map<std::string,gxDll*> libs;
 
 WindowsSystemDriver::WindowsSystemDriver(){
 	memset( &osinfo,0,sizeof(osinfo) );
@@ -110,7 +109,7 @@ WindowsSystemDriver::~WindowsSystemDriver(){
 	timeGetDevCaps( &tc,sizeof(tc) );
 	timeEndPeriod( tc.wPeriodMin );
 
-	map<string,gxDll*>::const_iterator it;
+	std::map<std::string,gxDll*>::const_iterator it;
 	for( it=libs.begin();it!=libs.end();++it ){
 		FreeLibrary( it->second->hinst );
 	}
@@ -121,7 +120,7 @@ bool WindowsSystemDriver::isXPorLess(){
 	return osinfo.dwMajorVersion<6;
 }
 
-static string toDir( string t ){
+static std::string toDir( std::string t ){
 	if( t.size() && t[t.size()-1]!='\\' ) t+='\\';
 	return t;
 }
@@ -131,7 +130,7 @@ void WindowsSystemDriver::refreshSystemProperties(){
 
 	bbSystemProperties["cpu"]="Intel";
 
-	string os="Unknown";
+	std::string os="Unknown";
 	switch( osinfo.dwMajorVersion ){
 	case 3:
 		switch( osinfo.dwMinorVersion ){
@@ -169,9 +168,9 @@ void WindowsSystemDriver::refreshSystemProperties(){
 	bbSystemProperties["os"]=os;
 
 	if( GetModuleFileName( 0,buff,MAX_PATH ) ){
-		string t=buff;
+		std::string t=buff;
 		int n=t.find_last_of( '\\' );
-		if( n!=string::npos ) t=t.substr( 0,n );
+		if( n!=std::string::npos ) t=t.substr( 0,n );
 		bbSystemProperties["appdir"]=toDir( t );
 	}
 
@@ -191,22 +190,22 @@ bool WindowsSystemDriver::delay( int ms ){
 	}
 }
 
-bool WindowsSystemDriver::execute( const string &cmd_line ){
+bool WindowsSystemDriver::execute( const std::string &cmd_line ){
 
 	if( !cmd_line.size() ) return false;
 
 	//convert cmd_line to cmd and params
-	string cmd=cmd_line,params;
+	std::string cmd=cmd_line,params;
 	while( cmd.size() && cmd[0]==' ' ) cmd=cmd.substr( 1 );
 	if( cmd.find( '\"' )==0 ){
 		int n=cmd.find( '\"',1 );
-		if( n!=string::npos ){
+		if( n!=std::string::npos ){
 			params=cmd.substr( n+1 );
 			cmd=cmd.substr( 1,n-1 );
 		}
 	}else{
 		int n=cmd.find( ' ' );
-		if( n!=string::npos ){
+		if( n!=std::string::npos ){
 			params=cmd.substr( n+1 );
 			cmd=cmd.substr( 0,n );
 		}
@@ -235,7 +234,7 @@ void WindowsSystemDriver::dpiInfo( float &scale_x,float &scale_y ){
 	static bool calculated=false;
 	static float _scale_x=1.0f,_scale_y=1.0f;
 
-  if ( !calculated ){
+	if ( !calculated ){
 		HDC hdc=GetDC( GetDesktopWindow() );
 		_scale_x=GetDeviceCaps( hdc,LOGPIXELSX ) / 96.0f;
 		_scale_y=GetDeviceCaps( hdc,LOGPIXELSY ) / 96.0f;
@@ -290,7 +289,7 @@ int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func
 	RTEX( "Only available in 32-bit builds." );
 	return 0;
 #else
-	map<string,gxDll*>::const_iterator lib_it=libs.find( dll );
+	std::map<std::string,gxDll*>::const_iterator lib_it=libs.find( dll );
 
 	if( lib_it==libs.end() ){
 		HINSTANCE h=LoadLibrary( dll.c_str() );
@@ -301,7 +300,7 @@ int WindowsSystemDriver::callDll( const std::string &dll,const std::string &func
 	}
 
 	gxDll *t=lib_it->second;
-	map<string,LibFunc>::const_iterator fun_it=t->funcs.find( func );
+	std::map<std::string,LibFunc>::const_iterator fun_it=t->funcs.find( func );
 
 	if( fun_it==t->funcs.end() ){
 		LibFunc f=(LibFunc)GetProcAddress( t->hinst,func.c_str() );

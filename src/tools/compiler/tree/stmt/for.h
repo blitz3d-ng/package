@@ -10,7 +10,7 @@ struct ForNode : public StmtNode{
 	VarNode *var;
 	ExprNode *fromExpr,*toExpr,*stepExpr;
 	StmtSeqNode *stmts;
-	string sem_brk;
+	std::string sem_brk;
 	ForNode( VarNode *v,ExprNode *f,ExprNode *t,ExprNode *s,StmtSeqNode *ss,int np );
 	~ForNode();
 	void semant( Environ *e );

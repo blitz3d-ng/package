@@ -48,7 +48,7 @@ bool VarNode::isObjParam(){
 
 #ifdef USE_LLVM
 llvm::Value *VarNode::translate2( Codegen_LLVM *g ){
-	cerr<<"translate2 missing implementation for "<<typeid(*this).name()<<endl;
+	std::cerr<<"translate2 missing implementation for "<<typeid(*this).name()<<std::endl;
 	abort();
 }
 #endif

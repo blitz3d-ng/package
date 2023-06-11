@@ -33,7 +33,7 @@ void ForNode::semant( Environ *e ){
 
 	if( !stepExpr->constNode() ) ex( "Step value must be constant" );
 
-	string brk=e->setBreak( sem_brk=genLabel() );
+	std::string brk=e->setBreak( sem_brk=genLabel() );
 	stmts->semant( e );
 	e->setBreak( brk );
 }
@@ -45,8 +45,8 @@ void ForNode::translate( Codegen *g ){
 	//initial assignment
 	g->code( var->store( g,fromExpr->translate( g ) ) );
 
-	string cond=genLabel();
-	string loop=genLabel();
+	std::string cond=genLabel();
+	std::string loop=genLabel();
 	g->code( jump( cond ) );
 	g->label( loop );
 	stmts->translate( g );

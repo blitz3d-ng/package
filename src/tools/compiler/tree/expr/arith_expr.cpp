@@ -94,18 +94,18 @@ llvm::Value *ArithExprNode::translate2( Codegen_LLVM *g ){
 		return g->CallIntrinsic( "_bbStrConcat",t,2,l,r );
 	}
 
-	using namespace llvm;
-	Instruction::BinaryOps n;
+	using BinaryOps = llvm::Instruction::BinaryOps;
+	BinaryOps n;
 	if( sem_type==::Type::int_type ){
 		switch( op ){
-		case '+':n=Instruction::BinaryOps::Add;break;case '-':n=Instruction::BinaryOps::Sub;break;
-		case '*':n=Instruction::BinaryOps::Mul;break;case '/':n=Instruction::BinaryOps::SDiv;break;
+		case '+':n=BinaryOps::Add;break;case '-':n=BinaryOps::Sub;break;
+		case '*':n=BinaryOps::Mul;break;case '/':n=BinaryOps::SDiv;break;
 		case MOD:return g->CallIntrinsic( "_bbMod",t,2,l,r );
 		}
 	}else{
 		switch( op ){
-		case '+':n=Instruction::BinaryOps::FAdd;break;case '-':n=Instruction::BinaryOps::FSub;break;
-		case '*':n=Instruction::BinaryOps::FMul;break;case '/':n=Instruction::BinaryOps::FDiv;break;
+		case '+':n=BinaryOps::FAdd;break;case '-':n=BinaryOps::FSub;break;
+		case '*':n=BinaryOps::FMul;break;case '/':n=BinaryOps::FDiv;break;
 		case MOD:return g->CallIntrinsic( "_bbFMod",t,2,l,r );
 		case '^':return g->CallIntrinsic( "_bbFPow",t,2,l,r );
 		}

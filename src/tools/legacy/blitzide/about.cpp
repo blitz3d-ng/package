@@ -73,7 +73,7 @@ void aboutBlitz( bool delay ){
 
 	about.Create( IDD_ABOUT );
 
-	string credits;
+	std::string credits;
 
 	credits+=_credits;
 
@@ -82,11 +82,11 @@ void aboutBlitz( bool delay ){
 	int ide_ver=VERSION&0xffff;
 	int lnk_ver=linker_ver&0xffff;
 	int run_ver=runtime_ver&0xffff;
-	string ide_v=itoa(ide_ver/1000)+"."+itoa(ide_ver%1000);
-	string lnk_v=itoa(lnk_ver/1000)+"."+itoa(lnk_ver%1000);
-	string run_v=itoa(run_ver/1000)+"."+itoa(run_ver%1000);
+	std::string ide_v=itoa(ide_ver/1000)+"."+itoa(ide_ver%1000);
+	std::string lnk_v=itoa(lnk_ver/1000)+"."+itoa(lnk_ver%1000);
+	std::string run_v=itoa(run_ver/1000)+"."+itoa(run_ver%1000);
 
-	string t="";
+	std::string t="";
 
 #ifdef PRO
 	t+="Blitz3D";

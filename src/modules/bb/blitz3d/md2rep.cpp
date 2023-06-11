@@ -54,13 +54,13 @@ struct t_tri{
 	unsigned short verts[3];
 };
 
-MD2Rep::MD2Rep( const string &f ):
+MD2Rep::MD2Rep( const std::string &f ):
 mesh(0),n_verts(0),n_tris(0),n_frames(0){
 
-	streambuf *in;
+	std::streambuf *in;
 	md2_header header;
 
-	in=gx_filesys->openFile( f,ios_base::in );
+	in=gx_filesys->openFile( f,std::ios_base::in );
 	if( !in ) return;
 
 	if( in->sgetn( (char*)&header,sizeof(header) )!=sizeof(header) ) return;
@@ -70,20 +70,20 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 	n_tris=header.numTriangles;
 
 	//read in tex coords
-	vector<md2_uv> md2_uvs;
+	std::vector<md2_uv> md2_uvs;
 	md2_uvs.resize( header.numTexCoords );
 	in->pubseekpos( header.offsetTexCoords );
 	in->sgetn( (char*)&md2_uvs[0],header.numTexCoords*sizeof(md2_uv) );
 
 	//read in triangles
-	vector<md2_tri> md2_tris;
+	std::vector<md2_tri> md2_tris;
 	md2_tris.resize( n_tris );
 	in->pubseekpos( header.offsetTriangles );
 	in->sgetn( (char*)&md2_tris[0],n_tris*sizeof(md2_tri) );
 
-	vector<t_tri> t_tris;
-	vector<t_vert> t_verts;
-	map<t_vert,int> t_map;
+	std::vector<t_tri> t_tris;
+	std::vector<t_vert> t_verts;
+	std::map<t_vert,int> t_map;
 
 	int k;
 	for( k=0;k<n_tris;++k ){
@@ -92,7 +92,7 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 			t_vert t;
 			t.i=md2_tris[k].verts[j];
 			t.uv=md2_tris[k].uvs[j];
-			map<t_vert,int>::iterator it=t_map.find( t );
+			std::map<t_vert,int>::iterator it=t_map.find( t );
 			if( it==t_map.end() ){
 				//create new vert
 				tr.verts[j]=t_map[t]=t_verts.size();
@@ -114,7 +114,7 @@ mesh(0),n_verts(0),n_tris(0),n_frames(0){
 	frames.resize( n_frames );
 	in->pubseekpos( header.offsetFrames );
 
-	vector<md2_vert> md2_verts;
+	std::vector<md2_vert> md2_verts;
 	md2_verts.resize( header.numVertices );
 
 	//read in frames

@@ -4,7 +4,6 @@
 #include "gxgraphics.h"
 
 #include <FreeImage.h>
-using namespace std;
 
 // For some reason, these aren't in the mingw headers...
 #if !defined(FOURCC_DXT1) && !defined(FOURCC_DXT1) && !defined(FOURCC_DXT1)
@@ -461,7 +460,7 @@ IDirectDrawSurface7 *loadDXTC(const char* filename,gxGraphics *gfx)
 ddSurf *ddUtil::loadSurface( const std::string &f,int flags,gxGraphics *gfx ){
 
 	int i=f.find( ".dds" );
-	if( i!=string::npos && i+4==f.size() ){
+	if( i!=std::string::npos && i+4==f.size() ){
 		//dds file!
 		ddSurf *surf=loadDXTC( f.c_str(),gfx );
 		return surf;

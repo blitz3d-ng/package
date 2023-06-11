@@ -5,9 +5,9 @@
 #include "../stmt/stmt_seq.h"
 
 struct IncludeNode : public StmtNode{
-	string file,label;
+	std::string file,label;
 	StmtSeqNode *stmts;
-	IncludeNode( const string &t,StmtSeqNode *ss ):file(t),stmts(ss){}
+	IncludeNode( const std::string &t,StmtSeqNode *ss ):file(t),stmts(ss){}
 	~IncludeNode(){ delete stmts; }
 
 	void semant( Environ *e );

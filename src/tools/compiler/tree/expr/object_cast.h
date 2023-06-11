@@ -5,8 +5,8 @@
 
 struct ObjectCastNode : public ExprNode{
 	ExprNode *expr;
-	string type_ident;
-	ObjectCastNode( ExprNode *e,const string &t ):expr(e),type_ident(t){}
+	std::string type_ident;
+	ObjectCastNode( ExprNode *e,const std::string &t ):expr(e),type_ident(t){}
 	~ObjectCastNode(){ delete expr; }
 	ExprNode *semant( Environ *e );
 	TNode *translate( Codegen *g );

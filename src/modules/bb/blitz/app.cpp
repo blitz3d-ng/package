@@ -4,7 +4,6 @@
 #include "app.h"
 #include "ex.h"
 #include "debug.h"
-using namespace std;
 
 #if defined(__APPLE__) || defined(__linux__)
 #include <unistd.h>

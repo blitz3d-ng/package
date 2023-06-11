@@ -3,10 +3,9 @@
 #include <bb/runtime/runtime.h>
 
 #include <string>
-using namespace std;
 
 extern "C" int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
-	string cmd_line;
+	std::string cmd_line;
 	for( int i=1;i<argc;i++ ){
 		cmd_line+=argv[i];
 	}

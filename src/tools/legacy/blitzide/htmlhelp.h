@@ -6,15 +6,15 @@ class HelpView;
 
 class HelpListener{
 public:
-	virtual void helpOpen( HelpView *help,const string &file,bool dir )=0;
-	virtual void helpTitleChange( HelpView *help,const string &title )=0;
+	virtual void helpOpen( HelpView *help,const std::string &file,bool dir )=0;
+	virtual void helpTitleChange( HelpView *help,const std::string &title )=0;
 };
 
 class HelpView : public CHtmlView{
 public:
 	HelpView( HelpListener *l ):listener(l){}
 
-	string getTitle();
+	std::string getTitle();
 
 DECLARE_DYNAMIC( HelpView )
 DECLARE_MESSAGE_MAP()
@@ -25,7 +25,7 @@ private:
 	virtual void OnTitleChange( LPCTSTR t );
 	virtual void OnBeforeNavigate2( LPCTSTR lpszURL, DWORD nFlags, LPCTSTR lpszTargetFrameName, CByteArray& baPostedData, LPCTSTR lpszHeaders, BOOL* pbCancel );
 
-	string title;
+	std::string title;
 	HelpListener *listener;
 };
 

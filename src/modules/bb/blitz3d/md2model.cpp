@@ -6,12 +6,12 @@
 struct MD2Model::Rep : public MD2Rep{
 	int ref_cnt;
 
-	Rep( const string &f):MD2Rep( f ),
+	Rep( const std::string &f):MD2Rep( f ),
 	ref_cnt(1){
 	}
 };
 
-MD2Model::MD2Model( const string &f ):
+MD2Model::MD2Model( const std::string &f ):
 rep( d_new Rep( f ) ),
 anim_mode(0),anim_time(0),
 render_a(0),render_b(0),render_t(0),trans_verts(0){

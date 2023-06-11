@@ -3,8 +3,6 @@
 #include "scene.h"
 #include "mesh.h"
 
-using namespace std;
-
 static bool can_wb;
 static int  hw_tex_stages,tex_stages;
 static float BLACK[]={0,0,0};
@@ -135,7 +133,7 @@ gxScene::~gxScene(){
 
 void gxScene::restore(){
 	//restore all meshes (b3d surfaces)
-	set<BBMesh*>::iterator mesh_it;
+	std::set<BBMesh*>::iterator mesh_it;
 	for( mesh_it=mesh_set.begin();mesh_it!=mesh_set.end();++mesh_it ){
 		((gxMesh*)(*mesh_it))->restore();
 	}
@@ -543,7 +541,7 @@ void gxScene::setRenderState( const RenderState &rs ){
 	}
 }
 
-bool gxScene::begin( const vector<BBLightRep*> &lights ){
+bool gxScene::begin( const std::vector<BBLightRep*> &lights ){
 
 	if( dir3dDev->BeginScene()!=D3D_OK ) return false;
 
