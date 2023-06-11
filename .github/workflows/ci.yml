@@ -31,7 +31,7 @@ jobs:
       # we're gonna upload this now so it's not contaminated with the mesa
       # files
       - name: Upload toolchain and package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.arch }}-${{ matrix.os }}
           path: |
@@ -102,7 +102,7 @@ jobs:
       - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
       - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
       - name: Upload toolchain and package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.os }}
           path: |
@@ -153,7 +153,7 @@ jobs:
       - run: make ENV=release PLATFORM=${{ matrix.device }}
       - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh ${{ matrix.device }}
       - name: Upload toolchain and package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.device }}
           path: _release/bin
@@ -176,7 +176,7 @@ jobs:
       - run: ./env.sh android make ENV=release PLATFORM=android ARCH=${{ matrix.arch }}
       - run: ./env.sh android ./test/suite.sh ${{ matrix.arch }}-android-30
       - name: Upload toolchain and package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: android-${{ matrix.arch }}
           path: _release/bin
@@ -191,7 +191,7 @@ jobs:
       - run: ./env.sh android make ovr
       - run: ./env.sh android ./test/suite.sh ovr
       - name: Upload toolchain and package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ovr-${{ matrix.arch }}
           path: _release/bin
@@ -228,7 +228,7 @@ jobs:
           bundler-cache: true
       - run: make help
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: help
           path: _release/help
@@ -272,7 +272,7 @@ jobs:
           git clean -xfd _release
 
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: windows-package
           path: "*.zip"
@@ -323,7 +323,7 @@ jobs:
           git clean -xfd _release
 
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: macos-11-package
           path: "*.zip"
@@ -367,7 +367,7 @@ jobs:
           git clean -xfd _release
 
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: macos-12-package
           path: "*.zip"

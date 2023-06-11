@@ -29,19 +29,22 @@ For bug reports & feature requests, feel free to open an [issue](https://github.
 
 All 3rd-party dependencies are included in the repo or linked as submodules to keep the project simple to build.
 
+The single exception to this is LLVM due to it's size and the time required build. A [pre-built toolchain](https://github.com/blitz3d-ng/env/releases/tag/v3) is provided for Windows & macOS. Download the appropriate archive for your platform, and unpack it into an `llvm/` directory in the root of this repository.
+
 ### Windows
 
 Download [cmake (3.16+)](https://cmake.org/download/) and [ninja](https://github.com/ninja-build/ninja/releases).
 
 Install [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/). Be sure to install the MFC components.
 
-Open up a command prompt via `Start -> Visual Studio 2022 -> Developer PowerShell for VS2022`.
+To build 32-bit or 64-bit, open `x86 Native Tools Command Prompt for VS 2022`. For 64-bit, open `x64 Native Tools Command Prompt for VS 2022`.
 
 ```
+> powershell
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
 > cd b3d
-> make release win32
-> make release win64
+> # download and unpack LLVM archive
+> .\make.bat release
 ```
 
 Once the build is complete, you can open the `_release/` directory and run `Blitz3D.exe`
@@ -55,7 +58,7 @@ Install [Xcode](https://developer.apple.com/xcode/) and [brew](http://brew.sh/).
 $ brew install cmake ninja
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
 $ cd b3d
-$ make llvm
+$ make llvm # or download the pre-built archive
 $ make ENV=release
 ```
 
@@ -67,7 +70,7 @@ Setup will vary across distributions, but here is an example for Ubuntu.
 $ sudo apt-get install -y git ninja-build libxml2-dev zlib1g-dev build-essential autoconf libtool gettext autopoint gperf cmake clang libwxgtk3.0-gtk3-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev
 $ git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
 $ cd b3d
-$ make llvm
+$ make llvm # or download the pre-built archive
 $ make ENV=release
 ```
 
