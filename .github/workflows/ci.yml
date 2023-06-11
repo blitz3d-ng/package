@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os:
-          # - windows-2019
+          - windows-2019
           - windows-2022
         arch:
           - win32
@@ -24,7 +24,7 @@ jobs:
       - if: matrix.arch == 'win64'
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
+          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v3/llvm-16.0.0-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
 
@@ -33,7 +33,7 @@ jobs:
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.arch }}
+          name: ${{ matrix.arch }}-${{ matrix.os }}
           path: |
             _release/bin
             _release/*.exe
@@ -66,21 +66,21 @@ jobs:
           $env:blitzpath='_release'
           .\test\suite.bat
 
-  # mingw:
-  #   name: MinGW
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       arch:
-  #         - mingw32
-  #         # - mingw64
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         submodules: recursive
-  #     - run: ./env.sh mingw make ENV=release PLATFORM=${{ matrix.arch }}
-  #     - run: ./env.sh mingw sh ./test/entry.mingw32.sh
-  #       continue-on-error: true
+  mingw:
+    name: MinGW
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - mingw32
+          - mingw64
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - run: ./env.sh mingw make ENV=release PLATFORM=${{ matrix.arch }}
+      # - run: ./env.sh mingw sh ./test/entry.mingw32.sh
+      #   continue-on-error: true
 
   macos:
     name: macOS
@@ -96,8 +96,8 @@ jobs:
           submodules: recursive
       - run: |
           mkdir _release/toolchains
-          wget https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-${{ matrix.os }}.zip
-          unzip llvm-16.0.0-rc3-${{ matrix.os }}.zip
+          wget https://github.com/blitz3d-ng/env/releases/download/v3/llvm-16.0.0-${{ matrix.os }}.zip
+          unzip llvm-16.0.0-${{ matrix.os }}.zip
       - run: brew install ninja gcovr
       - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
       - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
@@ -146,8 +146,8 @@ jobs:
           submodules: recursive
       - run: |
           mkdir _release/toolchains
-          wget https://github.com/blitz3d-ng/env/releases/download/v2/llvm-16.0.0-rc3-macos-12.zip
-          unzip llvm-16.0.0-rc3-macos-12.zip
+          wget https://github.com/blitz3d-ng/env/releases/download/v3/llvm-16.0.0-macos-12.zip
+          unzip llvm-16.0.0-macos-12.zip
       - run: brew install ninja gcovr
       - run: make compiler
       - run: make ENV=release PLATFORM=${{ matrix.device }}
@@ -256,13 +256,13 @@ jobs:
       - name: Download win32
         uses: actions/download-artifact@v3
         with:
-          name: win32
+          name: win32-windows-2022
           path: _release
 
       - name: Download win64
         uses: actions/download-artifact@v3
         with:
-          name: win64
+          name: win64-windows-2022
           path: _release
 
       - name: Create Windows package
