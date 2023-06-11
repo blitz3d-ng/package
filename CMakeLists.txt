@@ -189,6 +189,9 @@ ELSE()
   # over disk space.
   # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
   set(BB_RELEASE true)
+  if(NOT BB_MINGW)
+    set(ENABLE_LTO true)
+  endif()
 ENDIF()
 
 if(BB_ENV MATCHES test)
