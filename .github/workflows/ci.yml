@@ -392,7 +392,8 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v1
         with:
-          name: edge
+          name: Latest Build
+          tag_name: edge
           prerelease: true
           generate_release_notes: false
           body: |

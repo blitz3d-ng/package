@@ -9,7 +9,7 @@ This project is an attempt to modernize Blitz3D by adding cross-platform & 64-bi
 
 So far, we've made huge strides in making this happen. Some of the basic samples (such as [castle](_release/samples/mak/castle), [driver](_release/samples/mak/driver), and [tron](_release/samples/mak/tron)) can run on macOS with little-to-no modifications.
 
-This is achieved by adding [LLVM](#LLVM)-powered code generation to the original compiler. A basic test suite [test/all.bb](test/all.bb)
+This is achieved by adding [LLVM](#LLVM)-powered code generation to the original compiler. A basic test suite [test/all.bb](test/all.bb) has been implemented to help ensure the compiler functions as expected and the runtime can execute without error.
 
 (Note: The 32-bit Windows build still uses the original Blitz code generation.)
 
@@ -85,8 +85,7 @@ started replacing it with a Markdown based system. You'll need a [ruby 3.1.2](ht
 to generate the documentation.
 
 ```bash
-$ bundle install
-$ bin/blitz3d help --build
+$ make help
 ```
 
 ## Roadmap
