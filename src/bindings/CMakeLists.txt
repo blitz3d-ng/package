@@ -1,3 +1,3 @@
 # not enabled, by default
 
-# add_subdirectory(luajit)
+add_subdirectory(luajit)

@@ -10,7 +10,7 @@
 #define BBCALL __stdcall
 #define CDECL __cdecl
 #else
-#define BBDECL
+#define BBDECL __attribute__((visibility("default")))
 #define BBCALL
 #define CDECL
 #endif

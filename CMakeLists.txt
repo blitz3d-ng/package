@@ -60,6 +60,11 @@ else()
   endif()
 endif()
 
+# set symbol visibility to hidden to make dead code elimination more effective
+if (NOT MSVC)
+  add_compile_options(-fvisibility=hidden -fdata-sections -ffunction-sections)
+endif()
+
 if(NOT BB_HOST_ARCH STREQUAL BB_ARCH AND NOT BB_PLATFORM MATCHES mingw AND NOT BB_PLATFORM STREQUAL android AND NOT BB_PLATFORM STREQUAL win32 AND NOT BB_PLATFORM STREQUAL emscripten)
   if(BB_CLANG)
     add_compile_options(-arch ${BB_ARCH})
@@ -184,7 +189,7 @@ IF(BB_ENV MATCHES debug OR BB_ENV MATCHES test)
   # TODO: work to remove the need for this...
   add_definitions(-D_DEBUG)
 ELSE()
-  set(CMAKE_BUILD_TYPE Release)
+  set(CMAKE_BUILD_TYPE MinSizeRel)
   # TODO: perhaps enable this as a build option for those interested in speed
   # over disk space.
   # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
@@ -297,12 +302,6 @@ function(target_output_to_bin target)
   target_output_directory(${target} ${RELEASE_PATH}/bin)
 endfunction()
 
-macro(optimize_for_size)
-  if(BB_RELEASE)
-    set(CMAKE_BUILD_TYPE MinSizeRel)
-  endif()
-endmacro()
-
 IF(BB_MSVC)
   IF(BB_STATIC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
@@ -339,7 +338,7 @@ ELSEIF (BB_CLANG)
   add_compile_options(-fcolor-diagnostics)
 ENDIF ()
 
-set(ENABLE_UNITY_BUILD true)
+set(CMAKE_UNITY_BUILD true)
 
 function(file_write_changes path src)
   set(changed true)
@@ -397,8 +396,6 @@ ENDIF()
 
 add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")
 add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
-
-set(CMAKE_UNITY_BUILD ${ENABLE_UNITY_BUILD})
 
 add_subdirectory(src/stdutil)
 add_subdirectory(src/modules)

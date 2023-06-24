@@ -1,4 +1,6 @@
 IF(TARGET ogg)
+  set(CMAKE_UNITY_BUILD false)
+
   # use ogg in project tree
   file(READ tree/CMakeLists.txt FILE_CONTENTS)
   string(REPLACE "find_package(Ogg" "# find_package(Ogg" FILE_CONTENTS "${FILE_CONTENTS}")

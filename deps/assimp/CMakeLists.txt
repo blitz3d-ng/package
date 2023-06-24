@@ -1,5 +1,3 @@
-# set(CMAKE_UNITY_BUILD ${ENABLE_UNITY_BUILD})
-
 set (SOURCE tree/code/Assimp.cpp
   tree/code/BaseImporter.h
   tree/code/BaseImporter.cpp
@@ -166,3 +164,5 @@ target_compile_definitions(assimp PRIVATE
   # -DASSIMP_BUILD_NO_LIMITBONEWEIGHTS_PROCESS
   # -DASSIMP_BUILD_NO_IMPROVECACHELOCALITY_PROCESS
 )
+
+set_target_properties(assimp PROPERTIES UNITY_BUILD false)

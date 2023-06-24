@@ -2,6 +2,8 @@ if(BB_OVR OR BB_NX)
   return()
 endif()
 
+set(CMAKE_UNITY_BUILD false)
+add_compile_options(-w) # suppress warnings
 add_compile_definitions(SDL_LEAN_AND_MEAN)
 add_compile_definitions(GL_SILENCE_DEPRECATION GLES_SILENCE_DEPRECATION)
 

@@ -2,7 +2,12 @@ if(NOT BB_OVR)
   return()
 endif()
 
-set(VRAPI_SRC_DIR ${OVR_HOME}/VrApi/Libs/Android/${ANDROID_ABI}/${CMAKE_BUILD_TYPE})
+set(BUILD_TYPE Release)
+if(BUILD_TYPE STREQUAL "Debug")
+  set(BUILD_TYPE Debug)
+endif()
+
+set(VRAPI_SRC_DIR ${OVR_HOME}/VrApi/Libs/Android/${ANDROID_ABI}/${BUILD_TYPE})
 set(VRAPI_DEST_DIR ${TOOLCHAIN_PATH}/lib)
 
 if (EXISTS ${VRAPI_SRC_DIR}/libvrapi.so)

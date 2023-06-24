@@ -1,25 +1,38 @@
-# suppress warnings for 3rd-party code to help focus on 1st-party warnings
-add_definitions(-w)
-
+# core
 add_subdirectory(zlib)
+add_subdirectory(stackwalker)
+
+# ide
+add_subdirectory(wxwidgets)
+
+# compiler
+add_subdirectory(json-hpp)
+add_subdirectory(toml11)
+
+# system
 add_subdirectory(android_native_app_glue)
 add_subdirectory(vrapi)
-add_subdirectory(enet)
-add_subdirectory(uuid)
-# add_subdirectory(luajit)
-add_subdirectory(assimp)
-add_subdirectory(crossguid)
+
+# graphics
 add_subdirectory(freetype2)
 add_subdirectory(glew)
-add_subdirectory(json-hpp)
-add_subdirectory(ogg)
-add_subdirectory(vorbis)
-add_subdirectory(steamworks)
-add_subdirectory(toml11)
 add_subdirectory(sdl)
 add_subdirectory(freeimage)
-add_subdirectory(wxwidgets)
 add_subdirectory(dxsdk)
+add_subdirectory(assimp)
+
+# audio
 add_subdirectory(fmod)
+add_subdirectory(ogg)
+add_subdirectory(vorbis)
+
+# misc 
+add_subdirectory(enet)
+add_subdirectory(uuid)
+add_subdirectory(crossguid)
+
+# third-party wrappers
 add_subdirectory(ode)
-add_subdirectory(stackwalker)
+add_subdirectory(steamworks)
+add_subdirectory(tiltfive)
+#add_subdirectory(luajit)

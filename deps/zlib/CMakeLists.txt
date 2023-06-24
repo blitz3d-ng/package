@@ -12,7 +12,10 @@ add_subdirectory(tree)
 
 target_include_directories(zlibstatic PUBLIC tree ${CMAKE_BINARY_DIR}/deps/zlib/tree)
 target_output_to_toolchain(zlibstatic)
-set_target_properties(zlibstatic PROPERTIES OUTPUT_NAME zlibstatic)
+set_target_properties(zlibstatic PROPERTIES
+  OUTPUT_NAME zlibstatic
+  UNITY_BUILD false
+)
 
 # disable these since the CMakeLists.txt does not offer a flag.
 set_target_properties(zlib PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)

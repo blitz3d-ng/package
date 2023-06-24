@@ -18,6 +18,7 @@ set(ODE_WITH_TESTS OFF CACHE STRING "" FORCE)
 set(ODE_DOUBLE_PRECISION OFF CACHE STRING "" FORCE)
 
 add_subdirectory(tree)
+set_target_properties(ODE PROPERTIES UNITY_BUILD false)
 
 if(WIN32)
   set_target_properties(
