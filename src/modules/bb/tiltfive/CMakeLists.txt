@@ -1,0 +1,7 @@
+if(TARGET tiltfive)
+	bb_start_module(tiltfive)
+	set(DEPENDS_ON bb.runtime)
+	set(SOURCES tiltfive.cpp tiltfive.h)
+	set(LIBS tiltfive)
+	bb_end_module()
+endif()

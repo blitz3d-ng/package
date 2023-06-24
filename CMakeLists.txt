@@ -339,7 +339,7 @@ ELSEIF (BB_CLANG)
   add_compile_options(-fcolor-diagnostics)
 ENDIF ()
 
-set(ENABLE_UNITY_BUILD true)
+set(CMAKE_UNITY_BUILD true)
 
 function(file_write_changes path src)
   set(changed true)
@@ -397,8 +397,6 @@ ENDIF()
 
 add_definitions(-DBB_COMMIT_HASH="${GIT_COMMIT_HASH}")
 add_definitions(-DBB_BRANCH="${GIT_BRANCH}")
-
-set(CMAKE_UNITY_BUILD ${ENABLE_UNITY_BUILD})
 
 add_subdirectory(src/stdutil)
 add_subdirectory(src/modules)
