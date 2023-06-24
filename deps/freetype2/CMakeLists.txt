@@ -1,6 +1,5 @@
 set(CMAKE_UNITY_BUILD false)
 add_compile_options(-w) # suppress warnings
-optimize_for_size()
 
 add_library(freetype2 STATIC
   tree/src/base/ftbase.c

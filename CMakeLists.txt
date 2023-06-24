@@ -184,7 +184,7 @@ IF(BB_ENV MATCHES debug OR BB_ENV MATCHES test)
   # TODO: work to remove the need for this...
   add_definitions(-D_DEBUG)
 ELSE()
-  set(CMAKE_BUILD_TYPE Release)
+  set(CMAKE_BUILD_TYPE MinSizeRel)
   # TODO: perhaps enable this as a build option for those interested in speed
   # over disk space.
   # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
@@ -296,12 +296,6 @@ endfunction()
 function(target_output_to_bin target)
   target_output_directory(${target} ${RELEASE_PATH}/bin)
 endfunction()
-
-macro(optimize_for_size)
-  if(BB_RELEASE)
-    set(CMAKE_BUILD_TYPE MinSizeRel)
-  endif()
-endmacro()
 
 IF(BB_MSVC)
   IF(BB_STATIC)

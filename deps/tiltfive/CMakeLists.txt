@@ -1,4 +1,7 @@
-if(NOT BB_WIN64)
+if(NOT (
+  BB_WIN64 OR
+  (BB_ANDROID AND (BB_ARCH STREQUAL "arm64-v8a" OR BB_ARCH STREQUAL "armeabi-v7a"))
+))
   return()
 endif()
 
@@ -20,5 +23,6 @@ if(BB_WINDOWS)
     ${SDK_PATH}/lib/win/${BB_ARCH}/TiltFiveNative.dll
     DESTINATION ${TOOLCHAIN_BIN_PATH}
   )
+elseif(BB_ANDROID)
+  target_link_libraries(tiltfive INTERFACE ${SDK_PATH}/lib/android/${BB_ARCH}/libTiltFiveNative.so)
 endif()
-
