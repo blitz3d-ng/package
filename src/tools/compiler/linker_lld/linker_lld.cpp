@@ -113,6 +113,8 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	// just the name?
 	args.push_back( "linker" );
 
+	args.push_back( "-dead_strip" ); // strip unused symbols...
+
 	if( target.type=="ovr" ){
 		args.push_back( "-u" );args.push_back( "ANativeActivity_onCreate" );
 	}
