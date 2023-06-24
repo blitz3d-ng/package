@@ -113,7 +113,19 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	// just the name?
 	args.push_back( "linker" );
 
-	args.push_back( "-dead_strip" ); // strip unused symbols...
+	// strip unused symbols...
+	if( target.host ){
+#ifdef BB_MACOS
+		args.push_back( "-dead_strip" );
+#endif
+#ifdef BB_LINUX
+		args.push_back( "--gc-sections" );
+#endif
+	}else if( ios ){
+		args.push_back( "-dead_strip" );
+	}else if( android ){
+		args.push_back( "--gc-sections" );
+	}
 
 	if( target.type=="ovr" ){
 		args.push_back( "-u" );args.push_back( "ANativeActivity_onCreate" );

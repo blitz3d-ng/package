@@ -60,6 +60,11 @@ else()
   endif()
 endif()
 
+# set symbol visibility to hidden to make dead code elimination more effective
+if (NOT MSVC)
+  add_compile_options(-fvisibility=hidden -fdata-sections -ffunction-sections)
+endif()
+
 if(NOT BB_HOST_ARCH STREQUAL BB_ARCH AND NOT BB_PLATFORM MATCHES mingw AND NOT BB_PLATFORM STREQUAL android AND NOT BB_PLATFORM STREQUAL win32 AND NOT BB_PLATFORM STREQUAL emscripten)
   if(BB_CLANG)
     add_compile_options(-arch ${BB_ARCH})

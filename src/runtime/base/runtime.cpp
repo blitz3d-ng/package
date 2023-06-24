@@ -58,10 +58,7 @@ void Runtime::checkmem( std::streambuf *buf ){
 	::checkmem( out );
 }
 
-#ifndef BB_MSVC
-__attribute__((used))
-#endif
-Runtime * CDECL runtimeGetRuntime(){
+BBDECL Runtime * CDECL runtimeGetRuntime(){
 	static Runtime runtime;
 	return &runtime;
 }
