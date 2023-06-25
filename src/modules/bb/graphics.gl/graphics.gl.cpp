@@ -148,6 +148,8 @@ BBCanvas *GLGraphics::loadCanvas( const std::string &file,int flags ){
 	BBPixmap *pixmap=bbLoadPixmap( file );
 	if( !pixmap ) return 0;
 
+	pixmap->flipVertically();
+
 	BBCanvas *canvas=d_new GLTextureCanvas( &res,pixmap,flags );
 	canvas_set.insert( canvas );
 	delete pixmap;

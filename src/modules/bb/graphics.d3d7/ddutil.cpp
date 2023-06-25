@@ -3,8 +3,6 @@
 #include "asmcoder.h"
 #include "gxgraphics.h"
 
-#include <FreeImage.h>
-
 // For some reason, these aren't in the mingw headers...
 #if !defined(FOURCC_DXT1) && !defined(FOURCC_DXT1) && !defined(FOURCC_DXT1)
 #define FOURCC_DXT1 0x31545844 // Equivalent to "DXT1" in ASCII
@@ -466,32 +464,20 @@ ddSurf *ddUtil::loadSurface( const std::string &f,int flags,gxGraphics *gfx ){
 		return surf;
 	}
 
-	FreeImage_Initialise();
-	FREE_IMAGE_FORMAT fmt=FreeImage_GetFileType( f.c_str(),f.size() );
-	if( fmt==FIF_UNKNOWN ) return 0;
-	// if( fmt==FIF_UNKNOWN ){
-	// 	int n=f.find( "." );if( n==string::npos ) return 0;
-	// 	fmt=FreeImage_GetFileTypeFromExt( f.substr(n+1).c_str() );
-	// 	if( fmt==FIF_UNKNOWN ) return 0;
-	// }
-	FIBITMAP *t_dib=FreeImage_Load( fmt,f.c_str(),0 );
-	if( !t_dib ) return 0;
+	BBPixmap *pm=bbLoadPixmap( f );
+	if( !pm ){
+		return 0;
+	}
 
-	bool trans=FreeImage_GetBPP( t_dib )==32 ||	FreeImage_IsTransparent( t_dib );
-
-	FIBITMAP *dib=FreeImage_ConvertTo32Bits( t_dib );
-
-	if( dib ) FreeImage_Unload( t_dib );
-	else dib=t_dib;
-
-	int width=FreeImage_GetWidth(dib);
-	int height=FreeImage_GetHeight(dib);
-	int pitch=FreeImage_GetPitch(dib);
-	void *bits=FreeImage_GetBits(dib);
+	int width=pm->width;
+	int height=pm->height;
+	int pitch=pm->pitch;
+	bool trans=pm->trans;
+	void *bits=pm->bits;
 
 	ddSurf *src=::createSurface( width,height,pitch,bits,gfx->dirDraw );
 	if( !src ){
-		FreeImage_Unload( dib );
+		delete pm;
 		return 0;
 	}
 
@@ -515,7 +501,7 @@ ddSurf *ddUtil::loadSurface( const std::string &f,int flags,gxGraphics *gfx ){
 	ddSurf *dest=createSurface( width,height,flags,gfx );
 	if( !dest ){
 		src->Release();
-		FreeImage_Unload( dib );
+		delete pm;
 		return 0;
 	}
 
@@ -524,6 +510,6 @@ ddSurf *ddUtil::loadSurface( const std::string &f,int flags,gxGraphics *gfx ){
 	copy( dest,0,0,t_w,t_h,src,0,height-1,width,-height );
 
 	src->Release();
-	FreeImage_Unload( dib );
+	delete pm;
 	return dest;
 }

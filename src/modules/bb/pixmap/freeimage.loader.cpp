@@ -52,18 +52,21 @@ BBPixmap *bbLoadPixmapWithFreeImage( const std::string &path ){
 	FIBITMAP *t_dib=FreeImage_LoadFromHandle( fmt,&io,(fi_handle)buf,0 );
 	if( !t_dib ){ delete buf;return 0; }
 
-	bool trans=FreeImage_GetBPP( t_dib )==32 ||	FreeImage_IsTransparent( t_dib );
 
 	BBPixmap *pm=d_new BBPixmap();
+	pm->trans=FreeImage_GetBPP( t_dib )==32||FreeImage_IsTransparent( t_dib );
 
-	switch( int bpp=FreeImage_GetBPP( t_dib ) ){
-	case 32:pm->format=PF_RGBA;break;
-	case 24:pm->format=PF_RGB;break;
-	case 8:case 4:pm->format=PF_RGB;break;
-	default:RTEX( ("Unhandled image format: "+std::string(itoa(bpp))+" bpps").c_str() );
-	}
+	// TODO: it would be nice, from a memory perspective, to
+	// support other pixel formats beyond RGBA.
+	// switch( int bpp=FreeImage_GetBPP( t_dib ) ){
+	// case 32:pm->format=PF_RGBA;break;
+	// case 24:pm->format=PF_RGB;break;
+	// case 8:case 4:pm->format=PF_RGB;break;
+	// default:RTEX( ("Unhandled image format: "+std::string(itoa(bpp))+" bpps").c_str() );
+	// }
 
 	FIBITMAP *dib=FreeImage_ConvertTo32Bits( t_dib );
+	pm->format=PF_RGBA;
 
 	if( dib ) FreeImage_Unload( t_dib );
 	else dib=t_dib;
@@ -73,22 +76,12 @@ BBPixmap *bbLoadPixmapWithFreeImage( const std::string &path ){
 	pm->pitch=FreeImage_GetPitch( dib );
 	pm->bpp=FreeImage_GetBPP( dib )/8;
 
-	int scanline_size=pm->width*pm->bpp;
-	int size=scanline_size*pm->height;
+	int size=pm->width*pm->bpp*pm->height;
 	pm->bits=new unsigned char[size];
-	for( int y=0;y<pm->height;y++ ){
-		memcpy( pm->bits+((pm->height-y-1)*scanline_size),FreeImage_GetScanLine( dib,y ),scanline_size );
-	}
-
-	// NASTY: gotta be a better way to do this...
-	for( int i=0;i<pm->width*pm->height;i++ ){
-		unsigned char *p=&pm->bits[pm->bpp*i],tmp;
-		tmp=p[0]; // ARGB? BGRA
-		p[0]=p[2];
-		p[2]=tmp;
-	}
+	memcpy( pm->bits,FreeImage_GetBits( dib ),size );
 
 	FreeImage_Unload( dib );
 
 	return pm;
 }
+

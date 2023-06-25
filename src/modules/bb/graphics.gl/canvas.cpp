@@ -506,7 +506,7 @@ void GLTextureCanvas::uploadData( void *data ){
 	if( !texture ) GL( glGenTextures( 1,&texture ) );
 	GL( glActiveTexture( GL_TEXTURE0 ) );
 	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-	GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data ) );
+	GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_BGRA,GL_UNSIGNED_BYTE,data ) );
 	GL( glGenerateMipmap( GL_TEXTURE_2D ) );
 }
 
