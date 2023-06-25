@@ -81,7 +81,7 @@ BBPixmap *bbLoadPixmapWithFreeImage( const std::string &path ){
 	memcpy( pm->bits,FreeImage_GetBits( dib ),size );
 
 	FreeImage_Unload( dib );
+	delete buf;
 
 	return pm;
 }
-

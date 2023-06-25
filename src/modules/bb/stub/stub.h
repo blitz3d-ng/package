@@ -12,8 +12,9 @@ bool bbruntime_create();
 void bbruntime_link( BBRTLINK link );
 bool bbruntime_destroy();
 
+bool bbruntime_run( void (*pc)(),bool debug );
+
 #ifdef WIN32
-const char *bbruntime_run( void (*pc)(),bool debug );
 void bbruntime_panic( const char *err );
 #endif
 

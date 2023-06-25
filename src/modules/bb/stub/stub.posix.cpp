@@ -50,8 +50,10 @@ public:
     std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<std::endl;
 	}
 	void debugMsg( const char *msg,bool serious ){
+		std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<std::endl;
 	}
 	void debugSys( void *msg ){
+		std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<std::endl;
 	}
 };
 
@@ -66,7 +68,7 @@ void dump_backtrace(int sig) {
 	fprintf(stderr, "Error (%d):\n", sig);
 	backtrace_symbols_fd( array,size,STDERR_FILENO );
 
-	exit( 1 );
+	// exit( 1 );
 }
 #endif
 
@@ -105,5 +107,5 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 #else
   bool debug=false;
 #endif
-	return bbruntime_run( bbMain,debug )!=0;
+	return bbruntime_run( bbMain,debug )?0:1;
 }

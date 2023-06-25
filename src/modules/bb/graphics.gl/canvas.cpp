@@ -104,7 +104,7 @@ void GLCanvas::setMask( unsigned argb ){
 
 void GLCanvas::setColor( unsigned argb ){
 	color[0]=((argb>>16)&255)/255.0f;
-	color[1]=((argb>>8)&255)/255.0f;;
+	color[1]=((argb>>8)&255)/255.0f;
 	color[2]=(argb&255)/255.0f;;
 }
 
@@ -150,17 +150,18 @@ void GLCanvas::plot( int x,int y ){
 		initArrays( 1,&res->plot_buffer,&res->plot_array );
 		GL( glBindBuffer( GL_ARRAY_BUFFER,res->plot_buffer ) );
 		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW ) );
-		GL( glFlush() );
 	}
 
-	// GL( glEnable(GL_PROGRAM_POINT_SIZE) );
+	GL( glEnable(GL_PROGRAM_POINT_SIZE) );
 
 	makeProgram( res,scale_x,scale_y,1.0,1.0,false,width,height,x,y,1.0,1.0,color );
 
 	GL( glBindVertexArray( res->plot_array ) );
 	GL( glDrawArrays( GL_POINTS,0,1 ) );
 	GL( glBindVertexArray( 0 ) );
-	GL( glFlush() );
+	flush();
+
+	GL( glDisable(GL_PROGRAM_POINT_SIZE) );
 }
 
 void GLCanvas::line( int x,int y,int x2,int y2 ){
@@ -179,11 +180,18 @@ void GLCanvas::line( int x,int y,int x2,int y2 ){
 	GL( glBindVertexArray( res->line_array ) );
 	GL( glDrawArrays( GL_LINES,0,2 ) );
 	GL( glBindVertexArray( 0 ) );
-	GL( glFlush() );
+	flush();
 }
 
 void GLCanvas::rect( int x,int y,int w,int h,bool solid ){
 	quad( x,y,w,h,solid,false,1.0,1.0,color );
+}
+
+void GLCanvas::flush(){
+	if( !needs_flush ) return;
+
+	// here to support FrontBuffer...
+	GL( glFlush() );
 }
 
 void GLCanvas::quad( int x,int y,int w,int h,bool solid,bool texenabled,float tx,float ty,float color[3] ){
@@ -220,7 +228,7 @@ void GLCanvas::quad( int x,int y,int w,int h,bool solid,bool texenabled,float tx
 	GL( glBindVertexArray( res->quad_array[i] ) );
 	GL( glDrawArrays( solid?GL_TRIANGLE_STRIP:GL_LINE_LOOP,0,4 ) );
 	GL( glBindVertexArray( 0 ) );
-	GL( glFlush() );
+	flush();
 }
 
 void GLCanvas::oval( int x,int y,int w,int h,bool solid ){
@@ -256,7 +264,7 @@ void GLCanvas::oval( int x,int y,int w,int h,bool solid ){
 	GL( glBindVertexArray( res->oval_array ) );
 	GL( glDrawArrays( solid?GL_TRIANGLE_FAN:GL_LINE_LOOP,0,verts.size() ) );
 	GL( glBindVertexArray( 0 ) );
-	GL( glFlush() );
+	flush();
 }
 
 void GLCanvas::text( int x,int y,const std::string &t ){
@@ -342,7 +350,7 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 	GL( glBindVertexArray( 0 ) );
 
 	GL( glDisable( GL_BLEND ) );
-	GL( glFlush() );
+	flush();
 }
 
 void GLCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid ){
@@ -358,7 +366,7 @@ void GLCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int s
 	GL( glBlitFramebuffer( src_x,src_y,src_w,src_h,x,src_h,src_w,y,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
 
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
-	GL( glFlush() );
+	flush();
 }
 
 void GLCanvas::image( BBCanvas *c,int x,int y,bool solid ){
@@ -397,17 +405,23 @@ bool GLCanvas::lock()const{
 }
 
 void GLCanvas::setPixel( int x,int y,unsigned argb ){
-	setPixelFast( x,y,argb );
+	float prev_color[3]={ color[0],color[1],color[2] };
+	color[0]=((argb>>16)&255)/255.0f;
+	color[1]=((argb>>8)&255)/255.0f;;
+	color[2]=(argb&255)/255.0f;;
+
+	plot( x,y );
+
+	color[0]=prev_color[0];
+	color[1]=prev_color[1];
+	color[2]=prev_color[2];
 }
 
 #define UC(c) static_cast<unsigned char>(c)
 
 void GLCanvas::setPixelFast( int x,int y,unsigned argb ){
-	set();
-
 	// unsigned char rgba[4]={ UC((argb>>16)&255),UC((argb>>8)&255),UC(argb&255),UC((argb>>24)&255) };
-	// glRasterPos2f( x,y+1 );
-	// glDrawPixels( 1,1,GL_RGBA,GL_UNSIGNED_BYTE,rgba );
+	setPixel( x,y,argb );
 }
 
 void GLCanvas::copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y ){
@@ -421,8 +435,9 @@ unsigned GLCanvas::getPixel( int x,int y )const{
 }
 
 unsigned GLCanvas::getPixelFast( int x,int y )const{
-	y=height-y;
-	return pixels[(y*width+x)*4];
+	// y=height-y;
+	// return pixels[(y*width+x)*4];
+	return 0;
 }
 
 void GLCanvas::unlock()const{
@@ -500,7 +515,7 @@ void GLTextureCanvas::set(){
 }
 
 void GLTextureCanvas::unset(){
-	GL( glFlush() );
+	flush();
 
 	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
 	GL( glGenerateMipmap( GL_TEXTURE_2D ) );
@@ -568,12 +583,13 @@ void GLDefaultCanvas::bind()const{
 }
 
 GLDefaultCanvas::GLDefaultCanvas( ContextResources *res,unsigned int fb,int m,int f ):GLCanvas(res,f),framebuffer(fb),mode(m){
+	needs_flush=(mode==GL_FRONT);
 	set();
 	GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
 }
 
 void GLDefaultCanvas::unset(){
-	GL( glFlush() );
+	flush();
 }
 
 void GLDefaultCanvas::set(){
