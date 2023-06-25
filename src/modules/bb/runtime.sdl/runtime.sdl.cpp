@@ -70,7 +70,7 @@ BBRuntime *bbCreateOpenGLRuntime(){
 	return d_new SDLRuntime();
 }
 
-SDLRuntime::SDLRuntime():graphics(0){
+SDLRuntime::SDLRuntime(){
 	// runtimes.insert( make_pair( wnd,this ) );
 	// bbAppOnChange.add( _refreshTitle,this );
 }
@@ -154,6 +154,7 @@ bool SDLRuntime::idle(){
 }
 
 void *SDLRuntime::window(){
+	auto graphics=(SDLGraphics*)((SDLContextDriver*)bbContextDriver)->getGraphics();
 	if( !graphics ) return 0;
 #ifdef WIN32
 	SDL_SysWMinfo info;
@@ -166,6 +167,7 @@ void *SDLRuntime::window(){
 }
 
 void SDLRuntime::moveMouse( int x,int y ){
+	auto graphics=(SDLGraphics*)((SDLContextDriver*)bbContextDriver)->getGraphics();
 	graphics->moveMouse( x,y );
 }
 

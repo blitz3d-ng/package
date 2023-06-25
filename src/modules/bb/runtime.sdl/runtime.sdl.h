@@ -11,10 +11,9 @@ class SDLGraphics;
 
 class SDLRuntime :public BBRuntime{
 private:
-	SDLGraphics *graphics;
-
 	static void _refreshTitle( void *data,void *context );
 	void setTitle( const char *title );
+
 public:
 	SDLRuntime();
 	~SDLRuntime();

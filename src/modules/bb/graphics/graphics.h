@@ -86,6 +86,8 @@ public:
 		GFXMODECAPS_3D=1
 	};
 
+	BBGraphics *getGraphics();
+
 	bool graphicsOpened();
 
   virtual int numGraphicsDrivers()=0;

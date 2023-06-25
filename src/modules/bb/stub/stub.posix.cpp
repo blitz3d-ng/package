@@ -76,12 +76,6 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 	// signal(SIGSEGV, dump_backtrace);
 #endif
 
-#ifdef BB_DEBUG
-  bb_env.debug=true;
-#else
-  bb_env.debug=false;
-#endif
-
 #ifdef BB_MACOS
 	// TODO: this is a little bit of a hack...but it should work for now.
 	char path[PATH_MAX];
@@ -106,21 +100,10 @@ int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
 	StdioDebugger debugger( trace );
 	bbAttachDebugger( &debugger );
 
-	int retcode=0;
-	try{
-		if( !bbruntime_create() ) return 1;
-		bbMain();
-	}catch( bbEx &ex ){
-		if( ex.err ){
-			if( bb_env.debug ){
-				debugger.debugLog( ex.err );
-			}else{
-				std::cerr<<ex.err<<std::endl;
-			}
-			retcode=1;
-		}
-	}
-	bbruntime_destroy();
-
-	return retcode;
+#ifdef BB_DEBUG
+  bool debug=true;
+#else
+  bool debug=false;
+#endif
+	return bbruntime_run( bbMain,debug )!=0;
 }
