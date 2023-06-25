@@ -152,7 +152,9 @@ void GLCanvas::plot( int x,int y ){
 		GL( glBufferData( GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW ) );
 	}
 
+#ifdef BB_DESKTOP
 	GL( glEnable(GL_PROGRAM_POINT_SIZE) );
+#endif
 
 	makeProgram( res,scale_x,scale_y,1.0,1.0,false,width,height,x,y,1.0,1.0,color );
 
@@ -161,7 +163,9 @@ void GLCanvas::plot( int x,int y ){
 	GL( glBindVertexArray( 0 ) );
 	flush();
 
+#ifdef BB_DESKTOP
 	GL( glDisable(GL_PROGRAM_POINT_SIZE) );
+#endif
 }
 
 void GLCanvas::line( int x,int y,int x2,int y2 ){

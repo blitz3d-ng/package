@@ -28,3 +28,5 @@ Forever
 
 Expect found_axe, "Expect to find media/axe.jpg"
 Expect found_dwarf, "Expect to find media/dwarf2.b3d"
+
+CloseDir dir

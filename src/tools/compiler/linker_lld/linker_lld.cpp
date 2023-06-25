@@ -116,7 +116,13 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 	// strip unused symbols...
 	if( target.host ){
 #ifdef BB_MACOS
+		// strip unused code
 		args.push_back( "-dead_strip" );
+		args.push_back( "-dead_strip_dylibs" );
+		args.push_back( "--deduplicate-strings" );
+
+		// strip debug symbols
+		args.push_back( "-S" );args.push_back( "-x" );
 #endif
 #ifdef BB_LINUX
 		args.push_back( "--gc-sections" );
