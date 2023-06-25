@@ -24,7 +24,7 @@ jobs:
       - if: matrix.arch == 'win64'
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v3/llvm-16.0.0-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
+          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v4/llvm-16.0.0-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
 
@@ -97,7 +97,7 @@ jobs:
           submodules: recursive
       - run: |
           mkdir _release/toolchains
-          wget https://github.com/blitz3d-ng/env/releases/download/v3/llvm-16.0.0-${{ matrix.os }}.zip
+          wget https://github.com/blitz3d-ng/env/releases/download/v4/llvm-16.0.0-${{ matrix.os }}.zip
           unzip llvm-16.0.0-${{ matrix.os }}.zip
       - run: brew install ninja gcovr
       - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
@@ -147,7 +147,7 @@ jobs:
           submodules: recursive
       - run: |
           mkdir _release/toolchains
-          wget https://github.com/blitz3d-ng/env/releases/download/v3/llvm-16.0.0-macos-12.zip
+          wget https://github.com/blitz3d-ng/env/releases/download/v4/llvm-16.0.0-macos-12.zip
           unzip llvm-16.0.0-macos-12.zip
       - run: brew install ninja gcovr
       - run: make compiler
