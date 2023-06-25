@@ -24,8 +24,7 @@ jobs:
       - if: matrix.arch == 'win64'
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri 
-"https://github.com/blitz3d-ng/env/releases/download/v4/llvm-16.0.6-win64-msvc$env:VisualStudioVersion.zip" -OutFile 
+          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v4/llvm-16.0.6-win64-msvc$env:VisualStudioVersion.zip" -OutFile 
 "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
