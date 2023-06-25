@@ -2,6 +2,8 @@
 #include <bb/blitz/blitz.h>
 #include "pixmap.h"
 
+#include <string.h>
+
 #ifndef WIN32
   #define WRONG_DIV '\\'
   #define RIGHT_DIV '/'
