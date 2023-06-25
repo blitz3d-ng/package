@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.16)
+cmake_minimum_required (VERSION 3.24)
 project (Blitz3D)
 
 cmake_policy(SET CMP0069 NEW)

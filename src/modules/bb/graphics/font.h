@@ -40,21 +40,22 @@ public:
 	BBPixmap *atlas;
 	mutable bool dirty;
 	int baseline;
+	float density;
 
 private:
 	FT_Face face;
 	mutable std::map<char,Char> characters;
 
-	BBImageFont( FT_Face f,int height );
+	BBImageFont( FT_Face f,int height,float density );
 
 public:
-	static BBImageFont *load( const std::string &name,int height,int flags );
+	static BBImageFont *load( const std::string &name,int height,float density,int flags );
 
 	bool loadChars( const std::string &t )const;
 	void rebuildAtlas();
 
 	Char &getChar( char c );
-	int getKerning( char l,char r );
+	float getKerning( char l,char r );
 
 	int getWidth()const;
 	int getHeight()const;

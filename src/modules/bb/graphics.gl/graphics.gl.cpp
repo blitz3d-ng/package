@@ -127,10 +127,15 @@ void bbGLGraphicsCheckErrors( const char *file, int line ){
 }
 
 GLGraphics::GLGraphics(){
+}
+
+bool GLGraphics::init(){
 	def_font=(BBImageFont*)loadFont( "courier",12,0 );
 	if( def_font==0 ){
 		def_font=(BBImageFont*)loadFont( "courier new",12,0 );
 	}
+
+	return def_font!=0;
 }
 
 BBFont *GLGraphics::getDefaultFont()const{

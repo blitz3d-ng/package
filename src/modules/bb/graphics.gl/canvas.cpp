@@ -295,31 +295,33 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 
 	std::vector<Vertex> verts;
 
-	y+=font->baseline;
+	y+=font->baseline*font->density;
+
+	float awidth=font->atlas->width,aheight=font->atlas->height;
 
 	for( int i=0;i<t.length();i++ ){
 		BBImageFont::Char c=font->getChar( t[i] );
 
-		int cx=x+c.bearing_x,cy=y-c.bearing_y;
+		float cx=x+c.bearing_x*font->density,cy=y-c.bearing_y*font->density;
 
 		if( i>0 ){
 			cx+=font->getKerning( t[i-1],t[i] );
 		}
 
-		float l=c.x/(float)font->atlas->width;
-		float r=(c.x+c.width)/(float)font->atlas->width;
-		float t=c.y/(float)font->atlas->height;
-		float b=(c.y+c.height)/(float)font->atlas->height;
+		float l=c.x/awidth;
+		float r=(c.x+c.width)/awidth;
+		float t=c.y/aheight;
+		float b=(c.y+c.height)/aheight;
 
-		Vertex lb={ (float)cx,(float)cy+c.height,l,b },
-		       rb={ (float)cx+c.width,(float)cy+c.height,r,b },
-		       rt={ (float)cx+c.width,(float)cy,r,t },
-		       lt={ (float)cx,(float)cy,l,t };
+		Vertex lb={ cx,cy+c.height*font->density,l,b },
+		       rb={ cx+c.width*font->density,cy+c.height*font->density,r,b },
+		       rt={ cx+c.width*font->density,cy,r,t },
+		       lt={ cx,cy,l,t };
 
 		verts.push_back( lb );verts.push_back( rb );verts.push_back( rt );
 		verts.push_back( lb );verts.push_back( rt );verts.push_back( lt );
 
-		x+=c.advance;
+		x+=c.advance*font->density;
 	}
 
 	GL( glEnable( GL_BLEND ) );
@@ -487,7 +489,9 @@ GLTextureCanvas::GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f )
 	if( pixmap ) setPixmap( pixmap );
 }
 
-int GLTextureCanvas::getDepth()const{ return 8; }
+int GLTextureCanvas::getDepth()const{
+	return 8;
+}
 
 void GLTextureCanvas::set(){
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );

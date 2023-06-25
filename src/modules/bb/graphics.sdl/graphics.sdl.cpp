@@ -107,6 +107,7 @@ int SDLContextDriver::numGraphicsDrivers(){
 }
 
 void SDLContextDriver::graphicsDriverInfo( int driver,std::string *name,int *c ){
+	// TODO
 }
 
 int SDLContextDriver::numGraphicsModes( int driver ){
@@ -207,10 +208,12 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 		SDL_SetWindowFullscreen( wnd,SDL_WINDOW_FULLSCREEN );
 	}
 
-	if( (graphics=d_new SDLGraphics( wnd,context )) ){
+	graphics=d_new SDLGraphics( wnd,context );
+	if( graphics->init() ){
 		SDL_RaiseWindow( wnd );
 		return graphics;
 	}
+	delete graphics;
 	return 0;
 }
 

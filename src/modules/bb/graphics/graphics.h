@@ -27,6 +27,8 @@ public:
     GRAPHICS_AUTOSUSPEND=8	//suspend graphics when app suspended
   };
 
+	virtual bool init()=0;
+
 	virtual void backup()=0;
 	virtual bool restore()=0;
 

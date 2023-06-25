@@ -324,17 +324,10 @@ protected:
 	int window_width,window_height,drawable_width,drawable_height;
 
 	unsigned short gamma_red[256], gamma_green[256], gamma_blue[256];
-
-	BBImageFont *def_font;
 public:
 	VRAPIGraphics(){
 		front_canvas=d_new VRAPIDefaultCanvas( &res,0,GL_FRONT,0 );
 		back_canvas=d_new VRAPIDefaultCanvas( &res,0,GL_BACK,0 );
-
-		def_font=(BBImageFont*)loadFont( "courier",12,0 );
-		if( def_font==0 ){
-			def_font=(BBImageFont*)loadFont( "courier new",12,0 );
-		}
 
 		drawable_width=window_width=1440;
 		drawable_height=window_height=1584;
@@ -386,32 +379,6 @@ public:
 	int getScanLine()const{ return 0; }
 	int getAvailVidmem()const{ return 0; }
 	int getTotalVidmem()const{ return 0; }
-
-	BBFont *getDefaultFont()const{ return def_font; }
-
-	//OBJECTS
-	BBCanvas *createCanvas( int width,int height,int flags ){
-		BBCanvas *canvas=d_new GLTextureCanvas( &res,width,height,flags );
-		canvas_set.insert( canvas );
-		return canvas;
-	}
-
-	BBCanvas *loadCanvas( const std::string &file,int flags ){
-		BBPixmap *pixmap=bbLoadPixmap( file );
-		if( !pixmap ) return 0;
-
-		BBCanvas *canvas=d_new GLTextureCanvas( &res,pixmap,flags );
-		canvas_set.insert( canvas );
-		delete pixmap;
-		return canvas;
-	}
-
-	// b2dgraphics
-	BBMovie *openMovie( const std::string &file,int flags ){ return 0; }
-
-	BBFont *loadFont( const std::string &font,int height,int flags ){
-		return BBImageFont::load( font,height,flags );
-	}
 
 	void moveMouse( int x,int y ){}
 	void setPointerVisible( bool vis ){}
@@ -472,6 +439,7 @@ public:
 		MainThreadTid = gettid();
 
 		VRAPIGraphics *g=new VRAPIGraphics();
+		g->init();
 		graphics=g;
 
 		// create eye buffers
@@ -605,11 +573,22 @@ public:
 	~VRAPIRuntime();
 
 	// context driver
-	int numGraphicsDrivers(){return 0;}
-	void graphicsDriverInfo( int driver,std::string *name,int *c ){}
-	int numGraphicsModes( int driver ){return 0;}
-	void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c ){}
-	void windowedModeInfo( int *c ){}
+	int numGraphicsDrivers(){
+		return 0; // TODO
+	}
+	void graphicsDriverInfo( int driver,std::string *name,int *c ){
+		// TODO
+	}
+	int numGraphicsModes( int driver ){
+		// TODO
+		return 0;
+	}
+	void graphicsModeInfo( int driver,int mode,int *w,int *h,int *d,int *c ){
+		// TODO
+	}
+	void windowedModeInfo( int *c ){
+		// TODO
+	}
 
 	BBGraphics *openGraphics( int w,int h,int d,int driver,int flags ){return graphics;}
 	void closeGraphics( BBGraphics *graphics ){}
