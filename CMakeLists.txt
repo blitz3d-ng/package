@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.16)
+cmake_minimum_required (VERSION 3.24)
 project (Blitz3D)
 
 cmake_policy(SET CMP0069 NEW)
@@ -6,6 +6,9 @@ set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
 
 cmake_policy(SET CMP0072 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0072 NEW)
+
+cmake_policy(SET CMP0135 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0135 NEW)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)

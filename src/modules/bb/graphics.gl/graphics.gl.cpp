@@ -127,10 +127,15 @@ void bbGLGraphicsCheckErrors( const char *file, int line ){
 }
 
 GLGraphics::GLGraphics(){
+}
+
+bool GLGraphics::init(){
 	def_font=(BBImageFont*)loadFont( "courier",12,0 );
 	if( def_font==0 ){
 		def_font=(BBImageFont*)loadFont( "courier new",12,0 );
 	}
+
+	return def_font!=0;
 }
 
 BBFont *GLGraphics::getDefaultFont()const{
@@ -147,6 +152,8 @@ BBCanvas *GLGraphics::createCanvas( int width,int height,int flags ){
 BBCanvas *GLGraphics::loadCanvas( const std::string &file,int flags ){
 	BBPixmap *pixmap=bbLoadPixmap( file );
 	if( !pixmap ) return 0;
+
+	pixmap->flipVertically();
 
 	BBCanvas *canvas=d_new GLTextureCanvas( &res,pixmap,flags );
 	canvas_set.insert( canvas );

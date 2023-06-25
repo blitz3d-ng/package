@@ -32,8 +32,6 @@ private:
 	void resume();
 	void forceResume();
 
-	bool pointer_visible;
-
 	void backupGraphics();
 	void restoreGraphics();
 

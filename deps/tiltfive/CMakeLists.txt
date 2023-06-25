@@ -17,12 +17,15 @@ set(SDK_PATH ${tiltfive_sdk_SOURCE_DIR}/Native)
 add_library(tiltfive INTERFACE)
 target_include_directories(tiltfive INTERFACE ${SDK_PATH}/include)
 if(BB_WINDOWS)
-  target_link_libraries(tiltfive INTERFACE ${SDK_PATH}/lib/win/${BB_ARCH}/TiltFiveNative.dll.if.lib)
+  set(LIB ${SDK_PATH}/lib/win/${BB_ARCH}/TiltFiveNative.dll.if.lib)
+  set(DLL ${SDK_PATH}/lib/win/${BB_ARCH}/TiltFiveNative.dll)
 
-  file(COPY
-    ${SDK_PATH}/lib/win/${BB_ARCH}/TiltFiveNative.dll
-    DESTINATION ${TOOLCHAIN_BIN_PATH}
-  )
+  target_link_libraries(tiltfive INTERFACE ${LIB})
+
+  file(COPY ${LIB} DESTINATION ${TOOLCHAIN_PATH}/lib)
+  file(RENAME ${TOOLCHAIN_PATH}/lib/TiltFiveNative.dll.if.lib ${TOOLCHAIN_PATH}/lib/tiltfive.lib)
+
+  file(COPY ${DLL} DESTINATION ${TOOLCHAIN_BIN_PATH})
 elseif(BB_ANDROID)
   target_link_libraries(tiltfive INTERFACE ${SDK_PATH}/lib/android/${BB_ARCH}/libTiltFiveNative.so)
 endif()

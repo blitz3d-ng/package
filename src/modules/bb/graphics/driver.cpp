@@ -9,7 +9,7 @@ void BBGraphics::closeMovie( BBMovie *m ){
 }
 
 BBFont *BBGraphics::loadFont( const std::string &font,int height,int flags ){
-	BBFont *f=BBImageFont::load( font,height,flags );
+	BBFont *f=BBImageFont::load( font,height,getDensity(),flags );
 	font_set.insert( f );
 	return f;
 }

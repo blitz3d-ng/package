@@ -11,6 +11,7 @@ enum{
 struct BBPixmap{
 	int format;
   int width,height,depth,pitch,bpp;
+  bool trans;
   unsigned char *bits;
 
 #ifdef __cplusplus
@@ -24,6 +25,9 @@ struct BBPixmap{
 
 	void mask( int r,int g,int b );
 	void buildAlpha( bool whiten );
+
+	void flipVertically();
+	void swapBytes0and2();
 #endif
 };
 

@@ -43,28 +43,16 @@ public:
 extern "C" void bbMain();
 
 extern "C" int EMSCRIPTEN_KEEPALIVE main(){
-	printf("hello, world\n");
-
 	bbStartup( "","" );
 
 	bool trace=false;
 	StdioDebugger debugger( trace );
 	bbAttachDebugger( &debugger );
 
-	int retcode=0;
-	try{
-		if( !bbruntime_create() ) return 1;
-		bbMain();
-	}catch( bbEx &ex ){
-		if( ex.err ){
-			if( bb_env.debug ){
-				debugger.debugLog( ex.err );
-			}else{
-				std::cerr<<ex.err<<std::endl;
-			}
-		}
-		retcode=1;
-	}
-	bbruntime_destroy();
-	return retcode;
+#ifdef BB_DEBUG
+  bool debug=true;
+#else
+  bool debug=false;
+#endif
+	return bbruntime_run( bbMain,debug )!=0;
 }

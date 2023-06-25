@@ -63,7 +63,7 @@ gxRuntime *gxRuntime::openRuntime( HINSTANCE hinst ){
 //////////////////////////
 gxRuntime::gxRuntime( HINSTANCE hi,HWND hw ):
 hinst(hi),
-pointer_visible(true),D3D7ContextDriver(hw),Frame(hw){
+D3D7ContextDriver(hw),Frame(hw){
 
 	CoInitialize( 0 );
 
@@ -412,15 +412,7 @@ void gxRuntime::onDebugInfo( const char *t ){
 // POINTER VISIBLE //
 /////////////////////
 void gxRuntime::setPointerVisible( bool vis ){
-	if( pointer_visible==vis ) return;
-
-	pointer_visible=vis;
-	if( gfx_mode==3 ) return;
-
-	//force a WM_SETCURSOR
-	POINT pt;
-	GetCursorPos( &pt );
-	SetCursorPos( pt.x,pt.y );
+	Frame::setPointerVisible( vis );
 }
 
 BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
@@ -450,7 +442,6 @@ BBGraphics *gxRuntime::openGraphics( int w,int h,int d,int driver,int flags ){
 			auto_suspend=true;
 			SetCursorPos(0,0);
 		}else{
-			ShowCursor( 1 );
 			restoreWindowState();
 		}
 	}
@@ -479,7 +470,6 @@ void gxRuntime::closeGraphics( BBGraphics *g ){
 	delete graphics;graphics=0;
 
 	if( gfx_mode==3 ){
-		ShowCursor( 1 );
 		restoreWindowState();
 	}
 	gfx_mode=0;

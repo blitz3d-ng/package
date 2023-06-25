@@ -71,6 +71,10 @@ gxGraphics::~gxGraphics(){
 	dirDraw->Release();
 }
 
+bool gxGraphics::init(){
+	return true;
+}
+
 void gxGraphics::wipeSystemProperties(){
 	bbSystemProperties.erase( "direct3d7" );
 	bbSystemProperties.erase( "direct3ddevice7" );

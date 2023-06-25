@@ -5,7 +5,7 @@
 static const int static_ws=WS_VISIBLE|WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX;
 static const int scaled_ws=WS_VISIBLE|WS_CAPTION|WS_SYSMENU|WS_SIZEBOX|WS_MINIMIZEBOX|WS_MAXIMIZEBOX;
 
-Frame::Frame( HWND hwnd ):hwnd(hwnd),gfx_mode(0){
+Frame::Frame( HWND hwnd ):hwnd(hwnd),gfx_mode(0),pointer_visible(true){
 	bbAppOnChange.add( _refreshTitle,this );
 }
 
@@ -23,6 +23,7 @@ void Frame::backupWindowState(){
 }
 
 void Frame::restoreWindowState(){
+	ShowCursor( 1 );
 	SetWindowLong( hwnd,GWL_STYLE,t_style );
 	SetWindowPos(
 		hwnd,0,t_rect.left,t_rect.top,
@@ -66,6 +67,18 @@ void Frame::resize( int w,int h ){
 void Frame::fullscreen(){
   SetWindowLong( hwnd,GWL_STYLE,WS_VISIBLE|WS_POPUP );
   SetWindowPos( hwnd,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED );
+}
+
+void Frame::setPointerVisible( bool vis ){
+	if( pointer_visible==vis ) return;
+
+	pointer_visible=vis;
+	if( gfx_mode==3 ) return;
+
+	//force a WM_SETCURSOR
+	POINT pt;
+	GetCursorPos( &pt );
+	SetCursorPos( pt.x,pt.y );
 }
 
 BBMODULE_CREATE( frame ){

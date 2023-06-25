@@ -145,6 +145,10 @@ BBContextDriver::BBContextDriver():graphics(0){
 BBContextDriver::~BBContextDriver(){
 }
 
+BBGraphics *BBContextDriver::getGraphics(){
+	return graphics;
+}
+
 bool BBContextDriver::graphicsOpened(){
 	return !!graphics;
 }

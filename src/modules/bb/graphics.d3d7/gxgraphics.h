@@ -17,6 +17,8 @@ public:
 	gxGraphics( IDirectDraw7 *dirDraw,IDirectDrawSurface7 *front,IDirectDrawSurface7 *back,bool d3d );
 	~gxGraphics();
 
+	bool init();
+
 	void backup();
 	bool restore();
 
@@ -60,8 +62,6 @@ public:
 	int getAvailVidmem()const;
 	int getTotalVidmem()const;
 
-	BBCanvas *getFrontCanvas()const;
-	BBCanvas *getBackCanvas()const;
 	BBFont *getDefaultFont()const;
 
 	//OBJECTS

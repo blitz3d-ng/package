@@ -27,6 +27,8 @@ public:
     GRAPHICS_AUTOSUSPEND=8	//suspend graphics when app suspended
   };
 
+	virtual bool init()=0;
+
 	virtual void backup()=0;
 	virtual bool restore()=0;
 
@@ -85,6 +87,8 @@ public:
 	enum{
 		GFXMODECAPS_3D=1
 	};
+
+	BBGraphics *getGraphics();
 
 	bool graphicsOpened();
 

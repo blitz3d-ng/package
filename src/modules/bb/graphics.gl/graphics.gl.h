@@ -19,11 +19,15 @@
 	#endif
 #else
 	#ifdef BB_IOS
-		#include <OpenGLES/ES3/gl.h>
+		#include <OpenGLES/ES3/glext.h>
 	#endif
 
 	#if defined(BB_NDK) || defined(BB_NX)
+		#define GL_BGRA_EXT 0x80E1
 		#include <GLES3/gl3.h>
+		#ifndef GL_BGRA
+			#define GL_BGRA GL_BGRA_EXT
+		#endif
 	#endif
 #endif
 
@@ -57,6 +61,8 @@ public:
 	ContextResources res={ 0 }; // TODO: will make protected again
 
 	GLGraphics();
+
+	bool init();
 
 	BBFont *getDefaultFont()const;
 

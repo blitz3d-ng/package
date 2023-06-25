@@ -7,8 +7,6 @@
 
 #include <dinput.h>
 
-class gxRuntime;
-
 class DirectInput8Driver : public BBInputDriver{
 public:
 	IDirectInput8 *dirInput;

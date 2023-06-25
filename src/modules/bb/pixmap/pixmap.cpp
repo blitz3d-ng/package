@@ -2,6 +2,8 @@
 #include <bb/blitz/blitz.h>
 #include "pixmap.h"
 
+#include <string.h>
+
 #ifndef WIN32
   #define WRONG_DIV '\\'
   #define RIGHT_DIV '/'
@@ -59,6 +61,29 @@ void BBPixmap::buildAlpha( bool whiten ){
 	for( int i=0;i<width*height;i++ ){
 		unsigned char *p=&bits[bpp*i];
 		p[3]=(p[0]+p[1]+p[2])/3;
+	}
+}
+
+void BBPixmap::flipVertically(){
+	int scanline_size=width*bpp;
+	int size=scanline_size*height;
+
+	auto tmp=new unsigned char[size];
+	for( int y=0;y<height;y++ ){
+		memcpy( tmp+((height-y-1)*scanline_size),bits+(y*scanline_size),scanline_size );
+	}
+
+	memcpy( bits,tmp,size );
+	delete tmp;
+}
+
+void BBPixmap::swapBytes0and2(){
+	// NASTY: gotta be a better way to do this...
+	for( int i=0;i<width*height;i++ ){
+		unsigned char *p=&bits[bpp*i],tmp;
+		tmp=p[0]; // ARGB? BGRA
+		p[0]=p[2];
+		p[2]=tmp;
 	}
 }
 
