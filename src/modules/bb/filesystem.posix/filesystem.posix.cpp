@@ -4,7 +4,31 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <unistd.h>
+
+class PosixDir : public BBDir{
+public:
+	PosixDir( DIR *dp ):dp(dp){
+	}
+
+	~PosixDir(){
+		closedir( dp );
+	}
+
+private:
+	DIR *dp;
+
+public:
+	std::string getNextFile(){
+		struct dirent *ep=readdir( dp );
+		if( ep ){
+			return std::string( ep->d_name );
+		}
+		return "";
+	}
+};
+
 
 PosixFileSystem::PosixFileSystem(){
 }
@@ -41,11 +65,21 @@ bool PosixFileSystem::setCurrentDir( const std::string &dir ){
 }
 
 std::string PosixFileSystem::getCurrentDir()const{
-	RTEX( "PosixFileSystem::getCurrentDir not implemented" );
+	char buff[PATH_MAX];
+	if( getcwd( buff,sizeof(buff) ) ){
+		std::string t=buff;
+		if( t.size() && t[t.size()-1]!='/' ) t+='/';
+		return t;
+	}
+	return "";
 }
 
 int PosixFileSystem::getFileSize( const std::string &name )const{
-	RTEX( "PosixFileSystem::getFileSize not implemented" );
+	struct stat fstat;
+	if( stat( name.c_str(),&fstat )==0 ){
+		return fstat.st_size;;
+	}
+	return 0;
 }
 
 int PosixFileSystem::getFileType( const std::string &name )const{
@@ -62,15 +96,18 @@ int PosixFileSystem::getFileType( const std::string &name )const{
 }
 
 BBDir *PosixFileSystem::openDir( const std::string &name,int flags ){
-	RTEX( "PosixFileSystem::openDir not implemented" );
+	DIR *dp = opendir( name.c_str() );
+	if( !dp ) return 0;
+
+	return d_new PosixDir( dp );
 }
 
 BBDir *PosixFileSystem::verifyDir( BBDir *d ){
-	RTEX( "PosixFileSystem::verifyDir not implemented" );
+	return d; // TODO
 }
 
 void PosixFileSystem::closeDir( BBDir *dir ){
-	RTEX( "PosixFileSystem::closeDir not implemented" );
+	delete dir;
 }
 
 BBMODULE_CREATE( filesystem_posix ){

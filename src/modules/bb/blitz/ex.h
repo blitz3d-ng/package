@@ -1,8 +1,10 @@
 #ifndef BLITZ_EX_H
 #define BLITZ_EX_H
 
+#include <string>
+
 struct bbEx{
-	const char *err;
+	std::string err;
 	bbEx( const char *e );
 	~bbEx();
 };

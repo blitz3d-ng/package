@@ -38,7 +38,7 @@ void main() {
   v.color = RS.color;
   v.texcoord = a_texcoord*RS.texscale;
 
-  // gl_PointSize = 1.0; // TODO: figure out if there's a performance penalty when not used...
+  gl_PointSize = RS.scale.x;
   gl_Position = vec4(v_position, 0.0, 1.0);
 }
 #endif

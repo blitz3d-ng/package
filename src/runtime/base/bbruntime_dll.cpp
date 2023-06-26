@@ -72,14 +72,14 @@ int Runtime::execute( void (*pc)(),const char *args,Debugger *dbg ){
 
 	bbStartup( "a",params.c_str() );
 
-	const char *t=bbruntime_run( pc,debug );
+	bool success=bbruntime_run( pc,debug );
 
 #ifndef __MINGW32__
 	_control87( _CW_DEFAULT,0xfffff );
 	_set_se_translator( old_trans );
 #endif
 
-	return t!=0;
+	return success?0:1;
 }
 
 /********************** BUTT UGLY DLL->EXE HOOK! *************************/

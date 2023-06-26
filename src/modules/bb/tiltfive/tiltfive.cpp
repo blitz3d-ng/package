@@ -1,16 +1,23 @@
 #include "tiltfive.h"
-#include <bb/runtime/runtime.h>
+#include <bb/blitz3d/blitz3d.h>
 #include <TiltFiveNative.hpp>
 
 #include <chrono>
+#include <vector>
 #include <iostream>
 
-/// \private
 using Client = std::shared_ptr<tiltfive::Client>;
-/// \private
 using Glasses = std::shared_ptr<tiltfive::Glasses>;
-/// \private
 using Wand = std::shared_ptr<tiltfive::Wand>;
+
+struct GlassesConfig{
+	std::string ident;
+	Glasses handle;
+};
+
+static Client client;
+static Box gameboard;
+static std::vector<GlassesConfig> glasses;
 
 // Shim C++14 chrono_literals ms
 constexpr std::chrono::milliseconds operator""_ms(unsigned long long ms) {
@@ -110,31 +117,6 @@ auto readPoses(Glasses& glasses) -> tiltfive::Result<void> {
 auto doThingsWithGlasses(Glasses& glasses) -> tiltfive::Result<void> {
     std::cout << "Doing something with : " << glasses << std::endl;
 
-    /// [NonExclusiveOps]
-    // Get the friendly name for the glasses
-    // This is the name that's user set in the Tilt Five™ control panel.
-    auto friendlyName = glasses->getFriendlyName();
-    if (friendlyName) {
-        std::cout << "Obtained friendly name : " << friendlyName << std::endl;
-    } else if (friendlyName.error() == tiltfive::Error::kSettingUnknown) {
-        std::cerr << "Couldn't get friendly name : Service reports it's not set" << std::endl;
-    } else {
-        std::cerr << "Error obtaining friendly name : " << friendlyName << std::endl;
-    }
-
-    // Get the IPD for the glasses
-    // This is user set IPD in the Tilt Five™ control panel.
-    auto ipd = glasses->getIpd();
-    if (ipd) {
-        std::cout << "Obtained IPD : " << ipd << "m" << std::endl;
-    } else if (ipd.error() == tiltfive::Error::kSettingUnknown) {
-        std::cerr << "Couldn't get IPD : Service reports it's not set" << std::endl;
-    } else {
-        std::cerr << "Error obtaining IPD : " << ipd << std::endl;
-        return ipd.error();
-    }
-    /// [NonExclusiveOps]
-
     // Wait for a wand to connect
     auto wand = waitForWand(glasses);
     if (wand) {
@@ -189,46 +171,6 @@ auto doThingsWithGlasses(Glasses& glasses) -> tiltfive::Result<void> {
     return tiltfive::kSuccess;
 }
 
-/// [SystemWideQuery]
-auto printGameboardDimensions(Client& client) -> tiltfive::Result<void> {
-    auto result = client->getGameboardSize(kT5_GameboardType_LE);
-    if (!result) {
-        return result.error();
-    }
-
-    float width  = result->viewableExtentPositiveX + result->viewableExtentNegativeX;
-    float length = result->viewableExtentPositiveY + result->viewableExtentNegativeY;
-    float height = result->viewableExtentPositiveZ;
-
-    std::cout << "LE Gameboard size : " << width << "m x " << length << "m x " << height << "m"
-              << std::endl;
-
-    return tiltfive::kSuccess;
-}
-
-/// [WaitForServiceCallerFn]
-auto printServiceVersion(Client& client) -> tiltfive::Result<void> {
-    auto result = client->getServiceVersion();
-    if (!result) {
-        return result.error();
-    }
-
-    std::cout << "Service version : " << result << std::endl;
-    return tiltfive::kSuccess;
-}
-/// [WaitForServiceCallerFn]
-/// [SystemWideQuery]
-
-auto printUiStatusFlags(Client& client) -> tiltfive::Result<void> {
-    auto result = client->isTiltFiveUiRequestingAttention();
-    if (!result) {
-        return result.error();
-    }
-    std::cout << "Tilt Five UI (Attention Requested) : " << ((*result) ? "TRUE" : "FALSE")
-              << std::endl;
-
-    return tiltfive::kSuccess;
-}
 
 /// [WaitForService]
 // Convenience function to repeatedly call another function if it returns 'service unavailable'
@@ -268,11 +210,132 @@ class MyParamChangeListener : public tiltfive::ParamChangeListener {
     }
 };
 
+BBLIB bb_int_t BBCALL bbT5_Initialize(){
+	{
+		// TODO: expose params...
+		auto res=tiltfive::obtainClient( "com.tiltfive.test","0.1.0",nullptr );
+		if( res.error() ) return 0;
+
+		client=*res;
+	}
+
+	{
+		auto res=client->getGameboardSize( kT5_GameboardType_XE_Raised );
+		if( !res ){
+			return 0;
+		}
+
+		gameboard=Box(
+			Vector( -res->viewableExtentNegativeX,-res->viewableExtentNegativeY,0.0 ),
+			Vector( res->viewableExtentPositiveX,res->viewableExtentPositiveY,res->	viewableExtentPositiveZ )
+		);
+	}
+
+	return 1;
+}
+
+BBLIB bb_float_t BBCALL bbT5_GameboardX(){
+	return gameboard.a.x;
+}
+
+BBLIB bb_float_t BBCALL bbT5_GameboardY(){
+	return gameboard.a.y;
+}
+
+BBLIB bb_float_t BBCALL bbT5_GameboardZ(){
+	return gameboard.a.z;
+}
+
+BBLIB bb_float_t BBCALL bbT5_GameboardWidth(){
+	return gameboard.width();
+}
+
+BBLIB bb_float_t BBCALL bbT5_GameboardHeight(){
+	return gameboard.height();
+}
+
+BBLIB bb_float_t BBCALL bbT5_GameboardDepth(){
+	return gameboard.depth();
+}
+
+BBLIB BBStr* BBCALL bbT5_ServiceVersion(){
+	auto res = client->getServiceVersion();
+	if( !res ){
+		return d_new BBStr();
+	}
+
+	return d_new BBStr( *res );
+}
+
+BBLIB bb_int_t BBCALL bbT5_UIRequestingAttention(){
+	auto res=client->isTiltFiveUiRequestingAttention();
+	if( res.error() ){
+		return 0;
+	}
+
+	return *res;
+}
+
+BBLIB bb_int_t BBCALL bbT5_CountGlasses(){
+	return glasses.size();
+}
+
+BBLIB BBStr* BBCALL bbT5_GlassesIdentifier( bb_int_t i ){
+	auto id=glasses[i].handle->getIdentifier();
+
+	return d_new BBStr( id );
+}
+
+BBLIB BBStr* BBCALL bbT5_GlassesFriendlyName( bb_int_t i ){
+	auto name=glasses[i].handle->getFriendlyName();
+	if( name.error() ){
+		return d_new BBStr();
+	}
+
+	return d_new BBStr( *name );
+}
+
+BBLIB bb_float_t BBCALL bbT5_GlassesIPD( bb_int_t i ){
+	auto ipd=glasses[i].handle->getIpd();
+	if( ipd.error() ){
+		return 0.0;
+	}else{
+		return *ipd;
+	}
+}
+
+BBLIB bb_int_t BBCALL bbT5_Poll(){
+	auto list = client->listGlasses();
+	if( !list ){
+		return 0;
+	}
+
+	for( auto& id:*list ){
+		auto handle=tiltfive::obtainGlasses( id,client );
+		if( handle.error() ) continue;
+
+		int idx=-1;
+		for( int i=0;i<glasses.size();i++ ){
+			if( glasses[i].ident==id ){
+				idx=i;
+				break;
+			}
+		}
+		if( idx==-1 ){
+			glasses.push_back({ id,*handle });
+		}else{
+			glasses[idx].handle=*handle;
+		}
+	}
+
+	return 1;
+}
+
+
 void BBCALL bbT5_RunSample() {
     /// [CreateClient]
     // Create the client
-    auto client = tiltfive::obtainClient("com.tiltfive.test", "0.1.0", nullptr);
-    if (!client) {
+    if( !bbT5_Initialize() ){
         std::cerr << "Failed to create client : " << client << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -281,34 +344,11 @@ void BBCALL bbT5_RunSample() {
 
     // Create a parameter change helper
     std::shared_ptr<MyParamChangeListener> paramChangeListener(new MyParamChangeListener());
-    auto paramChangeHelper = (*client)->createParamChangedHelper(paramChangeListener);
-
-    // Get the gameboard dimensions
-    auto result = printGameboardDimensions(*client);
-    if (!result) {
-        std::cerr << "Failed to print gameboard dimensions : " << result << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
-
-    // Get the service version
-    /// [WaitForServiceCaller]
-    result = waitForService<void>(*client, printServiceVersion);
-    if (!result) {
-        std::cerr << "Failed to get service version : " << result << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
-    /// [WaitForServiceCaller]
-
-    // Get the UI flags
-    result = waitForService<void>(*client, printUiStatusFlags);
-    if (!result) {
-        std::cerr << "Failed to print UI status flags : " << result << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
+    auto paramChangeHelper = client->createParamChangedHelper(paramChangeListener);
 
     // Wait for glasses
     {
-        auto glasses = waitForService<Glasses>(*client, waitForGlasses);
+        auto glasses = waitForService<Glasses>(client, waitForGlasses);
         if (!glasses) {
             std::cerr << "Failed to wait for glasses : " << glasses << std::endl;
             std::exit(EXIT_FAILURE);
@@ -318,20 +358,17 @@ void BBCALL bbT5_RunSample() {
         paramChangeHelper->registerGlasses(*glasses);
 
         // Do things with the glasses
-        result = doThingsWithGlasses(*glasses);
+        auto result = doThingsWithGlasses(*glasses);
         if (!result) {
             std::cerr << "Failed to do things with glasses : " << result << std::endl;
         }
     }
-
-    std::cout << "Waiting a little..." << std::endl;
-    std::this_thread::sleep_for(5000_ms);
-
-    std::cout << "ALL DONE!" << std::endl;
 }
 /// [Main]
 
 BBMODULE_CREATE( tiltfive ){
+	client=0;
+	gameboard=Box();
 	return true;
 }
 

@@ -54,5 +54,5 @@ extern "C" int EMSCRIPTEN_KEEPALIVE main(){
 #else
   bool debug=false;
 #endif
-	return bbruntime_run( bbMain,debug )!=0;
+	return bbruntime_run( bbMain,debug )?0:1;
 }

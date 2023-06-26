@@ -51,12 +51,14 @@ public:
 	MyStackWalker():StackWalker(){}
 protected:
 	virtual void OnOutput( LPCSTR szText ){
-		fprintf( stderr,"%s",szText );StackWalker::OnOutput( szText );
+		fprintf( stderr,"%s",szText );
+		StackWalker::OnOutput( szText );
 	}
 };
 
 static long WINAPI exceptionFilter( EXCEPTION_POINTERS *e ){
-	MyStackWalker sw; sw.ShowCallstack( GetCurrentThread(),e->ContextRecord );
+	MyStackWalker sw;
+	sw.ShowCallstack( GetCurrentThread(),e->ContextRecord );
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 #endif

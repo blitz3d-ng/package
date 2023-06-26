@@ -19,7 +19,11 @@ protected:
 	int handle_x,handle_y;
 	float color[3];
 
+	bool needs_flush;
+
 	virtual void bind()const=0;
+
+	void flush();
 
 	void quad( int x,int y,int w,int h,bool solid,bool tex,float tx,float ty,float color[3] );
 public:
