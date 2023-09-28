@@ -18,7 +18,7 @@ jobs:
       - name: Find module
         run: |
           sudo apt-get install -y apt-file
-          apt-file update
+          sudo apt-file update
           apt-file find snd-dummy
 
       - name: Install dummy sound card
