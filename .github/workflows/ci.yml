@@ -16,7 +16,7 @@ jobs:
           - ubuntu-22.04
     steps:
       - name: Find module
-      - run: |
+        run: |
           sudo apt-get install -y apt-file
           apt-file update
           apt-file find snd-dummy
