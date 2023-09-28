@@ -21,8 +21,10 @@ add_subdirectory(tree)
 set_target_properties(ODE PROPERTIES UNITY_BUILD false)
 
 # temporarily silence warnings
-target_compile_options(ODE PRIVATE -Wno-deprecated-declarations)
-target_compile_options(ODE PRIVATE -Wno-undefined-var-template)
+if (NOT BB_MSVC)
+  target_compile_options(ODE PRIVATE -Wno-deprecated-declarations)
+  target_compile_options(ODE PRIVATE -Wno-undefined-var-template)
+endif()
 
 if(WIN32)
   set_target_properties(
