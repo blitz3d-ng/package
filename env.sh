@@ -13,7 +13,7 @@ VOLUME=blitz3d-ng-gems-$PLATFORM
 IMAGE=ghcr.io/blitz3d-ng/env:$PLATFORM
 OPTIONS="--cap-add=SYS_PTRACE --security-opt seccomp=unconfined --rm -w /b3d -v $(pwd):/b3d -v $VOLUME:/bundle -e LLVM_ROOT=/opt/llvm -e blitzpath=/b3d/_release -e BUNDLE_PATH=/bundle"
 
-if [ -f /dev/snd ]
+if [ -d /dev/snd ]
 then
   OPTIONS="--device /dev/snd $OPTIONS"
 fi
