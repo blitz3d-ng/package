@@ -1,5 +1,5 @@
 name: CI
-on: 
+on:
   - push
   - pull_request
 
@@ -70,7 +70,7 @@ jobs:
 
   mingw:
     name: MinGW
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04 # ubuntu-latest is missing some sound modules
     strategy:
       matrix:
         arch:
@@ -114,7 +114,7 @@ jobs:
 
   linux:
     name: Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04 # ubuntu-latest is missing some sound modules
     strategy:
       matrix:
         dist:
