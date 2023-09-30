@@ -6,7 +6,7 @@ on:
 jobs:
   linux:
     name: Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04 # ubuntu-latest
     strategy:
       matrix:
         dist:
@@ -22,10 +22,7 @@ jobs:
       - name: Install dummy sound card
         run: |
           sudo apt-get install -y linux-sound-base linux-modules-extra-`uname -r`
-          # sudo modprobe snd-dummy
-          sudo apt-get install build-essential linux-headers-`uname -r`
-          sudo modprobe snd-pcm snd-timer snd soundcore # snd-dummy
-          (cd .github/snd-dummy && make && sudo insmod ./dummy.ko)
+          sudo modprobe snd-dummy
 
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
       - run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
