@@ -15,14 +15,13 @@ jobs:
           #- ubuntu-20.04
           - ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
       - name: Install dummy sound card
         run: |
           sudo apt-get install -y linux-sound-base linux-modules-extra-`uname -r`
           sudo modprobe snd-dummy
 
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
       - run: ./env.sh ${{ matrix.dist }} ./test/suite.sh
