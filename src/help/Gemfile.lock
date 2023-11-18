@@ -1,36 +1,47 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.5)
+    activesupport (7.1.2)
+      base64
+      bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
+      connection_pool (>= 2.2.5)
+      drb
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
+      mutex_m
       tzinfo (~> 2.0)
+    base64 (0.2.0)
+    bigdecimal (3.1.4)
     colored (1.2)
-    commonmarker (0.23.9)
+    commonmarker (0.23.10)
     concurrent-ruby (1.2.2)
-    execjs (2.8.1)
-    ffi (1.15.5)
-    ffi (1.15.5-x64-mingw32)
+    connection_pool (2.4.1)
+    drb (2.2.0)
+      ruby2_keywords
+    execjs (2.9.1)
+    ffi (1.16.3)
     filewatcher (2.1.0)
       module_methods (~> 0.1.0)
-    github-markup (4.0.1)
+    github-markup (4.0.2)
     htmlcompressor (0.4.0)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    mini_portile2 (2.8.2)
-    minitest (5.18.0)
+    mini_portile2 (2.8.5)
+    minitest (5.20.0)
     module_methods (0.1.0)
-    nokogiri (1.15.2)
+    mutex_m (0.2.0)
+    nokogiri (1.15.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     os (1.1.4)
-    racc (1.7.0)
+    racc (1.7.3)
+    ruby2_keywords (0.0.5)
     sassc (2.4.0)
       ffi (~> 1.9)
     sassc (2.4.0-x64-mingw32)
       ffi (~> 1.9)
-    terser (1.1.16)
+    terser (1.1.19)
       execjs (>= 0.3.0, < 3)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -55,4 +66,4 @@ RUBY VERSION
    ruby 3.1.2p20
 
 BUNDLED WITH
-   2.2.31
+   2.3.7
