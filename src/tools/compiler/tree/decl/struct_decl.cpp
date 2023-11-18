@@ -56,9 +56,7 @@ void StructDeclNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void StructDeclNode::translate2( Codegen_LLVM *g ){
-	llvm::Constant *template_type0=0;
-	auto template_typesary=llvm::ArrayType::get( llvm::PointerType::get( g->bbType,0 ),sem_type->fields->size()-1 );
-
+	auto template_typesary=llvm::ArrayType::get( llvm::PointerType::get( g->bbType,0 ),sem_type->fields->size() );
 	std::vector<llvm::Constant*> template_types;
 	std::vector<llvm::Constant*> template_defs;
 	std::vector<llvm::Type*> fields;
@@ -66,12 +64,7 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 	for( int k=0;k<sem_type->fields->size();++k ){
 		Decl *field=sem_type->fields->decls[k];
 		Type *type=field->type;
-		type->llvmType( g->context.get() );
-		if( VectorType *v=type->vectorType() ){
-			fields.push_back( v->ty );
-		}else{
-			fields.push_back( type->llvmType( g->context.get() ) );
-		}
+		fields.push_back( type->llvmType( g->context.get() ) );
 
 		llvm::GlobalVariable* gt=0;
 		std::string t;
@@ -85,11 +78,7 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 			gt=(llvm::GlobalVariable*)g->module->getOrInsertGlobal( t,g->bbType );
 		}
 
-		if( k>0 ) {
-			template_types.push_back( gt );
-		} else {
-			template_type0=gt;
-		}
+		template_types.push_back( gt );
 	}
 
 	sem_type->llvmTypeDef( g );
@@ -137,14 +126,11 @@ void StructDeclNode::translate2( Codegen_LLVM *g ){
 	}
 
 	objtypedata.push_back( llvm::ConstantInt::get( *g->context,llvm::APInt( 64,sem_type->fields->size() ) ) ); // fieldCnt
-	objtypedata.push_back( template_type0 );     // fieldTypes
-	auto def=llvm::ConstantStruct::get( g->bbObjType,objtypedata );
-
-	auto fieldtypesa=llvm::ConstantArray::get( template_typesary,template_types );
+	// fieldTypes does not need to be accounted for.
 
 	std::vector<llvm::Constant*> structfields;
-	structfields.push_back( def );
-	structfields.push_back( fieldtypesa );
+	structfields.push_back( llvm::ConstantStruct::get( g->bbObjType,objtypedata ) );
+	structfields.push_back( llvm::ConstantArray::get( template_typesary,template_types ) );
 	auto init=llvm::ConstantStruct::get( ty2,structfields );
 	temp->setInitializer( init );
 }

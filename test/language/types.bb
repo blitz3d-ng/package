@@ -1,7 +1,15 @@
+Context "Types"
+
+; make sure an empty type is ok
+Type EmptyDef
+End Type
+
+emd.EmptyDef = New EmptyDef
+Delete emd
 
 Type Game
-	Field name$
 	Field player.Player[5]
+	Field name$
 End Type
 
 Type Player

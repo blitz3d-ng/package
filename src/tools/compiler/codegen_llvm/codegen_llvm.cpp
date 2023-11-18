@@ -61,7 +61,7 @@ Codegen_LLVM::Codegen_LLVM( bool debug ):debug(debug),breakBlock(0) {
 	objtypeels.push_back( bbObj );                              // used
 	objtypeels.push_back( bbObj );                              // free
 	objtypeels.push_back( intTy ); // fieldCnt
-	objtypeels.push_back( llvm::PointerType::get( bbType,0 ) ); // fieldTypes
+	// fieldTypes does not need to be added. seems to only be used to make pointer math easier in stdlib code
 	bbObjType->setBody( objtypeels );
 
 	std::vector<llvm::Type*> arrayels;
