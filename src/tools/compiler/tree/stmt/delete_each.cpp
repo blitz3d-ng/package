@@ -15,8 +15,7 @@ void DeleteEachNode::translate( Codegen *g ){
 
 #ifdef USE_LLVM
 void DeleteEachNode::translate2( Codegen_LLVM *g ){
-	llvm::Type *void_ty=llvm::Type::getVoidTy( *g->context );
 	auto objty=g->builder->CreateBitOrPointerCast( type->structType()->objty,llvm::PointerType::get( g->bbType,0 ) );
-	g->CallIntrinsic( "_bbObjDeleteEach",void_ty,1,objty );
+	g->CallIntrinsic( "_bbObjDeleteEach",g->voidTy,1,objty );
 }
 #endif

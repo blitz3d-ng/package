@@ -16,7 +16,7 @@ void ExprStmtNode::translate( Codegen *g ){
 #ifdef USE_LLVM
 void ExprStmtNode::translate2( Codegen_LLVM *g ){
 	auto v=expr->translate2( g );
-	if( expr->sem_type==Type::string_type ) g->CallIntrinsic( "_bbStrRelease",llvm::Type::getVoidTy( *g->context ),1,v );
+	if( expr->sem_type==Type::string_type ) g->CallIntrinsic( "_bbStrRelease",g->voidTy,1,v );
 }
 #endif
 

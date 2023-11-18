@@ -258,7 +258,6 @@ void Codegen_LLVM::injectMain(){
 
 	llvm::Type *int_ty=llvm::Type::getInt32Ty( *context );
 	llvm::Type *charpp_ty=llvm::PointerType::get( llvm::PointerType::get( llvm::Type::getInt8Ty( *context ),0 ),0 );
-	llvm::Type *void_type=llvm::Type::getVoidTy( *context );
 
 	std::vector<llvm::Type*> args;
 	args.push_back( int_ty );
@@ -272,6 +271,17 @@ void Codegen_LLVM::injectMain(){
 	auto block = llvm::BasicBlock::Create( *context,"entry",main );
 	builder->SetInsertPoint( block );
 	builder->CreateRet( CallIntrinsic( "bbStart",int_ty,3,argc,argv,bbMain ) );
+}
+
+void Codegen_LLVM::restoreData( int count ){
+	llvm::Value *t=bbData;
+	if( count ){
+		std::vector<llvm::Value*> indices;
+		indices.push_back( llvm::ConstantInt::get( *context,llvm::APInt( 32,count*2 ) ) );
+		t=builder->CreateGEP( intTy,t,indices );
+	}
+
+	CallIntrinsic( "_bbRestore",voidTy,1,builder->CreateBitOrPointerCast( t,llvm::PointerType::get( intTy,0 ) ) );
 }
 
 int Codegen_LLVM::dumpToObj( std::string &out ) {

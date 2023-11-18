@@ -26,16 +26,14 @@ TNode *VarNode::store( Codegen *g,TNode *n ){
 
 #ifdef USE_LLVM
 void VarNode::store2( Codegen_LLVM *g,llvm::Value *v ){
-	llvm::Type *void_ty=llvm::Type::getVoidTy( *g->context );
-
 	auto t=translate2( g );
 	if( sem_type->structType() ){
 		auto ptrptr=llvm::PointerType::get( llvm::PointerType::get( g->bbObj,0 ),0 );
 		t=g->builder->CreateBitOrPointerCast( t,ptrptr );
 		v=g->CastToObjPtr( v );
-		g->CallIntrinsic( "_bbObjStore",void_ty,2,t,v );
+		g->CallIntrinsic( "_bbObjStore",g->voidTy,2,t,v );
 	}else if( sem_type==Type::string_type ){
-		g->CallIntrinsic( "_bbStrStore",void_ty,2,t,v );
+		g->CallIntrinsic( "_bbStrStore",g->voidTy,2,t,v );
 	} else {
 		g->builder->CreateStore( v,t );
 	}

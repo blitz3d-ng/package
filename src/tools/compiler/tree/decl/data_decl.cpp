@@ -45,7 +45,7 @@ void DataDeclNode::translate2( Codegen_LLVM *g ){
 		v=llvm::ConstantExpr::getBitCast( (llvm::Constant*)c->translate2( g ),g->intTy );
 	}else{
 		ty=4;
-		v=llvm::ConstantExpr::getPtrToInt( g->builder->CreateGlobalStringPtr( std::string( c->stringValue() ) ),g->intTy );
+		v=llvm::ConstantExpr::getPtrToInt( g->constantString( c->stringValue() ),g->intTy );
 	}
 
 	values_idx=g->data_values.size();

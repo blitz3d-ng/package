@@ -7,7 +7,7 @@
 
 struct BBFontData{
 	long size;
-	const unsigned char *data;
+	unsigned char *data;
 
 	BBFontData():size(0),data(0){}
 };

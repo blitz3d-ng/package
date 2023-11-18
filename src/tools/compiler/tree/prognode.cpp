@@ -193,7 +193,6 @@ void ProgNode::translate2( Codegen_LLVM *g,const std::vector<UserFunc> &userfunc
 	for( k=0;k<sem_env->decls->size();++k ){
 		Decl *d=sem_env->decls->decls[k];
 		if( d->kind!=DECL_GLOBAL ) continue;
-		if( d->type->vectorType() ) continue;
 
 		auto ty=d->type->llvmType( g->context.get() );
 		auto glob=new llvm::GlobalVariable( *g->module,ty,false,llvm::GlobalValue::ExternalLinkage,nullptr,d->name );
@@ -203,7 +202,7 @@ void ProgNode::translate2( Codegen_LLVM *g,const std::vector<UserFunc> &userfunc
 			init=g->constantInt( 0 );
 		}if( d->type->floatType() ){
 			init=g->constantFloat( 0.0 );
-		}if( d->type->stringType() || d->type->structType() ){
+		}if( d->type->stringType() || d->type->structType() || d->type->vectorType() ){
 			init=llvm::ConstantPointerNull::get( (llvm::PointerType*)ty );
 		}
 
@@ -242,6 +241,9 @@ void ProgNode::translate2( Codegen_LLVM *g,const std::vector<UserFunc> &userfunc
 	funcs->translate2( g );
 
 	g->builder->SetInsertPoint( block );
+
+	g->restoreData( 0 ); // reset data pointer
+
 	createVars2( sem_env,g );
 	stmts->translate2( g );
 
