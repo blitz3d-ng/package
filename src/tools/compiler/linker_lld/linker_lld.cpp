@@ -28,12 +28,16 @@
 #ifdef BB_LINUX
 #define FORMAT elf
 #define UNAME "linux"
+#else
+LLD_HAS_DRIVER(elf) // android
 #endif
+
+LLD_HAS_DRIVER(FORMAT) // native
 
 Linker_LLD::Linker_LLD( const std::string &home ):home(home){
 }
 
-void Linker_LLD::createExe( const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
+void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile ){
 	// string tmpdir=string( tmpnam(0) );
 	std::string tmpdir="tmp/apk";
 
@@ -122,7 +126,9 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 		args.push_back( "--deduplicate-strings" );
 
 		// strip debug symbols
-		args.push_back( "-S" );args.push_back( "-x" );
+		if( !debug ){
+		  args.push_back( "-S" );args.push_back( "-x" );
+		}
 #endif
 #ifdef BB_LINUX
 		args.push_back( "--gc-sections" );
@@ -240,7 +246,7 @@ void Linker_LLD::createExe( const std::string &rt,const Target &target,const std
 #if defined(BB_MACOS) && defined(BB_ASAN)
 	if( target.host ){
 		// TODO: fix this hardcoding
-		#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/lib/darwin"
+		#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.3/lib/darwin"
 
 		args.push_back("-rpath");args.push_back(CLANG_LIBS);
 		args.push_back(CLANG_LIBS "/libclang_rt.asan_osx_dynamic.dylib");

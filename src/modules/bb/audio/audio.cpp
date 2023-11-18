@@ -13,7 +13,15 @@ static inline void debugSound( BBSound *s ){
 
 static BBSound *loadSound( BBStr *f,bool use_3d ){
 	std::string t=canonicalpath(*f);delete f;
-	return gx_audio ? gx_audio->loadSound( t,use_3d ) : 0;
+
+	BBSound *s = gx_audio ? gx_audio->loadSound( t,use_3d ) : 0;
+	// if( s ) {
+	// 	LOGD( "[audio] Loaded %s", t.c_str() );
+	// }else{
+	// 	LOGD( "[audio] Failed to load %s", t.c_str() );
+	// }
+
+	return s;
 }
 
 static BBChannel *playMusic( BBStr *f,bool use_3d ){

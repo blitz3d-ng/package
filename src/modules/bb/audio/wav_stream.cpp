@@ -3,13 +3,13 @@
 #include <string.h>
 #include <bb/blitz/app.h>
 
-WAVAudioStream::WAVAudioStream( int buf_size):AudioStream( buf_size){
+WAVAudioStream::WAVAudioStream( int buf_size ):AudioStream( buf_size ){
 }
 
 bool WAVAudioStream::readHeader(){
 	read( buf, 4 );
 	if( buf[0]!='R' || buf[1]!='I' || buf[2]!='F' || buf[3]!='F' ){
-		LOGD( "%s","missing RIFF" );
+		LOGD( "[audio] (%s) missing RIFF",path.c_str() );
 		return false;
 	}
 
@@ -17,14 +17,14 @@ bool WAVAudioStream::readHeader(){
 
 	read( buf, 4 );
 	if( buf[0]!='W' || buf[1]!='A' || buf[2]!='V' || buf[3]!='E' ){
-		LOGD( "%s","missing WAVE" );
+		LOGD( "[audio] (%s) missing WAVE",path.c_str() );
 		return false;
 	}
 
 	// format tag
 	read( buf,4 );
 	if( buf[0]!='f' || buf[1]!='m' || buf[2]!='t' || buf[3]!=' ' ){
-		LOGD( "%s","missing 'fmt '" );
+		LOGD( "[audio] (%s) missing 'fmt'",path.c_str() );
 		return false;
 	}
 
@@ -34,7 +34,7 @@ bool WAVAudioStream::readHeader(){
 	// format
 	read( buf,2 );
 	if( buf[1]!=0 || buf[0]!=1 ){
-		LOGD( "unsupported format type %i %i",buf[0],buf[1] );
+		LOGD( "[audio] (%s) unsupported format type %i %i",path.c_str(),buf[0],buf[1] );
 		return false;
 	}
 
@@ -71,7 +71,7 @@ bool WAVAudioStream::readHeader(){
 	}
 
 	if( buf[0]!='d' || buf[1]!='a' || buf[2]!='t' || buf[3]!='a' ){
-		LOGD( "missing 'data' %c%c%c%c",buf[0],buf[1],buf[2],buf[3] );
+		LOGD( "[audio] (%s) missing 'data' %c%c%c%c",path.c_str(),buf[0],buf[1],buf[2],buf[3] );
 		return false;
 	}
 

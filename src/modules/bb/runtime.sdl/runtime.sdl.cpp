@@ -123,8 +123,17 @@ bool SDLRuntime::idle(){
 			BBEvent ev( BBEVENT_MOUSEMOVE,0,event.motion.x,event.motion.y );
 			bbOnEvent.run( &ev );
 		}else if( event.type==SDL_MOUSEBUTTONDOWN||event.type==SDL_MOUSEBUTTONUP ){
-			BBEvent ev( event.type==SDL_MOUSEBUTTONDOWN?BBEVENT_MOUSEDOWN:BBEVENT_MOUSEUP,event.button.button );
-			bbOnEvent.run( &ev );
+			int button=0;
+			switch( event.button.button ){
+			case SDL_BUTTON_LEFT:button=1;break;
+			case SDL_BUTTON_MIDDLE:button=3;break;
+			case SDL_BUTTON_RIGHT:button=2;break;
+			}
+
+			if( button ){
+				BBEvent ev( event.type==SDL_MOUSEBUTTONDOWN?BBEVENT_MOUSEDOWN:BBEVENT_MOUSEUP,button );
+				bbOnEvent.run( &ev );
+			}
 		}else if( (event.type==SDL_KEYDOWN||event.type==SDL_KEYUP) && event.key.repeat==0 ){
 			int code=event.key.keysym.scancode;
 			if( code>=MAX_SDL_SCANCODES ) continue;

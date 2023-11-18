@@ -1,16 +1,9 @@
 
 #include <bb/blitz/blitz.h>
 #include "pixmap.h"
+#include "../../../stdutil/stdutil.h"
 
 #include <string.h>
-
-#ifndef WIN32
-  #define WRONG_DIV '\\'
-  #define RIGHT_DIV '/'
-#else
-  #define RIGHT_DIV '\\'
-  #define WRONG_DIV '/'
-#endif
 
 BBPixmap::BBPixmap():width(0),height(0),depth(0),pitch(0),bits(0){
 }
@@ -36,13 +29,10 @@ BBPixmap *bbLoadPixmapWithFreeImage( const std::string &file );
 extern "C" BBPixmap *bbLoadPixmapWithUIKit( const char *file );
 
 BBPixmap *bbLoadPixmap( const std::string &file ){
-	std::string f;
-	for( int i=0;i<file.size();i++ ){
-		f+=file[i] == WRONG_DIV ? RIGHT_DIV : file[i];
-	}
+	std::string f=canonicalpath( file );
+	// LOGD( "[pixmap] load %s", f.c_str() );
 
 #ifdef BB_IOS
-	LOGD( "load: %s\n", f.c_str() );
 	return bbLoadPixmapWithUIKit( f.c_str() );
 #else
 	return bbLoadPixmapWithFreeImage( f );
@@ -74,7 +64,7 @@ void BBPixmap::flipVertically(){
 	}
 
 	memcpy( bits,tmp,size );
-	delete tmp;
+	delete[] tmp;
 }
 
 void BBPixmap::swapBytes0and2(){

@@ -24,7 +24,7 @@ layout(std140) uniform BBLightState {
 // must be mindful of alignment when ordering...
 struct BBTextureState {
   mat4 TForm;
-  int Blend,SphereMap,_1,_2;
+  int Blend,SphereMap,Flags,_2;
 } ;
 
 layout(std140) uniform BBRenderState {
@@ -109,9 +109,11 @@ void main() {
   vec3 EyeNormal = bbNormalMatrix * bbNormal;
 
   for( int i=0;i<RS.TexturesUsed;i++ ){
-    vec2 coord=bbTexCoord0;
+    vec2 coord;
     if( RS.Texture[i].SphereMap==1 ) {
       coord=sphereMap( EyeNormal,gl_Position.xyz/gl_Position.w );
+    }else if( RS.Texture[i].Flags==1 ) {
+      coord=bbTexCoord1;
     }else {
       coord=bbTexCoord0;
     }

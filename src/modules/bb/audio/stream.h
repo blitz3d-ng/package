@@ -11,6 +11,8 @@ protected:
 	unsigned char *buf;
 	int buf_size;
 	unsigned int channels,bits,samples,frequency;
+	std::mutex lock;
+	std::string path;
 
 public:
 	struct Ref{

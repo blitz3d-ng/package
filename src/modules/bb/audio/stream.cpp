@@ -7,12 +7,17 @@
 
 AudioStream::Ref::Ref( AudioStream *s ):stream(s){
 	pos=stream->start;
+	// LOGD("[audio] created ref for %s",stream->path.c_str() );
 }
 
 AudioStream::Ref::~Ref(){
+	// LOGD("[audio] deleted ref for %s",stream->path.c_str() );
 }
 
 size_t AudioStream::Ref::decode( unsigned char **buf ){
+	// LOGD("[audio] decoding frame of %s",stream->path.c_str() );
+	std::lock_guard<std::mutex> guard( stream->lock );
+
 	stream->seek( pos );
 	size_t n=stream->decode();
 	pos=stream->pos();
@@ -51,6 +56,7 @@ AudioStream::~AudioStream(){
 }
 
 bool AudioStream::init( const char *url ){
+	path=url;
 	in.open( url,std::ios_base::in|std::ios::binary );
 	if( !readHeader() ) return false;
 	start=pos();

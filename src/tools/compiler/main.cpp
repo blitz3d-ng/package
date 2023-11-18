@@ -582,7 +582,7 @@ int main( int argc,char *argv[] ){
 		if( usellvm ) {
 #ifdef USE_LLVM
 			Linker_LLD linker( home );
-			linker.createExe( rt,target,obj_code,bundle,out_file );
+			linker.createExe( debug,rt,target,obj_code,bundle,out_file );
 #else
 			std::cerr<<"llvm support was not compiled in"<<std::endl;
 			abort();

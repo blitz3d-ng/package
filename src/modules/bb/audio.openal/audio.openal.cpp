@@ -1,6 +1,7 @@
 
 #include "../stdutil/stdutil.h"
 #include "audio.openal.h"
+#include <OpenAL/OpenAL.h>
 #include <bb/audio/ogg_stream.h>
 #include <bb/audio/wav_stream.h>
 
@@ -19,7 +20,21 @@
 #define NUM_BUFFERS 6
 #define BUFFER_SIZE 4096
 
+#define AL( func ) func; checkErrors( __FILE__,__LINE__ );
+
 static std::set<BBChannel*> channel_set;
+
+static void checkErrors( const char *file,int line ){
+  switch( alGetError() ){
+  case AL_NO_ERROR: return;
+  case AL_INVALID_NAME:      LOGE( "[audio.openal] %s (%s:%i)","AL_INVALID_NAME",file,line );break;
+  case AL_INVALID_ENUM:      LOGE( "[audio.openal] %s (%s:%i)","AL_INVALID_ENUM",file,line );break;
+  case AL_INVALID_VALUE:     LOGE( "[audio.openal] %s (%s:%i)","AL_INVALID_VALUE",file,line );break;
+  case AL_INVALID_OPERATION: LOGE( "[audio.openal] %s (%s:%i)","AL_INVALID_OPERATION",file,line );break;
+  case AL_OUT_OF_MEMORY:     LOGE( "[audio.openal] %s (%s:%i)","AL_OUT_OF_MEMORY",file,line );break;
+  default:                   LOGE( "[audio.openal] %s (%s:%i)","unknown error",file,line );break;
+  }
+}
 
 class OpenALChannel : public BBChannel{
 public:
@@ -30,7 +45,6 @@ public:
 	ALenum format;
 
 	std::thread playbackThread;
-	std::mutex playbackMutex;
 	bool playbackRunning;
 
 	OpenALChannel():stream(0),source(0),frequency(0),playbackRunning(false){}
@@ -139,6 +153,8 @@ end:
 
 		alDeleteSources( 1,&channel->source );
 		alDeleteBuffers( NUM_BUFFERS,channel->buffers );
+
+		delete channel->stream;channel->stream=0;
 	}
 
 	void stop(){
@@ -230,18 +246,27 @@ protected:
 	AudioStream *loadStream( const std::string &filename,bool preload ){
 		AudioStream *stream=0;
 
+		// TODO: come up with something a little more clever
 		const char *ext = strrchr( filename.c_str(),'.' );
-		if( strcasecmp( ext + 1,"wav" ) == 0 ){
-			stream=new WAVAudioStream( BUFFER_SIZE );
-		}else if( strcasecmp( ext + 1,"ogg" ) == 0 ){
-			stream=new OGGAudioStream( BUFFER_SIZE );
-		}
+		const char *exts[]={ ext,strcasecmp( ext + 1,"wav" )==0?".ogg":".wav",0 };
+		int tries=0;
+		while( exts[tries] ) {
+			if( strcasecmp( exts[tries] + 1,"wav" ) == 0 ){
+				stream=new WAVAudioStream( BUFFER_SIZE );
+			}else if( strcasecmp( exts[tries] + 1,"ogg" ) == 0 ){
+				stream=new OGGAudioStream( BUFFER_SIZE );
+			}
 
-		if( !stream ) return 0;
+			if( !stream ) return 0;
 
-		if( !stream->init( filename.c_str() ) ){
-			delete stream;
-			return 0;
+			if( stream->init( filename.c_str() ) ){
+				break;
+			}else{
+				delete stream;
+				stream=0;
+			}
+
+			tries++;
 		}
 
 		return stream;
@@ -264,11 +289,11 @@ public:
 
 	bool init(){
 		if( !(dev=alcOpenDevice(NULL)) ){
-			fprintf(stderr, "Oops\n");
+			LOGE("[audio.openal] %s", "Could not open audio device");
 			return false;
 		}
 		if( !(ctx=alcCreateContext(dev,NULL)) ){
-			fprintf(stderr, "Oops2\n");
+			LOGE("[audio.openal] %s", "Could not open audio context");
 			return false;
 		}
 		alcMakeContextCurrent( ctx );

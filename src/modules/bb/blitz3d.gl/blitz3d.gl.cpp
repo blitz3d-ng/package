@@ -49,7 +49,8 @@ struct GLVertex{
 	float coords[3];
 	float normal[3];
 	float color[4];
-	float tex_coord[2][2];
+	float tex_coord0[2];
+	float tex_coord1[2];
 };
 
 class GLMesh : public BBMesh{
@@ -78,11 +79,13 @@ public:
 		GL( glEnableVertexAttribArray( 1 ) );
 		GL( glEnableVertexAttribArray( 2 ) );
 		GL( glEnableVertexAttribArray( 3 ) );
+		GL( glEnableVertexAttribArray( 4 ) );
 
 		GL( glVertexAttribPointer( 0,3,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,coords ) ) );
 		GL( glVertexAttribPointer( 1,3,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,normal ) ) );
 		GL( glVertexAttribPointer( 2,4,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,color ) ) );
-		GL( glVertexAttribPointer( 3,4,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,tex_coord ) ) );
+		GL( glVertexAttribPointer( 3,2,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,tex_coord0 ) ) );
+		GL( glVertexAttribPointer( 4,2,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,tex_coord1 ) ) );
 
 		GL( glBindVertexArray( 0 ) );
 	}
@@ -128,11 +131,11 @@ public:
 		setVertex( n,coords,normal,0xffffff,tex_coords );
 	}
 
-  void setVertex( int n,const float coords[3],const float normal[3],unsigned argb,const float tex_coords[2][2] ){
+	void setVertex( int n,const float coords[3],const float normal[3],unsigned argb,const float tex_coords[2][2] ){
 		verts[n].coords[0]=coords[0];verts[n].coords[1]=coords[1];verts[n].coords[2]=coords[2];
 		verts[n].normal[0]=normal[0];verts[n].normal[1]=normal[1];verts[n].normal[2]=normal[2];
-		verts[n].tex_coord[0][0]=tex_coords[0][0];verts[n].tex_coord[0][1]=tex_coords[0][1];
-		verts[n].tex_coord[1][0]=tex_coords[1][0];verts[n].tex_coord[1][1]=tex_coords[1][1];
+		verts[n].tex_coord0[0]=tex_coords[0][0];verts[n].tex_coord0[1]=tex_coords[0][1];
+		verts[n].tex_coord1[0]=tex_coords[1][0];verts[n].tex_coord1[1]=tex_coords[1][1];
 		verts[n].color[0]=((argb>>16)&255)/255.0;verts[n].color[1]=((argb>>8)&255)/255.0;verts[n].color[2]=(argb&255)/255.0;verts[n].color[3]=((argb>>24)&255)/255.0;
 	}
 
@@ -160,7 +163,7 @@ struct UniformState{
 
 	struct GLTexState{
 		float mat[16];
-		int blend, sphere_map, _1, _2;
+		int blend, sphere_map, flags, _2;
 	} texs[8];
 
 	float fog_range[2];
@@ -489,6 +492,8 @@ public:
 				if( flags&BBCanvas::CANVAS_TEX_SPHERE ){
 					us.texs[us.texs_used].sphere_map=1;
 				}
+
+				us.texs[us.texs_used].flags=ts.flags;
 
 				us.texs[us.texs_used].blend=ts.blend;
 				switch( ts.blend ){

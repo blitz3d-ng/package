@@ -19,10 +19,12 @@ bb_int_t BBCALL bbPeekByte( bbBank *bank,bb_int_t offset );
 bb_int_t BBCALL bbPeekShort( bbBank *bank,bb_int_t offset );
 bb_int_t BBCALL bbPeekInt( bbBank *bank,bb_int_t offset );
 bb_float_t BBCALL bbPeekFloat( bbBank *bank,bb_int_t offset );
+bb_int_t BBCALL bbPeekHandle( bbBank *bank,bb_int_t offset );
 void BBCALL bbPokeByte( bbBank *bank,bb_int_t offset,bb_int_t value );
 void BBCALL bbPokeShort( bbBank *bank,bb_int_t offset,bb_int_t value );
 void BBCALL bbPokeInt( bbBank *bank,bb_int_t offset,bb_int_t value );
 void BBCALL bbPokeFloat( bbBank *bank,bb_int_t offset,bb_float_t value );
+void BBCALL bbPokeHandle( bbBank *bank,bb_int_t offset,bb_int_t value );
 bb_int_t BBCALL bbReadBytes( bbBank *bank,BBStream *file,bb_int_t offset,bb_int_t count );
 bb_int_t BBCALL bbWriteBytes( bbBank *bank,BBStream *file,bb_int_t offset,bb_int_t count );
 

@@ -20,9 +20,9 @@ int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &ho
 		if( ident[0]!='_' ) ident="bb"+ident;
 
 		symmap.insert(
-			std::pair< llvm::orc::SymbolStringPtr,llvm::JITEvaluatedSymbol >(
+			std::pair< llvm::orc::SymbolStringPtr,llvm::orc::ExecutorSymbolDef >(
 				J->mangleAndIntern( ident ),
-				llvm::JITEvaluatedSymbol::fromPointer( sym.second,llvm::JITSymbolFlags::Absolute|llvm::JITSymbolFlags::Exported )
+				llvm::orc::ExecutorSymbolDef( llvm::orc::ExecutorAddr( (uint64_t)sym.second ),llvm::JITSymbolFlags::Absolute|llvm::JITSymbolFlags::Exported )
 			)
 		);
 	}

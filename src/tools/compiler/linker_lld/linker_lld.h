@@ -13,7 +13,7 @@ public:
 
 	Linker_LLD( const std::string &home );
 
-	void createExe( const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile );
+	void createExe( bool debug,const std::string &rt,const Target &target,const std::string &mainObj,const BundleInfo &bundle,const std::string &exeFile );
 };
 
 #endif
