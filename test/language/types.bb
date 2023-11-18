@@ -1,6 +1,15 @@
+Context "Types"
+
+; make sure an empty type is ok
+Type EmptyDef
+End Type
+
+emd.EmptyDef = New EmptyDef
+Delete emd
 
 Type Game
 	Field name$
+	Field meshes[5] ; here to make sure a particular codegen issue is fixed
 	Field player.Player[5]
 End Type
 

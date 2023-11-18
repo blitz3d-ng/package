@@ -42,6 +42,7 @@ public:
 
 	llvm::Type *voidTy;
 	llvm::Type *intTy;
+	llvm::Type *stringTy;
 	llvm::PointerType *voidPtr;
 
 	llvm::Constant *constantInt( int i );
@@ -68,6 +69,7 @@ public:
 	bool verify();
 
 	void injectMain();
+	void restoreData( int count );
 
 	int dumpToObj( std::string &out );
 	void dumpToStderr();

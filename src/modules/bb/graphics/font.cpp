@@ -20,16 +20,34 @@ BBImageFont::BBImageFont( FT_Face f,int height,float d ):face(f),atlas(0){
 
 BBImageFont *BBImageFont::load( const std::string &name,int height,float density,int flags ){
 	BBFontData font;
-
 	if( bbFontCache.count( name )==0 ){
-		if( bbSystemDriver->lookupFontData( name,font ) ){
-			bbFontCache.insert( make_pair( name,font ) );
+		int n=name.rfind( "." );
+		if( n==std::string::npos ){
+			if( !bbSystemDriver->lookupFontData( name,font ) ){
+				return 0;
+			}
 		}else{
-			return 0;
+			// TODO: needs more work
+			std::string ext=tolower( name.substr( n+1 ) );
+			if( ext=="ttf" ){
+				FILE *in=fopen( name.c_str(),"rb" );
+				if( !in ) return 0;
+
+				fseek( in,0,SEEK_END );
+				font.size=ftell( in );
+				fseek( in,0,SEEK_SET );
+
+				font.data=(unsigned char *)malloc( font.size );
+				fread( font.data,font.size,1,in );
+				fclose( in );
+
+			}
 		}
 	}else{
 		font=bbFontCache[name];
 	}
+
+	bbFontCache.insert( make_pair( name,font ) );
 
 	FT_Face face;
 	if( FT_New_Memory_Face( ft,font.data,font.size,0,&face ) ){

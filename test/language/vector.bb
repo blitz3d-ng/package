@@ -1,5 +1,6 @@
 
-Local temperatures[5]
+Local local_temperatures[5]
+Global global_temperatures[5]
 
 Function SetTemperatures( temps[5] )
 	temps[0] = 72
@@ -7,15 +8,23 @@ Function SetTemperatures( temps[5] )
 	temps[2] = 55
 	temps[3] = 68
 	temps[4] = 50
+
+	; confirm globals work
+	global_temperatures[2] = 45
 End Function
 
-SetTemperatures( temperatures )
+SetTemperatures( local_temperatures )
+SetTemperatures( global_temperatures )
 
-Expect temperatures[0] = 72, "temp 1 is 72"
-Expect temperatures[1] = 40, "temp 2 is 40"
-Expect temperatures[2] = 55, "temp 3 is 55"
-Expect temperatures[3] = 68, "temp 4 is 68"
-Expect temperatures[4] = 50, "temp 5 is 50"
+WriteStdout "result: "+global_temperatures[0]
+
+Expect global_temperatures[0] = 72, "temp 1 is 72"
+Expect global_temperatures[1] = 40, "temp 2 is 40"
+Expect global_temperatures[2] = 45, "temp 3 is 45"
+Expect global_temperatures[3] = 68, "temp 4 is 68"
+Expect global_temperatures[4] = 50, "temp 5 is 50"
+
+Expect local_temperatures[3] = 68, "temp 3 is 68"
 
 i = 2
-Expect temperatures[i] = 55, "temp 3 is 55"
+Expect global_temperatures[i] = 45, "temp 3 is 45"

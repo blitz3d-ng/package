@@ -1,8 +1,11 @@
 set (CMAKE_EXECUTABLE_SUFFIX_ )
 
 if(BB64 AND NOT BB_MINGW)
+  set(REQUIRED_LLVM_VERSION 16)
+
   set(LLVM_KNOWN_PATHS
     $ENV{LLVM_ROOT}
+    ${PROJECT_SOURCE_DIR}/llvm${REQUIRED_LLVM_VERSION}
     ${PROJECT_SOURCE_DIR}/llvm
     /usr/lib/llvm-14/lib/cmake/lld
     c:/llvm-x64
@@ -10,7 +13,7 @@ if(BB64 AND NOT BB_MINGW)
     c:/llvm
   )
 
-  find_package(LLVM 16 PATHS ${LLVM_KNOWN_PATHS})
+  find_package(LLVM ${REQUIRED_LLVM_VERSION} PATHS ${LLVM_KNOWN_PATHS})
   find_package(LLD PATHS ${LLVM_KNOWN_PATHS})
 
   # TODO: this will go away once CI is sorted...

@@ -4,7 +4,7 @@ ruby File.read(File.expand_path('./.ruby-version', __dir__)).strip
 
 gem 'github-markup', require: 'github/markup'
 gem 'commonmarker', platforms: [:ruby, :x64_mingw] # doesn't build under MinGW for some reason...
-gem 'activesupport', require: 'active_support/core_ext/string'
+gem 'activesupport', require: 'active_support/all'
 gem 'colored'
 gem 'nokogiri'
 gem 'filewatcher'
