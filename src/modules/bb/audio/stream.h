@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <fstream>
+#include <mutex>
 
 class AudioStream{
 protected:

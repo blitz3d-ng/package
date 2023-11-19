@@ -11,6 +11,12 @@
 
 struct StaticChannel : public BBChannel{
 	virtual void play()=0;
+	float getDuration(){
+		return 0.0;
+	}
+	float getPosition(){
+		return 0.0;
+	}
 };
 
 struct SoundChannel : public BBChannel{
@@ -39,6 +45,12 @@ struct SoundChannel : public BBChannel{
 	}
 	bool isPlaying(){
 		return FSOUND_IsPlaying( channel ) ? true : false;
+	}
+	float getDuration(){
+		return 0.0;
+	}
+	float getPosition(){
+		return 0.0;
 	}
 private:
 	int channel;
@@ -70,6 +82,12 @@ struct CDChannel : public BBChannel{
 	}
 	bool isPlaying(){
 		return true;
+	}
+	float getDuration(){
+		return 0.0;
+	}
+	float getPosition(){
+		return 0.0;
 	}
 };
 
