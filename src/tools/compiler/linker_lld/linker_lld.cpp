@@ -245,13 +245,37 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 
 #if defined(BB_MACOS) && defined(BB_ASAN)
 	if( target.host ){
-		// TODO: fix this hardcoding
-		#define CLANG_LIBS "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.3/lib/darwin"
+		if( FILE *fp=popen("clang -v 2>&1 >/dev/null", "r") ){
+			std::string clang_version,clang_dir;
 
-		args.push_back("-rpath");args.push_back(CLANG_LIBS);
-		args.push_back(CLANG_LIBS "/libclang_rt.asan_osx_dynamic.dylib");
-		args.push_back(CLANG_LIBS "/libclang_rt.profile_osx.a");
-		args.push_back(CLANG_LIBS "/libclang_rt.osx.a");
+			const char *dir_key="InstalledDir: ";
+			const char *version_key="clang version ";
+			const char *toolchain_ext=".xctoolchain";
+
+			char path[512];
+			while( fgets( path,sizeof(path),fp ) ){
+				if( strncmp( path,dir_key,strlen( dir_key ) )==0 ){
+					const char *start=path+strlen( dir_key );
+					const char *end=strstr( start,toolchain_ext )+strlen( toolchain_ext );
+					clang_dir.assign( start,end-start );
+				}else if( const char *start=strstr( path,version_key ) ){
+					start+=strlen( version_key );
+					const char *end=start;
+					while( *end && *end!=' ' ) ++end;
+					clang_version.assign( start,end-start );
+				}
+			}
+			pclose( fp );
+
+			std::string clang_libs=clang_dir+"/usr/lib/clang/"+clang_version+"/lib/darwin";
+
+			args.push_back( "-rpath" );args.push_back( clang_libs );
+			args.push_back( clang_libs+"/libclang_rt.asan_osx_dynamic.dylib" );
+			args.push_back( clang_libs+"/libclang_rt.profile_osx.a" );
+			args.push_back( clang_libs+"/libclang_rt.osx.a" );
+		}else{
+			// TODO: figure out what exactly to do here...
+		}
 	}
 #endif
 

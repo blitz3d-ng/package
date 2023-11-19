@@ -9,7 +9,7 @@ ENDIF()
 
 IF(TARGET minimp3)
  set (SOURCES ${SOURCES} mp3_stream.cpp mp3_stream.h)
- set (LIBS ${LIBS} minimp3)
+ set (INTERFACE_LIBS ${INTERFACE_LIBS} minimp3)
 ENDIF()
 
 bb_end_module()
