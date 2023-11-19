@@ -157,7 +157,7 @@ BBCanvas *GLGraphics::loadCanvas( const std::string &file,int flags ){
 
 	BBCanvas *canvas=d_new GLTextureCanvas( &res,pixmap,flags );
 	canvas_set.insert( canvas );
-	delete pixmap;
+
 	return canvas;
 }
 

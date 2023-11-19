@@ -7,4 +7,9 @@ IF(TARGET ogg AND TARGET vorbis)
  set (LIBS ${LIBS} vorbisfile vorbis ogg)
 ENDIF()
 
+IF(TARGET minimp3)
+ set (SOURCES ${SOURCES} mp3_stream.cpp mp3_stream.h)
+ set (LIBS ${LIBS} minimp3)
+ENDIF()
+
 bb_end_module()

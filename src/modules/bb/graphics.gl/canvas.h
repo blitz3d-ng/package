@@ -17,17 +17,21 @@ protected:
 	float scale_x,scale_y;
 	int origin_x,origin_y;
 	int handle_x,handle_y;
+	int mask;
 	float color[3];
+	BBPixmap *pixmap;
+	bool dirty;
 
 	bool needs_flush;
 
-	virtual void bind()const=0;
+	virtual void bind()=0;
 
 	void flush();
 
 	void quad( int x,int y,int w,int h,bool solid,bool tex,float tx,float ty,float color[3] );
 public:
 	GLCanvas( ContextResources *res,int f );
+	~GLCanvas();
 
 	void resize( int w,int h,float d );
 
@@ -95,14 +99,14 @@ public:
 
 	void unset();
 
-	void uploadData( void *data );
+	void uploadData();
 
 	unsigned int textureId();
 	unsigned int framebufferId();
 
 	void setPixmap( BBPixmap *pm );
 
-	void bind()const;
+	void bind();
 };
 
 class GLDefaultCanvas : public GLCanvas{
@@ -110,7 +114,7 @@ protected:
 	int mode;
 	unsigned int framebuffer;
 
-	void bind()const;
+	void bind();
 public:
 	GLDefaultCanvas( ContextResources *res,unsigned int fb,int m,int f );
 

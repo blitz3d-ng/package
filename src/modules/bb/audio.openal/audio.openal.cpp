@@ -4,6 +4,7 @@
 #include <OpenAL/OpenAL.h>
 #include <bb/audio/ogg_stream.h>
 #include <bb/audio/wav_stream.h>
+#include <bb/audio/mp3_stream.h>
 
 #ifndef __APPLE__
 #include <AL/al.h>
@@ -185,6 +186,14 @@ end:
 	bool isPlaying(){
 		return playbackRunning;
 	}
+
+	float getDuration(){
+		return (stream->getSamples() / (float)stream->getChannels()) / (float)stream->getFrequency();
+	}
+
+	float getPosition(){
+		return (stream->pos / (float)stream->getChannels()) / (float)stream->getFrequency();
+	}
 };
 
 class OpenALSound : public BBSound{
@@ -255,6 +264,8 @@ protected:
 				stream=new WAVAudioStream( BUFFER_SIZE );
 			}else if( strcasecmp( exts[tries] + 1,"ogg" ) == 0 ){
 				stream=new OGGAudioStream( BUFFER_SIZE );
+			}else if( strcasecmp( exts[tries] + 1,"mp3" ) == 0 ){
+				stream=new MP3AudioStream( BUFFER_SIZE );
 			}
 
 			if( !stream ) return 0;

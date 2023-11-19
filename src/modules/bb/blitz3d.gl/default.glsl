@@ -170,12 +170,22 @@ void main() {
 
 out vec4 bbFragColor;
 
+#define BLEND_REPLACE   0
+#define BLEND_ALPHA     1
+#define BLEND_MULTIPLY  2
+#define BLEND_ADD       3
+#define BLEND_DOT3      4
+#define BLEND_MULTIPLY2 5
+
+
 vec4 Blend( vec4 t0,sampler2D tex,int i ){
   vec4 t1=texture( tex,bbVertex_TexCoord[i] );
   switch( RS.Texture[i].Blend ){
-  case 0:return t0;
-  case 2:return t0*t1;
-  case 3:return t0+t1;
+  case BLEND_REPLACE:return t0;
+  case BLEND_ALPHA:return t0*t1;
+  case BLEND_MULTIPLY:return t0*t1;
+  case BLEND_ADD:return t0+t1;
+  default:return t0;
   }
 }
 

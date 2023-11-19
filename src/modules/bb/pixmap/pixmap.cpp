@@ -30,19 +30,26 @@ extern "C" BBPixmap *bbLoadPixmapWithUIKit( const char *file );
 
 BBPixmap *bbLoadPixmap( const std::string &file ){
 	std::string f=canonicalpath( file );
-	// LOGD( "[pixmap] load %s", f.c_str() );
 
+	BBPixmap *pix=0;
 #ifdef BB_IOS
-	return bbLoadPixmapWithUIKit( f.c_str() );
+	pix=bbLoadPixmapWithUIKit( f.c_str() );
 #else
-	return bbLoadPixmapWithFreeImage( f );
+	pix=bbLoadPixmapWithFreeImage( f );
 #endif
+
+	// if( pix ){
+	// 	LOGD( "[pixmap] Loaded %s", f.c_str() );
+	// }else{
+	// 	LOGD( "[pixmap] Failed to load %s", f.c_str() );
+	// }
+	return pix;
 }
 
 void BBPixmap::mask( int r,int g,int b ){
 	for( int i=0;i<width*height;i++ ){
 		unsigned char *p=&bits[bpp*i];
-		if( p[0]==0 && p[1]==0 && p[2]==0 ) p[3]=0.0f;
+		if( p[2]==r && p[1]==g && p[0]==b ) p[3]=0.0f;
 	}
 }
 

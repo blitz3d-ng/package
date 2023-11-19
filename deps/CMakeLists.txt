@@ -25,8 +25,9 @@ add_subdirectory(assimp)
 add_subdirectory(fmod)
 add_subdirectory(ogg)
 add_subdirectory(vorbis)
+add_subdirectory(minimp3)
 
-# misc 
+# misc
 add_subdirectory(enet)
 add_subdirectory(uuid)
 add_subdirectory(crossguid)

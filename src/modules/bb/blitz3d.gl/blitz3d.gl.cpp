@@ -407,24 +407,12 @@ public:
 			us.alpha_test = 0;
 		}
 
-		if( rs.blend==BLEND_REPLACE ){
-			GL( glDisable( GL_BLEND ) );
-		} else {
-			switch( rs.blend ){
-			case BLEND_ALPHA:
-				GL( glEnable( GL_BLEND ) );
-				GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA ) );
-				break;
-			case BLEND_MULTIPLY:
-				GL( glEnable( GL_BLEND ) );
-				GL( glBlendFunc( GL_DST_COLOR,GL_ZERO ) );
-				break;
-			case BLEND_ADD:
-				GL( glEnable( GL_BLEND ) );
-				GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE ) );
-				break;
-			}
+		int fog_mode=us.fog_mode;
+		if( rs.fx&FX_NOFOG ){
+			us.fog_mode = 0;
 		}
+
+		int blend=rs.blend;
 
 		// glShadeModel( rs.fx&FX_FLATSHADED ? GL_FLAT : GL_SMOOTH );
 
@@ -489,45 +477,38 @@ public:
 					GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT ) );
 				}
 
+				if( flags&BBCanvas::CANVAS_TEX_ALPHA ){
+					blend=BLEND_ALPHA;
+					us.alpha_test=1;
+				}
+
 				if( flags&BBCanvas::CANVAS_TEX_SPHERE ){
 					us.texs[us.texs_used].sphere_map=1;
 				}
 
-				us.texs[us.texs_used].flags=ts.flags;
-
 				us.texs[us.texs_used].blend=ts.blend;
-				switch( ts.blend ){
-				case BLEND_REPLACE:
-					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
-					break;
-				case BLEND_ALPHA:
-					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-					break;
-				case BLEND_MULTIPLY:
-					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-					break;
-				// case BLEND_MULTIPLY:
-				// 	glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_ARB,GL_MODULATE );
-				// 	break;
-				case BLEND_ADD:
-					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_ADD);
-					break;
-				case BLEND_DOT3:
-					// glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE_ARB );
-					// glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_ARB,GL_DOT3_RGB_ARB );
-					break;
-				case BLEND_MULTIPLY2:
-					// glTexEnvi( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE );
-					// glTexEnvi( GL_TEXTURE_ENV,GL_COMBINE_RGB,GL_MODULATE );
-					// glTexEnvi( GL_TEXTURE_ENV,GL_RGB_SCALE,2.0f );
-					break;
-				default:
-					// glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
-					break;
-				}
+				us.texs[us.texs_used].flags=ts.flags;
 
 				us.texs_used++;
 			}
+		}
+
+		switch( blend ){
+		case BLEND_REPLACE:default:
+			GL( glDisable( GL_BLEND ) );
+			break;
+		case BLEND_ALPHA:
+			GL( glEnable( GL_BLEND ) );
+			GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA ) );
+			break;
+		case BLEND_MULTIPLY:
+			GL( glEnable( GL_BLEND ) );
+			GL( glBlendFunc( GL_DST_COLOR,GL_ZERO ) );
+			break;
+		case BLEND_ADD:
+			GL( glEnable( GL_BLEND ) );
+			GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE ) );
+			break;
 		}
 
 		static unsigned int ubo=0;
@@ -541,6 +522,9 @@ public:
 
 		GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(us),&us,GL_DYNAMIC_DRAW ) );
 		GL( glBindBuffer( GL_UNIFORM_BUFFER,0 ) );
+
+		// restore
+		us.fog_mode=fog_mode;
 	}
 
   //rendering

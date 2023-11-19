@@ -37,6 +37,10 @@ unsigned int AudioStream::Ref::getFrequency(){
 	return stream->frequency;
 }
 
+unsigned int AudioStream::Ref::getSamples(){
+	return stream->samples;
+}
+
 bool AudioStream::Ref::eof(){
 	return pos==-1;
 }

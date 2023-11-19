@@ -43,3 +43,6 @@
 [submodule "deps/stackwalker/tree"]
 	path = deps/stackwalker/tree
 	url = https://github.com/JochenKalmbach/StackWalker
+[submodule "deps/minimp3/tree"]
+	path = deps/minimp3/tree
+	url = https://github.com/lieff/minimp3

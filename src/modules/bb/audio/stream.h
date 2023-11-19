@@ -27,6 +27,7 @@ public:
 		unsigned int getChannels();
 		unsigned int getBits();
 		unsigned int getFrequency();
+		unsigned int getSamples();
 
 		bool eof();
 	};

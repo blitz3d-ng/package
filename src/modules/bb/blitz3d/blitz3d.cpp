@@ -159,6 +159,13 @@ static Entity *loadEntity( std::string t,int hint ){
 	CachedTexture::setPath( filenamepath( t ) );
 	Entity *e=l->load( t,conv,hint );
 	CachedTexture::setPath( "" );
+
+	// if( e ){
+	// 	LOGD( "[blitz3d] Loaded %s", t.c_str() );
+	// }else{
+	// 	LOGD( "[blitz3d] Failed to load %s", t.c_str() );
+	// }
+
 	return e;
 }
 
@@ -484,8 +491,8 @@ BBLIB Brush * BBCALL bbCreateBrush( bb_float_t r,bb_float_t g,bb_float_t b ){
 
 BBLIB Brush * BBCALL bbLoadBrush( BBStr *file,bb_int_t flags,bb_float_t u_scale,bb_float_t v_scale ){
 	debug3d();
-	Texture t( *file,flags );
-	delete file;if( !t.getCanvas(0) ) return 0;
+	Texture t( *file,flags );delete file;
+	if( !t.getCanvas(0) ) return 0;
 	if( u_scale!=1 || v_scale!=1 ) t.setScale( 1/u_scale,1/v_scale );
 	Brush *br=bbCreateBrush( 255,255,255 );
 	br->setTexture( 0,t,0 );

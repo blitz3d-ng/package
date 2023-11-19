@@ -47,6 +47,8 @@ bool OGGAudioStream::readHeader(){
 	channels=ov_info( &vfile,-1 )->channels;
 	frequency=ov_info( &vfile,-1 )->rate;
 
+	// LOGD("samples=%i, channels=%i, frequency=%i",samples,channels,frequency);
+
 	return true;
 }
 
