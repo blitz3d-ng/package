@@ -205,7 +205,8 @@ void main() {
   bbFragColor=bbVertex_Color * tex;
 
   if( RS.FogMode>0 ){
-    bbFragColor=mix( bbFragColor,RS.FogColor,bbVertex_FogFactor );
+    vec4 fogColor=vec4( RS.FogColor.rgb,bbFragColor.a );
+    bbFragColor=mix( bbFragColor,fogColor,bbVertex_FogFactor );
   }
 
   if( RS.AlphaTest==1 && bbFragColor.a==0.0 ){

@@ -459,7 +459,7 @@ unsigned GLCanvas::getPixelFast( int x,int y )const{
 }
 
 void GLCanvas::unlock()const{
-	delete[] pixels;pixels=0;
+	// delete[] pixels;pixels=0;
 }
 
 void GLCanvas::setCubeMode( int mode ){
