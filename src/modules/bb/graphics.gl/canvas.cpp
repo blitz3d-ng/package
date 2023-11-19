@@ -8,6 +8,16 @@
 
 #include "default.glsl.h"
 
+static
+GLenum _cube_order[6]={
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // left (negative X) face
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // forward (positive Z) face - this is the default.
+	GL_TEXTURE_CUBE_MAP_POSITIVE_X, // right (positive X) face
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, // backward (negative Z) face
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, // up (positive Y) face
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Y  // down (negative Y) face
+};
+
 struct UniformState{
 	float xywh[4];
 	float res[2];
@@ -367,6 +377,7 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 }
 
 void GLCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid ){
+	return;
 	unsigned int cfb;
 	GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,(GLint*)&cfb ) );
 
@@ -376,7 +387,17 @@ void GLCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int s
 
 	GL( glBindFramebuffer( GL_READ_FRAMEBUFFER,rfb ) );
 	GL( glBindFramebuffer( GL_DRAW_FRAMEBUFFER,dfb ) );
-	GL( glBlitFramebuffer( src_x,src_y,src_w,src_h,x,src_h,src_w,y,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
+
+	// y=context_height-(h+y);
+	GL( glBlitFramebuffer(
+		src_x,src->getHeight()-(src_h+src_y),src_x+src_w,src_y+src_h,
+		x,getHeight()-(src_h+y),src_w,src_h,
+		GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
+	// GL( glBlitFramebuffer(
+	// 	src_x,src_y,src_x+src_w,src_y+src_h,
+	// 	x,y,x+src_w,y+src_h,
+	// 	GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST )
+	// );
 
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
 	flush();
@@ -466,6 +487,7 @@ void GLCanvas::setCubeMode( int mode ){
 }
 
 void GLCanvas::setCubeFace( int face ){
+	cube_face=face;
 }
 
 int GLCanvas::getWidth()const{
@@ -511,6 +533,12 @@ unsigned GLCanvas::getClsColor()const{
 // --- GLTextureCanvas ---
 
 GLTextureCanvas::GLTextureCanvas( ContextResources *res,int f ):GLCanvas( res,f ),texture(0),framebuffer(0),depthbuffer(0),twidth(0),theight(0){
+	cube_face=0;
+	if( flags&CANVAS_TEX_CUBE ){
+		target=GL_TEXTURE_CUBE_MAP;
+	}else{
+		target=GL_TEXTURE_2D;
+	}
 }
 
 GLTextureCanvas::GLTextureCanvas( ContextResources *res,int w,int h,int f ):GLTextureCanvas(res,f){
@@ -526,20 +554,73 @@ int GLTextureCanvas::getDepth()const{
 	return 8;
 }
 
+void GLTextureCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid ){
+	return;
+	flush();
+	GLCanvas::blit( x,y,s,src_x,src_y,src_w,src_h,solid );
+
+	if( !pixmap ){
+		BBPixmap *pm=d_new BBPixmap();
+		pm->trans=true;
+		pm->format=PF_RGBA;
+		pm->width=width;
+		pm->height=height;
+		pm->pitch=4;
+		pm->bpp=4;
+		int size=pm->width*pm->bpp*pm->height;
+		pm->bits=new unsigned char[size];
+		pixmap=pm;
+	}
+
+	GLint cfb;
+	GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,&cfb ) );
+	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
+	GL( glReadPixels( 0,0,pixmap->width,pixmap->height,GL_BGRA,GL_UNSIGNED_BYTE,pixmap->bits  ) );
+	GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
+
+	dirty=true;
+}
+
 void GLTextureCanvas::set(){
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
-	GLenum bufs[]={ GL_COLOR_ATTACHMENT0 };
+	GLenum bufs[]={ 0 };
+	bufs[0]=GL_COLOR_ATTACHMENT0+cube_face;
 	GL( glDrawBuffers( 1,bufs ) );
 }
 
 void GLTextureCanvas::unset(){
 	flush();
 
-	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-	GL( glGenerateMipmap( GL_TEXTURE_2D ) );
+	// if( !pixmap ){
+	// 	BBPixmap *pm=d_new BBPixmap();
+	// 	pm->trans=true;
+	// 	pm->format=PF_RGBA;
+	// 	pm->width=width;
+	// 	pm->height=height;
+	// 	pm->pitch=4;
+	// 	pm->bpp=4;
+	// 	int size=pm->width*pm->bpp*pm->height;
+	// 	pm->bits=new unsigned char[size];
+	// 	pixmap=pm;
+	// }
+
+	// GLint cfb;
+	// GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,&cfb ) );
+	// GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
+	// GL( glReadPixels( 0,0,pixmap->width,pixmap->height,GL_BGRA,GL_UNSIGNED_BYTE,pixmap->bits  ) );
+	// GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
+	// dirty=true;
+
+	// GL( glBindTexture( target,texture ) );
+	// GL( glGenerateMipmap( target ) );
+	// GL( glBindTexture( target,0 ) );
+
+	GL( glBindFramebuffer( GL_FRAMEBUFFER,0 ) );
 }
 
 void GLTextureCanvas::uploadData(){
+	if( texture && target!=GL_TEXTURE_2D ) return;
+
 	BBPixmap *pm=0;
 	void *data=0;
 
@@ -552,19 +633,36 @@ void GLTextureCanvas::uploadData(){
 		pm->bits=new unsigned char[size];
 		memcpy( pm->bits,pixmap->bits,size );
 
-		// if( flags&CANVAS_TEX_MASK ){
+		if( flags&CANVAS_TEX_MASK ){
 			pm->mask( (mask>>16)&255,(mask>>8)&255,mask&255 );
-		// }
+		}
 
 		data=pm->bits;
+	}else{
+		if( target!=GL_TEXTURE_2D ){
+			pm=d_new BBPixmap();
+			pm->trans=true;
+			pm->format=PF_RGBA;
+			pm->width=width;
+			pm->height=height;
+			pm->pitch=4;
+			pm->bpp=4;
+			int size=pm->width*pm->bpp*pm->height;
+			pm->bits=new unsigned char[size];
+			pm->fill(255,0,0,1.0);
+
+			data=pm->bits;
+		}
 	}
 
 
 	if( !texture ) GL( glGenTextures( 1,&texture ) );
 	GL( glActiveTexture( GL_TEXTURE0 ) );
-	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-	GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_BGRA,GL_UNSIGNED_BYTE,data ) );
-	GL( glGenerateMipmap( GL_TEXTURE_2D ) );
+	GL( glBindTexture( target,texture ) );
+	for( int i=0;i<(target==GL_TEXTURE_2D?1:6);i++ ){
+		GL( glTexImage2D( target==GL_TEXTURE_2D?target:_cube_order[i],0,GL_RGBA,width,height,0,GL_BGRA,GL_UNSIGNED_BYTE,data ) );
+	}
+	GL( glGenerateMipmap( target ) );
 
 	delete pm;
 
@@ -588,7 +686,9 @@ unsigned int GLTextureCanvas::framebufferId(){
 
 	GL( glGenFramebuffers( 1,&framebuffer ) );
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebuffer ) );
-	GL( glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textureId(),0 ) );
+	for( int i=0;i<(target==GL_TEXTURE_2D?1:6);i++ ){
+		GL( glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0+i,target==GL_TEXTURE_2D?target:_cube_order[i],textureId(),0 ) );
+	}
 	GL( glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer ) );
 
 	GLenum status=GL( glCheckFramebufferStatus( GL_FRAMEBUFFER ) );
@@ -606,11 +706,11 @@ void GLTextureCanvas::setPixmap( BBPixmap *pm ){
 	width=pm->width;
 	height=pm->height;
 	uploadData();
-	GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+	GL( glBindTexture( target,0 ) );
 }
 
 void GLTextureCanvas::bind(){
-	GL( glBindTexture( GL_TEXTURE_2D,textureId() ) );
+	GL( glBindTexture( target,textureId() ) );
 }
 
 
@@ -635,6 +735,7 @@ void GLDefaultCanvas::set(){
 #ifdef BB_DESKTOP
 	if( framebuffer==0 ){
 		GL( glDrawBuffer( mode ) );
+		GL( glReadBuffer( mode ) );
 	}
 #endif
 

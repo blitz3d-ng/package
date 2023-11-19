@@ -65,6 +65,7 @@ bool SDLGraphics::restore(){
 void SDLGraphics::vwait(){}
 
 void SDLGraphics::copy( BBCanvas *dest,int dx,int dy,int dw,int dh,BBCanvas *src,int sx,int sy,int sw,int sh ){
+	dest->blit( dx,dy,src,sx,sy,sw,sh,false );
 }
 
 void SDLGraphics::setGamma( int r,int g,int b,float dr,float dg,float db ){

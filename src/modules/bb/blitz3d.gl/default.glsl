@@ -6,6 +6,7 @@ uniform mat4 bbViewMatrix;
 uniform mat4 bbWorldMatrix;
 
 uniform sampler2D bbTexture[8];
+uniform samplerCube bbTextureCube[8];
 
 #define FOG_NONE   0
 #define FOG_LINEAR 1
@@ -24,7 +25,7 @@ layout(std140) uniform BBLightState {
 // must be mindful of alignment when ordering...
 struct BBTextureState {
   mat4 TForm;
-  int Blend,SphereMap,Flags,_2;
+  int Blend,SphereMap,Flags,CubeMap;
 } ;
 
 layout(std140) uniform BBRenderState {
@@ -104,6 +105,8 @@ void main() {
   mat4 bbModelViewProjectionMatrix=bbProjMatrix * bbModelViewMatrix;
   mat3 bbNormalMatrix=transpose(inverse(mat3(bbModelViewMatrix)));
 
+  bbVertex_Position = bbPosition;
+
   gl_Position = bbModelViewProjectionMatrix * vec4(bbPosition, 1.0);
 
   vec3 EyeNormal = bbNormalMatrix * bbNormal;
@@ -177,32 +180,34 @@ out vec4 bbFragColor;
 #define BLEND_DOT3      4
 #define BLEND_MULTIPLY2 5
 
+vec4 Sample2D( sampler2D tex,int i ){
+  return texture( tex,bbVertex_TexCoord[i] );
+}
 
-vec4 Blend( vec4 t0,sampler2D tex,int i ){
-  vec4 t1=texture( tex,bbVertex_TexCoord[i] );
+vec4 SampleCube( samplerCube tex,int i ){
+  vec3 coord = normalize(vec3(bbVertex_Position.x,-bbVertex_Position.y,bbVertex_Position.z));
+  return texture( tex,coord );
+}
+
+vec4 Blend( vec4 t0,vec4 t1,int i ){
   switch( RS.Texture[i].Blend ){
-  case BLEND_REPLACE:return t0;
-  case BLEND_ALPHA:return t0*t1;
-  case BLEND_MULTIPLY:return t0*t1;
-  case BLEND_ADD:return t0+t1;
-  default:return t0;
+  default:
+  case BLEND_REPLACE:  return t0;
+  case BLEND_ALPHA:    return mix(t0, t1, t1.a);
+  case BLEND_MULTIPLY: return t0*t1;
+  case BLEND_ADD:      return t0+t1;
   }
 }
 
 void main() {
-  vec4 tex=vec4( 1.0,1.0,1.0,1.0 );
+  bbFragColor=bbVertex_Color;
 
-  // TODO; ES doesn't allow dynamic indexing...
-  if( 0<RS.TexturesUsed ) tex=Blend( tex,bbTexture[0],0 );
-  if( 1<RS.TexturesUsed ) tex=Blend( tex,bbTexture[1],1 );
-  if( 2<RS.TexturesUsed ) tex=Blend( tex,bbTexture[2],2 );
-  if( 3<RS.TexturesUsed ) tex=Blend( tex,bbTexture[3],3 );
-  if( 4<RS.TexturesUsed ) tex=Blend( tex,bbTexture[4],4 );
-  if( 5<RS.TexturesUsed ) tex=Blend( tex,bbTexture[5],5 );
-  if( 6<RS.TexturesUsed ) tex=Blend( tex,bbTexture[6],6 );
-  if( 7<RS.TexturesUsed ) tex=Blend( tex,bbTexture[7],7 );
-
-  bbFragColor=bbVertex_Color * tex;
+  // TODO: ES doesn't allow dynamic indexing of uniforms
+  // so this (should) force the various compilers to unroll.
+  #define ProcessTexture(i) if( i<RS.TexturesUsed ) bbFragColor=Blend( bbFragColor,RS.Texture[i].CubeMap!=1?Sample2D(bbTexture[i],i):SampleCube(bbTextureCube[i],i),i );
+  for( int i=0;i<8;i++ ){
+    ProcessTexture(i);
+  }
 
   if( RS.FogMode>0 ){
     vec4 fogColor=vec4( RS.FogColor.rgb,bbFragColor.a );

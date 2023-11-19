@@ -33,6 +33,8 @@ public:
 	GLCanvas( ContextResources *res,int f );
 	~GLCanvas();
 
+	int cube_face;
+
 	void resize( int w,int h,float d );
 
 	virtual unsigned int framebufferId()=0;
@@ -53,7 +55,7 @@ public:
 	void rect( int x,int y,int w,int h,bool solid );
 	void oval( int x,int y,int w,int h,bool solid );
 	void text( int x,int y,const std::string &t );
-	void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
+	virtual void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
 	void image( BBCanvas *c,int x,int y,bool solid );
 
 	bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const;
@@ -93,10 +95,13 @@ public:
 	GLTextureCanvas( ContextResources *res,int w,int h,int f );
 	GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f );
 
+	GLenum target;
+
 	int getDepth()const;
 
-	void set();
+	void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
 
+	void set();
 	void unset();
 
 	void uploadData();

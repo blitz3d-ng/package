@@ -26,6 +26,8 @@ struct BBPixmap{
 	void mask( int r,int g,int b );
 	void buildAlpha( bool whiten );
 
+	void fill( int r,int g,int b,float a );
+
 	void flipVertically();
 	void swapBytes0and2();
 #endif

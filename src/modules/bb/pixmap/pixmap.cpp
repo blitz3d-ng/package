@@ -38,11 +38,11 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 	pix=bbLoadPixmapWithFreeImage( f );
 #endif
 
-	// if( pix ){
-	// 	LOGD( "[pixmap] Loaded %s", f.c_str() );
-	// }else{
-	// 	LOGD( "[pixmap] Failed to load %s", f.c_str() );
-	// }
+	if( pix ){
+		LOGD( "[pixmap] Loaded %s", f.c_str() );
+	}else{
+		LOGD( "[pixmap] Failed to load %s", f.c_str() );
+	}
 	return pix;
 }
 
@@ -58,6 +58,16 @@ void BBPixmap::buildAlpha( bool whiten ){
 	for( int i=0;i<width*height;i++ ){
 		unsigned char *p=&bits[bpp*i];
 		p[3]=(p[0]+p[1]+p[2])/3;
+	}
+}
+
+void BBPixmap::fill( int r,int g,int b,float a ){
+	for( int i=0;i<width*height;i++ ){
+		unsigned char *p=&bits[bpp*i];
+		p[0]=b;
+		p[1]=g;
+		p[2]=r;
+		p[3]=a*255;
 	}
 }
 
