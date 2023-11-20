@@ -13,8 +13,8 @@ if(BB64 AND NOT BB_MINGW)
     c:/llvm
   )
 
-  find_package(LLVM ${REQUIRED_LLVM_VERSION} PATHS ${LLVM_KNOWN_PATHS})
-  find_package(LLD PATHS ${LLVM_KNOWN_PATHS})
+  find_package(LLVM ${REQUIRED_LLVM_VERSION} PATHS ${LLVM_KNOWN_PATHS} NO_DEFAULT_PATH)
+  find_package(LLD PATHS ${LLVM_KNOWN_PATHS} NO_DEFAULT_PATH)
 
   # TODO: this will go away once CI is sorted...
   if(NOT LLVM_FOUND OR NOT LLD_FOUND)
@@ -145,6 +145,14 @@ target_link_libraries(blitzcc stdutil toml11 nlohmann_json)
 target_output_to_bin(blitzcc)
 
 if(LLVM_FOUND)
+  if(BB_LINUX)
+    # ELF doesn't export symbols by default. llvm::orc::LLJITBuilder needs them during initialization. it's possible
+    # there is a better solution than this.
+    set(EXPORTS_PATH ${CMAKE_CURRENT_BINARY_DIR}/blitzcc.syms)
+    file_write_changes(${EXPORTS_PATH} "{ llvm_orc_registerEHFrameSectionWrapper; llvm_orc_deregisterEHFrameSectionWrapper; };")
+    target_link_options(blitzcc PUBLIC -Wl,--dynamic-list,${EXPORTS_PATH})
+  endif()
+
   target_compile_definitions(blitzcc PRIVATE USE_LLVM)
 
   target_sources(blitzcc PUBLIC

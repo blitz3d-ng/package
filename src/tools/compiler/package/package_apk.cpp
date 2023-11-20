@@ -147,7 +147,7 @@ void createApk( const std::string &out,const std::string &tmpdir,const std::stri
 
 	// since relative paths create issues...
 	char dir[PATH_MAX];
-	getwd( dir );
+	getcwd( dir,PATH_MAX );
 	std::string currdir=dir;
 	chdir( tmpdir.c_str() );
 	RUN( "zip -u unaligned.apk *.dex lib/**/*.so" );
