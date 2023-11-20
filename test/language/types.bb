@@ -11,6 +11,7 @@ Type Game
 	Field name$
 	Field meshes[5] ; here to make sure a particular codegen issue is fixed
 	Field player.Player[5]
+	Field self.Game
 End Type
 
 Type Player
