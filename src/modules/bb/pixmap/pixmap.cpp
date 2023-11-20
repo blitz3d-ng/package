@@ -38,11 +38,12 @@ BBPixmap *bbLoadPixmap( const std::string &file ){
 	pix=bbLoadPixmapWithFreeImage( f );
 #endif
 
-	if( pix ){
-		LOGD( "[pixmap] Loaded %s", f.c_str() );
-	}else{
-		LOGD( "[pixmap] Failed to load %s", f.c_str() );
-	}
+	// if( pix ){
+	// 	LOGD( "[pixmap] Loaded %s", f.c_str() );
+	// }else{
+	// 	LOGD( "[pixmap] Failed to load %s", f.c_str() );
+	// }
+
 	return pix;
 }
 
