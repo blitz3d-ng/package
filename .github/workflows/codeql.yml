@@ -31,13 +31,17 @@ jobs:
       with:
         submodules: recursive
 
-    # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
 
-    - name: Build
+    - if: matrix.language == 'ruby' || matrix.language == 'javascript-typescript'
+      name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+
+    - if: matrix.language == 'c-cpp' || matrix.language == 'java-kotlin'
+      name: Build
       run: |
         mkdir _release/toolchains
         wget https://github.com/blitz3d-ng/env/releases/download/v7/llvm-17.0.5-${{ matrix.os }}.zip
