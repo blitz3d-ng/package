@@ -3,6 +3,7 @@
 #include "stream.h"
 
 #include <cstdlib>
+#include <ios>
 
 
 AudioStream::Ref::Ref( AudioStream *s ):stream(s){
@@ -73,4 +74,8 @@ size_t AudioStream::read( void *ptr, size_t size ){
 
 bool AudioStream::eof(){
 	return in.eof();
+}
+
+std::streampos AudioStream::getStart(){
+	return start;
 }

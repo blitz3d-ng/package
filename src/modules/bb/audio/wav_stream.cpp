@@ -78,6 +78,8 @@ bool WAVAudioStream::readHeader(){
 	// data size
 	read( buf,4 );
 
+	start=pos();
+
 	return true;
 }
 

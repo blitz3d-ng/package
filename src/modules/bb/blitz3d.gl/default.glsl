@@ -184,7 +184,7 @@ vec4 Sample2D( sampler2D tex,int i ){
   return texture( tex,bbVertex_TexCoord[i] );
 }
 
-vec4 SampleCube( samplerCube tex,int i ){
+vec4 SampleCube( samplerCube tex ){
   vec3 coord = normalize(vec3(bbVertex_Position.x,-bbVertex_Position.y,bbVertex_Position.z));
   return texture( tex,coord );
 }
@@ -204,7 +204,7 @@ void main() {
 
   // TODO: ES doesn't allow dynamic indexing of uniforms
   // so this (should) force the various compilers to unroll.
-  #define ProcessTexture(i) if( i<RS.TexturesUsed ) bbFragColor=Blend( bbFragColor,RS.Texture[i].CubeMap!=1?Sample2D(bbTexture[i],i):SampleCube(bbTextureCube[i],i),i );
+  #define ProcessTexture(i) if( i<RS.TexturesUsed ) bbFragColor=Blend( bbFragColor,RS.Texture[i].CubeMap!=1?Sample2D(bbTexture[i],i):SampleCube(bbTextureCube[i]),i );
   for( int i=0;i<8;i++ ){
     ProcessTexture(i);
   }

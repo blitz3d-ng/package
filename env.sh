@@ -1,10 +1,21 @@
 #!/bin/sh
 
-set -e
-
 ##
-# A basic docker wrapper for our environment containers.
-# See https://github.com/blitz3d-ng/env
+# A basic script which either configures the current shell
+# or starts docker.
+#
+# See https://github.com/blitz3d-ng/env for info on docker.
+
+# if no params, export needed variables for the compiler.
+if [ "$1" = "" ]
+then
+    export blitzpath=$(dirname $0)/_release
+    export PATH=$blitzpath/bin:$PATH
+    return 0
+fi
+
+# otherwise, try docker
+set -e
 
 export PLATFORM=$1
 shift

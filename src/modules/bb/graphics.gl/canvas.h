@@ -14,6 +14,9 @@ protected:
 	mutable unsigned char *pixels;
 	BBImageFont *font;
 
+	int mode;
+	unsigned int framebuffer;
+
 	float scale_x,scale_y;
 	int origin_x,origin_y;
 	int handle_x,handle_y;
@@ -22,22 +25,35 @@ protected:
 	BBPixmap *pixmap;
 	bool dirty;
 
-	bool needs_flush;
-
-	virtual void bind()=0;
-
 	void flush();
 
 	void quad( int x,int y,int w,int h,bool solid,bool tex,float tx,float ty,float color[3] );
 public:
 	GLCanvas( ContextResources *res,int f );
+	GLCanvas( ContextResources *res,int w,int h,int f );
+	GLCanvas( ContextResources *res,BBPixmap *pixmap,int f );
+
 	~GLCanvas();
 
-	int cube_face;
+	int cube_face,cube_mode;
+	GLenum target;
+
+	unsigned int texture,depthbuffer;
+	int twidth,theight;
+
+	void uploadData();
+	void downloadData();
+	void setPixmap( BBPixmap *pm );
+	void setFramebuffer( unsigned int fb,int m );
 
 	void resize( int w,int h,float d );
 
-	virtual unsigned int framebufferId()=0;
+	void set();
+	void unset();
+	void bind();
+
+	unsigned int textureId();
+	unsigned int framebufferId();
 
 	//MANIPULATORS
 	void setFont( BBFont *f );
@@ -76,6 +92,7 @@ public:
 	//ACCESSORS
 	int getWidth()const;
 	int getHeight()const;
+	int getDepth()const;
 	int cubeMode()const;
 	void getOrigin( int *x,int *y )const;
 	void getScale( float *x,float *y )const;
@@ -84,53 +101,6 @@ public:
 	unsigned getMask()const;
 	unsigned getColor()const;
 	unsigned getClsColor()const;
-};
-
-class GLTextureCanvas : public GLCanvas{
-protected:
-	unsigned int texture,framebuffer,depthbuffer;
-	int twidth,theight;
-public:
-	GLTextureCanvas( ContextResources *res,int f );
-	GLTextureCanvas( ContextResources *res,int w,int h,int f );
-	GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f );
-
-	GLenum target;
-
-	int getDepth()const;
-
-	void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
-
-	void set();
-	void unset();
-
-	void uploadData();
-
-	unsigned int textureId();
-	unsigned int framebufferId();
-
-	void setPixmap( BBPixmap *pm );
-
-	void bind();
-};
-
-class GLDefaultCanvas : public GLCanvas{
-protected:
-	int mode;
-	unsigned int framebuffer;
-
-	void bind();
-public:
-	GLDefaultCanvas( ContextResources *res,unsigned int fb,int m,int f );
-
-	void unset();
-	void set();
-
-	unsigned int framebufferId();
-
-	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid );
-
-	int getDepth()const;
 };
 
 #endif

@@ -49,6 +49,8 @@ public:
 	bool init( const char *url );
 	virtual size_t read( void *ptr, size_t size );
 	bool eof();
+
+	std::streampos getStart();
 };
 
 

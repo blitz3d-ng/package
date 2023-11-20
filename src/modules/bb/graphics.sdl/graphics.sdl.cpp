@@ -1,11 +1,13 @@
 #include "../../../stdutil/stdutil.h"
 #include "graphics.sdl.h"
 
-class SDLDefaultCanvas : public GLDefaultCanvas{
+class SDLDefaultCanvas:public GLCanvas{
 protected:
 	SDL_Window *wnd;
 public:
-	SDLDefaultCanvas( ContextResources *res,SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLDefaultCanvas(res,framebuffer,mode,flags),wnd(wnd){}
+	SDLDefaultCanvas( ContextResources *res,SDL_Window *wnd,unsigned fb,int mode,int flags ):GLCanvas(res,framebuffer,mode,flags),wnd(wnd){
+		setFramebuffer( fb,mode );
+	}
 };
 
 void SDLGraphics::onAppChange( void *data,void *context ){

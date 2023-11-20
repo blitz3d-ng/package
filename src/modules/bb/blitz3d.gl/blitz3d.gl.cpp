@@ -449,6 +449,9 @@ public:
 		us.use_vertex_color=rs.fx&FX_VERTEXCOLOR;
 
 		for( int i=0;i<MAX_TEXTURES;i++ ){
+			GL( glActiveTexture( GL_TEXTURE0+i ) );
+			GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+
 			GL( glActiveTexture( GL_TEXTURE0+i+8 ) );
 			GL( glBindTexture( GL_TEXTURE_CUBE_MAP,0 ) );
 		}
@@ -466,7 +469,7 @@ public:
 				continue;
 			}
 
-			GLTextureCanvas *canvas=(GLTextureCanvas*)ts.canvas;
+			GLCanvas *canvas=(GLCanvas*)ts.canvas;
 
 			if( !canvas ){
 				// ---
@@ -474,8 +477,14 @@ public:
 				int flags=ts.canvas->getFlags();
 
 				if( flags&BBCanvas::CANVAS_TEX_CUBE ){
+					GL( glActiveTexture( GL_TEXTURE0+i ) );
+					GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+
 					GL( glActiveTexture( GL_TEXTURE0+MAX_TEXTURES+i ) );
 				}else{
+					GL( glActiveTexture( GL_TEXTURE0+MAX_TEXTURES+i ) );
+					GL( glBindTexture( GL_TEXTURE_CUBE_MAP,0 ) );
+
 					GL( glActiveTexture( GL_TEXTURE0+i ) );
 				}
 

@@ -45,6 +45,8 @@ public:
 	ALuint frequency;
 	ALenum format;
 
+	bool loop;
+
 	std::thread playbackThread;
 	bool playbackRunning;
 
@@ -121,6 +123,7 @@ public:
 			goto end;
 		}
 
+loop:
 		while( channel->streaming() ){
 			ALuint buffer;
 			ALint val;
@@ -140,8 +143,13 @@ public:
 
 			alGetSourcei( channel->source,AL_SOURCE_STATE,&val );
 			if( val!=AL_PLAYING ){
-				alSourcePlay(channel->source);
+				alSourcePlay( channel->source );
 			}
+		}
+		LOGD("channel->playbackRunning=%i,loop=%i",channel->playbackRunning,channel->loop?1:0);
+		if( channel->playbackRunning && channel->loop ){
+			channel->stream->pos=channel->stream->stream->getStart();
+			goto loop;
 		}
 
 		ALint val;
@@ -152,34 +160,39 @@ public:
 end:
 		channel->playbackRunning=false;
 
-		alDeleteSources( 1,&channel->source );
-		alDeleteBuffers( NUM_BUFFERS,channel->buffers );
+		AL( alDeleteSources( 1,&channel->source ) );
+		AL( alDeleteBuffers( NUM_BUFFERS,channel->buffers ) );
 
 		delete channel->stream;channel->stream=0;
 	}
 
 	void stop(){
+		AL( alSourceStop( source ) );
 	}
 	void setPaused( bool paused ){
 	}
 	void setPitch( int pitch ){
+		// AL( alSourcef( source,AL_GAIN,volume ) );
 	}
 	void setVolume( float volume ){
+		// AL( alSourcef( source,AL_GAIN,volume ) );
 	}
 	void setPan( float pan ){
 	}
 	void set3d( const float pos[3],const float vel[3] ){
 		float p[3]={ pos[0],pos[1],-pos[2] };
 		float v[3]={ vel[0],vel[1],-vel[2] };
+		float up[3]={ 0.0,1.0,0.0 };
 
 		// get these from set3dOptions...
-		alSourcef( source,AL_ROLLOFF_FACTOR,0.1 );
-		alSourcef( source,AL_REFERENCE_DISTANCE,0.2 );
+		// AL( alSourcef( source,AL_ROLLOFF_FACTOR,0.1 ) );
+		// AL( alSourcef( source,AL_REFERENCE_DISTANCE,20 ) );
+		// AL( alSourcef( source,AL_MAX_DISTANCE,100 ) );
 
-		alDistanceModel( AL_INVERSE_DISTANCE_CLAMPED );
-		alSourcefv( source,AL_POSITION,p );
-		alSourcefv( source,AL_VELOCITY,v );
-		alSourcei( source,AL_SOURCE_RELATIVE,false );
+		// AL( alDistanceModel( AL_INVERSE_DISTANCE_CLAMPED ) );
+		// AL( alSourcefv( source,AL_POSITION,p ) );
+		// AL( alSourcefv( source,AL_VELOCITY,v ) );
+		// AL( alSourcei( source,AL_SOURCE_RELATIVE,false ) );
 		// alSourcef( source,AL_MIN_GAIN,0.0 );
 		// alSourcef( source,AL_MAX_GAIN,100.0f );
 	}
@@ -200,8 +213,10 @@ class OpenALSound : public BBSound{
 public:
 	AudioStream *stream;
 	ALenum format;
+	bool loop;
 
 	OpenALSound():format(0){
+		setLoop( false );
 	}
 
 	~OpenALSound(){
@@ -212,29 +227,31 @@ public:
 		return true;
 	}
 
-	BBChannel *play(){
+	OpenALChannel *queue(){
 		OpenALChannel *channel=new OpenALChannel();
 		if( !channel->setStream( stream ) ){
 			return 0;
 		}
-		alDistanceModel( AL_NONE );
-		channel->play();
+		channel->loop=loop;
 		channel_set.insert( channel );
 		return channel;
+	}
+
+	BBChannel *play(){
+		OpenALChannel *c=queue();
+		c->play();
+		return c;
 	}
 
 	BBChannel *play3d( const float pos[3],const float vel[3] ){
-		OpenALChannel *channel=new OpenALChannel();
-		if( !channel->setStream( stream ) ){
-			return 0;
-		}
-		channel->set3d( pos,vel );
-		channel->play();
-		channel_set.insert( channel );
-		return channel;
+		OpenALChannel *c=queue();
+		c->set3d( pos,vel );
+		c->play();
+		return c;
 	}
 
 	void setLoop( bool loop ){
+		loop=loop;
 	}
 
 	void setPitch( int hertz ){
@@ -251,6 +268,7 @@ class OpenALAudioDriver : public BBAudioDriver{
 protected:
 	ALCdevice *dev;
 	ALCcontext *ctx;
+	float max_dist;
 
 	AudioStream *loadStream( const std::string &filename,bool preload ){
 		AudioStream *stream=0;
@@ -293,9 +311,9 @@ public:
 			if( channel_set.erase( c ) ) delete c;
 		}
 		while( sound_set.size() ) freeSound( *sound_set.begin() );
-		alcMakeContextCurrent( NULL );
-		if( ctx ){ alcDestroyContext( ctx );ctx=0; }
-		if( dev ){ alcCloseDevice( dev );dev=0; }
+		AL( alcMakeContextCurrent( NULL ) );
+		if( ctx ){ AL( alcDestroyContext( ctx ) );ctx=0; }
+		if( dev ){ AL( alcCloseDevice( dev ) );dev=0; }
 	}
 
 	bool init(){
@@ -337,16 +355,17 @@ public:
 	//master volume
 
 	void set3dOptions( float roll,float dopp,float dist ){
-		alDopplerFactor( dopp );
+		// AL( alDopplerFactor( dopp ) );
+		max_dist=dist;
 	}
 
 	void set3dListener( const float pos[3],const float vel[3],const float forward[3],const float up[3] ){
 		float p[3]={ pos[0],pos[1],-pos[2] };
 		float v[3]={ vel[0],vel[1],-vel[2] };
 
-		alListenerfv( AL_POSITION,p );
-		alListenerfv( AL_VELOCITY,v );
-		alListenerfv( AL_ORIENTATION,up );
+		// AL( alListenerfv( AL_POSITION,p ) );
+		// AL( alListenerfv( AL_VELOCITY,v ) );
+		// AL( alListenerfv( AL_ORIENTATION,up ) );
 	}
 
 	BBChannel *playCDTrack( int track,int mode ){

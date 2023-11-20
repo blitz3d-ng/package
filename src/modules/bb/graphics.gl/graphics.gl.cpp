@@ -144,7 +144,7 @@ BBFont *GLGraphics::getDefaultFont()const{
 
 //OBJECTS
 BBCanvas *GLGraphics::createCanvas( int width,int height,int flags ){
-	BBCanvas *canvas=d_new GLTextureCanvas( &res,width,height,flags );
+	BBCanvas *canvas=d_new GLCanvas( &res,width,height,flags );
 	canvas_set.insert( canvas );
 	return canvas;
 }
@@ -155,7 +155,7 @@ BBCanvas *GLGraphics::loadCanvas( const std::string &file,int flags ){
 
 	pixmap->flipVertically();
 
-	BBCanvas *canvas=d_new GLTextureCanvas( &res,pixmap,flags );
+	BBCanvas *canvas=d_new GLCanvas( &res,pixmap,flags );
 	canvas_set.insert( canvas );
 
 	return canvas;
