@@ -76,12 +76,12 @@ static bool clip( const RECT &viewport,RECT *d,RECT *s ){
 gxCanvas::gxCanvas( IDirectDraw7 *dd,ddSurf *s,BBFont *font,int f ):
 D3D7Canvas(dd,s,f),cm_mask(0){
 	DDSURFACEDESC2 desc={sizeof(desc)};
-  surf->GetSurfaceDesc( &desc );
+	surf->GetSurfaceDesc( &desc );
 
-  clip_rect.left=clip_rect.top=0;
-  clip_rect.right=desc.dwWidth;
-  clip_rect.bottom=desc.dwHeight;
-  cm_pitch=(clip_rect.right+31)/32+1;
+	clip_rect.left=clip_rect.top=0;
+	clip_rect.right=desc.dwWidth;
+	clip_rect.bottom=desc.dwHeight;
+	cm_pitch=(clip_rect.right+31)/32+1;
 
 	setMask( 0 );
 	setColor( ~0 );

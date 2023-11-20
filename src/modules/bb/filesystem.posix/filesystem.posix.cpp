@@ -49,7 +49,8 @@ bool PosixFileSystem::createFile( const std::string &file ){
 }
 
 bool PosixFileSystem::deleteFile( const std::string &file ){
-	RTEX( "PosixFileSystem::deleteFile not implemented" );
+	std::string t=canonicalpath( file );
+	return remove( t.c_str() )==0;
 }
 
 bool PosixFileSystem::copyFile( const std::string &src,const std::string &dest ){
@@ -61,7 +62,8 @@ bool PosixFileSystem::renameFile( const std::string &src,const std::string &dest
 }
 
 bool PosixFileSystem::setCurrentDir( const std::string &dir ){
-	return chdir( dir.c_str() )==0;
+	std::string t=canonicalpath( dir );
+	return chdir( t.c_str() )==0;
 }
 
 std::string PosixFileSystem::getCurrentDir()const{
@@ -75,16 +77,18 @@ std::string PosixFileSystem::getCurrentDir()const{
 }
 
 int PosixFileSystem::getFileSize( const std::string &name )const{
+	std::string t=canonicalpath(name);
 	struct stat fstat;
-	if( stat( name.c_str(),&fstat )==0 ){
+	if( stat( t.c_str(),&fstat )==0 ){
 		return fstat.st_size;;
 	}
 	return 0;
 }
 
 int PosixFileSystem::getFileType( const std::string &name )const{
+	std::string t=canonicalpath(name);
 	struct stat fstat;
-	if( stat( name.c_str(),&fstat )==0 ){
+	if( stat( t.c_str(),&fstat )==0 ){
 		if( S_ISREG( fstat.st_mode ) ){
 			return 1;
 		}else if( S_ISDIR( fstat.st_mode ) ){
@@ -96,7 +100,10 @@ int PosixFileSystem::getFileType( const std::string &name )const{
 }
 
 BBDir *PosixFileSystem::openDir( const std::string &name,int flags ){
-	DIR *dp = opendir( name.c_str() );
+	std::string t=canonicalpath( name );
+	if( t.back()=='/' ) t=t.substr( 0,t.size()-1 );
+
+	DIR *dp = opendir( t.c_str() );
 	if( !dp ) return 0;
 
 	return d_new PosixDir( dp );

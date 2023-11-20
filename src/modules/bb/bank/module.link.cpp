@@ -14,10 +14,12 @@ BBMODULE_LINK( bank ){
 	rtSym( "%PeekShort%bank%offset",bbPeekShort );
 	rtSym( "%PeekInt%bank%offset",bbPeekInt );
 	rtSym( "#PeekFloat%bank%offset",bbPeekFloat );
+	rtSym( "%PeekHandle%bank%offset",bbPeekHandle );
 	rtSym( "PokeByte%bank%offset%value",bbPokeByte );
 	rtSym( "PokeShort%bank%offset%value",bbPokeShort );
 	rtSym( "PokeInt%bank%offset%value",bbPokeInt );
 	rtSym( "PokeFloat%bank%offset#value",bbPokeFloat );
+	rtSym( "PokeHandle%bank%offset%value",bbPokeHandle );
 	rtSym( "%ReadBytes%bank%file%offset%count",bbReadBytes );
 	rtSym( "%WriteBytes%bank%file%offset%count",bbWriteBytes );
 }

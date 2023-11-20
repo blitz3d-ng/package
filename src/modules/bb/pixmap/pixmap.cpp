@@ -1,16 +1,9 @@
 
 #include <bb/blitz/blitz.h>
 #include "pixmap.h"
+#include "../../../stdutil/stdutil.h"
 
 #include <string.h>
-
-#ifndef WIN32
-  #define WRONG_DIV '\\'
-  #define RIGHT_DIV '/'
-#else
-  #define RIGHT_DIV '\\'
-  #define WRONG_DIV '/'
-#endif
 
 BBPixmap::BBPixmap():width(0),height(0),depth(0),pitch(0),bits(0){
 }
@@ -36,23 +29,28 @@ BBPixmap *bbLoadPixmapWithFreeImage( const std::string &file );
 extern "C" BBPixmap *bbLoadPixmapWithUIKit( const char *file );
 
 BBPixmap *bbLoadPixmap( const std::string &file ){
-	std::string f;
-	for( int i=0;i<file.size();i++ ){
-		f+=file[i] == WRONG_DIV ? RIGHT_DIV : file[i];
-	}
+	std::string f=canonicalpath( file );
 
+	BBPixmap *pix=0;
 #ifdef BB_IOS
-	LOGD( "load: %s\n", f.c_str() );
-	return bbLoadPixmapWithUIKit( f.c_str() );
+	pix=bbLoadPixmapWithUIKit( f.c_str() );
 #else
-	return bbLoadPixmapWithFreeImage( f );
+	pix=bbLoadPixmapWithFreeImage( f );
 #endif
+
+	// if( pix ){
+	// 	LOGD( "[pixmap] Loaded %s", f.c_str() );
+	// }else{
+	// 	LOGD( "[pixmap] Failed to load %s", f.c_str() );
+	// }
+
+	return pix;
 }
 
 void BBPixmap::mask( int r,int g,int b ){
 	for( int i=0;i<width*height;i++ ){
 		unsigned char *p=&bits[bpp*i];
-		if( p[0]==0 && p[1]==0 && p[2]==0 ) p[3]=0.0f;
+		if( p[2]==r && p[1]==g && p[0]==b ) p[3]=0.0f;
 	}
 }
 
@@ -61,6 +59,16 @@ void BBPixmap::buildAlpha( bool whiten ){
 	for( int i=0;i<width*height;i++ ){
 		unsigned char *p=&bits[bpp*i];
 		p[3]=(p[0]+p[1]+p[2])/3;
+	}
+}
+
+void BBPixmap::fill( int r,int g,int b,float a ){
+	for( int i=0;i<width*height;i++ ){
+		unsigned char *p=&bits[bpp*i];
+		p[0]=b;
+		p[1]=g;
+		p[2]=r;
+		p[3]=a*255;
 	}
 }
 
@@ -74,7 +82,7 @@ void BBPixmap::flipVertically(){
 	}
 
 	memcpy( bits,tmp,size );
-	delete tmp;
+	delete[] tmp;
 }
 
 void BBPixmap::swapBytes0and2(){

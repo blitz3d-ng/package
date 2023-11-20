@@ -66,7 +66,7 @@ static inline void debugDir( BBDir *d ){
 }
 
 static BBFile *open( BBStr *f,std::ios_base::openmode n ){
-	std::string t=*f;
+	std::string t=canonicalpath( *f );
 	std::streambuf *buf=gx_filesys->openFile( t,n );
 	if( buf ){
 		BBFile *f=d_new BBFile( buf );

@@ -10,13 +10,13 @@ enum{
 
 struct BBPixmap{
 	int format;
-  int width,height,depth,pitch,bpp;
-  bool trans;
-  unsigned char *bits;
+	int width,height,depth,pitch,bpp;
+	bool trans;
+	unsigned char *bits;
 
 #ifdef __cplusplus
-  BBPixmap();
-  ~BBPixmap();
+	BBPixmap();
+	~BBPixmap();
 
 	int getWidth();
 	int getHeight();
@@ -25,6 +25,8 @@ struct BBPixmap{
 
 	void mask( int r,int g,int b );
 	void buildAlpha( bool whiten );
+
+	void fill( int r,int g,int b,float a );
 
 	void flipVertically();
 	void swapBytes0and2();

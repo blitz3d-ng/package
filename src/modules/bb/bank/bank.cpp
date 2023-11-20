@@ -92,6 +92,11 @@ bb_float_t BBCALL bbPeekFloat( bbBank *b,bb_int_t offset ){
 	return *(float*)(b->data+offset);
 }
 
+bb_int_t BBCALL bbPeekHandle( bbBank *b,bb_int_t offset ){
+	debugBank( b,offset+sizeof(bb_ptr_t)-1 );
+	return *(bb_ptr_t*)(b->data+offset);
+}
+
 void BBCALL bbPokeByte( bbBank *b,bb_int_t offset,bb_int_t value ){
 	debugBank( b,offset );
 	*(char*)(b->data+offset)=value;
@@ -110,6 +115,11 @@ void BBCALL bbPokeInt( bbBank *b,bb_int_t offset,bb_int_t value ){
 void BBCALL bbPokeFloat( bbBank *b,bb_int_t offset,bb_float_t value ){
 	debugBank( b,offset );
 	*(float*)(b->data+offset)=value;
+}
+
+void BBCALL bbPokeHandle( bbBank *b,bb_int_t offset,bb_int_t value ){
+	debugBank( b,offset );
+	*(bb_ptr_t*)(b->data+offset)=value;
 }
 
 bb_int_t BBCALL  bbReadBytes( bbBank *b,BBStream *s,bb_int_t offset,bb_int_t count ){
