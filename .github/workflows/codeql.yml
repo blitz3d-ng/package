@@ -38,8 +38,8 @@ jobs:
       run: |
         make help
         mkdir _release/toolchains
-        wget https://github.com/blitz3d-ng/env/releases/download/v4/llvm-16.0.6-${{ matrix.os }}.zip
-        unzip llvm-16.0.6-${{ matrix.os }}.zip
+        wget https://github.com/blitz3d-ng/env/releases/download/v4/llvm-16.0.6-macos-13.zip
+        unzip llvm-16.0.6-macos-13.zip
         brew install ninja gcovr
         make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
 
