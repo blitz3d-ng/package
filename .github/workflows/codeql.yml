@@ -29,7 +29,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        submodules: recursive
+        submodules: ${{ matrix.language == 'c-cpp' || matrix.language == 'java-kotlin' && 'recursive' || false }}
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
