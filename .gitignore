@@ -36,6 +36,7 @@ UpgradeLog.htm
 *.tmp
 
 *.DS_Store
+*._*
 
 *.bb_bak*
 
