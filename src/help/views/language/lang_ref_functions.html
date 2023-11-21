@@ -1,0 +1,29 @@
+<% title 'Functions - Language Reference' %>
+
+<h2>Functions</h2>
+
+<p>A function is defined using the <kbd>Function</kbd> keyword:</p>
+<code>
+<pre>
+Function {funcname}{typetag}( {params} )
+  {statements}
+End Function
+</pre>
+</code>
+
+<ul>
+  <li>{<b>funcname</b>} is any valid identifier.</p>
+  <li> {<b>typetag</b>} is the type of value returned by the function. If {typetag}
+      is omitted, the function returns an integer value by default. </p>
+  <li> {<b>params</b>} is a comma separated list of variables which is passed
+      to the function when it is called, each parameter may be given an optional
+      type tag. Parameters are always local. </p>
+</ul>
+
+<p> A function may use the <kbd>Return</kbd> statement to return a result. <kbd>Return</kbd>
+  may optionally be followed by an expression. </p>
+<p> If there is no <kbd>Return</kbd> statement, or a <kbd>Return</kbd> without any expression is used,
+  the function returns a default value of <kbd>0</kbd> for numeric functions, an empty
+  string (<kbd>""</kbd>) for string functions, or a <kbd>Null</kbd> object for custom type functions.
+</p>
+<p>&nbsp; </p>

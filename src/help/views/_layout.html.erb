@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="<%= relative_to_root %>/assets/style.css" type="text/css" />
+</head>
+<body>
+  <nav>
+    <a href="<%= relative_to_root %>/index.html">
+      <img src="./b3dlogo.jpg" />
+    </a>
+    <h1>Blitz3D "NG" Docs</h1>
+    <div class="clear"></div>
+  </nav>
+  <%= yield %>
+</body>
+</html>

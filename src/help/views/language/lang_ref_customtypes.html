@@ -1,0 +1,170 @@
+<% title 'Custom Types - Language Reference' %>
+
+<h1>Custom Types</h1>
+
+<h2>Introduction - What Are They?</h2>
+
+<p>
+  <kbd>Type</kbd> is your best friend. It is used to create a 'collection' of objects that share the same parameters and need to be interated through quickly and easily.
+</p>
+<p>
+  Think about SPACE INVADERS. There are many aliens on the screen at one time. Each of these aliens have a few variables that they all need: x and y coordinates plus a variable to control which graphic to display (legs out or legs in). Now, we could make hundreds of variables like invader1x, invader1y, invader2x, invader2y, etc. to control all the aliens, but that wouldn't make much sense would it? You could use an array to track them; invader(number,x,y,graphic), and the loop through them with a <kbd>For/Next</kbd> loop but that is a lot of work! The <kbd>Type</kbd> variable collection was created to handle just this sort of need.
+</p>
+<p>
+  <kbd>Type</kbd> defines an object collection. Each object in that collection inherits its own copy of the variables defined by the <kbd>Type</kbd>'s <kbd>Field</kbd> command. Each variable of each object in the collection can be read individually and can be easily iterated through quickly. Use the <kbd>Field</kbd> command to assign the variables you want between the <kbd>Type</kbd> and <kbd>End Type</kbd> commands.
+</p>
+<p>
+  If it helps, think of a <kbd>Type</kbd> collection as a database. Each object is a record of the database, and every variable is a field of the record. Using commands like <kbd>Before</kbd>, <kbd>After</kbd>, and <kbd>For/Each</kbd>, you can move change the pointer of the 'database' to point to a different record and retrieve/set the variable 'field' values.
+</p>
+<p>
+  Not a database guru? Need another example? Okay. Let's say you are setting up an auditorium for a speech or event and you are putting up hundreds of chairs for the spectators. The chairs have to be in a certain place on the floor, and some will need to be raised up a bit higher than others (visiting dignitaries, the mayor is coming, etc.). So being the computer genius you are, you start figuring out how you can layout the chairs with the least amount of effort. You realize that the floor is checkered, so its really a huge grid! This will make it easy! You just need to number the floor on a piece of graph paper and put into the grid how high each chair should be, based on where the boss told you the important people are to sit. So, for each chair, you will have a row and column on the graph paper (x and y location) and a level to adjust the chair to (height). Good, we are organized. Now, even though we have it all on paper, we still have to do the work of placing all the chairs. After you are done, let's say your boss walks up to you and says, "They aren't centered right .. move'em all over 1 square." Ah crap! You have them all perfect, and even though it is a simple thing to move a chair one square to the right (after all, their order and height won't change) - you still have to move each and every chair! Should would be nice if you could just wave your hand and say &quot;For each chair in the room, add 1 square to its x location&quot; and have it just magically happen. Alas, in the real world, get busy - you've got a lot of chairs to move!
+</p>
+<p>
+  In Blitz, you could have set up a <kbd>Type</kbd> called <kbd>Chair</kbd>, and set a <kbd>Field</kbd> for each value such as <kbd>x</kbd>, <kbd>y</kbd>, and <kbd>height</kbd>. You would then create as many chairs as you need with the <kbd>New</kbd> command (each time you call <kbd>New</kbd>, it makes a new chair, with its own <kbd>x</kbd>, <kbd>y</kbd>, and <kbd>height</kbd> variables) and assign them the <kbd>x</kbd>, <kbd>y</kbd>, and <kbd>height</kbd> values you decide upon.
+</p>
+<p>
+  In our example above, when the boss told you to move the chairs over 1 box, you probably groaned inside. That's a lot of work! In Blitz, we could use four lines of code to adjust all our <kbd>Chair</kbd> objects to the new position (using <kbd>For/Each</kbd> commands).</p>
+
+<h2>Defining A Type</h2>
+<p>Custom types are defined using the 'Type' keyword. For example:</p>
+<code><pre>
+Type MyType
+  Field x, y
+End Type
+</pre></code>
+<p>...creates a custom type called <kbd>MyType</kbd> with 2 fields - <kbd>x</kbd> and <kbd>y</kbd>.</p>
+
+<p>Fields within a custom type may themselves be of any basic type or custom
+type. Type tags are used to determine the type of a field. For example:</p>
+<code><pre>
+Type MyType
+  Field x,y
+  Field description$
+  Field delta_x#,delta_y#
+End Type
+</pre></code>
+
+<h2>Creating a Type Instance</h2>
+<p>You can create variables or arrays of custom types using a <kbd>.</kbd> type tag followed
+by the type name. For example:</p>
+<code><pre>
+Global mine.MyType Dim all_mine.MyType( 100 )
+</pre></code>
+
+<p>Before a custom type variable or array element can be used, it must be initialized
+using the 'New' operator. For example:</p>
+<code><pre>
+mine.MyType=New MyType
+</pre></code>
+<p>
+  The <kbd>New</kbd> operator creates an 'object' of type <kbd>MyType</kbd>, and returns a 'pointer' to the new object. The identifier following the <kbd>New</kbd> operator must be a valid
+custom type name.
+</p>
+
+<p>The fields within a custom type are accessed using the <kbd>\</kbd> character. For
+example:</p>
+<code><pre>
+mine\x=100
+Print mine\x
+</pre></code>
+
+<h2>Destroying a Type Instance</h2>
+<p>When you've finished with an object, you should delete it using the 'Delete'
+command. For example:</p>
+<code><pre>
+Delete mine
+</pre></code>
+<p>This releases the memory used by the object.</p>
+
+<h2>Determining Existance</h2>
+<p>The special keyword <kbd>Null</kbd> is used to represent non-existent objects. An
+object is non-existent if it hasn't been initialized yet using <kbd>New</kbd>, or has
+been released using <kbd>Delete</kbd>. For example:</p>
+<code><pre>
+mine.MyType=New MyType
+If mine<>Null
+  Print "exists!"
+Else
+  Print "doesn't exist!"
+EndIf
+Delete mine
+If mine<>Null
+  Print "exists!"
+Else
+  Print "doesn't exist!"
+EndIf
+</pre></code>
+
+<p>...will print the following:</p>
+<code><pre>
+exists!
+doesn't exist!
+</pre></code>
+
+<p>Each custom type has an associated list of objects known as a 'type list'.
+When an object is created using <kbd>New</kbd>, it is automatically added to the type
+list. When an object is released using <kbd>Delete</kbd>, it is removed from the type
+list. This list is dynamic - once an instance has been deleted, its place
+in the collection is deleted and all the other objects after it will 'move
+up' in the collection hiearchy.</p>
+
+<h2>Iteration Through Type Lists</h2>
+<p>The <kbd>First</kbd>, <kbd>Last</kbd>, <kbd>After</kbd> and <kbd>Before</kbd> operators allow you to access type lists. The <kbd>First</kbd> operator returns the object at the start of the type
+list. For example:</p>
+<code><pre>
+mine.MyType=First MyType
+</pre></code>
+<p> This sets the <kbd>mine.MyType</kbd> variable to the first object of custom type
+<kbd>MyType</kbd>. </p>
+
+<p> Similarly, <kbd>Last</kbd> returns the object at the end of the list. </p>
+<p> If the type list is empty, <kbd>First</kbd> and <kbd>Last</kbd> return <kbd>Null</kbd>.</p>
+<p> You can use <kbd>After</kbd> to find the object after an object, and <kbd>Before</kbd> to
+find the object before an object.</p>
+<p>For example: </p>
+<code><pre>
+mine.MyType=First MyType ;mine=first object in the type list
+mine=After mine          ;mine=second object
+mine=After mine          ;mine=third object
+mine=Before mine         ;mine=second object
+mine=Before mine         ;mine=first again!
+</pre></code>
+
+<p><kbd>After</kbd> and <kbd>Before</kbd> return <kbd>Null</kbd> if there is no such object. For example:</p>
+<code><pre>
+mine.MyType=Last MyType ;mine=last object
+mine=After mine         ;object after last does not exist!
+</pre></code>
+
+<p>When an object is created using <kbd>New</kbd>, it is placed at the end of it's type
+list by default. However, you can move objects around within the type list using <kbd>Insert</kbd>. For example:</p>
+<code><pre>
+mine1.MyType=New MyType
+mine2.MyType=New MyType
+Insert mine2 Before mine1
+</pre></code>
+<p>This has the effect of placing the <kbd>mine2</kbd> object before the <kbd>mine1</kbd> object
+in the type list.<br>
+You can also use <kbd>After</kbd> instead of <kbd>Before</kbd> with Insert.</p>
+<p>Here's an example of moving an object to the start of it's type list:</p>
+<code><pre>
+Insert mine Before First MyType
+</pre></code>
+
+<p>A special form of <b>For/Next</b> allows you to easily iterate over all
+object of a custom type. For example: </p>
+<code><pre>
+For mine.MyType=Each MyType
+  ; do something with "mine"
+Next
+</pre></code>
+<p>This will cause the variable <kbd>mine.MyType</kbd> to loop through all existing objects
+of custom type <kbd>MyType</kbd>.</p>
+
+<p>Finally, the <kbd>Delete Each</kbd> command allows you to delete all objects of a
+particular type. For example: </p>
+<code>
+<pre>
+Delete Each MyType
+</pre>
+</code>

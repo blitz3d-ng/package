@@ -1,0 +1,40 @@
+<% title 'Language Reference - Arrays' %>
+
+<h1>Arrays</h1>
+
+<p>
+  Arrays are created using the standard BASIC <kbd>Dim</kbd> statement, and may be of any number of dimensions. For example:
+</p>
+<code>
+<pre>
+Dim arr(10)
+</pre>
+</code>
+<p>...creates a one dimensional array called <kbd>arr</kbd> with 11 elements numbered 0...10.</p>
+
+<p>Arrays may be of any basic type, or a custom type.</p>
+
+<p>The type of an array is specified using a type tag. For example:</p>
+<code>
+<pre>
+Dim Deltas#(100)
+</pre>
+</code>
+<p>...creates an array called <kbd>Deltas</kbd> of 101 floating point elements.</p>
+
+<p>If the type tag is omitted, the array defaults to an integer array. </p>
+
+<p>
+  An array may be dimensioned at more than one point in a program, each time
+  an array is dimensioned, it's previous contents are discarded. Arrays may
+  be dimensioned inside functions, but a corresponding <kbd>Dim</kbd> statement of the
+  same array must also appear somewhere in the main program. For example:
+</p>
+<code>
+<pre>
+Dim test(0,0)
+Function Setup( x,y )
+  Dim test(x,y)
+End Function
+</pre>
+</code>

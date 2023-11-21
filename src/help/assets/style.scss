@@ -1,12 +1,31 @@
+html, body {
+  height: 100%;
+}
+
+* {
+  box-sizing: content-box;
+  line-height: 1.5;
+}
+
 body {
   color: #ffffff;
-  font: 10pt verdana;
+  font: 0.9em verdana;
   background: #006060;
   margin: 32px;
 }
-h1 {
+
+h1, h2, h3 {
   color: #00ff44;
-  font: bold 10pt verdana;
+  font-family: verdana;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 1.5em;
+}
+
+h2 {
+  font-size: 1em;
 }
 
 a {
@@ -25,6 +44,75 @@ ul {
   padding-left: 10px;
 }
 
-li {
-  padding-bottom: 20px;
+.clear { clear: both; }
+
+ul.main-menu {
+  li {
+    padding-bottom: 20px;
+  }
+}
+
+table {
+  width: 100%;
+  font-size: 80%;
+
+  td {
+    color: #000000;
+    background-color: #DDDDDD;
+    border-color: #333333 #FFFFFF #FFFFFF #333333;
+    border-style: ridge;
+    border-top-width: thin;
+    border-right-width: thin;
+    border-bottom-width: thin;
+    border-left-width: thin
+  }
+}
+
+nav {
+  h1 {
+    font-size: 12pt;
+  }
+
+  img {
+    float: right;
+  }
+}
+
+main {
+  display: flex;
+
+  height:100%;
+
+  .sidebar {
+    flex: 0 0 200px;
+  }
+
+  .content {
+    flex-grow: 1
+  }
+}
+
+// TODO: make prettier
+kbd {
+  background-color: #ddd;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 3px;
+  padding: 2px;
+}
+
+code {
+  display: block;
+  background-color: #ddd;
+  color: #000;
+  padding: 0.5em;
+
+  border: 1px solid #000;
+  border-radius: 3px;
+
+  pre {
+    padding: 0;
+    margin: 0;
+  }
+
 }

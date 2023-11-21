@@ -50,6 +50,7 @@ _release/cfg/blitzide.toml
 _release/help/index.html
 _release/help/credits.html
 _release/help/assets/
+_release/help/language
 _release/help/reference/modules
 _release/help/reference/index.html
 _release/help/reference/commands.js

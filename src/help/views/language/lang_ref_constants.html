@@ -1,0 +1,46 @@
+<% title 'Constants - Language Reference' %>
+
+<h1>Constants</h1>
+
+<p>
+  Constants may be of any <a href="./lang_ref_basicdatatypes.html">basic data type</a>. Constants are variables that have fixed values that will not change (ever) during the course of your program. These are useful tools for things like screen resolution variables, etc.
+</p>
+
+<p>
+  <b>Floating point constants</b> must include a decimal point.
+</p>
+
+<p>
+  For example, <kbd>5</kbd> is an integer constant, but <kbd>5.0</kbd> is a floating point constant.
+</p>
+<p>
+  <b>String constants</b> must be surrounded by quotation marks, for example: <kbd>"This is a string constant"</kbd>
+</p>
+
+
+<p>The <kbd>Const</kbd> keyword is used to assign an identifier to a constant. For example:</p>
+<code>
+<pre>
+Const one_hundred=100
+</pre>
+</code>
+
+<p>You can then use the identifier <kbd>one_hundred</kbd> anywhere in your program instead of <kbd>100</kbd>.</p>
+
+<p>A more useful example might be:</p>
+<code>
+<pre>
+Const width=640,height=480
+</pre>
+</code>
+
+<p>
+  You can then use the more readable <kbd>width</kbd> and <kbd>height</kbd> throughout your program instead of <kbd>640</kbd> and <kbd>480</kbd>.
+</p>
+<p>
+  Also, if you ever decide to change the width and height values, you only have to do so at one place in the program.
+</p>
+<p>
+  There are two built-in <b>Integer constants</b> - <kbd>True</kbd> and <kbd>False</kbd>. <kbd>True</kbd> is equal to <kbd>1</kbd>, and <kbd>False</kbd> is equal to <kbd>0</kbd>.
+</p>
+<p>There is also a built in <b>floating point constant</b> for <kbd>Pi</kbd>.</p>

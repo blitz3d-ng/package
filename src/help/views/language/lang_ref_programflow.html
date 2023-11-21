@@ -1,0 +1,130 @@
+<% title 'Program Flow - Language Reference' %>
+
+<h1>Program Flow</h1>
+
+<p>The following constructs are available for controlling program flow.</p>
+
+<h2>If ... Then </h2>
+<code>
+If {expression} Then {statements1} Else {statements2}
+</code>
+
+<p>Evaluates the <kbd>If</kbd> expression and, if true, executes the <kbd>Then</kbd> statements.
+    If false, the <kbd>Else</kbd> statement are executed, the <kbd>Else</kbd> part is optional -
+    statements are executed until the end of the line.</p>
+<code>
+<pre>
+If {expression1}
+  {statements1}
+Else If {expression2}
+  {statements2}
+Else If {expression3}
+  {statements3}
+Else
+  {statements4}
+EndIf
+</pre>
+</code>
+
+<p>
+  This form of the <kbd>If</kbd> statement allows for more than one line of statements. The <kbd>Else If</kbd> and <kbd>Else</kbd> parts are optional. The <kbd>Else</kbd> part is executed only if none of the <kbd>If</kbd> or <kbd>Else If</kbd> expressions were true.
+</p>
+
+<h2>While ... Wend</h2>
+
+<code>
+<pre>
+While {expression}
+  {statements}
+Wend
+</pre>
+</code>
+
+<p>
+  A While loop continues executing until {expression} evaluates to false. {expression} is evaluated at the start of each loop.
+</p>
+
+<h2>For ... Next</h2>
+<code>
+<pre>
+For {variable}={initalvalue} To {finalvalue} Step {step}
+  {statements}
+Next
+</pre>
+</code>
+<p>
+  A <kbd>For/Next</kbd> loop first assigns {initialvalue} to {variable} and then starts looping. The loop continues until {variable} reaches {finalvalue} and then eterminates. Each loop, the value {step} is added to {variable}. If a step value is omitted, a default value of 1 is used.
+</p>
+
+<code>
+<pre>
+For {variable}=Each {typename}
+  {statements}
+Next
+</pre>
+</code>
+<p>
+  This form of the For/Next loop allows you to iterate over all objects of a custom type.
+</p>
+
+<h2>Repeat ... Until/Forever</h2>
+
+<code>
+<pre>
+Repeat
+  {statements}
+Until {expression}
+</pre>
+</code>
+
+<p>A <kbd>Repeat</kbd> loop continues executing until {expression} evaluates to true. {expression} is evaluated at the end of each loop.</p>
+
+<code>
+<pre>
+Repeat
+  {statements}
+Forever
+</pre>
+</code>
+
+<p>A <kbd>Repeat/Forever</kbd> loop simply executes {statements} until the <kbd>End</kbd> command ends the program or the <kbd>Exit</kbd> command breaks out.</p>
+
+<h2>Select ... Case</h2>
+
+<code>
+<pre>
+Select {expression}
+Case {expressions1}
+  {statements1}
+Case {expressions2}
+  {statements2}
+Default
+  {statements3}
+End Select
+</pre>
+</code>
+
+<p>
+  First the <kbd>Select</kbd> expression is evaluated. It is then compared with each of the <kbd>Case</kbd> expression lists. If it matches a <kbd>Case</kbd>, then the statements in the <kbd>Case</kbd> are executed.
+</p>
+<p>
+  If the <kbd>Select</kbd> expression matches none of the <kbd>Case</kbd> expressions, the statements in the optional <kbd>Default</kbd> section are executed.
+</p>
+
+<h2>Breaking Out Of A Loop</h2>
+<p>
+  The <kbd>Exit</kbd> command may be used to break out of any <kbd>For/Next</kbd>, <kbd>While/Wend</kbd>, <kbd>Repeat/Until</kbd> or <kbd>Repeat/Forever</kbd> loop.
+</p>
+
+<h2>Using Includes</h2>
+
+<p>
+  Blitz also supports the <kbd>Include</kbd> command. Include allows source code from an external file to be compiled as if it were part of the main program. Include must be followed by a quote enclosed filename. For example...
+</p>
+<code>
+<pre>
+Include "anotherfile.bb"
+</pre>
+</code>
+
+<p>Include allows you to break your program up into smaller, more manageable chunks.</p>

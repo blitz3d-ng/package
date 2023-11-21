@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title || 'Blitz Basic Language Reference' %></title>
+  <link rel="stylesheet" href="<%= relative_to_root %>/assets/style.css" type="text/css" />
+</head>
+<body>
+  <nav>
+    <a href="<%= relative_to_root %>/index.html">
+      <img src="<%= relative_to_root %>/b3dlogo.jpg" />
+    </a>
+    <h1>Language Reference</h1>
+    <div class="clear"></div>
+  </nav>
+  <main>
+    <div class="sidebar">
+      <ul>
+        <li><a href="./index.html">Introduction</a>
+        <li><a href="./lang_ref_keywords.html">Keywords</a>
+        <li><a href="./lang_ref_comments.html">Comments</a>
+        <li><a href="./lang_ref_identifiers.html">Identifiers</a>
+        <li><a href="./lang_ref_basicdatatypes.html">Basic Data Types</a>
+        <li><a href="./lang_ref_constants.html">Constants</a>
+        <li><a href="./lang_ref_variables.html">Variables</a>
+        <li><a href="./lang_ref_arrays.html">Basic Arrays</a>
+        <li><a href="./lang_ref_expressions.html">Expressions</a>
+        <li><a href="./lang_ref_programflow.html">Program Flow</a>
+        <li><a href="./lang_ref_functions.html">Functions</a>
+        <li><a href="./lang_ref_customtypes.html">Custom Types</a>
+      </ul>
+    </div>
+
+    <div class="content">
+      <%= yield %>
+    </div>
+  </main>
+</body>
+</html>

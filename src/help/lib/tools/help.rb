@@ -8,11 +8,14 @@ module Blitz3D
 
         outdir = File.expand_path('../../../../_release/help', __dir__)
 
+        FileUtils.rm_r "#{outdir}/assets"
         FileUtils.mkdir_p "#{outdir}/assets"
-        FileUtils.cp File.expand_path('../../assets/style.scss', __dir__), "#{outdir}/assets/style.css"
+
+        File.write("#{outdir}/assets/style.css", Sass.compile(File.expand_path('../../assets/style.scss', __dir__), style: :compressed).css)
 
         Blitz3D::Help::Index.new.generate("#{outdir}/index.html")
         Blitz3D::Help::Credits.new.generate("#{outdir}/credits.html")
+        Blitz3D::Help::Language.new.generate("#{outdir}/language")
         Blitz3D::Help::Reference::Index.new.generate
 
         puts "Writing command index to #{'index.json'.bold}..."

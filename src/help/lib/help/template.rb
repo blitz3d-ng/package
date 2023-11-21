@@ -9,7 +9,7 @@ class Template
     HtmlCompressor::Compressor.new.compress(html)
   end
 
-  def self.path
+  def path
     raise 'path not defined'
   end
 
@@ -22,15 +22,26 @@ class Template
     File.expand_path('../../../../../_release/help', __dir__)
   end
 
-  def generate(path)
-    template = File.read(self.class.path)
-    out = render(template) { source }
+  def layout_path
+    File.expand_path('../../views/_layout.html.erb', __dir__)
+  end
 
-    File.open(path, 'w') { |f| f.write out }
+  def generate(outdir)
+    body = render(File.read(input_path))
+    out = render(File.read(layout_path)) { body }
+    File.open(outdir, 'w') { |f| f.write out }
   end
 
   def relative_to_root
     relative_to(root_path)
+  end
+
+  def title(*args)
+    if args.size > 0
+      @title = args[0]
+    else
+      @title
+    end
   end
 
   def relative_to(path)

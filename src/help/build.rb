@@ -2,6 +2,7 @@
 
 ## WARNING: This file is VERY ugly & quite the hackjob.
 
+ENV['BUNDLE_GEMFILE'] = File.expand_path("./Gemfile", __dir__)
 require 'bundler'
 Bundler.require :default
 
@@ -33,14 +34,17 @@ elsif ARGV.include?('--import')
 else
   run Blitz3D::Tools::Help
 
-  if ARGV.include?('--watch')
+  if ENV['WATCH'].to_s.size > 0
     puts 'Watching for changes...'.yellow
-    FileWatcher.new(['src/docs', 'src/runtime/**/*.md']).watch do
-      begin
-        run Blitz3D::Tools::Help
-      rescue StandardError => e
-        puts e
-      end
+    root = Pathname.new(File.expand_path("../..", __dir__))
+    Filewatcher.new([
+      root.join('src/help/**/*'),
+      root.join('src/modules/**/*.md'),
+      root.join('src/runtime/**/*.md')
+    ]).watch do
+      run Blitz3D::Tools::Help
+    rescue StandardError => e
+      puts e
     end
   end
 end

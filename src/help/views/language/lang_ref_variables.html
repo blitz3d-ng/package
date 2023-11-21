@@ -1,0 +1,68 @@
+<% title 'Variables - Language Reference' %>
+
+<h1>Variables</h1>
+
+<h2>Types</h2>
+
+<p>Variables may be of any <a href="./lang_ref_basicdatatypes.html">basic data type</a>, or a <a href="./lang_ref_customtypes.html">custom type</a>. A variable's type is determined by a special character that follows its identifier.</p>
+
+<p>These special characters are called "type tags" and are: </p>
+<ul>
+  <li><kbd>%</kbd>, for integer variables </li>
+  <li><kbd>#</kbd>, for floating point variables </li>
+  <li><kbd>$</kbd>, for string variables </li>
+  <li><kbd>.MyCustomType</kbd> For custom type variables</li>
+</ul>
+
+<p>Here are some examples of valid variables:</p>
+<code>
+<pre>
+Score%
+Lives%
+x_speed#
+y_speed#
+name$
+title$
+ali.Alien
+player.Player
+</pre>
+</code>
+
+<p>The type tag only needs to be added the first time you use a variable, after that you can leave the type tag off if you wish.</p>
+
+<p>If you don't supply a type tag the first time a variable is used, the variable defaults to an integer.</p>
+
+<p>It is illegal to use the same variable name with a different type. For example, if you already have an integer variable called <kbd>name%</kbd>, it is illegal to also have a string variable called <kbd>name$</kbd>.</p>
+
+<h2>Setting Variables</h2>
+<p>The <kbd>=</kbd> operator is used to assign a value to a variable. For example: </p>
+<code>
+<pre>
+score%=0
+</pre>
+</code>
+<p>...assigns the value <kbd>0</kbd> to the integer variable <kbd>score</kbd>.</p>
+
+<h2>Variable Scope</h2>
+
+<p>Variables may also be either <b>global</b>, or <b>local</b>. This refers
+  to where in a program a variable may be used.</p>
+<ul>
+  <li><strong>Global</strong> variables can be used from anywhere in the program.</li>
+  <li><strong>Local</strong> variables can only be used within the function they are created in.</li>
+</ul>
+<p>The <kbd>Global</kbd> keyword is used to define one or more global variables. For example:</p>
+<code>
+<pre>
+  Global Score=0,Lives=3,Player_up=1
+</pre>
+</code>
+<p>...defines 3 global variables. </p>
+
+<p>Similarly, <kbd>Local</kbd> is used to define local variables: </p>
+<code>
+<pre>
+Local temp_x=x,temp_y=y
+</pre>
+</code>
+<p>If you use a variable without defining it as either local or global, it defaults to being local. </p>
