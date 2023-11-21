@@ -19,6 +19,7 @@ module Blitz3D
         Blitz3D::Help::Language.new.generate("#{outdir}/language")
         Blitz3D::Help::Reference::Index.new.generate
         Blitz3D::Help::Reference::ScanCodes.new.generate
+        Blitz3D::Help::Reference::Ascii.new.generate
 
         puts "Writing command index to #{'index.json'.bold}..."
         index = { modules: [], commands: [] }

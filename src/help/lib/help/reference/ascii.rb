@@ -1,13 +1,13 @@
 module Blitz3D
   module Help
     module Reference
-      class ScanCodes < Template
+      class Ascii < Template
         def input_path
-          File.expand_path('../../../views/commands/_scancodes.html.erb', __dir__)
+          File.expand_path('../../../views/commands/_ascii.html.erb', __dir__)
         end
 
         def output_path
-          File.join(root_path, 'scancodes.html')
+          File.join(root_path, 'ascii.html')
         end
 
         def generate
