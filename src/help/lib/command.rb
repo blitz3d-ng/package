@@ -1,11 +1,12 @@
 module Blitz3D
   class Command
     IDENTIFIER_REGEX = /[_A-Za-z]?[_A-Za-z0-9]*/
+    TYPE_REGEX = /%|#|\$|\.[A-Za-z]+/
 
     attr_accessor :mod, :name, :return_type, :params, :symbol
 
     class Parameter
-      REGEX = /^([_A-Za-z]?[_A-Za-z0-9]*)(%|#|\$)(?:=((-?[0-9]+)|".*"))?/
+      REGEX = /^(#{IDENTIFIER_REGEX})(#{TYPE_REGEX})(?:=((-?[0-9]+)|".*"))?/
 
       attr_accessor :identifier, :type, :default
 
@@ -24,7 +25,7 @@ module Blitz3D
       end
 
       def to_s
-        [identifier, type, default && "=#{default}"].compact.join('')
+        [identifier, type.size == 1 ? type : '%', default && "=#{default}"].compact.join('')
       end
 
       def to_rtsym
@@ -34,7 +35,7 @@ module Blitz3D
 
     def initialize(mod, code)
       @mod = mod
-      match = code.match(/^(#{IDENTIFIER_REGEX})(%|#|\$)?\(\s*(.*)\s*\)(:"(#{IDENTIFIER_REGEX})")/)
+      match = code.match(/^(#{IDENTIFIER_REGEX})(#{TYPE_REGEX})?\(\s*(.*)\s*\)(:"(#{IDENTIFIER_REGEX})")$/)
       _, @name, @return_type, @params, _, @symbol = match.to_a
       @params.strip!
       @params = @params.split(',').map { |s| Parameter.new(s) }
@@ -46,9 +47,9 @@ module Blitz3D
       rt = return_type != '%' && return_type
 
       if return_type.blank?
-        [name, ' ', params.join(',')].join('')
+        [name, ' ', params.join(', ')].join('')
       else
-        [name, return_type, '( ', params ,' )'].join('')
+        [name, return_type.size == 1 ? return_type : '%', '( ', params.join(', ') ,' )'].join('')
       end
     end
 
@@ -121,6 +122,8 @@ module Blitz3D
 
     def html_help
       markdown = File.read(help_exists? ? help_path : File.expand_path('../views/commands/not_found.md', __dir__))
+
+      markdown = ERB.new(markdown).result(binding)
 
       source = GitHub::Markup.render_s(GitHub::Markups::MARKUP_MARKDOWN, markdown)
 

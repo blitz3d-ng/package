@@ -81,7 +81,7 @@
 
   createNavbar();
 
-  var main = document.querySelector(".main");
+  var main = document.querySelector("main .content");
   if (activeCommand) {
     main.innerHTML = activeCommand.content;
   } else if (activeModule) {

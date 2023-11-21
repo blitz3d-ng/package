@@ -11,11 +11,11 @@ module Blitz3D
       web: %w(emscripten)
     }
 
-    attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path, :make
+    attr_accessor :id, :name, :description, :platforms, :symbols, :commands, :path
 
     def self.all
       @@store ||= {}
-      Dir.glob(File.expand_path('../../modules/bb/*/module.yml', __dir__)).map { |path| @@store[path] ||= new(path) }
+      Dir.glob(File.expand_path('../../modules/bb/*/commands.decls', __dir__)).map { |path| @@store[path] ||= new(path) }
       @@store.values
     end
 
@@ -25,37 +25,41 @@ module Blitz3D
     end
 
     def initialize(config_file)
-      begin
-        config = YAML.load(File.open(config_file).read)
-      rescue Psych::SyntaxError
-        puts "YAML syntax error in #{config_file}".red
-        exit 1
-      end
+      # begin
+      #   config = YAML.load(File.open(config_file).read)
+      # rescue Psych::SyntaxError
+      #   puts "YAML syntax error in #{config_file}".red
+      #   exit 1
+      # end
 
       @path = File.dirname(config_file)
       @id = File.basename(@path)
-      @name = config['name']
-      @description = config['description']
+      @name = "#{id} (TODO: add name support back in)" # config['name']
+      @description = 'TODO: add description support back in' #config['description']
 
-      platforms = config['platforms'] || []
+      platforms = [] #config['platforms'] || []
       if platforms.empty?
         @platforms = Module::PLATFORMS.dup
       else
         @platforms = platforms.map { |plat| METAPLATFORMS[plat.to_sym] || plat }.flatten.uniq
       end
 
-      @dependencies = [config['dependencies']].flatten.compact
-      @symbols = (config['symbols'] || []).inject({}) do |syms, line|
-        ident, sym = line.split(':')
-        syms[ident] = sym
-        syms
-      end
-      @commands = (config['commands'] || []).map { |text| Command.new(self, text) }.sort_by(&:name)
+      @dependencies = [] # [config['dependencies']].flatten.compact
+      @symbols = {} # (config['symbols'] || []).inject({}) do |syms, line|
+      #   ident, sym = line.split(':')
+      #   syms[ident] = sym
+      #   syms
+      # end
 
-      @make = config['make'] || {}
-      @make['files'] ||= []
-      @make['include_directories'] ||= []
-      @make['definitions'] ||= []
+      @commands = File.read(config_file).split("\n").map do |line|
+        next if line.blank? || line.strip.starts_with?(';')
+        next if line.match?(/^[a-z0-9_]+:"[&a-z0-9_]+"/i)
+
+        Command.new(self, line)
+      end.compact.sort_by(&:name)
+
+
+      # @commands = (config['commands'] || []).map { |text| Command.new(self, text) }
     end
 
     def ==(other)

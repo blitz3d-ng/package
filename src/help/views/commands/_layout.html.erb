@@ -1,35 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Blitz3D Docs</title>
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" />
-  <link rel="stylesheet" href="<%= relative_to_root %>/assets/style.css" type="text/css" />
+  <title><%= title || 'Blitz Basic Command Reference' %></title>
+  <link rel="stylesheet" href="<%= relative_to_root %>/../assets/style.css" type="text/css" />
 </head>
-<body>
-  <div class="list-container">
-    <div class="list">
-      <h1>Command Ref.</h1>
-      <a href=command_list_2d_cat.htm>2D - Category</a>
-      <br />
-      <a href=command_list_3d_cat.htm>3D - Category</a>
-      <br />
-      <br />
-      <a href=command_list_2d_a-z.htm>2D - A-Z</a>
-      <br />
-      <a href=command_list_3d_a-z.htm>3D - A-Z</a>
-      <br />
-      <br />
-      <a href=ascii.htm target="main">ASCII Codes</a>
-      <br />
-      <br />
-      <a href=scancodes.htm target="main">Scancodes</a>
-      <br />
-      <a href=scancode/keyboard.htm target="main">Scancodes Picker</a>
-      <br />
-      <br />
-      <a target=_top href="<%= relative_to_root %>/index.html">Index</a>
+<body class="command-reference">
+  <nav>
+    <h1>Command Reference</h1>
+    <a href="<%= relative_to_root %>/../index.html">
+      <img src="<%= relative_to_root %>/../b3dlogo.jpg" />
+    </a>
+  </nav>
+  <main>
+    <div class="sidebar v-stack">
+      <ul>
+        <li><a href=ascii.htm target="main">ASCII Codes</a></li>
+        <li><a href="./scancodes.html">Scancodes</a></li>
+        <li><a href=scancode/keyboard.htm target="main">Scancodes Picker</a></li>
+        <li><a target=_top href="<%= relative_to_root %>/index.html">Index</a></li>
+      </ul>
 
-      <hr />
+      <div class="toggle-group">
+        <a href>Category</a>
+        <a href>A-Z</a>
+        <a href>Module</a>
+      </div>
 
       <form>
         <input autofocus id="search" type="text" />
@@ -41,10 +36,9 @@
       </div>
     </div>
   </div>
-  <div class="main">
+  <div class="content">
     <%= yield %>
   </div>
-
   <script src="<%= relative_to_root %>/commands.js"></script>
   <script src="<%= relative_to_root %>/assets/help.js"></script>
 </body>
