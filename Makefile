@@ -123,6 +123,10 @@ dist-toolchain:
 clean:
 	rm -rf build
 	rm -rf _release/bin
+	rm -rf _release/help/assets
+	rm -rf _release/help/language
+	rm -rf _release/help/reference
+	rm -f _release/help/*.html
 	rm -rf _release/*.exe
 	rm -rf _release/*.app
 	rm -rf coverage

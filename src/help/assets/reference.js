@@ -1,4 +1,4 @@
-(function () {
+(function(){
   function findModule(name) {
     return commandReference.modules.find(function (m) {
       return m.name === name;
@@ -92,4 +92,4 @@
       activeModule.description +
       "</p>";
   }
-})();
+})()
