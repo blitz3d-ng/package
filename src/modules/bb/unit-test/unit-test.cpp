@@ -23,7 +23,7 @@ void BBCALL __bbExpect( int condition, const char *mesg, const char *file,int li
 	}
 }
 
-void BBCALL __bbExpectIntEq( int a,int b,const char *mesg, const char *file,int line ){
+void BBCALL __bbExpectInt( int a,int b,const char *mesg, const char *file,int line ){
 	if( a!=b ){
 		FAIL(mesg << ". Expected: " << b << ", but got " << a);
 	} else {
@@ -33,11 +33,23 @@ void BBCALL __bbExpectIntEq( int a,int b,const char *mesg, const char *file,int 
 
 const float EPSILON=.000001f;		//small value
 
-void BBCALL __bbExpectFloatEq( float a,float b,const char *mesg, const char *file,int line ){
+void BBCALL __bbExpectFloat( float a,float b,const char *mesg, const char *file,int line ){
 	if( abs(a-b)>EPSILON ){
 		FAIL(mesg << ". Expected: " << b << ", but got " << a);
 	} else {
 		PASS(mesg);
+	}
+}
+
+void BBCALL __bbExpectStr( std::string& a,std::string &b,const char *mesg, const char *file,int line ){
+	if( a!=b ){
+		FAIL(mesg << ". Expected: '" << b << "', but got '"<<a<<"'");
+	} else {
+		if( strlen(mesg)>0 ){
+			PASS(mesg);
+		}else{
+			PASS("'"+a+"' matches '"+b+"'");
+		}
 	}
 }
 
@@ -46,19 +58,25 @@ void BBCALL _bbContext( BBStr *m, const char *file,int line ){
 	__bbContext( mesg.c_str(),file,line );
 }
 
-void BBCALL _bbExpect( int condition,BBStr *m, const char *file,int line ){
+void BBCALL _bbExpect( bb_int_t condition,BBStr *m, const char *file,int line ){
 	std::string mesg=*m;delete m;
 	__bbExpect( condition,mesg.c_str(),file,line );
 }
 
-void BBCALL _bbExpectIntEq( int a,int b,BBStr *m, const char *file,int line ){
+void BBCALL _bbExpectInt( bb_int_t a,bb_int_t b,BBStr *m, const char *file,int line ){
 	std::string mesg=*m;delete m;
-	__bbExpectFloatEq( a,b,mesg.c_str(),file,line );
+	__bbExpectFloat( a,b,mesg.c_str(),file,line );
 }
 
-void BBCALL _bbExpectFloatEq( float a,float b,BBStr *m, const char *file,int line ){
+void BBCALL _bbExpectFloat( bb_float_t a,bb_float_t b,BBStr *m, const char *file,int line ){
 	std::string mesg=*m;delete m;
-	__bbExpectFloatEq( a,b,mesg.c_str(),file,line );
+	__bbExpectFloat( a,b,mesg.c_str(),file,line );
+}
+
+void BBCALL _bbExpectStr( BBStr *a,BBStr *b,BBStr *m, const char *file,int line ){
+	std::string mesg=*m;delete m;
+	__bbExpectStr( *a,*b,mesg.c_str(),file,line );
+	delete a;delete b;
 }
 
 void BBCALL bbContext( BBStr *m ){
@@ -69,12 +87,16 @@ void BBCALL bbExpect( bb_int_t condition,BBStr *m ){
 	_bbExpect( condition,m,"<unknown>",0 );
 }
 
-void BBCALL bbExpectIntEq( bb_int_t a,bb_int_t b,BBStr *m ){
-	_bbExpectIntEq( a,b,m,"<unknown>",0 );
+void BBCALL bbExpectInt( bb_int_t a,bb_int_t b,BBStr *m ){
+	_bbExpectInt( a,b,m,"<unknown>",0 );
 }
 
-void BBCALL bbExpectFloatEq( bb_float_t a,bb_float_t b,BBStr *m ){
-	_bbExpectIntEq( a,b,m,"<unknown>",0 );
+void BBCALL bbExpectFloat( bb_float_t a,bb_float_t b,BBStr *m ){
+	_bbExpectFloat( a,b,m,"<unknown>",0 );
+}
+
+void BBCALL bbExpectStr( BBStr *a,BBStr *b,BBStr *m ){
+	_bbExpectStr( a,b,m,"<unknown>",0 );
 }
 
 #ifdef BB_WINDOWS

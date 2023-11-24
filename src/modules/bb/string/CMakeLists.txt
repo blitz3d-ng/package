@@ -1,4 +1,5 @@
 bb_start_module(string)
 set(DEPENDS_ON bb.blitz)
 set(SOURCES string.cpp string.h)
+set(LIBS utf8.h)
 bb_end_module()

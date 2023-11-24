@@ -5,7 +5,7 @@
 	path = deps/assimp/tree
 	url = https://github.com/assimp/assimp.git
 [submodule "enet"]
-	path = deps/enet/src
+	path = deps/enet/tree
 	url = https://github.com/lsalzman/enet.git
 [submodule "ode"]
 	path = deps/ode/tree
@@ -43,3 +43,6 @@
 [submodule "deps/stackwalker/tree"]
 	path = deps/stackwalker/tree
 	url = https://github.com/JochenKalmbach/StackWalker
+[submodule "deps/utf8.h/tree"]
+	path = deps/utf8.h/tree
+	url = https://github.com/sheredom/utf8.h

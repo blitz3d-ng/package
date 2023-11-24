@@ -12,8 +12,9 @@ extern "C" {
 // RUN `make` TO UPDATE.
 void BBCALL bbContext( BBStr *mesg );
 void BBCALL bbExpect( bb_int_t condition,BBStr *mesg );
-void BBCALL bbExpectIntEq( bb_int_t a,bb_int_t b,BBStr *mesg );
-void BBCALL bbExpectFloatEq( bb_float_t a,bb_float_t b,BBStr *mesg );
+void BBCALL bbExpectInt( bb_int_t a,bb_int_t b,BBStr *mesg );
+void BBCALL bbExpectFloat( bb_float_t a,bb_float_t b,BBStr *mesg );
+void BBCALL bbExpectStr( BBStr *a,BBStr *b,BBStr *mesg );
 
 #ifdef __cplusplus
 }

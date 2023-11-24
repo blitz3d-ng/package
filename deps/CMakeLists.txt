@@ -1,6 +1,7 @@
 # core
 add_subdirectory(zlib)
 add_subdirectory(stackwalker)
+add_subdirectory(utf8.h)
 
 # ide
 add_subdirectory(wxwidgets)
@@ -26,7 +27,7 @@ add_subdirectory(fmod)
 add_subdirectory(ogg)
 add_subdirectory(vorbis)
 
-# misc 
+# misc
 add_subdirectory(enet)
 add_subdirectory(uuid)
 add_subdirectory(crossguid)

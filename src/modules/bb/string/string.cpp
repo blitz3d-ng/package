@@ -1,6 +1,7 @@
 
 #include "string.h"
 #include "../stdutil/stdutil.h"
+#include "utf8.h"
 #include <string>
 
 #include <time.h>
@@ -16,12 +17,24 @@ BBStr * BBCALL bbString( BBStr *s,bb_int_t n ){
 
 BBStr * BBCALL bbLeft( BBStr *s,bb_int_t n ){
 	CHKPOS( n );
+	const char *last=s->data();
+	while( n-->0 ){
+		utf8_int32_t chr;
+		last=utf8codepoint( last,&chr );
+	}
+	n=last-s->data();
 	*s=s->substr( 0,n );return s;
 }
 
 BBStr * BBCALL bbRight( BBStr *s,bb_int_t n ){
 	CHKPOS( n );
-	n=s->size()-n;if( n<0 ) n=0;
+	const char *begin=s->data();
+	const char *end=begin+s->size()-1;
+	while( --n>0&&end>begin ){
+		utf8_int32_t chr;
+		end=utf8rcodepoint( end,&chr );
+	}
+	n=end-begin;
 	*s=s->substr( n );return s;
 }
 
@@ -35,27 +48,44 @@ BBStr * BBCALL bbReplace( BBStr *s,BBStr *from,BBStr *to ){
 }
 
 bb_int_t BBCALL bbInstr( BBStr *s,BBStr *t,bb_int_t from ){
-	CHKOFF( from );--from;
-	int n=s->find( *t,from );
+	CHKOFF( from );
+	utf8_int32_t chr;
+	const char *l=s->c_str(),*r=s->c_str()+s->size()-1;
+	const char *o=l;
+	while( --from>0&&o<=r ) o=utf8codepoint( o,&chr );
+
+	utf8_int8_t *m=utf8str( o,t->c_str() );
+	size_t n;
+	if( m ){
+		n=0;
+		const char *c=l;
+		while( c<m ){
+			c=utf8codepoint( c,&chr );
+			++n;
+		}
+	}else{
+		n=-1;
+	}
 	delete s;delete t;
-	return n==std::string::npos ? 0 : n+1;
+	return n==-1 ? 0 : n+1;
 }
 
 BBStr * BBCALL bbMid( BBStr *s,bb_int_t o,bb_int_t n ){
-	CHKOFF( o );--o;
-	if( o>s->size() ) o=s->size();
-	if( n>=0 ) *s=s->substr( o,n );
-	else *s=s->substr( o );
-	return s;
+	CHKOFF( o );
+	utf8_int32_t chr;
+	const char *l=s->c_str(),*r=s->c_str()+s->size()-1;
+	const char *p=l;while( --o>0&&p<r ) p=utf8codepoint( p,&chr );
+	const char *e=p;while( n-->0&&p<r ) e=utf8codepoint( e,&chr );
+	*s=s->substr( p-l,e-p );return s;
 }
 
 BBStr * BBCALL bbUpper( BBStr *s ){
-	for( int k=0;k<s->size();++k ) (*s)[k]=toupper( (*s)[k] );
+	utf8upr( s->data() );
 	return s;
 }
 
 BBStr * BBCALL bbLower( BBStr *s ){
-	for( int k=0;k<s->size();++k ) (*s)[k]=tolower( (*s)[k] );
+	utf8lwr( s->data() );
 	return s;
 }
 
@@ -68,25 +98,26 @@ BBStr * BBCALL bbTrim( BBStr *s ){
 
 BBStr * BBCALL bbLSet( BBStr *s,bb_int_t n ){
 	CHKPOS(n);
-	if( s->size()>n ) *s=s->substr( 0,n );
+	if( utf8len( s->c_str() )>n ) *s=s->substr( 0,n );
 	else{
-		while( s->size()<n ) *s+=' ';
+		while( utf8len( s->c_str() )<n ) *s+=' ';
 	}
 	return s;
 }
 
 BBStr * BBCALL bbRSet( BBStr *s,bb_int_t n ){
 	CHKPOS(n);
-	if( s->size()>n ) *s=s->substr( s->size()-n );
+	if( utf8len( s->c_str() )>n ) *s=s->substr( s->size()-n );
 	else{
-		while( s->size()<n ) *s=' '+*s;
+		while( utf8len( s->c_str() )<n ) *s=' '+*s;
 	}
 	return s;
 }
 
 BBStr * BBCALL bbChr( bb_int_t n ){
-	BBStr *t=d_new BBStr();
-	*t+=(char)n;return t;
+	utf8_int8_t b[4];
+	const char *e=utf8catcodepoint( b,n,4 );
+	return d_new BBStr( b,e-b );
 }
 
 BBStr * BBCALL bbHex( bb_int_t n ){
@@ -109,12 +140,13 @@ BBStr * BBCALL bbBin( bb_int_t n ){
 }
 
 bb_int_t BBCALL bbAsc( BBStr *s ){
-	int n=s->size() ? (*s)[0] & 255 : -1;
+	int n=-1;
+	if( s->size() ) utf8codepoint( s->data(),&n );
 	delete s;return n;
 }
 
 bb_int_t BBCALL bbLen( BBStr *s ){
-	int n=s->size();
+	int n=utf8len( s->c_str() );
 	delete s;return n;
 }
 

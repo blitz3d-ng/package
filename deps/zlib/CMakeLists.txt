@@ -23,15 +23,4 @@ set_target_properties(zlibstatic PROPERTIES
   UNITY_BUILD false
 )
 
-# disable these since the CMakeLists.txt does not offer a flag.
-set_target_properties(zlib PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
-set_target_properties(example PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
-set_target_properties(minigzip PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
-IF(TARGET example64)
-  set_target_properties(example64 PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
-ENDIF()
-IF(TARGET minigzip64)
-  set_target_properties(minigzip64 PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
-ENDIF()
-
 add_library(ZLIB::ZLIB ALIAS zlibstatic)

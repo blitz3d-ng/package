@@ -1,4 +1,5 @@
 Context( mesg$ ):"bbContext"
 Expect( condition%,mesg$ ):"bbExpect"
-ExpectIntEq( a%,b%,mesg$ ):"bbExpectIntEq"
-ExpectFloatEq( a#,b#,mesg$ ):"bbExpectFloatEq"
+ExpectInt( a%,b%,mesg$="" ):"bbExpectInt"
+ExpectFloat( a#,b#,mesg$="" ):"bbExpectFloat"
+ExpectStr( a$,b$,mesg$="" ):"bbExpectStr"

@@ -360,7 +360,7 @@ endfunction()
 if(APPLE)
   enable_language(OBJC) # TODO: needed after adding SDL...seems like a deep root cmake bug
 endif()
-add_subdirectory(deps)
+add_subdirectory(deps EXCLUDE_FROM_ALL)
 
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")
