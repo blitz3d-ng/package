@@ -1,5 +1,5 @@
 if(MSVC)
-  add_compile_options(/W)
+  add_compile_options(/w)
 else()
   add_compile_options(-Wall -Wno-everything)
 endif()

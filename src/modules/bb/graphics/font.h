@@ -4,7 +4,6 @@
 #include <bb/pixmap/pixmap.h>
 
 #include <ft2build.h>
-#include <sys/_types/_int32_t.h>
 #include FT_FREETYPE_H
 
 #include <string>

@@ -4,7 +4,8 @@ set(PNG_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 
 add_subdirectory(tree)
 
-target_output_to_toolchain(png_static)
+target_link_libraries(png_static ${ZLIB})
 set_target_properties(png_static PROPERTIES OUTPUT_NAME png)
+target_output_to_toolchain(png_static)
 
 add_library(png ALIAS png_static)
