@@ -58,7 +58,7 @@ public:
 		}
 
 		int btn_count=SDL_JoystickNumButtons( js );
-		for( int i=0;i<32;i++ ){
+		for( int i=0;i<btn_count;i++ ){
 			setDownState( i,SDL_JoystickGetButton( js,i ) );
 		}
 	}

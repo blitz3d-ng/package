@@ -1,13 +1,13 @@
 #include "../stdutil/stdutil.h"
 #include <bb/graphics/font.h>
 #include "canvas.h"
+#include <utf8.h>
 
 #include <cmath>
 #include <map>
 #include <algorithm>
 
 #include "default.glsl.h"
-#include "utf8.h"
 
 struct UniformState{
 	float xywh[4];
@@ -290,11 +290,9 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 		font->rebuildAtlas();
 
 		int size=font->atlas->width*font->atlas->height;
-		std::vector<char> bmp( size*4 );
+		std::vector<unsigned char> bmp( size*4 );
 		for( int i=0;i<font->atlas->width*font->atlas->height;i++ ){
-			bmp[i*4+0]=font->atlas->bits[i];
-			bmp[i*4+1]=font->atlas->bits[i];
-			bmp[i*4+2]=font->atlas->bits[i];
+			bmp[i*4+0]=bmp[i*4+1]=bmp[i*4+2]=255;
 			bmp[i*4+3]=font->atlas->bits[i];
 		}
 

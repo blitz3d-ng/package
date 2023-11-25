@@ -52,7 +52,7 @@ private:
 public:
 	static BBImageFont *load( const std::string &name,int height,float density,int flags );
 
-	bool loadChar( int32_t c )const;
+	bool loadChar( uint32_t c )const;
 	bool loadChars( const std::string &t )const;
 	void rebuildAtlas();
 

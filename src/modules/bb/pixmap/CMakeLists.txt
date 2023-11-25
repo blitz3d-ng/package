@@ -4,7 +4,7 @@ set(SOURCES pixmap.cpp pixmap.h)
 
 IF(TARGET freeimage)
   set(SOURCES ${SOURCES} freeimage.loader.cpp)
-  set(LIBS freeimage ${ZLIB})
+  set(LIBS freeimage png ${ZLIB})
 ELSEIF(BB_IOS)
   set(SOURCES ${SOURCES} uikit.loader.m)
   set(SYSTEM_LIBS "-framework UIKit")

@@ -362,6 +362,12 @@ if(APPLE)
 endif()
 add_subdirectory(deps EXCLUDE_FROM_ALL)
 
+#if(NOT MSVC)
+#  add_compile_options(-Wall -Werror
+#    -Wno-error=deprecated-declarations
+#  )
+#endif()
+
 add_definitions(-DBB_PLATFORM="${BB_PLATFORM}")
 add_definitions(-DBB_ENV="${BB_ENV}")
 add_definitions(-DBB_ARCH="${BB_ARCH}")

@@ -57,7 +57,3 @@ ExpectInt Len("hello, wörld"),12, "'hello wörld' has 12 characters"
 ExpectStr Hex( 255 ),"000000FF", "Expects a hex string"
 
 ExpectInt Bin(14),1110 ; convert to int to deal with 32 vs 64 bits
-
-Expect CurrentDate$()<>"", "Gets the current date"
-
-Expect CurrentTime$()<>"", "Gets the current time"

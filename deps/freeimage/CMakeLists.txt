@@ -49,11 +49,6 @@ set_target_properties(jpeg PROPERTIES UNITY_BUILD false)
 # target_compile_definitions(openjpeg PUBLIC -DOPJ_STATIC)
 # set_target_properties(openjpeg PROPERTIES UNITY_BUILD false)
 
-# png
-add_library(png OBJECT src/Source/LibPNG/png.c src/Source/LibPNG/pngerror.c src/Source/LibPNG/pngget.c src/Source/LibPNG/pngmem.c src/Source/LibPNG/pngpread.c src/Source/LibPNG/pngread.c src/Source/LibPNG/pngrio.c src/Source/LibPNG/pngrtran.c src/Source/LibPNG/pngrutil.c src/Source/LibPNG/pngset.c src/Source/LibPNG/pngtrans.c src/Source/LibPNG/pngwio.c src/Source/LibPNG/pngwrite.c src/Source/LibPNG/pngwtran.c src/Source/LibPNG/pngwutil.c )
-target_link_libraries(png ${ZLIB})
-target_compile_definitions(png PRIVATE PNG_ARM_NEON_OPT=0)
-
 # raw
 # add_library(raw_ OBJECT src/Source/LibRawLite/internal/dcraw_common.cpp src/Source/LibRawLite/internal/dcraw_fileio.cpp src/Source/LibRawLite/internal/demosaic_packs.cpp src/Source/LibRawLite/src/libraw_c_api.cpp src/Source/LibRawLite/src/libraw_cxx.cpp src/Source/LibRawLite/src/libraw_datastream.cpp src/Source/LibRawLite/internal/defines.h src/Source/LibRawLite/internal/libraw_internal_funcs.h src/Source/LibRawLite/internal/var_defines.h src/Source/LibRawLite/libraw/libraw.h src/Source/LibRawLite/libraw/libraw_alloc.h src/Source/LibRawLite/libraw/libraw_const.h src/Source/LibRawLite/libraw/libraw_datastream.h src/Source/LibRawLite/libraw/libraw_internal.h src/Source/LibRawLite/libraw/libraw_types.h src/Source/LibRawLite/libraw/libraw_version.h)
 #
@@ -172,7 +167,7 @@ set(SOURCES
   # src/Source/OpenEXR/Half/half.cpp
 )
 
-set(DEPS jpeg png ${ZLIB})
+set(DEPS jpeg png_static ${ZLIB})
 
 add_library(freeimage STATIC ${SOURCES})
 target_output_to_toolchain(freeimage)

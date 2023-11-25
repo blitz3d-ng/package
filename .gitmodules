@@ -1,3 +1,6 @@
+[submodule "freetype2"]
+        path = deps/freetype2/tree
+        url = https://gitlab.freedesktop.org/freetype/freetype.git
 [submodule "freeimage"]
 	path = deps/freeimage/src
 	url = https://github.com/blitz3d-ng/freeimage
@@ -10,9 +13,6 @@
 [submodule "ode"]
 	path = deps/ode/tree
 	url = https://bitbucket.org/odedevs/ode.git
-[submodule "freetype2"]
-	path = deps/freetype2/tree
-	url = https://github.com/blitz3d-ng/freetype2.git
 [submodule "vorbis"]
 	path = deps/vorbis/tree
 	url = https://github.com/xiph/vorbis.git
@@ -22,27 +22,30 @@
 [submodule "crossguid"]
 	path = deps/crossguid/src
 	url = https://github.com/graeme-hill/crossguid.git
-[submodule "src/deps/zlib/src"]
+[submodule "zlib"]
 	path = deps/zlib/tree
 	url = https://github.com/madler/zlib.git
-[submodule "src/deps/json-hpp/src"]
+[submodule "json-hpp"]
 	path = deps/json-hpp/tree
 	url = https://github.com/nlohmann/json.git
-[submodule "deps/wxwidgets/tree"]
+[submodule "wxwidgets"]
 	path = deps/wxwidgets/tree
 	url = https://github.com/wxWidgets/wxWidgets
-[submodule "deps/sdl/tree"]
+[submodule "sdl"]
 	path = deps/sdl/tree
 	url = https://github.com/libsdl-org/SDL.git
-[submodule "deps/toml11/tree"]
+[submodule "toml11"]
 	path = deps/toml11/tree
 	url = https://github.com/ToruNiina/toml11.git
-[submodule "deps/env"]
+[submodule "env"]
 	path = deps/env
 	url = https://github.com/blitz3d-ng/env
-[submodule "deps/stackwalker/tree"]
+[submodule "stackwalker"]
 	path = deps/stackwalker/tree
 	url = https://github.com/JochenKalmbach/StackWalker
-[submodule "deps/utf8.h/tree"]
+[submodule "utf8.h"]
 	path = deps/utf8.h/tree
 	url = https://github.com/sheredom/utf8.h
+[submodule "libpng"]
+	path = deps/libpng/tree
+	url = https://github.com/glennrp/libpng
