@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "default.glsl.h"
+#include "utf8.h"
 
 struct UniformState{
 	float xywh[4];
@@ -311,13 +312,17 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 
 	float awidth=font->atlas->width,aheight=font->atlas->height;
 
-	for( int i=0;i<t.length();i++ ){
-		BBImageFont::Char c=font->getChar( t[i] );
+	const char *c=t.c_str();
+	utf8_int32_t curr=0,prev=0;
+	while( *c ){
+		prev=curr;
+		c=utf8codepoint( c,&curr );
+		BBImageFont::Char c=font->getChar( curr );
 
 		float cx=x+c.bearing_x*font->density,cy=y-c.bearing_y*font->density;
 
-		if( i>0 ){
-			cx+=font->getKerning( t[i-1],t[i] );
+		if( prev>0 ){
+			cx+=font->getKerning( prev,curr );
 		}
 
 		float l=c.x/awidth;

@@ -2,6 +2,7 @@
 #include "../stdutil/stdutil.h"
 #include <bb/system/system.h>
 #include "font.h"
+#include "utf8.h"
 
 #undef max
 
@@ -56,25 +57,31 @@ BBImageFont *BBImageFont::load( const std::string &name,int height,float density
 	return d_new BBImageFont( face,height,density );
 }
 
+bool BBImageFont::loadChar( int c )const{
+	if( characters.count( c ) ) return false;
+
+	Char chr;
+	chr.index=FT_Get_Char_Index( face,c );
+	FT_Load_Glyph( face,chr.index,FT_LOAD_RENDER );
+
+	chr.width=face->glyph->bitmap.width;
+	chr.height=face->glyph->bitmap.rows;
+	chr.bearing_x=face->glyph->bitmap_left;
+	chr.bearing_y=face->glyph->bitmap_top;
+	chr.advance=face->glyph->advance.x>>6;
+
+	characters.insert( std::make_pair( c,chr ) );
+
+	return (dirty=true);
+}
+
 bool BBImageFont::loadChars( const std::string &t )const{
-	for( int i=0;i<t.length();i++ ){
-		if( !characters.count(t[i]) ){
-			Char chr;
-			chr.index=FT_Get_Char_Index( face,t[i] );
-			FT_Load_Glyph( face,chr.index,FT_LOAD_RENDER );
-
-			chr.width=face->glyph->bitmap.width;
-			chr.height=face->glyph->bitmap.rows;
-			chr.bearing_x=face->glyph->bitmap_left;
-			chr.bearing_y=face->glyph->bitmap_top;
-			chr.advance=face->glyph->advance.x>>6;
-
-			characters.insert( std::make_pair( t[i],chr ) );
-
-			dirty=true;
-		}
+	const char *s=t.c_str();
+	while( *s ){
+		utf8_int32_t chr;
+		s=utf8codepoint( s,&chr );
+		loadChar( chr );
 	}
-
 	return dirty;
 }
 
@@ -88,7 +95,7 @@ void BBImageFont::rebuildAtlas(){
 	memset( atlas->bits,0,atlas->width*atlas->height );
 
 	int ox=0,oy=0,my=0;
-	for( std::map<char,Char>::iterator it=characters.begin();it!=characters.end();++it ){
+	for( std::map<uint32_t,Char>::iterator it=characters.begin();it!=characters.end();++it ){
 		Char &c=it->second;
 
 		FT_Load_Glyph( face,c.index,FT_LOAD_RENDER );
@@ -114,12 +121,12 @@ void BBImageFont::rebuildAtlas(){
 	dirty=false;
 }
 
-BBImageFont::Char &BBImageFont::getChar( char c ){
-	loadChars( std::string( 1,c ) );
+BBImageFont::Char &BBImageFont::getChar( uint32_t c ){
+	loadChar( c );
 	return characters[c];
 }
 
-float BBImageFont::getKerning( char l,char r ){
+float BBImageFont::getKerning( uint32_t l,uint32_t r ){
 	if( !FT_HAS_KERNING(face) ) return 0;
 	Char lc=getChar( l ),rc=getChar( r );
 
