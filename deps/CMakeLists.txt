@@ -1,7 +1,16 @@
-if(MSVC)
+set(BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
+set(SKIP_INSTALL_ALL ON CACHE STRING "" FORCE)
+
+# force local zlib
+set(ZLIB_FOUND 1 CACHE STRING "" FORCE)
+
+# suppress warnings
+if(BB_MSVC)
   add_compile_options(/w)
-else()
-  add_compile_options(-Wall -Wno-everything)
+elseif(BB_CLANG)
+  add_compile_options(-Wno-everything)
+elseif(BB_GNU)
+  add_compile_options(-w)
 endif()
 
 # core

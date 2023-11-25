@@ -4,6 +4,8 @@
 #include "../stdutil/stdutil.h"
 #include "unit-test.h"
 
+#include <string.h>
+
 static int _bbPasses, _bbFails;
 
 static std::string GREEN="\033[1;32m",RED="\033[1;31m",CLEAR="\033[0m";
