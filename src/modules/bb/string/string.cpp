@@ -2,9 +2,6 @@
 #include "string.h"
 #include "../stdutil/stdutil.h"
 #include "utf8.h"
-#include <string>
-
-#include <time.h>
 
 #define CHKPOS(x) if( (x)<0 ) RTEX( "parameter must be positive" );
 #define CHKOFF(x) if( (x)<=0 ) RTEX( "parameter must be greater than 0" );
@@ -98,8 +95,12 @@ BBStr * BBCALL bbTrim( BBStr *s ){
 
 BBStr * BBCALL bbLSet( BBStr *s,bb_int_t n ){
 	CHKPOS(n);
-	if( utf8len( s->c_str() )>n ) *s=s->substr( 0,n );
-	else{
+	if( utf8len( s->c_str() )>n ){
+		utf8_int32_t chr;
+		const char *l=s->c_str(),*r=s->c_str()+s->size()-1;
+		const char *p=l;while( n-->0&&p<r ) p=utf8codepoint( p,&chr );
+		*s=s->substr( 0,p-l );
+	}else{
 		while( utf8len( s->c_str() )<n ) *s+=' ';
 	}
 	return s;
@@ -107,8 +108,12 @@ BBStr * BBCALL bbLSet( BBStr *s,bb_int_t n ){
 
 BBStr * BBCALL bbRSet( BBStr *s,bb_int_t n ){
 	CHKPOS(n);
-	if( utf8len( s->c_str() )>n ) *s=s->substr( s->size()-n );
-	else{
+	if( utf8len( s->c_str() )>n ){
+		utf8_int32_t chr;
+		const char *l=s->c_str(),*r=s->c_str()+s->size()-1;
+		const char *p=r;while( --n>0&&p>l ) p=utf8rcodepoint( p,&chr );
+		*s=s->substr( p-l );
+	}else{
 		while( utf8len( s->c_str() )<n ) *s=' '+*s;
 	}
 	return s;
@@ -148,22 +153,6 @@ bb_int_t BBCALL bbAsc( BBStr *s ){
 bb_int_t BBCALL bbLen( BBStr *s ){
 	int n=utf8len( s->c_str() );
 	delete s;return n;
-}
-
-BBStr * BBCALL bbCurrentDate(){
-	time_t t;
-	time( &t );
-	char buff[256];
-	strftime( buff,256,"%d %b %Y",localtime( &t ) );
-	return d_new BBStr( buff );
-}
-
-BBStr * BBCALL bbCurrentTime(){
-	time_t t;
-	time( &t );
-	char buff[256];
-	strftime( buff,256,"%H:%M:%S",localtime( &t ) );
-	return d_new BBStr( buff );
 }
 
 BBMODULE_CREATE( string ){

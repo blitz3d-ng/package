@@ -74,6 +74,22 @@ bb_float_t BBCALL bbDPIScaleY(){
 	return y;
 }
 
+BBStr * BBCALL bbCurrentDate(){
+	time_t t;
+	time( &t );
+	char buff[256];
+	strftime( buff,256,"%d %b %Y",localtime( &t ) );
+	return d_new BBStr( buff );
+}
+
+BBStr * BBCALL bbCurrentTime(){
+	time_t t;
+	time( &t );
+	char buff[256];
+	strftime( buff,256,"%H:%M:%S",localtime( &t ) );
+	return d_new BBStr( buff );
+}
+
 BBMODULE_CREATE( system ){
 	bbSystemDriver=0;
 	bbSystemProperties["appdir"]=bbApp().executable_path;

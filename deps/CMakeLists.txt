@@ -1,3 +1,9 @@
+if(MSVC)
+  add_compile_options(/W)
+else()
+  add_compile_options(-Wall -Wno-everything)
+endif()
+
 # core
 add_subdirectory(zlib)
 add_subdirectory(stackwalker)

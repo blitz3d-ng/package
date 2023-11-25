@@ -39,9 +39,11 @@ ExpectStr Trim( "  wörld   " ), "wörld", "Expects no leading or trailing white
 
 ExpectStr LSet( "Kevin",8 ), "Kevin   ", "Expects padding on right"
 ExpectStr LSet( "wörld",8 ), "wörld   ", "Expects padding on right"
+ExpectStr LSet( "wörld",2 ), "wö", "Expects truncation"
 
 ExpectStr RSet( "Kevin",8 ), "   Kevin", "Expects padding on left"
 ExpectStr RSet( "wörld",8 ), "   wörld", "Expects padding on left"
+ExpectStr RSet( "dlröw",2 ), "öw", "Expects truncation"
 
 ExpectStr Chr( 65 ),"A", "Expects 65 to be 'A'"
 ExpectStr Chr( 246 ),"ö", "Expects 246 to be 'ö'"
@@ -54,7 +56,7 @@ ExpectInt Len("hello, wörld"),12, "'hello wörld' has 12 characters"
 
 ExpectStr Hex( 255 ),"000000FF", "Expects a hex string"
 
-ExpectStr Right( Bin(14),5 ),"01110"
+ExpectInt Bin(14),1110 ; convert to int to deal with 32 vs 64 bits
 
 Expect CurrentDate$()<>"", "Gets the current date"
 
