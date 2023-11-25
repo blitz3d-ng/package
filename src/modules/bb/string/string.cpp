@@ -1,6 +1,7 @@
 
 #include "string.h"
 #include "../stdutil/stdutil.h"
+#include "../graphics.gl/utf8.h"
 #include <string>
 
 #include <time.h>
@@ -114,7 +115,7 @@ bb_int_t BBCALL bbAsc( BBStr *s ){
 }
 
 bb_int_t BBCALL bbLen( BBStr *s ){
-	int n=s->size();
+	int n=utf8len( s->c_str() );
 	delete s;return n;
 }
 

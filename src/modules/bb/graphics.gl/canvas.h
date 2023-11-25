@@ -14,24 +14,46 @@ protected:
 	mutable unsigned char *pixels;
 	BBImageFont *font;
 
+	int mode;
+	unsigned int framebuffer;
+
+	int vx,vy,vw,vh;
 	float scale_x,scale_y;
 	int origin_x,origin_y;
 	int handle_x,handle_y;
+	int mask;
 	float color[3];
-
-	bool needs_flush;
-
-	virtual void bind()const=0;
+	BBPixmap *pixmap;
+	bool dirty;
 
 	void flush();
 
 	void quad( int x,int y,int w,int h,bool solid,bool tex,float tx,float ty,float color[3] );
 public:
 	GLCanvas( ContextResources *res,int f );
+	GLCanvas( ContextResources *res,int w,int h,int f );
+
+	~GLCanvas();
+
+	int cube_face,cube_mode;
+	GLenum target;
+
+	unsigned int texture,depthbuffer;
+	int twidth,theight;
+
+	void uploadData();
+	void downloadData();
+	void setPixmap( BBPixmap *pm );
+	void setFramebuffer( unsigned int fb,int m );
 
 	void resize( int w,int h,float d );
 
-	virtual unsigned int framebufferId()=0;
+	void set();
+	void unset();
+	void bind();
+
+	unsigned int textureId();
+	unsigned int framebufferId();
 
 	//MANIPULATORS
 	void setFont( BBFont *f );
@@ -49,20 +71,20 @@ public:
 	void rect( int x,int y,int w,int h,bool solid );
 	void oval( int x,int y,int w,int h,bool solid );
 	void text( int x,int y,const std::string &t );
-	void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
+	virtual void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
 	void image( BBCanvas *c,int x,int y,bool solid );
 
 	bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const;
 	bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const;
 
-	bool lock()const;
+	bool lock();
 	void setPixel( int x,int y,unsigned argb );
 	void setPixelFast( int x,int y,unsigned argb );
 	void copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y );
 	void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y );
 	unsigned getPixel( int x,int y )const;
 	unsigned getPixelFast( int x,int y )const;
-	void unlock()const;
+	void unlock();
 
 	void setCubeMode( int mode );
 	void setCubeFace( int face );
@@ -70,6 +92,7 @@ public:
 	//ACCESSORS
 	int getWidth()const;
 	int getHeight()const;
+	int getDepth()const;
 	int cubeMode()const;
 	void getOrigin( int *x,int *y )const;
 	void getScale( float *x,float *y )const;
@@ -78,50 +101,6 @@ public:
 	unsigned getMask()const;
 	unsigned getColor()const;
 	unsigned getClsColor()const;
-};
-
-class GLTextureCanvas : public GLCanvas{
-protected:
-	unsigned int texture,framebuffer,depthbuffer;
-	int twidth,theight;
-public:
-	GLTextureCanvas( ContextResources *res,int f );
-	GLTextureCanvas( ContextResources *res,int w,int h,int f );
-	GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f );
-
-	int getDepth()const;
-
-	void set();
-
-	void unset();
-
-	void uploadData( void *data );
-
-	unsigned int textureId();
-	unsigned int framebufferId();
-
-	void setPixmap( BBPixmap *pm );
-
-	void bind()const;
-};
-
-class GLDefaultCanvas : public GLCanvas{
-protected:
-	int mode;
-	unsigned int framebuffer;
-
-	void bind()const;
-public:
-	GLDefaultCanvas( ContextResources *res,unsigned int fb,int m,int f );
-
-	void unset();
-	void set();
-
-	unsigned int framebufferId();
-
-	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid );
-
-	int getDepth()const;
 };
 
 #endif

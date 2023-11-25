@@ -18,6 +18,7 @@ public:
 	void reset();
 	void downEvent( int key );
 	void upEvent( int key );
+	void charEvent( int code );
 	void setDownState( int key,bool down );
 
 protected:

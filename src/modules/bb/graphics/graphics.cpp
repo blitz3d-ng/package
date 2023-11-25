@@ -1110,10 +1110,14 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 	BBCanvas *c=startPrinting();
 	std::string t=*prompt;delete prompt;
 
+	float sx,sy;
+	c->getScale(&sx,&sy);
+
 	//get temp canvas
 	if( !p_canvas || p_canvas->getWidth()<c->getWidth() || p_canvas->getHeight()<curr_font->getHeight()*2 ){
 		if( p_canvas ) gx_graphics->freeCanvas( p_canvas );
-		p_canvas=gx_graphics->createCanvas( c->getWidth(),curr_font->getHeight()*2,0 );
+		p_canvas=gx_graphics->createCanvas( c->getWidth()*sx,curr_font->getHeight()*2*sy,0 );
+		p_canvas->setScale( sx,sy );
 		if( !p_canvas ){
 			endPrinting(c);
 			return d_new BBStr();
@@ -1156,14 +1160,12 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 				}
 				c->text( cx,curs_y,str.substr( curs,1 ) );
 			}
-			if( (key=bbGetKey( false )) ){
-				if( int asc=gx_input->toAscii( key ) ){
-					rep_delay=280;
-					last_key=key;
-					last_time=t;
-					key=asc;
-					break;
-				}
+			if( int asc=bbGetKey() ){
+				rep_delay=280;
+				last_key=asc;
+				last_time=t;
+				key=asc;
+				break;
 			}
 			if( last_key && bbKeyDown( last_key ) ){
 				if( t-last_time>rep_delay ){
@@ -1218,8 +1220,10 @@ BBStr * BBCALL bbInput( BBStr *prompt ){
 		}
 
 		//render text
+		p_canvas->set();
 		p_canvas->blit( 0,curr_font->getHeight(),p_canvas,0,0,c->getWidth(),curr_font->getHeight(),true );
 		p_canvas->text( curs_x,curr_font->getHeight(),str );
+		c->set();
 		c->blit( 0,curs_y,p_canvas,0,curr_font->getHeight(),c->getWidth(),curr_font->getHeight(),true );
 	}
 

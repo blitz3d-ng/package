@@ -53,10 +53,13 @@ struct ContextResources{
 	std::map<BBImageFont*,unsigned int> font_textures;
 };
 
+#include "canvas.h"
+
 class GLGraphics:public BBGraphics{
 protected:
 	BBImageFont *def_font;
 
+	GLCanvas fb, bb;
 public:
 	ContextResources res={ 0 }; // TODO: will make protected again
 
@@ -74,6 +77,5 @@ public:
 	BBMovie *openMovie( const std::string &file,int flags );
 };
 
-#include "canvas.h"
 
 #endif

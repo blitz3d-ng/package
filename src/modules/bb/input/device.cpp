@@ -20,11 +20,14 @@ void BBDevice::reset(){
 void BBDevice::downEvent( int key ){
 	down_state[key]=true;
 	++hit_count[key];
-	if( put-get<QUE_SIZE ) que[put++&QUE_MASK]=key;
 }
 
 void BBDevice::upEvent( int key ){
 	down_state[key]=false;
+}
+
+void BBDevice::charEvent( int code ){
+	if( put-get<QUE_SIZE ) que[put++&QUE_MASK]=code;
 }
 
 void BBDevice::setDownState( int key,bool down ){

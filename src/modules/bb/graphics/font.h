@@ -2,6 +2,7 @@
 #define BB_BLITZ2D_FONT_H
 
 #include <bb/pixmap/pixmap.h>
+#include "../graphics.gl/utf8.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -39,12 +40,12 @@ public:
 
 	BBPixmap *atlas;
 	mutable bool dirty;
-	int baseline;
+	int height,baseline;
 	float density;
 
 private:
 	FT_Face face;
-	mutable std::map<char,Char> characters;
+	mutable std::map<utf8_int32_t,Char> characters;
 
 	BBImageFont( FT_Face f,int height,float density );
 
@@ -54,8 +55,8 @@ public:
 	bool loadChars( const std::string &t )const;
 	void rebuildAtlas();
 
-	Char &getChar( char c );
-	float getKerning( char l,char r );
+	Char &getChar( utf8_int32_t c );
+	float getKerning( utf8_int32_t l,utf8_int32_t r );
 
 	int getWidth()const;
 	int getHeight()const;

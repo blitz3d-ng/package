@@ -49,7 +49,8 @@ struct GLVertex{
 	float coords[3];
 	float normal[3];
 	float color[4];
-	float tex_coord[2][2];
+	float tex_coord0[2];
+	float tex_coord1[2];
 };
 
 class GLMesh : public BBMesh{
@@ -78,11 +79,13 @@ public:
 		GL( glEnableVertexAttribArray( 1 ) );
 		GL( glEnableVertexAttribArray( 2 ) );
 		GL( glEnableVertexAttribArray( 3 ) );
+		GL( glEnableVertexAttribArray( 4 ) );
 
 		GL( glVertexAttribPointer( 0,3,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,coords ) ) );
 		GL( glVertexAttribPointer( 1,3,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,normal ) ) );
 		GL( glVertexAttribPointer( 2,4,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,color ) ) );
-		GL( glVertexAttribPointer( 3,4,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,tex_coord ) ) );
+		GL( glVertexAttribPointer( 3,2,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,tex_coord0 ) ) );
+		GL( glVertexAttribPointer( 4,2,GL_FLOAT,GL_FALSE,sizeof( GLVertex ),(void*)offsetof( GLVertex,tex_coord1 ) ) );
 
 		GL( glBindVertexArray( 0 ) );
 	}
@@ -128,11 +131,11 @@ public:
 		setVertex( n,coords,normal,0xffffff,tex_coords );
 	}
 
-  void setVertex( int n,const float coords[3],const float normal[3],unsigned argb,const float tex_coords[2][2] ){
+	void setVertex( int n,const float coords[3],const float normal[3],unsigned argb,const float tex_coords[2][2] ){
 		verts[n].coords[0]=coords[0];verts[n].coords[1]=coords[1];verts[n].coords[2]=coords[2];
 		verts[n].normal[0]=normal[0];verts[n].normal[1]=normal[1];verts[n].normal[2]=normal[2];
-		verts[n].tex_coord[0][0]=tex_coords[0][0];verts[n].tex_coord[0][1]=tex_coords[0][1];
-		verts[n].tex_coord[1][0]=tex_coords[1][0];verts[n].tex_coord[1][1]=tex_coords[1][1];
+		verts[n].tex_coord0[0]=tex_coords[0][0];verts[n].tex_coord0[1]=tex_coords[0][1];
+		verts[n].tex_coord1[0]=tex_coords[1][0];verts[n].tex_coord1[1]=tex_coords[1][1];
 		verts[n].color[0]=((argb>>16)&255)/255.0;verts[n].color[1]=((argb>>8)&255)/255.0;verts[n].color[2]=(argb&255)/255.0;verts[n].color[3]=((argb>>24)&255)/255.0;
 	}
 
@@ -160,7 +163,7 @@ struct UniformState{
 
 	struct GLTexState{
 		float mat[16];
-		int blend, sphere_map, _1, _2;
+		int blend, sphere_map, flags, cube_map;
 	} texs[8];
 
 	float fog_range[2];
@@ -249,15 +252,15 @@ public:
 		setAmbient( MIDLEVEL );
 	}
 
-	int  hwTexUnits(){ return 8; }
-	int  gfxDriverCaps3D(){ return 0; }
+	int  hwTexUnits(){ return MAX_TEXTURES; }
+	int  gfxDriverCaps3D(){ return 110; }
 
 	// intentionally left blank...
 	void setWBuffer( bool enable ){}
 	void setHWMultiTex( bool enable ){}
 	void setDither( bool enable ){}
 
-  void setAntialias( bool enable ){}
+	void setAntialias( bool enable ){}
 	void setWireframe( bool enable ){
 		wireframe=enable;
 	}
@@ -267,19 +270,24 @@ public:
 	void setAmbient( const float rgb[3] ){
 		us.ambient[0]=rgb[0];us.ambient[1]=rgb[1];us.ambient[2]=rgb[2];us.ambient[3]=1.0f;
 	}
+
 	void setAmbient2( const float rgb[3] ){
 		setAmbient( rgb );
 	}
-  void setFogColor( const float rgb[3] ){
+
+	void setFogColor( const float rgb[3] ){
 		us.fog_color[0]=rgb[0];us.fog_color[1]=rgb[1];us.fog_color[2]=rgb[2];us.fog_color[3]=1.0;
 	}
-  void setFogRange( float nr,float fr ){
+
+	void setFogRange( float nr,float fr ){
 		us.fog_range[0]=nr;us.fog_range[1]=fr;
 	}
+
 	void setFogMode( int mode ){
 		us.fog_mode=mode;
 	}
-  void setZMode( int mode ){
+
+	void setZMode( int mode ){
 		switch( mode ){
 		case ZMODE_NORMAL:
 			GL( glEnable( GL_DEPTH_TEST ) );
@@ -404,32 +412,35 @@ public:
 			us.alpha_test = 0;
 		}
 
-		if( rs.blend==BLEND_REPLACE ){
-			GL( glDisable( GL_BLEND ) );
+		if( rs.fx&FX_FLATSHADED ){
+			// TODO
 		} else {
-			switch( rs.blend ){
-			case BLEND_ALPHA:
-				GL( glEnable( GL_BLEND ) );
-				GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA ) );
-				break;
-			case BLEND_MULTIPLY:
-				GL( glEnable( GL_BLEND ) );
-				GL( glBlendFunc( GL_DST_COLOR,GL_ZERO ) );
-				break;
-			case BLEND_ADD:
-				GL( glEnable( GL_BLEND ) );
-				GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE ) );
-				break;
-			}
+			// TODO
 		}
+
+		int fog_mode=us.fog_mode;
+		if( rs.fx&FX_NOFOG ){
+			us.fog_mode = 0;
+		}
+
+		if( rs.fx&FX_DOUBLESIDED ){
+			GL( glDisable( GL_CULL_FACE ) );
+		}else{
+			GL( glEnable( GL_CULL_FACE ) );
+		}
+
+		int blend=rs.blend;
 
 		// glShadeModel( rs.fx&FX_FLATSHADED ? GL_FLAT : GL_SMOOTH );
 
+		// TODO: sort this out for ES
+#ifndef GLES
 		if( rs.fx&FX_WIREFRAME||wireframe ){
-			// glPolygonMode( GL_FRONT_AND_BACK,GL_LINE );
+			GL( glPolygonMode(GL_FRONT_AND_BACK,GL_LINE) );
 		}else{
-			// glPolygonMode( GL_FRONT_AND_BACK,GL_FILL );
+			GL( glPolygonMode(GL_FRONT_AND_BACK,GL_FILL) );
 		}
+#endif
 
 		us.brush_color[0]=rs.color[0];us.brush_color[1]=rs.color[1];us.brush_color[2]=rs.color[2];us.brush_color[3]=rs.alpha;
 		us.brush_shininess=rs.shininess;
@@ -437,16 +448,46 @@ public:
 		us.fullbright=rs.fx&FX_FULLBRIGHT;
 		us.use_vertex_color=rs.fx&FX_VERTEXCOLOR;
 
+		for( int i=0;i<MAX_TEXTURES;i++ ){
+			GL( glActiveTexture( GL_TEXTURE0+i ) );
+			GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+
+			GL( glActiveTexture( GL_TEXTURE0+i+8 ) );
+			GL( glBindTexture( GL_TEXTURE_CUBE_MAP,0 ) );
+		}
+
 		us.texs_used=0;
 		for( int i=0;i<MAX_TEXTURES;i++ ){
 			const RenderState::TexState &ts=rs.tex_states[i];
-			GL( glActiveTexture( GL_TEXTURE0+i ) );
 
-			GLTextureCanvas *canvas=(GLTextureCanvas*)ts.canvas;
+			if( !ts.canvas ){
+				GL( glActiveTexture( GL_TEXTURE0+i ) );
+				GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+
+				GL( glActiveTexture( GL_TEXTURE0+MAX_TEXTURES+i ) );
+				GL( glBindTexture( GL_TEXTURE_CUBE_MAP,0 ) );
+				continue;
+			}
+
+			GLCanvas *canvas=(GLCanvas*)ts.canvas;
 
 			if( !canvas ){
-				GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+				// ---
 			} else {
+				int flags=ts.canvas->getFlags();
+
+				if( flags&BBCanvas::CANVAS_TEX_CUBE ){
+					GL( glActiveTexture( GL_TEXTURE0+i ) );
+					GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+
+					GL( glActiveTexture( GL_TEXTURE0+MAX_TEXTURES+i ) );
+				}else{
+					GL( glActiveTexture( GL_TEXTURE0+MAX_TEXTURES+i ) );
+					GL( glBindTexture( GL_TEXTURE_CUBE_MAP,0 ) );
+
+					GL( glActiveTexture( GL_TEXTURE0+i ) );
+				}
+
 				canvas->bind();
 
 				float mat[16]={
@@ -466,63 +507,61 @@ public:
 
 				memcpy( us.texs[us.texs_used].mat,mat,sizeof(mat) );
 
-				int flags=ts.canvas->getFlags();
-
 				bool no_filter=flags&BBCanvas::CANVAS_TEX_NOFILTERING;
 				bool mipmap=flags&BBCanvas::CANVAS_TEX_MIPMAP;
 
-				GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR ) );
-				GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) ) );
+				GL( glTexParameteri( canvas->target,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR ) );
+				GL( glTexParameteri( canvas->target,GL_TEXTURE_MIN_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) ) );
 
 				if( flags&BBCanvas::CANVAS_TEX_CLAMPU ){
-					GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
+					GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
 				} else {
-					GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT ) );
+					GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_S,GL_REPEAT ) );
 				}
 
 				if( flags&BBCanvas::CANVAS_TEX_CLAMPV ){
-					GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
+					GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
 				} else {
-					GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT ) );
+					GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_T,GL_REPEAT ) );
+				}
+
+				if( flags&BBCanvas::CANVAS_TEX_ALPHA ){
+					us.alpha_test=1;
 				}
 
 				if( flags&BBCanvas::CANVAS_TEX_SPHERE ){
 					us.texs[us.texs_used].sphere_map=1;
 				}
 
-				us.texs[us.texs_used].blend=ts.blend;
-				switch( ts.blend ){
-				case BLEND_REPLACE:
-					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
-					break;
-				case BLEND_ALPHA:
-					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-					break;
-				case BLEND_MULTIPLY:
-					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-					break;
-				// case BLEND_MULTIPLY:
-				// 	glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_ARB,GL_MODULATE );
-				// 	break;
-				case BLEND_ADD:
-					// glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_ADD);
-					break;
-				case BLEND_DOT3:
-					// glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE_ARB );
-					// glTexEnvf( GL_TEXTURE_ENV,GL_COMBINE_RGB_ARB,GL_DOT3_RGB_ARB );
-					break;
-				case BLEND_MULTIPLY2:
-					// glTexEnvi( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE );
-					// glTexEnvi( GL_TEXTURE_ENV,GL_COMBINE_RGB,GL_MODULATE );
-					// glTexEnvi( GL_TEXTURE_ENV,GL_RGB_SCALE,2.0f );
-					break;
-				default:
-					// glTexEnvf( GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE );
-					break;
+				if( flags&BBCanvas::CANVAS_TEX_CUBE ){
+					us.texs[us.texs_used].cube_map=1;
+				}else{
+					us.texs[us.texs_used].cube_map=0;
 				}
+
+				us.texs[us.texs_used].blend=ts.blend;
+				us.texs[us.texs_used].flags=ts.flags;
 
 				us.texs_used++;
 			}
+		}
+
+		switch( blend ){
+		default:case BLEND_REPLACE:
+			GL( glDisable( GL_BLEND ) );
+			break;
+		case BLEND_ALPHA:
+			GL( glEnable( GL_BLEND ) );
+			GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA ) );
+			break;
+		case BLEND_MULTIPLY:
+			GL( glEnable( GL_BLEND ) );
+			GL( glBlendFunc( GL_DST_COLOR,GL_ZERO ) );
+			break;
+		case BLEND_ADD:
+			GL( glEnable( GL_BLEND ) );
+			GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE ) );
+			break;
 		}
 
 		static unsigned int ubo=0;
@@ -536,9 +575,12 @@ public:
 
 		GL( glBufferData( GL_UNIFORM_BUFFER,sizeof(us),&us,GL_DYNAMIC_DRAW ) );
 		GL( glBindBuffer( GL_UNIFORM_BUFFER,0 ) );
+
+		// restore
+		us.fog_mode=fog_mode;
 	}
 
-  //rendering
+	//rendering
 	bool begin( const std::vector<BBLightRep*> &l ){
 		if( !glIsProgram( defaultProgram ) ){
 			GL( glUseProgram( 0 ) );
@@ -555,9 +597,16 @@ public:
 
 			for( int i=0;i<MAX_TEXTURES;i++ ){
 				char sampler_name[20];
-				sprintf( sampler_name,"bbTexture[%i]",i );
+				snprintf( sampler_name,sizeof(sampler_name),"bbTexture[%i]",i );
 				GLint texLocation=GL( glGetUniformLocation( defaultProgram,sampler_name ) );
 				GL( glUniform1i( texLocation,i ) );
+			}
+
+			for( int i=0;i<MAX_TEXTURES;i++ ){
+				char sampler_name[25];
+				snprintf( sampler_name,sizeof(sampler_name),"bbTextureCube[%i]",i );
+				GLint texLocation=GL( glGetUniformLocation( defaultProgram,sampler_name ) );
+				GL( glUniform1i( texLocation,MAX_TEXTURES+i ) );
 			}
 
 			GLint lightIdx=GL( glGetUniformBlockIndex( defaultProgram,"BBLightState" ) );

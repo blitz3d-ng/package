@@ -11,10 +11,11 @@ std::map<std::string,BBFontData> bbFontCache;
 BBFont::~BBFont(){
 }
 
-BBImageFont::BBImageFont( FT_Face f,int height,float d ):face(f),atlas(0){
-	// TODO: this isn't quite right...
-	FT_Set_Char_Size( face,0,(height-3)*64*d,0,0 );
-	baseline=height;
+BBImageFont::BBImageFont( FT_Face f,int h,float d ):face(f),height(h),atlas(0){
+	FT_Size_RequestRec req={ FT_SIZE_REQUEST_TYPE_REAL_DIM,0,(long)(height*64*d),0,0 };
+	FT_Request_Size( face,&req );
+
+	baseline=height*d+(face->size->metrics.descender/64);
 	density=1.0/d;
 }
 
@@ -40,7 +41,6 @@ BBImageFont *BBImageFont::load( const std::string &name,int height,float density
 				font.data=(unsigned char *)malloc( font.size );
 				fread( font.data,font.size,1,in );
 				fclose( in );
-
 			}
 		}
 	}else{
@@ -57,10 +57,17 @@ BBImageFont *BBImageFont::load( const std::string &name,int height,float density
 }
 
 bool BBImageFont::loadChars( const std::string &t )const{
-	for( int i=0;i<t.length();i++ ){
-		if( !characters.count(t[i]) ){
+	const char *c=t.c_str();
+	while( *c ){
+		utf8_int32_t code;
+		auto b=c;
+		c=utf8codepoint( c,&code );
+
+		if( !characters.count(code) ){
+			LOGD("c: %c,%i => %i", *b,*b,code);
+
 			Char chr;
-			chr.index=FT_Get_Char_Index( face,t[i] );
+			chr.index=FT_Get_Char_Index( face,code );
 			FT_Load_Glyph( face,chr.index,FT_LOAD_RENDER );
 
 			chr.width=face->glyph->bitmap.width;
@@ -69,7 +76,7 @@ bool BBImageFont::loadChars( const std::string &t )const{
 			chr.bearing_y=face->glyph->bitmap_top;
 			chr.advance=face->glyph->advance.x>>6;
 
-			characters.insert( std::make_pair( t[i],chr ) );
+			characters.insert( std::make_pair( code,chr ) );
 
 			dirty=true;
 		}
@@ -88,7 +95,7 @@ void BBImageFont::rebuildAtlas(){
 	memset( atlas->bits,0,atlas->width*atlas->height );
 
 	int ox=0,oy=0,my=0;
-	for( std::map<char,Char>::iterator it=characters.begin();it!=characters.end();++it ){
+	for( std::map<utf8_int32_t,Char>::iterator it=characters.begin();it!=characters.end();++it ){
 		Char &c=it->second;
 
 		FT_Load_Glyph( face,c.index,FT_LOAD_RENDER );
@@ -114,12 +121,12 @@ void BBImageFont::rebuildAtlas(){
 	dirty=false;
 }
 
-BBImageFont::Char &BBImageFont::getChar( char c ){
+BBImageFont::Char &BBImageFont::getChar( utf8_int32_t c ){
 	loadChars( std::string( 1,c ) );
 	return characters[c];
 }
 
-float BBImageFont::getKerning( char l,char r ){
+float BBImageFont::getKerning( utf8_int32_t l,utf8_int32_t r ){
 	if( !FT_HAS_KERNING(face) ) return 0;
 	Char lc=getChar( l ),rc=getChar( r );
 
@@ -133,7 +140,7 @@ int BBImageFont::getWidth()const{
 }
 
 int BBImageFont::getHeight()const{
-	return baseline;
+	return height;
 }
 
 int BBImageFont::getWidth( const std::string &text )const{
@@ -147,5 +154,5 @@ int BBImageFont::getWidth( const std::string &text )const{
 }
 
 bool BBImageFont::isPrintable( int chr )const{
-	return true;
+	return FT_Get_Char_Index( face,chr )!=0;
 }

@@ -35,6 +35,7 @@ void processEvent( void *data,void *context){
 	switch( ev->id ){
 	case BBEVENT_KEYDOWN:   bbKeyboard.downEvent( ev->data );break;
 	case BBEVENT_KEYUP:     bbKeyboard.upEvent( ev->data );break;
+	case BBEVENT_CHAR:      bbKeyboard.charEvent( ev->data );break;
 	case BBEVENT_MOUSEDOWN: bbMouse.downEvent( ev->data );break;
 	case BBEVENT_MOUSEUP:   bbMouse.upEvent( ev->data );break;
 	case BBEVENT_MOUSEMOVE:
@@ -51,21 +52,6 @@ void processEvent( void *data,void *context){
 	}
 }
 
-BBMODULE_CREATE( input ){
-	gx_input=0;
-	bbOnEvent.add( processEvent,0 );
-	return true;
-}
-
-BBMODULE_DESTROY( input ){
-	bbJoysticks.clear();
-	if( gx_input ){
-		delete gx_input;
-		gx_input=0;
-	}
-	return true;
-}
-
 bb_int_t BBCALL bbKeyDown( bb_int_t n ){
 	return bbKeyboard.keyDown( n );
 }
@@ -74,17 +60,14 @@ bb_int_t BBCALL bbKeyHit( bb_int_t n ){
 	return bbKeyboard.keyHit( n );
 }
 
-bb_int_t BBCALL bbGetKey( bb_int_t ascii ){
-	int key=bbKeyboard.getKey();
-	return ascii ? gx_input->toAscii( key ) : key;
+bb_int_t BBCALL bbGetKey(){
+	return bbKeyboard.getKey();
 }
 
 bb_int_t BBCALL bbWaitKey(){
 	for(;;){
 		if( !bbRuntimeIdle() ) RTEX( 0 );
-		if( int key=bbKeyboard.getKey( ) ){
-			if( (key=gx_input->toAscii( key )) ) return key;
-		}
+		if( int key=bbKeyboard.getKey() ) return key;
 		bbDelay( 20 );
 	}
 }
@@ -278,4 +261,19 @@ bb_int_t	BBCALL bbJoyVDir( bb_int_t port ){
 
 void BBCALL bbFlushJoy(){
 	for( int k=0;k<bbJoysticks.size();++k ) bbJoysticks[k]->flush();
+}
+
+BBMODULE_CREATE( input ){
+	gx_input=0;
+	bbOnEvent.add( processEvent,0 );
+	return true;
+}
+
+BBMODULE_DESTROY( input ){
+	bbJoysticks.clear();
+	if( gx_input ){
+		delete gx_input;
+		gx_input=0;
+	}
+	return true;
 }
