@@ -16,6 +16,7 @@ ExpectInt GraphicsHeight(),600,"600px"
 ExpectInt GraphicsLost(),False,"graphics not lost"
 
 Locate 20,20
+Print ""
 Print "hello, world"
 Write "yo"
 

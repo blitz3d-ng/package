@@ -288,21 +288,23 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 
 	if( font->loadChars( t ) ){
 		font->rebuildAtlas();
+		if( font->atlas ){
+			int size=font->atlas->width*font->atlas->height;
+			std::vector<unsigned char> bmp( size*4 );
+			for( int i=0;i<font->atlas->width*font->atlas->height;i++ ){
+				bmp[i*4+0]=bmp[i*4+1]=bmp[i*4+2]=255;
+				bmp[i*4+3]=font->atlas->bits[i];
+			}
 
-		int size=font->atlas->width*font->atlas->height;
-		std::vector<unsigned char> bmp( size*4 );
-		for( int i=0;i<font->atlas->width*font->atlas->height;i++ ){
-			bmp[i*4+0]=bmp[i*4+1]=bmp[i*4+2]=255;
-			bmp[i*4+3]=font->atlas->bits[i];
+			GL( glPixelStorei( GL_UNPACK_ALIGNMENT,1 ) );
+			GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,font->atlas->width,font->atlas->height,0,GL_RGBA,GL_UNSIGNED_BYTE,bmp.data() ) );
+			GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
+			GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
+			GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR ) );
+			GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR ) );
 		}
-
-		GL( glPixelStorei( GL_UNPACK_ALIGNMENT,1 ) );
-		GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,font->atlas->width,font->atlas->height,0,GL_RGBA,GL_UNSIGNED_BYTE,bmp.data() ) );
-		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
-		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
-		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR ) );
-		GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR ) );
 	}
+	if( !font->atlas ) return;
 
 	std::vector<Vertex> verts;
 
