@@ -73,11 +73,11 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		}
 	}
 
-	bool windows=false,linux=false,nx=false;
+	bool windows=false,nux=false,nx=false;
 	if( target.type=="windows" ){
 		windows=true;
 	}else if( target.type=="linux" ){
-		linux=true;
+		nux=true;
 	}else if( target.type=="nx" ){
 		nx=true;
 	}
@@ -344,7 +344,7 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		for( std::string lib:m.system_libs ) systemlibs.push_back( lib );
 	}
 
-	if( linux||nx ){
+	if( nux||nx ){
 		args.push_back("--start-group");
 	}
 
@@ -380,7 +380,7 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 #endif
 	}
 
-	if( linux||nx ){
+	if( nux||nx ){
 		args.push_back("--end-group");
 	}
 
