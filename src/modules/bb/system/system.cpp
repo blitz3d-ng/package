@@ -3,7 +3,9 @@
 #include <bb/blitz/blitz.h>
 #include <bb/runtime/runtime.h>
 #include "system.h"
-#include <cstring>
+
+#include <string.h>
+#include <time.h>
 
 std::map<std::string,std::string> bbSystemProperties;
 BBSystemDriver *bbSystemDriver=0;
