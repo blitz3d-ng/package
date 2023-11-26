@@ -14,3 +14,7 @@ ScreenHeight()
 Expect SystemProperty( "appdir" )<>"", "appdir property is present"
 
 Expect MilliSecs()>0, "Can get clock time in ms"
+
+Expect CurrentDate$()<>"", "Gets the current date"
+
+Expect CurrentTime$()<>"", "Gets the current time"

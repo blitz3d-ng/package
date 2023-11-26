@@ -198,3 +198,7 @@ if(BB_MSVC)
   target_link_libraries(blitzcc StackWalker)
   target_sources(blitzcc PUBLIC ../../stdutil/dpi.manifest)
 endif()
+
+if(NOT BB_MSVC)
+  target_compile_options(blitzcc PRIVATE -Wno-error=delete-incomplete)
+endif()

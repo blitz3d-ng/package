@@ -2,6 +2,7 @@
 #include "../stdutil/stdutil.h"
 #include <bb/system/system.h>
 #include "font.h"
+#include <utf8.h>
 
 #undef max
 
@@ -29,7 +30,7 @@ BBImageFont *BBImageFont::load( const std::string &name,int height,float density
 		}else{
 			// TODO: needs more work
 			std::string ext=tolower( name.substr( n+1 ) );
-			if( ext=="ttf" ){
+			if( ext=="ttf"||ext=="fon" ){
 				FILE *in=fopen( name.c_str(),"rb" );
 				if( !in ) return 0;
 
@@ -40,7 +41,6 @@ BBImageFont *BBImageFont::load( const std::string &name,int height,float density
 				font.data=(unsigned char *)malloc( font.size );
 				fread( font.data,font.size,1,in );
 				fclose( in );
-
 			}
 		}
 	}else{
@@ -53,28 +53,39 @@ BBImageFont *BBImageFont::load( const std::string &name,int height,float density
 	if( FT_New_Memory_Face( ft,font.data,font.size,0,&face ) ){
 		return 0;
 	}
+
+	if( !face->charmap ){
+		FT_Set_Charmap( face,face->charmaps[0] );
+	}
+
 	return d_new BBImageFont( face,height,density );
 }
 
+bool BBImageFont::loadChar( uint32_t c )const{
+	if( characters.count( c ) ) return false;
+
+	Char chr;
+	chr.index=FT_Get_Char_Index( face,c );
+	FT_Load_Glyph( face,chr.index,FT_LOAD_RENDER );
+
+	chr.width=face->glyph->bitmap.width;
+	chr.height=face->glyph->bitmap.rows;
+	chr.bearing_x=face->glyph->bitmap_left;
+	chr.bearing_y=face->glyph->bitmap_top;
+	chr.advance=face->glyph->advance.x>>6;
+
+	characters.insert( std::make_pair( c,chr ) );
+
+	return (dirty=true);
+}
+
 bool BBImageFont::loadChars( const std::string &t )const{
-	for( int i=0;i<t.length();i++ ){
-		if( !characters.count(t[i]) ){
-			Char chr;
-			chr.index=FT_Get_Char_Index( face,t[i] );
-			FT_Load_Glyph( face,chr.index,FT_LOAD_RENDER );
-
-			chr.width=face->glyph->bitmap.width;
-			chr.height=face->glyph->bitmap.rows;
-			chr.bearing_x=face->glyph->bitmap_left;
-			chr.bearing_y=face->glyph->bitmap_top;
-			chr.advance=face->glyph->advance.x>>6;
-
-			characters.insert( std::make_pair( t[i],chr ) );
-
-			dirty=true;
-		}
+	const char *s=t.c_str();
+	while( *s ){
+		utf8_int32_t chr;
+		s=utf8codepoint( s,&chr );
+		loadChar( chr );
 	}
-
 	return dirty;
 }
 
@@ -88,7 +99,7 @@ void BBImageFont::rebuildAtlas(){
 	memset( atlas->bits,0,atlas->width*atlas->height );
 
 	int ox=0,oy=0,my=0;
-	for( std::map<char,Char>::iterator it=characters.begin();it!=characters.end();++it ){
+	for( std::map<uint32_t,Char>::iterator it=characters.begin();it!=characters.end();++it ){
 		Char &c=it->second;
 
 		FT_Load_Glyph( face,c.index,FT_LOAD_RENDER );
@@ -100,12 +111,22 @@ void BBImageFont::rebuildAtlas(){
 
 		c.x=ox;c.y=oy;
 
-		int width=face->glyph->bitmap.width;
-
 		my=std::max( c.height,my );
 
-		for( int y=0;y<face->glyph->bitmap.rows;y++ ){
-			memcpy( atlas->bits+(atlas->width*(oy+y))+ox,face->glyph->bitmap.buffer+y*width,width );
+		FT_Bitmap bm=face->glyph->bitmap;
+		for( int y=0;y<bm.rows;y++ ){
+			unsigned char *in=bm.buffer+y*bm.pitch;
+			unsigned char *out=atlas->bits+(atlas->width*(oy+y))+ox;
+			switch( bm.pixel_mode ){
+			case FT_PIXEL_MODE_MONO:
+				for( int i=0;i<8;i++ ) out[i]=(*in>>(7-i))&1?0xff:0;
+				break;
+			case FT_PIXEL_MODE_GRAY:
+				memcpy( out,in,bm.width );
+				break;
+			default:
+				RTEX( "unhandled font bitmap format" );
+			}
 		}
 
 		ox+=c.width;
@@ -114,12 +135,12 @@ void BBImageFont::rebuildAtlas(){
 	dirty=false;
 }
 
-BBImageFont::Char &BBImageFont::getChar( char c ){
-	loadChars( std::string( 1,c ) );
+BBImageFont::Char &BBImageFont::getChar( uint32_t c ){
+	loadChar( c );
 	return characters[c];
 }
 
-float BBImageFont::getKerning( char l,char r ){
+float BBImageFont::getKerning( uint32_t l,uint32_t r ){
 	if( !FT_HAS_KERNING(face) ) return 0;
 	Char lc=getChar( l ),rc=getChar( r );
 
@@ -139,11 +160,14 @@ int BBImageFont::getHeight()const{
 int BBImageFont::getWidth( const std::string &text )const{
 	loadChars( text );
 
-	int width=0;
-	for( int i=0;i<text.length();i++ ){
-		width+=characters[text[i]].advance*density;
+	const char *t=text.c_str();
+	int w=0;
+	while( *t ){
+		utf8_int32_t c;
+		t=utf8codepoint( t,&c );
+		w+=characters[c].advance*density;
 	}
-	return width;
+	return w;
 }
 
 bool BBImageFont::isPrintable( int chr )const{

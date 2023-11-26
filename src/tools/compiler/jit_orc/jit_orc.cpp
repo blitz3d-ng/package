@@ -38,8 +38,8 @@ int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &ho
 	BBMAIN bbMain=(BBMAIN)main_sym.getValue();
 	BBSTART bbStart=(BBSTART)start_sym.getValue();
 
-	char *argv[1]={ "blitzcc" };
-	int retcode=bbStart( 1, argv, bbMain );
+	const char *argv[1]={ "blitzcc" };
+	int retcode=bbStart( 1, (char**)argv, bbMain );
 
 	cantFail( RT->remove() );
 

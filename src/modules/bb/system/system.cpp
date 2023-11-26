@@ -3,7 +3,9 @@
 #include <bb/blitz/blitz.h>
 #include <bb/runtime/runtime.h>
 #include "system.h"
-#include <cstring>
+
+#include <string.h>
+#include <time.h>
 
 std::map<std::string,std::string> bbSystemProperties;
 BBSystemDriver *bbSystemDriver=0;
@@ -72,6 +74,22 @@ bb_float_t BBCALL bbDPIScaleY(){
 	float x,y;
 	bbSystemDriver->dpiInfo( x,y );
 	return y;
+}
+
+BBStr * BBCALL bbCurrentDate(){
+	time_t t;
+	time( &t );
+	char buff[256];
+	strftime( buff,256,"%d %b %Y",localtime( &t ) );
+	return d_new BBStr( buff );
+}
+
+BBStr * BBCALL bbCurrentTime(){
+	time_t t;
+	time( &t );
+	char buff[256];
+	strftime( buff,256,"%H:%M:%S",localtime( &t ) );
+	return d_new BBStr( buff );
 }
 
 BBMODULE_CREATE( system ){

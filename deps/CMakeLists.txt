@@ -1,6 +1,22 @@
+set(BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
+set(SKIP_INSTALL_ALL ON CACHE STRING "" FORCE)
+
+# force local zlib
+set(ZLIB_FOUND 1 CACHE STRING "" FORCE)
+
+# suppress warnings
+if(BB_MSVC)
+  add_compile_options(/w)
+elseif(BB_CLANG)
+  add_compile_options(-Wno-everything)
+elseif(BB_GNU)
+  add_compile_options(-w)
+endif()
+
 # core
 add_subdirectory(zlib)
 add_subdirectory(stackwalker)
+add_subdirectory(utf8.h)
 
 # ide
 add_subdirectory(wxwidgets)
@@ -17,6 +33,7 @@ add_subdirectory(vrapi)
 add_subdirectory(freetype2)
 add_subdirectory(glew)
 add_subdirectory(sdl)
+add_subdirectory(libpng)
 add_subdirectory(freeimage)
 add_subdirectory(dxsdk)
 add_subdirectory(assimp)
@@ -26,7 +43,7 @@ add_subdirectory(fmod)
 add_subdirectory(ogg)
 add_subdirectory(vorbis)
 
-# misc 
+# misc
 add_subdirectory(enet)
 add_subdirectory(uuid)
 add_subdirectory(crossguid)
