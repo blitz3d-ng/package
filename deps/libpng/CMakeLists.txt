@@ -2,6 +2,9 @@ set(PNG_SHARED OFF CACHE STRING "" FORCE)
 set(PNG_BUILD_ZLIB ON CACHE STRING "" FORCE)
 set(PNG_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 
+# TODO: remove this hack
+set(ZLIB_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/../zlib/tree;${CMAKE_CURRENT_SOURCE_DIR}/../zlib/tree" CACHE STRING "" FORCE)
+
 add_subdirectory(tree)
 
 target_link_libraries(png_static ${ZLIB})
