@@ -2,7 +2,6 @@
 #define BB_BLITZ2D_FONT_H
 
 #include <bb/pixmap/pixmap.h>
-#include "../graphics.gl/utf8.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

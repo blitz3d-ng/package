@@ -152,10 +152,19 @@ bool SDLRuntime::idle(){
 
 			if( event.type==SDL_KEYDOWN ){
 				BBEvent ev=BBEvent( BBEVENT_CHAR,0 );
-				LOGD( "code=%i",code );
+				// LOGD( "code=%i",code );
 				switch( code ){
 				case SDL_SCANCODE_BACKSPACE:
 					ev.data='\b';
+					break;
+				case SDL_SCANCODE_RETURN:case SDL_SCANCODE_RETURN2:case SDL_SCANCODE_KP_ENTER:
+					ev.data='\n';
+					break;
+				case SDL_SCANCODE_UP:
+					ev.data=BBInputDriver::ASC_UP;
+					break;
+				case SDL_SCANCODE_DOWN:
+					ev.data=BBInputDriver::ASC_DOWN;
 					break;
 				case SDL_SCANCODE_LEFT:
 					ev.data=BBInputDriver::ASC_LEFT;
@@ -167,7 +176,7 @@ bool SDLRuntime::idle(){
 				if( ev.data ) bbOnEvent.run( &ev );
 			}
 		}else if( event.type==SDL_TEXTINPUT||event.type==SDL_TEXTEDITING ){
-			LOGD( "text: %s",event.text.text );
+			// LOGD( "text: %s",event.text.text );
 			char *c=event.text.text;
 			while( *c ){
 				BBEvent ev=BBEvent( BBEVENT_CHAR,*(c++) );
