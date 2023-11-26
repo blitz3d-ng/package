@@ -2,7 +2,9 @@
 #ifndef STDUTIL_H
 #define STDUTIL_H
 
+#ifdef BB_MSVC
 #pragma warning(disable:4786)
+#endif
 
 #include "../config.h"
 

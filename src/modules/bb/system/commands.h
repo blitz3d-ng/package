@@ -20,6 +20,8 @@ bb_int_t BBCALL bbScreenWidth( bb_int_t i );
 bb_int_t BBCALL bbScreenHeight( bb_int_t i );
 bb_float_t BBCALL bbDPIScaleX(  );
 bb_float_t BBCALL bbDPIScaleY(  );
+BBStr * BBCALL bbCurrentDate(  );
+BBStr * BBCALL bbCurrentTime(  );
 
 #ifdef __cplusplus
 }

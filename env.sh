@@ -9,7 +9,8 @@
 # if no params, export needed variables for the compiler.
 if [ "$1" = "" ]
 then
-    export blitzpath=$(dirname $0)/_release
+    dir=$(cd "$(dirname "$0")"; pwd -P)
+    export blitzpath=$dir/_release
     export PATH=$blitzpath/bin:$PATH
     return 0
 fi

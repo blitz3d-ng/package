@@ -4,8 +4,6 @@ endif()
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_compile_options(-w) # suppress warnings
-
 # JPEG
 add_library(jpeg OBJECT src/Source/LibJPEG/jaricom.c src/Source/LibJPEG/jcapimin.c src/Source/LibJPEG/jcapistd.c src/Source/LibJPEG/jcarith.c src/Source/LibJPEG/jccoefct.c src/Source/LibJPEG/jccolor.c src/Source/LibJPEG/jcdctmgr.c src/Source/LibJPEG/jchuff.c src/Source/LibJPEG/jcinit.c src/Source/LibJPEG/jcmainct.c src/Source/LibJPEG/jcmarker.c src/Source/LibJPEG/jcmaster.c src/Source/LibJPEG/jcomapi.c src/Source/LibJPEG/jcparam.c src/Source/LibJPEG/jcprepct.c src/Source/LibJPEG/jcsample.c src/Source/LibJPEG/jctrans.c src/Source/LibJPEG/jdapimin.c src/Source/LibJPEG/jdapistd.c src/Source/LibJPEG/jdarith.c src/Source/LibJPEG/jdatadst.c src/Source/LibJPEG/jdatasrc.c src/Source/LibJPEG/jdcoefct.c src/Source/LibJPEG/jdcolor.c src/Source/LibJPEG/jddctmgr.c src/Source/LibJPEG/jdhuff.c src/Source/LibJPEG/jdinput.c src/Source/LibJPEG/jdmainct.c src/Source/LibJPEG/jdmarker.c src/Source/LibJPEG/jdmaster.c src/Source/LibJPEG/jdmerge.c src/Source/LibJPEG/jdpostct.c src/Source/LibJPEG/jdsample.c src/Source/LibJPEG/jdtrans.c src/Source/LibJPEG/jerror.c src/Source/LibJPEG/jfdctflt.c src/Source/LibJPEG/jfdctfst.c src/Source/LibJPEG/jfdctint.c src/Source/LibJPEG/jidctflt.c src/Source/LibJPEG/jidctfst.c src/Source/LibJPEG/jidctint.c src/Source/LibJPEG/jmemmgr.c src/Source/LibJPEG/jmemnobs.c src/Source/LibJPEG/jquant1.c src/Source/LibJPEG/jquant2.c src/Source/LibJPEG/jutils.c src/Source/LibJPEG/transupp.c)
 target_include_directories(jpeg PUBLIC src/Source/LibJPEG)
@@ -48,11 +46,6 @@ set_target_properties(jpeg PROPERTIES UNITY_BUILD false)
 # add_library(openjpeg OBJECT src/Source/LibOpenJPEG/bio.c src/Source/LibOpenJPEG/cio.c src/Source/LibOpenJPEG/dwt.c src/Source/LibOpenJPEG/event.c src/Source/LibOpenJPEG/function_list.c src/Source/LibOpenJPEG/image.c src/Source/LibOpenJPEG/invert.c src/Source/LibOpenJPEG/j2k.c src/Source/LibOpenJPEG/jp2.c src/Source/LibOpenJPEG/mct.c src/Source/LibOpenJPEG/mqc.c src/Source/LibOpenJPEG/openjpeg.c src/Source/LibOpenJPEG/opj_clock.c src/Source/LibOpenJPEG/pi.c src/Source/LibOpenJPEG/raw.c src/Source/LibOpenJPEG/t1.c src/Source/LibOpenJPEG/t2.c src/Source/LibOpenJPEG/tcd.c src/Source/LibOpenJPEG/tgt.c)
 # target_compile_definitions(openjpeg PUBLIC -DOPJ_STATIC)
 # set_target_properties(openjpeg PROPERTIES UNITY_BUILD false)
-
-# png
-add_library(png OBJECT src/Source/LibPNG/png.c src/Source/LibPNG/pngerror.c src/Source/LibPNG/pngget.c src/Source/LibPNG/pngmem.c src/Source/LibPNG/pngpread.c src/Source/LibPNG/pngread.c src/Source/LibPNG/pngrio.c src/Source/LibPNG/pngrtran.c src/Source/LibPNG/pngrutil.c src/Source/LibPNG/pngset.c src/Source/LibPNG/pngtrans.c src/Source/LibPNG/pngwio.c src/Source/LibPNG/pngwrite.c src/Source/LibPNG/pngwtran.c src/Source/LibPNG/pngwutil.c )
-target_link_libraries(png ${ZLIB})
-target_compile_definitions(png PRIVATE PNG_ARM_NEON_OPT=0)
 
 # raw
 # add_library(raw_ OBJECT src/Source/LibRawLite/internal/dcraw_common.cpp src/Source/LibRawLite/internal/dcraw_fileio.cpp src/Source/LibRawLite/internal/demosaic_packs.cpp src/Source/LibRawLite/src/libraw_c_api.cpp src/Source/LibRawLite/src/libraw_cxx.cpp src/Source/LibRawLite/src/libraw_datastream.cpp src/Source/LibRawLite/internal/defines.h src/Source/LibRawLite/internal/libraw_internal_funcs.h src/Source/LibRawLite/internal/var_defines.h src/Source/LibRawLite/libraw/libraw.h src/Source/LibRawLite/libraw/libraw_alloc.h src/Source/LibRawLite/libraw/libraw_const.h src/Source/LibRawLite/libraw/libraw_datastream.h src/Source/LibRawLite/libraw/libraw_internal.h src/Source/LibRawLite/libraw/libraw_types.h src/Source/LibRawLite/libraw/libraw_version.h)
@@ -172,14 +165,13 @@ set(SOURCES
   # src/Source/OpenEXR/Half/half.cpp
 )
 
-set(DEPS jpeg png ${ZLIB})
+set(DEPS jpeg png_static)
 
 add_library(freeimage STATIC ${SOURCES})
 target_output_to_toolchain(freeimage)
 target_compile_definitions(freeimage PRIVATE -DLIBRAW_NODLL)
 target_compile_definitions(freeimage PUBLIC -DFREEIMAGE_LIB)
-target_include_directories(freeimage SYSTEM PUBLIC src/Source)
-# target_include_directories(freeimage PRIVATE src/Source/LibJXR/jxrgluelib src/Source/LibJXR/image/sys src/Source/OpenEXR/Half src/Source/OpenEXR/Iex src/Source/OpenEXR/lexMath src/Source/OpenEXR/IlmImf src/Source/OpenEXR/IlmThread src/Source/OpenEXR/Imath src/Source/OpenEXR)
+target_include_directories(freeimage PUBLIC src/Source)
 
-target_link_libraries(freeimage ${DEPS})
+target_link_libraries(freeimage ${DEPS} png_static)
 set_target_properties(freeimage PROPERTIES UNITY_BUILD false)

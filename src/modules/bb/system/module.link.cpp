@@ -15,4 +15,6 @@ BBMODULE_LINK( system ){
 	rtSym( "%ScreenHeight%i=-1",bbScreenHeight );
 	rtSym( "#DPIScaleX",bbDPIScaleX );
 	rtSym( "#DPIScaleY",bbDPIScaleY );
+	rtSym( "$CurrentDate",bbCurrentDate );
+	rtSym( "$CurrentTime",bbCurrentTime );
 }

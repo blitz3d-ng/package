@@ -7,6 +7,7 @@
 BBMODULE_LINK( unit_test ){
 	rtSym( "Context$mesg",bbContext );
 	rtSym( "Expect%condition$mesg",bbExpect );
-	rtSym( "ExpectIntEq%a%b$mesg",bbExpectIntEq );
-	rtSym( "ExpectFloatEq#a#b$mesg",bbExpectFloatEq );
+	rtSym( "ExpectInt%a%b$mesg=\"\"",bbExpectInt );
+	rtSym( "ExpectFloat#a#b$mesg=\"\"",bbExpectFloat );
+	rtSym( "ExpectStr$a$b$mesg=\"\"",bbExpectStr );
 }

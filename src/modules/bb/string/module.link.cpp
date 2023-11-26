@@ -21,6 +21,4 @@ BBMODULE_LINK( string ){
 	rtSym( "%Len$string",bbLen );
 	rtSym( "$Hex%value",bbHex );
 	rtSym( "$Bin%value",bbBin );
-	rtSym( "$CurrentDate",bbCurrentDate );
-	rtSym( "$CurrentTime",bbCurrentTime );
 }

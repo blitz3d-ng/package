@@ -32,7 +32,7 @@ public:
 class BBImageFont : public BBFont{
 public:
 	struct Char{
-		unsigned long index;
+		uint32_t index;
 		int x,y,width,height;
 		int bearing_x,bearing_y;
 		int advance;
@@ -45,18 +45,19 @@ public:
 
 private:
 	FT_Face face;
-	mutable std::map<utf8_int32_t,Char> characters;
+	mutable std::map<uint32_t,Char> characters;
 
 	BBImageFont( FT_Face f,int height,float density );
 
 public:
 	static BBImageFont *load( const std::string &name,int height,float density,int flags );
 
+	bool loadChar( uint32_t c )const;
 	bool loadChars( const std::string &t )const;
 	void rebuildAtlas();
 
-	Char &getChar( utf8_int32_t c );
-	float getKerning( utf8_int32_t l,utf8_int32_t r );
+	Char &getChar( uint32_t c );
+	float getKerning( uint32_t l,uint32_t r );
 
 	int getWidth()const;
 	int getHeight()const;

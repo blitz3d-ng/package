@@ -26,8 +26,6 @@ bb_int_t BBCALL bbAsc( BBStr *string );
 bb_int_t BBCALL bbLen( BBStr *string );
 BBStr * BBCALL bbHex( bb_int_t value );
 BBStr * BBCALL bbBin( bb_int_t value );
-BBStr * BBCALL bbCurrentDate(  );
-BBStr * BBCALL bbCurrentTime(  );
 
 #ifdef __cplusplus
 }

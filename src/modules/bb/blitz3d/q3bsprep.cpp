@@ -73,7 +73,7 @@ struct q3_brushside{
 struct q3_direntry{
 	union{
 		int offset;
-		void *lump;
+		char *lump;
 	};
 	int length;
 };
