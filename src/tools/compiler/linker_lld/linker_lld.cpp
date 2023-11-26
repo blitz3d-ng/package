@@ -29,7 +29,7 @@
 #define FORMAT elf
 #define UNAME "linux"
 #else
-LLD_HAS_DRIVER(elf) // android
+LLD_HAS_DRIVER(elf) // android/nx
 #endif
 
 LLD_HAS_DRIVER(FORMAT) // native
@@ -73,6 +73,20 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		}
 	}
 
+	bool windows=false,linux=false,nx=false;
+	if( target.type=="windows" ){
+		windows=true;
+	}else if( target.type=="linux" ){
+		linux=true;
+	}else if( target.type=="nx" ){
+		nx=true;
+	}
+
+	std::string devkitpro;
+	if( nx ){
+		devkitpro="/opt/devkitpro";
+	}
+
 	// TODO: sort out all the lazy strdup business below...
 	std::vector<std::string> args,libs,systemlibs;
 
@@ -95,14 +109,6 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		}
 	}
 
-	if( apk ){
-		remove( exeFile.c_str() );
-		system( ("rm -rf "+tmpdir).c_str() );
-
-		// arm64-v8a armeabi-v7a x86_64 x86
-		system( ("mkdir -p "+tmpdir+"/lib/arm64-v8a").c_str() );
-		binaryPath=tmpdir+"/lib/arm64-v8a/libmain.so";
-	}
 #ifdef BB_MACOS
 	if( app ){
 		binaryPath=binaryPath.substr( 0,binaryPath.size()-4 ); // remove .app
@@ -113,9 +119,21 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		remove( binaryPath.c_str() );
 	}
 #endif
+	if( apk ){
+		remove( exeFile.c_str() );
+		system( ("rm -rf "+tmpdir).c_str() );
 
-	// just the name?
-	args.push_back( "linker" );
+		// arm64-v8a armeabi-v7a x86_64 x86
+		system( ("mkdir -p "+tmpdir+"/lib/arm64-v8a").c_str() );
+		binaryPath=tmpdir+"/lib/arm64-v8a/libmain.so";
+	}else if( nx ){
+		remove( exeFile.c_str() );
+
+		std::string dir=dirname( (char*)binaryPath.c_str() );
+		std::string base=basename( (char*)binaryPath.c_str() );
+		base=base.substr( 0,base.size()-4 );
+		binaryPath=dir+"/"+base+".elf";
+	}
 
 	// strip unused symbols...
 	if( target.host ){
@@ -137,16 +155,18 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		args.push_back( "-dead_strip" );
 	}else if( android ){
 		args.push_back( "--gc-sections" );
+	}else if( nx ){
+		args.push_back( "--gc-sections" );
 	}
 
 	if( target.type=="ovr" ){
 		args.push_back( "-u" );args.push_back( "ANativeActivity_onCreate" );
 	}
 
-#ifdef BB_POSIX
-	args.push_back("--error-limit=0");
-	// args.push_back("--lto-O0");
-#endif
+	if( !windows && !nx ){
+		args.push_back("--error-limit=0");
+		// args.push_back("--lto-O0");
+	}
 
 	if( target.host ){
 #ifdef BB_WINDOWS
@@ -202,6 +222,22 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib/"+ndktriple+"/"+target.version);
 		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib/"+ndktriple+"");
 		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib");
+	}else if( nx ){
+		args.push_back( "-maarch64elf" );
+		args.push_back( "-L"+devkitpro+"/portlibs/switch/lib" );
+
+		// TODO: read from /opt/devkitpro/libnx/switch.specs
+		args.push_back( "-X" );
+		args.push_back( "-EL" );
+		args.push_back( "-T" );args.push_back( devkitpro+"/libnx/switch.ld" );
+
+		args.push_back("-pie");
+		args.push_back("--no-dynamic-linker");
+		args.push_back( "-z" );args.push_back( "text" );
+		args.push_back( "-z" );args.push_back( "now" );
+
+		args.push_back("--build-id=sha1");
+		args.push_back("--nx-module-name");
 	}
 
 #ifdef BB_MACOS
@@ -295,11 +331,7 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 	std::string libPath="/libpath:"+libdir;
 	args.push_back( libPath );
 #else
-	args.push_back( "-L" );args.push_back( libdir );
-#endif
-
-#ifdef BB_LINUX
-	args.push_back("--start-group");
+	args.push_back( "-L"+libdir );
 #endif
 
 	libs.push_back( "runtime."+rt+".static" );
@@ -312,9 +344,9 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		for( std::string lib:m.system_libs ) systemlibs.push_back( lib );
 	}
 
-#ifdef BB_LINUX
-	args.push_back("--end-group");
-#endif
+	if( linux||nx ){
+		args.push_back("--start-group");
+	}
 
 	std::string mainPath=std::string(tmpnam(0))+".o";
 	std::ofstream mainFile( mainPath,std::ios_base::binary );
@@ -334,6 +366,24 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		args.push_back( arg );
 	}
 
+	for( auto lib:systemlibs ){
+#ifdef BB_WINDOWS
+		args.push_back( lib+".lib" );
+#else
+		std::string fw="-framework";
+		if( lib.find( fw )==0 ) {
+			args.push_back( fw );
+			args.push_back( lib.substr( fw.size()+1 ) );
+		} else {
+			args.push_back( "-l"+lib );
+		}
+#endif
+	}
+
+	if( linux||nx ){
+		args.push_back("--end-group");
+	}
+
 	if( target.host ){
 #ifdef BB_LINUX
 		args.push_back("-dynamic-linker");args.push_back("/lib64/ld-linux-x86-64.so.2");
@@ -347,20 +397,6 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 #endif
 	}else if( android ){
 		args.push_back("-dynamic-linker");args.push_back("/system/bin/linker64");
-	}
-
-	for( auto lib:systemlibs ){
-#ifdef BB_WINDOWS
-		args.push_back( lib+".lib" );
-#else
-		std::string fw="-framework";
-		if( lib.find( fw )==0 ) {
-			args.push_back( fw );
-			args.push_back( lib.substr( fw.size()+1 ) );
-		} else {
-			args.push_back( "-l"+lib );
-		}
-#endif
 	}
 
 	if( target.host ){
@@ -385,30 +421,54 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		args.push_back("-l");args.push_back("c");
 		args.push_back("-l");args.push_back("gcc");
 		args.push_back( ndkroot+"/sysroot/usr/lib/"+ndktriple+"/"+target.version+"/crtend_so.o" );
-	}
+	}else if( nx ){
+		std::string gcc=devkitpro+"/devkitA64/lib/gcc/aarch64-none-elf/13.2.0/pic";
+		args.push_back( "-L"+devkitpro+"/devkitA64/aarch64-none-elf/lib/pic" );
+		args.push_back( "-L"+devkitpro+"/libnx/lib" );
+		args.push_back( "-L"+gcc );
 
-	std::vector<const char *> _args;
-	for( auto arg:args ){
-		_args.push_back( strdup( arg.c_str() ) );
+		args.push_back( gcc+"/crti.o");
+		args.push_back( gcc+"/crtbegin.o");
+
+		args.push_back("-lstdc++");
+		args.push_back("--start-group");
+		args.push_back("-lgcc");
+		args.push_back("-lg");
+		args.push_back("-lc");
+		args.push_back("-lsysbase");
+		args.push_back("-lpthread");
+		args.push_back("--end-group");
+
+		args.push_back( gcc+"/crtend.o");
+		args.push_back( gcc+"/crtn.o");
 	}
 
 	bool success=false;
-	if( android ){
-		success=lld::elf::link( _args,llvm::outs(),llvm::errs(),false,false );
+	if( nx ){
+		// TODO: seems like it's possible to use the LLD elf linker, but there are
+		// some more config that needs to be discovered
+		std::string cmdline="";
+		for( auto arg:args ) cmdline+=arg+" ";
+
+		success=system( ("/opt/devkitpro/devkitA64/bin/aarch64-none-elf-ld "+cmdline).c_str() )!=-1;
 	}else{
-		success=lld::FORMAT::link( _args,llvm::outs(),llvm::errs(),false,false );
+		std::vector<char *> _args;_args.reserve( args.size()+1 );
+
+		// just the name?
+		_args.push_back( strdup( "linker" ) );
+		for( auto arg:args ) _args.push_back( strdup( arg.c_str() ) );
+
+		auto link=android?lld::elf::link:lld::FORMAT::link;
+		success=link( _args,llvm::outs(),llvm::errs(),false,false );
+		for( auto s:_args ) free( (char*)s );
 	}
+
+	remove( mainPath.c_str() );
 
 	if( !success ){
 		std::cerr<<"failed to link"<<std::endl;
 		exit( 1 );
 	}
-
-	for( auto s:_args ){
-		free( (char*)s );
-	}
-
-	remove( mainPath.c_str() );
 
 #ifdef BB_MACOS
 	if( app ){
@@ -417,5 +477,7 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 #endif
 	if( apk ){
 		createApk( exeFile,tmpdir,home,toolchain,bundle,target,rt,androidsdk );
+	}else if ( nx ){
+		createNRO( exeFile,home,bundle,target,binaryPath );
 	}
 }

@@ -1,4 +1,4 @@
-if(NOT BB_DESKTOP AND NOT BB_NDK)
+if(NOT BB_DESKTOP AND NOT BB_NDK AND NOT BB_NX)
   return()
 endif()
 

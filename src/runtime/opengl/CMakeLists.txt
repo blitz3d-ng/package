@@ -31,5 +31,6 @@ bb_addmodule(userlibs)
 bb_addmodule(runtime.sdl)
 bb_addmodule(runtime.html)
 bb_addmodule(runtime.vrapi)
+bb_addmodule(runtime.nx)
 
 bb_end_runtime()

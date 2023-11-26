@@ -63,7 +63,7 @@ endif
 
 ifeq ($(PLATFORM), nx)
 ARCH=aarch64
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/devkita64.toolchain.cmake
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/devkitA64.cmake
 endif
 
 PROJECT_TO_BUILD := all
