@@ -14,8 +14,7 @@ protected:
 	mutable unsigned char *pixels;
 	BBImageFont *font;
 
-	int mode;
-	unsigned int framebuffer;
+	unsigned framebuffer, mode;
 
 	int vx,vy,vw,vh;
 	float scale_x,scale_y;

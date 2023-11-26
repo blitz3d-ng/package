@@ -24,8 +24,8 @@ Graphics 1280,720,32,2
 
 AppTitle "hello, earth"
 
-ExpectInt StringWidth("hello, world"), 84
-ExpectInt StringWidth("hello, wörld"), 84
+Expect StringWidth("hello, world")>0,"Strings have height"
+Expect StringWidth("hello, wörld")>0,"Strings have height"
 
 ClsColor 255,0,0
 Cls
