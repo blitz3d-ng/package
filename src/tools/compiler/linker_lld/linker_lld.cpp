@@ -224,7 +224,6 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		args.push_back("-L");args.push_back( ndkroot+"/sysroot/usr/lib");
 	}else if( nx ){
 		args.push_back( "-maarch64elf" );
-		args.push_back( "-L"+devkitpro+"/portlibs/switch/lib" );
 
 		// TODO: read from /opt/devkitpro/libnx/switch.specs
 		args.push_back( "-X" );
@@ -334,6 +333,8 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 	args.push_back( "-L"+libdir );
 #endif
 
+  args.push_back( "-L"+devkitpro+"/portlibs/switch/lib" );
+
 	libs.push_back( "runtime."+rt+".static" );
 
 	const Target::Runtime &rti=target.runtimes.at( rt );
@@ -422,7 +423,7 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 		args.push_back("-l");args.push_back("gcc");
 		args.push_back( ndkroot+"/sysroot/usr/lib/"+ndktriple+"/"+target.version+"/crtend_so.o" );
 	}else if( nx ){
-		std::string gcc=devkitpro+"/devkitA64/lib/gcc/aarch64-none-elf/13.2.0/pic";
+		std::string gcc=devkitpro+"/devkitA64/lib/gcc/aarch64-none-elf/"+target.version+"/pic";
 		args.push_back( "-L"+devkitpro+"/devkitA64/aarch64-none-elf/lib/pic" );
 		args.push_back( "-L"+devkitpro+"/libnx/lib" );
 		args.push_back( "-L"+gcc );
@@ -478,6 +479,6 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 	if( apk ){
 		createApk( exeFile,tmpdir,home,toolchain,bundle,target,rt,androidsdk );
 	}else if ( nx ){
-		createNRO( exeFile,home,bundle,target,binaryPath );
+		createNRO( exeFile,home,devkitpro,bundle,target,binaryPath );
 	}
 }
