@@ -16,9 +16,9 @@ public:
 	}
 
 	void reset();
-	void downEvent( int key );
+	void downEvent( int key,bool que=true );
 	void upEvent( int key );
-	void charEvent( int code );
+	void queue( int code );
 	void setDownState( int key,bool down );
 
 protected:

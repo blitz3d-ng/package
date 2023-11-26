@@ -33,9 +33,9 @@ int BBCALL bbEnumInput(){
 void processEvent( void *data,void *context){
 	BBEvent *ev=(BBEvent*)data;
 	switch( ev->id ){
-	case BBEVENT_KEYDOWN:   bbKeyboard.downEvent( ev->data );break;
+	case BBEVENT_KEYDOWN:   bbKeyboard.downEvent( ev->data,false );break;
 	case BBEVENT_KEYUP:     bbKeyboard.upEvent( ev->data );break;
-	case BBEVENT_CHAR:      bbKeyboard.charEvent( ev->data );break;
+	case BBEVENT_CHAR:      bbKeyboard.queue( ev->data );break;
 	case BBEVENT_MOUSEDOWN: bbMouse.downEvent( ev->data );break;
 	case BBEVENT_MOUSEUP:   bbMouse.upEvent( ev->data );break;
 	case BBEVENT_MOUSEMOVE:

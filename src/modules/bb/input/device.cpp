@@ -17,16 +17,17 @@ void BBDevice::reset(){
 	put=get=0;
 }
 
-void BBDevice::downEvent( int key ){
+void BBDevice::downEvent( int key,bool que ){
 	down_state[key]=true;
 	++hit_count[key];
+	if( que ) queue( key );
 }
 
 void BBDevice::upEvent( int key ){
 	down_state[key]=false;
 }
 
-void BBDevice::charEvent( int code ){
+void BBDevice::queue( int code ){
 	if( put-get<QUE_SIZE ) que[put++&QUE_MASK]=code;
 }
 
