@@ -1,7 +1,7 @@
 ;keyboard
 KeyDown%( key% ):"bbKeyDown"
 KeyHit%( key% ):"bbKeyHit"
-GetKey%():"bbGetKey"
+GetKey%( ascii%=1 ):"bbGetKey"
 WaitKey%():"bbWaitKey"
 FlushKeys():"bbFlushKeys"
 

@@ -14,7 +14,7 @@ extern "C" {
 //keyboard
 bb_int_t BBCALL bbKeyDown( bb_int_t key );
 bb_int_t BBCALL bbKeyHit( bb_int_t key );
-bb_int_t BBCALL bbGetKey(  );
+bb_int_t BBCALL bbGetKey( bb_int_t ascii );
 bb_int_t BBCALL bbWaitKey(  );
 void BBCALL bbFlushKeys(  );
 

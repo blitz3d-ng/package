@@ -60,8 +60,8 @@ bb_int_t BBCALL bbKeyHit( bb_int_t n ){
 	return bbKeyboard.keyHit( n );
 }
 
-bb_int_t BBCALL bbGetKey(){
-	return bbKeyboard.getKey();
+bb_int_t BBCALL bbGetKey( bb_int_t ascii ){
+	return ascii?gx_input->toAscii( bbKeyboard.getKey() ):bbKeyboard.getKey();
 }
 
 bb_int_t BBCALL bbWaitKey(){

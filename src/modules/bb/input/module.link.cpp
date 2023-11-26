@@ -7,7 +7,7 @@
 BBMODULE_LINK( input ){
 	rtSym( "%KeyDown%key",bbKeyDown );
 	rtSym( "%KeyHit%key",bbKeyHit );
-	rtSym( "%GetKey",bbGetKey );
+	rtSym( "%GetKey%ascii=1",bbGetKey );
 	rtSym( "%WaitKey",bbWaitKey );
 	rtSym( "FlushKeys",bbFlushKeys );
 	rtSym( "%MouseDown%button",bbMouseDown );

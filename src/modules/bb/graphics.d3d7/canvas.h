@@ -24,7 +24,7 @@ public:
 	void releaseZBuffer();
 	bool getZBufferFormat( DDPIXELFORMAT &fmt );
 
-	virtual void damage( const RECT &r )const;
+	virtual void damage( const RECT &r );
 
 	void unset(){}
 	void set(){}
@@ -48,7 +48,7 @@ public:
 	gxCanvas( IDirectDraw7 *dirDraw,ddSurf *surface,BBFont *font,int flags );
 	~gxCanvas();
 
-	void damage( const RECT &r )const;
+	void damage( const RECT &r );
 
 private:
 	bool clip( RECT *d )const;
@@ -64,7 +64,7 @@ private:
 	int origin_x,origin_y,handle_x,handle_y;
 	unsigned mask_surf,color_surf,color_argb,clsColor_surf;
 
-	void updateBitMask( const RECT &r )const;
+	void updateBitMask( const RECT &r );
 
 	/***** GX INTERFACE *****/
 public:
@@ -87,10 +87,10 @@ public:
 	void blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid );
 	void image( BBCanvas *c,int x,int y,bool solid );
 
-	bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const;
-	bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const;
+	bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid );
+	bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid );
 
-	bool lock()const;
+	bool lock();
 	void setPixel( int x,int y,unsigned argb );
 	void setPixelFast( int x,int y,unsigned argb ){
 		format.setPixel( locked_surf+y*locked_pitch+x*format.getPitch(),argb );
@@ -98,9 +98,9 @@ public:
 	}
 	void copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y );
 	void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y );
-	unsigned getPixel( int x,int y )const;
-	unsigned getPixelFast( int x,int y )const;
-	void unlock()const;
+	unsigned getPixel( int x,int y );
+	unsigned getPixelFast( int x,int y );
+	void unlock();
 
 	void setCubeMode( int mode );
 	void setCubeFace( int face );

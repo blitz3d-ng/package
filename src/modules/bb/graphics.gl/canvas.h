@@ -74,16 +74,16 @@ public:
 	virtual void blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid );
 	void image( BBCanvas *c,int x,int y,bool solid );
 
-	bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const;
-	bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const;
+	bool collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid );
+	bool rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid );
 
 	bool lock();
 	void setPixel( int x,int y,unsigned argb );
 	void setPixelFast( int x,int y,unsigned argb );
 	void copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y );
 	void copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y );
-	unsigned getPixel( int x,int y )const;
-	unsigned getPixelFast( int x,int y )const;
+	unsigned getPixel( int x,int y );
+	unsigned getPixelFast( int x,int y );
 	void unlock();
 
 	void setCubeMode( int mode );

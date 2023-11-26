@@ -304,7 +304,13 @@ LRESULT gxRuntime::windowProc( HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam ){
 	default:
 		return DefWindowProc( hwnd,msg,wparam,lparam );
 	}
-	if( ev.id ) bbOnEvent.run( &ev );
+	if( ev.id ){
+		bbOnEvent.run( &ev );
+		if( ev.id==BBEVENT_KEYDOWN ){
+			BBEvent ev2=BBEvent( BBEVENT_CHAR,ev.data );
+			bbOnEvent.run( &ev2 );
+		}
+	}
 
 	return 0;
 }

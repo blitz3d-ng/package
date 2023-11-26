@@ -455,12 +455,12 @@ void GLCanvas::image( BBCanvas *c,int x,int y,bool solid ){
 	GL( glDisable( GL_BLEND ) );
 }
 
-bool GLCanvas::collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{
+bool GLCanvas::collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid ){
 	RTEX( "GLCanvas::collide not implemented" );
 	return false;
 }
 
-bool GLCanvas::rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const{
+bool GLCanvas::rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid ){
 	RTEX( "GLCanvas::rect_collide not implemented" );
 	return false;
 }
@@ -495,12 +495,12 @@ void GLCanvas::copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y ){
 	RTEX( "GLCanvas::copyPixelFast not implemented" );
 }
 
-unsigned GLCanvas::getPixel( int x,int y )const{
+unsigned GLCanvas::getPixel( int x,int y ){
 	// RTEX( "GLCanvas::getPixel not implemented" );
 	return 0;
 }
 
-unsigned GLCanvas::getPixelFast( int x,int y )const{
+unsigned GLCanvas::getPixelFast( int x,int y ){
 	// RTEX( "GLCanvas::getPixelFast not implemented" );
 	return 0;
 }

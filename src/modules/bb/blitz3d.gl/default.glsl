@@ -205,9 +205,14 @@ void main() {
   // TODO: ES doesn't allow dynamic indexing of uniforms
   // so this (should) force the various compilers to unroll.
   #define ProcessTexture(i) if( i<RS.TexturesUsed ) bbFragColor=Blend( bbFragColor,RS.Texture[i].CubeMap!=1?Sample2D(bbTexture[i],i):SampleCube(bbTextureCube[i]),i );
-  for( int i=0;i<8;i++ ){
-    ProcessTexture(i);
-  }
+  ProcessTexture(0);
+  ProcessTexture(1);
+  ProcessTexture(2);
+  ProcessTexture(3);
+  ProcessTexture(4);
+  ProcessTexture(5);
+  ProcessTexture(6);
+  ProcessTexture(7);
 
   if( RS.FogMode>0 ){
     vec4 fogColor=vec4( RS.FogColor.rgb,bbFragColor.a );
