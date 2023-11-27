@@ -12,10 +12,11 @@ std::map<std::string,BBFontData> bbFontCache;
 BBFont::~BBFont(){
 }
 
-BBImageFont::BBImageFont( FT_Face f,int height,float d ):face(f),atlas(0){
-	// TODO: this isn't quite right...
-	FT_Set_Char_Size( face,0,(height-3)*64*d,0,0 );
-	baseline=height;
+BBImageFont::BBImageFont( FT_Face f,int h,float d ):face(f),height(h),atlas(0){
+	FT_Size_RequestRec req={ FT_SIZE_REQUEST_TYPE_REAL_DIM,0,(long)(height*64*d),0,0 };
+	FT_Request_Size( face,&req );
+
+	baseline=height*d+(face->size->metrics.descender/64);
 	density=1.0/d;
 }
 
@@ -154,7 +155,7 @@ int BBImageFont::getWidth()const{
 }
 
 int BBImageFont::getHeight()const{
-	return baseline;
+	return height;
 }
 
 int BBImageFont::getWidth( const std::string &text )const{
@@ -171,5 +172,5 @@ int BBImageFont::getWidth( const std::string &text )const{
 }
 
 bool BBImageFont::isPrintable( int chr )const{
-	return true;
+	return FT_Get_Char_Index( face,chr )!=0;
 }

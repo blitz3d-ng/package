@@ -119,6 +119,6 @@ bool D3D7Canvas::getZBufferFormat( DDPIXELFORMAT &fmt ){
 	return true;
 }
 
-void D3D7Canvas::damage( const RECT &r )const{
+void D3D7Canvas::damage( const RECT &r ){
 	++mod_cnt;
 }

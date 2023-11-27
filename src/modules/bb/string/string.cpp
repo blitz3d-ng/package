@@ -1,7 +1,7 @@
 
 #include "string.h"
 #include "../stdutil/stdutil.h"
-#include "utf8.h"
+#include <utf8.h>
 
 #define CHKPOS(x) if( (x)<0 ) RTEX( "parameter must be positive" );
 #define CHKOFF(x) if( (x)<=0 ) RTEX( "parameter must be greater than 0" );

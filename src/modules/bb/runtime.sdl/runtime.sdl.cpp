@@ -25,15 +25,8 @@ public:
 	int getJoystickType( int port )const{ return 0; }
 	int numJoysticks()const{ return 0; }
 
-	int toAscii( int key )const{
-		if( key==28 ) return '\n';
-		switch( key ){
-		case 21: return 'y';
-		case 37: return 'K';
-		default:
-			LOGD( "unmapped key: %i", key );
-			return 0;
-		}
+	int toAscii( int code )const{
+		return code&0xff;
 	}
 };
 
@@ -123,15 +116,24 @@ bool SDLRuntime::idle(){
 			BBEvent ev( BBEVENT_MOUSEMOVE,0,event.motion.x,event.motion.y );
 			bbOnEvent.run( &ev );
 		}else if( event.type==SDL_MOUSEBUTTONDOWN||event.type==SDL_MOUSEBUTTONUP ){
-			BBEvent ev( event.type==SDL_MOUSEBUTTONDOWN?BBEVENT_MOUSEDOWN:BBEVENT_MOUSEUP,event.button.button );
-			bbOnEvent.run( &ev );
+			int button=0;
+			switch( event.button.button ){
+			case SDL_BUTTON_LEFT:button=1;break;
+			case SDL_BUTTON_MIDDLE:button=3;break;
+			case SDL_BUTTON_RIGHT:button=2;break;
+			}
+
+			if( button ){
+				BBEvent ev( event.type==SDL_MOUSEBUTTONDOWN?BBEVENT_MOUSEDOWN:BBEVENT_MOUSEUP,button );
+				bbOnEvent.run( &ev );
+			}
 		}else if( (event.type==SDL_KEYDOWN||event.type==SDL_KEYUP) && event.key.repeat==0 ){
 			int code=event.key.keysym.scancode;
 			if( code>=MAX_SDL_SCANCODES ) continue;
 
 			int key=SDL_SCANCODE_MAP[code];
 			if( !key ){
-				std::cout<<"unmapped key code: "<<code<<std::endl;
+				LOGD( "unmapped key code: %i",code );
 				continue;
 			}
 
@@ -147,6 +149,39 @@ bool SDLRuntime::idle(){
 				continue;
 			}
 			bbOnEvent.run( &ev );
+
+			if( event.type==SDL_KEYDOWN ){
+				BBEvent ev=BBEvent( BBEVENT_CHAR,0 );
+				// LOGD( "code=%i",code );
+				switch( code ){
+				case SDL_SCANCODE_BACKSPACE:
+					ev.data='\b';
+					break;
+				case SDL_SCANCODE_RETURN:case SDL_SCANCODE_RETURN2:case SDL_SCANCODE_KP_ENTER:
+					ev.data='\n';
+					break;
+				case SDL_SCANCODE_UP:
+					ev.data=BBInputDriver::ASC_UP;
+					break;
+				case SDL_SCANCODE_DOWN:
+					ev.data=BBInputDriver::ASC_DOWN;
+					break;
+				case SDL_SCANCODE_LEFT:
+					ev.data=BBInputDriver::ASC_LEFT;
+					break;
+				case SDL_SCANCODE_RIGHT:
+					ev.data=BBInputDriver::ASC_RIGHT;
+					break;
+				}
+				if( ev.data ) bbOnEvent.run( &ev );
+			}
+		}else if( event.type==SDL_TEXTINPUT||event.type==SDL_TEXTEDITING ){
+			// LOGD( "text: %s",event.text.text );
+			char *c=event.text.text;
+			while( *c ){
+				BBEvent ev=BBEvent( BBEVENT_CHAR,*(c++) );
+				bbOnEvent.run( &ev );
+			}
 		}
 	}
 

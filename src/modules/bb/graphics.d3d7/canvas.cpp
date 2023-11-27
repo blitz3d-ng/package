@@ -105,12 +105,12 @@ bool gxCanvas::clip( RECT *d,RECT *s )const{
 	return ::clip( viewport,d,s );
 }
 
-void gxCanvas::damage( const RECT &r )const{
+void gxCanvas::damage( const RECT &r ){
 	D3D7Canvas::damage( r );
 	if( cm_mask ) updateBitMask( r );
 }
 
-void gxCanvas::updateBitMask( const RECT &r )const{
+void gxCanvas::updateBitMask( const RECT &r ){
 
 	int w=r.right-r.left;if( w<=0 ) return;
 	int h=r.bottom-r.top;if( h<=0 ) return;
@@ -432,8 +432,8 @@ unsigned gxCanvas::getClsColor()const{
 	return format.toARGB( clsColor_surf );
 }
 
-bool gxCanvas::collide( int x1,int y1,const BBCanvas *_i2,int x2,int y2,bool solid )const{
-	const gxCanvas *i2=(gxCanvas*)_i2;
+bool gxCanvas::collide( int x1,int y1,const BBCanvas *_i2,int x2,int y2,bool solid ){
+	gxCanvas *i2=(gxCanvas*)_i2;
 
 	x1-=handle_x;x2-=i2->handle_x;
 	if( x1+clip_rect.right<=x2 || x1>=x2+i2->clip_rect.right ) return false;
@@ -451,7 +451,7 @@ bool gxCanvas::collide( int x1,int y1,const BBCanvas *_i2,int x2,int y2,bool sol
 		i2->updateBitMask( i2->clip_rect );
 	}
 
-	const gxCanvas *i1=this;
+	gxCanvas *i1=this;
 
 	//to keep me sane!
 	if( x1>x2 ){
@@ -516,7 +516,7 @@ bool gxCanvas::collide( int x1,int y1,const BBCanvas *_i2,int x2,int y2,bool sol
 	return false;
 }
 
-bool gxCanvas::rect_collide( int x1,int y1,int x2,int y2,int w2,int h2,bool solid )const{
+bool gxCanvas::rect_collide( int x1,int y1,int x2,int y2,int w2,int h2,bool solid ){
 
 	x1-=handle_x;if( x1+clip_rect.right<=x2 || x1>=x2+w2 ) return false;
 	y1-=handle_y;if( y1+clip_rect.bottom<=y2 || y1>=y2+h2 ) return false;
@@ -558,7 +558,7 @@ bool gxCanvas::rect_collide( int x1,int y1,int x2,int y2,int w2,int h2,bool soli
 	return false;
 }
 
-bool gxCanvas::lock()const{
+bool gxCanvas::lock(){
 	if( !locked_cnt++ ){
 		DDSURFACEDESC2 desc={sizeof(desc)};
 		if( surf->Lock( 0,&desc,DDLOCK_WAIT|DDLOCK_NOSYSLOCK,0 )<0 ){
@@ -572,7 +572,7 @@ bool gxCanvas::lock()const{
 	return true;
 }
 
-void gxCanvas::unlock()const{
+void gxCanvas::unlock(){
 	if( locked_cnt==1 ){
 		if( lock_mod_cnt!=mod_cnt && cm_mask ) updateBitMask( clip_rect );
 		surf->Unlock( 0 );
@@ -588,7 +588,7 @@ void gxCanvas::setPixel( int x,int y,unsigned argb ){
 	unlock();
 }
 
-unsigned gxCanvas::getPixel( int x,int y )const{
+unsigned gxCanvas::getPixel( int x,int y ){
 	x+=origin_x;if( x<viewport.left || x>=viewport.right ) return format.toARGB( mask_surf );
 	y+=origin_y;if( y<viewport.top || y>=viewport.bottom ) return format.toARGB( mask_surf );
 	lock();
@@ -597,7 +597,7 @@ unsigned gxCanvas::getPixel( int x,int y )const{
 	return p;
 }
 
-unsigned gxCanvas::getPixelFast( int x,int y )const{
+unsigned gxCanvas::getPixelFast( int x,int y ){
 	return format.getPixel( locked_surf+y*locked_pitch+x*format.getPitch() );
 }
 

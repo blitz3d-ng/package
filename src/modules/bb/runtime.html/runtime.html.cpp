@@ -5,9 +5,10 @@
 #include <bb/graphics.gl/graphics.gl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 
-class Canvas : public GLDefaultCanvas{
+class Canvas : public GLCanvas{
 public:
-	Canvas( ContextResources *res,int mode,int flags ):GLDefaultCanvas( res,0,mode,flags){
+	Canvas( ContextResources *res,int mode,int flags ):GLCanvas( res,flags ){
+		setFramebuffer( 0,mode );
 	}
 
 	int getWidth()const{
