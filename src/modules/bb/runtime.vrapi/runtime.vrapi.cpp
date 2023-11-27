@@ -309,16 +309,6 @@ bb_int_t BBCALL bbHMDPivot() {
 	return (bb_int_t)HMDPivot();
 }
 
-class VRAPIDefaultCanvas : public GLDefaultCanvas{
-protected:
-public:
-	VRAPIDefaultCanvas( ContextResources *res,unsigned framebuffer,int mode,int flags ):GLDefaultCanvas(res,framebuffer,mode,flags){}
-
-	void getViewport( int *x,int *y,int *w,int *h )const{
-		*x=0;*y=0;*w=getWidth();*h=getHeight();
-	}
-};
-
 class VRAPIGraphics : public GLGraphics{
 protected:
 	int window_width,window_height,drawable_width,drawable_height;
@@ -326,21 +316,12 @@ protected:
 	unsigned short gamma_red[256], gamma_green[256], gamma_blue[256];
 public:
 	VRAPIGraphics(){
-		front_canvas=d_new VRAPIDefaultCanvas( &res,0,GL_FRONT,0 );
-		back_canvas=d_new VRAPIDefaultCanvas( &res,0,GL_BACK,0 );
-
 		drawable_width=window_width=1440;
 		drawable_height=window_height=1584;
 
 		for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
 
 		resize();
-	}
-
-	~VRAPIGraphics(){
-		if( front_canvas ) delete front_canvas;
-		if( back_canvas ) delete back_canvas;
-		front_canvas=back_canvas=0;
 	}
 
 	void resize(){

@@ -9,6 +9,16 @@
 
 #include "default.glsl.h"
 
+static
+GLenum _cube_order[6]={
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_X, // left (negative X) face
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Z, // forward (positive Z) face - this is the default.
+	GL_TEXTURE_CUBE_MAP_POSITIVE_X, // right (positive X) face
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, // backward (negative Z) face
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, // up (positive Y) face
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Y  // down (negative Y) face
+};
+
 struct UniformState{
 	float xywh[4];
 	float res[2];
@@ -86,10 +96,33 @@ void initArrays( int size,GLuint* buffer,GLuint *array ){
 	}
 }
 
-// --- GLCanvas ---
-
-GLCanvas::GLCanvas( ContextResources *res,int f ):res(res),width(0),height(0),pixels(0),scale_x(1.0),scale_y(1.0),origin_x(0.0),origin_y(0.0),handle_x(0),handle_y(0){
+GLCanvas::GLCanvas( ContextResources *res,int w,int h,int f ):res(res),pixmap(0),mask(0),width(w),height(h),pixels(0),handle_x(0),handle_y(0),texture(0),framebuffer(0),mode(0),depthbuffer(0),cube_mode(0){
 	flags=f;
+
+	setOrigin( 0,0 );
+	setHandle( 0,0 );
+	setScale( 1.0,1.0 );
+
+	vx=vy=0;
+	vw=w;vh=h;
+
+	cube_face=0;
+	if( flags&CANVAS_TEX_CUBE ){
+		target=GL_TEXTURE_CUBE_MAP;
+	}else{
+		target=GL_TEXTURE_2D;
+	}
+}
+
+GLCanvas::GLCanvas( ContextResources *res,int f ):GLCanvas(res,0,0,f){
+}
+
+
+GLCanvas::~GLCanvas(){
+	if( pixmap ) {
+		delete pixmap;
+		pixmap=0;
+	}
 }
 
 void GLCanvas::resize( int w,int h,float d ){
@@ -101,12 +134,14 @@ void GLCanvas::setFont( BBFont *f ){
 }
 
 void GLCanvas::setMask( unsigned argb ){
+	mask=argb;
+	dirty=true;
 }
 
 void GLCanvas::setColor( unsigned argb ){
 	color[0]=((argb>>16)&255)/255.0f;
 	color[1]=((argb>>8)&255)/255.0f;
-	color[2]=(argb&255)/255.0f;;
+	color[2]=(argb&255)/255.0f;
 }
 
 void GLCanvas::setClsColor( unsigned argb ){
@@ -133,9 +168,9 @@ void GLCanvas::setHandle( int x,int y ){
 }
 
 void GLCanvas::setViewport( int x,int y,int w,int h ){
-	GL( glEnable( GL_SCISSOR_TEST ) );
-	GL( glViewport( x,y,w,h ) );
-	GL( glScissor( x,y,w,h ) );
+	vx=x;vy=y;vw=w;vh=h;
+	GL( glViewport( x,height-y-h,w,h ) );
+	GL( glScissor( x,height-y-h,w,h ) );
 }
 
 void GLCanvas::cls(){
@@ -193,10 +228,10 @@ void GLCanvas::rect( int x,int y,int w,int h,bool solid ){
 }
 
 void GLCanvas::flush(){
-	if( !needs_flush ) return;
-
 	// here to support FrontBuffer...
-	GL( glFlush() );
+	if( mode==GL_FRONT ){
+		GL( glFlush() );
+	}
 }
 
 void GLCanvas::quad( int x,int y,int w,int h,bool solid,bool texenabled,float tx,float ty,float color[3] ){
@@ -273,7 +308,7 @@ void GLCanvas::oval( int x,int y,int w,int h,bool solid ){
 }
 
 void GLCanvas::text( int x,int y,const std::string &t ){
-	if( !font ) return;
+	if( !font || t.size()==0 ) return;
 
 	unsigned int texture;
 	if( res->font_textures.count(font)==0 ){
@@ -363,100 +398,128 @@ void GLCanvas::text( int x,int y,const std::string &t ){
 }
 
 void GLCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int src_h,bool solid ){
-	unsigned int cfb;
+	uint32_t cfb;
 	GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,(GLint*)&cfb ) );
 
-	GLCanvas *src=(GLCanvas*)s;
+	float sx,sy,dx,dy;
+	s->getScale( &sx,&sy );
+	getScale( &dx,&dy );
 
+	// LOGD( "src: scale(%f, %f), %i,%i",sx,sy,s->getWidth(),s->getHeight() );
+	// LOGD( "dst: scale(%f, %f), %i,%i",dx,dy,getWidth(),getHeight() );
+
+	GLCanvas *src=(GLCanvas*)s;
 	unsigned int rfb=src->framebufferId(),dfb=framebufferId();
+
+	int srcX0=src_x*sx;
+	int srcY0=src->getHeight()-(src_h+src_y)*sy;
+	int srcX1=src_x*sx+src_w*sx;
+	int srcY1=src->getHeight()-src_y*sy;
+	int dstX0=x*dx;
+	int dstY0=getHeight()-(src_h+y)*dy;
+	int dstX1=(x+src_w)*dx;
+	int dstY1=getHeight()-y*dy;
 
 	GL( glBindFramebuffer( GL_READ_FRAMEBUFFER,rfb ) );
 	GL( glBindFramebuffer( GL_DRAW_FRAMEBUFFER,dfb ) );
-	GL( glBlitFramebuffer( src_x,src_y,src_w,src_h,x,src_h,src_w,y,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
+
+	GL( glBlitFramebuffer( srcX0,srcY0,srcX1,srcY1,dstX0,dstY0,dstX1,dstY1,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
+
+	if( !(flags&CANVAS_TEX_VIDMEM) ){
+		downloadData();
+	}
 
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
 	flush();
+
+	dirty=true;
 }
 
 void GLCanvas::image( BBCanvas *c,int x,int y,bool solid ){
-	GLTextureCanvas *src=(GLTextureCanvas*)c;
+	GLCanvas *src=(GLCanvas*)c;
 
+	GL( glActiveTexture( GL_TEXTURE0 ) );
 	src->bind();
+
+	GL( glEnable( GL_BLEND ) );
+	GL( glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA ) );
 
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR ) );
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR ) );
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
 	GL( glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
 
-
 	float white[3]={ 1.0,1.0,1.0 };
 	quad( x-src->handle_x,y-src->handle_y,src->getWidth(),src->getHeight(),true,true,1.0,1.0,white );
+
+	GL( glDisable( GL_BLEND ) );
 }
 
-bool GLCanvas::collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid )const{
+bool GLCanvas::collide( int x,int y,const BBCanvas *src,int src_x,int src_y,bool solid ){
+	RTEX( "GLCanvas::collide not implemented" );
 	return false;
 }
 
-bool GLCanvas::rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid )const{
+bool GLCanvas::rect_collide( int x,int y,int rect_x,int rect_y,int rect_w,int rect_h,bool solid ){
+	RTEX( "GLCanvas::rect_collide not implemented" );
 	return false;
 }
 
-bool GLCanvas::lock()const{
+bool GLCanvas::lock(){
 	if( pixels ) return false;
 
 	pixels=new unsigned char[width*height*4];
-
-	bind();
-#ifdef BB_DESKTOP
-	GL( glGetTexImage( GL_TEXTURE_2D,0,GL_RGBA,GL_UNSIGNED_BYTE,pixels ) );
-#endif
+	downloadData();
+	// RTEX( "GLCanvas::lock not implemented" );
 	return true;
 }
 
 void GLCanvas::setPixel( int x,int y,unsigned argb ){
-	float prev_color[3]={ color[0],color[1],color[2] };
-	color[0]=((argb>>16)&255)/255.0f;
-	color[1]=((argb>>8)&255)/255.0f;;
-	color[2]=(argb&255)/255.0f;;
-
-	plot( x,y );
-
-	color[0]=prev_color[0];
-	color[1]=prev_color[1];
-	color[2]=prev_color[2];
+	// RTEX( "GLCanvas::setPixel not implemented" );
+	lock();
+	setPixelFast( x,y,argb );
+	unlock();
 }
 
 #define UC(c) static_cast<unsigned char>(c)
 
 void GLCanvas::setPixelFast( int x,int y,unsigned argb ){
-	// unsigned char rgba[4]={ UC((argb>>16)&255),UC((argb>>8)&255),UC(argb&255),UC((argb>>24)&255) };
-	setPixel( x,y,argb );
+	// RTEX( "GLCanvas::setPixelFast not implemented" );
 }
 
 void GLCanvas::copyPixel( int x,int y,BBCanvas *src,int src_x,int src_y ){
+	RTEX( "GLCanvas::copyPixel not implemented" );
 }
 
 void GLCanvas::copyPixelFast( int x,int y,BBCanvas *src,int src_x,int src_y ){
+	RTEX( "GLCanvas::copyPixelFast not implemented" );
 }
 
-unsigned GLCanvas::getPixel( int x,int y )const{
+unsigned GLCanvas::getPixel( int x,int y ){
+	// RTEX( "GLCanvas::getPixel not implemented" );
 	return 0;
 }
 
-unsigned GLCanvas::getPixelFast( int x,int y )const{
-	// y=height-y;
-	// return pixels[(y*width+x)*4];
+unsigned GLCanvas::getPixelFast( int x,int y ){
+	// RTEX( "GLCanvas::getPixelFast not implemented" );
 	return 0;
 }
 
-void GLCanvas::unlock()const{
+void GLCanvas::unlock(){
+	if( !pixels ) return;
+
+	// RTEX( "GLCanvas::unlock not implemented" );
+	uploadData();
 	delete[] pixels;pixels=0;
 }
 
 void GLCanvas::setCubeMode( int mode ){
+	RTEX( "GLCanvas::setCubeMode not implemented" );
 }
 
 void GLCanvas::setCubeFace( int face ){
+	cube_face=face;
+	mode=GL_COLOR_ATTACHMENT0+face;
 }
 
 int GLCanvas::getWidth()const{
@@ -467,8 +530,12 @@ int GLCanvas::getHeight()const{
 	return height;
 }
 
+int GLCanvas::getDepth()const{
+	return 8;
+}
+
 int GLCanvas::cubeMode()const{
-	return 0;
+	return cube_mode;
 }
 
 void GLCanvas::getOrigin( int *x,int *y )const{
@@ -484,69 +551,145 @@ void GLCanvas::getHandle( int *x,int *y )const{
 }
 
 void GLCanvas::getViewport( int *x,int *y,int *w,int *h )const{
-	*x=0;*y=0;*w=getWidth();*h=getHeight();
+	*x=vx;*y=vy;*w=vw;*h=vh;
 }
 
 unsigned GLCanvas::getMask()const{
-	return 0;
+	return mask;
 }
 
 unsigned GLCanvas::getColor()const{
+	RTEX( "GLCanvas::getColor not implemented" );
 	return 0;
 }
 
 unsigned GLCanvas::getClsColor()const{
+	RTEX( "GLCanvas::getClsColor not implemented" );
 	return 0;
 }
 
-// --- GLTextureCanvas ---
+void GLCanvas::set(){
+	const GLenum modes[1]{ mode };
 
-GLTextureCanvas::GLTextureCanvas( ContextResources *res,int f ):GLCanvas( res,f ),texture(0),framebuffer(0),depthbuffer(0),twidth(0),theight(0){
-}
-
-GLTextureCanvas::GLTextureCanvas( ContextResources *res,int w,int h,int f ):GLTextureCanvas(res,f){
-	width=w;
-	height=h;
-}
-
-GLTextureCanvas::GLTextureCanvas( ContextResources *res,BBPixmap *pixmap,int f ):GLTextureCanvas(res,f){
-	if( pixmap ) setPixmap( pixmap );
-}
-
-int GLTextureCanvas::getDepth()const{
-	return 8;
-}
-
-void GLTextureCanvas::set(){
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
-	GLenum bufs[]={ GL_COLOR_ATTACHMENT0 };
-	GL( glDrawBuffers( 1,bufs ) );
+	GL( glDrawBuffers( 1,modes ) );
+	GL( glReadBuffer( mode ) );
+	setViewport( vx,vy,vw,vh );
 }
 
-void GLTextureCanvas::unset(){
+void GLCanvas::unset(){
 	flush();
 
-	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-	GL( glGenerateMipmap( GL_TEXTURE_2D ) );
+	// if( !pixmap ){
+	// 	BBPixmap *pm=d_new BBPixmap();
+	// 	pm->trans=true;
+	// 	pm->format=PF_RGBA;
+	// 	pm->width=width;
+	// 	pm->height=height;
+	// 	pm->pitch=4;
+	// 	pm->bpp=4;
+	// 	int size=pm->width*pm->bpp*pm->height;
+	// 	pm->bits=new unsigned char[size];
+	// 	pixmap=pm;
+	// }
+
+	// GLint cfb;
+	// GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,&cfb ) );
+	// GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
+	// GL( glReadPixels( 0,0,pixmap->width,pixmap->height,GL_BGRA,GL_UNSIGNED_BYTE,pixmap->bits  ) );
+	// GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
+	// dirty=true;
+
+	// GL( glBindTexture( target,texture ) );
+	// GL( glGenerateMipmap( target ) );
+	// GL( glBindTexture( target,0 ) );
+
+	GL( glBindFramebuffer( GL_FRAMEBUFFER,0 ) );
 }
 
-void GLTextureCanvas::uploadData( void *data ){
+void GLCanvas::uploadData(){
+	if( texture && target!=GL_TEXTURE_2D ) return;
+
+	BBPixmap *pm=0;
+	void *data=0;
+
+	// TODO: not super happy with this...
+	if( pixels ){
+		data=pixels;
+	} else if( pixmap ){
+		pm=d_new BBPixmap;
+		memcpy( pm,pixmap,sizeof(BBPixmap) );
+
+		int size=pm->width*pm->bpp*pm->height;
+		pm->bits=new unsigned char[size];
+		memcpy( pm->bits,pixmap->bits,size );
+
+		if( flags&CANVAS_TEX_MASK ){
+			pm->mask( (mask>>16)&255,(mask>>8)&255,mask&255 );
+		}
+
+		data=pm->bits;
+	}else{
+		// if( target!=GL_TEXTURE_2D ){
+		// 	pm=d_new BBPixmap();
+		// 	pm->trans=true;
+		// 	pm->format=PF_RGBA;
+		// 	pm->width=width;
+		// 	pm->height=height;
+		// 	pm->pitch=4;
+		// 	pm->bpp=4;
+		// 	int size=pm->width*pm->bpp*pm->height;
+		// 	pm->bits=new unsigned char[size];
+		// 	pm->fill(255,0,0,1.0);
+
+		// 	data=pm->bits;
+		// }
+	}
+
 	if( !texture ) GL( glGenTextures( 1,&texture ) );
+
 	GL( glActiveTexture( GL_TEXTURE0 ) );
-	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
-	GL( glTexImage2D( GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_BGRA,GL_UNSIGNED_BYTE,data ) );
-	GL( glGenerateMipmap( GL_TEXTURE_2D ) );
+	GL( glBindTexture( target,texture ) );
+	for( int i=0;i<(target==GL_TEXTURE_2D?1:6);i++ ){
+		GL( glTexImage2D( target==GL_TEXTURE_2D?target:_cube_order[i],0,GL_RGBA,width,height,0,GL_BGRA,GL_UNSIGNED_BYTE,data ) );
+	}
+	GL( glGenerateMipmap( target ) );
+
+	delete pm;
+
+	dirty=false;
 }
 
-unsigned int GLTextureCanvas::textureId(){
-	if( texture ) return texture;
+void GLCanvas::downloadData(){
+	// BBPixmap *pm=d_new BBPixmap();
+	// pm->trans=true;
+	// pm->format=PF_RGBA;
+	// pm->width=width;
+	// pm->height=height;
+	// pm->pitch=4;
+	// pm->bpp=4;
+	// int size=pm->width*pm->bpp*pm->height;
+	// pm->bits=new unsigned char[size];
+	// pixmap=pm;
 
-	uploadData(0);
+	void *bits=pixmap?pixmap->bits:pixels;
+	if( bits ){
+		GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
+		GL( glReadPixels( 0,0,width,height,GL_BGRA,GL_UNSIGNED_BYTE,bits  ) );
+	}
+}
+
+unsigned int GLCanvas::textureId(){
+	if( texture && !dirty ) return texture;
+
+	uploadData();
 	return texture;
 }
 
-unsigned int GLTextureCanvas::framebufferId(){
-	if( framebuffer ) return framebuffer;
+unsigned int GLCanvas::framebufferId(){
+	if( framebuffer || mode==GL_FRONT || mode==GL_BACK ) return framebuffer;
+
+	mode=GL_COLOR_ATTACHMENT0;
 
 	GL( glGenRenderbuffers( 1,&depthbuffer ) );
 	GL( glBindRenderbuffer( GL_RENDERBUFFER,depthbuffer ) );
@@ -555,7 +698,9 @@ unsigned int GLTextureCanvas::framebufferId(){
 
 	GL( glGenFramebuffers( 1,&framebuffer ) );
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebuffer ) );
-	GL( glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,textureId(),0 ) );
+	for( int i=0;i<(target==GL_TEXTURE_2D?1:6);i++ ){
+		GL( glFramebufferTexture2D( GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0+i,target==GL_TEXTURE_2D?target:_cube_order[i],textureId(),0 ) );
+	}
 	GL( glFramebufferRenderbuffer( GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuffer ) );
 
 	GLenum status=GL( glCheckFramebufferStatus( GL_FRAMEBUFFER ) );
@@ -566,68 +711,34 @@ unsigned int GLTextureCanvas::framebufferId(){
 	return framebuffer;
 }
 
-void GLTextureCanvas::setPixmap( BBPixmap *pm ){
-	if( flags&CANVAS_TEX_ALPHA ){
-		if( flags&CANVAS_TEX_MASK ){
-			pm->mask( 0,0,0 );
-		}else{
-			pm->buildAlpha( false );
+void GLCanvas::setPixmap( BBPixmap *pm ){
+	if( pixmap==pm ) return;
+
+	dirty=true;
+
+	if( !pm ){
+		if( pixmap ){
+			delete pixmap->bits;
+			delete pixmap;
 		}
+		pixmap=0;
+		return;
 	}
+
+	pixmap=pm;
 
 	width=pm->width;
 	height=pm->height;
-	uploadData( pm->bits );
-	GL( glBindTexture( GL_TEXTURE_2D,0 ) );
+	uploadData();
+
+	GL( glBindTexture( target,0 ) );
 }
 
-void GLTextureCanvas::bind()const{
-	GL( glBindTexture( GL_TEXTURE_2D,texture ) );
+void GLCanvas::setFramebuffer( unsigned int fb,int m ){
+	framebuffer=fb;
+	mode=m;
 }
 
-
-// --- GLDefaultCanvas ---
-
-void GLDefaultCanvas::bind()const{
-}
-
-GLDefaultCanvas::GLDefaultCanvas( ContextResources *res,unsigned int fb,int m,int f ):GLCanvas(res,f),framebuffer(fb),mode(m){
-	needs_flush=(mode==GL_FRONT);
-	set();
-	GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
-}
-
-void GLDefaultCanvas::unset(){
-	flush();
-}
-
-void GLDefaultCanvas::set(){
-	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebuffer ) );
-
-#ifdef BB_DESKTOP
-	if( framebuffer==0 ){
-		GL( glDrawBuffer( mode ) );
-	}
-#endif
-
-	GL( glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT ) );
-}
-
-unsigned int GLDefaultCanvas::framebufferId(){
-	return framebuffer;
-}
-
-void GLDefaultCanvas::blit( int x,int y,BBCanvas *src,int src_x,int src_y,int src_w,int src_h,bool solid ){
-}
-
-int GLDefaultCanvas::getDepth()const{
-	return 8;
-}
-
-BBMODULE_CREATE( blitz2d_gl ){
-	return true;
-}
-
-BBMODULE_DESTROY( blitz2d_gl ){
-	return true;
+void GLCanvas::bind(){
+	GL( glBindTexture( target,textureId() ) );
 }

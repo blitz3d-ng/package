@@ -39,7 +39,7 @@ public:
 
 	BBPixmap *atlas;
 	mutable bool dirty;
-	int baseline;
+	int height,baseline;
 	float density;
 
 private:

@@ -126,7 +126,22 @@ void bbGLGraphicsCheckErrors( const char *file, int line ){
 	}
 }
 
-GLGraphics::GLGraphics(){
+GLGraphics::GLGraphics():fb(&res,BBCanvas::CANVAS_TEX_VIDMEM),bb(&res,BBCanvas::CANVAS_TEX_VIDMEM){
+	GLint framebuffer=0;
+#ifdef BB_IOS
+	// ios doesn't supply a default framebuffer
+	GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,(int*)&framebuffer ) );
+	LOGD( "framebuffer: %i\n", framebuffer );
+#endif
+
+	fb.setFramebuffer( framebuffer,GL_FRONT );
+	front_canvas=&fb;
+
+	bb.setFramebuffer( framebuffer,GL_BACK );
+	back_canvas=&fb;
+
+	GL( glDisable( GL_DEPTH_TEST ) );
+	GL( glEnable( GL_SCISSOR_TEST ) );
 }
 
 bool GLGraphics::init(){
@@ -144,7 +159,7 @@ BBFont *GLGraphics::getDefaultFont()const{
 
 //OBJECTS
 BBCanvas *GLGraphics::createCanvas( int width,int height,int flags ){
-	BBCanvas *canvas=d_new GLTextureCanvas( &res,width,height,flags );
+	GLCanvas *canvas=d_new GLCanvas( &res,width,height,flags );
 	canvas_set.insert( canvas );
 	return canvas;
 }
@@ -155,9 +170,10 @@ BBCanvas *GLGraphics::loadCanvas( const std::string &file,int flags ){
 
 	pixmap->flipVertically();
 
-	BBCanvas *canvas=d_new GLTextureCanvas( &res,pixmap,flags );
+	GLCanvas *canvas=d_new GLCanvas( &res,flags );
+	canvas->setPixmap( pixmap );
 	canvas_set.insert( canvas );
-	delete pixmap;
+
 	return canvas;
 }
 

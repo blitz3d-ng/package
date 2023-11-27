@@ -1,29 +1,12 @@
 #include "../../../stdutil/stdutil.h"
 #include "graphics.sdl.h"
 
-class SDLDefaultCanvas : public GLDefaultCanvas{
-protected:
-	SDL_Window *wnd;
-public:
-	SDLDefaultCanvas( ContextResources *res,SDL_Window *wnd,unsigned framebuffer,int mode,int flags ):GLDefaultCanvas(res,framebuffer,mode,flags),wnd(wnd){}
-};
-
 void SDLGraphics::onAppChange( void *data,void *context ){
 	SDLGraphics *graphics=(SDLGraphics*)context;
 	SDL_SetWindowTitle( graphics->wnd,bbApp().title.c_str() );
 }
 
 SDLGraphics::SDLGraphics( SDL_Window *wnd,SDL_GLContext ctx ):wnd(wnd),context(ctx){
-	unsigned framebuffer=0;
-#ifdef BB_IOS
-	// ios doesn't supply a default framebuffer
-	GL( glGetIntegerv( GL_FRAMEBUFFER_BINDING,(int*)&framebuffer ) );
-	LOGD( "framebuffer: %i\n", framebuffer );
-#endif
-
-	front_canvas=d_new SDLDefaultCanvas( &res,wnd,framebuffer,GL_FRONT,0 );
-	back_canvas=d_new SDLDefaultCanvas( &res,wnd,framebuffer,GL_BACK,0 );
-
 	for( int k=0;k<256;++k ) gamma_red[k]=gamma_green[k]=gamma_blue[k]=k;
 
 	bbAppOnChange.add( onAppChange,this );
@@ -32,10 +15,6 @@ SDLGraphics::SDLGraphics( SDL_Window *wnd,SDL_GLContext ctx ):wnd(wnd),context(c
 }
 
 SDLGraphics::~SDLGraphics(){
-	if( front_canvas ) delete front_canvas;
-	if( back_canvas ) delete back_canvas;
-	front_canvas=back_canvas=0;
-
 	bbAppOnChange.remove( onAppChange,this );
 
 	SDL_GL_DeleteContext( context );
@@ -65,6 +44,7 @@ bool SDLGraphics::restore(){
 void SDLGraphics::vwait(){}
 
 void SDLGraphics::copy( BBCanvas *dest,int dx,int dy,int dw,int dh,BBCanvas *src,int sx,int sy,int sw,int sh ){
+	dest->blit( dx,dy,src,sx,sy,sw,sh,false );
 }
 
 void SDLGraphics::setGamma( int r,int g,int b,float dr,float dg,float db ){
