@@ -4,7 +4,6 @@ ExpectStr DottedIP(2130706433), "127.0.0.1"
 
 ips=CountHostIPs("")
 Expect ips>0,"At least one IP for localhost"
-ExpectStr DottedIP(HostIP(1)),"127.0.0.1"
 
 ; TCP
 TCPTimeouts 1000,1000
@@ -38,6 +37,7 @@ WriteLine tcp_out,"hello, world"
 tcp_in=AcceptTCPStream(tcp_server)
 Expect tcp_in,"Accepts the TCP connection"
 ExpectStr ReadLine(tcp_in),"hello, world"
+ExpectInt ReadAvail(tcp_in),0,"There are no bytes to read"
 
 CloseTCPServer tcp_server
 

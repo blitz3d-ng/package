@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/ioctl.h>
+#include <sys/socket.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <poll.h>
@@ -47,6 +48,29 @@ static int recv_timeout;
 static int read_timeout;
 static int accept_timeout;
 
+static bool bind( SOCKET s,int port ){
+#if defined(BB_MACH) || defined(BB_NX)
+	sockaddr_in addr={sizeof(sockaddr_in),AF_INET,htons(port)};
+#else
+	sockaddr_in addr={AF_INET,htons(port)};
+#endif
+	return ::bind( s,(sockaddr*)&addr,sizeof(addr) )==0;
+}
+
+static int waitForRead( SOCKET s,int ms ){
+#ifdef WIN32
+		fd_set fd={ 1,s };
+		timeval tv={ ms/1000,(ms%1000)*1000 };
+		int n=::select( 0,&fd,0,0,&tv );
+		return n;
+#else
+		pollfd fd={ s,POLLIN|POLLPRI,0 };
+		int n=poll( &fd,1,ms );
+		if( fd.revents&POLLIN ) return 1;
+#endif
+	return n;
+}
+
 static void close( SOCKET sock,int e ){
 	if( e<0 ){
 		int opt=1;
@@ -65,7 +89,30 @@ static std::set<UDPStream*> udp_set;
 static std::set<TCPStream*> tcp_set;
 static std::set<TCPServer*> server_set;
 
-class UDPStream : public BBStream{
+class SocketStream : public BBStream{
+protected:
+	SOCKET sock;
+	int e;
+
+	SocketStream( SOCKET s );
+	int readAvail( size_t *sz );
+};
+
+SocketStream::SocketStream( SOCKET s ):sock(s),e(0){
+}
+
+int SocketStream::readAvail( size_t *sz ){
+#ifdef WIN32
+	u_long t=-1;
+#else
+	int t=-1;
+#endif
+	int n=::ioctlsocket( sock,FIONREAD,&t );
+	*sz=t;
+	return n;
+}
+
+class UDPStream : public SocketStream{
 public:
 	UDPStream( SOCKET s );
 	~UDPStream();
@@ -83,13 +130,12 @@ public:
 	int getMsgPort();
 
 private:
-	SOCKET sock;
 	std::vector<char> in_buf,out_buf;
 	sockaddr_in addr,in_addr,out_addr;
-	int in_get,e;
+	int in_get;
 };
 
-UDPStream::UDPStream( SOCKET s ):sock(s),in_get(0),e(0){
+UDPStream::UDPStream( SOCKET s ):SocketStream(s),in_get(0){
 	socklen_t len=sizeof(addr);
 	getsockname( s,(sockaddr*)&addr,&len );
 	in_addr=out_addr=addr;
@@ -134,23 +180,11 @@ int UDPStream::recv(){
 			dt=tout-bbMilliSecs();
 			if( dt<0 ) dt=0;
 		}
-#ifdef WIN32
-		fd_set fd={ 1,sock };
-		timeval tv={ dt/1000,(dt%1000)*1000 };
-		int n=::select( 0,&fd,0,0,&tv );
-#else
-		pollfd fd={ sock,POLLIN|POLLPRI,0 };
-		int n=poll( &fd,1,recv_timeout );
-		if( !(fd.revents&POLLIN) ) return 0;
-#endif
+		int n=waitForRead( sock,dt );
 		if( !n ) return 0;
 		if( n!=1 ){ e=-1;return 0; }
-#ifdef WIN32
-		unsigned long sz=-1;
-#else
-		int sz=-1;
-#endif
-		if( ioctlsocket( sock,FIONREAD,&sz ) ){ e=-1;return 0; }
+		size_t sz=-1;
+		if( readAvail( &sz ) ){ e=-1;return 0; }
 		in_buf.resize( sz );in_get=0;
 		socklen_t len=sizeof(in_addr);
 		n=::recvfrom( sock,&in_buf[0],sz,0,(sockaddr*)&in_addr,&len );
@@ -189,7 +223,7 @@ int UDPStream::getMsgPort(){
 	return ntohs( in_addr.sin_port );
 }
 
-class TCPStream : public BBStream{
+class TCPStream : public SocketStream{
 public:
 	TCPStream( SOCKET s,TCPServer *t );
 	~TCPStream();
@@ -203,9 +237,8 @@ public:
 	int getPort();
 
 private:
-	SOCKET sock;
 	TCPServer *server;
-	int e,ip,port;
+	int ip,port;
 };
 
 class TCPServer{
@@ -223,7 +256,7 @@ private:
 	std::set<TCPStream*> accepted_set;
 };
 
-TCPStream::TCPStream( SOCKET s,TCPServer *t ):sock(s),server(t),e(0){
+TCPStream::TCPStream( SOCKET s,TCPServer *t ):SocketStream(s),server(t){
 	sockaddr_in addr;
 	socklen_t len=sizeof(addr);
 	if( getpeername( s,(sockaddr*)&addr,&len ) ){
@@ -250,16 +283,8 @@ int TCPStream::read( char *buff,int size ){
 			dt=tout-bbMilliSecs();
 			if( dt<0 ) dt=0;
 		}
-		timeval tv={ dt/1000,(dt%1000)*1000 };
-#ifdef WIN32
-		fd_set fd={ 1,sock };
-		int n=::select( 0,&fd,0,0,&tv );
+		int n=waitForRead( sock,dt );
 		if( n!=1 ){ e=-1;break; }
-#else
-		pollfd fd={ sock,POLLIN|POLLPRI,0 };
-		int n=poll( &fd,1,read_timeout );
-		if( !(fd.revents&POLLIN) ){ e=-1;break; }
-#endif
 		n=::recv( sock,b,l-b,0 );
 		if( n==0 ){ e=1;break; }
 		if( n==SOCKET_ERROR ){ e=-1;break; }
@@ -276,21 +301,15 @@ int TCPStream::write( const char *buff,int size ){
 }
 
 int TCPStream::avail(){
-#ifdef WIN32
-	unsigned long t=-1;
-#else
-	int t=-1;
-#endif
-	int n=::ioctlsocket( sock,FIONREAD,&t );
+	size_t t=-1;
+	int n=readAvail( &t );
 	if( n==SOCKET_ERROR ){ e=-1;return 0; }
 	return t;
 }
 
 int TCPStream::eof(){
 	if( e ) return e;
-	fd_set fd={ 1,sock };
-	timeval tv={ 0,0 };
-	switch( ::select( 0,&fd,0,0,&tv ) ){
+	switch( waitForRead( sock,0 ) ){
 	case 0:break;
 	case 1:if( !avail() ) e=1;break;
 	default:e=-1;
@@ -316,13 +335,9 @@ TCPServer::~TCPServer(){
 
 TCPStream *TCPServer::accept(){
 	if( e ) return 0;
-#ifdef WIN32
-	fd_set fd={ 1,sock };
-	timeval tv={ accept_timeout/1000,(accept_timeout%1000)*1000 };
-	int n=::select( 0,&fd,0,0,&tv );
-	if( n==0 ) return 0;
+	int n=waitForRead( sock,accept_timeout );
+	if( !n ) return 0;
 	if( n!=1 ){ e=-1;return 0; }
-#endif
 	SOCKET t=::accept( sock,0,0 );
 	if( t==INVALID_SOCKET ){ e=-1;return 0; }
 	TCPStream *s=d_new TCPStream( t,this );
@@ -379,12 +394,7 @@ UDPStream * BBCALL bbCreateUDPStream( bb_int_t port ){
 	if( !socks_ok ) return 0;
 	SOCKET s=::socket( AF_INET,SOCK_DGRAM,0 );
 	if( s!=INVALID_SOCKET ){
-#ifndef BB_MACOS
-		sockaddr_in addr={AF_INET,htons(port)};
-#else
-		sockaddr_in addr={sizeof(sockaddr_in),AF_INET,htons(port)};
-#endif
-		if( !::bind( s,(sockaddr*)&addr,sizeof(addr) ) ){
+		if( bind( s,port ) ){
 			UDPStream *p=d_new UDPStream( s );
 			udp_set.insert( p );
 			return p;
@@ -462,20 +472,15 @@ TCPStream * BBCALL bbOpenTCPStream( BBStr *server,bb_int_t port,bb_int_t local_p
 	SOCKET s=::socket( AF_INET,SOCK_STREAM,0 );
 	if( s!=INVALID_SOCKET ){
 		if( local_port ){
-#ifndef BB_MACOS
-			sockaddr_in addr={AF_INET,htons(local_port)};
-#else
-			sockaddr_in addr={sizeof(sockaddr_in),AF_INET,htons(local_port)};
-#endif
-			if( ::bind( s,(sockaddr*)&addr,sizeof(addr) ) ){
+			if( !bind( s,local_port ) ){
 				::closesocket( s );
 				return 0;
 			}
 		}
-#ifndef BB_MACOS
-		sockaddr_in addr={AF_INET,htons(port)};
+#if defined(BB_MACH) || defined(BB_NX)
+	sockaddr_in addr={sizeof(sockaddr_in),AF_INET,htons(port)};
 #else
-		sockaddr_in addr={sizeof(sockaddr_in),AF_INET,htons(port)};
+	sockaddr_in addr={AF_INET,htons(port)};
 #endif
 		S_ADDR(addr.sin_addr)=ip;
 		if( !::connect( s,(sockaddr*)&addr,sizeof(addr) ) ){
@@ -497,12 +502,7 @@ void BBCALL bbCloseTCPStream( TCPStream *p ){
 TCPServer * BBCALL bbCreateTCPServer( bb_int_t port ){
 	SOCKET s=::socket( AF_INET,SOCK_STREAM,0 );
 	if( s!=INVALID_SOCKET ){
-#ifndef BB_MACOS
-		sockaddr_in addr={AF_INET,htons(port)};
-#else
-		sockaddr_in addr={sizeof(sockaddr_in),AF_INET,htons(port)};
-#endif
-		if( !::bind( s,(sockaddr*)&addr,sizeof(addr) ) ){
+		if( bind( s,port ) ){
 			if( !::listen( s,SOMAXCONN ) ){
 				TCPServer *p=d_new TCPServer( s );
 				server_set.insert( p );

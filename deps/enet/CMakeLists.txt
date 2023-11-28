@@ -1,7 +1,11 @@
-if (BB_EMSCRIPTEN OR BB_NX)
+if (BB_EMSCRIPTEN)
   return()
 endif()
 
 add_subdirectory(tree)
 target_output_to_toolchain(enet)
 target_include_directories (enet INTERFACE tree/include)
+if(BB_NX)
+  target_link_libraries(enet nx)
+  target_compile_definitions(enet PRIVATE HAS_SOCKLEN_T)
+endif()
