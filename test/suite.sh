@@ -255,6 +255,12 @@ then
   blitzcc "driver.app" -c -o `pwd`/tmp/driver.app _release/samples/mak/driver/driver.bundle.bb
 fi
 
+if [[ "$TARGET" = *"nx"* ]]
+then
+  mkdir -p tmp/
+  blitzcc "test.nro" -r test -o `pwd`/tmp/test.nro test/all.bb
+fi
+
 # generate the report...
 ENV=$($BLITZCC -e)
 if [ "$ENV" = "test" ]; then

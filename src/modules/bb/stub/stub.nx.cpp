@@ -1,51 +1,58 @@
-// Include the most common headers from the C standard library
+#include <bb/stub/stub.h>
+#include <bb/runtime/runtime.h>
+
+#include <iostream>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// Include the main libnx system header, for Switch development
 #include <switch.h>
 
-// Main program entrypoint
-int main(int argc, char* argv[])
-{
-    // This example uses a text console, as a simple way to output text to the screen.
-    // If you want to write a software-rendered graphics application,
-    //   take a look at the graphics/simplegfx example, which uses the libnx Framebuffer API instead.
-    // If on the other hand you want to write an OpenGL based application,
-    //   take a look at the graphics/opengl set of examples, which uses EGL instead.
-    consoleInit(NULL);
+class StdioDebugger : public Debugger{
+private:
+	bool trace;
+	std::string file;
+	int row,col;
+public:
+	StdioDebugger( bool t ):trace(t){
+	}
 
-    // Configure our supported input layout: a single player with standard controller styles
-    padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+	void debugRun(){
+	}
+	void debugStop(){
+	}
+	void debugStmt( int srcpos,const char *f ){
+		file=std::string(f);
+		row=(srcpos>>16)&0xffff;
+		col=srcpos&0xffff;
+		if( trace ) std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"]"<<std::endl;
+	}
+	void debugEnter( void *frame,void *env,const char *func ){
+	}
+	void debugLeave(){
+	}
+	void debugLog( const char *msg ){
+		std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<std::endl;
+	}
+	void debugMsg( const char *msg,bool serious ){
+		if( serious ){
+			std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<std::endl;
+		}
+	}
+	void debugSys( void *msg ){
+		std::cout<<file<<":"<<"["<<row+1<<":"<<col<<"] "<<msg<<std::endl;
+	}
+};
 
-    // Initialize the default gamepad (which reads handheld mode inputs as well as the first connected controller)
-    PadState pad;
-    padInitializeDefault(&pad);
+extern "C"
+int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
+	std::string cmd_line="";
+	bbStartup( argv[0],cmd_line.c_str() );
 
-    // Other initialization goes here. As a demonstration, we print hello world.
-    printf("Hello World!\n");
+	bool debug=false;
+	StdioDebugger debugger( debug );
+	bbAttachDebugger( &debugger );
 
-    // Main loop
-    while (appletMainLoop())
-    {
-        // Scan the gamepad. This should be done once for each frame
-        padUpdate(&pad);
-
-        // padGetButtonsDown returns the set of buttons that have been
-        // newly pressed in this frame compared to the previous one
-        u64 kDown = padGetButtonsDown(&pad);
-
-        if (kDown & HidNpadButton_Plus)
-            break; // break in order to return to hbmenu
-
-        // Your code goes here
-
-        // Update the console, sending a new frame to the display
-        consoleUpdate(NULL);
-    }
-
-    // Deinitialize and clean up resources used by the console (important!)
-    consoleExit(NULL);
-    return 0;
+	return bbruntime_run( bbMain,debug )?0:1;
 }

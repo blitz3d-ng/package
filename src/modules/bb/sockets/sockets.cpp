@@ -34,6 +34,10 @@ typedef int socklen_t;
 #include <windows.h>
 #endif
 
+#ifdef BB_NX
+#include <switch.h>
+#endif
+
 #ifdef WIN32
 #define S_ADDR( a ) a.S_un.S_addr
 #else
@@ -546,6 +550,9 @@ void BBCALL bbTCPTimeouts( bb_int_t rt,bb_int_t at ){
 }
 
 BBMODULE_CREATE( sockets ){
+#ifdef BB_NX
+	socketInitializeDefault();
+#endif
 #ifdef WIN32
 	socks_ok=WSAStartup( 0x0101,&wsadata )==0;
 #else

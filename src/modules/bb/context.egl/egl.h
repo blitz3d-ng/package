@@ -1,5 +1,5 @@
-#ifndef BB_GRAPHICS_GL_EGL_H
-#define BB_GRAPHICS_GL_EGL_H
+#ifndef BB_CONTEXT_EGL_EGL_H
+#define BB_CONTEXT_EGL_EGL_H
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -18,8 +18,9 @@ public:
 	~BBContextES();
 
 	void clear();
-	void create(BBContextES *share);
+	void create( EGLNativeWindowType win,BBContextES *share );
 	void destroy();
+	void swap();
 };
 
 #endif

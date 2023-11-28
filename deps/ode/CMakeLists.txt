@@ -1,4 +1,4 @@
-if(NOT BB_DESKTOP)
+if(NOT BB_DESKTOP AND NOT BB_NX)
   return()
 endif()
 
@@ -18,6 +18,8 @@ set(ODE_WITH_TESTS OFF CACHE STRING "" FORCE)
 set(ODE_DOUBLE_PRECISION OFF CACHE STRING "" FORCE)
 
 add_subdirectory(tree)
+add_library(ode ALIAS ODE)
+target_output_to_toolchain(ODE)
 set_target_properties(ODE PROPERTIES UNITY_BUILD false)
 
 # temporarily silence warnings
@@ -38,4 +40,6 @@ if(WIN32)
   )
 endif()
 
-target_output_to_toolchain(ODE)
+if(BB_NX)
+  target_compile_definitions(ODE PRIVATE __linux__)
+endif()

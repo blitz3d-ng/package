@@ -164,6 +164,7 @@ if(LLVM_FOUND)
 
     package/bundle.cpp
     package/package_apk.cpp
+    package/package_nro.cpp
     package/package.h
 
     jit_orc/jit_orc.cpp jit_orc/jit_orc.h

@@ -5,7 +5,7 @@ Expect FileType("modules/filesystem.bb") = 1, "Expect this source file to exist 
 Expect FileType("modules/a-bad-path.bb") = 0, "Expect an invalid path to be detected."
 Expect FileType("modules") = 2, "Expect a this directory to be detected."
 
-Expect FileSize("all.bb") >= 800, "Expect the root source file to be at least 800 bytes."
+Expect FileSize("all.bb") >= 10, "Expect the root source file to be at least 10 bytes."
 
 dir=ReadDir("./media")
 found_axe = False

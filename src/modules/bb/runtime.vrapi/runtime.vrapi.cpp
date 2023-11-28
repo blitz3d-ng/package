@@ -3,7 +3,7 @@
 #include <bb/graphics.gl/graphics.gl.h>
 #include <bb/blitz3d.gl/blitz3d.gl.h>
 #include <bb/runtime/runtime.h>
-#include <bb/graphics.gl/egl.h>
+#include <bb/context.egl/context.egl.h>
 #include <bb/blitz3d/commands.h>
 #include <bb/blitz3d/geom.h>
 #include <bb/system.ndk/system.ndk.h>
@@ -398,7 +398,7 @@ public:
 	void init(){
 		((NDKSystemDriver*)bbSystemDriver)->setJNI( app->activity->clazz,java.Env );
 
-		Egl.create(NULL);
+		Egl.create( NULL,NULL );
 
 		const char* exts=(const char*)glGetString( GL_EXTENSIONS );
 		if( exts!=NULL ){

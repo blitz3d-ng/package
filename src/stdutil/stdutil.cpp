@@ -342,9 +342,14 @@ std::string filenamepath( const std::string &t ){
 }
 #else
 std::string filenamepath( const std::string &t ){
+#ifdef BB_NX
+	// FIXME: this certainly isn't right
+	return t;
+#else
 	char buff[PATH_MAX+1];
 	strcpy( buff,t.c_str() );
 	return std::string( dirname( buff ) );
+#endif
 }
 #endif
 
@@ -357,9 +362,14 @@ std::string filenamefile( const std::string &t ){
 }
 #else
 std::string filenamefile( const std::string &t ){
+#ifdef BB_NX
+	// FIXME: this certainly isn't right
+	return t;
+#else
 	char buff[PATH_MAX+1];
 	strcpy( buff,t.c_str() );
 	return std::string( basename( buff ) );
+#endif
 }
 #endif
 

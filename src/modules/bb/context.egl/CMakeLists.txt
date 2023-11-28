@@ -1,0 +1,13 @@
+if(NOT BB_ANDROID AND NOT BB_OVR AND NOT BB_NX)
+  return()
+endif()
+
+bb_start_module(context.egl)
+set(DEPENDS_ON bb.graphics.gl)
+set(SOURCES context.egl.cpp context.egl.h egl.cpp egl.h)
+if(BB_ANDROID OR BB_OVR)
+  set(SYSTEM_LIBS EGL GLESv3)
+elseif(BB_NX)
+  set(SYSTEM_LIBS drm_nouveau glapi EGL GLESv2)
+endif()
+bb_end_module()

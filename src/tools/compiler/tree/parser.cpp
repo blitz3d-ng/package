@@ -199,14 +199,9 @@ void Parser::parseStmtSeq( StmtSeqNode *stmts,int scope ){
 			{
 				if( toker->next()!=STRINGCONST ) exp( "File must be a string" );
 				std::string path=toker->text();toker->next();
-				path=path.substr( 1,path.size()-2 );
+				path=canonicalpath( path.substr( 1,path.size()-2 )) ;
 
-#ifndef BB_WINDOWS // TODO: solve this properly
-				char buf[PATH_MAX];
-				std::string abspath=realpath( path.c_str(),buf );
-#else
-				std::string abspath=path;
-#endif
+				std::string abspath=fullfilename( path );
 				std::ifstream i_stream( abspath.c_str() );
 				if( !i_stream.good() ) ex( "Unable to open "+abspath );
 				i_stream.close();
@@ -767,7 +762,7 @@ ExprNode *Parser::parsePrimary( bool opt ){
 	a_ptr<ExprNode> expr;
 	std::string t,ident,tag;
 	ExprNode *result=0;
-	int n,k;
+	size_t n,k;
 
 	switch( toker->curr() ){
 	case '(':
