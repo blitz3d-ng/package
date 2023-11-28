@@ -220,7 +220,7 @@ jobs:
           submodules: recursive
       - run: ./env.sh nx make compiler
       - run: ./env.sh nx make ENV=release PLATFORM=nx
-      - run: ./test/suite.sh nx
+      - run: ./env.sh nx ./test/suite.sh nx
 
   help:
     name: Help

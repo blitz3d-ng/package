@@ -21,7 +21,7 @@ set -e
 export PLATFORM=$1
 shift
 
-VERSION="${VERSION:-v8}"
+VERSION="${VERSION:-v9}"
 
 VOLUME=blitz3d-ng-gems-$PLATFORM
 IMAGE=ghcr.io/blitz3d-ng/env:$PLATFORM-$VERSION
