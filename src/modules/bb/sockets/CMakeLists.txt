@@ -1,4 +1,4 @@
-IF(BB_DESKTOP)
+IF(NOT BB_EMSCRIPTEN)
   bb_start_module(sockets)
   set(DEPENDS_ON bb.stream)
   set(SOURCES sockets.cpp sockets.h)
