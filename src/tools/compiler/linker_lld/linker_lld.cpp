@@ -1,3 +1,4 @@
+#include "../stdutil/stdutil.h"
 #include "linker_lld.h"
 #include "../package/package.h"
 #include <lld/Common/Driver.h>
@@ -129,8 +130,8 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 	}else if( nx ){
 		remove( exeFile.c_str() );
 
-		std::string dir=dirname( (char*)binaryPath.c_str() );
-		std::string base=basename( (char*)binaryPath.c_str() );
+		std::string dir=filenamepath( binaryPath );
+		std::string base=filenamefile( binaryPath );
 		base=base.substr( 0,base.size()-4 );
 		binaryPath=dir+"/"+base+".elf";
 	}
