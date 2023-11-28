@@ -15,33 +15,70 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <poll.h>
 
 typedef int SOCKET;
 typedef hostent HOSTENT;
+#define ioctlsocket(fd,flags,ptr) ioctl(fd,flags,ptr)
+#define closesocket(fd) close(fd)
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
 #else
 typedef int socklen_t;
 #endif
 
-#ifndef FIXME
+#ifdef WIN32
 #include <windows.h>
 #endif
 
+#ifdef WIN32
+#define S_ADDR( a ) a.S_un.S_addr
+#else
+#define S_ADDR( a ) a.s_addr
+#endif
+
 static bool socks_ok=0;
-#ifndef FIXME
+#ifdef WIN32
 static WSADATA wsadata;
 #endif
 static int recv_timeout;
 static int read_timeout;
 static int accept_timeout;
 
+static bool bind( SOCKET s,int port ){
+#if defined(BB_MACH) || defined(BB_NX)
+	sockaddr_in addr={sizeof(sockaddr_in),AF_INET,htons(port)};
+#else
+	sockaddr_in addr={AF_INET,htons(port)};
+#endif
+	return ::bind( s,(sockaddr*)&addr,sizeof(addr) )==0;
+}
+
+static int waitForRead( SOCKET s,int ms ){
+#ifdef WIN32
+		fd_set fd={ 1,s };
+		timeval tv={ ms/1000,(ms%1000)*1000 };
+		int n=::select( 0,&fd,0,0,&tv );
+		return n;
+#else
+		pollfd fd={ s,POLLIN|POLLPRI,0 };
+		int n=poll( &fd,1,ms );
+		if( fd.revents&POLLIN ) return 1;
+#endif
+	return n;
+}
+
 static void close( SOCKET sock,int e ){
-#ifndef FIXME
 	if( e<0 ){
 		int opt=1;
+#ifndef FIXME
 		setsockopt( sock,SOL_SOCKET,SO_DONTLINGER,(char*)&opt,sizeof(opt) );
+#endif
 	}
 	closesocket( sock );
-#endif
 }
 
 class UDPStream;
@@ -52,7 +89,30 @@ static std::set<UDPStream*> udp_set;
 static std::set<TCPStream*> tcp_set;
 static std::set<TCPServer*> server_set;
 
-class UDPStream : public BBStream{
+class SocketStream : public BBStream{
+protected:
+	SOCKET sock;
+	int e;
+
+	SocketStream( SOCKET s );
+	int readAvail( size_t *sz );
+};
+
+SocketStream::SocketStream( SOCKET s ):sock(s),e(0){
+}
+
+int SocketStream::readAvail( size_t *sz ){
+#ifdef WIN32
+	u_long t=-1;
+#else
+	int t=-1;
+#endif
+	int n=::ioctlsocket( sock,FIONREAD,&t );
+	*sz=t;
+	return n;
+}
+
+class UDPStream : public SocketStream{
 public:
 	UDPStream( SOCKET s );
 	~UDPStream();
@@ -70,13 +130,12 @@ public:
 	int getMsgPort();
 
 private:
-	SOCKET sock;
 	std::vector<char> in_buf,out_buf;
 	sockaddr_in addr,in_addr,out_addr;
-	int in_get,e;
+	int in_get;
 };
 
-UDPStream::UDPStream( SOCKET s ):sock(s),in_get(0),e(0){
+UDPStream::UDPStream( SOCKET s ):SocketStream(s),in_get(0){
 	socklen_t len=sizeof(addr);
 	getsockname( s,(sockaddr*)&addr,&len );
 	in_addr=out_addr=addr;
@@ -112,7 +171,6 @@ int UDPStream::eof(){
 
 //fill buffer, return sender
 int UDPStream::recv(){
-#ifndef FIXME
 	if( e ) return 0;
 	int tout;
 	if( recv_timeout ) tout=bbMilliSecs()+recv_timeout;
@@ -122,73 +180,50 @@ int UDPStream::recv(){
 			dt=tout-bbMilliSecs();
 			if( dt<0 ) dt=0;
 		}
-		fd_set fd={ 1,sock };
-		timeval tv={ dt/1000,(dt%1000)*1000 };
-		int n=::select( 0,&fd,0,0,&tv );
+		int n=waitForRead( sock,dt );
 		if( !n ) return 0;
 		if( n!=1 ){ e=-1;return 0; }
-		unsigned long sz=-1;
-		if( ioctlsocket( sock,FIONREAD,&sz ) ){ e=-1;return 0; }
+		size_t sz=-1;
+		if( readAvail( &sz ) ){ e=-1;return 0; }
 		in_buf.resize( sz );in_get=0;
-		int len=sizeof(in_addr);
+		socklen_t len=sizeof(in_addr);
 		n=::recvfrom( sock,&in_buf[0],sz,0,(sockaddr*)&in_addr,&len );
 		if( n==SOCKET_ERROR ) continue;	//{ e=-1;return 0; }
 		in_buf.resize( n );
 		return getMsgIP();
 	}
-#endif
 	return 0;
 }
 
 //send, empty buffer
 int UDPStream::send( int ip,int port ){
-#ifdef FIXME
-	return 0;
-#else
 	if( e ) return 0;
 	int sz=out_buf.size();
-	out_addr.sin_addr.S_un.S_addr=htonl( ip );
+	S_ADDR(out_addr.sin_addr)=htonl( ip );
 	out_addr.sin_port=htons( port ? port : addr.sin_port );
 	int n=::sendto( sock,&out_buf[0],sz,0,(sockaddr*)&out_addr,sizeof(out_addr) );
 	if( n!=sz ) return e=-1;
 	out_buf.clear();
 	return sz;
-#endif
 }
 
 int UDPStream::getIP(){
-#ifdef FIXME
-	return 0;
-#else
-	return ntohl( addr.sin_addr.S_un.S_addr );
-#endif
+	return ntohl( S_ADDR( addr.sin_addr ) );
 }
 
 int UDPStream::getPort(){
-#ifdef FIXME
-	return 0;
-#else
 	return ntohs( addr.sin_port );
-#endif
 }
 
 int UDPStream::getMsgIP(){
-#ifdef FIXME
-	return 0;
-#else
-	return ntohl( in_addr.sin_addr.S_un.S_addr );
-#endif
+	return ntohl( S_ADDR( in_addr.sin_addr ) );
 }
 
 int UDPStream::getMsgPort(){
-#ifdef FIXME
-	return 0;
-#else
 	return ntohs( in_addr.sin_port );
-#endif
 }
 
-class TCPStream : public BBStream{
+class TCPStream : public SocketStream{
 public:
 	TCPStream( SOCKET s,TCPServer *t );
 	~TCPStream();
@@ -202,9 +237,8 @@ public:
 	int getPort();
 
 private:
-	SOCKET sock;
 	TCPServer *server;
-	int e,ip,port;
+	int ip,port;
 };
 
 class TCPServer{
@@ -222,30 +256,23 @@ private:
 	std::set<TCPStream*> accepted_set;
 };
 
-TCPStream::TCPStream( SOCKET s,TCPServer *t ):sock(s),server(t),e(0){
-#ifndef FIXME
+TCPStream::TCPStream( SOCKET s,TCPServer *t ):SocketStream(s),server(t){
 	sockaddr_in addr;
-	int len=sizeof(addr);
+	socklen_t len=sizeof(addr);
 	if( getpeername( s,(sockaddr*)&addr,&len ) ){
 		ip=port=0;
 		return;
 	}
-	ip=ntohl(addr.sin_addr.S_un.S_addr);
+	ip=ntohl( S_ADDR(addr.sin_addr ) );
 	port=ntohs(addr.sin_port);
-#endif
 }
 
 TCPStream::~TCPStream(){
 	if( server ) server->remove( this );
-#ifndef FIXME
 	close( sock,e );
-#endif
 }
 
 int TCPStream::read( char *buff,int size ){
-#ifdef FIXME
-	return 0;
-#else
 	if( e ) return 0;
 	char *b=buff,*l=buff+size;
 	int tout;
@@ -256,9 +283,7 @@ int TCPStream::read( char *buff,int size ){
 			dt=tout-bbMilliSecs();
 			if( dt<0 ) dt=0;
 		}
-		fd_set fd={ 1,sock };
-		timeval tv={ dt/1000,(dt%1000)*1000 };
-		int n=::select( 0,&fd,0,0,&tv );
+		int n=waitForRead( sock,dt );
 		if( n!=1 ){ e=-1;break; }
 		n=::recv( sock,b,l-b,0 );
 		if( n==0 ){ e=1;break; }
@@ -266,36 +291,25 @@ int TCPStream::read( char *buff,int size ){
 		b+=n;
 	}
 	return b-buff;
-#endif
 }
 
 int TCPStream::write( const char *buff,int size ){
-#ifdef FIXME
-	return 0;
-#else
 	if( e ) return 0;
 	int n=::send( sock,buff,size,0 );
 	if( n==SOCKET_ERROR ){ e=-1;return 0; }
 	return n;
-#endif
 }
 
 int TCPStream::avail(){
-#ifdef FIXME
-	return 0;
-#else
-	unsigned long t;
-	int n=::ioctlsocket( sock,FIONREAD,&t );
+	size_t t=-1;
+	int n=readAvail( &t );
 	if( n==SOCKET_ERROR ){ e=-1;return 0; }
 	return t;
-#endif
 }
 
 int TCPStream::eof(){
 	if( e ) return e;
-	fd_set fd={ 1,sock };
-	timeval tv={ 0,0 };
-	switch( ::select( 0,&fd,0,0,&tv ) ){
+	switch( waitForRead( sock,0 ) ){
 	case 0:break;
 	case 1:if( !avail() ) e=1;break;
 	default:e=-1;
@@ -315,26 +329,20 @@ TCPServer::TCPServer( SOCKET s ):sock(s),e(0){
 }
 
 TCPServer::~TCPServer(){
-	while( accepted_set.size() ) delete *accepted_set.begin();
+	while( accepted_set.size() ) bbCloseTCPStream( *accepted_set.begin() );
 	close( sock,e );
 }
 
 TCPStream *TCPServer::accept(){
-#ifdef FIXME
-	return 0;
-#else
 	if( e ) return 0;
-	fd_set fd={ 1,sock };
-	timeval tv={ accept_timeout/1000,(accept_timeout%1000)*1000 };
-	int n=::select( 0,&fd,0,0,&tv );
-	if( n==0 ) return 0;
+	int n=waitForRead( sock,accept_timeout );
+	if( !n ) return 0;
 	if( n!=1 ){ e=-1;return 0; }
 	SOCKET t=::accept( sock,0,0 );
 	if( t==INVALID_SOCKET ){ e=-1;return 0; }
 	TCPStream *s=d_new TCPStream( t,this );
 	accepted_set.insert( s );
 	return s;
-#endif
 }
 
 void TCPServer::remove( TCPStream *s ){
@@ -362,6 +370,9 @@ static inline void debugTCPServer( TCPServer *p ){
 static std::vector<int> host_ips;
 
 bb_int_t BBCALL bbCountHostIPs( BBStr *host ){
+#ifndef WIN32
+	if( *host=="" ) *host="localhost";
+#endif
 	host_ips.clear();
 	HOSTENT *h=gethostbyname( host->c_str() );
 	delete host;if( !h ) return 0;
@@ -380,19 +391,16 @@ bb_int_t BBCALL bbHostIP( bb_int_t index ){
 }
 
 UDPStream * BBCALL bbCreateUDPStream( bb_int_t port ){
-#ifndef FIXME
 	if( !socks_ok ) return 0;
 	SOCKET s=::socket( AF_INET,SOCK_DGRAM,0 );
 	if( s!=INVALID_SOCKET ){
-		sockaddr_in addr={AF_INET,htons(port)};
-		if( !::bind( s,(sockaddr*)&addr,sizeof(addr) ) ){
+		if( bind( s,port ) ){
 			UDPStream *p=d_new UDPStream( s );
 			udp_set.insert( p );
 			return p;
 		}
 		::closesocket( s );
 	}
-#endif
 	return 0;
 }
 
@@ -442,7 +450,6 @@ BBStr * BBCALL bbDottedIP( bb_int_t ip ){
 		itoa((ip>>8)&255)+"."+itoa(ip&255) );
 }
 
-#ifndef FIXME
 static int findHostIP( const std::string &t ){
 	int ip=inet_addr( t.c_str() );
 	if( ip!=INADDR_NONE ) return ip;
@@ -454,10 +461,8 @@ static int findHostIP( const std::string &t ){
 	}
 	return 0;
 }
-#endif
 
 TCPStream * BBCALL bbOpenTCPStream( BBStr *server,bb_int_t port,bb_int_t local_port ){
-#ifndef FIXME
 	if( !socks_ok ){
 		delete server;
 		return 0;
@@ -467,14 +472,17 @@ TCPStream * BBCALL bbOpenTCPStream( BBStr *server,bb_int_t port,bb_int_t local_p
 	SOCKET s=::socket( AF_INET,SOCK_STREAM,0 );
 	if( s!=INVALID_SOCKET ){
 		if( local_port ){
-			sockaddr_in addr={AF_INET,htons(local_port)};
-			if( ::bind( s,(sockaddr*)&addr,sizeof(addr) ) ){
+			if( !bind( s,local_port ) ){
 				::closesocket( s );
 				return 0;
 			}
 		}
-		sockaddr_in addr={AF_INET,htons(port)};
-		addr.sin_addr.S_un.S_addr=ip;
+#if defined(BB_MACH) || defined(BB_NX)
+	sockaddr_in addr={sizeof(sockaddr_in),AF_INET,htons(port)};
+#else
+	sockaddr_in addr={AF_INET,htons(port)};
+#endif
+		S_ADDR(addr.sin_addr)=ip;
 		if( !::connect( s,(sockaddr*)&addr,sizeof(addr) ) ){
 			TCPStream *p=d_new TCPStream( s,0 );
 			tcp_set.insert( p );
@@ -482,7 +490,6 @@ TCPStream * BBCALL bbOpenTCPStream( BBStr *server,bb_int_t port,bb_int_t local_p
 		}
 		::closesocket( s );
 	}
-#endif
 	return 0;
 }
 
@@ -493,11 +500,9 @@ void BBCALL bbCloseTCPStream( TCPStream *p ){
 }
 
 TCPServer * BBCALL bbCreateTCPServer( bb_int_t port ){
-#ifndef FIXME
 	SOCKET s=::socket( AF_INET,SOCK_STREAM,0 );
 	if( s!=INVALID_SOCKET ){
-		sockaddr_in addr={AF_INET,htons(port)};
-		if( !::bind( s,(sockaddr*)&addr,sizeof(addr) ) ){
+		if( bind( s,port ) ){
 			if( !::listen( s,SOMAXCONN ) ){
 				TCPServer *p=d_new TCPServer( s );
 				server_set.insert( p );
@@ -506,7 +511,6 @@ TCPServer * BBCALL bbCreateTCPServer( bb_int_t port ){
 		}
 		::closesocket(s);
 	}
-#endif
 	return 0;
 }
 
@@ -542,8 +546,10 @@ void BBCALL bbTCPTimeouts( bb_int_t rt,bb_int_t at ){
 }
 
 BBMODULE_CREATE( sockets ){
-#ifndef FIXME
+#ifdef WIN32
 	socks_ok=WSAStartup( 0x0101,&wsadata )==0;
+#else
+	socks_ok=true;
 #endif
 	recv_timeout=0;
 	read_timeout=10000;
@@ -555,7 +561,7 @@ BBMODULE_DESTROY( sockets ){
 	while( udp_set.size() ) bbCloseUDPStream( *udp_set.begin() );
 	while( tcp_set.size() ) bbCloseTCPStream( *tcp_set.begin() );
 	while( server_set.size() ) bbCloseTCPServer( *server_set.begin() );
-#ifndef FIXME
+#ifdef WIN32
 	if( socks_ok ) WSACleanup();
 #endif
 	return true;

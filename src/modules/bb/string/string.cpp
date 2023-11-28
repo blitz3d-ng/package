@@ -15,7 +15,8 @@ BBStr * BBCALL bbString( BBStr *s,bb_int_t n ){
 BBStr * BBCALL bbLeft( BBStr *s,bb_int_t n ){
 	CHKPOS( n );
 	const char *last=s->data();
-	while( n-->0 ){
+	const char *end=last+s->size();
+	while( n-->0&&last<end ){
 		utf8_int32_t chr;
 		last=utf8codepoint( last,&chr );
 	}

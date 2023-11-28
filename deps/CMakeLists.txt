@@ -28,6 +28,7 @@ add_subdirectory(toml11)
 # system
 add_subdirectory(android_native_app_glue)
 add_subdirectory(vrapi)
+add_subdirectory(libnx)
 
 # graphics
 add_subdirectory(freetype2)
