@@ -3,7 +3,7 @@ if(NOT BB_NX)
 endif()
 
 bb_start_module(runtime.nx)
-set(DEPENDS_ON bb.event bb.runtime)
+set(DEPENDS_ON bb.event bb.runtime bb.context.egl bb.input)
 set(SOURCES runtime.nx.cpp runtime.nx.h)
 set(SYSTEM_LIBS nx)
 bb_end_module()

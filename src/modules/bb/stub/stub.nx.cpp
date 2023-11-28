@@ -47,33 +47,12 @@ public:
 
 extern "C"
 int BBCALL bbStart( int argc,char *argv[], BBMAIN bbMain ) {
-	consoleInit(NULL);
-
-	padConfigureInput(1, HidNpadStyleSet_NpadStandard);
-
-	PadState pad;
-	padInitializeDefault(&pad);
-
 	std::string cmd_line="";
 	bbStartup( argv[0],cmd_line.c_str() );
 
-	StdioDebugger debugger( false );
+	bool debug=false;
+	StdioDebugger debugger( debug );
 	bbAttachDebugger( &debugger );
 
-	// return bbruntime_run( bbMain,debug )?0:1;
-	bbruntime_run( bbMain,false );
-
-	while( appletMainLoop() ){
-		padUpdate(&pad);
-
-		u64 kDown = padGetButtonsDown(&pad);
-		if( kDown&HidNpadButton_Plus )
-			break;
-
-		consoleUpdate(NULL);
-	}
-
-	consoleExit(NULL);
-
-	return 0;
+	return bbruntime_run( bbMain,debug )?0:1;
 }

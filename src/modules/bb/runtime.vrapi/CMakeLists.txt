@@ -1,6 +1,6 @@
 if(TARGET vrapi)
   bb_start_module(runtime.vrapi)
-  set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz3d.gl bb.graphics.gl bb.timer bb.system.ndk)
+  set(DEPENDS_ON bb.runtime bb.input bb.pixmap bb.blitz3d.gl bb.context.egl bb.system.ndk)
   set(LIBS android_native_app_glue vrapi)
   set(SOURCES runtime.vrapi.h runtime.vrapi.cpp)
   set(EXTRA_FILES Runtime.jar libvrapi.so)

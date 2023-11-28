@@ -1,0 +1,2 @@
+UpdateConsole():"bbUpdateConsole"
+InitConsole():"bbInitConsole"

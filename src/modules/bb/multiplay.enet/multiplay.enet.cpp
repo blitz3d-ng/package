@@ -30,13 +30,17 @@
 static GuidGenerator generator;
 
 BBPlayer::BBPlayer(){
+#ifndef BB_NX
 	id=generator.newGuid();
+#else
+	// FIXME
+	id=Guid( "46a38d6b-fd83-44bb-b17a-2fdea913a4cc" );
+#endif
 }
 
 const std::string BBPlayer::getId(){
-	auto myGuid = generator.newGuid();
 	std::stringstream stream;
-	stream << myGuid;
+	stream<<id;
 	return stream.str();
 }
 

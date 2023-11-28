@@ -63,7 +63,7 @@ endif
 
 ifeq ($(PLATFORM), nx)
 ARCH=aarch64
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=/opt/devkitpro/cmake/devkitA64.cmake
+CMAKE_OPTIONS=-DDEVKITPRO=$(DEVKITPRO) -DCMAKE_TOOLCHAIN_FILE=$(DEVKITPRO)/cmake/Switch.cmake
 endif
 
 PROJECT_TO_BUILD := all
@@ -101,6 +101,10 @@ ovr-sdk:
 emscripten:
 	make compiler
 	make PLATFORM=emscripten
+
+nx:
+	make compiler
+	make PLATFORM=nx DEVKITPRO=$(DEVKITPRO)
 
 llvm:
 	./deps/env/build-llvm.sh build/llvm llvm

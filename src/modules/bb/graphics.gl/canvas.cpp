@@ -569,11 +569,12 @@ unsigned GLCanvas::getClsColor()const{
 }
 
 void GLCanvas::set(){
-	const GLenum modes[1]{ mode };
-
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,framebufferId() ) );
-	GL( glDrawBuffers( 1,modes ) );
-	GL( glReadBuffer( mode ) );
+	if( mode!=GL_FRONT&&mode!=GL_BACK ){
+		const GLenum modes[1]{ mode };
+		GL( glDrawBuffers( 1,modes ) );
+		GL( glReadBuffer( mode ) );
+	}
 	setViewport( vx,vy,vw,vh );
 }
 

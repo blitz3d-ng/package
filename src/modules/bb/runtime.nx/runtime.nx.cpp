@@ -4,13 +4,36 @@
 
 #include <switch.h>
 
-void bbSystemPollEvent(){
+#include <bb/input/input.h>
+#include <bb/graphics/graphics.h>
+#include <math.h>
 
+void bbSystemPollEvent(){
+	appletMainLoop();
+}
+
+void BBCALL bbInitConsole(){
+	 consoleInit( 0 );
+}
+
+void BBCALL bbUpdateConsole(){
+	consoleUpdate( 0 );
 }
 
 class NXRuntime : public BBRuntime{
 public:
-	// runtime
+	~NXRuntime(){
+		consoleExit( 0 );
+	}
+
+	void afterCreate(){
+		// consoleInit( 0 );
+
+		romfsInit();
+
+		// BBContextDriver::change( "gl" );
+		// bbDefaultGraphics();
+	}
 
 	void asyncStop(){}
 	void asyncRun(){}

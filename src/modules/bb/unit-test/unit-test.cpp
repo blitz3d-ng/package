@@ -1,6 +1,7 @@
 
 #include <bb/blitz/blitz.h>
 #include <bb/math/math.h>
+#include <bb/runtime.nx/runtime.nx.h>
 #include "../stdutil/stdutil.h"
 #include "unit-test.h"
 
@@ -110,9 +111,17 @@ void BBCALL bbExpectStr( BBStr *a,BBStr *b,BBStr *m ){
 
 #endif
 
+#ifdef BB_NX
+bool bbSystemPollEvent();
+#endif
+
 BBMODULE_CREATE( unit_test ){
 	_bbPasses = 0;
 	_bbFails = 0;
+
+#ifdef BB_NX
+	bbInitConsole();
+#endif
 
 #ifdef WIN32
 	HANDLE handle=GetStdHandle( STD_OUTPUT_HANDLE );
@@ -159,6 +168,10 @@ BBMODULE_CREATE( unit_test ){
 BBMODULE_DESTROY( unit_test ){
 	std::cout << std::endl << "==== Results ====" << std::endl;
 	std::cout << "Pass: " << GREEN << _bbPasses << CLEAR << ". Fail: " << RED << _bbFails << CLEAR << std::endl;
+
+#ifdef BB_NX
+	while( bbSystemPollEvent() ){ bbUpdateConsole(); }
+#endif
 
 	if (_bbFails > 0) {
 		exit(1);

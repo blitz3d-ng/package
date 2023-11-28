@@ -11,9 +11,18 @@ void createNRO( const std::string &out,const std::string &home,const std::string
 	base=base.substr( 0,base.size()-4 );
 	std::string nacpPath=dir+"/"+base+".nacp";
 
+	std::string tmpdir=dir+"/"+base+"-tmp";
+	std::string romDir=tmpdir+"/romfs";
+
+	RUN( "mkdir -p "+romDir );
+	bundleFiles( bundle,romDir );
+
 	// must be a jpg? 256x256
 	std::string icon=home+"/cfg/bbexe.jpg";
 
 	RUN( devkitpro+"/tools/bin/nacptool --create \""+bundle.appName+"\" \"Unspecified Author\" \"1.0.0\" "+nacpPath );
-	RUN( devkitpro+"/tools/bin/elf2nro "+elfPath+" "+out+" --icon="+icon+" --nacp="+nacpPath );
+	RUN( devkitpro+"/tools/bin/elf2nro "+elfPath+" "+out+" --icon="+icon+" --nacp="+nacpPath+" --romfsdir="+romDir );
+
+	remove( elfPath.c_str() );
+	remove( nacpPath.c_str() );
 }

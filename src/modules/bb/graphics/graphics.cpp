@@ -343,15 +343,8 @@ void BBCALL bbGraphics3D( bb_int_t w,bb_int_t h,bb_int_t d,bb_int_t mode ){
 #endif
 
 bool BBCALL bbDefaultGraphics(){
-	freeGraphics();
-	gx_graphics=bbContextDriver->openGraphics( 400,300,0,0,BBGraphics::GRAPHICS_WINDOWED );
-	if( !bbRuntimeIdle() ) RTEX( 0 );
-	if( gx_graphics ){
-		blitz2d_open();
-		bbSetBuffer( bbFrontBuffer() );
-		return true;
-	}
-	return false;
+	graphics( 400,300,0,BBGraphics::GRAPHICS_WINDOWED );
+	return gx_graphics?true:false;
 }
 
 void BBCALL bbEndGraphics(){

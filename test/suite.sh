@@ -258,7 +258,7 @@ fi
 if [[ "$TARGET" = *"nx"* ]]
 then
   mkdir -p tmp/
-  blitzcc "test.nro" -r test -o `pwd`/tmp/test.nro test/language.bb
+  blitzcc "test.nro" -r test -o `pwd`/tmp/test.nro test/all.bb
 fi
 
 # generate the report...
