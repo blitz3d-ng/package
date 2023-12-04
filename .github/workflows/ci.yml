@@ -49,7 +49,7 @@ jobs:
         run: |
           Start-Service audio*
           Invoke-WebRequest https://github.com/duncanthrax/scream/releases/download/3.6/Scream3.6.zip -OutFile C:\Scream3.6.zip
-          Extract-7Zip -Path C:\Scream3.6.zip -DestinationPath C:\Scream
+          7z x C:\Scream3.6.zip -o C:\Scream
           $cert = (Get-AuthenticodeSignature C:\Scream\Install\driver\Scream.sys).SignerCertificate
           $store = [System.Security.Cryptography.X509Certificates.X509Store]::new("TrustedPublisher", "LocalMachine")
           $store.Open("ReadWrite")
@@ -62,7 +62,7 @@ jobs:
         shell: pwsh
         run: |
           Invoke-WebRequest https://github.com/pal1000/mesa-dist-win/releases/download/23.0.0/mesa3d-23.0.0-release-msvc.7z -OutFile mesa3d.7z
-          Extract-7Zip -Path mesa3d.7z -DestinationPath mesa
+          7z x mesa3d.7z -o mesa
           cp mesa\$env:platform\*.dll _release\bin\
           ls _release\bin
 
