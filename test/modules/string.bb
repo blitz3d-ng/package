@@ -24,9 +24,11 @@ ExpectInt Instr( "AöBBAA","A",100000 ),0
 ExpectInt Instr( "AöBBAA","C",100000 ),0
 
 ExpectStr Mid( "Kevin",2,3 ), "evi"
+ExpectStr Mid( "Kevin",2 ), "evin"
 ExpectStr Mid( "wörld",2,2 ), "ör"
 ExpectStr Mid( "wörld",1000,1000 ), ""
 ExpectStr Mid( "wörld",2,1000 ), "örld"
+ExpectStr Mid$( "test/test.x",Instr("test/test.x",".")+1 ), "x"
 
 ExpectStr Upper( "Kevin" ),"KEVIN"
 ExpectStr Upper("hello, wörld"),"HELLO, WÖRLD"

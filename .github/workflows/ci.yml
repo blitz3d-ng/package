@@ -210,6 +210,7 @@ jobs:
         with:
           submodules: recursive
       - run: ./env.sh emscripten make emscripten
+      - run: ./env.sh emscripten ./test/suite.sh emscripten
 
   nx:
     name: Switch

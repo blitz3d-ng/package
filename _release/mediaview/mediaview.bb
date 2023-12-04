@@ -4,8 +4,7 @@
 ;Create executable in 'bin'
 
 AppTitle CommandLine$()
-fil$=Lower$( CommandLine$() )
-
+fil$=CommandLine$()
 index=Instr( fil$,"." )
 If index>0 ext$=Mid$( fil$,index+1 )
 Select ext$
@@ -20,7 +19,7 @@ Case "wav"
 Case "mp3","mid","mod","x3m","xm","it"
 	ShowMusic( fil$ )
 Default
-	RuntimeError "Unknown File Extension"
+	RuntimeError "Unknown File Extension: "+ext
 End Select
 
 End
@@ -35,7 +34,7 @@ Function ShowModel( fil$,md2 )
 		model=LoadMD2( fil$ )
 		If model ScaleEntity model,.025,.025,.025
 	Else
-		model=LoadAnimMesh( fil$ )
+		model=LoadMesh( fil$ )
 		If model FitMesh model,-1,-1,-1,2,2,2,True
 	EndIf
 	If model=0 RuntimeError "Unable to load 3D mesh:"+fil$

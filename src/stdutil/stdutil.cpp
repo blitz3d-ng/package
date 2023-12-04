@@ -318,7 +318,7 @@ std::string toupper( const std::string &s ){
 }
 
 std::string fullfilename( const std::string &t ){
-#ifdef BB_NDK
+#if defined(BB_NDK)||defined(BB_NX)
 	// TODO: this may not be the correct thing...
 	return t;
 #endif
@@ -343,8 +343,11 @@ std::string filenamepath( const std::string &t ){
 #else
 std::string filenamepath( const std::string &t ){
 #ifdef BB_NX
-	// FIXME: this certainly isn't right
-	return t;
+	size_t p=t.size();
+	while( t[p]!='/'&&t[p]!='\\'&&p>0 ) p--;
+	std::string res=t.substr( 0,p );
+	if( res=="" ) res=".";
+	return res;
 #else
 	char buff[PATH_MAX+1];
 	strcpy( buff,t.c_str() );
@@ -363,8 +366,9 @@ std::string filenamefile( const std::string &t ){
 #else
 std::string filenamefile( const std::string &t ){
 #ifdef BB_NX
-	// FIXME: this certainly isn't right
-	return t;
+	size_t p=t.size();
+	while( t[p]!='/'&&t[p]!='\\'&&p>0 ) --p;
+	return t.substr( p );
 #else
 	char buff[PATH_MAX+1];
 	strcpy( buff,t.c_str() );

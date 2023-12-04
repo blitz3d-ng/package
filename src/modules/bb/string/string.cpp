@@ -70,8 +70,9 @@ bb_int_t BBCALL bbInstr( BBStr *s,BBStr *t,bb_int_t from ){
 
 BBStr * BBCALL bbMid( BBStr *s,bb_int_t o,bb_int_t n ){
 	CHKOFF( o );
+	if( n==-1 ) n=s->size();
 	utf8_int32_t chr;
-	const char *l=s->c_str(),*r=s->c_str()+s->size()-1;
+	const char *l=s->c_str(),*r=s->c_str()+s->size();
 	const char *p=l;while( --o>0&&p<r ) p=utf8codepoint( p,&chr );
 	const char *e=p;while( n-->0&&p<r ) e=utf8codepoint( e,&chr );
 	*s=s->substr( p-l,e-p );return s;

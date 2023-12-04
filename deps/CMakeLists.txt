@@ -37,7 +37,6 @@ add_subdirectory(sdl)
 add_subdirectory(libpng)
 add_subdirectory(freeimage)
 add_subdirectory(dxsdk)
-add_subdirectory(assimp)
 
 # audio
 add_subdirectory(fmod)
