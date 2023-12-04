@@ -180,6 +180,7 @@ ENDIF()
 IF(BB_EMSCRIPTEN)
   set (BB_WEB true)
   add_definitions(-DBB_WEB)
+  set(CMAKE_SYSTEM_PROCESSOR wasm) # defaults to x86? not sure that makes sense.
 ENDIF()
 
 IF(NOT BB_ENV)

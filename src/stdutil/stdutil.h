@@ -17,6 +17,12 @@
 HBITMAP ScaleBitmap( HBITMAP bmp,int width,int height );
 #endif
 
+#ifdef BB_WINDOWS
+#define OS_FS_SEP "\\"
+#else
+#define OS_FS_SEP "/"
+#endif
+
 #ifdef MEMDEBUG
 
 void * _cdecl operator new( size_t size );

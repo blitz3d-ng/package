@@ -107,8 +107,8 @@ rep(d_new Rep(w,h,flags,cnt)){
 }
 
 CachedTexture::CachedTexture( const std::string &f_,int flags,int w,int h,int first,int cnt ){
-	std::string f=f_;
-	if( f.substr(0,2)==".\\" ) f=f.substr(2);
+	std::string f=canonicalpath( f_ );
+	if( f.substr(0,2)=="." OS_FS_SEP ) f=f.substr(2);
 	if( path.size() ){
 #ifdef BB_WINDOWS // TODO: decide if tolower should get pushed into filenamefile/fullfilename
 		std::string t=path+tolower( filenamefile( f ) );
@@ -163,8 +163,12 @@ const std::vector<BBCanvas*> &CachedTexture::getFrames()const{
 }
 
 void CachedTexture::setPath( const std::string &t ){
+#ifdef BB_WINDOWS
 	path=tolower(t);
+#else
+	path=t;
+#endif
 	if( int sz=path.size() ){
-		if( path[sz-1]!='/' && path[sz-1]!='\\' ) path+='\\';
+		if( path[sz-1]!=OS_FS_SEP[0] ) path+=OS_FS_SEP[0];
 	}
 }
