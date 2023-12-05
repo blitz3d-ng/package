@@ -2,6 +2,10 @@ DottedIP$( IP% ):"bbDottedIP"
 CountHostIPs%( host_name$ ):"bbCountHostIPs"
 HostIP%( host_index% ):"bbHostIP"
 
+CountNetInterfaces%():"bbCountNetInterfaces"
+NetInterfaceName$( iface% ):"bbNetInterfaceName"
+NetInterfaceIP$( iface% ):"bbNetInterfaceIP"
+
 CreateUDPStream.UDPStream( port%=0 ):"bbCreateUDPStream"
 CloseUDPStream( udp_stream.UDPStream ):"bbCloseUDPStream"
 SendUDPMsg( udp_stream.UDPStream,dest_ip%,dest_port%=0 ):"bbSendUDPMsg"
