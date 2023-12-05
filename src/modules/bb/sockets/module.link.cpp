@@ -8,6 +8,9 @@ BBMODULE_LINK( sockets ){
 	rtSym( "$DottedIP%IP",bbDottedIP );
 	rtSym( "%CountHostIPs$host_name",bbCountHostIPs );
 	rtSym( "%HostIP%host_index",bbHostIP );
+	rtSym( "%CountNetInterfaces",bbCountNetInterfaces );
+	rtSym( "$NetInterfaceName%iface",bbNetInterfaceName );
+	rtSym( "$NetInterfaceIP%iface",bbNetInterfaceIP );
 	rtSym( "%CreateUDPStream%port=0",bbCreateUDPStream );
 	rtSym( "CloseUDPStream%udp_stream",bbCloseUDPStream );
 	rtSym( "SendUDPMsg%udp_stream%dest_ip%dest_port=0",bbSendUDPMsg );

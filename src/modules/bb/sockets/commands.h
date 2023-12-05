@@ -13,6 +13,9 @@ extern "C" {
 BBStr * BBCALL bbDottedIP( bb_int_t IP );
 bb_int_t BBCALL bbCountHostIPs( BBStr *host_name );
 bb_int_t BBCALL bbHostIP( bb_int_t host_index );
+bb_int_t BBCALL bbCountNetInterfaces(  );
+BBStr * BBCALL bbNetInterfaceName( bb_int_t iface );
+BBStr * BBCALL bbNetInterfaceIP( bb_int_t iface );
 UDPStream * BBCALL bbCreateUDPStream( bb_int_t port );
 void BBCALL bbCloseUDPStream( UDPStream *udp_stream );
 void BBCALL bbSendUDPMsg( UDPStream *udp_stream,bb_int_t dest_ip,bb_int_t dest_port );

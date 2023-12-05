@@ -431,7 +431,7 @@ public:
 		// log("parseAnim-start");
 
 		for( auto &child:obj->children ){
-			if( child->tmpl=="Frame" ){
+			if( child->tmpl=="DataReference" ){
 				frame=frames_map[child->id];
 				if( frame ) break;
 			}

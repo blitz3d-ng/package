@@ -16,9 +16,13 @@
 #include <sys/select.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+#include <net/if.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <poll.h>
+#ifndef BB_NX
+#include <ifaddrs.h>
+#endif
 
 typedef int SOCKET;
 typedef hostent HOSTENT;
@@ -32,6 +36,7 @@ typedef int socklen_t;
 
 #ifdef WIN32
 #include <windows.h>
+#include <iphlpapi.h>
 #endif
 
 #ifdef BB_NX
@@ -62,15 +67,19 @@ static bool bind( SOCKET s,int port ){
 }
 
 static int waitForRead( SOCKET s,int ms ){
+#ifdef BB_NX
+	// TODO: this should be investigated further
+	return 1;
+#endif
 #ifdef WIN32
-		fd_set fd={ 1,s };
-		timeval tv={ ms/1000,(ms%1000)*1000 };
-		int n=::select( 0,&fd,0,0,&tv );
-		return n;
+	fd_set fd={ 1,s };
+	timeval tv={ ms/1000,(ms%1000)*1000 };
+	int n=::select( 0,&fd,0,0,&tv );
+	return n;
 #else
-		pollfd fd={ s,POLLIN|POLLPRI,0 };
-		int n=poll( &fd,1,ms );
-		if( fd.revents&POLLIN ) return 1;
+	pollfd fd={ s,POLLIN,0 };
+	int n=poll( &fd,1,ms );
+	if( fd.revents&POLLIN ) return 1;
 #endif
 	return n;
 }
@@ -88,6 +97,10 @@ static void close( SOCKET sock,int e ){
 class UDPStream;
 class TCPStream;
 class TCPServer;
+
+static std::vector<int> host_ips;
+static std::vector<std::string> iface_names;
+static std::vector<std::string> iface_ips;
 
 static std::set<UDPStream*> udp_set;
 static std::set<TCPStream*> tcp_set;
@@ -279,7 +292,7 @@ TCPStream::~TCPStream(){
 int TCPStream::read( char *buff,int size ){
 	if( e ) return 0;
 	char *b=buff,*l=buff+size;
-	int tout;
+	int n,tout;
 	if( read_timeout ) tout=bbMilliSecs()+read_timeout;
 	while( b<l ){
 		int dt=0;
@@ -287,7 +300,7 @@ int TCPStream::read( char *buff,int size ){
 			dt=tout-bbMilliSecs();
 			if( dt<0 ) dt=0;
 		}
-		int n=waitForRead( sock,dt );
+		n=waitForRead( sock,dt );
 		if( n!=1 ){ e=-1;break; }
 		n=::recv( sock,b,l-b,0 );
 		if( n==0 ){ e=1;break; }
@@ -339,9 +352,11 @@ TCPServer::~TCPServer(){
 
 TCPStream *TCPServer::accept(){
 	if( e ) return 0;
+#ifndef BB_NX
 	int n=waitForRead( sock,accept_timeout );
 	if( !n ) return 0;
 	if( n!=1 ){ e=-1;return 0; }
+#endif
 	SOCKET t=::accept( sock,0,0 );
 	if( t==INVALID_SOCKET ){ e=-1;return 0; }
 	TCPStream *s=d_new TCPStream( t,this );
@@ -371,7 +386,11 @@ static inline void debugTCPServer( TCPServer *p ){
 	}
 }
 
-static std::vector<int> host_ips;
+static inline void debugIface( int index ){
+	if( bb_env.debug && (index<1 || index>iface_ips.size()) ){
+		RTEX( "Interface index out of range" );
+	}
+}
 
 bb_int_t BBCALL bbCountHostIPs( BBStr *host ){
 #ifndef WIN32
@@ -392,6 +411,94 @@ bb_int_t BBCALL bbHostIP( bb_int_t index ){
 		}
 	}
 	return host_ips[index-1];
+}
+
+bb_int_t BBCALL bbCountNetInterfaces(){
+	iface_names.clear();
+	iface_ips.clear();
+
+#ifdef BB_NX
+	static bool inited=false;
+	if( !inited ){
+		nifmInitialize( NifmServiceType_System );
+		inited=true;
+	}
+
+	NifmNetworkProfileData profile;
+	nifmGetCurrentNetworkProfile( &profile );
+
+	NifmIpAddressSetting setting=profile.ip_setting_data.ip_address_setting;
+	NifmIpV4Address curr_addr=setting.current_addr;
+
+	std::string ip=itoa(curr_addr.addr[0])+"."+itoa(curr_addr.addr[1])+"."+itoa(curr_addr.addr[2])+"."+itoa(curr_addr.addr[3]);
+	iface_names.push_back( "nifm" );
+	iface_ips.push_back( ip );
+
+#else
+#ifdef WIN32
+	ULONG sz=sizeof( IP_ADAPTER_INFO );
+	IP_ADAPTER_INFO *info=(IP_ADAPTER_INFO*)malloc( sz );
+	if( GetAdaptersInfo( info,&sz )==ERROR_BUFFER_OVERFLOW ){
+		info=(IP_ADAPTER_INFO*)realloc( info,sz );
+		if( GetAdaptersInfo( info,&sz )!=0 ) return 0;
+	}
+	IP_ADAPTER_INFO *adapter=info;
+	while( adapter ){
+		if( adapter->Type==MIB_IF_TYPE_LOOPBACK||adapter->Type==MIB_IF_TYPE_ETHERNET||adapter->Type==IF_TYPE_IEEE80211 ){
+			iface_ips.push_back( adapter->IpAddressList.IpAddress.String );
+			iface_names.push_back( adapter->AdapterName );
+		}
+		adapter=adapter->Next;
+	}
+	free( info );
+#else
+	ifaddrs *ifaddr;
+	if( getifaddrs( &ifaddr )==-1 ){
+		return -1;
+	}
+
+	for( ifaddrs *ifa=ifaddr;ifa!=NULL;ifa=ifa->ifa_next ){
+		if( !ifa->ifa_addr ){
+			continue;
+		}
+
+		char host[NI_MAXHOST];
+		if( getnameinfo( ifa->ifa_addr,sizeof(struct sockaddr_in),host,NI_MAXHOST,0,0,NI_NUMERICHOST )==0 ){
+			if(
+				!(ifa->ifa_flags&IFF_LOOPBACK) &&
+				(ifa->ifa_flags&IFF_UP) &&
+				(ifa->ifa_flags&IFF_RUNNING) &&
+				(
+					ifa->ifa_addr->sa_family==AF_INET||
+					ifa->ifa_addr->sa_family==AF_INET6
+				)
+			){
+				std::string ip=host;
+				if( size_t t=ip.find( "%" ) ){
+					ip=ip.substr( 0,t );
+				}
+
+				iface_ips.push_back( ip );
+				iface_names.push_back( ifa->ifa_name  );
+			}
+		}
+	}
+
+	freeifaddrs( ifaddr );
+#endif
+#endif
+
+	return iface_ips.size();
+}
+
+BBStr * BBCALL bbNetInterfaceName( bb_int_t index ){
+	debugIface( index );
+	return d_new BBStr( iface_names[index-1] );
+}
+
+BBStr * BBCALL bbNetInterfaceIP( bb_int_t index ){
+	debugIface( index );
+	return d_new BBStr( iface_ips[index-1] );
 }
 
 UDPStream * BBCALL bbCreateUDPStream( bb_int_t port ){

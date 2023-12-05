@@ -5,6 +5,11 @@ ExpectStr DottedIP(2130706433), "127.0.0.1"
 ips=CountHostIPs("")
 Expect ips>0,"At least one IP for localhost"
 
+ifaces=CountNetInterfaces()
+Expect ifaces>0,"At least one network interface"
+Expect NetInterfaceName(1)<>"","Iface has a name"
+Expect NetInterfaceIP(1)<>"","Iface has an IP"
+
 ; TCP
 TCPTimeouts 1000,1000
 
