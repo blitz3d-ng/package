@@ -17,6 +17,15 @@ channel_ogg = PlaySound( snap_ogg )
 Expect channel_ogg <> 0, "OGG channel created"
 Expect ChannelPlaying( channel_ogg ) = 1, "OGG channel playing"
 
+snap_mp3 = LoadSound( "media/snap.mp3" )
+Expect snap_mp3 <> 0, "MP3 was loaded"
+
+channel_mp3 = PlaySound( snap_mp3 )
+Expect channel_mp3 <> 0, "MP3 channel created"
+Expect ChannelPlaying( channel_mp3 ) = 1, "MP3 channel playing"
+
+Delay 100
+
 music = PlayMusic( "../_release/samples/mak/castle/sounds/shoot.wav" )
 Expect music <> 0, "Streaming shoot sound"
 

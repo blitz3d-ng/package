@@ -103,6 +103,14 @@ bb_int_t BBCALL bbChannelPlaying( BBChannel *channel ){
 	return channel ? channel->isPlaying() : 0;
 }
 
+bb_float_t BBCALL bbChannelDuration( BBChannel *channel ){
+	return channel ? channel->getDuration() : 0;
+}
+
+bb_float_t BBCALL bbChannelPosition( BBChannel *channel ){
+	return channel ? channel->getPosition() : 0;
+}
+
 BBSound * BBCALL bbLoad3DSound( BBStr *f ){
 	return loadSound( f,true );
 }

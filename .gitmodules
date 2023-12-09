@@ -46,3 +46,6 @@
 [submodule "libpng"]
 	path = deps/libpng/tree
 	url = https://github.com/glennrp/libpng
+[submodule "deps/minimp3/tree"]
+	path = deps/minimp3/tree
+	url = https://github.com/lieff/minimp3

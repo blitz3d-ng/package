@@ -27,6 +27,8 @@ void BBCALL bbChannelPitch( BBChannel *channel,bb_int_t pitch );
 void BBCALL bbChannelVolume( BBChannel *channel,bb_float_t volume );
 void BBCALL bbChannelPan( BBChannel *channel,bb_float_t pan );
 bb_int_t BBCALL bbChannelPlaying( BBChannel *channel );
+bb_float_t BBCALL bbChannelDuration( BBChannel *channel );
+bb_float_t BBCALL bbChannelPosition( BBChannel *channel );
 
 #ifdef __cplusplus
 }

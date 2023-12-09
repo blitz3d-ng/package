@@ -22,4 +22,6 @@ BBMODULE_LINK( audio ){
 	rtSym( "ChannelVolume%channel#volume",bbChannelVolume );
 	rtSym( "ChannelPan%channel#pan",bbChannelPan );
 	rtSym( "%ChannelPlaying%channel",bbChannelPlaying );
+	rtSym( "#ChannelDuration%channel",bbChannelDuration );
+	rtSym( "#ChannelPosition%channel",bbChannelPosition );
 }
