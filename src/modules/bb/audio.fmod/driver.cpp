@@ -40,6 +40,12 @@ struct SoundChannel : public BBChannel{
 	bool isPlaying(){
 		return FSOUND_IsPlaying( channel ) ? true : false;
 	}
+	float getDuration(){
+		return 0.0; // TODO: fix this
+	}
+	float getPosition(){
+		return 0.0; // TODO: fix this
+	}
 private:
 	int channel;
 };
@@ -70,6 +76,12 @@ struct CDChannel : public BBChannel{
 	}
 	bool isPlaying(){
 		return true;
+	}
+	float getDuration(){
+		return 0.0; // TODO: fix this
+	}
+	float getPosition(){
+		return 0.0; // TODO: fix this
 	}
 };
 
@@ -105,6 +117,12 @@ struct StreamChannel : public StaticChannel{
 	bool isPlaying(){
 		return FSOUND_IsPlaying( channel ) ? true : false;
 	}
+	float getDuration(){
+		return 0.0; // TODO: fix this
+	}
+	float getPosition(){
+		return 0.0; // TODO: fix this
+	}
 private:
 	FSOUND_STREAM *stream;
 	int channel;
@@ -137,6 +155,12 @@ struct MusicChannel : public StaticChannel{
 	}
 	bool isPlaying(){
 		return FMUSIC_IsFinished( module ) ? false : true;
+	}
+	float getDuration(){
+		return 0.0; // TODO: fix this
+	}
+	float getPosition(){
+		return 0.0; // TODO: fix this
 	}
 private:
 	FMUSIC_MODULE *module;
