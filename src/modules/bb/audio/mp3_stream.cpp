@@ -35,7 +35,7 @@ MP3AudioStream::MP3AudioStream( int buf_size ):AudioStream( buf_size ){
 }
 
 bool MP3AudioStream::readHeader(){
-	io=(mp3dec_io_t){
+	io=mp3dec_io_t{
 		read_cb,
 		this,
 		seek_cb,

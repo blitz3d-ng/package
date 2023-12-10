@@ -13,12 +13,19 @@ AudioStream::Ref::~Ref(){
 }
 
 size_t AudioStream::Ref::decode( unsigned char **buf ){
+#ifndef BB_MINGW
 	std::lock_guard<std::mutex> guard( stream->lock );
-
+#else
+	WaitForSingleObject( stream->lock,INFINITE );
+#endif
 	stream->seek( pos );
 	size_t n=stream->decode();
 	pos=stream->pos();
 	*buf=stream->buf;
+
+#ifdef BB_MINGW
+	ReleaseMutex( stream->lock );
+#endif
 	return n;
 }
 
@@ -49,11 +56,17 @@ AudioStream::Ref *AudioStream::getRef(){
 
 AudioStream::AudioStream( int size ):buf_size(size),channels(0),bits(0),samples(0),frequency(0){
 	buf=new unsigned char[buf_size];
+#ifdef BB_MINGW
+	lock=CreateMutex( NULL,FALSE,NULL );
+#endif
 }
 
 AudioStream::~AudioStream(){
 	in.close();
 	delete[] buf;
+#ifdef BB_MINGW
+	CloseHandle( lock );
+#endif
 }
 
 bool AudioStream::init( const char *url ){

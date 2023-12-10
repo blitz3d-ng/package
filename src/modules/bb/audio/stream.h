@@ -12,7 +12,11 @@ protected:
 	unsigned char *buf;
 	int buf_size;
 	unsigned int channels,bits,samples,frequency;
+#ifndef BB_MINGW
 	std::mutex lock;
+#else
+	HANDLE lock;
+#endif
 	std::string path;
 
 public:
