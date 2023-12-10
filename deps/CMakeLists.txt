@@ -42,6 +42,7 @@ add_subdirectory(dxsdk)
 add_subdirectory(fmod)
 add_subdirectory(ogg)
 add_subdirectory(vorbis)
+add_subdirectory(minimp3)
 
 # misc
 add_subdirectory(enet)

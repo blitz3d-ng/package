@@ -16,6 +16,8 @@ public:
 	virtual void set3d( const float pos[3],const float vel[3] )=0;
 
 	virtual bool isPlaying()=0;
+	virtual float getDuration()=0;
+	virtual float getPosition()=0;
 };
 
 #endif
