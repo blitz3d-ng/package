@@ -5,13 +5,13 @@
 #include <bb/multiplay.enet/multiplay.enet.h>
 
 BBMODULE_LINK( multiplay_enet ){
-	rtSym( "%HostNetGame$game_name",bbHostNetGame );
-	rtSym( "%JoinNetGame$game_name$ip_address",bbJoinNetGame );
-	rtSym( "%CreateNetPlayer$name",bbCreateNetPlayer );
-	rtSym( "%SendNetMsg%type$msg%from_player%to_player=0%reliable=1",bbSendNetMsg );
-	rtSym( "%RecvNetMsg",bbRecvNetMsg );
-	rtSym( "%NetMsgType",bbNetMsgType );
-	rtSym( "%NetMsgFrom",bbNetMsgFrom );
-	rtSym( "%NetMsgTo",bbNetMsgTo );
-	rtSym( "$NetMsgData",bbNetMsgData );
+	rtSym( "%HostNetGame$game_name","bbHostNetGame",bbHostNetGame );
+	rtSym( "%JoinNetGame$game_name$ip_address","bbJoinNetGame",bbJoinNetGame );
+	rtSym( "%CreateNetPlayer$name","bbCreateNetPlayer",bbCreateNetPlayer );
+	rtSym( "%SendNetMsg%type$msg%from_player%to_player=0%reliable=1","bbSendNetMsg",bbSendNetMsg );
+	rtSym( "%RecvNetMsg","bbRecvNetMsg",bbRecvNetMsg );
+	rtSym( "%NetMsgType","bbNetMsgType",bbNetMsgType );
+	rtSym( "%NetMsgFrom","bbNetMsgFrom",bbNetMsgFrom );
+	rtSym( "%NetMsgTo","bbNetMsgTo",bbNetMsgTo );
+	rtSym( "$NetMsgData","bbNetMsgData",bbNetMsgData );
 }

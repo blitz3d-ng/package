@@ -5,19 +5,19 @@
 #include <bb/stream/stream.h>
 
 BBMODULE_LINK( stream ){
-	rtSym( "%Eof%stream",bbEof );
-	rtSym( "%ReadAvail%stream",bbReadAvail );
-	rtSym( "%ReadByte%stream",bbReadByte );
-	rtSym( "%ReadShort%stream",bbReadShort );
-	rtSym( "%ReadInt%stream",bbReadInt );
-	rtSym( "#ReadFloat%stream",bbReadFloat );
-	rtSym( "$ReadString%stream",bbReadString );
-	rtSym( "$ReadLine%stream",bbReadLine );
-	rtSym( "WriteByte%stream%byte",bbWriteByte );
-	rtSym( "WriteShort%stream%short_",bbWriteShort );
-	rtSym( "WriteInt%stream%int_",bbWriteInt );
-	rtSym( "WriteFloat%stream#float_",bbWriteFloat );
-	rtSym( "WriteString%stream$string",bbWriteString );
-	rtSym( "WriteLine%stream$string",bbWriteLine );
-	rtSym( "CopyStream%src_stream%dest_stream%buffer_size=16384",bbCopyStream );
+	rtSym( "%Eof%stream","bbEof",bbEof );
+	rtSym( "%ReadAvail%stream","bbReadAvail",bbReadAvail );
+	rtSym( "%ReadByte%stream","bbReadByte",bbReadByte );
+	rtSym( "%ReadShort%stream","bbReadShort",bbReadShort );
+	rtSym( "%ReadInt%stream","bbReadInt",bbReadInt );
+	rtSym( "#ReadFloat%stream","bbReadFloat",bbReadFloat );
+	rtSym( "$ReadString%stream","bbReadString",bbReadString );
+	rtSym( "$ReadLine%stream","bbReadLine",bbReadLine );
+	rtSym( "WriteByte%stream%byte","bbWriteByte",bbWriteByte );
+	rtSym( "WriteShort%stream%short_","bbWriteShort",bbWriteShort );
+	rtSym( "WriteInt%stream%int_","bbWriteInt",bbWriteInt );
+	rtSym( "WriteFloat%stream#float_","bbWriteFloat",bbWriteFloat );
+	rtSym( "WriteString%stream$string","bbWriteString",bbWriteString );
+	rtSym( "WriteLine%stream$string","bbWriteLine",bbWriteLine );
+	rtSym( "CopyStream%src_stream%dest_stream%buffer_size=16384","bbCopyStream",bbCopyStream );
 }

@@ -109,6 +109,7 @@ BLITZCC="$VALGRIND $XVFBRUN _release/bin/blitzcc -target $TARGET"
 
 echo "Running test suite for $TARGET"
 
+mkdir -p tmp/
 cleanup
 
 echo "Run misc compiler flags"
@@ -132,13 +133,15 @@ $BLITZCC -r d3d1 test/all.bb > /dev/null 2>&1
 if [ "$TARGET" = "host" ]
 then
   # run the proper suite
-  blitzcc_stream test/all.bb -r test test/all.bb
+  blitzcc_stream test/all.bb -d -r test test/all.bb
   RESULT=$?
   if [ $RESULT -eq 101 ]; then
     fail=1
   elif [ $RESULT -ne 0 ]; then
     fail=1
   fi
+
+  blitzcc test/all.bb -r test -o `pwd`/tmp/test test/all.bb
 
   # run the old win32 codegen just because we can
   blitzcc test/all.bb -llvm=off -c -a -r test test/all.bb
@@ -253,9 +256,7 @@ elif [[ "$TARGET" = *"ios"* ]]
 then
   mkdir -p tmp/
   blitzcc "driver.app" -c -o `pwd`/tmp/driver.app _release/samples/mak/driver/driver.bundle.bb
-fi
-
-if [[ "$TARGET" = *"nx"* ]]
+elif [[ "$TARGET" = *"nx"* ]]
 then
   mkdir -p tmp/
   blitzcc "test.nro" -r test -o `pwd`/tmp/test.nro test/all.bb

@@ -334,7 +334,9 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 	args.push_back( "-L"+libdir );
 #endif
 
-  args.push_back( "-L"+devkitpro+"/portlibs/switch/lib" );
+	if( nx ){
+		args.push_back( "-L"+devkitpro+"/portlibs/switch/lib" );
+	}
 
 	libs.push_back( "runtime."+rt+".static" );
 

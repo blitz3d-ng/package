@@ -17,6 +17,8 @@ channel_ogg = PlaySound( snap_ogg )
 Expect channel_ogg <> 0, "OGG channel created"
 Expect ChannelPlaying( channel_ogg ) = 1, "OGG channel playing"
 
+Delay 100
+
 snap_mp3 = LoadSound( "media/snap.mp3" )
 Expect snap_mp3 <> 0, "MP3 was loaded"
 

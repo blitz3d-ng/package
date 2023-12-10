@@ -99,7 +99,7 @@ macro(bb_end_module)
 
         set(IDENT  ${CMAKE_MATCH_1})
         set(SYMBOL ${CMAKE_MATCH_3})
-        link("\trtSym( \"${IDENT}\",${SYMBOL} );")
+        link("\trtSym( \"${IDENT}\",\"${SYMBOL}\",${SYMBOL} );")
       elseif("${DECL}" MATCHES "${REGEXP_COM}")
         set(IDENT  ${CMAKE_MATCH_1})
         if(NOT ${CMAKE_MATCH_4} STREQUAL "")
@@ -177,7 +177,7 @@ macro(bb_end_module)
 
         list(JOIN ARGS_LIST "," ARGS_STR)
 
-        link("\trtSym( \"${RTSYM}\",${SYMBOL} );")
+        link("\trtSym( \"${RTSYM}\",\"${SYMBOL}\",${SYMBOL} );")
 
         set(toml "${RTSYM}:${SYMBOL}")
         string(REPLACE "\\\\\"" "\\\"" toml "${toml}")

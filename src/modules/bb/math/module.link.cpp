@@ -5,21 +5,21 @@
 #include <bb/math/math.h>
 
 BBMODULE_LINK( math ){
-	rtSym( "#Sin#degrees",bbSin );
-	rtSym( "#Cos#degrees",bbCos );
-	rtSym( "#Tan#degrees",bbTan );
-	rtSym( "#ASin#degrees",bbASin );
-	rtSym( "#ACos#degrees",bbACos );
-	rtSym( "#ATan#degrees",bbATan );
-	rtSym( "#ATan2#y#x",bbATan2 );
-	rtSym( "#Sqr#n",bbSqr );
-	rtSym( "#Floor#n",bbFloor );
-	rtSym( "#Ceil#n",bbCeil );
-	rtSym( "#Exp#n",bbExp );
-	rtSym( "#Log#x",bbLog );
-	rtSym( "#Log10#x",bbLog10 );
-	rtSym( "#Rnd#from#to=0",bbRnd );
-	rtSym( "%Rand%from%to=1",bbRand );
-	rtSym( "SeedRnd%seed",bbSeedRnd );
-	rtSym( "%RndSeed",bbRndSeed );
+	rtSym( "#Sin#degrees","bbSin",bbSin );
+	rtSym( "#Cos#degrees","bbCos",bbCos );
+	rtSym( "#Tan#degrees","bbTan",bbTan );
+	rtSym( "#ASin#degrees","bbASin",bbASin );
+	rtSym( "#ACos#degrees","bbACos",bbACos );
+	rtSym( "#ATan#degrees","bbATan",bbATan );
+	rtSym( "#ATan2#y#x","bbATan2",bbATan2 );
+	rtSym( "#Sqr#n","bbSqr",bbSqr );
+	rtSym( "#Floor#n","bbFloor",bbFloor );
+	rtSym( "#Ceil#n","bbCeil",bbCeil );
+	rtSym( "#Exp#n","bbExp",bbExp );
+	rtSym( "#Log#x","bbLog",bbLog );
+	rtSym( "#Log10#x","bbLog10",bbLog10 );
+	rtSym( "#Rnd#from#to=0","bbRnd",bbRnd );
+	rtSym( "%Rand%from%to=1","bbRand",bbRand );
+	rtSym( "SeedRnd%seed","bbSeedRnd",bbSeedRnd );
+	rtSym( "%RndSeed","bbRndSeed",bbRndSeed );
 }

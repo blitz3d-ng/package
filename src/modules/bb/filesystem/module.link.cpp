@@ -5,21 +5,21 @@
 #include <bb/filesystem/filesystem.h>
 
 BBMODULE_LINK( filesystem ){
-	rtSym( "%OpenFile$filename",bbOpenFile );
-	rtSym( "%ReadFile$filename",bbReadFile );
-	rtSym( "%WriteFile$filename",bbWriteFile );
-	rtSym( "CloseFile%file_stream",bbCloseFile );
-	rtSym( "%FilePos%file_stream",bbFilePos );
-	rtSym( "%SeekFile%file_stream%pos",bbSeekFile );
-	rtSym( "%ReadDir$dirname",bbReadDir );
-	rtSym( "CloseDir%dir",bbCloseDir );
-	rtSym( "$NextFile%dir",bbNextFile );
-	rtSym( "$CurrentDir",bbCurrentDir );
-	rtSym( "ChangeDir$dir",bbChangeDir );
-	rtSym( "CreateDir$dir",bbCreateDir );
-	rtSym( "DeleteDir$dir",bbDeleteDir );
-	rtSym( "%FileSize$file",bbFileSize );
-	rtSym( "%FileType$file",bbFileType );
-	rtSym( "CopyFile$file$to",bbCopyFile );
-	rtSym( "DeleteFile$file",bbDeleteFile );
+	rtSym( "%OpenFile$filename","bbOpenFile",bbOpenFile );
+	rtSym( "%ReadFile$filename","bbReadFile",bbReadFile );
+	rtSym( "%WriteFile$filename","bbWriteFile",bbWriteFile );
+	rtSym( "CloseFile%file_stream","bbCloseFile",bbCloseFile );
+	rtSym( "%FilePos%file_stream","bbFilePos",bbFilePos );
+	rtSym( "%SeekFile%file_stream%pos","bbSeekFile",bbSeekFile );
+	rtSym( "%ReadDir$dirname","bbReadDir",bbReadDir );
+	rtSym( "CloseDir%dir","bbCloseDir",bbCloseDir );
+	rtSym( "$NextFile%dir","bbNextFile",bbNextFile );
+	rtSym( "$CurrentDir","bbCurrentDir",bbCurrentDir );
+	rtSym( "ChangeDir$dir","bbChangeDir",bbChangeDir );
+	rtSym( "CreateDir$dir","bbCreateDir",bbCreateDir );
+	rtSym( "DeleteDir$dir","bbDeleteDir",bbDeleteDir );
+	rtSym( "%FileSize$file","bbFileSize",bbFileSize );
+	rtSym( "%FileType$file","bbFileType",bbFileType );
+	rtSym( "CopyFile$file$to","bbCopyFile",bbCopyFile );
+	rtSym( "DeleteFile$file","bbDeleteFile",bbDeleteFile );
 }

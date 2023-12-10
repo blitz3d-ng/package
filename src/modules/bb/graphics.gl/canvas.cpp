@@ -424,6 +424,7 @@ void GLCanvas::blit( int x,int y,BBCanvas *s,int src_x,int src_y,int src_w,int s
 	GL( glBindFramebuffer( GL_DRAW_FRAMEBUFFER,dfb ) );
 
 	GL( glBlitFramebuffer( srcX0,srcY0,srcX1,srcY1,dstX0,dstY0,dstX1,dstY1,GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT,GL_NEAREST ) );
+	GL( glGenerateMipmap( target ) );
 
 	if( !(flags&CANVAS_TEX_VIDMEM) ){
 		downloadData();
@@ -601,9 +602,11 @@ void GLCanvas::unset(){
 	// GL( glBindFramebuffer( GL_FRAMEBUFFER,cfb ) );
 	// dirty=true;
 
-	// GL( glBindTexture( target,texture ) );
-	// GL( glGenerateMipmap( target ) );
-	// GL( glBindTexture( target,0 ) );
+	if( texture ){
+		GL( glBindTexture( target,texture ) );
+		GL( glGenerateMipmap( target ) );
+		GL( glBindTexture( target,0 ) );
+	}
 
 	GL( glBindFramebuffer( GL_FRAMEBUFFER,0 ) );
 }

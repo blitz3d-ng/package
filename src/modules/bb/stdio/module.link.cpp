@@ -5,6 +5,6 @@
 #include <bb/stdio/stdio.h>
 
 BBMODULE_LINK( stdio ){
-	rtSym( "WriteStdout$str",bbWriteStdout );
-	rtSym( "WriteStderr$str",bbWriteStderr );
+	rtSym( "WriteStdout$str","bbWriteStdout",bbWriteStdout );
+	rtSym( "WriteStderr$str","bbWriteStderr",bbWriteStderr );
 }

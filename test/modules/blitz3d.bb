@@ -4,6 +4,8 @@ Context "Blitz3D"
 SetRenderer "OpenGL"
 Graphics3D 800,600,32,2
 
+ExpectInt GfxDriverCaps3D(),110
+
 brush = CreateBrush()
 Expect brush <> 0, "Can create a brush"
 BrushFX brush,1
@@ -12,6 +14,9 @@ FreeBrush brush
 
 light = CreateLight()
 Expect light <> 0, "Can create a light"
+
+point_light = CreateLight(2)
+Expect point_light <> 0, "Can create a light"
 
 pivot = CreatePivot()
 Expect pivot <> 0, "Can create a pivot"
@@ -174,6 +179,13 @@ EntityType camera,1
 EntityType cube,2
 
 UpdateWorld
+
+; persp
+CameraProjMode camera,1
+RenderWorld
+
+; ortho
+CameraProjMode camera,2
 RenderWorld
 
 MoveEntity cube,0,-2,0

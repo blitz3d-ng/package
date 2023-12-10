@@ -70,7 +70,7 @@ std::streambuf *NDKFileSystem::openFile( const std::string &file,std::ios_base::
 	}
 	size_t size = AAsset_getLength64(asset);
 
-	LOGD("Loaded file %s. size, %u.", file.c_str(), size);
+	LOGD("Loaded file %s. size, %zu.", file.c_str(), size);
 
 	return new membuf( (char*)data, ((char*)data)+size  );
 }

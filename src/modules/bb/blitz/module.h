@@ -17,7 +17,7 @@
 
 #define BBLIB extern "C"
 
-typedef void (*BBRTLINK)( const char *sym,void *pc );
+typedef void (*BBRTLINK)( const char *ident,const char *sym,void *pc );
 
 #define BBMODULE_FUNC_NAME( name,action ) name##_##action
 
@@ -25,7 +25,7 @@ typedef void (*BBRTLINK)( const char *sym,void *pc );
 #define BBMODULE_DESTROY( name ) bool BBMODULE_FUNC_NAME( name, destroy )()
 #define BBMODULE_LINK( name )    void BBMODULE_FUNC_NAME( name, link )( BBRTLINK _rtSym )
 
-#define rtSym( text,sym ) (_rtSym( text,(void*)sym ))
+#define rtSym( sym,ident,pc ) (_rtSym( sym,ident,(void*)pc ))
 
 #define BBMODULE_DECL( name ) \
 	BBMODULE_CREATE( name ); \

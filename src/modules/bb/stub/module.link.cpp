@@ -5,5 +5,5 @@
 #include <bb/stub/stub.h>
 
 BBMODULE_LINK( stub ){
-	rtSym( "_bbStart",bbStart );
+	rtSym( "_bbStart","bbStart",bbStart );
 }

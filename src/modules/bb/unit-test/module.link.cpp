@@ -5,9 +5,9 @@
 #include <bb/unit-test/unit-test.h>
 
 BBMODULE_LINK( unit_test ){
-	rtSym( "Context$mesg",bbContext );
-	rtSym( "Expect%condition$mesg",bbExpect );
-	rtSym( "ExpectInt%a%b$mesg=\"\"",bbExpectInt );
-	rtSym( "ExpectFloat#a#b$mesg=\"\"",bbExpectFloat );
-	rtSym( "ExpectStr$a$b$mesg=\"\"",bbExpectStr );
+	rtSym( "Context$mesg","bbContext",bbContext );
+	rtSym( "Expect%condition$mesg","bbExpect",bbExpect );
+	rtSym( "ExpectInt%a%b$mesg=\"\"","bbExpectInt",bbExpectInt );
+	rtSym( "ExpectFloat#a#b$mesg=\"\"","bbExpectFloat",bbExpectFloat );
+	rtSym( "ExpectStr$a$b$mesg=\"\"","bbExpectStr",bbExpectStr );
 }

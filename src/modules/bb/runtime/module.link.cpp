@@ -5,8 +5,8 @@
 #include <bb/runtime/runtime.h>
 
 BBMODULE_LINK( runtime ){
-	rtSym( "ShowPointer",bbShowPointer );
-	rtSym( "HidePointer",bbHidePointer );
-	rtSym( "RuntimeError$message",bbRuntimeError );
-	rtSym( "MoveMouse%x%y",bbMoveMouse );
+	rtSym( "ShowPointer","bbShowPointer",bbShowPointer );
+	rtSym( "HidePointer","bbHidePointer",bbHidePointer );
+	rtSym( "RuntimeError$message","bbRuntimeError",bbRuntimeError );
+	rtSym( "MoveMouse%x%y","bbMoveMouse",bbMoveMouse );
 }
