@@ -234,6 +234,7 @@ jobs:
         with:
           working-directory: src/help
           bundler-cache: true
+          rubygems: latest
       - run: make help
       - name: Upload package
         uses: actions/upload-artifact@v3
