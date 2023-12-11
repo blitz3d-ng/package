@@ -4,8 +4,11 @@
 
 #include <unistd.h>
 #include <fontconfig/fontconfig.h>
+#include <sys/time.h>
 
 #include <fstream>
+
+static int base_time=0;
 
 bool LinuxSystemDriver::delay( int ms ){
   usleep( ms * 1000 );
@@ -17,10 +20,12 @@ bool LinuxSystemDriver::execute( const std::string &cmd ){
 }
 
 int LinuxSystemDriver::getMilliSecs(){
-	struct timespec ts;
-	clock_gettime( CLOCK_REALTIME,&ts );
-	double t=ts.tv_sec; // TODO: not right
-	return ts.tv_sec/(1000.0/512.0);
+	int t;
+	struct timeval tv;
+	gettimeofday(&tv,0);
+	t=tv.tv_sec*1000;
+	t+=tv.tv_usec/1000;
+	return t-base_time;
 }
 
 int LinuxSystemDriver::getScreenWidth( int i ){
@@ -69,6 +74,7 @@ bool LinuxSystemDriver::lookupFontData( const std::string &fontName,BBFontData &
 BBMODULE_CREATE( system_linux ){
 	if( !bbSystemDriver ){
 		bbSystemDriver=d_new LinuxSystemDriver();
+		base_time=bbMilliSecs();
 	}
 	return true;
 }

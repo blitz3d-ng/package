@@ -78,20 +78,17 @@ all: host ios android ovr emscripten nx
 compiler:
 	make host PROJECT_TO_BUILD=blitzcc
 
-ios:
-	make compiler
+ios: compiler
 	make PLATFORM=ios
 	make PLATFORM=ios-sim
 
-android:
-	make compiler
+android: compiler
 	make PLATFORM=android ARCH=arm64-v8a
 	make PLATFORM=android ARCH=armeabi-v7a
 	make PLATFORM=android ARCH=x86_64
 	make PLATFORM=android ARCH=x86
 
-ovr: ovr-sdk
-	make compiler
+ovr: ovr-sdk compiler
 	make PLATFORM=ovr
 
 ovr-sdk:
@@ -100,12 +97,10 @@ ovr-sdk:
 	cd ovr-sdk && unzip ../ovr-sdk.zip
 	rm ovr-sdk.zip
 
-emscripten:
-	make compiler
+emscripten: compiler
 	make PLATFORM=emscripten
 
-nx:
-	make compiler
+nx: compiler
 	make PLATFORM=nx DEVKITPRO=$(DEVKITPRO)
 
 llvm:

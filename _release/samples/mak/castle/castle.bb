@@ -1,4 +1,3 @@
-
 ;The castle demo!
 Const FPS=30
 Const n_trees=100
@@ -56,7 +55,7 @@ Global bull_x#=1.5
 Setup()
 
 ChangeDir "environ"
-LoadEnviron( "terrain-1.jpg","water-2_mip.bmp","sky","heightmap_256.bmp" )
+LoadEnviron( "terrain-1.jpg","Water-2_mip.BMP","sky","heightmap_256.BMP" )
 ChangeDir "..\"
 
 player1.Player=CreatePlayer( 0,10,0 )
@@ -412,7 +411,7 @@ End Function
 
 Function Setup()
 
-	castle=LoadMesh( "castle\castle1.x" )
+	castle=LoadMesh( "castle\CASTLE1.X" )
 	ScaleEntity castle,.15,.15,.15
 	EntityType castle,TYPE_SCENERY
 
@@ -421,24 +420,25 @@ Function Setup()
 	TranslateEntity player_model,0,-1.25,0
 	HideEntity player_model
 
-	spark_sprite=LoadSprite( "sprites\bigspark.bmp" )
+	spark_sprite=LoadSprite( "sprites\Bigspark.BMP" )
 	HideEntity spark_sprite
 
-	bull_sprite=LoadSprite( "sprites\bluspark.bmp" )
+	bull_sprite=LoadSprite( "sprites\bluspark.BMP" )
 	ScaleSprite bull_sprite,3,3
 	EntityRadius bull_sprite,1.5
 	EntityType bull_sprite,TYPE_BULLET
 	HideEntity bull_sprite
 	
-	hole_sprite=LoadSprite( "sprites\bullet_hole.bmp",1 )
+	hole_sprite=LoadSprite( "sprites\bullet_hole.BMP",1 )
 	EntityBlend hole_sprite,2
 	SpriteViewMode hole_sprite,2
 	HideEntity hole_sprite
 	
-	tree_sprite=LoadSprite( "sprites\tree.bmp",7 )
+	tree_sprite=LoadSprite( "sprites\tree.BMP",7 )
 	HandleSprite tree_sprite,0,-1
 	ScaleSprite tree_sprite,2,4
 	PositionEntity tree_sprite,0,0,-100
 	SpriteViewMode tree_sprite,3
 	EntityAutoFade tree_sprite,120,150
 End Function
+

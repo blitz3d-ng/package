@@ -292,6 +292,14 @@ void MainFrame::EnumerateDevices(){
 			devices.push_back( dev );
 		}
 	}
+#else
+	Target dev;
+	dev.id="host";
+	dev.name="host";
+	dev.platform="host";
+	dev.emulator=false;
+	dev.host=true;
+	devices.push_back( dev );
 #endif
 
 	for( int i=0;i<platformMenu->GetMenuItemCount();i++ ){
