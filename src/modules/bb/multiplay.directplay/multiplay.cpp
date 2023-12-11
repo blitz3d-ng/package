@@ -82,26 +82,6 @@ static BOOL FAR PASCAL enumPlayer( DPID id,DWORD type,LPCDPNAME name,DWORD flags
 	return TRUE;
 }
 
-BBMODULE_LINK( multiplay ) {
-	rtSym( "%StartNetGame",bbStartNetGame );
-	rtSym( "%HostNetGame$game_name",bbHostNetGame );
-	rtSym( "%JoinNetGame$game_name$ip_address",bbJoinNetGame );
-	rtSym( "StopNetGame",bbStopNetGame );
-
-	rtSym( "%CreateNetPlayer$name",bbCreateNetPlayer );
-	rtSym( "DeleteNetPlayer%player",bbDeleteNetPlayer );
-	rtSym( "$NetPlayerName%player",bbNetPlayerName );
-	rtSym( "%NetPlayerLocal%player",bbNetPlayerLocal );
-
-	rtSym( "%SendNetMsg%type$msg%from_player%to_player=0%reliable=1",bbSendNetMsg );
-
-	rtSym( "%RecvNetMsg",bbRecvNetMsg );
-	rtSym( "%NetMsgType",bbNetMsgType );
-	rtSym( "%NetMsgFrom",bbNetMsgFrom );
-	rtSym( "%NetMsgTo",bbNetMsgTo );
-	rtSym( "$NetMsgData",bbNetMsgData );
-}
-
 BBMODULE_CREATE( multiplay_directplay ){
 	recv_buff_sz=send_buff_sz=1024;
 	recv_buff=d_new char[recv_buff_sz];

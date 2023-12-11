@@ -5,6 +5,6 @@
 #include <bb/input.directinput8/input.directinput8.h>
 
 BBMODULE_LINK( input_directinput8 ){
-	rtSym( "EnableDirectInput%enable",bbEnableDirectInput );
-	rtSym( "%DirectInputEnabled",bbDirectInputEnabled );
+	rtSym( "EnableDirectInput%enable","bbEnableDirectInput",bbEnableDirectInput );
+	rtSym( "%DirectInputEnabled","bbDirectInputEnabled",bbDirectInputEnabled );
 }
