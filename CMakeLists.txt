@@ -18,6 +18,7 @@ include(src/bin2h.cmake)
 if(ANDROID)
   find_package(Java 1.8 REQUIRED COMPONENTS Development)
   include(UseJava)
+  set(CMAKE_JAVA_COMPILE_FLAGS -source 1.8 -target 1.8)
   set(ANDROID_JAR $ENV{ANDROID_HOME}/platforms/android-${ANDROID_PLATFORM}/android.jar)
 endif()
 
