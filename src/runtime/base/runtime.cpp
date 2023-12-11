@@ -5,10 +5,12 @@
 #include <map>
 
 static std::map<const char*,void*> syms;
+static std::map<const char*,const char*> idents;
 std::map<const char*,void*>::iterator sym_it;
 
-static void linkSym( const char *sym,void *pc ){
+static void linkSym( const char *sym,const char *ident,void *pc ){
 	syms[sym]=pc;
+	idents[sym]=ident;
 }
 
 int Runtime::version(){
@@ -30,6 +32,12 @@ bb_int_t Runtime::symValue( const char *sym ){
 	std::map<const char*,void*>::iterator it=syms.find( sym );
 	if( it!=syms.end() ) return (bb_int_t)it->second;
 	return -1;
+}
+
+const char *Runtime::symName( const char *sym ){
+	std::map<const char*,const char*>::iterator it=idents.find( sym );
+	if( it!=idents.end() ) return it->second;
+	return "__not_found__";
 }
 
 void Runtime::loadSyms( std::map<const char*,void*> &_syms ){

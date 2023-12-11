@@ -5,23 +5,23 @@
 #include <bb/audio/audio.h>
 
 BBMODULE_LINK( audio ){
-	rtSym( "%LoadSound$filename",bbLoadSound );
-	rtSym( "%Load3DSound$filename",bbLoad3DSound );
-	rtSym( "FreeSound%sound",bbFreeSound );
-	rtSym( "LoopSound%sound",bbLoopSound );
-	rtSym( "SoundPitch%sound%pitch",bbSoundPitch );
-	rtSym( "SoundVolume%sound#volume",bbSoundVolume );
-	rtSym( "SoundPan%sound#pan",bbSoundPan );
-	rtSym( "%PlaySound%sound",bbPlaySound );
-	rtSym( "%PlayMusic$filename",bbPlayMusic );
-	rtSym( "%PlayCDTrack%track%mode=1",bbPlayCDTrack );
-	rtSym( "StopChannel%channel",bbStopChannel );
-	rtSym( "PauseChannel%channel",bbPauseChannel );
-	rtSym( "ResumeChannel%channel",bbResumeChannel );
-	rtSym( "ChannelPitch%channel%pitch",bbChannelPitch );
-	rtSym( "ChannelVolume%channel#volume",bbChannelVolume );
-	rtSym( "ChannelPan%channel#pan",bbChannelPan );
-	rtSym( "%ChannelPlaying%channel",bbChannelPlaying );
-	rtSym( "#ChannelDuration%channel",bbChannelDuration );
-	rtSym( "#ChannelPosition%channel",bbChannelPosition );
+	rtSym( "%LoadSound$filename","bbLoadSound",bbLoadSound );
+	rtSym( "%Load3DSound$filename","bbLoad3DSound",bbLoad3DSound );
+	rtSym( "FreeSound%sound","bbFreeSound",bbFreeSound );
+	rtSym( "LoopSound%sound","bbLoopSound",bbLoopSound );
+	rtSym( "SoundPitch%sound%pitch","bbSoundPitch",bbSoundPitch );
+	rtSym( "SoundVolume%sound#volume","bbSoundVolume",bbSoundVolume );
+	rtSym( "SoundPan%sound#pan","bbSoundPan",bbSoundPan );
+	rtSym( "%PlaySound%sound","bbPlaySound",bbPlaySound );
+	rtSym( "%PlayMusic$filename","bbPlayMusic",bbPlayMusic );
+	rtSym( "%PlayCDTrack%track%mode=1","bbPlayCDTrack",bbPlayCDTrack );
+	rtSym( "StopChannel%channel","bbStopChannel",bbStopChannel );
+	rtSym( "PauseChannel%channel","bbPauseChannel",bbPauseChannel );
+	rtSym( "ResumeChannel%channel","bbResumeChannel",bbResumeChannel );
+	rtSym( "ChannelPitch%channel%pitch","bbChannelPitch",bbChannelPitch );
+	rtSym( "ChannelVolume%channel#volume","bbChannelVolume",bbChannelVolume );
+	rtSym( "ChannelPan%channel#pan","bbChannelPan",bbChannelPan );
+	rtSym( "%ChannelPlaying%channel","bbChannelPlaying",bbChannelPlaying );
+	rtSym( "#ChannelDuration%channel","bbChannelDuration",bbChannelDuration );
+	rtSym( "#ChannelPosition%channel","bbChannelPosition",bbChannelPosition );
 }

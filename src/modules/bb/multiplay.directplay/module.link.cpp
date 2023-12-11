@@ -2,12 +2,17 @@
 // RUN `make` TO UPDATE.
 
 #include <bb/blitz/module.h>
-#include <bb/multiplay.enet/multiplay.enet.h>
+#include <bb/multiplay.directplay/multiplay.directplay.h>
 
-BBMODULE_LINK( multiplay_enet ){
+BBMODULE_LINK( multiplay_directplay ){
+	rtSym( "%StartNetGame","bbStartNetGame",bbStartNetGame );
 	rtSym( "%HostNetGame$game_name","bbHostNetGame",bbHostNetGame );
 	rtSym( "%JoinNetGame$game_name$ip_address","bbJoinNetGame",bbJoinNetGame );
+	rtSym( "StopNetGame","bbStopNetGame",bbStopNetGame );
 	rtSym( "%CreateNetPlayer$name","bbCreateNetPlayer",bbCreateNetPlayer );
+	rtSym( "DeleteNetPlayer%player","bbDeleteNetPlayer",bbDeleteNetPlayer );
+	rtSym( "$NetPlayerName%player","bbNetPlayerName",bbNetPlayerName );
+	rtSym( "%NetPlayerLocal%player","bbNetPlayerLocal",bbNetPlayerLocal );
 	rtSym( "%SendNetMsg%type$msg%from_player%to_player=0%reliable=1","bbSendNetMsg",bbSendNetMsg );
 	rtSym( "%RecvNetMsg","bbRecvNetMsg",bbRecvNetMsg );
 	rtSym( "%NetMsgType","bbNetMsgType",bbNetMsgType );

@@ -18,6 +18,7 @@ public:
 	virtual int version();
 	virtual const char *nextSym();
 	virtual bb_int_t symValue( const char *sym );
+	virtual const char *symName( const char *sym );
 	virtual void loadSyms( std::map<const char*,void*> &syms );
 	virtual void startup();
 	virtual void shutdown();

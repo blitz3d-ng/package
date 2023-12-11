@@ -33,6 +33,7 @@ Cls
 ; now for some drawing...
 Rect 10,10,100,100,True
 Rect 10,10,100,100,False
+Line 10,10,200,200
 Oval 10,10,100,100
 Text 0,0,"hello, world"
 Plot 123,321

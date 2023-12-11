@@ -17,7 +17,7 @@ int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &ho
 		size_t e=1;
 		while( isalnum(ident[e]) || ident[e]=='_' ) e++;
 		ident=ident.substr( 0,e );
-		if( ident[0]!='_' ) ident="bb"+ident;
+		if( ident[0]!='_' ) ident=runtime->symName( sym.first );
 
 		symmap.insert(
 			std::pair< llvm::orc::SymbolStringPtr,llvm::orc::ExecutorSymbolDef >(

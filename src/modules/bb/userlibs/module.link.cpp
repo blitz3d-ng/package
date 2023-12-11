@@ -5,7 +5,7 @@
 #include <bb/userlibs/userlibs.h>
 
 BBMODULE_LINK( userlibs ){
-	rtSym( "_bbLoadLibs",_bbLoadLibs );
-	rtSym( "_bbStrToCStr",_bbStrToCStr );
-	rtSym( "_bbCStrToStr",_bbCStrToStr );
+	rtSym( "_bbLoadLibs","_bbLoadLibs",_bbLoadLibs );
+	rtSym( "_bbStrToCStr","_bbStrToCStr",_bbStrToCStr );
+	rtSym( "_bbCStrToStr","_bbCStrToStr",_bbCStrToStr );
 }

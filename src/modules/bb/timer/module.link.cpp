@@ -5,7 +5,7 @@
 #include <bb/timer/timer.h>
 
 BBMODULE_LINK( timer ){
-	rtSym( "%CreateTimer%hertz",bbCreateTimer );
-	rtSym( "%WaitTimer%timer",bbWaitTimer );
-	rtSym( "FreeTimer%timer",bbFreeTimer );
+	rtSym( "%CreateTimer%hertz","bbCreateTimer",bbCreateTimer );
+	rtSym( "%WaitTimer%timer","bbWaitTimer",bbWaitTimer );
+	rtSym( "FreeTimer%timer","bbFreeTimer",bbFreeTimer );
 }

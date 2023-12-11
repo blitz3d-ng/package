@@ -191,10 +191,9 @@ private:
 	void setLights(){
 		LightState ls={ 0 };
 
-		// FIXME: replace hardcoded '8' with proper hardward-backed value.
+		// FIXME: replace hardcoded '8' with proper hardware-backed value.
 		for( unsigned long i=0;i<8;i++ ){
 			if( i>=lights.size() ){
-				// glDisable( GL_LIGHT0+i );
 				break;
 			}
 
@@ -227,8 +226,6 @@ private:
 				// glLightfv( GL_LIGHT0+i,GL_SPOT_CUTOFF,outer );
 				// glLightfv( GL_LIGHT0+i,GL_SPOT_EXPONENT,exponent );
 			}
-
-			// glPopMatrix();
 		}
 
 		static unsigned int ubo=0;
@@ -512,34 +509,16 @@ public:
 
 				GL( glTexParameteri( canvas->target,GL_TEXTURE_MAG_FILTER,no_filter?GL_NEAREST:GL_LINEAR ) );
 				GL( glTexParameteri( canvas->target,GL_TEXTURE_MIN_FILTER,mipmap?GL_LINEAR_MIPMAP_LINEAR:(no_filter?GL_NEAREST:GL_LINEAR) ) );
-
-				if( flags&BBCanvas::CANVAS_TEX_CLAMPU ){
-					GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE ) );
-				} else {
-					GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_S,GL_REPEAT ) );
-				}
-
-				if( flags&BBCanvas::CANVAS_TEX_CLAMPV ){
-					GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE ) );
-				} else {
-					GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_T,GL_REPEAT ) );
-				}
+				GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_S,flags&BBCanvas::CANVAS_TEX_CLAMPU?GL_CLAMP_TO_EDGE:GL_REPEAT ) );
+				GL( glTexParameteri( canvas->target,GL_TEXTURE_WRAP_T,flags&BBCanvas::CANVAS_TEX_CLAMPV?GL_CLAMP_TO_EDGE:GL_REPEAT ) );
 
 				if( flags&BBCanvas::CANVAS_TEX_ALPHA ){
 					us.alpha_test=1;
 				}
 
-				if( flags&BBCanvas::CANVAS_TEX_SPHERE ){
-					us.texs[us.texs_used].sphere_map=1;
-				}
-
-				if( flags&BBCanvas::CANVAS_TEX_CUBE ){
-					us.texs[us.texs_used].cube_map=1;
-				}else{
-					us.texs[us.texs_used].cube_map=0;
-				}
-
 				us.texs[us.texs_used].blend=ts.blend;
+				us.texs[us.texs_used].sphere_map=flags&BBCanvas::CANVAS_TEX_SPHERE?1:0;
+				us.texs[us.texs_used].cube_map=flags&BBCanvas::CANVAS_TEX_CUBE?1:0;
 				us.texs[us.texs_used].flags=ts.flags;
 
 				us.texs_used++;
@@ -621,11 +600,6 @@ public:
 		GL( glEnable( GL_SCISSOR_TEST ) );
 		GL( glEnable( GL_CULL_FACE ) );
 
-		// glLightModeli( GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR );
-		// glLightModeli( GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE );
-
-    // glAlphaFunc( GL_GEQUAL,0.5 );
-
 		GL( glDepthFunc( GL_LEQUAL ) );
 
 		lights.clear();
@@ -679,15 +653,15 @@ public:
 	}
 	void freeLight( BBLightRep *l ){}
 
-  //meshes
-  BBMesh *createMesh( int max_verts,int max_tris,int flags ){
-    BBMesh *mesh=d_new GLMesh( max_verts,max_tris,flags );
-    mesh_set.insert( mesh );
-    return mesh;
-  }
+	//meshes
+	BBMesh *createMesh( int max_verts,int max_tris,int flags ){
+		BBMesh *mesh=d_new GLMesh( max_verts,max_tris,flags );
+		mesh_set.insert( mesh );
+		return mesh;
+	}
 
-  //info
-  int getTrianglesDrawn()const{ return 0; }
+	//info
+	int getTrianglesDrawn()const{ return 0; }
 };
 
 BBScene *GLB3DGraphics::createScene( int w,int h,float d,int flags ){

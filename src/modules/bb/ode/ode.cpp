@@ -35,19 +35,19 @@ BBLIB void BBCALL _odeGeomSyncEntity( bb_ptr_t g,Entity *e ){
 	dQuaternion dq;
 	dGeomGetQuaternion( (dGeomID)g,dq );
 	Quat q;
-	q.v.x=dq[2];
+	q.v.x=dq[0];
 	q.v.y=dq[1];
-	q.v.z=dq[0];
+	q.v.z=dq[2];
 	q.w=dq[3];
 	e->setWorldPosition( Vector(dGeomGetPosition((dGeomID)g)) );
 	e->setWorldRotation( q );
 }
 
 BBMODULE_CREATE( ode ){
-  memset( &_odeSurfaceParams,0,sizeof(dSurfaceParameters) );
-  return true;
+	memset( &_odeSurfaceParams,0,sizeof(dSurfaceParameters) );
+	return true;
 }
 
 BBMODULE_DESTROY( ode ){
-  return true;
+	return true;
 }

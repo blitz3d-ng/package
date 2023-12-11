@@ -5,9 +5,9 @@
 #include <bb/runtime.vrapi/runtime.vrapi.h>
 
 BBMODULE_LINK( runtime_vrapi ){
-	rtSym( "%HMDPivot",bbHMDPivot );
-	rtSym( "%HMDHead",bbHMDHead );
-	rtSym( "%HMDLeftEye",bbHMDLeftEye );
-	rtSym( "%HMDRightEye",bbHMDRightEye );
-	rtSym( "UpdateHMD",bbUpdateHMD );
+	rtSym( "%HMDPivot","bbHMDPivot",bbHMDPivot );
+	rtSym( "%HMDHead","bbHMDHead",bbHMDHead );
+	rtSym( "%HMDLeftEye","bbHMDLeftEye",bbHMDLeftEye );
+	rtSym( "%HMDRightEye","bbHMDRightEye",bbHMDRightEye );
+	rtSym( "UpdateHMD","bbUpdateHMD",bbUpdateHMD );
 }

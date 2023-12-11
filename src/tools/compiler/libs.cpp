@@ -136,7 +136,7 @@ static const char *linkRuntime(std::string rt){
 		}
 
 		FuncType *f=d_new FuncType( t,params,false,cfunc );
-		f->symbol="bb"+n;
+		f->symbol=runtimeLib->symName( sym );
 		n=tolower(n);
 		runtimeEnviron->funcDecls->insertDecl( n,f,DECL_FUNC );
 		runtimeModule->addSymbol( ("_f"+n).c_str(),pc );

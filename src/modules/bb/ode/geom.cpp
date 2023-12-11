@@ -26,7 +26,7 @@ BBLIB bb_float_t BBCALL _odeGeomGetPositionY( bb_ptr_t g ){
 }
 
 BBLIB bb_float_t BBCALL _odeGeomGetPositionZ( bb_ptr_t g ){
-  return dGeomGetPosition( (dGeomID)g )[2];
+  return -dGeomGetPosition( (dGeomID)g )[2];
 }
 
 // ODE_API void dGeomCopyPosition (dGeomID geom, dVector3 pos);

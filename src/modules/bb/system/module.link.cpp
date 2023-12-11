@@ -5,16 +5,16 @@
 #include <bb/system/system.h>
 
 BBMODULE_LINK( system ){
-	rtSym( "%ExecFile$file",bbExecFile );
-	rtSym( "Delay%millisecs",bbDelay );
-	rtSym( "%MilliSecs",bbMilliSecs );
-	rtSym( "$SystemProperty$property",bbSystemProperty );
-	rtSym( "$GetEnv$env_var",bbGetEnv );
-	rtSym( "SetEnv$env_var$value",bbSetEnv );
-	rtSym( "%ScreenWidth%i=-1",bbScreenWidth );
-	rtSym( "%ScreenHeight%i=-1",bbScreenHeight );
-	rtSym( "#DPIScaleX",bbDPIScaleX );
-	rtSym( "#DPIScaleY",bbDPIScaleY );
-	rtSym( "$CurrentDate",bbCurrentDate );
-	rtSym( "$CurrentTime",bbCurrentTime );
+	rtSym( "%ExecFile$file","bbExecFile",bbExecFile );
+	rtSym( "Delay%millisecs","bbDelay",bbDelay );
+	rtSym( "%MilliSecs","bbMilliSecs",bbMilliSecs );
+	rtSym( "$SystemProperty$property","bbSystemProperty",bbSystemProperty );
+	rtSym( "$GetEnv$env_var","bbGetEnv",bbGetEnv );
+	rtSym( "SetEnv$env_var$value","bbSetEnv",bbSetEnv );
+	rtSym( "%ScreenWidth%i=-1","bbScreenWidth",bbScreenWidth );
+	rtSym( "%ScreenHeight%i=-1","bbScreenHeight",bbScreenHeight );
+	rtSym( "#DPIScaleX","bbDPIScaleX",bbDPIScaleX );
+	rtSym( "#DPIScaleY","bbDPIScaleY",bbDPIScaleY );
+	rtSym( "$CurrentDate","bbCurrentDate",bbCurrentDate );
+	rtSym( "$CurrentTime","bbCurrentTime",bbCurrentTime );
 }

@@ -5,21 +5,21 @@
 #include <bb/bank/bank.h>
 
 BBMODULE_LINK( bank ){
-	rtSym( "%CreateBank%size=0",bbCreateBank );
-	rtSym( "FreeBank%bank",bbFreeBank );
-	rtSym( "%BankSize%bank",bbBankSize );
-	rtSym( "ResizeBank%bank%size",bbResizeBank );
-	rtSym( "CopyBank%src_bank%src_offset%dest_bank%dest_offset%count",bbCopyBank );
-	rtSym( "%PeekByte%bank%offset",bbPeekByte );
-	rtSym( "%PeekShort%bank%offset",bbPeekShort );
-	rtSym( "%PeekInt%bank%offset",bbPeekInt );
-	rtSym( "#PeekFloat%bank%offset",bbPeekFloat );
-	rtSym( "%PeekHandle%bank%offset",bbPeekHandle );
-	rtSym( "PokeByte%bank%offset%value",bbPokeByte );
-	rtSym( "PokeShort%bank%offset%value",bbPokeShort );
-	rtSym( "PokeInt%bank%offset%value",bbPokeInt );
-	rtSym( "PokeFloat%bank%offset#value",bbPokeFloat );
-	rtSym( "PokeHandle%bank%offset%value",bbPokeHandle );
-	rtSym( "%ReadBytes%bank%file%offset%count",bbReadBytes );
-	rtSym( "%WriteBytes%bank%file%offset%count",bbWriteBytes );
+	rtSym( "%CreateBank%size=0","bbCreateBank",bbCreateBank );
+	rtSym( "FreeBank%bank","bbFreeBank",bbFreeBank );
+	rtSym( "%BankSize%bank","bbBankSize",bbBankSize );
+	rtSym( "ResizeBank%bank%size","bbResizeBank",bbResizeBank );
+	rtSym( "CopyBank%src_bank%src_offset%dest_bank%dest_offset%count","bbCopyBank",bbCopyBank );
+	rtSym( "%PeekByte%bank%offset","bbPeekByte",bbPeekByte );
+	rtSym( "%PeekShort%bank%offset","bbPeekShort",bbPeekShort );
+	rtSym( "%PeekInt%bank%offset","bbPeekInt",bbPeekInt );
+	rtSym( "#PeekFloat%bank%offset","bbPeekFloat",bbPeekFloat );
+	rtSym( "%PeekHandle%bank%offset","bbPeekHandle",bbPeekHandle );
+	rtSym( "PokeByte%bank%offset%value","bbPokeByte",bbPokeByte );
+	rtSym( "PokeShort%bank%offset%value","bbPokeShort",bbPokeShort );
+	rtSym( "PokeInt%bank%offset%value","bbPokeInt",bbPokeInt );
+	rtSym( "PokeFloat%bank%offset#value","bbPokeFloat",bbPokeFloat );
+	rtSym( "PokeHandle%bank%offset%value","bbPokeHandle",bbPokeHandle );
+	rtSym( "%ReadBytes%bank%file%offset%count","bbReadBytes",bbReadBytes );
+	rtSym( "%WriteBytes%bank%file%offset%count","bbWriteBytes",bbWriteBytes );
 }

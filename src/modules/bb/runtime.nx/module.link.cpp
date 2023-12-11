@@ -5,6 +5,6 @@
 #include <bb/runtime.nx/runtime.nx.h>
 
 BBMODULE_LINK( runtime_nx ){
-	rtSym( "UpdateConsole",bbUpdateConsole );
-	rtSym( "InitConsole",bbInitConsole );
+	rtSym( "UpdateConsole","bbUpdateConsole",bbUpdateConsole );
+	rtSym( "InitConsole","bbInitConsole",bbInitConsole );
 }
