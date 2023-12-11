@@ -27,7 +27,11 @@ GEM
     htmlcompressor (0.4.0)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    libv8-node (18.16.0.0)
+    libv8-node (18.16.0.0-x86_64-linux)
     mini_portile2 (2.8.5)
+    mini_racer (0.8.0)
+      libv8-node (~> 18.16.0.0)
     minitest (5.20.0)
     module_methods (0.1.0)
     mutex_m (0.2.0)
@@ -36,21 +40,19 @@ GEM
       racc (~> 1.4)
     os (1.1.4)
     racc (1.7.3)
-    rake (13.1.0)
     ruby2_keywords (0.0.5)
-    sass-embedded (1.69.5)
-      google-protobuf (~> 3.23)
-      rake (>= 13.0.0)
     sass-embedded (1.69.5-x64-mingw32)
       google-protobuf (~> 3.23)
-    terser (1.1.19)
+    sass-embedded (1.69.5-x86_64-linux-gnu)
+      google-protobuf (~> 3.23)
+    terser (1.1.20)
       execjs (>= 0.3.0, < 3)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
 
 PLATFORMS
-  ruby
   x64-mingw32
+  x86_64-linux
 
 DEPENDENCIES
   activesupport
@@ -59,6 +61,7 @@ DEPENDENCIES
   filewatcher
   github-markup
   htmlcompressor
+  mini_racer
   nokogiri
   os
   sass-embedded
@@ -68,4 +71,4 @@ RUBY VERSION
    ruby 3.1.2p20
 
 BUNDLED WITH
-   2.3.7
+   2.4.22

@@ -36,7 +36,11 @@ FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),d
 #ifdef __WXMSW__
   font = wxFontInfo(12).FaceName("Consolas");
 #else
+#ifdef __WXOSX__
   font = wxFontInfo(12).FaceName("Monaco");
+#else
+  font = wxFontInfo(12).FaceName("Courier New");
+#endif
 #endif
 
 	text=new wxStyledTextCtrl(this, wxID_ANY);

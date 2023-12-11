@@ -24,7 +24,7 @@ ExternalProject_Add(UUID_EXTERNAL
 )
 
 add_custom_command(TARGET UUID_EXTERNAL POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${UUID_LIB} ${BUILD_PATH}/lib
+  COMMAND ${CMAKE_COMMAND} -E copy ${UUID_LIB} ${TOOLCHAIN_PATH}/lib
 )
 
 add_library(uuid INTERFACE)
