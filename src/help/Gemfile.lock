@@ -28,6 +28,7 @@ GEM
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     libv8-node (18.16.0.0)
+    libv8-node (18.16.0.0-arm64-darwin)
     libv8-node (18.16.0.0-x86_64-linux)
     mini_portile2 (2.8.5)
     mini_racer (0.8.0)
@@ -41,9 +42,11 @@ GEM
     os (1.1.4)
     racc (1.7.3)
     ruby2_keywords (0.0.5)
+    sass-embedded (1.69.5-arm64-darwin)
+      google-protobuf (~> 3.23)
     sass-embedded (1.69.5-x64-mingw32)
       google-protobuf (~> 3.23)
-    sass-embedded (1.69.5-x86_64-linux-gnu)
+    sass-embedded (1.69.5-x86_64-linux)
       google-protobuf (~> 3.23)
     terser (1.1.20)
       execjs (>= 0.3.0, < 3)
@@ -51,6 +54,7 @@ GEM
       concurrent-ruby (~> 1.0)
 
 PLATFORMS
+  arm64-darwin-21
   x64-mingw32
   x86_64-linux
 

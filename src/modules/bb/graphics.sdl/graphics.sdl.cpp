@@ -157,7 +157,10 @@ BBGraphics *SDLContextDriver::openGraphics( int w,int h,int d,int driver,int fla
 		return 0;
 	}
 
-	SDL_GL_MakeCurrent( wnd,context );
+	if( SDL_GL_MakeCurrent( wnd,context ) ){
+		LOGD( "%s",SDL_GetError() );
+		return 0;
+	}
 
 	int screen_w,screen_h;
 	int drawableW,drawableH;
@@ -223,7 +226,7 @@ static BBContextDriver *createSDLContext( const std::string &name ){
 }
 
 BBMODULE_CREATE( graphics_sdl ){
-	bbContextDrivers.push_back( createSDLContext );
+	bbContextDrivers.insert( bbContextDrivers.begin(),createSDLContext );
 
 	return true;
 }

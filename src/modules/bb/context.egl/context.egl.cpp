@@ -255,6 +255,10 @@ void EGLContextDriver::flip( bool vwait ){
 }
 
 static BBContextDriver *createEGLContext( const std::string &name ){
+	if( name.find("gl")!=std::string::npos ){
+		return 0;
+	}
+
 	return d_new EGLContextDriver();
 }
 

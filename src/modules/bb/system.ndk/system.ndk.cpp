@@ -3,6 +3,8 @@
 #include "system.ndk.h"
 #include <unistd.h>
 
+static int base_time=0;
+
 bool NDKSystemDriver::delay( int ms ){
 	usleep( ms*1000 );
 	return true;
@@ -13,10 +15,12 @@ bool NDKSystemDriver::execute( const std::string &cmd ){
 }
 
 int NDKSystemDriver::getMilliSecs(){
-	struct timespec ts;
-	clock_gettime( CLOCK_REALTIME,&ts );
-
-	return ts.tv_sec*1000+(ts.tv_nsec/1.0e6);
+	int t;
+	struct timeval tv;
+	gettimeofday(&tv,0);
+	t=tv.tv_sec*1000;
+	t+=tv.tv_usec/1000;
+	return t-base_time;
 }
 
 int NDKSystemDriver::getScreenWidth( int i ){
@@ -51,6 +55,7 @@ JNIEnv *NDKSystemDriver::getEnv(){
 BBMODULE_CREATE( system_ndk ){
 	if( !bbSystemDriver ){
 		bbSystemDriver=d_new NDKSystemDriver();
+		base_time=bbMilliSecs();
 	}
 	return true;
 }

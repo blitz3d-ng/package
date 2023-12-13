@@ -91,7 +91,7 @@ void SDLRuntime::afterCreate(){
 	sysdriver->setJNI( (jobject)SDL_AndroidGetActivity(),(JNIEnv*)SDL_AndroidGetJNIEnv() );
 #endif
 
-	BBContextDriver::change( "gl" );
+	BBContextDriver::change( "sdl" );
 	bbDefaultGraphics();
 }
 
