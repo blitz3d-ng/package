@@ -4,10 +4,10 @@
 #include <bb/runtime/runtime.h>
 #include "system.h"
 
-#include <unistd.h>
 #include <string.h>
 #include <time.h>
 #ifndef BB_WINDOWS
+#include <unistd.h>
 #include <sys/time.h>
 #endif
 
