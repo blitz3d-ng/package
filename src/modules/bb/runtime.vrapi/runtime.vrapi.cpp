@@ -6,7 +6,7 @@
 #include <bb/context.egl/context.egl.h>
 #include <bb/blitz3d/commands.h>
 #include <bb/blitz3d/geom.h>
-#include <bb/system.ndk/system.ndk.h>
+#include <bb/system/system.ndk.h>
 #include <bb/blitz/app.h>
 
 
@@ -396,7 +396,7 @@ public:
 	std::vector<VRAPIEyeCanvas> eyes;
 
 	void init(){
-		((NDKSystemDriver*)bbSystemDriver)->setJNI( app->activity->clazz,java.Env );
+		bbSetJNI( app->activity->clazz,java.Env );
 
 		Egl.create( NULL,NULL );
 

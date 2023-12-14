@@ -1,6 +1,0 @@
-IF(NOT BB_WINDOWS)
-  bb_start_module(timer.noop)
-  set(DEPENDS_ON bb.timer)
-  set(SOURCES timer.noop.cpp)
-  bb_end_module()
-ENDIF()

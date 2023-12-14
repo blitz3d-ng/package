@@ -2,7 +2,7 @@
 
 #include <llvm/ExecutionEngine/Orc/LLJIT.h>
 
-int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &home, const std::string &rt ) {
+int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &home, const std::string &rt,std::string &args ) {
 	auto J=llvm::cantFail( llvm::orc::LLJITBuilder().create() );
 
 	std::map<const char*,void*> syms;
@@ -38,8 +38,8 @@ int JIT_ORC::run( Runtime *runtime,const std::string &obj, const std::string &ho
 	BBMAIN bbMain=(BBMAIN)main_sym.getValue();
 	BBSTART bbStart=(BBSTART)start_sym.getValue();
 
-	const char *argv[1]={ "blitzcc" };
-	int retcode=bbStart( 1, (char**)argv, bbMain );
+	const char *argv[2]={ "blitzcc",args.c_str() };
+	int retcode=bbStart( 2, (char**)argv, bbMain );
 
 	cantFail( RT->remove() );
 

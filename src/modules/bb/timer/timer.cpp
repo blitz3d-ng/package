@@ -8,7 +8,7 @@ BBTimer::~BBTimer(){
 }
 
 BBTimer * BBCALL bbCreateTimer( bb_int_t hertz ){
-	BBTimer *t=_bbCreateTimer( hertz );
+	BBTimer *t=_osCreateTimer( hertz );
 	timers.insert( t );
 	return t;
 }
@@ -26,10 +26,10 @@ void BBCALL bbFreeTimer( BBTimer *t ){
 }
 
 BBMODULE_CREATE( timer ){
-  return true;
+	return true;
 }
 
 BBMODULE_DESTROY( timer ){
 	while( timers.size() ) bbFreeTimer( *timers.begin() );
-  return true;
+	return true;
 }

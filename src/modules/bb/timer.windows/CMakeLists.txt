@@ -1,7 +1,0 @@
-IF(BB_WINDOWS)
-  bb_start_module(timer.windows)
-  set(DEPENDS_ON bb.timer)
-  set(SOURCES timer.windows.cpp timer.windows.h)
-  set(LIBS winmm)
-  bb_end_module()
-ENDIF()

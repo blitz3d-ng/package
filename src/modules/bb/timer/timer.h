@@ -12,7 +12,7 @@ public:
 	virtual int wait()=0;
 };
 
-BBTimer * BBCALL _bbCreateTimer( int hertz );
+BBTimer * BBCALL _osCreateTimer( int hertz );
 
 #include "commands.h"
 

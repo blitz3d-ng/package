@@ -607,7 +607,7 @@ int main( int argc,char *argv[] ){
 #ifdef USE_LLVM
 			if( !veryquiet ) std::cout<<"Executing..."<<std::endl;
 
-			ret=JIT_ORC::run( runtimeLib,obj_code,home,rt );
+			ret=JIT_ORC::run( runtimeLib,obj_code,home,rt,args );
 #else
 			std::cerr<<"llvm support was not compiled in"<<std::endl;
 			abort();

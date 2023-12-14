@@ -1,5 +1,23 @@
 
-#include "timer.windows.h"
+#include "timer.h"
+#include <windows.h>
+
+class WindowsTimer : public BBTimer{
+public:
+	WindowsTimer( int hertz );
+	~WindowsTimer();
+
+	static void CALLBACK timerCallback( UINT id,UINT msg,DWORD_PTR user,DWORD_PTR dw1,DWORD_PTR dw2 );
+
+private:
+	HANDLE event;
+	MMRESULT timerID;
+	int ticks_put,ticks_get;
+
+	/***** GX INTERFACE *****/
+public:
+	int wait();
+};
 
 WindowsTimer::WindowsTimer( int hertz ):
 ticks_get(0),ticks_put(0){
@@ -27,8 +45,6 @@ int WindowsTimer::wait(){
 	return n;
 }
 
-BBTimer * BBCALL _bbCreateTimer( int hertz ){
+BBTimer * BBCALL _osCreateTimer( int hertz ){
 	return new WindowsTimer( hertz );
 }
-
-BBMODULE_EMPTY( timer_windows );

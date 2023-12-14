@@ -2,6 +2,7 @@
 set(CMAKE_SYSTEM_NAME Windows)
 
 set(MINGW true)
+set(WIN32 true)
 
 if(NOT ARCH)
   set(ARCH i686)
