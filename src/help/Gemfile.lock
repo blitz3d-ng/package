@@ -12,7 +12,7 @@ GEM
       mutex_m
       tzinfo (~> 2.0)
     base64 (0.2.0)
-    bigdecimal (3.1.4)
+    bigdecimal (3.1.5)
     colored (1.2)
     commonmarker (0.23.10)
     concurrent-ruby (1.2.2)
@@ -46,7 +46,7 @@ GEM
       google-protobuf (~> 3.23)
     sass-embedded (1.69.5-x64-mingw32)
       google-protobuf (~> 3.23)
-    sass-embedded (1.69.5-x86_64-linux)
+    sass-embedded (1.69.5-x86_64-linux-gnu)
       google-protobuf (~> 3.23)
     terser (1.1.20)
       execjs (>= 0.3.0, < 3)
