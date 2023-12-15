@@ -1,6 +1,0 @@
-if(BB_NDK)
-  bb_start_module(system.ndk)
-  set(DEPENDS_ON bb.system)
-  set(SOURCES system.ndk.cpp system.ndk.h)
-  bb_end_module()
-endif()

@@ -105,7 +105,8 @@ jobs:
           mkdir _release/toolchains
           wget https://github.com/blitz3d-ng/env/releases/download/v7/llvm-17.0.5-${{ matrix.os }}.zip
           unzip llvm-17.0.5-${{ matrix.os }}.zip
-      - run: brew install ninja gcovr
+      - run: brew install python && brew link --overwrite python && brew install gcovr # macos-13 fix
+      - run: brew install ninja
       - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm
       - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh
       - name: Upload toolchain and package
@@ -154,7 +155,7 @@ jobs:
           mkdir _release/toolchains
           wget https://github.com/blitz3d-ng/env/releases/download/v7/llvm-17.0.5-macos-12.zip
           unzip llvm-17.0.5-macos-12.zip
-      - run: brew install ninja gcovr
+      - run: brew install ninja
       - run: make compiler
       - run: make ENV=release PLATFORM=${{ matrix.device }}
       - run: blitzpath=$GITHUB_WORKSPACE/_release ./test/suite.sh ${{ matrix.device }}
@@ -247,6 +248,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - windows
+      - help
     steps:
       - uses: actions/checkout@v3
       - name: Get tag name
@@ -297,6 +299,7 @@ jobs:
     needs:
       - macos
       - ios
+      - help
     steps:
       - uses: actions/checkout@v3
       - name: Get tag name

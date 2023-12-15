@@ -4,6 +4,7 @@
 // https://learn.microsoft.com/en-us/windows/win32/direct3d9/dx9-graphics-reference-x-file-format
 
 #include <bb/blitz/app.h>
+#include <bb/filesystem/filesystem.h>
 #include "loader_x2.h"
 #include "meshmodel.h"
 #include "animation.h"
@@ -70,12 +71,12 @@ static bool collapse,animonly;
 #define TOKEN_COMMENT 98
 #define TOKEN_EOF     99
 
-class XParser:public std::ifstream{
+class XParser:public std::istream{
 protected:
 	int format,float_bits;
 
 public:
-	XParser( const std::string &path ):std::ifstream( path,std::ios::binary ),format(0),float_bits(0){}
+	XParser( std::streambuf *in ):std::istream(in),format(0),float_bits(0){}
 
 	enum{
 		BINARY,
@@ -770,43 +771,42 @@ MeshModel *Loader_X2::load( const std::string &filename,const Transform &t,int h
 	collapse=!!(hint&MeshLoader::HINT_COLLAPSE);
 	animonly=!!(hint&MeshLoader::HINT_ANIMONLY);
 
-	std::string path=filename;
-#ifdef BB_NX
-	path="romfs:/"+path;
-#endif
-	XParser in( path );
-	if( !in.is_open() ){
-		in.log( "failed to open "+path );
+	std::streambuf *in;
+	if( !(in=gx_filesys->openFile( filename.c_str(),std::ios_base::in )) ){
 		return 0;
 	}
 
-	if( in.readInt()!=XOFFILE_FORMAT_MAGIC ) return 0;
-	if( in.readShort()!=XOFFILE_FORMAT_MAJOR_VERSION ) return 0;
-	in.readShort(); // minor version
+	XParser x( in );
+	if( x.readInt()!=XOFFILE_FORMAT_MAGIC ) return 0;
+	if( x.readShort()!=XOFFILE_FORMAT_MAJOR_VERSION ) return 0;
+	x.readShort(); // minor version
 
-	switch( in.readInt() ){
+	switch( x.readInt() ){
 	case XOFFILE_FORMAT_BINARY:
-		in.setFormat( XParser::BINARY );
+		x.setFormat( XParser::BINARY );
 		break;
 	case XOFFILE_FORMAT_TEXT:
-		in.setFormat( XParser::TEXT );
+		x.setFormat( XParser::TEXT );
 		break;
 	default:
 		return 0;
 	}
 
-	switch( in.readInt() ){
+	switch( x.readInt() ){
 	case XOFFILE_FORMAT_FLOAT_BITS_32:
-		in.setFloatBits( 32 );
+		x.setFloatBits( 32 );
 		break;
 	case XOFFILE_FORMAT_FLOAT_BITS_64:
-		in.setFloatBits( 64 );
+		x.setFloatBits( 64 );
 		break;
 	default:
 		return 0;
 	}
 
-	MeshModel *e=in.parseFile();
+	MeshModel *e=x.parseFile();
 	frames_map.clear();
+
+	delete in;
+
 	return e;
 }

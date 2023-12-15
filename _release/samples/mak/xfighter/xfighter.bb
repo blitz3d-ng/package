@@ -16,13 +16,13 @@ Include "../start.bb"
 ;grrr..ATI - FIX IT!
 ; HWMultiTex False ;
 ;*******************
-	
+
 Type Player
 	Field entity,camera
 	Field ctrl_mode,cam_mode,ignition
 	Field pitch#,yaw#,pitch_speed#,yaw_speed#,roll#,thrust#
 End Type
- 
+
 Collisions 1,10,2,2	;sphere-to-polygon, colliding collisions
 
 Global terr
@@ -46,19 +46,19 @@ While Not KeyHit(1)
 		elapsed=MilliSecs()-time
 	Until elapsed
 
-	;how many 'frames' have elapsed	
+	;how many 'frames' have elapsed
 	ticks=elapsed/period
-	
+
 	;fractional remainder
 	tween#=Float(elapsed Mod period)/Float(period)
-	
+
 	For k=1 To ticks
 		If k=ticks Then CaptureWorld
 		time=time+period
 		UpdateGame()
 		UpdateWorld
 	Next
-	
+
 	If KeyHit(17)
 		wire=Not wire
 		WireFrame wire
@@ -76,9 +76,9 @@ While Not KeyHit(1)
 		morph=Not morph
 		TerrainDetail terr,detail,morph
 	EndIf
-			
+
 	RenderWorld tween
-	
+
 	Color 255,0,0
 	If morph t$="Y" Else t$="N"
 	Text 0,0,"Detail:"+detail+" Morph:"+t$
@@ -101,31 +101,31 @@ Function UpdatePlayer( p.Player )
 	Case 1:
 		If KeyDown(203) x_dir=-1
 		If KeyDown(205) x_dir=1
-		
+
 		If KeyDown(200) y_dir=-1
 		If KeyDown(208) y_dir=1
-		
+
 		If KeyDown(30) z_dir=1
 		If KeyDown(44) z_dir=-1
-		
+
 		If KeyHit(59) p\cam_mode=1
 		If KeyHit(60) p\cam_mode=2
 		If KeyHit(61) p\cam_mode=3
 		If KeyHit(62) p\cam_mode=4
-		
+
 	Case 2:
 		x_dir=JoyXDir()
 		y_dir=JoyYDir()
 		If JoyDown(1) z_dir=1
 		If JoyDown(2) z_dir=-1
-		
+
 		If KeyHit(63) p\cam_mode=1
 		If KeyHit(64) p\cam_mode=2
 		If KeyHit(65) p\cam_mode=3
 		If KeyHit(66) p\cam_mode=4
-		
+
 	End Select
-	
+
 	If x_dir<0
 		p\yaw_speed=p\yaw_speed + (4-p\yaw_speed)*.04
 	Else If x_dir>0
@@ -133,7 +133,7 @@ Function UpdatePlayer( p.Player )
 	Else
 		p\yaw_speed=p\yaw_speed + (-p\yaw_speed)*.02
 	EndIf
-		
+
 	If y_dir<0
 		p\pitch_speed=p\pitch_speed + (2-p\pitch_speed)*.2
 	Else If y_dir>0
@@ -141,24 +141,24 @@ Function UpdatePlayer( p.Player )
 	Else
 		p\pitch_speed=p\pitch_speed + (-p\pitch_speed)*.1
 	EndIf
-		
+
 	p\yaw=p\yaw+p\yaw_speed
 	If p\yaw<-180 Then p\yaw=p\yaw+360
 	If p\yaw>=180 Then p\yaw=p\yaw-360
-	
+
 	p\pitch=p\pitch+p\pitch_speed
 	If p\pitch<-180 Then p\pitch=p\pitch+360
 	If p\pitch>=180 Then p\pitch=p\pitch-360
-		
+
 	p\roll=p\yaw_speed*30
 	RotateEntity p\entity,p\pitch,p\yaw,p\roll
-	
+
 	;see if y/p/r funcs are working...
 	t_p#=EntityPitch( p\entity )
 	t_y#=EntityYaw( p\entity )
 	t_r#=EntityRoll( p\entity )
 	RotateEntity p\entity,t_p,t_y,t_r
-	
+
 	If p\ignition
 		If z_dir>0			;faster?
 			p\thrust=p\thrust + (1.5-p\thrust)*.04	;1.5
@@ -169,7 +169,7 @@ Function UpdatePlayer( p.Player )
 	Else If z_dir>0
 		p\ignition=True
 	EndIf
-	
+
 	If p\camera
 		Select p\cam_mode
 		Case 1:
@@ -192,7 +192,7 @@ Function UpdatePlayer( p.Player )
 			PointEntity p\camera,p\entity,0
 		End Select
 	EndIf
-	
+
 End Function
 
 Function LoadAirPlane( file$ )
@@ -234,22 +234,22 @@ Function CreateScene()
 	l=CreateLight()
 	RotateEntity l,45,45,0
 	AmbientLight 32,32,32
-	
+
 	;Load terrain
-	terr=LoadTerrain( "hmap_1024.bmp" )
+	terr=LoadTerrain( "hmap_1024.BMP" )
 	ScaleEntity terr,20,800,20
 	PositionEntity terr,-20*512,0,-20*512
 	EntityFX terr,1
 	EntityType terr,10
 
-	;apply textures to terrain	
-	tex1=LoadTexture( "coolgrass2.bmp",1 )
+	;apply textures to terrain
+	tex1=LoadTexture( "coolgrass2.BMP",1 )
 	ScaleTexture tex1,10,10
-	tex2=LoadTexture( "lmap_256.bmp" )
+	tex2=LoadTexture( "lmap_256.BMP" )
 	ScaleTexture tex2,TerrainSize(terr),TerrainSize(terr)
 	EntityTexture terr,tex1,0,0
 	EntityTexture terr,tex2,0,1
-	
+
 	;and ground plane
 	plane=CreatePlane()
 	ScaleEntity plane,20,1,20
@@ -258,9 +258,9 @@ Function CreateScene()
 	EntityOrder plane,3
 	EntityFX plane,1
 	EntityType plane,10
-	
+
 	;create cloud planes
-	tex=LoadTexture( "cloud_2.bmp",3 )
+	tex=LoadTexture( "cloud_2.BMP",3 )
 	ScaleTexture tex,1000,1000
 	p=CreatePlane()
 	EntityTexture p,tex
@@ -268,9 +268,9 @@ Function CreateScene()
 	PositionEntity p,0,450,0
 	p=CopyEntity( p )
 	RotateEntity p,0,0,180
-	
+
 	;create water plane
-	tex=LoadTexture( "water-2_mip.bmp",3 )
+	tex=LoadTexture( "Water-2_mip.BMP",3 )
 	ScaleTexture tex,10,10
 	p=CreatePlane()
 	EntityTexture p,tex
@@ -278,5 +278,5 @@ Function CreateScene()
 	EntityAlpha p,.75
 	PositionEntity p,0,10,0
 	EntityFX p,1
-	
+
 End Function

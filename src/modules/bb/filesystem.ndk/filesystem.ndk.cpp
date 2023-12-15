@@ -1,6 +1,6 @@
 #include "../stdutil/stdutil.h"
 #include <bb/blitz/app.h>
-#include <bb/system.ndk/system.ndk.h>
+#include <bb/system/system.ndk.h>
 #include "filesystem.ndk.h"
 
 #include <sys/stat.h>
@@ -39,10 +39,8 @@ NDKFileSystem::~NDKFileSystem(){
 std::streambuf *NDKFileSystem::openFile( const std::string &file,std::ios_base::openmode n ){
 	LOGD( "openFile %s",file.c_str() );
 
-	NDKSystemDriver *sys=(NDKSystemDriver*)bbSystemDriver;
-
-	jobject activity=sys->getActivityClass();
-	JNIEnv *env=sys->getEnv();
+	jobject activity=bbActivityClass();
+	JNIEnv *env=bbJNIEnv();
 
 	jclass cls = env->GetObjectClass( activity );
 	jmethodID mid = env->GetMethodID( cls,"getAssets","()Landroid/content/res/AssetManager;" );

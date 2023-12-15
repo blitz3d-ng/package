@@ -655,7 +655,7 @@ void GLCanvas::uploadData(){
 	GL( glActiveTexture( GL_TEXTURE0 ) );
 	GL( glBindTexture( target,texture ) );
 	for( int i=0;i<(target==GL_TEXTURE_2D?1:6);i++ ){
-		GL( glTexImage2D( target==GL_TEXTURE_2D?target:_cube_order[i],0,GL_RGBA,width,height,0,GL_BGRA,GL_UNSIGNED_BYTE,data ) );
+		GL( glTexImage2D( target==GL_TEXTURE_2D?target:_cube_order[i],0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data ) );
 	}
 	GL( glGenerateMipmap( target ) );
 

@@ -1308,6 +1308,7 @@ BBLIB Entity * BBCALL bbLoadTerrain( BBStr *file,Entity *p ){
 	debugParent(p);
 	BBPixmap *m=bbLoadPixmap( *file );
 	if( !m ) RTEX( "Unable to load heightmap image" );
+	m->flipVertically();
 	int w=m->getWidth(),h=m->getHeight();
 	if( w!=h ) RTEX( "Terrain must be square" );
 	int shift=0;

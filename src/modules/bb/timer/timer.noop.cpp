@@ -12,8 +12,6 @@ public:
 	}
 };
 
-BBTimer * BBCALL _bbCreateTimer( int hertz ){
+BBTimer * BBCALL _osCreateTimer( int hertz ){
 	return new NoopTimer( hertz );
 }
-
-BBMODULE_EMPTY( timer_noop );

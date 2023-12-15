@@ -1,10 +1,111 @@
 
 #include "../stdutil/stdutil.h"
-#include <bb/system/system.h>
 #include "font.h"
 #include <utf8.h>
 
 #undef max
+
+struct BBFontData{
+	long size;
+	unsigned char *data;
+
+	BBFontData():size(0),data(0){}
+};
+
+#ifdef BB_WINDOWS
+bool lookupFontData( const std::string &fontName,BBFontData &font ){
+	bool bold=false,italic=false,underline=false,strikeout=false;
+
+	int height=10;
+
+	HFONT hfont=CreateFont(
+		height,0,0,0,
+		bold,italic,underline,strikeout,
+		ANSI_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
+		DEFAULT_PITCH|FF_DONTCARE,fontName.c_str() );
+
+	if( !hfont ) return false;
+
+	bool success=false;
+	HDC hdc=CreateCompatibleDC( NULL );
+	if( hdc ){
+		if( SelectObject( hdc,hfont ) ) {
+			font.size=GetFontData( hdc,0,0,NULL,0 );
+			if( font.size>0 ) {
+				font.data=new unsigned char[font.size];
+				if( GetFontData( hdc,0,0,(void*)font.data,font.size )==font.size ){
+					success=true;
+				}else{
+					delete[] font.data;
+				}
+			}
+		}
+		DeleteDC( hdc );
+	}
+
+	DeleteObject( hfont );
+
+	return success;
+}
+#else
+#ifdef BB_MACOS
+extern "C" const char *lookupFontFile( const char *fontName );
+
+bool lookupFontData( const std::string &fontName,BBFontData &font ){
+	const char *fontPath=lookupFontFile( fontName.c_str() );
+	if( !fontPath ) return false;
+
+	std::ifstream file( fontPath,std::ios::binary|std::ios::ate );
+	font.size=file.tellg();
+	file.seekg( 0,std::ios::beg );
+
+	font.data=new unsigned char[font.size];
+	if( file.read( (char*)font.data,font.size ) ){
+		return true;
+	}
+	return false;
+}
+#else
+#ifdef BB_LINUX
+#include <fontconfig/fontconfig.h>
+
+bool lookupFontData( const std::string &fontName,BBFontData &font ){
+	static FcConfig* config=0;
+	if( !config ) config=FcInitLoadConfigAndFonts();
+
+	FcPattern* pat=FcNameParse( (const FcChar8*)fontName.c_str() );
+	FcConfigSubstitute( config,pat,FcMatchPattern );
+	FcDefaultSubstitute( pat );
+	char* fontPath=0;
+	FcResult result;
+	FcPattern* match=FcFontMatch( config,pat,&result );
+	if( match ){
+		FcChar8* file = NULL;
+		if( FcPatternGetString( match,FC_FILE,0,&file )==FcResultMatch ){
+			fontPath = (char*)file;
+		}
+	}
+	FcPatternDestroy( pat );
+
+	if( !fontPath ) return false;
+
+	std::ifstream file( fontPath,std::ios::binary|std::ios::ate );
+	font.size=file.tellg();
+	file.seekg( 0,std::ios::beg );
+
+	font.data=new unsigned char[font.size];
+	if( file.read( (char*)font.data,font.size ) ){
+		return true;
+	}
+	return false;
+}
+#else
+bool lookupFontData( const std::string &fontName,BBFontData &font ){
+	return false;
+}
+#endif
+#endif
+#endif
 
 FT_Library ft;
 std::map<std::string,BBFontData> bbFontCache;
@@ -25,7 +126,7 @@ BBImageFont *BBImageFont::load( const std::string &name,int height,float density
 	if( bbFontCache.count( name )==0 ){
 		int n=name.rfind( "." );
 		if( n==std::string::npos ){
-			if( !bbSystemDriver->lookupFontData( name,font ) ){
+			if( !lookupFontData( name,font ) ){
 				return 0;
 			}
 		}else{

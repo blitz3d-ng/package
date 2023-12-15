@@ -1,6 +1,0 @@
-if(BB_NX)
-  bb_start_module(system.nx)
-  set(DEPENDS_ON bb.runtime bb.system)
-  set(SOURCES system.nx.cpp system.nx.h)
-  bb_end_module()
-endif()

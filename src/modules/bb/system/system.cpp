@@ -6,7 +6,23 @@
 
 #include <string.h>
 #include <time.h>
+#ifndef BB_WINDOWS
+#include <unistd.h>
+#include <sys/time.h>
+#endif
 
+#ifdef BB_MACOS
+#include <CoreServices/CoreServices.h>
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+#ifdef BB_IOS
+extern "C" {
+	int iosScreenWidth();
+	int iosScreenHeight();
+}
+#endif
+
+static int base_time=0;
 std::map<std::string,std::string> bbSystemProperties;
 BBSystemDriver *bbSystemDriver=0;
 
@@ -20,17 +36,65 @@ void BBCALL bbRuntimeError( BBStr *str ){
 
 bb_int_t BBCALL bbExecFile( BBStr *f ){
 	std::string t=*f;delete f;
-	int n=bbSystemDriver->execute( t );
+	if( !t.size() ) return false;
+
+	int n=0;
+#ifdef BB_WINDOWS
+	//convert cmd_line to cmd and params
+	std::string cmd=t,params;
+	while( cmd.size() && cmd[0]==' ' ) cmd=cmd.substr( 1 );
+	if( cmd.find( '\"' )==0 ){
+		int n=cmd.find( '\"',1 );
+		if( n!=std::string::npos ){
+			params=cmd.substr( n+1 );
+			cmd=cmd.substr( 1,n-1 );
+		}
+	}else{
+		int n=cmd.find( ' ' );
+		if( n!=std::string::npos ){
+			params=cmd.substr( n+1 );
+			cmd=cmd.substr( 0,n );
+		}
+	}
+	while( params.size() && params[0]==' ' ) params=params.substr( 1 );
+	while( params.size() && params[params.size()-1]==' ' ) params=params.substr( 0,params.size()-1 );
+
+	SetForegroundWindow( GetDesktopWindow() );
+
+	n=(bb_int_t)ShellExecute( GetDesktopWindow(),0,cmd.c_str(),params.size() ? params.c_str() : 0,0,SW_SHOW )>32;
+#else
+	// TODO: ...
+#endif
 	if( !bbRuntimeIdle() ) RTEX( 0 );
 	return n;
 }
 
 void BBCALL bbDelay( bb_int_t ms ){
-	if( !bbSystemDriver->delay( ms ) ) RTEX( 0 );
+	int t=bbMilliSecs()+ms;
+	for(;;){
+		if( !bbRuntimeIdle() ) RTEX( 0 );
+		int d=t-bbMilliSecs();	//how long left to wait
+		if( d<=0 ) return;
+		if( d>100 ) d=100;
+#ifdef BB_WINDOWS
+		Sleep( d );
+#else
+		usleep( d * 1000 );
+#endif
+	}
 }
 
 bb_int_t BBCALL bbMilliSecs(){
-	return bbSystemDriver->getMilliSecs();
+#ifdef BB_WINDOWS
+	return timeGetTime();
+#else
+	int t;
+	struct timeval tv;
+	gettimeofday(&tv,0);
+	t=tv.tv_sec*1000;
+	t+=tv.tv_usec/1000;
+	return t-base_time;
+#endif
 }
 
 BBStr * BBCALL bbSystemProperty( BBStr *p ){
@@ -56,24 +120,70 @@ void BBCALL bbSetEnv( BBStr *env_var,BBStr *val ){
 	delete val;
 }
 
+
+
 bb_int_t BBCALL bbScreenWidth( bb_int_t i ){
-	return bbSystemDriver->getScreenWidth( i );
+#ifdef BB_WINDOWS
+	return GetSystemMetrics( SM_CXSCREEN );
+#endif
+#ifdef BB_MACOS
+	auto id=CGMainDisplayID();
+	return CGDisplayPixelsWide( id );
+#endif
+#ifdef BB_IOS
+	return iosScreenWidth();
+#endif
+	// TODO: linux,android,ovr,emscripten,nx
+	return 0;
 }
 
 bb_int_t BBCALL bbScreenHeight( bb_int_t i ){
-	return bbSystemDriver->getScreenHeight( i );
+#ifdef BB_WINDOWS
+	return GetSystemMetrics( SM_CYSCREEN );
+#endif
+#ifdef BB_MACOS
+	auto id=CGMainDisplayID();
+	return CGDisplayPixelsHigh( id );
+#endif
+#ifdef BB_IOS
+	return iosScreenHeight();
+#endif
+	// TODO: linux,android,ovr,emscripten,nx
+	return 0;
 }
 
+#ifdef BB_WINDOWS
+static bool dpi_calculated=false;
+static float dpi_x, dpi_y;
+void calcDPI(){
+	if( dpi_calculated ) return;
+
+	HDC hdc=GetDC( GetDesktopWindow() );
+	dpi_x=GetDeviceCaps( hdc,LOGPIXELSX ) / 96.0f;
+	dpi_y=GetDeviceCaps( hdc,LOGPIXELSY ) / 96.0f;
+	ReleaseDC( GetDesktopWindow(),hdc );
+	dpi_calculated=true;
+}
+#endif
+
 bb_float_t BBCALL bbDPIScaleX(){
-	float x,y;
-	bbSystemDriver->dpiInfo( x,y );
-	return x;
+#ifdef BB_WINDOWS
+	calcDPI();return dpi_x;
+#endif
+#ifdef BB_MACOS
+	return 2.0; // TODO:
+#endif
+	return 1.0;
 }
 
 bb_float_t BBCALL bbDPIScaleY(){
-	float x,y;
-	bbSystemDriver->dpiInfo( x,y );
-	return y;
+#ifdef BB_WINDOWS
+	calcDPI();return dpi_y;
+#endif
+#ifdef BB_MACOS
+	return 2.0; // TODO:
+#endif
+	return 1.0;
 }
 
 BBStr * BBCALL bbCurrentDate(){
@@ -95,6 +205,9 @@ BBStr * BBCALL bbCurrentTime(){
 BBMODULE_CREATE( system ){
 	bbSystemDriver=0;
 	bbSystemProperties["appdir"]=bbApp().executable_path;
+#ifndef BB_WINDOWS
+	base_time=bbMilliSecs();
+#endif
 	return true;
 }
 
