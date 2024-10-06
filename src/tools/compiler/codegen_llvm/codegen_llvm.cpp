@@ -201,7 +201,7 @@ void Codegen_LLVM::optimize(){
 	// until the gosub implementation is improved, we have to relax optimization
 	// to avoid long build times...
 	if( gosubUsed ){
-		targetMachine->setOptLevel( llvm::CodeGenOpt::Level::None );
+		targetMachine->setOptLevel( llvm::CodeGenOptLevel::None );
 		targetMachine->setFastISel( false );
 		targetMachine->setGlobalISel( false );
 		return;
@@ -287,7 +287,7 @@ int Codegen_LLVM::dumpToObj( std::string &out ) {
 	llvm::buffer_ostream dest( sstr );
 
 	llvm::legacy::PassManager pass;
-	if( targetMachine->addPassesToEmitFile( pass,dest,0,llvm::CGFT_ObjectFile ) ){
+	if( targetMachine->addPassesToEmitFile( pass,dest,0,llvm::CodeGenFileType::ObjectFile ) ){
 		llvm::errs()<<"target can't emit a file of this type\n";
 		return 1;
 	}

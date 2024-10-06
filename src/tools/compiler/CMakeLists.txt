@@ -1,15 +1,16 @@
-set (CMAKE_EXECUTABLE_SUFFIX_ )
+set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH ON)
+set(CMAKE_EXECUTABLE_SUFFIX_ )
 
 if(BB64 AND NOT BB_MINGW)
-  set(REQUIRED_LLVM_VERSION 17)
+  set(REQUIRED_LLVM_VERSION 19)
 
   set(LLVM_KNOWN_PATHS
     $ENV{LLVM_ROOT}
     ${PROJECT_SOURCE_DIR}/llvm${REQUIRED_LLVM_VERSION}
     ${PROJECT_SOURCE_DIR}/llvm
-    /usr/lib/llvm-14/lib/cmake/lld
+    /usr/lib/llvm-${REQUIRED_LLVM_VERSION}/lib/cmake/lld
     c:/llvm-x64
-    c:/llvm-14
+    c:/llvm-${REQUIRED_LLVM_VERSION}
     c:/llvm
   )
 

@@ -1,4 +1,6 @@
+set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH ON)
 find_package(OpenAL)
+
 if(OPENAL_FOUND)
   bb_start_module(audio.openal)
   set(DEPENDS_ON bb.audio)
