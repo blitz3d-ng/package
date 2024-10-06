@@ -104,7 +104,7 @@ jobs:
       - run: |
           mkdir _release/toolchains
           wget https://github.com/blitz3d-ng/env/releases/download/v10/llvm-19.1.0-${{ matrix.os }}.zip
-          unzip llvm-17.0.5-${{ matrix.os }}.zip
+          unzip llvm-19.1.0-${{ matrix.os }}.zip
       - run: brew install python && brew link --overwrite python && brew install gcovr # macos-13 fix
       - run: brew install ninja
       - run: make ENV=release PLATFORM=macos LLVM_ROOT=$GITHUB_WORKSPACE/llvm

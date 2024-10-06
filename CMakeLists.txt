@@ -1,8 +1,6 @@
 cmake_minimum_required (VERSION 3.24)
 project (Blitz3D)
 
-set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH OFF)
-
 cmake_policy(SET CMP0069 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
 
@@ -16,6 +14,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 include(src/bin2h.cmake)
+
+set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH OFF)
 
 if(ANDROID)
   find_package(Java 1.8 REQUIRED COMPONENTS Development)
