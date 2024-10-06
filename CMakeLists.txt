@@ -15,6 +15,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 include(src/bin2h.cmake)
 
+# try to prevent accidental linking with shared libraries
 set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH OFF)
 
 if(ANDROID)
@@ -22,11 +23,6 @@ if(ANDROID)
   include(UseJava)
   set(CMAKE_JAVA_COMPILE_FLAGS -source 1.8 -target 1.8)
   set(ANDROID_JAR $ENV{ANDROID_HOME}/platforms/android-${ANDROID_PLATFORM}/android.jar)
-endif()
-
-# c++17/windows.h conflict
-if (MSVC)
-  add_compile_definitions(_HAS_STD_BYTE=0)
 endif()
 
 # TODO: make this toggleable
