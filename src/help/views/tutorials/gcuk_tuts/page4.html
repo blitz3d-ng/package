@@ -1,19 +1,12 @@
-<font face="verdana">
-<table border="1" width="100%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="61%" bgcolor="#6097C9"><font face="verdana">
-<h1 align="left"><font color="#FFFFFF">&nbsp;Object Animation</font></h1>
-<p align="left"><b>&nbsp;Aim</b>: To animate an object<br>
-&nbsp;<b>Skill level</b>: Intermediate<br>
-&nbsp;<b>Files Needed</b>: animation.bb / gargoyle.md2</font>
-      <p>&nbsp;</td>
-    <td width="5%">&nbsp;</td>
-    <td width="34%">
-      <p align="right"><font face="verdana">
-<img src="6c.jpg" alt="Animation" width="166" height="128"></font></p>
-    </td>
-  </tr>
-</table>
+<h1>Object Animation</h1>
+<p>
+    <img src="./assets/6c.jpg" alt="Object Animation" width="165" height="128" align="right" />
+    <strong>Aim</strong>: To animate an object<br/>
+    <strong>Skill level</strong>: Intermediate<br/>
+    <strong>Files Needed</strong>: <a href="./code/animation.bb">animation.bb</a> | <a href="./assets/gargoyle.md2">gargoyle.md2</a>
+    <div class="clear"></div>
+</p>
+<hr/>
 
 <p>
 So far we have just used static objects, its Time to liven up our 3d world and think about animation. Blitz will load in animated meshes from a variety of sources, including X. format (DirectX), MD2 (used by the Quake 2 engine) and lastly 3DS
@@ -37,63 +30,52 @@ luckily places such as 3dcafe (www.3dcafe.com) contain hundreds of ready made fr
 Time for the source:
 </p>
 
-<table border="1" width="86%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
-      
-	  
-	  
-	  &nbsp; <font face="arial">Graphics3D 800,600<br>
-      <br>
-      &nbsp; SetBuffer BackBuffer()<br>
-      <br>
-      &nbsp; camera=CreateCamera()<br>
-      &nbsp; CameraViewport camera,0,0,800,600<br>
-      <br>
-      &nbsp; light=CreateLight()<br>
-      <br>
-      &nbsp; man=LoadMD2( &quot;gargoyle.md2&quot; )<br>
-	  &nbsp; PositionEntity man,0,-35,600<br>
-      &nbsp; RotateEntity man,0,</font></font><font face="arial">180<font face="verdana">,0<br>
-	  <br>
-	  &nbsp; Animate</font></font><font face="arial">MD2</font><font face="arial"> <font face="verdana"> man,1,.1,32,46<br>
-      <br>
-      &nbsp; While Not KeyHit(1)<br>
-      <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If dist<970 MoveEntity man,.5,0,0<br>
-	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If dist=970 Animate</font>MD2 </font><font face="arial"><font face="verdana">man,1,.05,0,31<br>
-	<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dist=dist+1<br>
-	  
-	  
-      <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UpdateWorld<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RenderWorld<br>
-      <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Text 320,500,&quot;An Animated M</font>D2</font><font face="verdana"><font face="arial"> Demo&quot;<br>
-      <br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Flip<br>
-      <br>
-      &nbsp; Wend<br>
-      &nbsp; End<br><br>
-      </font></font></td>
-    <td width="14%">&nbsp;</td>
-  </tr>
-</table>
+<code>
+<pre>
+Graphics3D 800,600
+
+SetBuffer BackBuffer()
+
+camera=CreateCamera()
+CameraViewport camera,0,0,800,600
+
+light=CreateLight()
+
+man=LoadMD2( "gargoyle.md2" )
+PositionEntity man,0,-35,600
+RotateEntity man,0,180,0
+
+AnimateMD2 man,1,.1,32,46
+
+While Not KeyHit(1)
+
+    If dist&lt;970 MoveEntity man,.5,0,0
+    If dist=970 AnimateMD2 man,1,.05,0,31
+
+    dist=dist+1
+
+    UpdateWorld
+    RenderWorld
+
+    Text 320,500,"An Animated MD2 Demo"
+
+    Flip
+
+Wend
+End
+</pre>
+</code>
+
 <p>
 So whats going on ?</p>
 
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b><font face="Arial">man=LoadMD2( "gargoyle.md2" )<br>
-PositionEntity man,0,-35,600<br>
-RotateEntity man,0,-90,0</font></b></td>
-  </tr>
-</table>
-<font face="verdana">
+<code>
+<pre>
+man=LoadMD2( "gargoyle.md2" )
+PositionEntity man,0,-35,600
+RotateEntity man,0,-90,0
+</pre>
+</code>
 
 <p>
 Here, I've used the LoadMD2 command to load an MD2 animated object into the pointer handle 'man'.
@@ -112,15 +94,11 @@ my Gamecoding website very soon)</p>
 The frames of animation (keyframes) are loaded in with the model, all we have to do is tell B3D where to start - and where to end !. Before we look at this in action, you will notice that I've positioned and rotated the object to a new starting point. Originally the character was designed facing Right, so we need to rotate it by 90 degrees - so it faces us.
 (I did this by using the RotateEntity command)</p>
 
-</font>
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b><font face="Arial">AnimateMD2 man,1,.1,32,46</font></b></td>
-  </tr>
-</table>
-<font face="verdana">
+<code>
+<pre>
+AnimateMD2 man,1,.1,32,46
+</pre>
+</code>
 
 <p>
 This instruction informs B3D that we want the object 'man' to animate in a loop (so the walking frames can restart), at a speed of .1 of a unit, starting at frame 32 - and ending in frame 46</p>
@@ -145,43 +123,33 @@ After that the animation is reset to display the standing stance animation.. (fr
 Although I've setup the animation to loop, we can of course just have it run through the animation loop once if we had wanted to it.
 To do this you just change the MODE flag in the Animate instruction. Here's the instruction in full:</p>
 
-</font>
-<table border="0" width="100%" bgcolor="#FFFF00">
-  <tr>
-    <td width="100%">
 
-<font face="Arial"><i>Animate [entity name], [mode 0,1,2 or 3], [speed], [frame to begin at], [frame to end at]</i></font></td>
-  </tr>
-</table>
-<font face="verdana">
+<code>
+<pre>
+Animate [entity name], [mode 0,1,2 or 3], [speed], [frame to begin at], [frame to end at]
+</pre>
+</code>
 
-<p>
-in the case of MD2's you'd use the instruction:</p>
+<p>in the case of MD2's you'd use the instruction:</p>
 
-<table border="0" width="100%" bgcolor="#FFFF00">
-  <tr>
-    <td width="100%">
+<code>
+<pre>
+AnimateMD2 [entity name], [mode
+0, 1,2 or 3], [speed], [frame to begin at], [frame to end at]
+</pre>
+</code>
 
-<i>
-
-<font face="Arial">Animate</font></font><font face="Arial">MD2 [entity name], [mode
-0, 1,2 or 3], [speed], [frame to begin at], [frame to end at]</font></i></td>
-  </tr>
-</table>
-<font face="verdana">
-
-<p>
-Just incase your interested, here's a rundown of all the mode switches we can
+<p>Just incase your interested, here's a rundown of all the mode switches we can
 use: (Remember we used the loop anim mode)</p>
 
 <table border="0" width="100%" bgcolor="#FFFF00">
   <tr>
     <td width="100%">
 
-<font face="Arial"><i>0: Stop Anim<br>
+<i>0: Stop Anim<br>
 1: Loop Anim<br>
 2: Ping-Pong Anim<br>
-3: One-Shot Anim</i></font></td>
+3: One-Shot Anim</i></td>
   </tr>
 </table>
 
@@ -204,9 +172,6 @@ could smooth out the change so it would be unnoticeable. Although I wont be
 using these commands in this tutorial, I may add a new tutorial on the subject
 very soon.</p>
 
-<p>
-So what are you waiting for !, go and design the next Quake !!</p>
-</font>
-<p><font face="verdana"><center><font color="#808080">Tutorial 4 - <a href="page5.html">Texturing</a></font></center>
-</font>
-</p>
+<p>So what are you waiting for !, go and design the next Quake!!</p>
+
+<p><center>Tutorial 4 - <a href="page5.html">Texturing</a></center></p>

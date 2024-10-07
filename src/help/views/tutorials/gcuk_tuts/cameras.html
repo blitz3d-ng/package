@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Introduction to Camera Entities</title>
+</head>
+<body>
+
+<center><h1>Introduction to Camera Entities</h1>
+</center>
+
+<p>
+
+Cameras allow you to see what's going on in the 3D world. Without at least one camera, nothing that may be happening in the world will be rendered to the screen.</p>
+<p>
+
+Cameras also control a number of other effects, including rendering range, zoom and fog.</p>
+
+<h2><span style="background-color: #6097C9">&nbsp;Creating Cameras&nbsp;</span></h2>
+<p>
+
+To create a camera, simply use the <b>CreateCamera</b> command:
+</p>
+<table border="1" width="100%" bordercolor="#FFFFFF">
+  <tr>
+    <td width="14%">&nbsp;</td>
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;;create a new camera!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>camera=CreateCamera()</b><br><br>
+
+    </td>
+    <td width="14%">&nbsp;</td>
+  </tr>
+</table>
+
+<h2><span style="background-color: #6097C9">&nbsp;Camera Viewport&nbsp;</span></h2>
+<p>
+
+A camera needs to know where on screen its view of the world is to be rendered. This area of the screen is known as the camera viewport. By default, a new camera's viewport is set to the entire screen.</p>
+
+<p>
+
+To change the camera viewport use the <b>CameraViewport</b> command:</p>
+
+<table border="1" width="100%" bordercolor="#FFFFFF">
+  <tr>
+    <td width="14%">&nbsp;</td>
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;;Draw to top left corner of the screen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>CameraViewport camera,0,0,GraphicsWidth()/2,GraphicsHeight()/2</b><br><br>
+
+    </td>
+    <td width="14%">&nbsp;</td>
+  </tr>
+</table>
+
+
+<h2><span style="background-color: #6097C9">&nbsp;Camera Range&nbsp;</span></h2>
+
+<p>
+
+Camera range determines how far into the distance a camera can 'see'. You specify 2 values for camera range - a near value and a far value. All rendering is clipped to this range.</p>
+
+<p>
+
+Its a good idea to try and keep the near value as high as possible, while keeping the far value as low as possible. This helps to minimize z-buffer problems like 'jaggies'. By default, the near value for a new camera is 1, and the far value is 1000.</p>
+
+<p>
+
+To change the camera range, use the <b>CameraRange</b> command:</p>
+
+<table border="1" width="100%" bordercolor="#FFFFFF">
+  <tr>
+    <td width="14%">&nbsp;</td>
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;;Sets the near range to 5 and the far range to 5000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>CameraRange camera,5,5000</b><br><br>
+
+    </td>
+    <td width="14%">&nbsp;</td>
+  </tr>
+</table>
+
+<h2><span style="background-color: #6097C9">&nbsp;Camera Zoom&nbsp;</span></h2>
+
+<p>
+
+Changing a cameras zoom allows you to 'zoom-in' or 'zoom-out' of the action in the world. The default zoom value for a new camera is 1. Zoom values greater than 1 will cause a 'zoom-in' effect, while zoom values less than 1 will cause a 'zoom-out'. Zoom values should never be set at 0 or less!</p>
+
+<p>
+
+The <b>CameraZoom</b> command controls camera zoom:</p>
+
+<table border="1" width="100%" bordercolor="#FFFFFF">
+  <tr>
+    <td width="14%">&nbsp;</td>
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;;Zoom-in a bit!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>CameraZoom camera,1.5</b><br><br>
+
+    </td>
+    <td width="14%">&nbsp;</td>
+  </tr>
+</table>
+
+<h2><span style="background-color: #6097C9">&nbsp;Fog Effects&nbsp;</span></h2>
+
+<p>
+
+Blitz3D allows you to setup fog effects independently for each camera. This can be useful for limiting what a certain camera can see. For example, a racing game might use a camera for its rearview mirror. However, you might want to limit what is visible in the rearview mirror in order to keep the game running fast.</p>
+
+<p>To setup a simple fog effect for a camera, you might use something like this:</p>
+
+<table border="1" width="100%" bordercolor="#FFFFFF">
+  <tr>
+    <td width="14%">&nbsp;</td>
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+
+&nbsp;&nbsp;&nbsp; &nbsp;;Sets the color of fog for this camera<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>CameraFogColor camera,0,128,255</b><br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;;Sets the near/far range of fog for this camera<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>CameraFogRange camera,1,1000</b><br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;;Sets the fog mode for this camera.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>CameraFogMode camera,1</b><br><br>
+
+    </td>
+    <td width="14%">&nbsp;</td>
+  </tr>
+</table>
+
+<p>
+
+Often, the fog range and camera range will be the same. However, by increasing the near value of fog, you can control how 'thick' fog appears to be. Smaller fog near values will result in a  thicker fog effect, since the fog will start nearer to the camera.</p>
+
+<p>
+
+Unfortunately, fog is not well supported on all graphics cards. While all cards can perform some kind of fog effect, the quality varies a lot. For this reason, its a good idea to make fog optional in your Blitz3D games.</p>
+
+<p><center>
+Copyright 2001 (c) Paul Gerfen -
+GamecodingUK</center></p>
+</body>
+</html>

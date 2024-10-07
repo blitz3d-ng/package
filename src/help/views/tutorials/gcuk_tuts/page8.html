@@ -1,17 +1,17 @@
-<font face="verdana">
+
 <table border="1" width="100%" bordercolor="#FFFFFF">
   <tr>
-    <td width="61%" bgcolor="#6097C9"><font face="verdana">
-<h1 align="left"><font color="#FFFFFF">&nbsp;Vertexes</font></h1>
+    <td width="61%" bgcolor="#6097C9">
+<h1 align="left">&nbsp;Vertexes</h1>
 <p align="left"><b>&nbsp;Aim</b>: To edit a meshes vertexes in Real-time<br>
 &nbsp;<b>Skill level</b>: Intermediate<br>
-&nbsp;<b>Files Needed</b>: vertex.bb / plane.3ds</font>
+&nbsp;<b>Files Needed</b>: vertex.bb / plane.3ds
       <p>&nbsp;</td>
     <td width="5%">&nbsp;</td>
     <td width="34%">
-      <p align="center"><font face="verdana">
+      <p align="center">
 <img src="10c.jpg" alt="Movement" width="167" height="127" align="right">
-</font>
+
 
 
       </p>
@@ -60,10 +60,10 @@ each vertex to a random selection, before resetting the counter value.</p>
     <td width="14%">&nbsp;</td>
     <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
       &nbsp;
-</font>
 
 
-    <font face="arial">Graphics3D 800,600<br>
+
+    Graphics3D 800,600<br>
     <br>
     &nbsp;&nbsp; SetBuffer BackBuffer()<br>
     <br>
@@ -129,7 +129,7 @@ each vertex to a random selection, before resetting the counter value.</p>
     &nbsp;&nbsp; Flip<br>
     <br>
     &nbsp;&nbsp; Wend<br>
-    &nbsp;&nbsp; End<br><br></font>
+    &nbsp;&nbsp; End<br><br>
 </td>
     <td width="14%">&nbsp;</td>
   </tr>
@@ -145,43 +145,43 @@ are loading is of course called Plane.3ds.</p>
   <tr>
     <td width="100%">
 
-<b><font face="Arial">EntityFX plane,2</font></b></td>
+<b>EntityFX plane,2</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 <p>Now here's a new command we haven't seen before !, this command is really
 more of mode switch than anything else. But setting values we can access the
 entity in different ways. the mode value '2' is to able vertex colouring on the
 whole entity, by default this is turned off.</p>
 <p>Here's those mode settings:</p>
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#FFFF00">
   <tr>
     <td width="100%">
 
-<font face="Arial"><i>1 = Full-Bright<br>
+<i>1 = Full-Bright<br>
 2 = Use Vertex Colours<br>
 4 = Flatshading<br>
-8 = Disable Fog</i></font></td>
+8 = Disable Fog</i></td>
   </tr>
 </table>
-<font face="verdana">
+
 <p>There is another command very similar to EntitiyFX called BRUSHFX. This uses
 the same mode settings, but instead of changing the whole entity will work on a
 single brush. (remember a mesh has surfaces, with brushes applied to them)</p>
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<b><font face="Arial">surface=GetSurface(plane,CountSurfaces(plane))</font></b></td>
+<b>surface=GetSurface(plane,CountSurfaces(plane))</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 <p>
 In order to get at the vertexes we must first unlock them, we do this by
 creating a pointer variable that holds the memory address to the surfaces on the
@@ -191,41 +191,41 @@ Calm down !, we don't have to get our hands dirty calling with lots of nasty mat
 - instead we just use the GETSURFACE command, which likes us to pass firstly the
 mesh name - and secondly the amount of surfaces it has. As you can see I've
 cheated and used the COUNTSURFACES command to do this for me.</p>
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<font face="Arial"><b>VertexColor surface,0,255,0,0<br>
+<b>VertexColor surface,0,255,0,0<br>
 VertexColor surface,1,0,255,0<br>
 VertexColor surface,2,0,0,255<br>
-VertexColor surface,3,255,0,255</b></font>
+VertexColor surface,3,255,0,255</b>
     </td>
   </tr>
 </table>
-<font face="verdana">
+
 <p>Before going into the main loop, I've set the colour of each vertex to a
 different colour. This gives us a nice rainbow effect !. As you can see we pass
 the pointer variable SURFACE to the VERTEXCOLOR command, as well as the vertex
 number (0-3, since our object only has 4 points) - followed by the colour values
 for the Red, Green and Blue shades. (must be in the range of 0 (Dark) through to
 255 (Light))</p>
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<font face="Arial"><b>xx#=VertexX(surface,0)<br>
+<b>xx#=VertexX(surface,0)<br>
 yy#=VertexY(surface,0)<br>
-zz#=VertexZ(surface,0)</b></font>
+zz#=VertexZ(surface,0)</b>
     </td>
   </tr>
 </table>
-<font face="verdana">
+
 <p>Since I want the coordinates of the mesh to change all the time, I cant set
 it with a value that doesn't change. Every update I've got to get the current
 coordinates and slightly update them (by adding an offset to the X and Y coords).</p>
@@ -241,7 +241,7 @@ vertex 99 !!!.</p>
   <tr>
     <td width="100%">
 
-<font face="Arial"><b>VertexCoords surface,0,xx+x1,yy+y1,zz</b></font>
+<b>VertexCoords surface,0,xx+x1,yy+y1,zz</b>
     </td>
   </tr>
 </table>
@@ -261,7 +261,6 @@ fender.. or crack that window.</p>
 <p>
 Just like a certain other car game currently in the charts, they use exactly the
 same method. You gotta hand it to B3D - You want it.. it's there, now go and use it wisely !.</p>
-<p align="center"><font color="#808080"><b>More Tutorials to follow..</b><br>
+<p align="center"><b>More Tutorials to follow..</b><br>
 Tutorials written by Paul Gerfen<br>
 (c) 2001GameCodingUK
-</font>

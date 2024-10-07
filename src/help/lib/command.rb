@@ -94,6 +94,8 @@ module Blitz3D
 
           example_source = File.open(path).read
           example_link.parent.after("\n<code><pre>\n#{example_source}</pre></code>")
+
+          Highlighter.run self
         end
       end
 

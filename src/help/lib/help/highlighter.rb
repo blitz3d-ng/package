@@ -1,0 +1,194 @@
+module Highlighter
+  def run(html)
+    formatter = Rouge::Formatters::HTML.new
+    lexer = Highlighter::Lexer.new
+
+    html.css('code pre').each do |block|
+      block.children = formatter.format(lexer.lex(block.text))
+    end
+  end
+
+  def css
+    Highlighter::Theme.render(scope: 'code pre')
+  end
+
+  module_function :run, :css
+
+  class Theme < Rouge::CSSTheme
+    name 'blitzbasic'
+
+    palette :bright_green   => '#a6e22e'
+    palette :bright_pink    => '#f92672'
+    palette :carmine        => '#960050'
+    palette :dark_grey      => '#888888'
+    palette :dark_red       => '#aa0000'
+    palette :dimgreen       => '#324932'
+    palette :dimred         => '#493131'
+    palette :emperor        => '#555555'
+    palette :grey           => '#999999'
+    palette :light_grey     => '#aaaaaa'
+    palette :soft_cyan      => '#66d9ef'
+    palette :very_dark      => '#1e0010'
+    palette :whitish        => '#eeeeee'
+    palette :white          => '#ffffff'
+
+    palette :yellow         => '#ffee00'
+    palette :green          => '#00ff66'
+    palette :light_blue     => '#aaffff'
+    palette :dark_blue      => '#225588'
+    palette :cyan           => '#33ffdd'
+
+    style Comment,                 :fg => :yellow
+    style Error,                            :fg => :carmine, :bg => :very_dark
+    style Keyword,
+          Keyword::Constant,
+          Keyword::Declaration,
+          Keyword::Pseudo,
+          Keyword::Reserved,
+          Keyword::Type,
+          Name::Function,          :fg => :light_blue
+    style Keyword::Namespace,
+          Operator::Word,
+          Operator,                         :fg => :white
+    style Literal::Number::Float,
+          Literal::Number::Hex,
+          Literal::Number::Integer::Long,
+          Literal::Number::Integer,
+          Literal::Number::Oct,
+          Literal::Number::Bin,
+          Literal::Number,
+          Literal::String::Escape,          :fg => :cyan
+    style Literal::String::Affix,           :fg => :soft_cyan
+    style Literal::String::Backtick,
+          Literal::String::Char,
+          Literal::String::Doc,
+          Literal::String::Double,
+          Literal::String::Heredoc,
+          Literal::String::Interpol,
+          Literal::String::Other,
+          Literal::String::Regex,
+          Literal::String::Single,
+          Literal::String::Symbol,
+          Literal::String,                  :fg => :green
+    style Name::Attribute,                  :fg => :bright_green
+    style Name::Class,
+          Name::Decorator,
+          Name::Exception,                  :fg => :bright_green
+    style Name::Constant,                   :fg => :soft_cyan
+    style Name::Builtin::Pseudo,
+          Name::Entity,
+          Name::Namespace,
+          Name::Variable::Class,
+          Name::Variable::Global,
+          Name::Variable::Instance,
+          Name::Variable,
+          Text::Whitespace,                 :fg => :whitish
+    style Name::Label,                      :fg => :whitish, :bold => true
+    style Name::Tag,                        :fg => :bright_pink
+    style Text,                             :fg => :whitish, :bg => :dark_blue
+  end
+
+  class Lexer < Rouge::RegexLexer
+    title "BlitzBasic"
+    desc "BlitzBasic syntax"
+    tag 'blitzbasic'
+    filenames '*,bb'
+
+    def self.punctuation
+      @punctuation ||= %w(
+        [,;'~] SPC TAB
+      )
+    end
+
+    def self.function
+      @function ||= begin
+        commands = Blitz3D::Module.all.map(&:commands).flatten.map(&:name)
+
+        %w(
+          Local Global Const Dim
+        ) + commands
+      end
+    end
+
+    def self.statement
+      @statement ||= %w(
+        BEATS BPUT# CALL CASE CHAIN CLEAR CLG CLOSE# CLS COLOR DATA
+        ELSE ENDIF Wend END FOR GOSUB GOTO
+        IF NEXT ORIGIN
+        PLOT PRINT# PRINT READ REPEAT RETURN
+        STEP STOP THEN TO UNTIL WAIT
+        WHEN WHILE
+      )
+    end
+
+    def self.operator
+      @operator ||= %w(
+        << <= <> < >= >>> >> > [-!$()*+/=?^|] AND DIV EOR MOD NOT OR
+      )
+    end
+
+    def self.constant
+      @constant ||= %w(
+        FALSE TRUE
+      )
+    end
+
+    state :expression do
+      rule %r/#{Lexer.function.join('|')}/io, Name::Function  # function or pseudo-variable
+      rule %r/#{Lexer.operator.join('|')}/io, Operator
+      rule %r/#{Lexer.constant.join('|')}/io, Name::Constant
+      rule %r/"[^"]*"/o, Literal::String
+      rule %r/[a-z_][\w]*[$%#]?/io, Name::Variable
+      rule %r/[\d.]+/io, Literal::Number
+      rule %r/%[01]+/io, Literal::Number::Bin
+      rule %r/\$[\h]+/io, Literal::Number::Hex
+    end
+
+    state :root do
+      rule %r/(:+)( *)(\*)(.*)/ do
+        groups Punctuation, Text, Keyword, Text # CLI command
+      end
+      rule %r/(\n+ *)(\*)(.*)/ do
+        groups Text, Keyword, Text # CLI command
+      end
+      rule %r/(ELSE|REPEAT|THEN)( *)(\*)(.*)/ do
+        groups Keyword, Text, Keyword, Text # CLI command
+      end
+      rule %r/[ \n]+/o, Text
+      rule %r/:+/o, Punctuation
+      rule %r/[\[]/o, Keyword, :assembly1
+      rule %r/;.*/o, Comment
+      rule %r/(?:#{Lexer.statement.join('|')})/io, Keyword
+      mixin :expression
+      rule %r/#{Lexer.punctuation.join('|')}/o, Punctuation
+    end
+
+    # Assembly statements are parsed as
+    # {label} {directive|opcode |']' {expressions}} {comment}
+    # Technically, you don't need whitespace between opcodes and arguments,
+    # but this is rare in uncrunched source and trying to enumerate all
+    # possible opcodes here is impractical so we colour it as though
+    # the whitespace is required. Opcodes and directives can only easily be
+    # distinguished from the symbols that make up expressions by looking at
+    # their position within the statement. Similarly, ']' is treated as a
+    # keyword at the start of a statement or as punctuation elsewhere. This
+    # requires a two-state state machine.
+
+    state :assembly1 do
+      rule %r/ +/o, Text
+      rule %r/]/o, Keyword, :pop!
+      rule %r/[:\n]/o, Punctuation
+      rule %r/\.[a-z_`][\w`]*%? */io, Name::Label
+      rule %r/(?:REM|;)[^:\n]*/o, Comment
+      rule %r/[^ :\n]+/o, Keyword, :assembly2
+    end
+
+    state :assembly2 do
+      rule %r/ +/o, Text
+      rule %r/[:\n]/o, Punctuation, :pop!
+      rule %r/(?:REM|;)[^:\n]*/o, Comment, :pop!
+      mixin :expression
+      rule %r/[!#,@\[\]^{}]/, Punctuation
+    end
+  end
+end

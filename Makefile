@@ -19,7 +19,7 @@ endif
 IOS_VERSION:=15.4
 IOS_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/ios.toolchain.cmake -DENABLE_BITCODE=OFF -DDEPLOYMENT_TARGET=$(IOS_VERSION)
 
-ANDROID_PLATFORM:=30
+ANDROID_PLATFORM:=31
 
 ifeq ($(PLATFORM), ios)
 ARCH=arm64
@@ -127,6 +127,7 @@ clean:
 	rm -rf _release/help/assets
 	rm -rf _release/help/language
 	rm -rf _release/help/reference
+	rm -rf _release/help/tutorials
 	rm -f _release/help/*.html
 	rm -rf _release/*.exe
 	rm -rf _release/*.app

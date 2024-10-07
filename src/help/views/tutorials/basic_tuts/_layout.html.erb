@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title || 'Basic Tutorial' %></title>
+  <link rel="stylesheet" href="<%= relative_to_root %>/../assets/style.css" type="text/css" />
+</head>
+<body>
+  <nav>
+    <h1>Basic Tutorial</h1>
+    <a href="<%= relative_to_root %>/../index.html">
+      <img src="<%= relative_to_root %>/../b3dlogo.jpg" />
+    </a>
+  </nav>
+  <main>
+    <div class="sidebar">
+      <ul>
+        <li><a href="./index.html">Introduction</a></li>
+        <li><a href="./basic.html">Blitz Tutorial</a></li>
+        <li><a href="./gettingstarted.html">Getting Started</a></li>
+        <li><a href="./examples.html">Example Code</a></li>
+        <li><a href="./game.html">Written a Game?</a></li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <%= yield %>
+    </div>
+  </main>
+</body>
+</html>

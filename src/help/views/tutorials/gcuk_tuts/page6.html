@@ -1,17 +1,17 @@
-<font face="verdana">
+
 <table border="1" width="100%" bordercolor="#FFFFFF">
   <tr>
-    <td width="61%" bgcolor="#6097C9"><font face="verdana">
-<h1 align="left"><font color="#FFFFFF">&nbsp;Lighting</font></h1>
+    <td width="61%" bgcolor="#6097C9">
+<h1 align="left">&nbsp;Lighting</h1>
 <p align="left"><b>&nbsp;Aim</b>: Lighting a scene<br>
 &nbsp;<b>Skill level</b>: Intermediate<br>
-&nbsp;<b>Files Needed</b>: lights.bb</font>
+&nbsp;<b>Files Needed</b>: lights.bb
       <p>&nbsp;</td>
     <td width="5%">&nbsp;</td>
     <td width="34%">
-      <p align="right"><font face="verdana">
+      <p align="right">
 <img src="4c.jpg" alt="Lighting" width="166" height="127">
-</font>
+
 
 
       </p>
@@ -33,7 +33,7 @@ on top of the camera, pointing at whatever we can see.</p>
 <table border="1" width="86%" bordercolor="#FFFFFF">
   <tr>
     <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br><font face="arial">
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
       &nbsp; Graphics3D 800,600<br>
       <br>
       &nbsp; SetBuffer BackBuffer()<br>
@@ -65,7 +65,7 @@ on top of the camera, pointing at whatever we can see.</p>
 	  &nbsp; LightRange light2,8<br>
 	  &nbsp; PointEntity light2,cube2<br>
 	  <br>
-	  
+
 	  &nbsp; ;cube 3<br>
 	  &nbsp; cube3=CopyEntity(cube)<br>
 	  &nbsp; PositionEntity cube3,5,0,8<br>
@@ -77,26 +77,26 @@ on top of the camera, pointing at whatever we can see.</p>
 	  &nbsp; LightRange light3,8<br>
 	  &nbsp; PointEntity light3,cube3<br>
 	  <br>
-	  
+
       &nbsp; While Not KeyHit(1)<br>
       <br>
-	  &nbsp; TurnEntity cube,0.1,0.2,0.3<br>      
-      
+	  &nbsp; TurnEntity cube,0.1,0.2,0.3<br>
+
 	  &nbsp; TurnEntity cube2,0.3,0.2,0.1<br>
-	  
+
 	  &nbsp; TurnEntity cube3,0.3,0.2,0.1<br>
 	  <br>
       &nbsp; UpdateWorld<br>
       &nbsp; RenderWorld<br>
       <br>
-      &nbsp; Text 3</font></font><font face="arial">1</font><font face="arial"><font face="verdana">0,500,&quot;</font>Coloured
-    Lighting</font><font face="verdana"><font face="arial"> Demo&quot;<br>
+      &nbsp; Text 310,500,&quot;Coloured
+    Lighting Demo&quot;<br>
       <br>
       &nbsp; Flip<br>
       <br>
       &nbsp; Wend<br>
       &nbsp; End<br><br>
-      </font></font></td>
+      </td>
     <td width="14%">&nbsp;</td>
   </tr>
 </table>
@@ -111,10 +111,10 @@ Remember that torch I spoke about, well the first new command we will learn is s
   <tr>
     <td width="100%">
 
-<b><font face="Arial">AmbientLight 0,0,0</font></b></td>
+<b>AmbientLight 0,0,0</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 
 <p>
 
@@ -122,119 +122,119 @@ This sets the light to black, so that any additional lights we use will show up 
 
 By changing these values we can just about get any colour we want, such as setting them all to 255 will result in the colour white. It's usually easier to work out the values you will need from a paint program such as Paintshop Pro.</p>
 
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<b><font face="Arial">light=CreateLight(3)</font></b></td>
+<b>light=CreateLight(3)</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 
 <p>
 
 B3D at present lets us use three different types of lighting. As with the ANMATE
 instruction these are selected with flags, these are:</p>
 
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#FFFF00">
   <tr>
     <td width="100%">
 
-<font face="Arial"><i>1: AREALIGHT - Which will light the whole surrounding area around it.<br>
+<i>1: AREALIGHT - Which will light the whole surrounding area around it.<br>
 
 2: POINTLIGHT - A directional light that can light a specific area<br>
 
 3: SPOTLIGHT - Very similar to POINT, but can give off more light on a subject area than using
-POINTLIGHT.</i></font></td>
+POINTLIGHT.</i></td>
   </tr>
 </table>
-<font face="verdana">
+
 
 <p>
 
 For this demo I chose to use SPOTLIGHT.</p>
 
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<b><font face="Arial">LightColor light,100,20,30</font></b></td>
+<b>LightColor light,100,20,30</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 
 <p>
 
 Same as the AMBIENTLIGHT instruction, this command lets us select the colour of the light. Here I've set it up so that RED=100, GREEN=20 and BLUE=30 - which gives us a nice reddish glow.</p>
 
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<b><font face="Arial">LightConeAngles light,0,45</font></b></td>
+<b>LightConeAngles light,0,45</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 
 <p>
 
 We use this instruction to control the angle of light that comes from our spotlight. In this case I've set it up to 45 degrees, In-other-words.. The light has a radius of 45 degrees, any part of the object that is outside of this will not be lit.</p>
 
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<b><font face="Arial">PositionEntity light,0,0,0.5</font></b></td>
+<b>PositionEntity light,0,0,0.5</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 
 <p>
 
 We move the light into position.</p>
 
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<b><font face="Arial">LightRange light,8</font></b></td>
+<b>LightRange light,8</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 
 <p>
 
 This controls the distance of the light, I set it at 8 units.. If I wanted the light to shine further into the distance then I would increase this value.</p>
 
-</font>
+
 
 
 <table border="0" width="100%" bgcolor="#6097C9">
   <tr>
     <td width="100%">
 
-<b><font face="Arial">PointEntity light,cube</font></b></td>
+<b>PointEntity light,cube</b></td>
   </tr>
 </table>
-<font face="verdana">
+
 
 <p>
 This command will point the light at our cube object. No matter where are light is
@@ -252,4 +252,4 @@ would equal Unreal !. But then this is a subject for another tutorial...</p>
 
 <p align="center">
 
-<center><font color="#808080">Tutorial 6 - </font><font color="#808080"><a href="page7.html">Collisions</a></font></font></center>
+<center>Tutorial 6 - <a href="page7.html">Collisions</a></center>

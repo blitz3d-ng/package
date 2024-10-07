@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title || 'Welcome to Blitz3D' %></title>
+  <link rel="stylesheet" href="<%= relative_to_root %>/../assets/style.css" type="text/css" />
+</head>
+<body>
+  <nav>
+    <h1>3D Tutorial</h1>
+    <a href="<%= relative_to_root %>/../index.html">
+      <img src="<%= relative_to_root %>/../b3dlogo.jpg" />
+    </a>
+  </nav>
+  <main>
+    <div class="sidebar">
+      <ul>
+        <li><a href="./index.html">Introduction</a>
+        <li><a href="./page1.html">Setting Up</a>
+        <li><a href="./page2.html">Movement &amp; Rotation</a>
+        <li><a href="./page3.html">Camera Movement</a>
+        <li><a href="./page4.html">Object Animation</a>
+        <li><a href="./page5.html">Texturing</a>
+        <li><a href="./page6.html">Lighting</a>
+        <li><a href="./page7.html">Collision Detection</a>
+        <li><a href="./page8.html">Vertices</a>
+      </ul>
+
+      <p class="author">
+        <strong>By Paul Gerfen</strong><br/>
+        &copy; 2001 Paul Gerfen<br/>
+        <a href="http://www.gamecoding.co.uk">http://www.gamecoding.co.uk</a>
+      </p>
+    </div>
+
+    <div class="content">
+      <%= yield %>
+    </div>
+  </main>
+</body>
+</html>

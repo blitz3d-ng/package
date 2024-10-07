@@ -11,12 +11,13 @@ module Blitz3D
         FileUtils.rm_r "#{outdir}/assets" if Dir.exist?("#{outdir}/assets")
         FileUtils.mkdir_p "#{outdir}/assets"
 
-        File.write("#{outdir}/assets/style.css", Sass.compile(File.expand_path('../../assets/style.scss', __dir__), style: :compressed).css)
+        File.write("#{outdir}/assets/style.css", Sass.compile_string(File.read(File.expand_path('../../assets/style.scss', __dir__)) + "\n" + Highlighter.css, style: :compressed).css)
         File.write("#{outdir}/assets/reference.js", Terser.compile(File.read(File.expand_path('../../assets/reference.js', __dir__)), compress: true))
 
         Blitz3D::Help::Index.new.generate("#{outdir}/index.html")
         Blitz3D::Help::Credits.new.generate("#{outdir}/credits.html")
         Blitz3D::Help::Language.new.generate("#{outdir}/language")
+        Blitz3D::Help::Tutorials.new.generate("#{outdir}/tutorials")
         Blitz3D::Help::Reference::Index.new.generate
         Blitz3D::Help::Reference::ScanCodes.new.generate
         Blitz3D::Help::Reference::Ascii.new.generate

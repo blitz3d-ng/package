@@ -8,6 +8,10 @@ html, body {
 $bgcolor: #006060;
 $txcolor: #ffffff;
 
+$divider-color: color.adjust($bgcolor, $lightness: -2%);
+
+$code-bg: #225588;
+
 * {
   box-sizing: border-box;
   line-height: 1.5;
@@ -36,6 +40,12 @@ h1 {
 
 h2 {
   font-size: 1em;
+}
+
+hr {
+    border: solid 1px $divider-color;
+    margin: 1em 0;
+    box-sizing: border-box;
 }
 
 a {
@@ -112,24 +122,35 @@ main {
     overflow: scroll;
 
     padding: 0 32px 0 16px;
-    border-right: 2px solid color.adjust($bgcolor, $lightness: -2%);
+    border-right: 2px solid $divider-color;
+
+    display: flex;
+    flex-direction: column;
+    ul {
+      flex: 1;
+    }
+
+    .author {
+        text-align: center;
+    }
   }
 
   .content {
     flex-grow: 1;
     overflow: scroll;
     padding: 0 32px 16px 32px;
-    border-left: 2px solid color.adjust($bgcolor, $lightness: -2%);
+    border-left: 2px solid $divider-color;
   }
 }
 
 // TODO: make prettier
 @mixin code {
-  background-color: #ddd;
-  color: #000;
+  background-color: $code-bg;
+  color: #eeeeee;
   text-shadow: none;
   border: 1px solid #000;
   border-radius: 3px;
+  font-family: monospace;
 }
 
 kbd {

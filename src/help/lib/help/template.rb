@@ -1,6 +1,8 @@
 class Template
   def render(temp)
-    compress(ERB.new(temp).result(binding))
+    html = Nokogiri::HTML(ERB.new(temp).result(binding))
+    Highlighter.run html
+    compress(html.to_html)
   rescue SyntaxError => e
     throw StandardError.new(e)
   end
