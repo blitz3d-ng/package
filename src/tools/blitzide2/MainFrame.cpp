@@ -357,6 +357,7 @@ void MainFrame::OnOpen( wxCommandEvent& event ){
 void MainFrame::OnAddFile( wxCommandEvent& event ){
   auto path = event.GetString();
   AddFile( path );
+  nb->SetSelection( nb->GetPageCount() - 1 );
 }
 
 void MainFrame::OnSave( wxCommandEvent& WXUNUSED(event) ){

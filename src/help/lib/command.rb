@@ -71,7 +71,7 @@ module Blitz3D
       end
 
       def example_path
-        return false if example_link.nil?
+        return nil if example_link.nil?
 
         example_path = File.join(command.mod.path, 'docs', example_href)
         example_path && File.exist?(example_path) && example_path
@@ -88,7 +88,7 @@ module Blitz3D
       def example_link=(path)
         if path.present?
           if example_link.nil?
-            doc = Nokogiri::XML("<h2><a href=\"#{example_path}\">Example</a></h2>")
+            doc = Nokogiri::XML("<h2><a href=\"examples/#{File.basename(path)}\">Example</a></h2>")
             xpath('//body').children.last.after(doc.root)
           end
 

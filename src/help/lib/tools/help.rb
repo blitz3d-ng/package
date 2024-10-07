@@ -22,8 +22,12 @@ module Blitz3D
         Blitz3D::Help::Reference::ScanCodes.new.generate
         Blitz3D::Help::Reference::Ascii.new.generate
 
+
         puts "Writing command index to #{'index.json'.bold}..."
         index = { modules: [], commands: [] }
+
+        examples_dir = "#{outdir}/reference/examples"
+        FileUtils.mkdir_p examples_dir
 
         modules.each do |mod|
           puts "Found #{mod.name.bold}. #{mod.commands.size} commands."
@@ -35,6 +39,10 @@ module Blitz3D
           }
 
           mod.commands.each do |command|
+            if !command.example_path.nil?
+              FileUtils.cp command.example_path, examples_dir
+            end
+
             index[:commands] << {
               name: command.name,
               module: mod.name,
