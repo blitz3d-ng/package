@@ -45,7 +45,6 @@ h2 {
 hr {
     border: solid 1px $divider-color;
     margin: 1em 0;
-    box-sizing: border-box;
 }
 
 a {
@@ -101,6 +100,8 @@ nav {
   display: flex;
   flex-direction: row;
 
+  border-bottom: 4px solid $divider-color;
+
   h1 {
     font-size: 12pt;
     flex: 1;
@@ -112,8 +113,9 @@ nav {
 }
 
 main {
+  height: 100%;
   display: flex;
-    overflow: scroll;
+  overflow: scroll;
 
   $sidebar-width: 280px;
   .sidebar {
@@ -162,6 +164,8 @@ code {
   @include code;
   display: block;
   padding: 0.5em;
+
+  font-size: 1rem;
 
   pre {
     padding: 0;

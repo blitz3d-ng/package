@@ -13,18 +13,11 @@
 
 <h2 id="first">My First Program</h2>
 
-<p>After sampling some of the fine
-example programs included in the BlitzBasic package you are
-hopefully itching to try some of your own code.</p>
+<p>After sampling some of the fine example programs included in the BlitzBasic package you are hopefully itching to try some of your own code.</p>
 
-<p>BlitzBasic is intended as both a
-friendly introduction to programming computers as well as a
-language capable of producing polished video game software.</p>
+<p>BlitzBasic is intended as both a friendly introduction to programming computers as well as a language capable of producing polished video game software.</p>
 
-<p>First up, the traditonal hello
-world program. A simple one line program that prints the message
-&quot;hello world&quot; on the screen. Select the File-New menu
-option and enter the following text:</p>
+<p>First up, the traditonal hello world program. A simple one line program that prints the message &quot;hello world&quot; on the screen. Select the File-New menu option and enter the following text:</p>
 
 <code>
 <pre>
@@ -33,12 +26,9 @@ Print "Hello World!"
 </code>
 
 
-<p>If you press the F5 key to compile
-and run and a message greeting the world appears then congratulations! You have just authored your first
-BlitzBasic program.</p>
+<p>If you press the F5 key to compile and run and a message greeting the world appears then congratulations! You have just authored your first BlitzBasic program.</p>
 
-<p>The following code illustrates
-prompting the user of your program for some input.</p>
+<p>The following code illustrates prompting the user of your program for some input.</p>
 
 <code>
 <pre>
@@ -336,35 +326,22 @@ up, right, down and left respectively.</p>
 <pre>
 Function UpdatePlayer()
     ; steer player
-
     If KeyDown(200) Or JoyY()&lt;-0.5 dir=0
-
     If KeyDown(205) Or JoyX()>0.5 dir=1
-
     If KeyDown(208) Or JoyY()>0.5 dir=2
-
     If KeyDown(203) Or JoyX()&lt;-0.5 dir=3
 
     ; move player
-
     Select dir
-
     Case 0 y=y-speed
-
     Case 1 x=x+speed
-
     Case 2 y=y+speed
-
     Case 3 x=x-speed
-
     End Select
 
     ; draw player
-
     Color 255,255,255
-
     Rect x,y,10,10
-
 End Function
 </pre>
 </code>
@@ -378,354 +355,103 @@ End Function
 <p>Place the following Type
 declarations at the top of the program.</p>
 
-<div align="center"><center>
+<code>
+<pre>
+Type food
+    Field x,y
+End Type
 
-<table border="2" cellpadding="8" width="600" bgcolor="#006060">
-    <tr>
-        <td>Type <font
-        color="#FFFFFF" size="2" face="blitz">food<blockquote>
-            <p>Field <font
-            color="#FFFFFF" size="2" face="blitz">x<font
-            color="#FFF0C8" size="2" face="blitz">,<font
-            color="#FFFFFF" size="2" face="blitz">y</p>
-        </blockquote>
-        <p>End Type</p>
-        <p>Type <font
-        color="#FFFFFF" size="2" face="blitz">rock</p>
-        <blockquote>
-            <p>Field <font
-            color="#FFFFFF" size="2" face="blitz">x<font
-            color="#FFF0C8" size="2" face="blitz">,<font
-            color="#FFFFFF" size="2" face="blitz">y</p>
-        </blockquote>
-        <p>End Type</p>
-        </td>
-    </tr>
-</table>
-</center></div>
+Type rock
+    Field x,y
+End Type
+</pre>
+</code>
 
-<p>The following code then needs to be
-added to the InitGame() function, insert it after the line that
-reads status=1.</p>
+<p>The following code then needs to be added to the InitGame() function, insert it after the line that reads status=1.</p>
 
-<p>This code creates 20 rocks that
-will kill the player and 20 food that will speed the player up.
-The New command creates a new object and also adds it to a list.
-We set the position of each rock and food by setting the x and y
-fields of each new object created using the backslash \ character
-to denote which field.</p>
-<div align="center"><center>
+<p>This code creates 20 rocks that will kill the player and 20 food that will speed the player up. The New command creates a new object and also adds it to a list. We set the position of each rock and food by setting the x and y fields of each new object created using the backslash \ character to denote which field.</p>
 
-<table border="2" cellpadding="8" width="600" bgcolor="#006060">
-    <tr>
-        <td>For <font
-        color="#FFFFFF" size="2" face="blitz">i<font
-        color="#FFF0C8" size="2" face="blitz">=<font
-        color="#C8F0FF" size="2" face="blitz">0 <font
-        color="#FFE75F" size="2" face="blitz">To <font
-        color="#C8F0FF" size="2" face="blitz">20 <blockquote>
-            <p>r<font
-            color="#FFF0C8" size="2" face="blitz">.<font
-            color="#FFFFFF" size="2" face="blitz">rock<font
-            color="#FFF0C8" size="2" face="blitz">=<font
-            color="#FFE75F" size="2" face="blitz">New <font
-            color="#FFFFFF" size="2" face="blitz">rock</p>
-            <p>r<font
-            color="#FFF0C8" size="2" face="blitz">\<font
-            color="#FFFFFF" size="2" face="blitz">x<font
-            color="#FFF0C8" size="2" face="blitz">=<font
-            color="#FFE75F" size="2" face="blitz">Rnd<font
-            color="#FFF0C8" size="2" face="blitz">(<font
-            color="#C8F0FF" size="2" face="blitz">640<font
-            color="#FFF0C8" size="2" face="blitz">)</p>
-            <p>r<font
-            color="#FFF0C8" size="2" face="blitz">\<font
-            color="#FFFFFF" size="2" face="blitz">y<font
-            color="#FFF0C8" size="2" face="blitz">=<font
-            color="#FFE75F" size="2" face="blitz">Rnd<font
-            color="#FFF0C8" size="2" face="blitz">(<font
-            color="#C8F0FF" size="2" face="blitz">480<font
-            color="#FFF0C8" size="2" face="blitz">)</p>
-        </blockquote>
-        <p>Next</p>
-        <p>For <font
-        color="#FFFFFF" size="2" face="blitz">i<font
-        color="#FFF0C8" size="2" face="blitz">=<font
-        color="#C8F0FF" size="2" face="blitz">0 <font
-        color="#FFE75F" size="2" face="blitz">To <font
-        color="#C8F0FF" size="2" face="blitz">20 </p>
-        <blockquote>
-            <p>f<font
-            color="#FFF0C8" size="2" face="blitz">.<font
-            color="#FFFFFF" size="2" face="blitz">food<font
-            color="#FFF0C8" size="2" face="blitz">=<font
-            color="#FFE75F" size="2" face="blitz">New <font
-            color="#FFFFFF" size="2" face="blitz">food</p>
-            <p>f<font
-            color="#FFF0C8" size="2" face="blitz">\<font
-            color="#FFFFFF" size="2" face="blitz">x<font
-            color="#FFF0C8" size="2" face="blitz">=<font
-            color="#FFE75F" size="2" face="blitz">Rnd<font
-            color="#FFF0C8" size="2" face="blitz">(<font
-            color="#C8F0FF" size="2" face="blitz">640<font
-            color="#FFF0C8" size="2" face="blitz">)</p>
-            <p>f<font
-            color="#FFF0C8" size="2" face="blitz">\<font
-            color="#FFFFFF" size="2" face="blitz">y<font
-            color="#FFF0C8" size="2" face="blitz">=<font
-            color="#FFE75F" size="2" face="blitz">Rnd<font
-            color="#FFF0C8" size="2" face="blitz">(<font
-            color="#C8F0FF" size="2" face="blitz">480<font
-            color="#FFF0C8" size="2" face="blitz">)</p>
-        </blockquote>
-        <p>Next</p>
-        </td>
-    </tr>
-</table>
-</center></div>
+<code>
+<pre>
+For i=0 To 20
+    r.rock=New rock
+    r\x=Rnd(640)
+    r\y=Rnd(480)
+Next
 
-<p>We now need a function that draws
-all the food and rocks each frame and checks if the player has
-collided with any.</p>
+For i=0 To 20
+    f.food=New food
+    f\x=Rnd(640)
+    f\y=Rnd(480)
+Next
+</pre>
+</code>
 
-<p>Note how we can loop through each
-food and rock element that exist using the For..Each command pair.
-This is another great feature of BlitzBasic that keeps programs
-simple and easy to read.</p>
+<p>We now need a function that draws all the food and rocks each frame and checks if the player has collided with any.</p>
 
-<p>We use the RectsOverlap command to
-check of the players position (x,y) collides with each food or
-rock element (f \ x , f \ y) or (r \ x , r \ y). If the player
-collides with some food we delete that piece of food and increase
-the player's speed. If the player collides with a rock we end the
-game by resetting the status variable.</p>
-<div align="center"><center>
+<p>Note how we can loop through each food and rock element that exist using the For..Each command pair. This is another great feature of BlitzBasic that keeps programs simple and easy to read.</p>
 
-<table border="2" cellpadding="8" width="600" bgcolor="#006060">
-    <tr>
-        <td>Function <font
-        color="#FFFFFF" size="2" face="blitz">UpdateRocksandFood<font
-        color="#FFF0C8" size="2" face="blitz">()<blockquote>
-            <p>; draw
-            food and check if eaten</p>
-            <p>Color <font
-            color="#C8F0FF" size="2" face="blitz">0<font
-            color="#FFF0C8" size="2" face="blitz">,<font
-            color="#C8F0FF" size="2" face="blitz">255<font
-            color="#FFF0C8" size="2" face="blitz">,<font
-            color="#C8F0FF" size="2" face="blitz">0</p>
-            <p>For <font
-            color="#FFFFFF" size="2" face="blitz">f<font
-            color="#FFF0C8" size="2" face="blitz">.<font
-            color="#FFFFFF" size="2" face="blitz">food<font
-            color="#FFF0C8" size="2" face="blitz">=<font
-            color="#FFE75F" size="2" face="blitz">Each <font
-            color="#FFFFFF" size="2" face="blitz">food </p>
-            <blockquote>
-                <p>Rect
-                <font color="#FFFFFF" size="2"
-                face="blitz">f<font color="#FFF0C8"
-                size="2" face="blitz">\<font
-                color="#FFFFFF" size="2" face="blitz">x<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#FFFFFF" size="2" face="blitz">f<font
-                color="#FFF0C8" size="2" face="blitz">\<font
-                color="#FFFFFF" size="2" face="blitz">y<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10</p>
-                <p>If
-                RectsOverlap<font color="#FFF0C8" size="2"
-                face="blitz">(<font color="#FFFFFF"
-                size="2" face="blitz">x<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#FFFFFF" size="2" face="blitz">y<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#FFFFFF" size="2" face="blitz">f<font
-                color="#FFF0C8" size="2" face="blitz">\<font
-                color="#FFFFFF" size="2" face="blitz">x<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#FFFFFF" size="2" face="blitz">f<font
-                color="#FFF0C8" size="2" face="blitz">\<font
-                color="#FFFFFF" size="2" face="blitz">y<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">)</p>
-                <blockquote>
-                    <p><font color="#FFFFFF" size="2"
-                    face="blitz">speed<font
-                    color="#FFF0C8" size="2" face="blitz">=<font
-                    color="#FFFFFF" size="2" face="blitz">speed<font
-                    color="#FFF0C8" size="2" face="blitz">+<font
-                    color="#C8F0FF" size="2" face="blitz">0<font
-                    color="#FFF0C8" size="2" face="blitz">.<font
-                    color="#C8F0FF" size="2" face="blitz">2</p>
-                    <p><font color="#FFE75F" size="2"
-                    face="blitz">Delete <font
-                    color="#FFFFFF" size="2" face="blitz">f</p>
-                </blockquote>
-                <p>EndIf
-                </p>
-            </blockquote>
-            <p>Next</p>
-            <p>; draw
-            rocks and check for roadkill</p>
-            <p>Color <font
-            color="#C8F0FF" size="2" face="blitz">255<font
-            color="#FFF0C8" size="2" face="blitz">,<font
-            color="#C8F0FF" size="2" face="blitz">0<font
-            color="#FFF0C8" size="2" face="blitz">,<font
-            color="#C8F0FF" size="2" face="blitz">255</p>
-            <p>For <font
-            color="#FFFFFF" size="2" face="blitz">r<font
-            color="#FFF0C8" size="2" face="blitz">.<font
-            color="#FFFFFF" size="2" face="blitz">rock<font
-            color="#FFF0C8" size="2" face="blitz">=<font
-            color="#FFE75F" size="2" face="blitz">Each <font
-            color="#FFFFFF" size="2" face="blitz">rock </p>
-            <blockquote>
-                <p>Rect
-                <font color="#FFFFFF" size="2"
-                face="blitz">r<font color="#FFF0C8"
-                size="2" face="blitz">\<font
-                color="#FFFFFF" size="2" face="blitz">x<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#FFFFFF" size="2" face="blitz">r<font
-                color="#FFF0C8" size="2" face="blitz">\<font
-                color="#FFFFFF" size="2" face="blitz">y<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10</p>
-                <p>If
-                RectsOverlap<font color="#FFF0C8" size="2"
-                face="blitz">(<font color="#FFFFFF"
-                size="2" face="blitz">x<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#FFFFFF" size="2" face="blitz">y<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#FFFFFF" size="2" face="blitz">r<font
-                color="#FFF0C8" size="2" face="blitz">\<font
-                color="#FFFFFF" size="2" face="blitz">x<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#FFFFFF" size="2" face="blitz">r<font
-                color="#FFF0C8" size="2" face="blitz">\<font
-                color="#FFFFFF" size="2" face="blitz">y<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">,<font
-                color="#C8F0FF" size="2" face="blitz">10<font
-                color="#FFF0C8" size="2" face="blitz">)</p>
-                <blockquote>
-                    <p><font color="#FFFFFF" size="2"
-                    face="blitz">status<font
-                    color="#FFF0C8" size="2" face="blitz">=<font
-                    color="#C8F0FF" size="2" face="blitz">0</p>
-                </blockquote>
-            </blockquote>
-            <blockquote>
-                <p>EndIf</p>
-            </blockquote>
-            <p>Next</p>
-        </blockquote>
-        <p>End
-        Function</p>
-        </td>
-    </tr>
-</table>
-</center></div>
+<p>We use the RectsOverlap command to check of the players position (x,y) collides with each food or rock element (f \ x , f \ y) or (r \ x , r \ y). If the player collides with some food we delete that piece of food and increase the player's speed. If the player collides with a rock we end the game by resetting the status variable.</p>
+
+<code>
+<pre>
+Function UpdateRocksandFood()
+    ; draw food and check if eaten
+    Color 0,255,0
+
+    For f.food=Each food
+        Rect f\x,f\y,10,10
+
+        If RectsOverlap(x,y,10,10,f\x,f\y,10,10)
+            speed=speed+0.2
+
+            Delete f
+        EndIf
+    Next
+
+    ; draw rocks and check for roadkill
+    Color 255,0,255
+
+    For r.rock=Each rock
+        Rect r\x,r\y,10,10
+
+        If RectsOverlap(x,y,10,10,r\x,r\y,10,10)
+          status=0
+        EndIf
+    Next
+End Function
+</pre>
+</code>
 
 <p>Oops, one last thing, don't forget
 to call the UpdateRocksandFood() function from the main loop,
 just after the UpdatePlayer() call should do nicely.</p>
-<div align="center"><center>
 
-<table border="2" cellpadding="8" width="600" bgcolor="#006060">
-    <tr>
-        <td>UpdateRocksandFood<font
-        color="#FFF0C8" size="2" face="blitz">()</td>
-    </tr>
-</table>
-</center></div>
+<code>
+<pre>
+UpdateRocksandFood()
+</pre>
+</code>
 
-<p>OK, after playing the game, a few
-things should become evident.</p>
+<p>OK, after playing the game, a few things should become evident.</p>
 
-<p>First, the player should die if
-they hit the outer wall. We could do this by checking if their
-position does not collide with the main screen rectangle (0,0,640,480).
-Try adding the following code to the UpdatePlayer function.</p>
-<div align="center"><center>
+<p>First, the player should die if they hit the outer wall. We could do this by checking if their position does not collide with the main screen rectangle (0,0,640,480). Try adding the following code to the UpdatePlayer function.</p>
 
-<table border="2" cellpadding="8" width="600" bgcolor="#006060">
-    <tr>
-        <td>If Not
-        RectsOverlap<font color="#FFF0C8" size="2"
-        face="blitz">(<font color="#FFFFFF" size="2"
-        face="blitz">x<font color="#FFF0C8" size="2"
-        face="blitz">,<font color="#FFFFFF" size="2"
-        face="blitz">y<font color="#FFF0C8" size="2"
-        face="blitz">,<font color="#C8F0FF" size="2"
-        face="blitz">10<font color="#FFF0C8" size="2"
-        face="blitz">,<font color="#C8F0FF" size="2"
-        face="blitz">10<font color="#FFF0C8" size="2"
-        face="blitz">,<font color="#C8F0FF" size="2"
-        face="blitz">0<font color="#FFF0C8" size="2"
-        face="blitz">,<font color="#C8F0FF" size="2"
-        face="blitz">0<font color="#FFF0C8" size="2"
-        face="blitz">,<font color="#C8F0FF" size="2"
-        face="blitz">630<font color="#FFF0C8" size="2"
-        face="blitz">,<font color="#C8F0FF" size="2"
-        face="blitz">470<font color="#FFF0C8" size="2"
-        face="blitz">) <font color="#FFFFFF" size="2"
-        face="blitz">status<font color="#FFF0C8" size="2"
-        face="blitz">=<font color="#C8F0FF" size="2"
-        face="blitz">0</td>
-    </tr>
-</table>
-</center></div>
+<code>
+<pre>
+If Not RectsOverlap(x,y,10,10,0,0,630,470) status=0
+</pre>
+</code>
 
-<p>Secondly, each time the game starts
-more rocks and food appear. This is because we never delete the
-food and rocks remaining from the last game. Insert the following
-code <strong>before</strong> the code that creates the new food
-and rocks in the InitGame() function.</p>
-<div align="center"><center>
+<p>Secondly, each time the game starts more rocks and food appear. This is because we never delete the food and rocks remaining from the last game. Insert the following code <strong>before</strong> the code that creates the new food and rocks in the InitGame() function.</p>
 
-<table border="2" cellpadding="8" width="600" bgcolor="#006060">
-    <tr>
-        <td>For <font
-        color="#FFFFFF" size="2" face="blitz">f<font
-        color="#FFF0C8" size="2" face="blitz">.<font
-        color="#FFFFFF" size="2" face="blitz">food<font
-        color="#FFF0C8" size="2" face="blitz">=<font
-        color="#FFE75F" size="2" face="blitz">Each <font
-        color="#FFFFFF" size="2" face="blitz">food <font
-        color="#FFE75F" size="2" face="blitz">Delete <font
-        color="#FFFFFF" size="2" face="blitz">f <font
-        color="#FFE75F" size="2" face="blitz">Next<p><font
-        color="#FFE75F" size="2" face="blitz">For <font
-        color="#FFFFFF" size="2" face="blitz">r<font
-        color="#FFF0C8" size="2" face="blitz">.<font
-        color="#FFFFFF" size="2" face="blitz">rock<font
-        color="#FFF0C8" size="2" face="blitz">=<font
-        color="#FFE75F" size="2" face="blitz">Each <font
-        color="#FFFFFF" size="2" face="blitz">rock <font
-        color="#FFE75F" size="2" face="blitz">Delete <font
-        color="#FFFFFF" size="2" face="blitz">r <font
-        color="#FFE75F" size="2" face="blitz">Next</p>
-        </td>
-    </tr>
-</table>
-</center></div>
+<code>
+<pre>
+For f.food=Each food
+    Delete f
+Next
+For r.rock=Each rock
+    Delete r
+Next
+</pre>
+</code>

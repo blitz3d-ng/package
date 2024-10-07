@@ -1,24 +1,12 @@
-
-<table border="1" width="100%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="61%" bgcolor="#6097C9">
-<h1 align="left">&nbsp;Texturing</h1>
-<p align="left"><b>&nbsp;Aim</b>: How to texture an object<br>
-&nbsp;<b>Skill level</b>: Intermediate<br>
-&nbsp;<b>Files Needed</b>: texture.bb / blitztexture.bmp
-
-      <p>&nbsp;</td>
-    <td width="5%">&nbsp;</td>
-    <td width="34%">
-      <p align="right">
-<img src="7c.jpg" alt="Texturing" width="166" height="127">
-
-
-
-      </p>
-    </td>
-  </tr>
-</table>
+<h1>Texturing</h1>
+<p>
+    <img src="./assets/7c.jpg" alt="Texturing" width="165" height="128" align="right" />
+    <strong>Aim</strong>: How to texture an object<br/>
+    <strong>Skill level</strong>: Intermediate<br/>
+    <strong>Files Needed</strong>: <a href="./code/texture.bb">texture.bb</a> | <a href="./assets/blitztexture.bmp">blitztexture.bmp</a>
+    <div class="clear"></div>
+</p>
+<hr/>
 
 <p>
 For our objects to look more realistic we really need to texture them, but what is texture mapping ?<br>
@@ -33,71 +21,54 @@ Although B3D has alot of commands to manage multiple textures and special effect
 
 Of course we could save ourselves alot of time by designing our objects and applying the textures to them directly from a 3d modelling program, but that would make this tutorial a waste of time !.<br><br>
 
-So why would we want to apply a texture in realtime ?, well for starters a new texture may be put onto the object at any time. Take a wall, shoot it ! - now for things to look realistic in our 3d world, we would like to have somekind of indication that it was shot. We could do this by loading a texture of a bullet hole directly onto the wall. Every 3d game currently on the market uses texture trickery in some form or another, as your experience grows - so will your imagination !. Why have a flat river, when you could use texturemaps to give the impression of ripples or waves.</p>
+So why would we want to apply a texture in realtime?, well for starters a new texture may be put onto the object at any time. Take a wall, shoot it ! - now for things to look realistic in our 3d world, we would like to have somekind of indication that it was shot. We could do this by loading a texture of a bullet hole directly onto the wall. Every 3d game currently on the market uses texture trickery in some form or another, as your experience grows - so will your imagination !. Why have a flat river, when you could use texturemaps to give the impression of ripples or waves.</p>
 
-<p>B3D has so many lovely features for us to use including the new ANIMATED textures command, we will be using this later on !. (Quake I/II/III used this trick to give us the impression of moving water)</p>
+<p>B3D has so many lovely features for us to use including the new ANIMATED textures command, we will be using this later on! (Quake I/II/III used this trick to give us the impression of moving water)</p>
 
 <p>Let's look at this in practice:</p>
 
-<table border="1" width="86%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
-      &nbsp; Graphics3D 800,600<br>
-      <br>
-      &nbsp; SetBuffer BackBuffer()<br>
-      <br>
-      &nbsp; camera=CreateCamera()<br>
-      &nbsp; CameraViewport camera,0,0,800,600<br>
-      <br>
-      &nbsp; light=CreateLight()<br>
-      <br>
-	  &nbsp; cube=CreateCube()<br>
-	  &nbsp; PositionEntity cube,0,0,5<br>
+<code>
+<pre>
+Graphics3D 800,600
 
+SetBuffer BackBuffer()
 
-	  <br>
-      &nbsp; texture=LoadTexture("blitztexture.bmp")<br>
-      &nbsp; EntityTexture cube,texture<br>
-      <br>
-      &nbsp; While Not KeyHit(1)<br>
-      <br>
-	  &nbsp; TurnEntity cube,0.1,0.2,0.3<br>
-      <br>
-      &nbsp; UpdateWorld<br>
-      &nbsp; RenderWorld<br>
-      <br>
-      &nbsp; Text 340,500,&quot;Texturing Demo&quot;<br>
-      <br>
-      &nbsp; Flip<br>
-      <br>
-      &nbsp; Wend<br>
-      &nbsp; End<br><br>
-      </td>
-    <td width="14%">&nbsp;</td>
-  </tr>
-</table>
-<p>
-As you can see, a texture can make all the difference to a very basic object.</p>
-<p>
-The only 2 lines of code we don't already know are:
-</p>
+camera=CreateCamera()
+CameraViewport camera,0,0,800,600
 
+light=CreateLight()
 
+cube=CreateCube()
+PositionEntity cube,0,0,5
 
+texture=LoadTexture("blitztexture.bmp")
+EntityTexture cube,texture
 
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-<b>
-texture=LoadTexture(&quot;blitztexture.bmp&quot;)<br>
-EntityTexture cube,texture</b>
-    </td>
-  </tr>
-</table>
+While Not KeyHit(1)
+    TurnEntity cube,0.1,0.2,0.3
 
-<p>
-Two nice and friendly commands, the first loads a texturemap into memory - with the pointer variable 'texture' pointing to it.<br><br>
+    UpdateWorld
+    RenderWorld
+
+    Text 340,500,"Texturing Demo"
+
+    Flip
+Wend
+End
+</pre>
+</code>
+
+<p>As you can see, a texture can make all the difference to a very basic object.</p>
+<p>The only 2 lines of code we don't already know are:</p>
+
+<code>
+<pre>
+texture=LoadTexture("blitztexture.bmp")
+EntityTexture cube,texture
+</pre>
+</code>
+
+<p>Two nice and friendly commands, the first loads a texturemap into memory - with the pointer variable 'texture' pointing to it.<br><br>
 
 Once we have successfully loaded the texture, we assign it to the object using the <b>EntityTexture</b> command. (here we are assigning the variable pointer TEXTURE to the cube we defined earlier)<br><br>
 

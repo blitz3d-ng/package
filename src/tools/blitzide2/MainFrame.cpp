@@ -43,7 +43,8 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(ID_BACK,          MainFrame::OnBack)
 	EVT_MENU(ID_FORWARD,       MainFrame::OnForward)
 
-	EVT_COMMAND (wxID_ANY, OPEN_EVENT, MainFrame::OnOpen)
+	EVT_COMMAND (wxID_ANY, BROWSE_DIR_EVENT, MainFrame::OnOpen)
+	EVT_COMMAND (wxID_ANY, OPEN_FILE_EVENT, MainFrame::OnAddFile)
 
 	EVT_COMMAND (wxID_ANY, BUILD_BEGIN,    MainFrame::OnBuildBegin)
 	EVT_COMMAND (wxID_ANY, BUILD_PROGRESS, MainFrame::OnBuildProgress)
@@ -351,6 +352,11 @@ void MainFrame::OnOpen( wxCommandEvent& event ){
   wxArrayString paths;
   openFileDialog.GetPaths( paths );
   AddFiles( paths );
+}
+
+void MainFrame::OnAddFile( wxCommandEvent& event ){
+  auto path = event.GetString();
+  AddFile( path );
 }
 
 void MainFrame::OnSave( wxCommandEvent& WXUNUSED(event) ){

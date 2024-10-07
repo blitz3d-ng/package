@@ -1,13 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-
-<html>
-<head>
-	<title>Introduction to Camera Entities</title>
-</head>
-<body>
-
-<center><h1>Introduction to Terrains</h1>
-</center>
+<h1>Introduction to Terrains</h1>
 
 <p>
 Terrain entities are used to draw very large landscapes made up
@@ -29,8 +20,7 @@ Terrains have a few limitations:</p>
     eg: 2,4,8,16,32...</li>
 </ul>
 
-<h2><span style="background-color: #6097C9">&nbsp;Creating
-Terrains&nbsp;</span></h2>
+<h2>Creating Terrains</h2>
 <p>
 You can create terrains either by loading in a heightmap image, or by creating an 'empty' terrain and setting the height of each vertex yourself.<br>
 <br>
@@ -44,27 +34,21 @@ The terrain will extend from 0 to 32 along the x and z axis', and from 0 to 1 al
 <br>
 However, you are free to position and scale the terrain as you see fit using entity manipulation commands such as ScaleEntity, PositionEntity. For example:
 </p>
-<table border="1" width="100%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
 
-&nbsp;&nbsp;&nbsp;&nbsp;;terrain is 32 x 1 x 32<b><br>
-      &nbsp;&nbsp;&nbsp; terrain=CreateTerrain( 32 )<br>
-      <br>
-      &nbsp;&nbsp;&nbsp; </b>;terrain is now 320 x 100 x 320<br>
-      &nbsp;&nbsp;&nbsp; <b>ScaleEntity terrain,10,100,10<br>
-      <br>
-      &nbsp;&nbsp;&nbsp; </b>;and centred (on x/z axis') at 0,0,0<br>
-      &nbsp;&nbsp;&nbsp; <b>PositionEntity terrain,-160,0,-160</b><br><br>
+<code>
+<pre>
+;terrain is 32 x 1 x 32
+terrain=CreateTerrain( 32 )
 
-    </td>
-    <td width="14%">&nbsp;</td>
-  </tr>
-</table>
+;terrain is now 320 x 100 x 320
+ScaleEntity terrain,10,100,10
 
-<h2><span style="background-color: #6097C9">&nbsp;Terrrain
-Detail Level&nbsp;</span></h2>
+;and centred (on x/z axis') at 0,0,0
+PositionEntity terrain,-160,0,-160
+</pre>
+</code>
+
+<h2>Terrrain Detail Level</h2>
 
 <p>
 You can directly control how many triangles are used to approximate a terrain using the
@@ -102,35 +86,22 @@ Blitz3D also provides a technique called '<b>vertex morphing</b>' to help reduce
 <b> TerrainDetail</b> command is also used to enable vertex morphing.</p>
 
 
-<h2><span style="background-color: #6097C9">&nbsp;Modifying
-Terrain&nbsp;</span></h2>
+<h2>Modifying Terrain</h2>
 
-<p>
-The <b> ModifyTerrain</b> command is used to change the height of a terrain vertex, for example:</p>
+<p>The <b> ModifyTerrain</b> command is used to change the height of a terrain vertex, for example:</p>
 
-<table border="1" width="100%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+<code>
+<pre>
+;create a terrain of size 32.
+terrain=CreateTerrain( 32 )
+;push the centre vertex up half-way.
+ModifyTerrain terrain,16,16,.5
+</pre>
+</code>
 
-&nbsp;&nbsp;&nbsp;&nbsp;;create a terrain of size 32.<br>&nbsp;&nbsp;&nbsp;
-      <b>terrain=CreateTerrain( 32 )&nbsp;</b>
-      <p>&nbsp;&nbsp; ;push the centre vertex up half-way.<br>
-      &nbsp;&nbsp; <b>ModifyTerrain terrain,16,16,.5</b><br><br>
+<p>The parameters used with <b> ModifyTerrain</b> must be given in 'terrain coordinates'. This means that the x and z values should always be from 0 to the size of the terrain, and the height value should always be from 0 to 1. In other words, any scale, position or rotation applied to the terrain will be ignored.</p>
 
-      </p>
-
-    </td>
-    <td width="14%">&nbsp;</td>
-  </tr>
-</table>
-
-<p>
-The parameters used with <b> ModifyTerrain</b> must be given in 'terrain coordinates'. This means that the x and z values should always be from 0 to the size of the terrain, and the height value should always be from 0 to 1. In other words, any scale, position or rotation applied to the terrain will be ignored.</p>
-
-
-<h2><span style="background-color: #6097C9">&nbsp;Texturing
-Terrains&nbsp;</span></h2>
+<h2>Texturing Terrains</h2>
 
 <p>By default the terrain you create will be just a plain
 colour, but by using the <b>EntityTexture</b> command it is possible to apply a
@@ -139,9 +110,3 @@ possible to texture different parts of the terrain with different textures. But
 fear not !, remember a brush can have 8 multitextures applied to it. By
 carefully building up these textures - it is possible to have different
 texturemaps applied onto the same landscape.</p>
-
-<p><center>
-Copyright 2001 (c) Paul Gerfen -
-GamecodingUK</center></p>
-</body>
-</html>

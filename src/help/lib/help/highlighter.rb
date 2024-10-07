@@ -102,7 +102,14 @@ module Highlighter
 
     def self.function
       @function ||= begin
-        commands = Blitz3D::Module.all.map(&:commands).flatten.map(&:name)
+        commands = Blitz3D::Module.all.map(&:commands).flatten.map(&:name).sort do |a, b|
+          c, d = [a, b].sort
+          if d.starts_with?(c)
+            -(a <=> b)
+          else
+            a <=> b
+          end
+        end
 
         %w(
           Local Global Const Dim
@@ -112,24 +119,29 @@ module Highlighter
 
     def self.statement
       @statement ||= %w(
-        BEATS BPUT# CALL CASE CHAIN CLEAR CLG CLOSE# CLS COLOR DATA
-        ELSE ENDIF Wend END FOR GOSUB GOTO
+        Select EndSelect Case Default
+        Data Read
+        If Then Else EndIf
+        While Wend
+        For Next Step To Each
+        Gosub Goto
         IF NEXT ORIGIN
-        PLOT PRINT# PRINT READ REPEAT RETURN
-        STEP STOP THEN TO UNTIL WAIT
-        WHEN WHILE
+        Function EndFunction Return
+        Repeat Until
+        Type EndType Field Delete Before After Insert
+        Not Or And
       )
     end
 
     def self.operator
       @operator ||= %w(
-        << <= <> < >= >>> >> > [-!$()*+/=?^|] AND DIV EOR MOD NOT OR
+        << <= <> < >= >>> >> > [-!$()*+/=?^|]
       )
     end
 
     def self.constant
       @constant ||= %w(
-        FALSE TRUE
+        False True
       )
     end
 

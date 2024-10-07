@@ -1,23 +1,12 @@
-
-<table border="1" width="100%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="61%" bgcolor="#6097C9">
-<h1 align="left">&nbsp;Lighting</h1>
-<p align="left"><b>&nbsp;Aim</b>: Lighting a scene<br>
-&nbsp;<b>Skill level</b>: Intermediate<br>
-&nbsp;<b>Files Needed</b>: lights.bb
-      <p>&nbsp;</td>
-    <td width="5%">&nbsp;</td>
-    <td width="34%">
-      <p align="right">
-<img src="4c.jpg" alt="Lighting" width="166" height="127">
-
-
-
-      </p>
-    </td>
-  </tr>
-</table>
+<h1>Lighting</h1>
+<p>
+    <img src="./assets/4c.jpg" alt="Lighting" width="165" height="128" align="right" />
+    <strong>Aim</strong>: Lighting a scene<br/>
+    <strong>Skill level</strong>: Intermediate<br/>
+    <strong>Files Needed</strong>: <a href="./code/lights.bb">lights.bb</a>
+    <div class="clear"></div>
+</p>
+<hr/>
 
 <p>
 So we can now move objects (and ourselves) around, texture objects, animate... so what shall we look at now ?<br><br>
@@ -30,91 +19,76 @@ on top of the camera, pointing at whatever we can see.</p>
 
 <p>Sourcecode time:</p>
 
-<table border="1" width="86%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
-      &nbsp; Graphics3D 800,600<br>
-      <br>
-      &nbsp; SetBuffer BackBuffer()<br>
-      <br>
-      &nbsp; camera=CreateCamera()<br>
-      &nbsp; CameraViewport camera,0,0,800,600<br>
-      <br>
-      &nbsp; AmbientLight 0,0,0<br>
-      <br>
-	  &nbsp; ;cube 1<br>
-	  &nbsp; cube=CreateCube()<br>
-	  &nbsp; PositionEntity cube,0,0,5<br>
-	  <br>
-	  &nbsp; light=CreateLight(3)<br>
-	  &nbsp; LightColor light,100,20,30<br>
-	  &nbsp; LightConeAngles light,0,45<br>
-	  &nbsp; PositionEntity light,0,0,0.5<br>
-	  &nbsp; LightRange light,8<br>
-	  &nbsp; PointEntity light,cube<br><br>
+<code>
+<pre>
+Graphics3D 800,600
 
-	  &nbsp; ;cube 2<br>
-	  &nbsp; cube2=CopyEntity(cube)<br>
-	  &nbsp; PositionEntity cube2,-5,0,8<br>
-	  <br>
-	  &nbsp; light2=CreateLight(3)<br>
-	  &nbsp; LightColor light2,40,150,60<br>
-	  &nbsp; LightConeAngles light2,0,45<br>
-	  &nbsp; PositionEntity light2,-5,0,4.5<br>
-	  &nbsp; LightRange light2,8<br>
-	  &nbsp; PointEntity light2,cube2<br>
-	  <br>
+SetBuffer BackBuffer()
 
-	  &nbsp; ;cube 3<br>
-	  &nbsp; cube3=CopyEntity(cube)<br>
-	  &nbsp; PositionEntity cube3,5,0,8<br>
-	  <br>
-	  &nbsp; light3=CreateLight(3)<br>
-	  &nbsp; LightColor light3,70,80,190<br>
-	  &nbsp; LightConeAngles light3,0,45<br>
-	  &nbsp; PositionEntity light3,5,0,4.5<br>
-	  &nbsp; LightRange light3,8<br>
-	  &nbsp; PointEntity light3,cube3<br>
-	  <br>
+camera=CreateCamera()
+CameraViewport camera,0,0,800,600
 
-      &nbsp; While Not KeyHit(1)<br>
-      <br>
-	  &nbsp; TurnEntity cube,0.1,0.2,0.3<br>
+AmbientLight 0,0,0
 
-	  &nbsp; TurnEntity cube2,0.3,0.2,0.1<br>
+;cube 1
+cube=CreateCube()
+PositionEntity cube,0,0,5
 
-	  &nbsp; TurnEntity cube3,0.3,0.2,0.1<br>
-	  <br>
-      &nbsp; UpdateWorld<br>
-      &nbsp; RenderWorld<br>
-      <br>
-      &nbsp; Text 310,500,&quot;Coloured
-    Lighting Demo&quot;<br>
-      <br>
-      &nbsp; Flip<br>
-      <br>
-      &nbsp; Wend<br>
-      &nbsp; End<br><br>
-      </td>
-    <td width="14%">&nbsp;</td>
-  </tr>
-</table>
+light=CreateLight(3)
+LightColor light,100,20,30
+LightConeAngles light,0,45
+PositionEntity light,0,0,0.5
+LightRange light,8
+PointEntity light,cube
+
+;cube 2
+cube2=CopyEntity(cube)
+PositionEntity cube2,-5,0,8
+
+light2=CreateLight(3)
+LightColor light2,40,150,60
+LightConeAngles light2,0,45
+PositionEntity light2,-5,0,4.5
+LightRange light2,8
+PointEntity light2,cube2
+
+;cube 3
+cube3=CopyEntity(cube)
+PositionEntity cube3,5,0,8
+
+light3=CreateLight(3)
+LightColor light3,70,80,190
+LightConeAngles light3,0,45
+PositionEntity light3,5,0,4.5
+LightRange light3,8
+PointEntity light3,cube3
+
+While Not KeyHit(1)
+    TurnEntity cube,0.1,0.2,0.3
+    TurnEntity cube2,0.3,0.2,0.1
+    TurnEntity cube3,0.3,0.2,0.1
+
+    UpdateWorld
+    RenderWorld
+
+    Text 310,500,"Coloured Lighting Demo"
+
+    Flip
+Wend
+End
+</pre>
+</code>
 
 <p>
 There's quite a few new commands to look at here.<br><br>
 
 Remember that torch I spoke about, well the first new command we will learn is strictly for changing the colour of the beam. (so to speak)</p>
 
-
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>AmbientLight 0,0,0</b></td>
-  </tr>
-</table>
-
+<code>
+<pre>
+AmbientLight 0,0,0
+</pre>
+</code>
 
 <p>
 
@@ -122,17 +96,11 @@ This sets the light to black, so that any additional lights we use will show up 
 
 By changing these values we can just about get any colour we want, such as setting them all to 255 will result in the colour white. It's usually easier to work out the values you will need from a paint program such as Paintshop Pro.</p>
 
-
-
-
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>light=CreateLight(3)</b></td>
-  </tr>
-</table>
-
+<code>
+<pre>
+light=CreateLight(3)
+</pre>
+</code>
 
 <p>
 
@@ -161,32 +129,22 @@ POINTLIGHT.</i></td>
 For this demo I chose to use SPOTLIGHT.</p>
 
 
-
-
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>LightColor light,100,20,30</b></td>
-  </tr>
-</table>
-
+<code>
+<pre>
+LightColor light,100,20,30
+</pre>
+</code>
 
 <p>
 
 Same as the AMBIENTLIGHT instruction, this command lets us select the colour of the light. Here I've set it up so that RED=100, GREEN=20 and BLUE=30 - which gives us a nice reddish glow.</p>
 
 
-
-
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>LightConeAngles light,0,45</b></td>
-  </tr>
-</table>
-
+<code>
+<pre>
+LightConeAngles light,0,45
+</pre>
+</code>
 
 <p>
 
@@ -194,47 +152,32 @@ We use this instruction to control the angle of light that comes from our spotli
 
 
 
-
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>PositionEntity light,0,0,0.5</b></td>
-  </tr>
-</table>
-
+<code>
+<pre>
+PositionEntity light,0,0,0.5
+</pre>
+</code>
 
 <p>
 
 We move the light into position.</p>
 
 
+<code>
+<pre>
+LightRange light,8
+</pre>
+</code>
 
 
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>LightRange light,8</b></td>
-  </tr>
-</table>
+<p>This controls the distance of the light, I set it at 8 units.. If I wanted the light to shine further into the distance then I would increase this value.</p>
 
 
-<p>
-
-This controls the distance of the light, I set it at 8 units.. If I wanted the light to shine further into the distance then I would increase this value.</p>
-
-
-
-
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>PointEntity light,cube</b></td>
-  </tr>
-</table>
-
+<code>
+<pre>
+PointEntity light,cube
+</pre>
+</code>
 
 <p>
 This command will point the light at our cube object. No matter where are light is
@@ -243,13 +186,6 @@ Something else you should think about is whether the light and object can see ea
 
 I won't go into details with the rest of the program as you should be able to work out what is happening without any additional help.</p>
 
-<p>
-Where's the fancy lensflare commands, I can hear you cry. Well at present B3D doesn't
-have any readymade, built-in commands - so its really up to you the programmer -
-to come up with these effects. And believe me it is possible with a little careful
-effort. I've seen some of the Beta Testers come up with lighting effects that
-would equal Unreal !. But then this is a subject for another tutorial...</p>
-
-<p align="center">
+<p>Where's the fancy lensflare commands, I can hear you cry. Well at present B3D doesn't have any readymade, built-in commands - so its really up to you the programmer - to come up with these effects. And believe me it is possible with a little careful effort. I've seen some of the Beta Testers come up with lighting effects that would equal Unreal! But then this is a subject for another tutorial...</p>
 
 <center>Tutorial 6 - <a href="page7.html">Collisions</a></center>

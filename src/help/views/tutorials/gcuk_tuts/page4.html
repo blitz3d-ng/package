@@ -8,27 +8,19 @@
 </p>
 <hr/>
 
-<p>
-So far we have just used static objects, its Time to liven up our 3d world and think about animation. Blitz will load in animated meshes from a variety of sources, including X. format (DirectX), MD2 (used by the Quake 2 engine) and lastly 3DS
+<p>So far we have just used static objects, its Time to liven up our 3d world and think about animation. Blitz will load in animated meshes from a variety of sources, including X. format (DirectX), MD2 (used by the Quake 2 engine) and lastly 3DS
 (3D Studio).</p>
 
-<p>
-How do you draw and animate an object ?, although B3D has a few commands for building shapes such as the cube and sphere instructions - really we need to use a 3d modeller program to create our object.</p>
+<p>How do you draw and animate an object ?, although B3D has a few commands for building shapes such as the cube and sphere instructions - really we need to use a 3d modeller program to create our object.</p>
 
-<p>
-Most 3d packages will export/import just about every format you are going to ever need, personally I like to work with the Directx format (X). What modeller you choose to use really depends on your preference, Truespace (www.caligari.com), Rhino 3D (www.rhino3d.com) and Canvas 3d
+<p>Most 3d packages will export/import just about every format you are going to ever need, personally I like to work with the Directx format (X). What modeller you choose to use really depends on your preference, Truespace (www.caligari.com), Rhino 3D (www.rhino3d.com) and Canvas 3d
 (www.amegia.com) - all support X format without any problems.</p>
 
-<p>
-Recently I've been using the AC3D modeller for my modelling needs, since its simple but powerful. You can download a fully working trial version from
+<p>Recently I've been using the AC3D modeller for my modelling needs, since its simple but powerful. You can download a fully working trial version from
 official website - (www.comp.lancs.ac.uk/computing/users/andy/ac3d.html), but of course designing an object that has realistic movement really is an art form all in itself. Most of us including me - are going to find it a struggle,
-luckily places such as 3dcafe (www.3dcafe.com) contain hundreds of ready made free models for us to use.
-</p>
+luckily places such as 3dcafe (www.3dcafe.com) contain hundreds of ready made free models for us to use.</p>
 
-
-<p>
-Time for the source:
-</p>
+<p>Time for the source:</p>
 
 <code>
 <pre>
@@ -48,7 +40,6 @@ RotateEntity man,0,180,0
 AnimateMD2 man,1,.1,32,46
 
 While Not KeyHit(1)
-
     If dist&lt;970 MoveEntity man,.5,0,0
     If dist=970 AnimateMD2 man,1,.05,0,31
 
@@ -60,14 +51,12 @@ While Not KeyHit(1)
     Text 320,500,"An Animated MD2 Demo"
 
     Flip
-
 Wend
 End
 </pre>
 </code>
 
-<p>
-So whats going on ?</p>
+<p>So whats going on ?</p>
 
 <code>
 <pre>
@@ -145,7 +134,6 @@ use: (Remember we used the loop anim mode)</p>
 <table border="0" width="100%" bgcolor="#FFFF00">
   <tr>
     <td width="100%">
-
 <i>0: Stop Anim<br>
 1: Loop Anim<br>
 2: Ping-Pong Anim<br>

@@ -1,26 +1,14 @@
-
-<table border="1" width="100%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="61%" bgcolor="#6097C9">
-<h1 align="left">&nbsp;Vertexes</h1>
-<p align="left"><b>&nbsp;Aim</b>: To edit a meshes vertexes in Real-time<br>
-&nbsp;<b>Skill level</b>: Intermediate<br>
-&nbsp;<b>Files Needed</b>: vertex.bb / plane.3ds
-      <p>&nbsp;</td>
-    <td width="5%">&nbsp;</td>
-    <td width="34%">
-      <p align="center">
-<img src="10c.jpg" alt="Movement" width="167" height="127" align="right">
-
-
-
-      </p>
-    </td>
-  </tr>
-</table>
-
+<h1>Vertices</h1>
 <p>
-If you've already read the section on Meshes beforehand then hopefully you'll
+    <img src="./assets/10c.jpg" alt="Vertices" width="165" height="128" align="right" />
+    <strong>Aim</strong>: To edit a mesh's vertices in realtime<br/>
+    <strong>Skill level</strong>: Intermediate<br/>
+    <strong>Files Needed</strong>: <a href="./code/vertex.bb">vertex.bb</a> | <a href="./assets/plane.3ds">plane.3ds</a>
+    <div class="clear"></div>
+</p>
+<hr/>
+
+<p>If you've already read the section on Meshes beforehand then hopefully you'll
 know most of what we will be doing already in this tutorial, if not - go away
 and read it first !.</p>
 
@@ -55,85 +43,78 @@ Based on what value the counter is equal to, corresponds to what direction we
 should pull the vertexes. If the counter reaches 1000 then change the colour of
 each vertex to a random selection, before resetting the counter value.</p>
 <p>Let's take a look:</p>
-<table border="1" width="86%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
-      &nbsp;
 
+<code>
+<pre>
+Graphics3D 800,600
 
+SetBuffer BackBuffer()
 
-    Graphics3D 800,600<br>
-    <br>
-    &nbsp;&nbsp; SetBuffer BackBuffer()<br>
-    <br>
-    &nbsp;&nbsp; camera=CreateCamera()<br>
-    &nbsp;&nbsp; CameraViewport camera,0,0,800,600<br>
-    <br>
-    &nbsp;&nbsp; light=CreateLight()<br>
-    <br>
-    &nbsp;&nbsp; plane=LoadMesh(&quot;plane.3ds&quot;)<br>
-    &nbsp;&nbsp; PositionEntity plane,0,0,25<br>
-    &nbsp;&nbsp; EntityFX plane,2<br>
-    <br>
-    &nbsp;&nbsp; surface=GetSurface(plane,CountSurfaces(plane))<br>
-    <br>
-    &nbsp;&nbsp; VertexColor surface,0,255,0,0<br>
-    &nbsp;&nbsp; VertexColor surface,1,0,255,0<br>
-    &nbsp;&nbsp; VertexColor surface,2,0,0,255<br>
-    &nbsp;&nbsp; VertexColor surface,3,255,0,255<br>
-    <br>
-    &nbsp;&nbsp; While Not KeyHit(1)<br>
-    <br>
-    &nbsp;&nbsp; TurnEntity plane,0,0,.3<br>
-    <br>
-    &nbsp;&nbsp; counter=counter+1<br>
-    <br>
-    &nbsp;&nbsp; If counter&lt;500 Then&nbsp;<br>
-    &nbsp;&nbsp; x1#=-.01<br>
-    &nbsp;&nbsp; y1#=-.01<br>
-    &nbsp;&nbsp; x2#=+.01<br>
-    &nbsp;&nbsp; EndIf<br>
-    <br>
-    &nbsp;&nbsp; If counter>499 Then<br>
-    &nbsp;&nbsp; x1#=+.01<br>
-    &nbsp;&nbsp; y1#=+.01<br>
-    &nbsp;&nbsp; x2#=-.01<br>
-    &nbsp;&nbsp; EndIf<br>
-    <br>
-    &nbsp;&nbsp; xx#=VertexX(surface,0)<br>
-    &nbsp;&nbsp; yy#=VertexY(surface,0)<br>
-    &nbsp;&nbsp; zz#=VertexZ(surface,0)<br>
-    <br>
-    &nbsp;&nbsp; VertexCoords surface,0,xx+x1,yy+y1,zz<br>
-    <br>
-    &nbsp;&nbsp; xx#=VertexX(surface,2)<br>
-    &nbsp;&nbsp; yy#=VertexY(surface,2)<br>
-    &nbsp;&nbsp; zz#=VertexZ(surface,2)<br>
-    <br>
-    &nbsp;&nbsp; VertexCoords surface,2,xx+x2,yy+y1,zz<br>
-    <br>
-    &nbsp;&nbsp; If counter=1000 Then<br>
-    &nbsp;&nbsp; counter=0<br>
-    &nbsp;&nbsp; VertexColor surface,0,Rnd#(0,255),Rnd#(0,255),Rnd#(0,255)<br>
-    &nbsp;&nbsp; VertexColor surface,1,Rnd#(0,255),Rnd#(0,255),Rnd#(0,255)<br>
-    &nbsp;&nbsp; VertexColor surface,2,Rnd#(0,255),Rnd#(0,255),Rnd#(0,255)<br>
-    &nbsp;&nbsp; VertexColor surface,3,Rnd#(0,255),Rnd#(0,255),Rnd#(0,255)<br>
-    &nbsp;&nbsp; EndIf<br>
-    <br>
-    &nbsp;&nbsp; UpdateWorld<br>
-    &nbsp;&nbsp; RenderWorld<br>
-    <br>
-    &nbsp;&nbsp; Text 350,500,"Vertex Control"<br>
-    <br>
-    &nbsp;&nbsp; Flip<br>
-    <br>
-    &nbsp;&nbsp; Wend<br>
-    &nbsp;&nbsp; End<br><br>
-</td>
-    <td width="14%">&nbsp;</td>
-  </tr>
-</table>
+camera=CreateCamera()
+CameraViewport camera,0,0,800,600
+
+light=CreateLight()
+
+plane=LoadMesh("plane.3ds")
+PositionEntity plane,0,0,25
+EntityFX plane,2
+
+surface=GetSurface(plane,CountSurfaces(plane))
+
+VertexColor surface,0,255,0,0
+VertexColor surface,1,0,255,0
+VertexColor surface,2,0,0,255
+VertexColor surface,3,255,0,255
+
+While Not KeyHit(1)
+
+    TurnEntity plane,0,0,.3
+
+    counter=counter+1
+
+    If counter&lt;500 Then
+        x1#=-.01
+        y1#=-.01
+        x2#=+.01
+    EndIf
+
+    If counter>499 Then
+        x1#=+.01
+        y1#=+.01
+        x2#=-.01
+    EndIf
+
+    xx#=VertexX(surface,0)
+    yy#=VertexY(surface,0)
+    zz#=VertexZ(surface,0)
+
+    VertexCoords surface,0,xx+x1,yy+y1,zz
+
+    xx#=VertexX(surface,2)
+    yy#=VertexY(surface,2)
+    zz#=VertexZ(surface,2)
+
+    VertexCoords surface,2,xx+x2,yy+y1,zz
+
+    If counter=1000 Then
+        counter=0
+        VertexColor surface,0,Rnd#(0,255),Rnd#(0,255),Rnd#(0,255)
+        VertexColor surface,1,Rnd#(0,255),Rnd#(0,255),Rnd#(0,255)
+        VertexColor surface,2,Rnd#(0,255),Rnd#(0,255),Rnd#(0,255)
+        VertexColor surface,3,Rnd#(0,255),Rnd#(0,255),Rnd#(0,255)
+    EndIf
+
+    UpdateWorld
+    RenderWorld
+
+    Text 350,500,"Vertex Control"
+
+    Flip
+Wend
+End
+</pre>
+</code>
+
 <p>
 So how do we get at the vertexes of the object ?</p>
 <p>
@@ -141,13 +122,11 @@ Well for starters we load the object with the LoadMesh command, the object we
 are loading is of course called Plane.3ds.</p>
 
 
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>EntityFX plane,2</b></td>
-  </tr>
-</table>
+<code>
+<pre>
+EntityFX plane,2
+</pre>
+</code>
 
 <p>Now here's a new command we haven't seen before !, this command is really
 more of mode switch than anything else. But setting values we can access the
@@ -160,7 +139,6 @@ whole entity, by default this is turned off.</p>
 <table border="0" width="100%" bgcolor="#FFFF00">
   <tr>
     <td width="100%">
-
 <i>1 = Full-Bright<br>
 2 = Use Vertex Colours<br>
 4 = Flatshading<br>
@@ -174,13 +152,11 @@ single brush. (remember a mesh has surfaces, with brushes applied to them)</p>
 
 
 
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>surface=GetSurface(plane,CountSurfaces(plane))</b></td>
-  </tr>
-</table>
+<code>
+<pre>
+surface=GetSurface(plane,CountSurfaces(plane))
+</pre>
+</code>
 
 <p>
 In order to get at the vertexes we must first unlock them, we do this by
@@ -193,18 +169,14 @@ mesh name - and secondly the amount of surfaces it has. As you can see I've
 cheated and used the COUNTSURFACES command to do this for me.</p>
 
 
-
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>VertexColor surface,0,255,0,0<br>
-VertexColor surface,1,0,255,0<br>
-VertexColor surface,2,0,0,255<br>
-VertexColor surface,3,255,0,255</b>
-    </td>
-  </tr>
-</table>
+<code>
+<pre>
+VertexColor surface,0,255,0,0
+VertexColor surface,1,0,255,0
+VertexColor surface,2,0,0,255
+VertexColor surface,3,255,0,255
+</pre>
+</code>
 
 <p>Before going into the main loop, I've set the colour of each vertex to a
 different colour. This gives us a nice rainbow effect !. As you can see we pass
@@ -215,16 +187,13 @@ for the Red, Green and Blue shades. (must be in the range of 0 (Dark) through to
 
 
 
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
-
-<b>xx#=VertexX(surface,0)<br>
-yy#=VertexY(surface,0)<br>
-zz#=VertexZ(surface,0)</b>
-    </td>
-  </tr>
-</table>
+<code>
+<pre>
+xx#=VertexX(surface,0)
+yy#=VertexY(surface,0)
+zz#=VertexZ(surface,0)
+</pre>
+</code>
 
 <p>Since I want the coordinates of the mesh to change all the time, I cant set
 it with a value that doesn't change. Every update I've got to get the current
@@ -237,30 +206,20 @@ surface, at vertex 0.</p>
 vertex 99 !!!.</p>
 
 
-<table border="0" width="100%" bgcolor="#6097C9">
-  <tr>
-    <td width="100%">
+<code>
+<pre>
+VertexCoords surface,0,xx+x1,yy+y1,zz
+</pre>
+</code>
 
-<b>VertexCoords surface,0,xx+x1,yy+y1,zz</b>
-    </td>
-  </tr>
-</table>
-<p>
-As you've probably worked out by now, this is the main instruction for changing
+<p>As you've probably worked out by now, this is the main instruction for changing
 the actual Vertex positions. It needs to be called with the Surface pointer
 value, followed by the new values for the X, Y and Z positions.</p>
-<p>
-And that's all there is to it !!</p>
-<p>
-But why would you want to change the coordinates ?</p>
-<p>
-All games will alter their objects, its just a case of working out how, and
-where they do it. Imagine you've just written a driving simulation.. wouldn't it
-be nice when you crash the car to reflect the damage ?. Perhaps crumple that
-fender.. or crack that window.</p>
-<p>
-Just like a certain other car game currently in the charts, they use exactly the
-same method. You gotta hand it to B3D - You want it.. it's there, now go and use it wisely !.</p>
-<p align="center"><b>More Tutorials to follow..</b><br>
-Tutorials written by Paul Gerfen<br>
-(c) 2001GameCodingUK
+
+<p>And that's all there is to it !!</p>
+
+<p>But why would you want to change the coordinates ?</p>
+
+<p>All games will alter their objects, its just a case of working out how, and where they do it. Imagine you've just written a driving simulation.. wouldn't it be nice when you crash the car to reflect the damage ?. Perhaps crumple that fender.. or crack that window.</p>
+
+<p>Just like a certain other car game currently in the charts, they use exactly the same method. You gotta hand it to B3D - You want it.. it's there, now go and use it wisely!</p>

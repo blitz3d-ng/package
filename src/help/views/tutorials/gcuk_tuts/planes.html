@@ -1,12 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-
-<html>
-<head>
-	<title>Planes</title>
-</head>
-
-<body>
-<center><h1>Introduction to Planes</h1></center>
+<h1>Introduction to Planes</h1>
 
 <p>
 
@@ -17,20 +9,15 @@ Planes are a simple way to add large, flat surfaces to the world. Planes are use
 
 How do you create a plane ? - Easy, just use the <b>CreatePlane</b> instruction:
 </p>
-<table border="1" width="100%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
 
-&nbsp;&nbsp;&nbsp;&nbsp;;create a simple plane.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>plane=CreatePlane()</b><br><br>
+<code>
+<pre>
+;create a simple plane.
+plane=CreatePlane()
+</pre>
+</code>
 
-    </td>
-    <td width="14%">&nbsp;</td>
-  </tr>
-</table>
-
-<h2><span style="background-color: #6097C9">&nbsp;Manipulating planes&nbsp;</span></h2>
+<h2>Manipulating planes</h2>
 <p>
 
 By default, a new Plane is positioned at 0,0,0 and faces upwards. However, you may want the plane to face a different direction, or to be moved up or down. To do this, you just need to use the standard entity commands.</p>
@@ -38,39 +25,21 @@ By default, a new Plane is positioned at 0,0,0 and faces upwards. However, you m
 
 For example, you might want to use a plane for a layer-of-clouds type effect. In this case, just rotate and position the plane as necessary:</p>
 
-<table border="1" width="100%" bordercolor="#FFFFFF">
-  <tr>
-    <td width="14%">&nbsp;</td>
-    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+<code>
+<pre>
+;create clouds plane.
+plane=CreatePlane()
 
-&nbsp;&nbsp;&nbsp;&nbsp;;create clouds plane.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>plane=CreatePlane()</b><br><br>
+;rotate plane so it faces downwards.
+RotateEntity clouds,0,0,180
 
-&nbsp;&nbsp;&nbsp;&nbsp;;rotate plane so it faces downwards.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>RotateEntity clouds,0,0,180</b><br><br>
+;and position it up in the sky!
+PositionEntity clouds,0,100,0
+</pre>
+</code>
 
-&nbsp;&nbsp;&nbsp;&nbsp;;and position it up in the sky!<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>PositionEntity clouds,0,100,0</b><br><br>
+<p>So now we have a plane that is going to represent the sky, how can we make it look realistic ?</p>
 
+<p>The easy answer would be to Texture it !, as you shall see later on in these tutorials - Blitz3D has ALL the answers.</p>
 
-    </td>
-    <td width="14%">&nbsp;</td>
-  </tr>
-</table>
-<p>
-
-So now we have a plane that is going to represent the sky, how can we make it look realistic ?</p>
-
-<p>
-
-The easy answer would be to Texture it !, as you shall see later on in these tutorials - Blitz3D has ALL the answers.</p>
-
-<p>
-
-If you take a careful look at most of todays top titles you will notice that most of the sky scenes contain more than one layer. Usually this consists of 2 - sometimes even 3 planes. The very top plane contains static objects such as the Sun, while the plane infront has a cloud layer. This can be achieved by using the BRUSHFX instuction (to make the texture slightly see-through) -in conjunction with an animated texture, that is slowly wrap-scrolling. (And YES, B3D can do this effect with ease!)</p>
-
-<p><center>
-Copyright 2001 (c) Paul Gerfen -
-GamecodingUK</center></p>
-</body>
-</html>
+<p>If you take a careful look at most of todays top titles you will notice that most of the sky scenes contain more than one layer. Usually this consists of 2 - sometimes even 3 planes. The very top plane contains static objects such as the Sun, while the plane infront has a cloud layer. This can be achieved by using the BRUSHFX instuction (to make the texture slightly see-through) -in conjunction with an animated texture, that is slowly wrap-scrolling. (And YES, B3D can do this effect with ease!)</p>
