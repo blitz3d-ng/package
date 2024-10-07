@@ -1,6 +1,6 @@
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef BB_CONFIG_H
+#define BB_CONFIG_H
 
 #include <stdint.h>
 

@@ -2,7 +2,7 @@
 #ifndef STD_COMPILER_H
 #define STD_COMPILER_H
 
-#include "../../config.h"
+#include "../modules/bb/config.h"
 #include "../stdutil/stdutil.h"
 
 #include <set>

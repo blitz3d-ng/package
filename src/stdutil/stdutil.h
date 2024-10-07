@@ -6,7 +6,7 @@
 #pragma warning(disable:4786)
 #endif
 
-#include "../config.h"
+#include "../modules/bb/config.h"
 
 #include <string>
 #include <iostream>

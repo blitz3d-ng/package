@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include "../../config.h"
+#include "../../modules/bb/config.h"
 #include "../../stdutil/stdutil.h"
 
 #include <set>
