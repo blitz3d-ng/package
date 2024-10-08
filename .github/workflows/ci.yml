@@ -122,7 +122,6 @@ jobs:
     strategy:
       matrix:
         dist:
-          - debian-10
           - debian-11
           - debian-12
           - ubuntu-20.04
