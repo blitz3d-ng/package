@@ -94,7 +94,6 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-12
           - macos-13
           - macos-14
     steps:
@@ -125,8 +124,10 @@ jobs:
         dist:
           - debian-10
           - debian-11
+          - debian-12
           - ubuntu-20.04
           - ubuntu-22.04
+          - ubuntu-24.04
     steps:
       - name: Install dummy sound card
         run: |
@@ -367,11 +368,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: windows-package
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: macos-12-package
-      - run: TAG=$GITHUB_TAG MACOS=macos12 file=\$file ARCHIVE=\$ARCHIVE envsubst < src/download.macos.sh > blitz3d-ng-$GITHUB_TAG-macos12.sh
 
       - uses: actions/download-artifact@v4
         with:
