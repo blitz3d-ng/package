@@ -30,7 +30,7 @@ jobs:
       - if: matrix.arch == 'win64'
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v10/llvm-19.1.0-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
+          Invoke-WebRequest -Uri "https://github.com/blitz3d-ng/env/releases/download/v11/llvm-19.1.0-win64-msvc$env:VisualStudioVersion.zip" -OutFile "llvm.zip"
           Expand-Archive llvm.zip -DestinationPath .\
       - run: .\make.bat release
 
@@ -102,7 +102,7 @@ jobs:
           submodules: recursive
       - run: |
           mkdir _release/toolchains
-          wget https://github.com/blitz3d-ng/env/releases/download/v10/llvm-19.1.0-${{ matrix.os }}.zip
+          wget https://github.com/blitz3d-ng/env/releases/download/v11/llvm-19.1.0-${{ matrix.os }}.zip
           unzip llvm-19.1.0-${{ matrix.os }}.zip
       - run: brew install python && brew link --overwrite python && brew install gcovr # macos-13 fix
       - run: brew install ninja
@@ -154,7 +154,7 @@ jobs:
           submodules: recursive
       - run: |
           mkdir _release/toolchains
-          wget https://github.com/blitz3d-ng/env/releases/download/v10/llvm-19.1.0-macos-14.zip
+          wget https://github.com/blitz3d-ng/env/releases/download/v11/llvm-19.1.0-macos-14.zip
           unzip llvm-19.1.0-macos-14.zip
       - run: brew install ninja
       - run: make compiler
