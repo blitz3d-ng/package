@@ -20,7 +20,7 @@ jobs:
           - win32
           - win64
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: seanmiddleditch/gha-setup-ninja@master
@@ -81,7 +81,7 @@ jobs:
           - mingw32
           - mingw64
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: ./env.sh mingw make ENV=release PLATFORM=${{ matrix.arch }}
@@ -94,11 +94,10 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-11
-          - macos-12
-          - macos-13
+          - macos-14
+          - macos-15
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: |
@@ -133,7 +132,7 @@ jobs:
           sudo apt-get install -y linux-sound-base linux-modules-extra-`uname -r`
           sudo modprobe snd-dummy
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: ./env.sh ${{ matrix.dist }} make ENV=release PLATFORM=linux
@@ -148,7 +147,7 @@ jobs:
           - ios
           - ios-sim
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: |
@@ -176,7 +175,7 @@ jobs:
           - "x86"
           - "x86_64"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: ./env.sh android make compiler
@@ -192,7 +191,7 @@ jobs:
     name: OVR
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: ./env.sh android make ovr
@@ -207,7 +206,7 @@ jobs:
     name: Emscripten (Web)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: ./env.sh emscripten make emscripten
@@ -217,7 +216,7 @@ jobs:
     name: Switch
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: ./env.sh nx make compiler
@@ -228,7 +227,7 @@ jobs:
     name: Help
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: ruby/setup-ruby@v1
@@ -250,7 +249,7 @@ jobs:
       - windows
       - help
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get tag name
         run: |
           export GITHUB_TAG=$([ $GITHUB_REF_NAME = "master" ] && echo "edge" || (echo $GITHUB_REF_NAME | tr / -))
@@ -258,19 +257,19 @@ jobs:
 
       - run: rm -rf _release/help
       - name: Download help
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: help
           path: _release/help
 
       - name: Download win32
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: win32-windows-2022
           path: _release
 
       - name: Download win64
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: win64-windows-2022
           path: _release
@@ -293,15 +292,14 @@ jobs:
     strategy:
       matrix:
         version:
-          - 11
-          - 12
-          - 13
+          - 14
+          - 15
     needs:
       - macos
       - ios
       - help
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Get tag name
         run: |
           export GITHUB_TAG=$([ $GITHUB_REF_NAME = "master" ] && echo "edge" || (echo $GITHUB_REF_NAME | tr / -))
@@ -309,25 +307,25 @@ jobs:
 
       - run: rm -rf _release/help
       - name: Download help
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: help
           path: _release/help
 
       - name: Download macos-${{ matrix.version }}
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-${{ matrix.version }}
           path: _release
 
       - name: Download ios
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ios
           path: _release
 
       - name: Download ios-sim
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ios-sim
           path: _release
@@ -357,31 +355,26 @@ jobs:
       - emscripten
       - nx
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get tag name
         run: |
           export GITHUB_TAG=$([ $GITHUB_REF_NAME = "master" ] && echo "edge" || (echo $GITHUB_REF_NAME | tr / -))
           echo "GITHUB_TAG=$GITHUB_TAG" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: windows-package
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: macos-11-package
-      - run: TAG=$GITHUB_TAG MACOS=macos11 file=\$file ARCHIVE=\$ARCHIVE envsubst < src/download.macos.sh > blitz3d-ng-$GITHUB_TAG-macos11.sh
+          name: macos-14-package
+      - run: TAG=$GITHUB_TAG MACOS=macos14 file=\$file ARCHIVE=\$ARCHIVE envsubst < src/download.macos.sh > blitz3d-ng-$GITHUB_TAG-macos14.sh
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: macos-12-package
-      - run: TAG=$GITHUB_TAG MACOS=macos12 file=\$file ARCHIVE=\$ARCHIVE envsubst < src/download.macos.sh > blitz3d-ng-$GITHUB_TAG-macos12.sh
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: macos-13-package
-      - run: TAG=$GITHUB_TAG MACOS=macos13 file=\$file ARCHIVE=\$ARCHIVE envsubst < src/download.macos.sh > blitz3d-ng-$GITHUB_TAG-macos13.sh
+          name: macos-15-package
+      - run: TAG=$GITHUB_TAG MACOS=macos15 file=\$file ARCHIVE=\$ARCHIVE envsubst < src/download.macos.sh > blitz3d-ng-$GITHUB_TAG-macos15.sh
 
       - name: Versioned Release
         if: startsWith(github.ref, 'refs/tags/v')
