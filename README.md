@@ -43,7 +43,7 @@ To build 32-bit or 64-bit, open `x86 Native Tools Command Prompt for VS 2022`. F
 > powershell
 > git clone --recursive https://github.com/blitz3d-ng/blitz3d-ng b3d
 > cd b3d
-> # download and unpack LLVM archive
+> # download and unpack LLVM archive into llvm/
 > .\make.bat release
 ```
 

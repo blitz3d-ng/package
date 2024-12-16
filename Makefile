@@ -2,7 +2,7 @@ ENV := release
 GENERATOR := Ninja
 GENERATOR_OPTIONS := -k 0
 
-ifeq ($(shell uname -m), arm64)
+ifeq ($(shell uname -m),$(filter $(shell uname -m), arm64 aarch64))
 ARCH := arm64
 else
 ARCH := x86_64
@@ -104,7 +104,7 @@ nx: compiler
 	make PLATFORM=nx DEVKITPRO=$(DEVKITPRO)
 
 llvm:
-	./deps/env/build-llvm.sh build/llvm llvm
+	./deps/llvm/build-llvm.sh build/llvm llvm
 
 install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
