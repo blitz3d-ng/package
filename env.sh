@@ -4,7 +4,7 @@
 # A basic script which either configures the current shell
 # or starts docker.
 #
-# See https://github.com/blitz3d-ng/env for info on docker.
+# See https://github.com/blitz3d-ng/docker-images for info on docker.
 
 # if no params, export needed variables for the compiler.
 if [ "$1" = "" ]
@@ -21,10 +21,10 @@ set -e
 export PLATFORM=$1
 shift
 
-VERSION="${VERSION:-v9}"
+VERSION="${VERSION:-v20241216}"
 
 VOLUME=blitz3d-ng-gems-$PLATFORM
-IMAGE=ghcr.io/blitz3d-ng/env:$PLATFORM-$VERSION
+IMAGE=ghcr.io/blitz3d-ng/docker-images:$PLATFORM-$VERSION
 OPTIONS="--cap-add=SYS_PTRACE --security-opt seccomp=unconfined --rm -w /b3d -v $(pwd):/b3d -v $VOLUME:/bundle -e LLVM_ROOT=/opt/llvm -e blitzpath=/b3d/_release -e BUNDLE_PATH=/bundle"
 
 if [ -d /dev/snd ]

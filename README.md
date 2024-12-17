@@ -29,7 +29,7 @@ For bug reports & feature requests, feel free to open an [issue](https://github.
 
 All 3rd-party dependencies are included in the repo or linked as submodules to keep the project simple to build.
 
-The single exception to this is LLVM due to it's size and the time required build. A [pre-built toolchain](https://github.com/blitz3d-ng/env/releases/tag/v3) is provided for Windows & macOS. Download the appropriate archive for your platform, and unpack it into an `llvm/` directory in the root of this repository.
+The single exception to this is LLVM due to it's size and the time required build. A [pre-built toolchain](https://github.com/blitz3d-ng/build-llvm/releases) is provided for Windows & macOS. Download the appropriate archive for your platform, and unpack it into an `llvm/` directory in the root of this repository.
 
 ### Windows
 
@@ -75,7 +75,7 @@ $ make ENV=release
 ```
 
 Alternatively, you can build everything with [docker](https://docker.io). See
-[env.sh](env.sh) and the [env](https://github.com/blitz3d-ng/env) repo for some
+[env.sh](env.sh) and the [docker-images](https://github.com/blitz3d-ng/docker-images) repo for some
 example Dockerfiles.
 
 ## Documentation
