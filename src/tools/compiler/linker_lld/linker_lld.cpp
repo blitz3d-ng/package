@@ -55,8 +55,14 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 			exit( 1 );
 		}
 
+		char *ndkhome=getenv("ANDROID_NDK_HOME");
+		if( ndkhome==0 ){
+			std::cerr<<"ANDROID_NDK_HOME is not set"<<std::endl;
+			exit( 1 );
+		}
+
 		androidsdk=std::string( androidhome );
-		ndkroot=androidsdk+"/ndk-bundle/toolchains/llvm/prebuilt/" UNAME "-x86_64";
+		ndkroot=std::string( ndkhome )+"/toolchains/llvm/prebuilt/" UNAME "-x86_64";
 		sysroot=ndkroot+"/sysroot";
 
 		if( target.arch=="arm64-v8a" ){
@@ -421,9 +427,9 @@ void Linker_LLD::createExe( bool debug,const std::string &rt,const Target &targe
 	}else if( android ){
 		args.push_back("-l");args.push_back("c++_static");
 		args.push_back("-l");args.push_back("c++abi");
-		args.push_back("-l");args.push_back("gcc");
+		//args.push_back("-l");args.push_back("gcc");
 		args.push_back("-l");args.push_back("c");
-		args.push_back("-l");args.push_back("gcc");
+		//args.push_back("-l");args.push_back("gcc");
 		args.push_back( ndkroot+"/sysroot/usr/lib/"+ndktriple+"/"+target.version+"/crtend_so.o" );
 	}else if( nx ){
 		std::string gcc=devkitpro+"/devkitA64/lib/gcc/aarch64-none-elf/"+target.version+"/pic";
