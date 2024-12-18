@@ -183,7 +183,7 @@ jobs:
           submodules: recursive
       - run: ./env.sh android make compiler
       - run: ./env.sh android make ENV=release PLATFORM=android ARCH=${{ matrix.arch }}
-      - run: ./env.sh android ./test/suite.sh ${{ matrix.arch }}-android-30
+      - run: ./env.sh android ./test/suite.sh ${{ matrix.arch }}-android-31
       - name: Upload toolchain and package
         uses: actions/upload-artifact@v3
         with:
