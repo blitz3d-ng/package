@@ -1,0 +1,457 @@
+<h1>Getting Started with BlitzBasic</h1>
+<hr>
+<menu>
+    <li><a href="#first">My First Program</a></li>
+    <li><a href="#variables">Variables</a></li>
+    <li><a href="#firstgame">My First Game</a></li>
+    <li><a href="#gettinggraphic">Getting Graphic</a></li>
+    <li><a href="#doublebuffering">Double Buffering</a></li>
+    <li><a href="#mysecondgame">My Second Game</a></li>
+</menu>
+
+<hr>
+
+<h2 id="first">My First Program</h2>
+
+<p>After sampling some of the fine example programs included in the BlitzBasic package you are hopefully itching to try some of your own code.</p>
+
+<p>BlitzBasic is intended as both a friendly introduction to programming computers as well as a language capable of producing polished video game software.</p>
+
+<p>First up, the traditonal hello world program. A simple one line program that prints the message &quot;hello world&quot; on the screen. Select the File-New menu option and enter the following text:</p>
+
+<code>
+<pre>
+Print "Hello World!"
+</pre>
+</code>
+
+
+<p>If you press the F5 key to compile and run and a message greeting the world appears then congratulations! You have just authored your first BlitzBasic program.</p>
+
+<p>The following code illustrates prompting the user of your program for some input.</p>
+
+<code>
+<pre>
+a=Input("enter a number:")
+Print "the value of a is "+a
+</pre>
+</code>
+
+<p>Note: see how we add text and an
+integer variable together to print them both on the same line.</p>
+
+<hr>
+
+<h4 id="variables">Variables</h4>
+
+<p>Variables in Blitz are used to
+store integers, floats and strings.</p>
+
+<p>The first time a float or a string
+variable is used in your program it must be denoted with # or $
+symbols .</p>
+
+<p>If the &quot;a=&quot; in the
+program is changed to &quot;a$=&quot; Blitz will treat a as a
+string variable which can then contain any text the user enters
+instead of the integer number it originally converted the user's
+reply into.</p>
+
+<code>
+<pre>
+a$=Input("enter a number:")
+Print "the value of a is "+a
+</pre>
+</code>
+
+<p>Suggestion: change the &quot;a$=&quot;
+to &quot;a#=&quot; and enter the number 22.95. What's going on?</p>
+
+<hr>
+
+<h2 id="firstgame">My First Game</h2>
+
+<p>The following program gives the
+user 5 turns to guess the random number.</p>
+
+<code>
+<pre>
+; guessing game
+turnsleft=5
+
+sheep=Rnd(20)
+
+While (turnsleft>0)
+
+    turnsleft=turnsleft-1
+
+    guess=Input("guess how many sheep I have in my room:")
+
+    If guess&lt;sheep Then Print "more than that!"
+
+    If guess&gt;sheep Then Print "oh, not that many!"
+
+    If guess=sheep Then Exit
+
+Wend
+
+If turnsleft=0 Then Print "game over dude" Else Print "good guess!"
+</pre>
+</code>
+
+<p>There are three variables used in
+this program: turnsleft, sheep and guess.</p>
+
+<p>To begin with, turnsleft is set to
+5 and sheep is set to a random number between 0 and 20. The
+program then enters a &quot;while&quot; loop asking the player to
+guess a number, and comparing their answer which is placed in the
+variable guess with the value in sheep.</p>
+
+<p>After playing the game a few times,
+you may notice that the number of sheep does not vary much. Try
+adding the following line to the top of the program to &quot;seed&quot;
+the random number generator using the time of day in milliseconds.</p>
+
+<code>
+<pre>
+SeedRnd MilliSecs()
+</pre>
+</code>
+
+<p>Congratulations, you have just
+doubled the playability of the game with one line of code!</p>
+
+<hr>
+
+<h4 id="gettinggraphic">Getting Graphic</h4>
+
+<p>BlitzBasic is not designed for
+building text based application such as our initial guessing game.
+It is also not designed for building applications featuring
+friendly graphics user interfaces filled with windows and sliders.</p>
+
+<p>The only thing BlitzBasic has been
+designed for is the very serious business of video game
+development.</p>
+
+<p>The following program initializes a
+640x480 video display then plots points at random positions until
+the user presses the escape key.</p>
+
+<code>
+<pre>
+; getting graphic
+Graphics 640,480
+
+While Not KeyDown(1)
+    Plot Rnd(640),Rnd(480)
+Wend
+</pre>
+</code>
+
+<p>Once again we rely on the random
+number generator to provide an interesting result. Try adding the
+following color command before the plot statement to vary the
+color of the dots.</p>
+
+<code>
+<pre>
+Color Rnd(256),Rnd(256),Rnd(256)
+</pre>
+</code>
+
+<p>Although this may seem like a
+simple program, creating a DirectX display such as featured here
+using traditional methods can be a complex task. BlitzBasic makes
+it so easy!</p>
+
+<hr>
+
+<h2 id="doublebuffering">Double Buffering</h2>
+
+<p>The following code illustrates the
+typical &quot;main loop&quot; of a game. For a video game to
+display smoothly animated graphics it must use a technique called
+&quot;Double Buffering&quot;.</p>
+
+<p>The following program shows one
+frame (the FrontBuffer) while drawing to another frame (the
+BackBuffer).</p>
+
+<code>
+<pre>
+; double buffering
+Graphics 640,480
+
+SetBuffer BackBuffer()
+
+While Not KeyDown(1)
+    Flip
+
+    Cls
+
+    Line 320,240,320+100*Cos(a),240+100*Sin(a)
+
+    a=a+1
+Wend
+</pre>
+</code>
+
+<p>In BlitzBasic the <kbd>Flip</kbd> command
+performs the double buffering by swapping the back and front
+buffers. The <kbd>Cls</kbd> command clears the screen and the <kbd>Line</kbd> command draws a line.</p>
+
+<p>Note: the flip command also
+synchronizes to the video refresh which on standard VGA monitors
+is 60 frames per second. </p>
+
+<p>The program draws a line from the
+center of the screen (320,240) at an angle of a degrees, 100
+pixels long.</p>
+
+<p>Try changing the program to add 6
+to the value of a. If the frame rate of your monitor is 60 frames
+per second, and a is incrementing by 6 each frame, in theory it
+should increment by 360 every second which is equivalent to a
+complete rotation in the world of degrees.</p>
+
+<hr>
+
+<h2 id="mysecondgame">My Second Game</h2>
+
+<p>The following introduces the basic
+skeleton of a simple video game. </p>
+
+<p>The status variable contains the
+&quot;state&quot; of the game, which is either displaying a title
+page or allowing the player to steer round the screen. Extra
+states such as player dies with cosmic explosion and gameover
+screen would be added to extend the game further.</p>
+
+<p>Reading through the program, the
+display is initialized in a similar manned to the previous
+example using the Graphics and SetBuffer commands. The main loop,
+then uses the Flip command to perform the double buffering (allowing
+us to draw to one screen while the other is displayed) and then
+either prints a message informing the user to press Enter to
+start or calls the UpdatePlayer() function.</p>
+
+
+<code>
+<pre>
+; eat the dots
+Graphics 640,480
+
+SetBuffer BackBuffer()
+
+Global status=0,x#=0,y#=0,speed#=1,dir=1
+
+; main loop
+While Not KeyHit(1)
+    ; refresh screen
+
+    Flip
+
+    Cls
+
+    Color 255,255,0
+
+    Rect 0,0,640,480,0
+
+    ; select state
+
+    Select status
+
+    Case 0
+
+        Locate 100,100
+
+        Print "Press Enter To Start"
+
+        If KeyHit(28) InitGame()
+
+    Case 1
+
+        UpdatePlayer()
+
+    End Select
+
+Wend
+</pre>
+</code>
+
+<p>What UpdatePlayer() function you
+ask? And if the user presses Enter what's this InitGame()
+function?</p>
+
+<p>Unlike traditional BASIC languages
+where we would implement these functions as subroutines and call
+them with the Gosub command BlitzBasic features user defined
+functions. </p>
+
+<p>Add the following two functions at
+the bottom of the above program to allow the program to run.</p>
+
+<p>The first function initializes the
+variables we will need inorder to steer the players rectangle
+around the screen. Note how these variables have been declared at
+the top of the program as Global which allows us to access them
+from inside functions such as InitGame().</p>
+
+<code>
+<pre>
+Function InitGame()
+    x=320
+
+    y=240
+
+    speed=1
+
+    dir=1
+
+    status=1
+
+End Function
+</pre>
+</code>
+
+<p>This second function changes the
+players direction depending on the arrow key they are pressing or
+the direction of the joystick. The code then moves the players
+position (x,y) depending on the dir variable which corresponds to
+up, right, down and left respectively.</p>
+
+<code>
+<pre>
+Function UpdatePlayer()
+    ; steer player
+    If KeyDown(200) Or JoyY()&lt;-0.5 dir=0
+    If KeyDown(205) Or JoyX()>0.5 dir=1
+    If KeyDown(208) Or JoyY()>0.5 dir=2
+    If KeyDown(203) Or JoyX()&lt;-0.5 dir=3
+
+    ; move player
+    Select dir
+    Case 0 y=y-speed
+    Case 1 x=x+speed
+    Case 2 y=y+speed
+    Case 3 x=x-speed
+    End Select
+
+    ; draw player
+    Color 255,255,255
+    Rect x,y,10,10
+End Function
+</pre>
+</code>
+
+<p>After adding the InitGame() and UpdatePlayer() code the game should run.</p>
+
+<p>Next it's time to add some deadly rocks and some yummy food. </p>
+
+<p>In order to do this we create some new Types that will hold all the information we need for each rock and food. To begin with these Types will simply hold the x and y position of each rock and food element we create for our game.</p>
+
+<p>Place the following Type
+declarations at the top of the program.</p>
+
+<code>
+<pre>
+Type food
+    Field x,y
+End Type
+
+Type rock
+    Field x,y
+End Type
+</pre>
+</code>
+
+<p>The following code then needs to be added to the InitGame() function, insert it after the line that reads status=1.</p>
+
+<p>This code creates 20 rocks that will kill the player and 20 food that will speed the player up. The New command creates a new object and also adds it to a list. We set the position of each rock and food by setting the x and y fields of each new object created using the backslash \ character to denote which field.</p>
+
+<code>
+<pre>
+For i=0 To 20
+    r.rock=New rock
+    r\x=Rnd(640)
+    r\y=Rnd(480)
+Next
+
+For i=0 To 20
+    f.food=New food
+    f\x=Rnd(640)
+    f\y=Rnd(480)
+Next
+</pre>
+</code>
+
+<p>We now need a function that draws all the food and rocks each frame and checks if the player has collided with any.</p>
+
+<p>Note how we can loop through each food and rock element that exist using the For..Each command pair. This is another great feature of BlitzBasic that keeps programs simple and easy to read.</p>
+
+<p>We use the RectsOverlap command to check of the players position (x,y) collides with each food or rock element (f \ x , f \ y) or (r \ x , r \ y). If the player collides with some food we delete that piece of food and increase the player's speed. If the player collides with a rock we end the game by resetting the status variable.</p>
+
+<code>
+<pre>
+Function UpdateRocksandFood()
+    ; draw food and check if eaten
+    Color 0,255,0
+
+    For f.food=Each food
+        Rect f\x,f\y,10,10
+
+        If RectsOverlap(x,y,10,10,f\x,f\y,10,10)
+            speed=speed+0.2
+
+            Delete f
+        EndIf
+    Next
+
+    ; draw rocks and check for roadkill
+    Color 255,0,255
+
+    For r.rock=Each rock
+        Rect r\x,r\y,10,10
+
+        If RectsOverlap(x,y,10,10,r\x,r\y,10,10)
+          status=0
+        EndIf
+    Next
+End Function
+</pre>
+</code>
+
+<p>Oops, one last thing, don't forget
+to call the UpdateRocksandFood() function from the main loop,
+just after the UpdatePlayer() call should do nicely.</p>
+
+<code>
+<pre>
+UpdateRocksandFood()
+</pre>
+</code>
+
+<p>OK, after playing the game, a few things should become evident.</p>
+
+<p>First, the player should die if they hit the outer wall. We could do this by checking if their position does not collide with the main screen rectangle (0,0,640,480). Try adding the following code to the UpdatePlayer function.</p>
+
+<code>
+<pre>
+If Not RectsOverlap(x,y,10,10,0,0,630,470) status=0
+</pre>
+</code>
+
+<p>Secondly, each time the game starts more rocks and food appear. This is because we never delete the food and rocks remaining from the last game. Insert the following code <strong>before</strong> the code that creates the new food and rocks in the InitGame() function.</p>
+
+<code>
+<pre>
+For f.food=Each food
+    Delete f
+Next
+For r.rock=Each rock
+    Delete r
+Next
+</pre>
+</code>

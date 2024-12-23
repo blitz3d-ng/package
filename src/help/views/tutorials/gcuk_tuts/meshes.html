@@ -1,0 +1,190 @@
+<h1>Introduction to Meshes</h1>
+
+<p>Meshes are the entities you will most frequently be
+working with - unless you're writing something weird (please do...)!
+</p>
+<p>Meshes are made up of vertices and triangles, and can be
+either loaded from files (perhaps the result of a 3d modeler program), or built
+'by hand'. (assembled from within a B3d program in realtime)
+</p>
+<h2><span style="background-color: #6097C9">&nbsp;Loading
+Meshes&nbsp;</span></h2>
+<p>There are 2 commands provided for loading meshes from
+files - 'LoadMesh' and 'LoadAnimMesh', both of which load a '.X' or '.3DS' file
+and return an entity. So what's the difference ?
+</p>
+<p>Models stored in files are usually made up of several
+'parts'. In the case of a character model, these parts may represent arms, legs
+etc.
+</p>
+<p>In addition, files also contain animation information
+with the 'LoadAnimMesh' command. The entity returned will actually be the parent
+entity of the whole bunch of child 'parts'.
+</p>
+<p>Therefore, 'LoadAnimMesh' really loads in several meshes
+!
+</p>
+<p>If you don't need to animate a model, you can use 'LoadMesh'
+instead. This will 'collapse' all the parts in a mesh and return a single,
+combined mesh. The collapsed mesh will look the same as a mesh loaded with
+LoadAnimMesh, only you wont be able to animate it, and it wont have any child
+meshes.
+</p>
+<p>Why bother with LoadMesh at all ? SPEED! - It's faster
+for B3D to deal with a single mesh than with multiple meshes, so if you're not
+planning to animate or doing anything tricky with a mesh, use LoadMesh.
+</p>
+<h2><span style="background-color: #6097C9">&nbsp;Creating
+Meshes&nbsp;</span></h2>
+<p>Before looking closely at creating meshes, you'll need
+to know about 'Brushes' in Blitz3D. A brush is a collection of properties used
+when rendering triangles. These properties are:
+</p>
+<ul>
+  <li><b>Colour</b> - The colour a triangle is rendered in.
+    (see BrushColor)<br>
+    </li>
+  <li><b>Texture</b> - From 0 to 8 texture maps that are
+    used to render a triangle. (see BrushTexture)<br>
+    </li>
+  <li><b>Alpha</b> - How transparent a triangle is. Alpha
+    can range from 0 (completely transparent) to 1 (completely opaque). (see
+    BrushAlpha)<br>
+    </li>
+  <li><b>Shininess</b> - How 'shiny' a triangle is. This
+    value can range from 0 (not shiny) to 1 (really shiny!). (see BrushShininess)<br>
+    </li>
+  <li><b>Blend</b> - The blend mode used to render a
+    triangle. Blend mode describes how a triangle is combined with what's
+    already on the screen. (see BrushBlend)<br>
+    </li>
+  <li><b>FX</b> - Optional special effects for rendering.
+    (see BrushFX)<br>
+    </li>
+</ul>
+<p>To create a brush, you use the CreateBrush command:</p>
+<table border="1" width="100%" bordercolor="#FFFFFF">
+  <tr>
+    <td width="14%">&nbsp;</td>
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;;create a brush.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>brush=CreateBrush()</b><br><br>
+
+    </td>
+    <td width="14%">&nbsp;</td>
+  </tr>
+</table>
+
+<p>Once we have a brush, we can set its properties:
+</p>
+<table border="1" width="100%" bordercolor="#FFFFFF">
+  <tr>
+    <td width="14%">&nbsp;</td>
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;;a red brush.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>BrushColor brush,255,255,0</b>
+      <p>&nbsp;&nbsp;a shiny red brush.&nbsp;<br>
+      &nbsp;&nbsp; <b>BrushShininess brush,1</b><br><br>
+
+      </p>
+
+    </td>
+    <td width="14%">&nbsp;</td>
+  </tr>
+</table>
+
+<p>So what has all this got to do with meshes ?
+</p>
+<p>Well, when I said meshes are made up of vertices and
+triangles, I sort of lied !. Meshes are actually made of 'surfaces', and
+surfaces are made up of vertices and triangles !.
+</p>
+<p>When a surface is created, you provide it with a brush
+that controls how all the triangles in the surface are rendered.
+</p>
+<p>So, a quick overview:
+</p>
+<ul>
+  <li>A mesh is made up of any number of surfaces.<br>
+    </li>
+  <li>Each surface in a mesh contains any number of
+    vertices and triangles.<br>
+    </li>
+  <li>All triangles in a surface are rendered using a
+    common brush.</li>
+</ul>
+<p>Lets dive on in and create a simple mesh:</p>
+<table border="1" width="100%" bordercolor="#FFFFFF">
+  <tr>
+    <td width="14%">&nbsp;</td>
+    <td width="72%" bordercolor="#000000" bgcolor="#C0C0C0">&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>brush=CreateBrush()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
+      ; create a brush<br>
+      &nbsp;&nbsp;&nbsp; <b>BrushColor
+      brush,255,0,0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </b>; a red brush
+      <p>&nbsp;&nbsp;&nbsp; <b>mesh=CreateMesh()&nbsp;&nbsp;</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      ; create a mesh<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;<b> surf=CreateSurface(
+      mesh,brush)&nbsp;&nbsp;&nbsp;</b> ;  create a (red) surface</p>
+      <p>&nbsp;&nbsp;&nbsp; <b>AddVertex surf,-1,1,0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      ; Now, we add 4 vertices...<br>
+      &nbsp;&nbsp;&nbsp; <b>AddVertex surf,1,1,0&nbsp;<br>
+      &nbsp;&nbsp;&nbsp; AddVertex surf,1-,1,0&nbsp;<br>
+      &nbsp;&nbsp;&nbsp; AddVertex surf,-1,-1,0</b></p>
+      <p><b>&nbsp;&nbsp;&nbsp; AddTriangle
+      surf,0,1,2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </b>; and 2 triangles...<b><br>
+      &nbsp;&nbsp;&nbsp; AddTriangle surf,0,2,3</b></p>
+      <p><b>&nbsp;&nbsp;&nbsp; UpdateNormals mesh</b>&nbsp;<br><br>
+
+      </p>
+
+    </td>
+    <td width="14%">&nbsp;</td>
+  </tr>
+</table>
+
+<p>This code will create a simple red square mesh entity.
+</p>
+<p>So what's with the weird 'UpdateNormals' command at the
+end ?. Well, in order for a mesh to be correctly lit, its 'vertex normals' must
+be calculated. Without going into the gory details, the UpdateNormals command
+will do this for you. If you are aware of how normals work, you can actually set
+your own vertex normals using the VertexNormal command. If not, just remember to
+stick an 'UpdateNormals' command at the end of any mesh modifications you do, or
+else your meshes will not be correctly lit.
+</p>
+<p>Note that you can create any number of surfaces you
+want. So, the same mesh can contain many differently coloured/textured/whatever
+triangles !.
+</p>
+<p>Why bother with surfaces at all ?, Why not just create a
+bunch of separate meshes, each with its own rendering properties and skip all
+this surface nonsense ?. Well, again it comes down to SPEED !. It's faster for
+Blitz3D to handle multiple surfaces - which can NOT be moved or rotated as
+entities can - than it would be to handle multiple meshes.
+</p>
+<h2><span style="background-color: #6097C9">&nbsp;Modifying
+Meshes&nbsp;</span></h2>
+<p>
+
+Once you've created a mesh, there are various commands available for modifying
+the mesh in realtime. This can be used to create a range of impressive special
+effects such as waving flags, rippling water and so on.</p>
+<p>These commands are:</p>
+<ul>
+  <li><b>VertexCoords</b> - Changes the coordinates of a
+    vertex.<br>
+    </li>
+  <li><b>VertexColor</b> - Changes the colour of a vertex.<br>
+    </li>
+  <li><b>VertexTexCoords</b> - Changes the texture mapping
+    coordinates of a vertex.<br>
+    </li>
+  <li><b>VertexNormal</b> - Changes the normal of a vertex.</li>
+</ul>
+<p>For more info on how to use these commands, take a look
+at the Vertex tutorial further on down the line.</p>

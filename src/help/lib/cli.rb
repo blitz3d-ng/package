@@ -7,6 +7,8 @@ require_relative './help/index'
 require_relative './help/credits'
 require_relative './help/language'
 require_relative './help/reference'
+require_relative './help/tutorials'
+require_relative './help/highlighter'
 
 require_relative './tools/import'
 require_relative './tools/lint'

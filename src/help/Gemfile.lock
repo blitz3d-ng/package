@@ -42,14 +42,18 @@ GEM
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     os (1.1.4)
+    parslet (2.0.0)
     racc (1.8.1)
     rake (13.2.1)
+    rouge (4.5.1)
     sass-embedded (1.83.0)
       google-protobuf (~> 4.28)
       rake (>= 13)
     securerandom (0.4.1)
     terser (1.2.4)
       execjs (>= 0.3.0, < 3)
+    toml (0.3.0)
+      parslet (>= 1.8.0, < 3.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
 
@@ -66,8 +70,10 @@ DEPENDENCIES
   mini_racer
   nokogiri
   os
+  rouge
   sass-embedded
   terser
+  toml
 
 RUBY VERSION
    ruby 3.1.2p20

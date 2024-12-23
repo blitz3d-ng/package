@@ -1,0 +1,45 @@
+<h1>Introduction to Planes</h1>
+
+<p>
+
+Planes are a simple way to add large, flat surfaces to the world. Planes are useful for such things as ground, sea, sky, clouds and so on. Just about every 3d game will use planes in some way or another.
+</p>
+<h2><span style="background-color: #6097C9">&nbsp;Creating Planes&nbsp;</span></h2>
+<p>
+
+How do you create a plane ? - Easy, just use the <b>CreatePlane</b> instruction:
+</p>
+
+<code>
+<pre>
+;create a simple plane.
+plane=CreatePlane()
+</pre>
+</code>
+
+<h2>Manipulating planes</h2>
+<p>
+
+By default, a new Plane is positioned at 0,0,0 and faces upwards. However, you may want the plane to face a different direction, or to be moved up or down. To do this, you just need to use the standard entity commands.</p>
+<p>
+
+For example, you might want to use a plane for a layer-of-clouds type effect. In this case, just rotate and position the plane as necessary:</p>
+
+<code>
+<pre>
+;create clouds plane.
+plane=CreatePlane()
+
+;rotate plane so it faces downwards.
+RotateEntity clouds,0,0,180
+
+;and position it up in the sky!
+PositionEntity clouds,0,100,0
+</pre>
+</code>
+
+<p>So now we have a plane that is going to represent the sky, how can we make it look realistic ?</p>
+
+<p>The easy answer would be to Texture it !, as you shall see later on in these tutorials - Blitz3D has ALL the answers.</p>
+
+<p>If you take a careful look at most of todays top titles you will notice that most of the sky scenes contain more than one layer. Usually this consists of 2 - sometimes even 3 planes. The very top plane contains static objects such as the Sun, while the plane infront has a cloud layer. This can be achieved by using the BRUSHFX instuction (to make the texture slightly see-through) -in conjunction with an animated texture, that is slowly wrap-scrolling. (And YES, B3D can do this effect with ease!)</p>

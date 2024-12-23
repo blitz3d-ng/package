@@ -53,6 +53,7 @@ _release/help/credits.html
 _release/help/assets/
 _release/help/language
 _release/help/reference
+_release/help/tutorials
 _release/tmp
 _release/toolchains
 _release/userlibs/*.dll
