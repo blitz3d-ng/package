@@ -4,7 +4,7 @@
 # A basic script which either configures the current shell
 # or starts docker.
 #
-# See https://github.com/blitz3d-ng/env for info on docker.
+# See https://github.com/blitz3d-ng/docker-images for info on docker.
 
 # if no params, export needed variables for the compiler.
 if [ "$1" = "" ]
@@ -21,7 +21,7 @@ set -e
 export PLATFORM=$1
 shift
 
-VERSION="${VERSION:-v9}"
+VERSION="${VERSION:-v20241218}"
 
 VOLUME=blitz3d-ng-gems-$PLATFORM
 IMAGE=ghcr.io/blitz3d-ng/env:$PLATFORM-$VERSION

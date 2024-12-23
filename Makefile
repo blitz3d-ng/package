@@ -2,7 +2,7 @@ ENV := release
 GENERATOR := Ninja
 GENERATOR_OPTIONS := -k 0
 
-ifeq ($(shell uname -m), arm64)
+ifeq ($(shell uname -m),$(filter $(shell uname -m), arm64 aarch64))
 ARCH := arm64
 else
 ARCH := x86_64
@@ -19,7 +19,7 @@ endif
 IOS_VERSION:=15.4
 IOS_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=src/ios.toolchain.cmake -DENABLE_BITCODE=OFF -DDEPLOYMENT_TARGET=$(IOS_VERSION)
 
-ANDROID_PLATFORM:=30
+ANDROID_PLATFORM:=31
 
 ifeq ($(PLATFORM), ios)
 ARCH=arm64
@@ -52,13 +52,13 @@ endif
 
 ifeq ($(PLATFORM), android)
 ARCH:=arm64-v8a# armeabi-v7a x86_64 x86
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=$(ANDROID_HOME)/ndk-bundle/build/cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=$(ANDROID_PLATFORM) -DANDROID_PLATFORM=$(ANDROID_PLATFORM) -DANDROID_ABI="$(ARCH)" -DANDROID_LD=deprecated -DARCH=$(ARCH)
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=$(ANDROID_NDK_HOME)/build/cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=$(ANDROID_PLATFORM) -DANDROID_PLATFORM=$(ANDROID_PLATFORM) -DANDROID_ABI="$(ARCH)" -DANDROID_LD=deprecated -DARCH=$(ARCH)
 endif
 
 ifeq ($(PLATFORM), ovr)
 ANDROID_PLATFORM=24
 ARCH=arm64-v8a
-CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=$(ANDROID_HOME)/ndk-bundle/build/cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=$(ANDROID_PLATFORM) -DANDROID_PLATFORM=$(ANDROID_PLATFORM) -DANDROID_ABI="$(ARCH)" -DANDROID_LD=deprecated -DARCH=$(ARCH)
+CMAKE_OPTIONS=-DCMAKE_TOOLCHAIN_FILE=$(ANDROID_NDK_HOME)/build/cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=$(ANDROID_PLATFORM) -DANDROID_PLATFORM=$(ANDROID_PLATFORM) -DANDROID_ABI="$(ARCH)" -DANDROID_LD=deprecated -DARCH=$(ARCH)
 endif
 
 ifeq ($(PLATFORM), nx)
@@ -104,14 +104,14 @@ nx: compiler
 	make PLATFORM=nx DEVKITPRO=$(DEVKITPRO)
 
 llvm:
-	./deps/env/build-llvm.sh build/llvm llvm
+	./deps/llvm/build-llvm.sh build/llvm llvm
 
 install-unit-test:
 	cp _release/toolchains/mingw32/bin/unit_test.dll ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 	cp src/modules/bb/unit-test/unit_test.decls ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 
 help:
-	(cd src/help && bundle && ./build.rb)
+	(cd src/help && bundle && bundle exec ./build.rb)
 
 dist-pkg:
 	mv _release blitz3d-ng
