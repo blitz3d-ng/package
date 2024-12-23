@@ -111,7 +111,7 @@ install-unit-test:
 	cp src/modules/bb/unit-test/unit_test.decls ~/.wine/drive_c/Program\ Files/Blitz3D/userlibs/
 
 help:
-	(cd src/help && bundle && ./build.rb)
+	(cd src/help && bundle && bundle exec ./build.rb)
 
 dist-pkg:
 	mv _release blitz3d-ng
