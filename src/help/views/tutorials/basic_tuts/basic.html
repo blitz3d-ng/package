@@ -1,76 +1,87 @@
-<html>
+<h1>Learning how to program Blitz BASIC</h1>
 
-<head>
-<meta http-equiv="Content-Type"
-content="text/html; charset=iso-8859-1">
-<title>Getting Started with BlitzBasic </title>
-<style>
-<!--
-     A:link {text-decoration: none;}
-     A:visited {text-decoration: none;}
--->
-</style>
-</head>
+<p>You want to learn the first steps so you can evantually write a game? Well you've come to the right place.</p>
 
-<body bgcolor="#206060" text="#ffff00" link="#00ff00"
-vlink="#00ff00" alink="#00ff00">
+<p>Blitz Basic uses a specially designed and easy to use programming language so that it is easy to follow and requires no previous knowledge of programming, just a love of games and your ideas.</p>
 
-
-<br>
-<center><h1>Learning how to program Blitz BASIC</center></h1>
-<center>You want to learn the first steps so you can evantually write a game? Well you've come to the right place.</center> 
-<p align="left"><font size="2" face="verdana">
-<br>
-Blitz Basic uses a specially designed and easy to use programming language so that it is easy to follow and requires no previous knowledge of programming, just a love of games and your ideas.<br><br> 
-So, welcome to the BASIC guide to Blitz - where the only restrictions are your imagination. 
+<p>So, welcome to the BASIC guide to Blitz - where the only restrictions are your imagination.
 The sole purpose of this section is to teach you how to write your own Blitz Basic programs. The traditional description of a program is a task that you want your computer to perform via a set of instructions. The task is described to the computer using an instruction set Blitz Basic can understand.
 
-The instructions in your program must be written using a set of rules known as Syntax. You must follow these rules if you are to write Blitz Basic programs. With lots of practice and a sprinkle of determination you will gain a firm and confident understanding about the general rules of BASIC and how to use them as a programmer 
+The instructions in your program must be written using a set of rules known as Syntax. You must follow these rules if you are to write Blitz Basic programs. With lots of practice and a sprinkle of determination you will gain a firm and confident understanding about the general rules of BASIC and how to use them as a programmer
 - When you have this working knowledge of Blitz Basic, the types of games you create are entirely up to you, but with a little imagination you could be writing the next hit game.
-<br>
-<br> If you didn't know - BASIC is an acronym for <b>Beginners All-purpose Symbollic Instruction Code.</b> In this mini course you'll learn the BASIC language as implemented in Blitz and the planning of good programming structures.<br><br><b>Hello World Hello Me or <i>Hello sheep! Hello cup of tea!</i></b><br><br>
+</p>
 
-OK - lets start with the <b>Print</b> command - this simply prints any text onto your screen - like this:<br><br>
+<p> If you didn't know - BASIC is an acronym for <b>Beginners All-purpose Symbollic Instruction Code.</b> In this mini course you'll learn the BASIC language as implemented in Blitz and the planning of good programming structures.</p>
 
-<b>print "Hello sheep"</b><br>
-<b>print "Hello cup of tea"</b><br>
-<b>End</b><br><br>
-just simply type it into your ide...
-<img align="left" src="hello.gif"><br><br><br><br><br><br><br><br><br><br><br><br><br>
-...and click on the red rocket <img src="rocket.gif"> to run....
-<img align="left" src="hellooutput.gif"><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><b>Well done - you've just written your first Blitz program.</b>
+<hr />
+
+<p>OK - lets start with the <kbd>Print</kbd> command - this simply prints any text onto your screen - like this:</p>
+
+<code>
+<pre>
+Print "Hello sheep"
+Print "Hello cup of tea"
+End
+</pre>
+</code>
+
+<p>just simply type it into your ide...</p>
+<p><img src="./assets/hello.gif"></p>
+
+<p>...and click on the red rocket <img src="./assets/rocket.gif"> to run...</p>
+<p><img src="./assets/hellooutput.gif"></p>
+
+<p>Well done - you've just written your first Blitz program.</p>
+
 <br><br>You can also include comments/notes in your programs - this is highly
 recommended and is good programming practice also. You do this by placing a semi-colon (;) into your program
 then just type your text eg:<br><br>
-<b>Print "George Bray" </b>; This piece of code is for printing your name to the screen<br><br>
-You can also stop the machine with the <b>End</b> command - this will break your program
-at any point that you want it to end.<br><br>
+
+<code>
+<pre>
+Print "George Bray" ; This piece of code is for printing your name to the screen
+</pre>
+</code>
+
+<p>You can also stop the machine with the <kbd>End</kbd> command - this will break your program
+at any point that you want it to end.</p>
 You can give your code a title too by typing <b>AppTitle "gamenamehere"</b><br><br>
 OK let's learn how Blitz works in interpreting your programs and what you'll need to know to write them...<br><br>
 <b><u>Data</b></u><br><br>These are the main items in programming. Data is represented to in three basic forms. The first is a whole number which is known as an <b>Integer</b> eg. 8,20,100,1000.</b> The second type is a <b>Real Number</b>, this allows decimal
-points eg. 1.2, 48.20, 100.4, 3000.201. The third type of data is a <b>String</b> which is basically 
+points eg. 1.2, 48.20, 100.4, 3000.201. The third type of data is a <b>String</b> which is basically
 something that is not a number, all strings consist of characters enclosed within quotation marks.
 A string can include numbers eg "A", "1", "Blitz Basic", "Commodore 64", "Sheep".
 <br><br>
 <b><u>Variables</b></u><br><br>
 A Variable is used to store Data - to simplify this - Imagine a Variable as
 being one big box and within that box you can store an item plus more boxes if required.
-An example would be:<br><br> <b>A = 2 + 2</b><br><br>You can also <b>print</b> the contents of a variable to the screen:<br><br>
-<b>A = 2 + 2<br>
-Print A</b><br><br>
-Another example would be:<br><br>
-<b>A = 1<br>
-B = 2<br>
-C = A + B<br>
-PRINT C</b><br><br>
+An example would be:<br><br> <b>A = 2 + 2</b><br><br>You can also <b>print</b> the contents of a variable to the screen:
+
+<code>
+<pre>
+A = 2 + 2
+Print A
+</pre>
+</code>
+
+<p>Another example would be:</p>
+
+<code>
+<pre>
+A = 1
+B = 2
+C = A + B
+Print C
+</pre>
+</code>
+
 If we break this down - we have 3 variables here A & B - which store 2 numbers
-and finally variable C which is a calculation that is based on the values stored within variables A & B 
+and finally variable C which is a calculation that is based on the values stored within variables A & B
 so the calculation is actually C = 1 + 2. The result is then stored in C and printed to the screen.<br><br>
-Variables can also store <b>Real Numbers</b> and <b>Strings</b> In order to allow a variable to store these other types of data, 
+Variables can also store <b>Real Numbers</b> and <b>Strings</b> In order to allow a variable to store these other types of data,
 you must make sure you tell the computer whether it is a <b>Integer</b>, <b>Real Number</b>, or a <b>String</b>
 variable. To specify a real number variable, you must add a hash sign (#) as the last character
-of the variable name. If you want your variable to store a string, you must add a dollar sign ($) as the last 
+of the variable name. If you want your variable to store a string, you must add a dollar sign ($) as the last
 character of the variable name eg:<br><br>
 
 <b>A# = 1.2<br>
@@ -81,13 +92,13 @@ You can also create mathematical functions using <b>String</b> variables eg:<br>
 D$ = A$ + B$ + C$<br>
 Print D$<br><br></b>
 When you run this program, it will print <b> Welcome to the world of programming</b> on your screen.<br><br>
- 
+
 Easy eh?<br><br>
 <b><u>Arrays</b></u><br><br>
 Arrays are very important because you can store lots of data under a single name.
  You can even pinpoint an item of data and use it from within an array. If for example
 you want to store 7 days of the week, you would have to create 7 different
-variables eg. <br><br><b>day0$ = "Monday" <br>day1$ = "Tuesday" <br> </b>upto<b><br> day6$ = "Sunday"</b><br><br> But with an Array 
+variables eg. <br><br><b>day0$ = "Monday" <br>day1$ = "Tuesday" <br> </b>upto<b><br> day6$ = "Sunday"</b><br><br> But with an Array
  you can create a different kind of variable that can store more than one item of data.
 eg. For days of the week you might go:<br><br>
 <b>Dim day$(6)	; Dim the array... 7 elements (0 to 6)<br>
@@ -103,7 +114,7 @@ Print day$(loop) ; loops through and prints the data.<br>
 Next ; this continues until loop is equal to 6 then continues with the next line of your program.</b><br><br>
 You can also you the <b>STEP</b> command when creating a FOR/NEXT loop eg. If you
 were to create a FOR/NEXT loop followed by STEP 2 the computer would count
-up the for next loop in increments of 2 eg. 2, 4, 6. So if we were to apply this to our days of the week 
+up the for next loop in increments of 2 eg. 2, 4, 6. So if we were to apply this to our days of the week
 program: <br><br>
 <b>
 For loop = 0 to 6 step 2</b><br><br>
@@ -119,8 +130,8 @@ levels of data so by:<br><br>
 Here we are setting up the arrays 0 - 6 but for each one there is another
 5 boxes of data numbered 0 - 4 upon which more data can be stored. So if you
 think back to your boxes - here we have 7 boxes with 5 boxes inside, so in all
-you can store 35 values (7x5) in this array. So data entry into the Array you would 
-create something like this:<b><br><br> 
+you can store 35 values (7x5) in this array. So data entry into the Array you would
+create something like this:<b><br><br>
 day(0,0) = 10<br>
 day(0,1) = 20<br>
 day(0,2) = 30<br>
@@ -132,8 +143,8 @@ day(1,2) = 300<br>
 day(1,3) = 400<br>
 day(1,4) = 500<br><br>
 </b>
-As you can see arrays need to be declared as a particular type - <b>Integer, Real Number & String.</b> 
-You can have an array of integer, real numbers or strings but you cannot have multiple 
+As you can see arrays need to be declared as a particular type - <b>Integer, Real Number & String.</b>
+You can have an array of integer, real numbers or strings but you cannot have multiple
 types in the same array. <br><br><b><u>
 Mathematical Commands</u></b><br><br>
 The dreaded mathematical side of computers but DON'T PANIC - I'm no mathematician either.
@@ -141,7 +152,7 @@ I'll just give you a quick run down on the "boring" side of things - don't worry
 a little patience you will be familiar with all these functions in no time as
 we will make the computer do all the hard work. Just relax - make a nice steaming hot cup of tea & read on.....<br><br>
 OK - lets start with the easiest stuff - <b>Add, Subtract, Divide and Multiply.</b>
-In computer terms these are represented by<b>(+) (-) (/) (*)</b> respectively. 
+In computer terms these are represented by<b>(+) (-) (/) (*)</b> respectively.
 A simple example would be:<br><br><b>
 
 A = 2 + 2<br>
@@ -168,7 +179,7 @@ The basics are (study the logic in these examples - it is pretty straight forwar
 <b>If agecategory$ = 18 And age$&gt;18 Or agecategory$ = 15 And age$&gt;15 Then Print "Enjoy your film."</b> ; Using AND OR expressions decides if they are old enough<br>
 <b>WaitMouse</b> ; waits for the mouse button to be pressed<br>
 <b>End</b> ; Once the mouse button has been pressed - Ends the program.<br><br>
-We can compare not only numbers, but strings (text) also. We have seen '=' used 
+We can compare not only numbers, but strings (text) also. We have seen '=' used
 in 'agecategory$ = 18' so what does 'less than' & 'more than' mean for strings?
 One thing it does not mean is 'shorter than', so we don't make that
 mistake. We make the definition that one string is less than another
@@ -208,7 +219,7 @@ commands:<br><br>
 <b>.second</b><br>
 <b>Data 4,5,6</b>                ;more data items<br><br>
 
-You may have notice that I threw in the <b>RESTORE</b> command within example 2. This is used 
+You may have notice that I threw in the <b>RESTORE</b> command within example 2. This is used
 to reset the data pointer at any time. In a games programming environment
 you may need to read the same data again eg. If you want to clear the
 screen & redraw it using your data table - by resetting the pointer
@@ -271,7 +282,7 @@ to printing out 1-100 sequencially - as per previous <b>FOR</b>...<b>NEXT loop</
 <b><u>Functions</b></u><br><br>
 Using functions - Part 1<br><br>
 
-Now that you are getting to grips with the very "basics" of Basic 
+Now that you are getting to grips with the very "basics" of Basic
 programming (eg. For...Next)!
 
 A function allows you to run a commonly used piece of code. For
@@ -288,7 +299,7 @@ Next</b><br><br>
 
 Now run the program to see the result.<br><br>
 Using Functions - Part 2<br><br>
-OK, now we'll modify the function so that it'll print whatever we 
+OK, now we'll modify the function so that it'll print whatever we
 want, which can be different each time we call it.<br><br>
 
 The function:<br><br>
@@ -314,8 +325,8 @@ expecting you to pass a string variable, as we've done above.<br><br>
 Note that "a$" could be named anything at all - "b$" "sometext$" whatever.<br><br>
 Look inside the function, and it takes whatever is passed into its
  "a$" parameter and uses it in the Print call ("Print a$").<br><br>
-As an exercise, try changing "a$" to "b$". Make sure you change "a$" to "b$" 
-all throughout the function, or it won't work! Do that before continuing, then run it.<br><br> 
+As an exercise, try changing "a$" to "b$". Make sure you change "a$" to "b$"
+all throughout the function, or it won't work! Do that before continuing, then run it.<br><br>
 Here's what you should have ended up with:<br><br>
 Function PrintSomething (b$)<br>
 Print b$<br>
@@ -340,7 +351,7 @@ Print mysentence$<br><br></b>
 
 Run the program as before - now what happens here?<br><br>
 
-First of all, looking at the function itself, we know we're returning a string 
+First of all, looking at the function itself, we know we're returning a string
 from the function (it's joining "You passed: " onto whatever string you pass to it), so we add
 a $ (string) sign to the name of the function ("JoinString"), which gives us "JoinString$".
 The "Return" statement passes the joined string back to where we called it. Remember,
@@ -392,7 +403,7 @@ If the condition is true then the statement after <b>THEN</b> is executed, but o
 is skipped over. The most useful conditions compare two number or two strings. You can test
 whether two numbers are equal, or whether one is bigger than the other and they can test whether
 two strings are equal, or whether one come before the other in alphabetical order. They use the
-relations =,&lt;,&gt;,&lt;=,&gt;=, and <>. If you've not experienced 
+relations =,&lt;,&gt;,&lt;=,&gt;=, and <>. If you've not experienced
 these signs before they represent the following:<br><br>
 <b>Sign</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Meaning</b><br><br>
 =&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Equals<br>
@@ -411,7 +422,7 @@ We can also achieve the same effect with numbers too:<br><br>
 
 <b>number = Input ("How old are you ")</b> ; prints a question - waits for users input<br>
 <b>If number &lt; 18 Then Print "You are under 18"</b> ; IF input is smaller than 18 THEN print text<br>
-<b>If number > 18 Then Print "You are over 18"</b> ; IF input is greater than 18 THEN print text<br> 
+<b>If number > 18 Then Print "You are over 18"</b> ; IF input is greater than 18 THEN print text<br>
 <b>If number = 18 Then Print "you are 18"</b> ; IF input is equal to 18 THEN print text<br>
 <br><br>
 The expression IF THEN can be any combination of values, variables, arrays and operators providing the expressions are logical.<br><br>
@@ -427,7 +438,7 @@ shows you this principle:<br><br>
 The above code is the same as typing:<br><br>
 IF commodore = atari THEN PRINT "Welcome to the machine - commodore and atari..."<br><br>
 If you change the values of commodore and atari - so they are both different - see the end result?<br><br>
-You can also make your program follow a different chain of events if the values are not equal to. 
+You can also make your program follow a different chain of events if the values are not equal to.
 Here we introduce the <b>ELSE</b> command - so you would point this to a different
 piece of code that you wanted to execute - like below:<br><br>
 <b>IF commodore = atari<br>
@@ -464,24 +475,32 @@ actual list of elements without scrolling all the way back up!<br><br>
 
 A way around this general awkwardness is to use <b>types.</b> Whereas with the
 array, we made a "playerdata" array, here we'll make a "playerdata" type
-instead:<br><br>
+instead:
 
-  <b>Type playerdata<br>
-      Field player<br>
-      Field x<br>
-      Field y<br>
-      Field animframe<br>
-      Field weaponselected<br>
-      Field lives<br>
-      Field rockets<br>
-      Field jewelscollected<br>
-      Field blah<br>
-      Field blah2<br>
-  End Type<br><br></b>
+<code>
+<pre>
+Type playerdata
+    Field player
+    Field x
+    Field y
+    Field animframe
+    Field weaponselected
+    Field lives
+    Field rockets
+    Field jewelscollected
+    Field blah
+    Field blah2
+End Type
+</pre>
+</code>
 
 Think it looks complicated? Well, let's take a look:<br><br>
 
-<b>Type playerdata</b><br><br>
+<code>
+<pre>
+Type playerdata
+</pre>
+</code>
 
 This line simply creates a new type (you'll also hear types referred to as
 "objects", so this might be called a "playerdata object").<br><br>
@@ -677,5 +696,3 @@ for a synopsis of the more advanced commands :) </b>
 <br><br><center><b>REMEMBER: Look in the Blitz Basic samples folder for lots of example code for
 you to play around with and more importantly - learn whilst having fun.</center><br><br>
 <hr><br><br>
-</body>
-</html>

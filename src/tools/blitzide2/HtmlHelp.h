@@ -20,7 +20,8 @@ public:
   bool CanGoForward();
 };
 
-wxDECLARE_EVENT(OPEN_EVENT, wxCommandEvent);
+wxDECLARE_EVENT(BROWSE_DIR_EVENT, wxCommandEvent);
+wxDECLARE_EVENT(OPEN_FILE_EVENT, wxCommandEvent);
 
 
 #endif

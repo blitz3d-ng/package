@@ -51,6 +51,7 @@ private:
 	void OnRun( wxCommandEvent& event );
 	void OnExe( wxCommandEvent& event );
 	void OnTarget( wxCommandEvent& event );
+	void OnAddFile( wxCommandEvent& event );
 	void OnBuildBegin( wxCommandEvent& event );
 	void OnBuildProgress( wxCommandEvent& event );
 	void OnBuildEnd( wxCommandEvent& event );

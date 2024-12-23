@@ -5,7 +5,8 @@
 
 extern wxString blitzpath;
 
-wxDEFINE_EVENT(OPEN_EVENT, wxCommandEvent);
+wxDEFINE_EVENT(BROWSE_DIR_EVENT, wxCommandEvent);
+wxDEFINE_EVENT(OPEN_FILE_EVENT, wxCommandEvent);
 
 HtmlHelp::HtmlHelp( wxWindow *parent,wxWindowID id ):wxPanel( parent,id ){
   browser = wxWebView::New(this, wxID_ANY);
@@ -28,10 +29,18 @@ void HtmlHelp::OnNavigating( wxWebViewEvent& event ){
   if ( dir.IsOpened() ){
     event.StopPropagation();
 
-    wxCommandEvent event( OPEN_EVENT,GetId() );
+    wxCommandEvent event( BROWSE_DIR_EVENT,GetId() );
     event.SetEventObject( this );
     event.SetString( dirPath );
     ProcessWindowEvent( event );
+  } else {
+    wxFileName filename( dirPath );
+    if ( !dirPath.EndsWith(".html") && filename.IsFileReadable() ){
+      wxCommandEvent event( OPEN_FILE_EVENT,GetId() );
+      event.SetEventObject( this );
+      event.SetString( dirPath );
+      ProcessWindowEvent( event );
+    }
   }
 }
 

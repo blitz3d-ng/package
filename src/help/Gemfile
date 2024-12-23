@@ -9,6 +9,8 @@ gem 'colored'
 gem 'nokogiri'
 gem 'filewatcher'
 gem 'os'
+gem 'rouge'
+gem 'toml'
 
 gem 'htmlcompressor'
 gem 'terser'
