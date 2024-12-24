@@ -1,4 +1,5 @@
 #include "MainFrame.h"
+#include "FileView.h"
 #include "PreferencesDialog.h"
 #include "dpi.h"
 
@@ -45,6 +46,8 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 
 	EVT_COMMAND (wxID_ANY, BROWSE_DIR_EVENT, MainFrame::OnOpen)
 	EVT_COMMAND (wxID_ANY, OPEN_FILE_EVENT, MainFrame::OnAddFile)
+
+	EVT_COMMAND (wxID_ANY, FILE_VIEW_DIRTY_EVENT, MainFrame::OnFileViewDirty)
 
 	EVT_COMMAND (wxID_ANY, BUILD_BEGIN,    MainFrame::OnBuildBegin)
 	EVT_COMMAND (wxID_ANY, BUILD_PROGRESS, MainFrame::OnBuildProgress)
@@ -338,26 +341,34 @@ void MainFrame::OnAbout(wxCommandEvent& event){
 }
 
 void MainFrame::OnNew( wxCommandEvent& WXUNUSED(event) ){
-  wxString path("");
-  AddFile( path );
-  nb->SetSelection( nb->GetPageCount()-1 );
+	wxString path("");
+	AddFile( path );
+	nb->SetSelection( nb->GetPageCount()-1 );
 }
 
 void MainFrame::OnOpen( wxCommandEvent& event ){
-  wxFileDialog openFileDialog(this, wxT("Open Blitz Basic file..."), event.GetString(), "", "Blitz Basic files (*.bb)|*.bb", wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE);
+	wxFileDialog openFileDialog(this, wxT("Open Blitz Basic file..."), event.GetString(), "", "Blitz Basic files (*.bb)|*.bb", wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE);
 
-  if (openFileDialog.ShowModal() == wxID_CANCEL)
-    return;
+	if (openFileDialog.ShowModal() == wxID_CANCEL)
+		return;
 
-  wxArrayString paths;
-  openFileDialog.GetPaths( paths );
-  AddFiles( paths );
+	wxArrayString paths;
+	openFileDialog.GetPaths( paths );
+	AddFiles( paths );
 }
 
 void MainFrame::OnAddFile( wxCommandEvent& event ){
-  auto path = event.GetString();
-  AddFile( path );
-  nb->SetSelection( nb->GetPageCount() - 1 );
+	auto path = event.GetString();
+	AddFile( path );
+	nb->SetSelection( nb->GetPageCount() - 1 );
+}
+
+void MainFrame::OnFileViewDirty( wxCommandEvent& event ){
+	FileView *file=dynamic_cast<FileView*>( nb->GetCurrentPage() );
+
+	wxString title=file->GetTitle();
+	if( file->IsDirty() ) title += "*";
+	nb->SetPageText( nb->GetSelection(),title );
 }
 
 void MainFrame::OnSave( wxCommandEvent& WXUNUSED(event) ){
@@ -369,11 +380,26 @@ void MainFrame::OnSave( wxCommandEvent& WXUNUSED(event) ){
 }
 
 void MainFrame::OnClose( wxCommandEvent& WXUNUSED(event) ){
-  size_t page = nb->GetSelection();
-  if ( page==0 ) return;
+	size_t page = nb->GetSelection();
+	if ( page==0 ) return;
 
-  nb->DeletePage( page );
-  UpdateToolbar( page-1 );
+	FileView *file=dynamic_cast<FileView*>( nb->GetCurrentPage() );
+	if( file->IsDirty() ){
+		wxMessageDialog* dialog=new wxMessageDialog(NULL, "File "+file->GetPath()+" has been modified! Save changes before closing?", _("Save changes?"), wxYES_NO|wxCANCEL|wxCANCEL_DEFAULT|wxICON_WARNING );
+
+		switch (dialog->ShowModal()){
+		case wxID_YES:
+			file->Save();
+			break;
+		case wxID_NO:
+			break;
+		default:
+			return;
+		};
+	}
+
+	nb->DeletePage( page );
+	UpdateToolbar( page-1 );
 }
 
 void MainFrame::OnPreferences( wxCommandEvent& WXUNUSED(event) ){
