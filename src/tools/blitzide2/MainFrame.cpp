@@ -165,19 +165,30 @@ MainFrame::MainFrame( const wxString& title )
   CreateStatusBar();
   // SetStatusText( "" );
 
-  nb = new wxNotebook( this,wxID_ANY );
+  splitter = new wxSplitterWindow( this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxSP_3D|wxSP_LIVE_UPDATE );
+  splitter->SetSashGravity( 1.0 );
+  splitter->SetMinimumPaneSize( 250 );
+
+  nb = new wxNotebook( splitter,wxID_ANY );
   nb->Bind( wxEVT_NOTEBOOK_PAGE_CHANGED,&MainFrame::OnPageChanged,this,wxID_ANY );
 
   help = new HtmlHelp( nb,wxID_ANY );
   nb->AddPage( help,wxT("Help") );
 
-  wxBoxSizer *sizer = new wxBoxSizer( wxVERTICAL );
-  sizer->AddSpacer( 5 );
-  sizer->Add( nb,1,wxEXPAND,0 );
+  codePanel=new CodePanel( splitter );
+
+  wxBoxSizer *sizer=new wxBoxSizer( wxVERTICAL );
+  sizer->Add( splitter,1,wxEXPAND,0 );
+
+  splitter->SplitVertically( nb,codePanel );
 
   SetSizer( sizer );
+  sizer->SetSizeHints(this);
 
 	buildFile=0;
+
+	splitter->SetSashPosition( 900 );
+	splitter->UpdateSize();
 
 	UpdateToolbar( 0 );
 	UpdateMenu( 0 );
@@ -199,6 +210,8 @@ void MainFrame::AddFiles( wxArrayString &paths ){
 		AddFile( *it );
 	}
 	nb->SetSelection( nb->GetPageCount()-1 );
+	FileView *file=dynamic_cast<FileView*>( nb->GetCurrentPage() );
+	codePanel->updateLists( file->GetSource() );
 }
 
 void MainFrame::UpdateToolbar( int pageIndex ){
@@ -361,6 +374,9 @@ void MainFrame::OnAddFile( wxCommandEvent& event ){
 	auto path = event.GetString();
 	AddFile( path );
 	nb->SetSelection( nb->GetPageCount() - 1 );
+
+	FileView *file=dynamic_cast<FileView*>( nb->GetCurrentPage() );
+	codePanel->updateLists( file->GetSource() );
 }
 
 void MainFrame::OnFileViewDirty( wxCommandEvent& event ){
@@ -369,6 +385,8 @@ void MainFrame::OnFileViewDirty( wxCommandEvent& event ){
 	wxString title=file->GetTitle();
 	if( file->IsDirty() ) title += "*";
 	nb->SetPageText( nb->GetSelection(),title );
+
+	codePanel->updateLists( file->GetSource() );
 }
 
 void MainFrame::OnSave( wxCommandEvent& WXUNUSED(event) ){
@@ -498,6 +516,14 @@ void MainFrame::OnForward( wxCommandEvent& WXUNUSED(event) ){
 }
 
 void MainFrame::OnPageChanged( wxBookCtrlEvent& event ){
+	if( nb->GetSelection()==0 ){
+		codePanel->Hide();
+		splitter->Unsplit();
+	}else{
+		codePanel->Show();
+		splitter->SplitVertically( nb,codePanel );
+	}
+
 	UpdateToolbar( event.GetSelection() );
 	UpdateMenu( event.GetSelection() );
 }

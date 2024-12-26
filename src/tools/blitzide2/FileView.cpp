@@ -65,45 +65,65 @@ FileView::FileView( wxString &path,wxWindow *parent,wxWindowID id ):path(path),c
 	wxColour rgb_digit=wxColour( 0x33,0xff,0xdd );
 	wxColour rgb_default=wxColour( 0xee,0xee,0xee );
 
+	wxColour rgb_white=wxColour( 0xff,0xff,0xff );
+
 	// text->StyleClearAll();
 
 	text->StyleSetBackground( wxSTC_STYLE_DEFAULT,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_STYLE_DEFAULT,rgb_default );
 
-	text->SetCaretForeground( wxColour( 0xff,0xff,0xff ) );
+	text->SetCaretForeground( rgb_white );
 	text->SetCaretLineBackground( wxColour( 0x1e,0x4a,0x76 ) );
 	text->SetCaretLineVisible( true );
 
 	text->SetTabWidth( 4 );
 
-	text->SetMarginWidth( MARGIN_LINE_NUMBERS,25 );
+	// text->SetWrapMode( wxSTC_WRAP_WORD );
+
+	// text->SetExtraAscent( 1 );
+	// text->SetExtraDescent( 1 );
+
+	text->SetMarginWidth( MARGIN_LINE_NUMBERS,25*2 );
 	text->SetMarginType( MARGIN_LINE_NUMBERS,wxSTC_MARGIN_NUMBER );
 
 	text->SetLexer( wxSTC_LEX_BLITZBASIC );
 
 	text->StyleSetFont( wxSTC_STYLE_DEFAULT,font );
 
-	text->StyleSetForeground( wxSTC_STYLE_LINENUMBER, wxColour (0xee,0xee,0xee) );
+	text->StyleSetForeground( wxSTC_STYLE_LINENUMBER, rgb_default );
 	text->StyleSetBackground( wxSTC_STYLE_LINENUMBER, wxColour (0x1e,0x4a,0x76) );
 
 	text->StyleSetBackground( wxSTC_B_DEFAULT,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_B_DEFAULT,rgb_default );
-	text->StyleSetBackground( wxSTC_B_DATE,rgb_bkgrnd );
-	text->StyleSetForeground( wxSTC_B_DATE,rgb_default );
 	text->StyleSetBackground( wxSTC_B_OPERATOR,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_B_OPERATOR,rgb_default );
 	text->StyleSetBackground( wxSTC_B_PREPROCESSOR,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_B_PREPROCESSOR,rgb_default );
+	text->StyleSetBackground( wxSTC_B_DATE,rgb_bkgrnd );
+	text->StyleSetForeground( wxSTC_B_DATE,rgb_default );
+	text->StyleSetBackground( wxSTC_B_LABEL,rgb_bkgrnd );
+	text->StyleSetForeground( wxSTC_B_LABEL,rgb_default );
+
 	text->StyleSetBackground( wxSTC_B_IDENTIFIER,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_B_IDENTIFIER,rgb_ident );
+
 	text->StyleSetBackground( wxSTC_B_STRING,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_B_STRING,rgb_string );
+	text->StyleSetBackground( wxSTC_B_STRINGEOL,rgb_bkgrnd );
+	text->StyleSetForeground( wxSTC_B_STRINGEOL,rgb_string );
+
 	text->StyleSetBackground( wxSTC_B_COMMENT,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_B_COMMENT,rgb_comment );
+
 	text->StyleSetBackground( wxSTC_B_KEYWORD,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_B_KEYWORD,rgb_keyword );
+
 	text->StyleSetBackground( wxSTC_B_NUMBER,rgb_bkgrnd );
 	text->StyleSetForeground( wxSTC_B_NUMBER,rgb_digit );
+	text->StyleSetBackground( wxSTC_B_HEXNUMBER,rgb_bkgrnd );
+	text->StyleSetForeground( wxSTC_B_HEXNUMBER,rgb_digit );
+	text->StyleSetBackground( wxSTC_B_BINNUMBER,rgb_bkgrnd );
+	text->StyleSetForeground( wxSTC_B_BINNUMBER,rgb_digit );
 
 	text->SetKeyWords( 0,keywordsList );
 
@@ -124,6 +144,10 @@ wxString FileView::GetTitle(){
 
 wxString FileView::GetPath(){
 	return path;
+}
+
+wxString FileView::GetSource(){
+	return text->GetText();
 }
 
 bool FileView::IsDirty(){

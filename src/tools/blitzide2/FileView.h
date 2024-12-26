@@ -24,6 +24,7 @@ public:
 
 	wxString GetTitle();
 	wxString GetPath();
+	wxString GetSource();
 	bool IsDirty();
 
   bool Save();
