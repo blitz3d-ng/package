@@ -9,9 +9,11 @@
 #include <wx/notebook.h>
 #include <wx/filedlg.h>
 #include <wx/filename.h>
+#include <wx/splitter.h>
 
 #include "HtmlHelp.h"
 #include "FileView.h"
+#include "CodePanel.h"
 #include "BuildDialog.h"
 #include "Preferences.h"
 
@@ -29,6 +31,8 @@ private:
 	wxToolBar *toolbar;
 	HtmlHelp *help;
 	wxNotebook *nb;
+	CodePanel *codePanel;
+	wxSplitterWindow *splitter;
 	FileView *buildFile;
 	wxMenu *platformMenu;
 
@@ -52,6 +56,7 @@ private:
 	void OnExe( wxCommandEvent& event );
 	void OnTarget( wxCommandEvent& event );
 	void OnAddFile( wxCommandEvent& event );
+	void OnFileViewDirty( wxCommandEvent& event );
 	void OnBuildBegin( wxCommandEvent& event );
 	void OnBuildProgress( wxCommandEvent& event );
 	void OnBuildEnd( wxCommandEvent& event );

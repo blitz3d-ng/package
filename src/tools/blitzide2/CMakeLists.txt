@@ -7,6 +7,7 @@ if (TARGET wxstc AND TARGET wxwebview)
     MainFrame.h MainFrame.cpp
     HtmlHelp.h HtmlHelp.cpp
     FileView.h FileView.cpp
+    CodePanel.h CodePanel.cpp
     PreferencesDialog.h PreferencesDialog.cpp
     Preferences.h Preferences.cpp
     BlitzCC.h BlitzCC.cpp

@@ -17,10 +17,15 @@ private:
 	void Open( wxString &path );
 
 	void OnTextEvent( wxStyledTextEvent& event );
+
+	void EmitDirtyEvent();
 public:
   FileView( wxString &path,wxWindow *parent,wxWindowID id );
 
 	wxString GetTitle();
+	wxString GetPath();
+	wxString GetSource();
+	bool IsDirty();
 
   bool Save();
   bool Save( wxString &newPath );
@@ -29,5 +34,7 @@ public:
 	void Kill();
 	void Build( wxString &out );
 };
+
+wxDECLARE_EVENT(FILE_VIEW_DIRTY_EVENT, wxCommandEvent);
 
 #endif

@@ -33,7 +33,7 @@ bool MyApp::OnInit(){
 	}
 
 	frame = new MainFrame( "Blitz3D \"NG\"" );
-	frame->SetClientSize( frame->FromDIP( wxSize( 800,600 ) ) );
+	frame->SetClientSize( frame->FromDIP( wxSize( 900,600 ) ) );
 	frame->AddFiles( filesToOpen );
 	frame->Show( true );
 	return true;
