@@ -6,6 +6,7 @@
 #include <wx/wx.h>
 #endif
 
+#include <wx/notebook.h>
 #include <wx/listbox.h>
 
 WX_DECLARE_HASH_MAP( int,int,wxIntegerHash,wxIntegerEqual,LineLookup );
